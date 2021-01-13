@@ -1,0 +1,7 @@
+<Project>
+  <Import Project="..\Directory.Build.props"/>
+  <PropertyGroup>
+    <RootNamespace>BadEcho.Omnified.$(MSBuildProjectName)</RootNamespace>
+    <AssemblyName>BadEcho.Omnified.$(MSBuildProjectName)</AssemblyName>
+  </PropertyGroup>
+</Project>
