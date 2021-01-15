@@ -29,5 +29,4 @@
     </EmbeddedResource>
   </ItemGroup>
   
-  <!--Import Project="..\..\root.targets" /-->
 </Project>
