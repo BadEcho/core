@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // In SDK-style projects such as this one, several assembly attributes that were historically
@@ -17,14 +18,10 @@ using System.Runtime.InteropServices;
 
 [assembly: Guid("c23f1588-7af9-4d9e-83af-15e922501b7f")]
 
+[assembly: InternalsVisibleTo("BadEcho.Odin.Tests")]
+
 [assembly: SuppressMessage("Microsoft.Design",
                            "CA1045",
                            Scope = "member",
-                           Target = "BadEcho.Odin.Serialization.JsonPolymorphicConverter`2.ReadFromDescriptor",
+                           Target = "~M:BadEcho.Odin.Serialization.JsonPolymorphicConverter`2.ReadFromDescriptor(System.Text.Json.Utf8JsonReader@,`0)~`1",
                            Justification = "System.Text.Json.Serialization.JsonConverter design is centered around the use of the System.Text.Json.Utf8JsonReader being passed around by reference.")]
-
-[assembly: SuppressMessage("Microsoft.Performance",
-                           "CA1812",
-                           Scope = "type",
-                           Target = "BadEcho.Odin.Extensibility.CompositionElement+CompositionElementDebuggerProxy",
-                           Justification = "Not entirely sure why this is being flagged. Besides being actually set up as a display proxy for CompositionElement, the Roslyn analyzers, according to the GitHub at least, are supposed to have support for types specified as parameters decorated with DynamicallyAccessedMembersAttribute, as is the case with DebuggerTypeProxyAttribute's Type parameter. This is either a bug, or the analyzers don't actually support DynamicallyAccessedMembersAttribute usage for this rule.")]

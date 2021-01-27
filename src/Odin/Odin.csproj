@@ -1,9 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Product>Odin Framework</Product>
     <Version>0.1.0</Version>
-    <Description>Bad Echo core framework containing technologies applicable to all domains.</Description>
+    <Description>Bad Echo core frameworks containing technologies applicable to all domains.</Description>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,7 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.ComponentModel.Composition" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
+    <PackageReference Include="System.Composition" Version="5.0.1" />
   </ItemGroup>
 
   <ItemGroup>

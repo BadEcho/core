@@ -158,5 +158,23 @@ namespace BadEcho.Odin.Properties {
                 return ResourceManager.GetString("JsonTypeValueNotNumber", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing exception payload..
+        /// </summary>
+        internal static string LoggingMissingException {
+            get {
+                return ResourceManager.GetString("LoggingMissingException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing message payload..
+        /// </summary>
+        internal static string LoggingMissingMessage {
+            get {
+                return ResourceManager.GetString("LoggingMissingMessage", resourceCulture);
+            }
+        }
     }
 }

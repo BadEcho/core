@@ -131,4 +131,10 @@
   <data name="ArgumentExportValueNoObject" xml:space="preserve">
     <value>Cannot retrieve a value from an export that isn't representing an object.</value>
   </data>
+  <data name="LoggingMissingMessage" xml:space="preserve">
+    <value>Missing message payload.</value>
+  </data>
+  <data name="LoggingMissingException" xml:space="preserve">
+    <value>Missing exception payload.</value>
+  </data>
 </root>

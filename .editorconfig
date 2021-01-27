@@ -247,7 +247,8 @@ dotnet_diagnostic.CA1836.severity = warning
 dotnet_diagnostic.CA1837.severity = warning
 
 # CA2000: Dispose objects before losing scope
-dotnet_diagnostic.CA2000.severity = warning
+# This is a fairly useless rule. There are many proper use cases (IDisposable needed for object initialization, assuming said object will be disposed properly) that run afoul of this rule.
+dotnet_diagnostic.CA2000.severity = none
 
 # CA2002: Do not lock on objects with weak identity
 dotnet_diagnostic.CA2002.severity = warning

@@ -11,14 +11,18 @@
     <AssemblyName>BadEcho.$(MSBuildProjectName)</AssemblyName>
     <Nullable>enable</Nullable>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <CLSCompliant>true</CLSCompliant>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>$(SolutionDir)\bin\dbg</OutputPath>
     <DocumentationFile>$(SolutionDir)\bin\dbg\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>$(SolutionDir)\bin\rel</OutputPath>
     <DocumentationFile>$(SolutionDir)\bin\rel\$(AssemblyName).xml</DocumentationFile>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)strongNaming.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>  
 </Project>

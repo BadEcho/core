@@ -5,6 +5,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Composition.Hosting;
+
 namespace BadEcho.Odin.Extensibility.Hosting
 {
     /// <summary>
@@ -13,13 +15,13 @@ namespace BadEcho.Odin.Extensibility.Hosting
     internal interface IPluginContextFactory
     {
         /// <summary>
-        /// Creates the <see cref="ExtensibilityContainer"/> used by the <see cref="PluginContext"/> to compose its objects.
+        /// Creates the <see cref="CompositionHost"/> used by the <see cref="PluginContext"/> to compose its objects.
         /// </summary>
         /// <returns>
-        /// A <see cref="ExtensibilityContainer"/> instance configured to compose objects as specified by the
+        /// A <see cref="CompositionHost"/> instance configured to compose objects as specified by the
         /// <see cref="IPluginContextFactory"/>
         /// implementation.
         /// </returns>
-        ExtensibilityContainer CreateContainer();
+        CompositionHost CreateContainer();
     }
 }
