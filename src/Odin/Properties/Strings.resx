@@ -119,15 +119,6 @@
   <data name="ArgumentStringNullOrEmpty" xml:space="preserve">
     <value>The provided string cannot be null or empty.</value>
   </data>
-  <data name="ArgumentImportFactoryOnlyExport" xml:space="preserve">
-    <value>The '{0}' type can only be composed using an imported parts builder. Directly importing exports of this type is not allowed.</value>
-  </data>
-  <data name="CompositionInvalidExportType" xml:space="preserve">
-    <value>Exported value '{0}' cannot be cast to type '{1}'.</value>
-  </data>
-  <data name="CompositionUnknownOrigin" xml:space="preserve">
-    <value>Unknown Origin</value>
-  </data>
   <data name="ArgumentExportValueNoObject" xml:space="preserve">
     <value>Cannot retrieve a value from an export that isn't representing an object.</value>
   </data>
@@ -136,5 +127,11 @@
   </data>
   <data name="LoggingMissingException" xml:space="preserve">
     <value>Missing exception payload.</value>
+  </data>
+	<data name="PluginFileLoadException" xml:space="preserve">
+    <value>The file '{0}' being scanned for pluggable exports failed to load.</value>
+  </data>
+	<data name="PluginBadImageException" xml:space="preserve">
+    <value>The file '{0}' being scanned for pluggable exports failed to load due to most likely not being a valid .NET assembly.</value>
   </data>
 </root>

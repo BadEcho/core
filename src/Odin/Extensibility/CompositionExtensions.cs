@@ -6,14 +6,14 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Composition.Hosting;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
+using BadEcho.Odin.Extensions;
+using BadEcho.Odin.Logging;
+using BadEcho.Odin.Properties;
 
 namespace BadEcho.Odin.Extensibility
 {
@@ -23,8 +23,17 @@ namespace BadEcho.Odin.Extensibility
     /// </summary>
     public static class CompositionExtensions
     {
-        public static ContainerConfiguration WithDirectory(string path)
+        /// <summary>
+        /// Adds part types from the assemblies found in the specified directory to this container configuration.
+        /// </summary>
+        /// <param name="configuration">The current container configuration.</param>
+        /// <param name="path">The directory containing assemblies to add part types from.</param>
+        /// <returns>An object that can be used to further configure the container.</returns>
+        public static ContainerConfiguration WithDirectory(this ContainerConfiguration configuration, string path)
         {
+            if (configuration == null) 
+                throw new ArgumentNullException(nameof(configuration));
+
             var assemblies = new List<Assembly>();
             string[] dllFiles = Directory.GetFiles(Path.GetFullPath(path), "*.dll");
 
@@ -36,13 +45,17 @@ namespace BadEcho.Odin.Extensibility
                 }
                 catch (FileLoadException ex)
                 {
-
+                    var errorMessage = Strings.PluginFileLoadException.InvariantFormat(dllFile);
+                    Logger.Error(errorMessage, ex);
                 }
-                catch (BadImageFormatException ex)
+                catch (BadImageFormatException)
                 {
-
+                    var errorMessage = Strings.PluginBadImageException.InvariantFormat(dllFile);
+                    Logger.Warning(errorMessage);
                 }
             }
+
+            return configuration.WithAssemblies(assemblies);
         }
     }
 }

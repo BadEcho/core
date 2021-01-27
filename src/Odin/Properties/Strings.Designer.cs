@@ -70,38 +70,11 @@ namespace BadEcho.Odin.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The &apos;{0}&apos; type can only be composed using an imported parts builder. Directly importing exports of this type is not allowed..
-        /// </summary>
-        internal static string ArgumentImportFactoryOnlyExport {
-            get {
-                return ResourceManager.GetString("ArgumentImportFactoryOnlyExport", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The provided string cannot be null or empty..
         /// </summary>
         internal static string ArgumentStringNullOrEmpty {
             get {
                 return ResourceManager.GetString("ArgumentStringNullOrEmpty", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Exported value &apos;{0}&apos; cannot be cast to type &apos;{1}&apos;..
-        /// </summary>
-        internal static string CompositionInvalidExportType {
-            get {
-                return ResourceManager.GetString("CompositionInvalidExportType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unknown Origin.
-        /// </summary>
-        internal static string CompositionUnknownOrigin {
-            get {
-                return ResourceManager.GetString("CompositionUnknownOrigin", resourceCulture);
             }
         }
         
@@ -174,6 +147,24 @@ namespace BadEcho.Odin.Properties {
         internal static string LoggingMissingMessage {
             get {
                 return ResourceManager.GetString("LoggingMissingMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file &apos;{0}&apos; being scanned for pluggable exports failed to load due to most likely not being a valid .NET assembly..
+        /// </summary>
+        internal static string PluginBadImageException {
+            get {
+                return ResourceManager.GetString("PluginBadImageException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file &apos;{0}&apos; being scanned for pluggable exports failed to load..
+        /// </summary>
+        internal static string PluginFileLoadException {
+            get {
+                return ResourceManager.GetString("PluginFileLoadException", resourceCulture);
             }
         }
     }
