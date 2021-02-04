@@ -34,7 +34,12 @@ namespace BadEcho.Odin.Extensibility.Hosting
         /// <inheritdoc/>
         public CompositionHost CreateContainer()
         {
-            var configuration = new ContainerConfiguration();
+            var configuration = new ContainerConfiguration()
+                .WithDirectory(_pluginDirectory);
+
+            this.LoadConventions(configuration);
+
+            return configuration.CreateContainer();
         }
     }
 }

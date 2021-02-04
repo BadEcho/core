@@ -23,7 +23,7 @@ internal sealed class DefaultEventListener : EventListener
     {
         base.OnEventSourceCreated(eventSource);
         
-        if (eventSource.Name == LogSource.EVENT_SOURCE_NAME)
+        if (eventSource == LogSource.Instance)
             EnableEvents(eventSource, EventLevel.LogAlways, EventKeywords.All);
     }
 

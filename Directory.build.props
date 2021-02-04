@@ -23,6 +23,6 @@
     <OutputPath>$(SolutionDir)\bin\rel</OutputPath>
     <DocumentationFile>$(SolutionDir)\bin\rel\$(AssemblyName).xml</DocumentationFile>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)strongNaming.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)\build\strongNaming.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>  
 </Project>

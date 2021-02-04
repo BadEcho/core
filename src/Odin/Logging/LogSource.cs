@@ -14,11 +14,9 @@ namespace BadEcho.Odin.Logging
     /// <summary>
     /// Provides a source for diagnostic messages from Bad Echo technologies to external listeners.
     /// </summary>
-    [EventSource(Name = EVENT_SOURCE_NAME)]
+    [EventSource(Name = "BadEcho-Odin")]
     internal sealed class LogSource : EventSource
     {
-        public const string EVENT_SOURCE_NAME = "BadEcho-Odin";
-
         /// <summary>
         /// Initializes a new instance of the <see cref="LogSource"/> class.
         /// </summary>

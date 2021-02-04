@@ -13,9 +13,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Vision Modules", "Vision Mo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Statistics", "src\Statistics\Statistics.csproj", "{73762C39-D5E7-4588-AAC4-055A85AD16A6}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{89F4C425-A0FF-4930-97D3-D115214D9AC5}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{89F4C425-A0FF-4930-97D3-D115214D9AC5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Odin.Tests", "..\tests\Odin.Tests\Odin.Tests.csproj", "{55D24B2A-8AF8-4207-9A25-5BDBBFC93DDC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Odin.Tests.Plugin", "..\tests\Odin.Tests.Plugin\Odin.Tests.Plugin.csproj", "{CF2634B5-E301-4F86-9A8D-9A3D2B9DFFAD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +45,10 @@ Global
 		{55D24B2A-8AF8-4207-9A25-5BDBBFC93DDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55D24B2A-8AF8-4207-9A25-5BDBBFC93DDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55D24B2A-8AF8-4207-9A25-5BDBBFC93DDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF2634B5-E301-4F86-9A8D-9A3D2B9DFFAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF2634B5-E301-4F86-9A8D-9A3D2B9DFFAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF2634B5-E301-4F86-9A8D-9A3D2B9DFFAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF2634B5-E301-4F86-9A8D-9A3D2B9DFFAD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -50,6 +56,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{73762C39-D5E7-4588-AAC4-055A85AD16A6} = {23D08756-43AF-44DF-861E-92F05E06BB77}
 		{55D24B2A-8AF8-4207-9A25-5BDBBFC93DDC} = {89F4C425-A0FF-4930-97D3-D115214D9AC5}
+		{CF2634B5-E301-4F86-9A8D-9A3D2B9DFFAD} = {89F4C425-A0FF-4930-97D3-D115214D9AC5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {975D5FCE-8519-47CC-95A7-876F8CDC17D0}

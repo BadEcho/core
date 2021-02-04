@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:fenestra="http://schemas.badecho.com/fenestra/2020/06/xaml">
+                    xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="StatTextStyle.xaml"/>
     </ResourceDictionary.MergedDictionaries>

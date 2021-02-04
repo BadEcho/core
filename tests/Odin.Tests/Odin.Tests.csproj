@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <IsPackable>false</IsPackable>
@@ -20,4 +20,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Odin\Odin.csproj" />
   </ItemGroup>
+
+  <Target Name="BuildPlugin" AfterTargets="Build">
+    <MSBuild Projects="..\Odin.Tests.Plugin\Odin.Tests.Plugin.csproj" Properties="Configuration=$(Configuration);Platform=$(Platform)"/>
+  </Target>
 </Project>

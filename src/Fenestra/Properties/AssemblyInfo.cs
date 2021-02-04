@@ -11,7 +11,7 @@ using System.Windows.Markup;
 [assembly: SuppressMessage("Microsoft.Maintainability",
                            "CA1501",
                            Scope = "type",
-                           Target = "BadEcho.Fenestra.Controls.OutlinedTextElement",
+                           Target = "~T:BadEcho.Fenestra.Controls.OutlinedTextElement",
                            Justification = "Base classes are Microsoft controlled, cannot influence their hierarchy.")]
 
 [assembly:SuppressMessage("Microsoft.Design",
