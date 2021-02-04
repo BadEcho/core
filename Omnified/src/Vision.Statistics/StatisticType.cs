@@ -5,7 +5,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Omnified.Statistics
+namespace BadEcho.Omnified.Vision.Statistics
 {
     /// <summary>
     /// Specifies the type of statistic exported from an Omnified game.

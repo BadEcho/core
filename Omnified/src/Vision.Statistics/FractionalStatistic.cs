@@ -5,7 +5,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Omnified.Statistics
+namespace BadEcho.Omnified.Vision.Statistics
 {
     /// <summary>
     /// Provides an individual statistic exported from an Omnified game concerning a fractional,

@@ -9,9 +9,9 @@ using System;
 using System.ComponentModel;
 using System.Text.Json;
 using BadEcho.Odin.Serialization;
-using BadEcho.Omnified.Statistics.Properties;
+using BadEcho.Omnified.Vision.Statistics.Properties;
 
-namespace BadEcho.Omnified.Statistics
+namespace BadEcho.Omnified.Vision.Statistics
 {
     /// <summary>
     /// Provides a converter of <see cref="Statistic"/> objects to or from JSON.
@@ -46,7 +46,7 @@ namespace BadEcho.Omnified.Statistics
                 WholeStatistic => StatisticType.Whole,
                 FractionalStatistic => StatisticType.Fractional,
                 CoordinateStatistic => StatisticType.Coordinate,
-                _ => throw new ArgumentException(Strings.ArgumentStatisticTypeUnsupported, 
+                _ => throw new ArgumentException(Strings.ArgumentExceptionStatisticTypeUnsupported,
                                                  nameof(value))
             };
         }

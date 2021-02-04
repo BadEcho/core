@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace BadEcho.Omnified.Statistics.Properties {
+namespace BadEcho.Omnified.Vision.Statistics.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace BadEcho.Omnified.Statistics.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("BadEcho.Omnified.Statistics.Properties.Strings", typeof(Strings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("BadEcho.Omnified.Vision.Statistics.Properties.Strings", typeof(Strings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -63,7 +63,7 @@ namespace BadEcho.Omnified.Statistics.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The provided Statistic object type lacks support for describing in JSON..
         /// </summary>
-        internal static string ArgumentStatisticTypeUnsupported {
+        internal static string ArgumentExceptionStatisticTypeUnsupported {
             get {
                 return ResourceManager.GetString("ArgumentExceptionStatisticTypeUnsupported", resourceCulture);
             }
