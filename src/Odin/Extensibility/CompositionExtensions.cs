@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Composition.Hosting;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Runtime.Loader;
@@ -30,6 +31,20 @@ namespace BadEcho.Odin.Extensibility
         /// <param name="path">The directory containing assemblies to add part types from.</param>
         /// <returns>An object that can be used to further configure the container.</returns>
         public static ContainerConfiguration WithDirectory(this ContainerConfiguration configuration, string path)
+        {
+            var assemblies = configuration.LoadFromDirectory(path);
+
+            return configuration.WithAssemblies(assemblies);
+        }
+
+
+        /// <summary>
+        /// Loads all assemblies found in the specified directory for the purposes of exported part discovery.
+        /// </summary>
+        /// <param name="configuration">The current container configuration.</param>
+        /// <param name="path">The directory containing the assemblies to load.</param>
+        /// <returns>A collection of <see cref="Assembly"/> objects found at <c>path</c>.</returns>
+        internal static IEnumerable<Assembly> LoadFromDirectory([NotNull] this ContainerConfiguration configuration, string path)
         {
             if (configuration == null) 
                 throw new ArgumentNullException(nameof(configuration));
@@ -55,7 +70,7 @@ namespace BadEcho.Odin.Extensibility
                 }
             }
 
-            return configuration.WithAssemblies(assemblies);
+            return assemblies;
         }
     }
 }

@@ -90,7 +90,7 @@ namespace BadEcho.Odin.Extensions
         {
             if (attributeProvider == null) 
                 throw new ArgumentNullException(nameof(attributeProvider));
-
+            
             return attributeProvider.GetCustomAttributes(false).OfType<T>();
         }
 
@@ -111,9 +111,6 @@ namespace BadEcho.Odin.Extensions
         public static T? GetAttribute<T>(this ICustomAttributeProvider attributeProvider)
             where T : Attribute
         {
-            if (attributeProvider == null) 
-                throw new ArgumentNullException(nameof(attributeProvider));
-
             return attributeProvider.GetAttributes<T>().FirstOrDefault();
         }
     }

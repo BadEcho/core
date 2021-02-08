@@ -13,20 +13,20 @@ using Xunit;
 
 namespace BadEcho.Odin.Tests.Extensibility
 {
-    public class GlobalPluginContextFactoryTests
+    public class GlobalPluginContextStrategyTests
     {
-        private readonly IPluginContextFactory _factory;
+        private readonly IPluginContextStrategy _strategy;
 
-        public GlobalPluginContextFactoryTests()
+        public GlobalPluginContextStrategyTests()
         {
             var path = Path.Combine(Environment.CurrentDirectory, "plugins");
-            _factory = new GlobalPluginContextFactory(path);
+            _strategy = new GlobalPluginContextStrategy(path);
         }
 
         [Fact]
         public void IFakePart_GetExports()
         {
-            var container = _factory.CreateContainer();
+            var container = _strategy.CreateContainer();
 
             var parts = container.GetExports<IFakePart>();
             
@@ -36,7 +36,7 @@ namespace BadEcho.Odin.Tests.Extensibility
         [Fact]
         public void IFakePart_GetExport()
         {
-            var container = _factory.CreateContainer();
+            var container = _strategy.CreateContainer();
 
             Assert.Throws<CompositionFailedException>(container.GetExport<IFakePart>);
         }
@@ -44,7 +44,7 @@ namespace BadEcho.Odin.Tests.Extensibility
         [Fact]
         public void INonSharedFakePart_IsNonShared()
         {
-            var container = _factory.CreateContainer();
+            var container = _strategy.CreateContainer();
 
             var firstPart = container.GetExport<INonSharedFakePart>();
             var secondPart = container.GetExport<INonSharedFakePart>();
@@ -55,7 +55,7 @@ namespace BadEcho.Odin.Tests.Extensibility
         [Fact]
         public void ISharedFakePart_IsShared()
         {
-            var container = _factory.CreateContainer();
+            var container = _strategy.CreateContainer();
 
             var firstPart = container.GetExport<ISharedFakePart>();
             var secondPart = container.GetExport<ISharedFakePart>();

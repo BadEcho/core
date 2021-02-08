@@ -5,28 +5,29 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Composition.Convention;
 using System.Composition.Hosting;
 
 namespace BadEcho.Odin.Extensibility.Hosting
 {
     /// <summary>
-    /// Provides a factory that constructs a <see cref="PluginContext"/> object covering all plugins that are discoverable
-    /// through Odin's Extensibility framework.
+    /// Provides a strategy that directs a <see cref="PluginContext"/> to cover all plugins that are discoverable through Odin's
+    /// Extensibility framework.
     /// </summary>
     /// <remarks>
-    /// This is the standard plugin context factory used to load any plugins exported for consumption with no amount of discretion
-    /// at play. Any contracts loaded through contexts created with this factory will have all possible implementations of said
+    /// This is the standard strategy used to load any plugins exported for consumption with no amount of discretion
+    /// at play. Any contracts loaded through contexts using this strategy will have all possible implementations of said
     /// contracts returned.
     /// </remarks>
-    internal sealed class GlobalPluginContextFactory : IPluginContextFactory
+    internal sealed class GlobalPluginContextStrategy : IPluginContextStrategy
     {
         private readonly string _pluginDirectory;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GlobalPluginContextFactory"/> class.
+        /// Initializes a new instance of the <see cref="GlobalPluginContextStrategy"/> class.
         /// </summary>
         /// <param name="pluginDirectory">Full path to the directory where plugins will be loaded from.</param>
-        public GlobalPluginContextFactory(string pluginDirectory)
+        public GlobalPluginContextStrategy(string pluginDirectory)
         { 
             _pluginDirectory = pluginDirectory;
         }
@@ -37,7 +38,9 @@ namespace BadEcho.Odin.Extensibility.Hosting
             var configuration = new ContainerConfiguration()
                 .WithDirectory(_pluginDirectory);
 
-            this.LoadConventions(configuration);
+            ConventionBuilder conventions = this.LoadConventions(configuration);
+
+            configuration.WithDefaultConventions(conventions);
 
             return configuration.CreateContainer();
         }
