@@ -14,8 +14,14 @@ using BadEcho.Odin.Tests.Extensibility;
 
 namespace BadEcho.Odin.Tests.Plugin
 {
-    [Filter(
-            typeof(SharedGammaFakePart),
+    [FilterType(FakeIds.GammaFakeIdValue)]
+    public class GammaTypeFakePart : IFilterable
+    {
+        public Guid TypeIdentifier
+            => FakeIds.GammaFakeId;
+    }
+
+    [Filter(typeof(SharedGammaFakePart),
             FakeIds.GammaFakeIdValue)]
     public sealed class SharedGammaFakePart : IFilterableFakePart
     {
@@ -26,7 +32,7 @@ namespace BadEcho.Odin.Tests.Plugin
 
         public Guid TypeIdentifier
             => FakeIds.GammaFakeId;
-        
+
         [Export(typeof(IConventionProvider))]
         private sealed class SharedConventionProvider : IConventionProvider
         {

@@ -62,5 +62,19 @@ namespace BadEcho.Odin.Tests.Extensibility
 
             Assert.Equal(firstPart, secondPart);
         }
+
+        [Fact]
+        public void IFakePartWithDependencies_GetExport()
+        {
+            var container = _strategy.CreateContainer();
+
+            var part = container.GetExport<IFakePartWithDependencies>();
+            var dependency = container.GetExport<IFakeDependency>();
+
+            Assert.NotNull(part);
+            Assert.NotNull(part.Dependency);
+            Assert.NotNull(dependency);
+            Assert.Equal(part.Dependency.GetType(), dependency.GetType());
+        }
     }
 }

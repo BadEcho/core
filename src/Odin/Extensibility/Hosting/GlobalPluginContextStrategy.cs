@@ -11,7 +11,7 @@ using System.Composition.Hosting;
 namespace BadEcho.Odin.Extensibility.Hosting
 {
     /// <summary>
-    /// Provides a strategy that directs a <see cref="PluginContext"/> to cover all plugins that are discoverable through Odin's
+    /// Provides a strategy that directs a <see cref="PluginContext"/> to make available all plugins that are discoverable through Odin's
     /// Extensibility framework.
     /// </summary>
     /// <remarks>

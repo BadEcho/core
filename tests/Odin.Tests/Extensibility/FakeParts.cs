@@ -23,15 +23,31 @@ namespace BadEcho.Odin.Tests.Extensibility
         public const string GammaFakeIdValue = "E7A75BE5-839E-4CE4-A0AA-61FFADD8675A";
         public static Guid GammaFakeId
             => new(GammaFakeIdValue);
-    }
 
+        public const string DeltaFakeIdValue = "C6412E46-3908-4223-9E72-4E8F6246FF4C";
+        public static Guid DeltaFakeId
+            => new(DeltaFakeIdValue);
+    }
+    
     public interface IFakePart
     {
         int DoSomething();
     }
+    public interface IFakeDependency
+    { } 
+    public interface IFakePartWithDependencies
+    {
+        IFakeDependency Dependency { get; }
+    }
     public interface IFilterableFakePart : IFilterable
     {
         int DoSomething();
+    }
+    public interface IFilterableFakeDependency : IFilterable
+    { }
+    public interface IFilterableFakePartWithDependencies : IFilterableFakePart
+    {
+        IFilterableFakeDependency Dependency { get; }   
     }
     public interface INonSharedFakePart
     {

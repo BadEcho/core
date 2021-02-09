@@ -16,7 +16,7 @@ using BadEcho.Odin.Extensions;
 namespace BadEcho.Odin.Extensibility.Hosting
 {
     /// <summary>
-    /// Provides a strategy that directs a <see cref="PluginContext"/> to cover only the exports filtered against a specific
+    /// Provides a strategy that directs a <see cref="PluginContext"/> to make available only the exports filtered against a specific
     /// type identifier.
     /// </summary>
     internal sealed class FilterablePluginContextStrategy : IPluginContextStrategy
@@ -65,7 +65,8 @@ namespace BadEcho.Odin.Extensibility.Hosting
                        .Export<IFilterable>(
                            ex => ex.AddMetadata(nameof(IFilterMetadata.PartType), type => type)
                                    .AddMetadata(nameof(IFilterMetadata.TypeIdentifier),
-                                                type => type.GetAttribute<FilterAttribute>()?.TypeIdentifier));
+                                                type => type.GetAttribute<FilterAttribute>()?.TypeIdentifier))
+                       .ExportInterfaces(t => t != typeof(IFilterable));
             return conventions;
         }
 

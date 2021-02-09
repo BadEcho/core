@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Composition;
-using System.Composition.Convention;
+﻿//-----------------------------------------------------------------------
+// <copyright>
+//      Created by Matt Weber <matt@badecho.com>
+//      Copyright @ 2021 Bad Echo LLC. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BadEcho.Odin.Extensibility;
 using BadEcho.Odin.Extensibility.Hosting;
 using Xunit;
 
@@ -37,8 +37,8 @@ namespace BadEcho.Odin.Tests.Extensibility
         }
 
         [Theory]
-        [InlineData(FakeIds.AlphaFakeIdValue)]
         [InlineData(FakeIds.BetaFakeIdValue)]
+        [InlineData(FakeIds.DeltaFakeIdValue)]
         public void SingleFilterableTypes_GetExport(string fakeId)
         {
             var strategy = new FilterablePluginContextStrategy(_path, new Guid(fakeId));
@@ -72,6 +72,21 @@ namespace BadEcho.Odin.Tests.Extensibility
             var secondPart = container.GetExport<IFilterableFakePart>();
 
             Assert.Equal(firstPart, secondPart);
+        }
+
+        [Fact]
+        public void FilterableWithDependencies_GetExport()
+        {
+            var strategy = new FilterablePluginContextStrategy(_path, FakeIds.AlphaFakeId);
+            var container = strategy.CreateContainer();
+
+            var part = container.GetExport<IFilterableFakePartWithDependencies>();
+            var dependency = container.GetExport<IFilterableFakeDependency>();
+
+            Assert.NotNull(part);
+            Assert.NotNull(part.Dependency);
+            Assert.NotNull(dependency);
+            Assert.Equal(part.Dependency.GetType(), dependency.GetType());
         }
     }
 }
