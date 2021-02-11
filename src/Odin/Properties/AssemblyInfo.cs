@@ -22,9 +22,3 @@ using System.Runtime.InteropServices;
                            Scope = "member",
                            Target = "~M:BadEcho.Odin.Extensibility.Hosting.PluginContextStrategyExtensions.LoadConventions(BadEcho.Odin.Extensibility.Hosting.IPluginContextStrategy,System.Composition.Hosting.ContainerConfiguration)",
                            Justification = "This is an extension method for an interface that provides code useful to all said interface's implementations. Whether or not the parameter is used is moot, it is very much required to be here.")]
-
-[assembly: SuppressMessage("Performance", 
-                           "CA1813:Avoid unsealed attributes", 
-                           Scope = "type", 
-                           Target = "~T:BadEcho.Odin.Extensibility.ExtensibilityAttribute",
-                           Justification = "This attribute is meant to be derived to allow for greater customization of the plugin discovery process. MEF's own ExportAttribute is unsealed.")]
