@@ -7,18 +7,13 @@
 
 using System;
 using System.Composition;
+using System.Composition.Convention;
 using BadEcho.Odin.Extensibility;
+using BadEcho.Odin.Extensibility.Hosting;
 using BadEcho.Odin.Tests.Extensibility;
 
 namespace BadEcho.Odin.Tests.Plugin
 {
-    [FilterType(FakeIds.AlphaFakeIdValue)]
-    public class AlphaTypeFakePart : IFilterable
-    {
-        public Guid TypeIdentifier
-            => FakeIds.AlphaFakeId;
-    }
-
     [Filter(typeof(AlphaFakePart),
             FakeIds.AlphaFakeIdValue)]
     public class AlphaFakePart : IFilterableFakePart
@@ -35,7 +30,7 @@ namespace BadEcho.Odin.Tests.Plugin
     [Filter(typeof(AlphaFakeDependency), FakeIds.AlphaFakeIdValue)]
     public class AlphaFakeDependency : IFilterableFakeDependency
     {
-        public Guid TypeIdentifier => FakeIds.AlphaFakeId; 
+        public Guid TypeIdentifier => FakeIds.AlphaFakeId;
     }
 
     [Filter(typeof(AlphaFakePartWithDependencies),
@@ -55,7 +50,56 @@ namespace BadEcho.Odin.Tests.Plugin
 
         public int DoSomething()
         {
-            throw new NotImplementedException();
+            return 0;
+        }
+    }
+
+    [Filter(typeof(BetaFakePart),
+            FakeIds.BetaFakeIdValue)]
+    public class BetaFakePart : IFilterableFakePart
+    {
+        public Guid TypeIdentifier
+            => FakeIds.BetaFakeId;
+
+        public int DoSomething()
+        {
+            return 29290892;
+        }
+    }
+    
+    [Filter(typeof(DeltaFakePart),
+            FakeIds.DeltaFakeIdValue)]
+    public class DeltaFakePart : IFilterableFakePart
+    {
+        public Guid TypeIdentifier
+            => FakeIds.DeltaFakeId;
+
+        public int DoSomething()
+        {
+            return -1;
+        }
+    }
+    
+    [Filter(typeof(SharedGammaFakePart),
+            FakeIds.GammaFakeIdValue)]
+    public sealed class SharedGammaFakePart : IFilterableFakePart
+    {
+        public int DoSomething()
+        {
+            return 0;
+        }
+
+        public Guid TypeIdentifier
+            => FakeIds.GammaFakeId;
+
+        [Export(typeof(IConventionProvider))]
+        private sealed class SharedConventionProvider : IConventionProvider
+        {
+            public void ConfigureRules(ConventionBuilder conventions)
+            {
+                conventions.ForType<SharedGammaFakePart>()
+                           .Shared();
+            }
         }
     }
 }

@@ -11,13 +11,25 @@ using BadEcho.Odin.Tests.Extensibility;
 
 namespace BadEcho.Odin.Tests.Plugin
 {
+    [Export(typeof(IFakePartWithDependencies))]
+    public class FakePartWithDependencies : IFakePartWithDependencies
+    {
+        [ImportingConstructor]
+        public FakePartWithDependencies(IFakeDependency dependency)
+        {
+            Dependency = dependency;
+        }
+
+        public IFakeDependency Dependency { get; }
+    }
+
     [Export(typeof(IFakePartWithComposedDependencies))]
     public class FakePartWithComposedDependencies : IFakePartWithComposedDependencies
     {
         private const string DEPENDENCY_CONTRACT = "ComposedDependency";
 
         [ImportingConstructor]
-        public FakePartWithComposedDependencies([Import(DEPENDENCY_CONTRACT)]IFakeDependency dependency)
+        public FakePartWithComposedDependencies([Import(DEPENDENCY_CONTRACT)] IFakeDependency dependency)
         {
             Dependency = dependency;
         }
