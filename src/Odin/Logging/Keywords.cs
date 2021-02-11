@@ -17,23 +17,23 @@ namespace BadEcho.Odin.Logging
         /// <summary>
         /// Attached to all events containing simple message payloads.
         /// </summary>
-        internal const EventKeywords MESSAGE_KEYWORD = (EventKeywords) 0x1;
+        internal const EventKeywords MessageKeywordValue = (EventKeywords) 0x1;
 
         /// <summary>
         /// Attached to all events containing <see cref="System.Exception"/> information payloads.
         /// </summary>
-        internal const EventKeywords EXCEPTION_KEYWORD = (EventKeywords) 0x2;
+        internal const EventKeywords ExceptionKeywordValue = (EventKeywords) 0x2;
 
         /// <summary>
         /// Gets the keyword attached to all events containing simple message payloads.
         /// </summary>
         public static EventKeywords MessageKeyword
-            => MESSAGE_KEYWORD;
+            => MessageKeywordValue;
 
         /// <summary>
         /// Gets the keyword attached to all events containing <see cref="System.Exception"/> information payloads.
         /// </summary>
         public static EventKeywords ExceptionKeyword
-            => EXCEPTION_KEYWORD;
+            => ExceptionKeywordValue;
     }
 }

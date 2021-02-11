@@ -34,7 +34,7 @@ namespace BadEcho.Odin.Logging
         /// Writes a debug event, its details described by the provided message.
         /// </summary>
         /// <param name="message">A debug message describing the details of the event.</param>
-        [Event(1, Level = EventLevel.Verbose, Keywords = Keywords.MESSAGE_KEYWORD)]
+        [Event(1, Level = EventLevel.Verbose, Keywords = Keywords.MessageKeywordValue)]
         public void Debug(string message)
         {
             if (!IsEnabled())
@@ -47,7 +47,7 @@ namespace BadEcho.Odin.Logging
         /// Writes an informational event, its details described by the provided message.
         /// </summary>
         /// <param name="message">An informational message describing the details of the event.</param>
-        [Event(2, Level = EventLevel.Informational, Keywords = Keywords.MESSAGE_KEYWORD)]
+        [Event(2, Level = EventLevel.Informational, Keywords = Keywords.MessageKeywordValue)]
         public void Info(string message)
         {
             if (!IsEnabled())
@@ -60,7 +60,7 @@ namespace BadEcho.Odin.Logging
         /// Writes a warning event, its details described by the provided message.
         /// </summary>
         /// <param name="message">A warning message describing the details of the event.</param>
-        [Event(3, Level = EventLevel.Warning, Keywords = Keywords.MESSAGE_KEYWORD)]
+        [Event(3, Level = EventLevel.Warning, Keywords = Keywords.MessageKeywordValue)]
         public void Warning(string message)
         {
             if (!IsEnabled())
@@ -73,7 +73,7 @@ namespace BadEcho.Odin.Logging
         /// Writes an error event, its details described by the provided message.
         /// </summary>
         /// <param name="message">An error message describing the details of the event.</param>
-        [Event(4, Level = EventLevel.Error, Keywords = Keywords.MESSAGE_KEYWORD)]
+        [Event(4, Level = EventLevel.Error, Keywords = Keywords.MessageKeywordValue)]
         public void Error(string message)
         {
             if (!IsEnabled())
@@ -86,7 +86,7 @@ namespace BadEcho.Odin.Logging
         /// Writes a critical error event, its details described by the provided message.
         /// </summary>
         /// <param name="message">A critical error message describing the details of the event.</param>
-        [Event(5, Level = EventLevel.Critical, Keywords = Keywords.MESSAGE_KEYWORD)]
+        [Event(5, Level = EventLevel.Critical, Keywords = Keywords.MessageKeywordValue)]
         public void Critical(string message)
         {
             if (!IsEnabled())
@@ -132,7 +132,7 @@ namespace BadEcho.Odin.Logging
                               exception.ToString());
         }
 
-        [Event(6, Level = EventLevel.Error, Keywords = Keywords.MESSAGE_KEYWORD | Keywords.EXCEPTION_KEYWORD)]
+        [Event(6, Level = EventLevel.Error, Keywords = Keywords.MessageKeywordValue | Keywords.ExceptionKeywordValue)]
         private unsafe void ErrorException(string? message,
                                            string exceptionType,
                                            string exceptionMessage,
@@ -157,7 +157,7 @@ namespace BadEcho.Odin.Logging
             }
         }
 
-        [Event(7, Level = EventLevel.Critical, Keywords = Keywords.MESSAGE_KEYWORD | Keywords.EXCEPTION_KEYWORD)]
+        [Event(7, Level = EventLevel.Critical, Keywords = Keywords.MessageKeywordValue | Keywords.ExceptionKeywordValue)]
         private unsafe void CriticalException(string? message,
                                               string exceptionType,
                                               string exceptionMessage,
