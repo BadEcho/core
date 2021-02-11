@@ -21,9 +21,6 @@ namespace BadEcho.Odin.Extensibility.Hosting
     /// </summary>
     internal sealed class FilterablePluginContextStrategy : IPluginContextStrategy
     {
-        private static readonly ConventionBuilder _FilterableBuilder
-            = InitializeConventions();
-
         private readonly string _pluginDirectory;
         private readonly Guid _typeIdentifier;
 
@@ -42,55 +39,35 @@ namespace BadEcho.Odin.Extensibility.Hosting
         public CompositionHost CreateContainer()
         {
             var globalConfiguration = new ContainerConfiguration();
-            
-            var assemblies 
-                = globalConfiguration.LoadFromDirectory(_pluginDirectory).ToList();
 
-            var conventions 
+            IEnumerable<Assembly> assemblies
+                = globalConfiguration.LoadFromDirectory(_pluginDirectory);
+
+            ConventionBuilder conventions
                 = this.LoadConventions(globalConfiguration.WithAssemblies(assemblies));
 
-            var matchingPartTypes = FindMatchingPartTypes(assemblies);
+            globalConfiguration.WithDefaultConventions(conventions);
 
+            IEnumerable<Type> matchingPartTypes = FindMatchingPartTypes(globalConfiguration);
+            
             return new ContainerConfiguration()
                    .WithParts(matchingPartTypes)
                    .WithDefaultConventions(conventions)
                    .CreateContainer();
         }
 
-        private static ConventionBuilder InitializeConventions()
+        private IEnumerable<Type> FindMatchingPartTypes(ContainerConfiguration globalConfiguration)
         {
-            var conventions = new ConventionBuilder();
-
-            conventions.ForTypesDerivedFrom<IFilterable>()
-                       .Export<IFilterable>(
-                           ex => ex.AddMetadata(nameof(IFilterMetadata.PartType), type => type)
-                                   .AddMetadata(nameof(IFilterMetadata.TypeIdentifier),
-                                                type => type.GetAttribute<FilterAttribute>()?.TypeIdentifier))
-                       .ExportInterfaces(t => t != typeof(IFilterable));
-            return conventions;
-        }
-
-        private IEnumerable<Type> FindMatchingPartTypes(IEnumerable<Assembly> assemblies)
-        {
-            var configuration = new ContainerConfiguration()
-                .WithAssemblies(assemblies)
-                .WithDefaultConventions(_FilterableBuilder);
-
-            using (var container = configuration.CreateContainer())
+            using (var globalContainer = globalConfiguration.CreateContainer())
             {
-                var filterableParts = container.GetExports<Lazy<IFilterable, FilterMetadataView>>();
-
-                foreach (var filterablePart in filterableParts)
-                {
-                    if (null == filterablePart.Metadata.PartType)
-                        continue;
-
-                    if (!Guid.TryParse(filterablePart.Metadata.TypeIdentifier, out var typeIdentifier))
-                        continue;
-
-                    if (_typeIdentifier.Equals(typeIdentifier))
-                        yield return filterablePart.Metadata.PartType;
-                }
+                var filterableParts = globalContainer.GetExports<Lazy<IFilterable, FilterMetadataView>>();
+                
+                return filterableParts
+                       .Where(filterablePart =>
+                                  Guid.TryParse(filterablePart.Metadata.TypeIdentifier, out var typeIdentifier)
+                                  && _typeIdentifier.Equals(typeIdentifier))
+                       .Select(matchingPart => matchingPart.Metadata.PartType)
+                       .WhereNotNull();
             }
         }
     }

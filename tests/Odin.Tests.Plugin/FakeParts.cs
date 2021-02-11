@@ -12,6 +12,28 @@ using BadEcho.Odin.Tests.Extensibility;
 
 namespace BadEcho.Odin.Tests.Plugin
 {
+    [Export(typeof(IFakePart))]
+    public sealed class FakePart : IFakePart
+    {
+        public int DoSomething()
+        {
+            return 69;
+        }
+    }
+
+    [Export(typeof(IFakeDependency))]
+    public class FakeDependency : IFakeDependency
+    { }
+
+    [Export(typeof(INonSharedFakePart))]
+    public sealed class NonSharedFakePart : INonSharedFakePart
+    {
+        public int DoSomething()
+        {
+            return 99;
+        }
+    }
+
     [Export(typeof(ISharedFakePart))]
     public sealed class SharedFakePart : ISharedFakePart
     {

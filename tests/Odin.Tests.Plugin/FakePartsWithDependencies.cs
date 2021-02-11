@@ -26,7 +26,7 @@ namespace BadEcho.Odin.Tests.Plugin
     [Export(typeof(IFakePartWithComposedDependencies))]
     public class FakePartWithComposedDependencies : IFakePartWithComposedDependencies
     {
-        private const string DEPENDENCY_CONTRACT = "ComposedDependency";
+        private const string DEPENDENCY_CONTRACT = "SuperFakeDependency";
 
         [ImportingConstructor]
         public FakePartWithComposedDependencies([Import(DEPENDENCY_CONTRACT)] IFakeDependency dependency)

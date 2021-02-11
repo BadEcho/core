@@ -42,8 +42,10 @@ namespace BadEcho.Odin.Tests.Extensibility
         IFakeDependency Dependency { get; }
     }
 
-    public interface IFakePartWithComposedDependencies : IFakePartWithDependencies
-    { }
+    public interface IFakePartWithComposedDependencies
+    {
+        IFakeDependency Dependency { get; }
+    }
 
     public interface IFilterableFakePart : IFilterable
     {
@@ -56,6 +58,14 @@ namespace BadEcho.Odin.Tests.Extensibility
     public interface IFilterableFakePartWithDependencies : IFilterableFakePart
     {
         IFilterableFakeDependency Dependency { get; }
+    }
+
+    public interface IFilterableFakePartWithComposedDependencies : IFilterableFakePartWithDependencies
+    { }
+
+    public interface IFilterableFakePartWithNonFilterableDependencies : IFilterableFakePart
+    {
+        IFakeDependency Dependency { get; }
     }
 
     public interface INonSharedFakePart

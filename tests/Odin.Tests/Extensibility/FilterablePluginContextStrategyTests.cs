@@ -29,7 +29,6 @@ namespace BadEcho.Odin.Tests.Extensibility
         {
             var strategy = new FilterablePluginContextStrategy(_path, new Guid(fakeId));
             var container = strategy.CreateContainer();
-
             var parts = container.GetExports<IFilterableFakePart>();
 
             Assert.NotEmpty(parts);
@@ -43,7 +42,6 @@ namespace BadEcho.Odin.Tests.Extensibility
         {
             var strategy = new FilterablePluginContextStrategy(_path, new Guid(fakeId));
             var container = strategy.CreateContainer();
-
             var part = container.GetExport<IFilterableFakePart>();
 
             Assert.NotNull(part);
@@ -51,11 +49,10 @@ namespace BadEcho.Odin.Tests.Extensibility
         }
 
         [Fact]
-        public void FilterableType_IsNonShared()
+        public void BetaFilterableType_IsNonShared()
         {
             var strategy = new FilterablePluginContextStrategy(_path, FakeIds.BetaFakeId);
             var container = strategy.CreateContainer();
-
             var firstPart = container.GetExport<IFilterableFakePart>();
             var secondPart = container.GetExport<IFilterableFakePart>();
 
@@ -63,11 +60,10 @@ namespace BadEcho.Odin.Tests.Extensibility
         }
 
         [Fact]
-        public void SharedFilterableType_IsShared()
+        public void GammaFilterableType_IsShared()
         {
             var strategy = new FilterablePluginContextStrategy(_path, FakeIds.GammaFakeId);
             var container = strategy.CreateContainer();
-
             var firstPart = container.GetExport<IFilterableFakePart>();
             var secondPart = container.GetExport<IFilterableFakePart>();
 
@@ -75,11 +71,10 @@ namespace BadEcho.Odin.Tests.Extensibility
         }
 
         [Fact]
-        public void FilterableWithDependencies_GetExport()
+        public void IFilterableFakePartWithDependencies_GetExport()
         {
             var strategy = new FilterablePluginContextStrategy(_path, FakeIds.AlphaFakeId);
             var container = strategy.CreateContainer();
-
             var part = container.GetExport<IFilterableFakePartWithDependencies>();
             var dependency = container.GetExport<IFilterableFakeDependency>();
 
@@ -88,5 +83,64 @@ namespace BadEcho.Odin.Tests.Extensibility
             Assert.NotNull(dependency);
             Assert.Equal(part.Dependency.GetType(), dependency.GetType());
         }
+
+        [Fact]
+        public void IFilterableFakePartWithComposedDependencies_GetExport()
+        {
+            var strategy = new FilterablePluginContextStrategy(_path, FakeIds.AlphaFakeId);
+            var container = strategy.CreateContainer();
+            var dependency = container.GetExport<IFilterableFakeDependency>();
+
+            DependencyRegistry<IFilterableFakeDependency>
+                .ArmedDependency = dependency;
+
+            var part = container.GetExport<IFilterableFakePartWithComposedDependencies>();
+
+            Assert.NotNull(part);
+            Assert.Equal(dependency, part.Dependency);
+        }
+
+        [Fact]
+        public void IFilterableFakePartWithComposedDependencies_IsRecomposed()
+        {
+            var strategy = new FilterablePluginContextStrategy(_path, FakeIds.AlphaFakeId);
+            var container = strategy.CreateContainer();
+            var dependency = container.GetExport<IFilterableFakeDependency>();
+
+            DependencyRegistry<IFilterableFakeDependency>
+                .ArmedDependency = dependency;
+
+            var part = container.GetExport<IFilterableFakePartWithComposedDependencies>();
+            var newDependency = container.GetExport<IFilterableFakeDependency>();
+
+            DependencyRegistry<IFilterableFakeDependency>
+                .ArmedDependency = newDependency;
+
+            var newPart = container.GetExport<IFilterableFakePartWithComposedDependencies>();
+
+            Assert.NotNull(newPart);
+            Assert.Equal(newDependency, newPart.Dependency);
+            Assert.NotNull(part);
+            Assert.NotEqual(part.Dependency, newPart.Dependency);
+        }
+
+        [Fact]
+        public void IFilterableFakePartWithNonFilterableDependencies_GetExport()
+        {
+            var strategy = new FilterablePluginContextStrategy(_path, FakeIds.AlphaFakeId);
+            var container = strategy.CreateContainer();
+            var dependency = new ComposedDependency();
+
+            DependencyRegistry<IFakeDependency>
+                .ArmedDependency = dependency;
+
+            var part = container.GetExport<IFilterableFakePartWithNonFilterableDependencies>();
+
+            Assert.NotNull(part);
+            Assert.Equal(dependency, part.Dependency);
+        }
+
+        private class ComposedDependency : IFakeDependency
+        { }
     }
 }

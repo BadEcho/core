@@ -1,8 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <OutputPath>$(OutputPath)\plugins</OutputPath>
-  </PropertyGroup>
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <PackageReference Include="System.Composition" Version="5.0.1" />
@@ -12,4 +8,7 @@
     <ProjectReference Include="..\Odin.Tests\Odin.Tests.csproj" />
   </ItemGroup>
 
+  <Target Name="CopyPlugin" AfterTargets="Build">
+    <Copy SourceFiles="$(OutputPath)\$(AssemblyName).dll" DestinationFolder="$(OutputPath)\plugins\"/>
+  </Target>
 </Project>

@@ -86,7 +86,6 @@ namespace BadEcho.Odin.Tests.Extensibility
                 = composedDependency;
 
             var container = _strategy.CreateContainer();
-
             var part = container.GetExport<IFakePartWithComposedDependencies>();
 
             Assert.NotNull(part);
@@ -100,11 +99,9 @@ namespace BadEcho.Odin.Tests.Extensibility
                 = new ComposedDependency();
 
             DependencyRegistry<IFakeDependency>.ArmedDependency = new ComposedDependency();
-
+            
             var container = _strategy.CreateContainer();
-
             var part = container.GetExport<IFakePartWithComposedDependencies>();
-
             var newDependency = new ComposedDependency();
 
             DependencyRegistry<IFakeDependency>.ArmedDependency

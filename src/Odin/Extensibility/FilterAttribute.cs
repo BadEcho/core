@@ -6,6 +6,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Composition;
 
 namespace BadEcho.Odin.Extensibility
 {
@@ -13,9 +14,10 @@ namespace BadEcho.Odin.Extensibility
     /// Provides an attribute that specifies that a type, property, field, or method provides a particular filterable
     /// export to Odin's Extensibility framework.
     /// </summary>
+    [MetadataAttribute]
     [AttributeUsage(
         AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method | AttributeTargets.Class)]
-    public sealed class FilterAttribute : ExtensibilityAttribute, IFilterMetadata
+    public sealed class FilterAttribute : ExportAttribute, IFilterMetadata
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="FilterAttribute"/> class.
@@ -23,6 +25,7 @@ namespace BadEcho.Odin.Extensibility
         /// <param name="partType">The concrete type of the part being exported.</param>
         /// <param name="typeIdentifier">The type identifier of the part being exported.</param>
         public FilterAttribute(Type partType, string typeIdentifier)
+            : base(typeof(IFilterable))
         {
             PartType = partType ?? throw new ArgumentNullException(nameof(partType));
             TypeIdentifier = typeIdentifier ?? throw new ArgumentNullException(nameof(typeIdentifier));

@@ -7,7 +7,6 @@
 
 using System.Composition.Convention;
 using System.Composition.Hosting;
-using BadEcho.Odin.Extensions;
 
 namespace BadEcho.Odin.Extensibility.Hosting
 {
@@ -36,9 +35,6 @@ namespace BadEcho.Odin.Extensibility.Hosting
                     conventionProvider.ConfigureRules(conventions);
                 }
             }
-
-            conventions.ForTypesMatching(type => type.GetAttribute<ExtensibilityAttribute>() != null)
-                       .ExportInterfaces();
 
             return conventions;
         }

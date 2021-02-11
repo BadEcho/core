@@ -14,6 +14,7 @@ using BadEcho.Odin.Tests.Extensibility;
 
 namespace BadEcho.Odin.Tests.Plugin
 {
+    [Export(typeof(IFilterableFakePart))]
     [Filter(typeof(AlphaFakePart),
             FakeIds.AlphaFakeIdValue)]
     public class AlphaFakePart : IFilterableFakePart
@@ -27,33 +28,7 @@ namespace BadEcho.Odin.Tests.Plugin
         }
     }
 
-    [Filter(typeof(AlphaFakeDependency), FakeIds.AlphaFakeIdValue)]
-    public class AlphaFakeDependency : IFilterableFakeDependency
-    {
-        public Guid TypeIdentifier => FakeIds.AlphaFakeId;
-    }
-
-    [Filter(typeof(AlphaFakePartWithDependencies),
-            FakeIds.AlphaFakeIdValue)]
-    public class AlphaFakePartWithDependencies : IFilterableFakePartWithDependencies
-    {
-        [ImportingConstructor]
-        public AlphaFakePartWithDependencies(IFilterableFakeDependency dependency)
-        {
-            Dependency = dependency;
-        }
-
-        public IFilterableFakeDependency Dependency { get; }
-
-        public Guid TypeIdentifier
-            => FakeIds.AlphaFakeId;
-
-        public int DoSomething()
-        {
-            return 0;
-        }
-    }
-
+    [Export(typeof(IFilterableFakePart))]
     [Filter(typeof(BetaFakePart),
             FakeIds.BetaFakeIdValue)]
     public class BetaFakePart : IFilterableFakePart
@@ -66,7 +41,8 @@ namespace BadEcho.Odin.Tests.Plugin
             return 29290892;
         }
     }
-    
+
+    [Export(typeof(IFilterableFakePart))]
     [Filter(typeof(DeltaFakePart),
             FakeIds.DeltaFakeIdValue)]
     public class DeltaFakePart : IFilterableFakePart
@@ -79,7 +55,8 @@ namespace BadEcho.Odin.Tests.Plugin
             return -1;
         }
     }
-    
+
+    [Export(typeof(IFilterableFakePart))]
     [Filter(typeof(SharedGammaFakePart),
             FakeIds.GammaFakeIdValue)]
     public sealed class SharedGammaFakePart : IFilterableFakePart

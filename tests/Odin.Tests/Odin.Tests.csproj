@@ -23,6 +23,5 @@
 
   <Target Name="BuildPlugin" AfterTargets="Build">
     <MSBuild Projects="..\Odin.Tests.Plugin\Odin.Tests.Plugin.csproj" Properties="Configuration=$(Configuration);Platform=$(Platform)"/>
-    <Copy SourceFiles="$(OutputPath)\$(AssemblyName).dll" DestinationFolder="$(OutputPath)\plugins\"/>
   </Target>
 </Project>
