@@ -76,5 +76,49 @@ namespace BadEcho.Odin.Tests.Extensibility
             Assert.NotNull(dependency);
             Assert.Equal(part.Dependency.GetType(), dependency.GetType());
         }
+
+        [Fact]
+        public void IFakePartWithComposedDependencies_GetExport()
+        {
+            var composedDependency = new ComposedDependency();
+
+            DependencyRegistry<IFakeDependency>.ArmedDependency
+                = composedDependency;
+
+            var container = _strategy.CreateContainer();
+
+            var part = container.GetExport<IFakePartWithComposedDependencies>();
+
+            Assert.NotNull(part);
+            Assert.Equal(composedDependency, part.Dependency);
+        }
+
+        [Fact]
+        public void IFakePartWithComposedDependencies_IsRecomposed()
+        {
+            DependencyRegistry<IFakeDependency>.ArmedDependency
+                = new ComposedDependency();
+
+            DependencyRegistry<IFakeDependency>.ArmedDependency = new ComposedDependency();
+
+            var container = _strategy.CreateContainer();
+
+            var part = container.GetExport<IFakePartWithComposedDependencies>();
+
+            var newDependency = new ComposedDependency();
+
+            DependencyRegistry<IFakeDependency>.ArmedDependency
+                = newDependency;
+
+            var newPart = container.GetExport<IFakePartWithComposedDependencies>();
+
+            Assert.NotNull(newPart);
+            Assert.Equal(newDependency, newPart.Dependency);
+            Assert.NotNull(part);
+            Assert.NotEqual(part.Dependency, newPart.Dependency);
+        }
+
+        private class ComposedDependency : IFakeDependency  
+        { }
     }
 }

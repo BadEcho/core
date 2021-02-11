@@ -16,7 +16,7 @@ using BadEcho.Odin.Extensions;
 using BadEcho.Odin.Logging;
 using BadEcho.Odin.Properties;
 
-namespace BadEcho.Odin.Extensibility
+namespace BadEcho.Odin.Extensibility.Hosting
 {
     /// <summary>
     /// Provides a set of static methods intended to aid in matters related to general composition using the Managed

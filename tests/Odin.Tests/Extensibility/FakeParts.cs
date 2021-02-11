@@ -28,31 +28,41 @@ namespace BadEcho.Odin.Tests.Extensibility
         public static Guid DeltaFakeId
             => new(DeltaFakeIdValue);
     }
-    
+
     public interface IFakePart
     {
         int DoSomething();
     }
+
     public interface IFakeDependency
-    { } 
+    { }
+
     public interface IFakePartWithDependencies
     {
         IFakeDependency Dependency { get; }
     }
+
+    public interface IFakePartWithComposedDependencies : IFakePartWithDependencies
+    { }
+
     public interface IFilterableFakePart : IFilterable
     {
         int DoSomething();
     }
+
     public interface IFilterableFakeDependency : IFilterable
     { }
+
     public interface IFilterableFakePartWithDependencies : IFilterableFakePart
     {
-        IFilterableFakeDependency Dependency { get; }   
+        IFilterableFakeDependency Dependency { get; }
     }
+
     public interface INonSharedFakePart
     {
         int DoSomething();
     }
+
     public interface ISharedFakePart
     {
         int DoSomething();
