@@ -21,6 +21,15 @@ namespace BadEcho.Odin.Tests.Plugin
         }
     }
 
+    [Export(typeof(IFakePart))]
+    public sealed class AnotherFakePart : IFakePart
+    {
+        public int DoSomething()
+        {
+            return 42;
+        }
+    }
+
     [Export(typeof(IFakeDependency))]
     public class FakeDependency : IFakeDependency
     { }
