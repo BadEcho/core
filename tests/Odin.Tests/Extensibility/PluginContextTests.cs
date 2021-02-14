@@ -47,7 +47,7 @@ namespace BadEcho.Odin.Tests.Extensibility
         private sealed class PluggablePart
         {
             [ImportMany] 
-            public IEnumerable<IFakePart> FakeParts 
+            public IEnumerable<IFakePart>? FakeParts 
             { get; set; }
         }
     }

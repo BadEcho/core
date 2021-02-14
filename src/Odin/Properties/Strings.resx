@@ -134,4 +134,10 @@
 	<data name="PluginBadImageException" xml:space="preserve">
     <value>The file '{0}' being scanned for pluggable exports failed to load due to most likely not being a valid .NET assembly.</value>
   </data>
+  <data name="RoutableProxyNotInitializedCorrectly" xml:space="preserve">
+    <value>RoutableProxy was not provided a IHostAdapter due to improper initialization. Use a static factory method such as RoutableProxy.Create instead to initialize the proxy properly.</value>
+  </data>
+  <data name="RoutableProxyNullMethodInfo" xml:space="preserve">
+    <value>RouteProxy instance was somehow invoked with null method information.</value>
+  </data>
 </root>

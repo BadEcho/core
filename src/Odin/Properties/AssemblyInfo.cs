@@ -22,3 +22,9 @@ using System.Runtime.InteropServices;
                            Scope = "member",
                            Target = "~M:BadEcho.Odin.Extensibility.Hosting.PluginContextStrategyExtensions.LoadConventions(BadEcho.Odin.Extensibility.Hosting.IPluginContextStrategy,System.Composition.Hosting.ContainerConfiguration)",
                            Justification = "This is an extension method for an interface that provides code useful to all said interface's implementations. Whether or not the parameter is used is moot, it is very much required to be here.")]
+
+[assembly: SuppressMessage("Style", 
+                           "IDE0016:Use 'throw' expression",                            
+                           Scope = "member", 
+                           Target = "~M:BadEcho.Odin.Extensibility.Hosting.RoutableProxy.Create``1(BadEcho.Odin.Extensibility.Hosting.IHostAdapter)~``0",
+                           Justification = "If method info is null, I rather an exception be thrown prior to dynamic proxy creation.")]

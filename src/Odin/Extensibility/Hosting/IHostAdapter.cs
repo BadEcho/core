@@ -8,7 +8,7 @@
 namespace BadEcho.Odin.Extensibility.Hosting
 {
     /// <summary>
-    /// Defines an adapter that is responsible for establishing connections between a host and routable
+    /// Defines an adapter that is responsible for establishing connections between a host and several routable
     /// plugin adapters that segment a common contract.
     /// </summary>
     public interface IHostAdapter

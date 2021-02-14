@@ -167,5 +167,23 @@ namespace BadEcho.Odin.Properties {
                 return ResourceManager.GetString("PluginFileLoadException", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RoutableProxy was not provided a IHostAdapter due to improper initialization. Use a static factory method such as RoutableProxy.Create instead to initialize the proxy properly..
+        /// </summary>
+        internal static string RoutableProxyNotInitializedCorrectly {
+            get {
+                return ResourceManager.GetString("RoutableProxyNotInitializedCorrectly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RouteProxy instance was somehow invoked with null method information..
+        /// </summary>
+        internal static string RoutableProxyNullMethodInfo {
+            get {
+                return ResourceManager.GetString("RoutableProxyNullMethodInfo", resourceCulture);
+            }
+        }
     }
 }
