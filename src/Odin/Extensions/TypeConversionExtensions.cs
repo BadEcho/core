@@ -24,8 +24,7 @@ namespace BadEcho.Odin.Extensions
         /// </returns>
         public static bool IsA(this Type type, Type otherType)
         {
-            if (otherType == null) 
-                throw new ArgumentNullException(nameof(otherType));
+            Require.NotNull(otherType, nameof(otherType));
             
             return otherType.IsAssignableFrom(type);
         }

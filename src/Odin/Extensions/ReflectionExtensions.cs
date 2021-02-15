@@ -36,8 +36,7 @@ namespace BadEcho.Odin.Extensions
         /// </returns>
         public static ConstructorInfo? FindConstructor(this Type type, params Type[] parameterTypes)
         {
-            if (type == null)
-                throw new ArgumentNullException(nameof(type));
+            Require.NotNull(type, nameof(type));
 
             lock (_ConstructorSyncObject)
             {
@@ -62,8 +61,7 @@ namespace BadEcho.Odin.Extensions
         /// <returns>A collection of <see cref="PropertyInfo"/> objects belonging to <c>type</c>.</returns>
         public static IEnumerable<PropertyInfo> GetAllProperties(this Type type)
         {
-            if (type == null) 
-                throw new ArgumentNullException(nameof(type));
+            Require.NotNull(type, nameof(type));
 
             return
                 type.GetInterfaces()
@@ -88,8 +86,7 @@ namespace BadEcho.Odin.Extensions
         public static IEnumerable<T> GetAttributes<T>(this ICustomAttributeProvider attributeProvider)
             where T : Attribute
         {
-            if (attributeProvider == null) 
-                throw new ArgumentNullException(nameof(attributeProvider));
+            Require.NotNull(attributeProvider, nameof(attributeProvider));
             
             return attributeProvider.GetCustomAttributes(false).OfType<T>();
         }

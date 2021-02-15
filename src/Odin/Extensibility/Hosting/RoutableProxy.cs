@@ -44,8 +44,7 @@ namespace BadEcho.Odin.Extensibility.Hosting
         public static T Create<T>(IHostAdapter adapter)
             where T : class
         {
-            if (adapter == null) 
-                throw new ArgumentNullException(nameof(adapter));
+            Require.NotNull(adapter, nameof(adapter));
 
             object proxy = Create<T, RoutableProxy>();
             var routableProxy = (RoutableProxy)proxy;

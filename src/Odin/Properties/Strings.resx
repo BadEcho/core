@@ -116,8 +116,8 @@
   <data name="JsonDataValueNotObject" xml:space="preserve">
     <value>The provided JSON object's object data property is not a JSON object.</value>
   </data>
-  <data name="ArgumentStringNullOrEmpty" xml:space="preserve">
-    <value>The provided string cannot be null or empty.</value>
+  <data name="ArgumentStringEmpty" xml:space="preserve">
+    <value>The provided string cannot be empty.</value>
   </data>
   <data name="ArgumentExportValueNoObject" xml:space="preserve">
     <value>Cannot retrieve a value from an export that isn't representing an object.</value>

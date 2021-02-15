@@ -13,6 +13,7 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Markup;
 using System.Windows.Media;
+using BadEcho.Odin;
 
 namespace BadEcho.Fenestra.Controls
 {
@@ -347,8 +348,7 @@ namespace BadEcho.Fenestra.Controls
         /// <inheritdoc/>
         protected override void OnRender(DrawingContext drawingContext)
         {
-            if (drawingContext == null)
-                throw new ArgumentNullException(nameof(drawingContext));
+            Require.NotNull(drawingContext, nameof(drawingContext));
 
             drawingContext.DrawGeometry(null, _textPen, TextGeometry);
             drawingContext.DrawGeometry(Fill, null, TextGeometry);

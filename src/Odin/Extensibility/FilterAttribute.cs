@@ -27,8 +27,11 @@ namespace BadEcho.Odin.Extensibility
         public FilterAttribute(Type partType, string typeIdentifier)
             : base(typeof(IFilterable))
         {
-            PartType = partType ?? throw new ArgumentNullException(nameof(partType));
-            TypeIdentifier = typeIdentifier ?? throw new ArgumentNullException(nameof(typeIdentifier));
+            Require.NotNull(partType, nameof(partType));
+            Require.NotNull(typeIdentifier, nameof(typeIdentifier));
+
+            PartType = partType;
+            TypeIdentifier = typeIdentifier;
         }
 
         /// <inheritdoc/>

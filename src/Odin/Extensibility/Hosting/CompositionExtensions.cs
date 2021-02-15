@@ -46,8 +46,7 @@ namespace BadEcho.Odin.Extensibility.Hosting
         /// <returns>A collection of <see cref="Assembly"/> objects found at <c>path</c>.</returns>
         internal static IEnumerable<Assembly> LoadFromDirectory([NotNull] this ContainerConfiguration configuration, string path)
         {
-            if (configuration == null) 
-                throw new ArgumentNullException(nameof(configuration));
+            Require.NotNull(configuration, nameof(configuration));
 
             var assemblies = new List<Assembly>();
             string[] dllFiles = Directory.GetFiles(Path.GetFullPath(path), "*.dll");

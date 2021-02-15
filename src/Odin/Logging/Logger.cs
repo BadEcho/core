@@ -71,8 +71,7 @@ namespace BadEcho.Odin.Logging
         /// <param name="exception">The particular exception that inspired you to log it.</param>
         public static void Error(string? message, Exception exception)
         {
-            if (exception == null) 
-                throw new ArgumentNullException(nameof(exception));
+            Require.NotNull(exception, nameof(exception));
 
             Source.Error(message, exception);
         }
@@ -93,8 +92,7 @@ namespace BadEcho.Odin.Logging
         /// <param name="exception">The particular exception that inspired you to log it.</param>
         public static void Critical(string? message, Exception exception)
         {
-            if (exception == null) 
-                throw new ArgumentNullException(nameof(exception));
+            Require.NotNull(exception, nameof(exception));
 
             Source.Critical(message, exception);
         }

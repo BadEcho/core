@@ -70,11 +70,11 @@ namespace BadEcho.Odin.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The provided string cannot be null or empty..
+        ///   Looks up a localized string similar to The provided string cannot be empty..
         /// </summary>
-        internal static string ArgumentStringNullOrEmpty {
+        internal static string ArgumentStringEmpty {
             get {
-                return ResourceManager.GetString("ArgumentStringNullOrEmpty", resourceCulture);
+                return ResourceManager.GetString("ArgumentStringEmpty", resourceCulture);
             }
         }
         

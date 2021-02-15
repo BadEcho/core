@@ -9,6 +9,7 @@ using System;
 using BadEcho.Odin.Extensions;
 using System.Collections.Generic;
 using BadEcho.Fenestra.Properties;
+using BadEcho.Odin;
 
 namespace BadEcho.Fenestra.ViewModels
 {
@@ -33,8 +34,7 @@ namespace BadEcho.Fenestra.ViewModels
         /// <param name="model">The data to bind to this view model.</param>brush 
         public void Bind(T model)
         {
-            if (model == null)
-                throw new ArgumentNullException(nameof(model));
+            Require.NotNull(model, nameof(model));
 
             // Rebinding bound data should never be done as a means to refresh the display of said data.
             if (_boundData.Contains(model))

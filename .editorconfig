@@ -729,3 +729,5 @@ dotnet_diagnostic.CA2016.severity = warning
 
 # CA2200: Rethrow to preserve stack details
 dotnet_diagnostic.CA2200.severity = warning
+
+dotnet_code_quality.null_check_validation_methods = NotNull|NotNullOrEmpty

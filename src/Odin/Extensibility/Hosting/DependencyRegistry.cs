@@ -46,8 +46,7 @@ namespace BadEcho.Odin.Extensibility.Hosting
         /// <inheritdoc/>
         public void ConfigureRules(ConventionBuilder conventions)
         {
-            if (conventions == null)
-                throw new ArgumentNullException(nameof(conventions));
+            Require.NotNull(conventions, nameof(conventions));
 
             conventions.ForType(GetType())
                        .ExportProperties(p => p.Name == nameof(Dependency),

@@ -82,11 +82,8 @@ namespace BadEcho.Odin.Serialization
         /// <inheritdoc/>
         public override void Write(Utf8JsonWriter writer, TBase value, JsonSerializerOptions options)
         {
-            if (writer == null) 
-                throw new ArgumentNullException(nameof(writer));
-
-            if (value == null)
-                throw new ArgumentNullException(nameof(value));
+            Require.NotNull(writer, nameof(writer));
+            Require.NotNull(value, nameof(value));
 
             TTypeDescriptor typeDescriptor = DescriptorFromValue(value);
 

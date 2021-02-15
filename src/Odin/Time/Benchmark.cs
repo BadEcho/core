@@ -22,8 +22,7 @@ namespace BadEcho.Odin.Time
         /// <returns>The time required for <c>action</c> to execute.</returns>
         public static TimeSpan MeasureTime(Action action)
         {
-            if (action == null) 
-                throw new ArgumentNullException(nameof(action));
+            Require.NotNull(action, nameof(action));
 
             var stopwatch = Stopwatch.StartNew();
             action();
