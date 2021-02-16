@@ -31,17 +31,17 @@ namespace BadEcho.Odin.Extensibility.Hosting
         }
 
         /// <summary>
-        /// Gets or sets a dependency object armed for injection into a pluggable part.
-        /// </summary>
-        [field: ThreadStatic]
-        internal static TDependency? ArmedDependency 
-        { get; set; }
-
-        /// <summary>
         /// Gets the loaded dependency object for injection into a pluggable part.
         /// </summary>
         public TDependency? Dependency
-        { get; }
+         { get; }
+
+        /// <summary>
+        /// Gets or sets a dependency object armed for injection into a pluggable part.
+        /// </summary>
+        [field: ThreadStatic]
+        internal static TDependency? ArmedDependency
+        { get; set; }
 
         /// <inheritdoc/>
         public void ConfigureRules(ConventionBuilder conventions)
