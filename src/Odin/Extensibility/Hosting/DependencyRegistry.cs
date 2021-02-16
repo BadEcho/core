@@ -51,7 +51,6 @@ namespace BadEcho.Odin.Extensibility.Hosting
             conventions.ForType(GetType())
                        .ExportProperties(p => p.Name == nameof(Dependency),
                                          (_, ex) => ex.AsContractName(_contractName));
-
         }
     }
 }
