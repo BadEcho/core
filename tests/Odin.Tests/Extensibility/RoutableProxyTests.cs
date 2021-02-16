@@ -19,10 +19,8 @@ namespace BadEcho.Odin.Tests.Extensibility
         private const string SECOND_SOME_METHOD = "Second";
         private const string SECOND_SOME_OTHER_METHOD = "StillSecond";
 
-        public RoutableProxyTests()
-        {
-            _proxy = RoutableProxy.Create<ISegmentedContract>(new HostAdapterStub());
-        }
+        public RoutableProxyTests() 
+            => _proxy = RoutableProxy.Create<ISegmentedContract>(new HostAdapterStub());
 
         [Fact]
         public void FirstContract_SomeMethod()
@@ -47,15 +45,15 @@ namespace BadEcho.Odin.Tests.Extensibility
 
             public object Route(string methodName)
             {
-                switch (methodName)
+                return methodName switch
                 {
-                    case nameof(ISegmentedContract.SomeMethod):
-                        return _first;
-                    case nameof(ISegmentedContract.SomeOtherMethod):
-                        return _second;
-                    default:
-                        throw new InvalidOperationException();
-                }
+                    nameof(ISegmentedContract.SomeMethod) 
+                        => _first,
+                    nameof(ISegmentedContract.SomeOtherMethod) 
+                        => _second,
+                    _ 
+                        => throw new InvalidOperationException()
+                };
             }
         }
 
@@ -68,28 +66,20 @@ namespace BadEcho.Odin.Tests.Extensibility
 
         private sealed class FirstContractStub : ISegmentedContract
         {
-            public string SomeMethod()
-            {
-                return FIRST_SOME_METHOD;
-            }
+            public string SomeMethod() 
+                => FIRST_SOME_METHOD;
 
-            public string SomeOtherMethod()
-            {
-                return FIRST_SOME_OTHER_METHOD;
-            }
+            public string SomeOtherMethod() 
+                => FIRST_SOME_OTHER_METHOD;
         }
 
         private sealed class SecondContractStub : ISegmentedContract
         {
-            public string SomeMethod()
-            {
-                return SECOND_SOME_METHOD;
-            }
+            public string SomeMethod() 
+                => SECOND_SOME_METHOD;
 
-            public string SomeOtherMethod()
-            {
-                return SECOND_SOME_OTHER_METHOD;
-            }
+            public string SomeOtherMethod() 
+                => SECOND_SOME_OTHER_METHOD;
         }
     }
 }

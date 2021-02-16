@@ -23,7 +23,7 @@ namespace BadEcho.Odin
         /// <param name="value">The parameter value to validate.</param>
         /// <param name="parameterName">The name of the parameter.</param>
         /// <exception cref="ArgumentNullException"><c>value</c> is null.</exception>
-        public static void NotNull<T>([NotNull]T? value, string? parameterName)
+        public static void NotNull<T>([NotNull][NoEnumeration]T? value, string? parameterName)
         {
             if (value == null)
                 throw new ArgumentNullException(parameterName);

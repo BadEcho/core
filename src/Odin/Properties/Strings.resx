@@ -140,4 +140,13 @@
   <data name="RoutableProxyNullMethodInfo" xml:space="preserve">
     <value>RouteProxy instance was somehow invoked with null method information.</value>
   </data>
+  <data name="HostAdapterUnregisteredMethod" xml:space="preserve">
+    <value>No routable plugin has been registered to handle calls made to '{0}'.</value>
+  </data>
+  <data name="EnumerationNotStarted" xml:space="preserve">
+    <value>Enumeration has not started. A call to MoveNext() must occur at least once prior to reading the Current object.</value>
+  </data>
+  <data name="EnumerationAtEnd" xml:space="preserve">
+    <value>Enumeration has already finished; no more objects exist in the sequence.</value>
+  </data>
 </root>

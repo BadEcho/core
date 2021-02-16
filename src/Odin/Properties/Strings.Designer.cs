@@ -79,11 +79,38 @@ namespace BadEcho.Odin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enumeration has already finished; no more objects exist in the sequence..
+        /// </summary>
+        internal static string EnumerationAtEnd {
+            get {
+                return ResourceManager.GetString("EnumerationAtEnd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enumeration has not started. A call to MoveNext() must occur at least once prior to reading the Current object..
+        /// </summary>
+        internal static string EnumerationNotStarted {
+            get {
+                return ResourceManager.GetString("EnumerationNotStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The enumeration type&apos;s underlying integral numeric type is not an integer..
         /// </summary>
         internal static string EnumIntegralTypeNotInteger {
             get {
                 return ResourceManager.GetString("EnumIntegralTypeNotInteger", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No routable plugin has been registered to handle calls made to &apos;{0}&apos;..
+        /// </summary>
+        internal static string HostAdapterUnregisteredMethod {
+            get {
+                return ResourceManager.GetString("HostAdapterUnregisteredMethod", resourceCulture);
             }
         }
         

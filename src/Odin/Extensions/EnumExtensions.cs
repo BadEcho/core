@@ -25,7 +25,7 @@ namespace BadEcho.Odin.Extensions
         public static TEnum ToEnum<TEnum>(this int value) 
             where TEnum : Enum
         {
-            VerifyIsInteger<TEnum>();
+            EnsureIsInteger<TEnum>();
 
             return Unsafe.As<int, TEnum>(ref value);
         }
@@ -39,12 +39,12 @@ namespace BadEcho.Odin.Extensions
         public static int ToInt32<TEnum>(this TEnum member)
             where TEnum : Enum
         {
-            VerifyIsInteger<TEnum>();
+            EnsureIsInteger<TEnum>();
 
             return Unsafe.As<TEnum, int>(ref member);
         }
 
-        private static void VerifyIsInteger<TEnum>()
+        private static void EnsureIsInteger<TEnum>()
             where TEnum : Enum
         {
             if (Unsafe.SizeOf<TEnum>() != Unsafe.SizeOf<int>())
