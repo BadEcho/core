@@ -11,7 +11,6 @@ namespace BadEcho.Odin.Tests.Extensibility
 {
     public class HostAdapterTests
     {
-        [Fact]
         public void NoPlugins_Initialize()
         {
             var strategy = new EmptyPluginContextStrategy();

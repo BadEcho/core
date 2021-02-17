@@ -2,6 +2,6 @@
   <Import Project="..\Directory.Build.props"/>
   <PropertyGroup>
     <EnableNETAnalyzers>false</EnableNETAnalyzers>
-	  <DocumentationFile></DocumentationFile>
+	<DocumentationFile></DocumentationFile>
   </PropertyGroup>
 </Project>

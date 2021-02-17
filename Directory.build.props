@@ -1,14 +1,14 @@
 <Project>
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <PackageId>BadEcho.$(MSBuildProjectName)</PackageId>
+    <PackageId>$(MSBuildProjectName)</PackageId>
     <Authors>Matt Weber</Authors>
     <Company>BadEcho LLC</Company>
     <Copyright>© Bad Echo LLC. All rights reserved.</Copyright>
     <PackageLicenseExpression>CC-BY-NC-4.0</PackageLicenseExpression>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <RootNamespace>BadEcho.$(MSBuildProjectName)</RootNamespace>
-    <AssemblyName>BadEcho.$(MSBuildProjectName)</AssemblyName>
+    <RootNamespace>$(MSBuildProjectName)</RootNamespace>
+    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
     <Nullable>enable</Nullable>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <CLSCompliant>true</CLSCompliant>

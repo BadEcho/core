@@ -5,7 +5,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Odin.Tests\Odin.Tests.csproj" />
+    <ProjectReference Include="..\Odin.Tests\BadEcho.Odin.Tests.csproj" />
   </ItemGroup>
 
   <Target Name="CopyPlugin" AfterTargets="Build">

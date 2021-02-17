@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\Fenestra\Fenestra.csproj" />
+    <ProjectReference Include="..\..\..\src\Fenestra\BadEcho.Fenestra.csproj" />
   </ItemGroup>
 
   <ItemGroup>

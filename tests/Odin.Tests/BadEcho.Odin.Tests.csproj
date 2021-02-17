@@ -18,10 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Odin\Odin.csproj" />
+    <ProjectReference Include="..\..\src\Odin\BadEcho.Odin.csproj" />
   </ItemGroup>
 
   <Target Name="BuildPlugin" AfterTargets="Build">
-    <MSBuild Projects="..\Odin.Tests.Plugin\Odin.Tests.Plugin.csproj" Properties="Configuration=$(Configuration);Platform=$(Platform)" />
+    <MSBuild Projects="..\Odin.Tests.Plugin\BadEcho.Odin.Tests.Plugin.csproj" Properties="Configuration=$(Configuration);Platform=$(Platform)" />
   </Target>
 </Project>

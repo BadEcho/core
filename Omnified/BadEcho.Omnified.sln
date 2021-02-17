@@ -3,21 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30128.74
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fenestra", "..\src\Fenestra\Fenestra.csproj", "{ECC644EC-675B-4FB9-B13F-42F0A0C2BE2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Fenestra", "..\src\Fenestra\BadEcho.Fenestra.csproj", "{ECC644EC-675B-4FB9-B13F-42F0A0C2BE2C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Odin", "..\src\Odin\Odin.csproj", "{8BFE0FD0-D334-41E8-A52F-FE2135ACA03F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Odin", "..\src\Odin\BadEcho.Odin.csproj", "{8BFE0FD0-D334-41E8-A52F-FE2135ACA03F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vision", "src\Vision\Vision.csproj", "{19E42B3E-0AF0-4FAD-A94B-36F42572B9C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Omnified.Vision", "src\Vision\BadEcho.Omnified.Vision.csproj", "{19E42B3E-0AF0-4FAD-A94B-36F42572B9C0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{89F4C425-A0FF-4930-97D3-D115214D9AC5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Odin.Tests", "..\tests\Odin.Tests\Odin.Tests.csproj", "{55D24B2A-8AF8-4207-9A25-5BDBBFC93DDC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Odin.Tests", "..\tests\Odin.Tests\BadEcho.Odin.Tests.csproj", "{55D24B2A-8AF8-4207-9A25-5BDBBFC93DDC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Odin.Tests.Plugin", "..\tests\Odin.Tests.Plugin\Odin.Tests.Plugin.csproj", "{CF2634B5-E301-4F86-9A8D-9A3D2B9DFFAD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Odin.Tests.Plugin", "..\tests\Odin.Tests.Plugin\BadEcho.Odin.Tests.Plugin.csproj", "{CF2634B5-E301-4F86-9A8D-9A3D2B9DFFAD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B5CF34AE-C64C-44AC-87E0-E3C5A682ED81}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vision.Statistics", "src\Vision.Statistics\Vision.Statistics.csproj", "{7CB796CE-5891-409C-B7BC-BEFB9C8B43FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Omnified.Vision.Statistics", "src\Vision.Statistics\BadEcho.Omnified.Vision.Statistics.csproj", "{7CB796CE-5891-409C-B7BC-BEFB9C8B43FE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
