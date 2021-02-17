@@ -27,10 +27,8 @@ namespace BadEcho.Odin.Extensibility.Hosting
         /// Initializes a new instance of the <see cref="GlobalPluginContextStrategy"/> class.
         /// </summary>
         /// <param name="pluginDirectory">Full path to the directory where plugins will be loaded from.</param>
-        public GlobalPluginContextStrategy(string pluginDirectory)
-        { 
-            _pluginDirectory = pluginDirectory;
-        }
+        public GlobalPluginContextStrategy(string pluginDirectory) 
+            => _pluginDirectory = pluginDirectory;
 
         /// <inheritdoc/>
         public CompositionHost CreateContainer()

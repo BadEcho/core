@@ -20,11 +20,9 @@ namespace BadEcho.Odin.Logging
         /// <summary>
         /// Initializes static members of the <see cref="Logger"/> class.
         /// </summary>
-        static Logger()
-        {
-            _Listener = new DefaultEventListener();
-        }
-        
+        static Logger() 
+            => _Listener = new DefaultEventListener();
+
         private static LogSource Source
             => LogSource.Instance;
 
@@ -32,37 +30,29 @@ namespace BadEcho.Odin.Logging
         /// Logs the provided message as a debug statement.
         /// </summary>
         /// <param name="message">The debug message to log.</param>
-        public static void Debug(string message)
-        {
-            Source.Debug(message);
-        }
+        public static void Debug(string message) 
+            => Source.Debug(message);
 
         /// <summary>
         /// Logs the provided message as general information.
         /// </summary>
         /// <param name="message">The informational message to log.</param>
-        public static void Info(string message)
-        {
-            Source.Info(message);
-        }
+        public static void Info(string message) 
+            => Source.Info(message);
 
         /// <summary>
         /// Logs the provided message as a warning.
         /// </summary>
         /// <param name="message">The warning message to log.</param>
-        public static void Warning(string message)
-        {
-            Source.Warning(message);
-        }
+        public static void Warning(string message) 
+            => Source.Warning(message);
 
         /// <summary>
         /// Logs the provided message as an error.
         /// </summary>
         /// <param name="message">The error message to log.</param>
-        public static void Error(string message)
-        {
-            Source.Error(message);
-        }
+        public static void Error(string message) 
+            => Source.Error(message);
 
         /// <summary>
         /// Logs an error message regarding an unexpected exception.
@@ -80,10 +70,8 @@ namespace BadEcho.Odin.Logging
         /// Logs the provided message as a critical error.
         /// </summary>
         /// <param name="message">The critical error message to log.</param>
-        public static void Critical(string message)
-        {
-            Source.Critical(message);
-        }
+        public static void Critical(string message) 
+            => Source.Critical(message);
 
         /// <summary>
         /// Logs a critical error message regarding an unexpected exception.

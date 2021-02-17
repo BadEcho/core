@@ -37,9 +37,7 @@ namespace BadEcho.Odin.Extensions
         /// <returns>
         /// True if an instance of <c>type</c> can be assigned to a variable of <typeparamref name="T"/>; otherwise, false.
         /// </returns>
-        public static bool IsA<T>(this Type type)
-        {
-            return type.IsA(typeof(T));
-        }
+        public static bool IsA<T>(this Type type) 
+            => type.IsA(typeof(T));
     }
 }

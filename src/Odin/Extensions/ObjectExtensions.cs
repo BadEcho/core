@@ -44,9 +44,7 @@ namespace BadEcho.Odin.Extensions
         /// implementation if it is present.
         /// </para>
         /// </remarks>
-        public static bool Equals<T>(this T source, T? other)
-        {
-            return EqualityComparer<T>.Default.Equals(source, other);
-        }
+        public static bool Equals<T>(this T source, T? other) 
+            => EqualityComparer<T>.Default.Equals(source, other);
     }
 }

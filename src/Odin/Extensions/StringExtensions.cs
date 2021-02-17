@@ -24,10 +24,8 @@ namespace BadEcho.Odin.Extensions
         /// A copy of <c>format</c> in which the format items have been replaced by the string representation of corresponding objects
         /// in <c>args</c> using current-culture formatting.
         /// </returns>
-        public static string CulturedFormat(this string format, params object[] args)
-        {
-            return string.Format(CultureInfo.CurrentCulture, format, args);
-        }
+        public static string CulturedFormat(this string format, params object[] args) 
+            => string.Format(CultureInfo.CurrentCulture, format, args);
 
         /// <summary>
         /// Replaces the format items in this string with the string representation of corresponding objects in
@@ -39,9 +37,7 @@ namespace BadEcho.Odin.Extensions
         /// A copy of <c>format</c> in which the format items have been replaced by the string representation of corresponding objects
         /// in <c>args</c> using invariant-culture formatting.
         /// </returns>
-        public static string InvariantFormat(this string format, params object[] args)
-        {
-            return string.Format(CultureInfo.InvariantCulture, format, args);
-        }
+        public static string InvariantFormat(this string format, params object[] args) 
+            => string.Format(CultureInfo.InvariantCulture, format, args);
     }
 }

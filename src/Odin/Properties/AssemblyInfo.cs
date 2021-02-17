@@ -28,3 +28,9 @@ using System.Runtime.InteropServices;
                            Scope = "member", 
                            Target = "~M:BadEcho.Odin.Extensibility.Hosting.RoutableProxy.Create``1(BadEcho.Odin.Extensibility.Hosting.IHostAdapter)~``0",
                            Justification = "If method info is null, I rather an exception be thrown prior to dynamic proxy creation.")]
+
+[assembly: SuppressMessage("Style", 
+                           "IDE0022:Use expression body for methods", 
+                           Justification = "Rather disgusting when a generic type constraint is involved.", 
+                           Scope = "member", 
+                           Target = "~M:BadEcho.Odin.Extensions.ReflectionExtensions.GetAttribute``1(System.Reflection.ICustomAttributeProvider)~``0")]

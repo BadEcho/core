@@ -9,6 +9,6 @@
   </ItemGroup>
 
   <Target Name="CopyPlugin" AfterTargets="Build">
-    <Copy SourceFiles="$(OutputPath)\$(AssemblyName).dll" DestinationFolder="$(OutputPath)\plugins\"/>
+    <Copy SourceFiles="$(OutputPath)\$(AssemblyName).dll" DestinationFolder="$(OutputPath)\plugins\" />
   </Target>
 </Project>
