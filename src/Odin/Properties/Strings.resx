@@ -149,4 +149,25 @@
   <data name="EnumerationAtEnd" xml:space="preserve">
     <value>Enumeration has already finished; no more objects exist in the sequence.</value>
   </data>
+  <data name="TypeIdentifierNotValid" xml:space="preserve">
+    <value>'{0}' is not a valid pluggable type identity value. Values must be parseable as standard globally unique identifiers.</value>
+  </data>
+  <data name="MissingConfigurationWhole" xml:space="preserve">
+    <value>No configuration at all could be found. Ensure that the required configuration provider (be it a file or whatnot) is accessible by the application.</value>
+  </data>
+  <data name="MissingConfigurationSection" xml:space="preserve">
+    <value>A required configuration section is missing: '{0}'.</value>
+  </data>
+  <data name="MissingConfigurationElement" xml:space="preserve">
+    <value>A required configuration element is missing: '{0}'.</value>
+  </data>
+  <data name="MissingConfigurationAttribute" xml:space="preserve">
+    <value>A configuration element is missing a required attribute or part: '{0}'.</value>
+  </data>
+  <data name="MultiplePrimaryRoutablePlugins" xml:space="preserve">
+    <value>More than one primary call-routable plugin was found in the configuration source.</value>
+  </data>
+  <data name="MethodClaimedByMultiplePlugins" xml:space="preserve">
+    <value>A method was claimed by more than one call-routable plugin in the configuration source. Methods are only allowed to be claimed once across all registered call-routable plugins.</value>
+  </data>
 </root>

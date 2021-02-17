@@ -13,7 +13,7 @@ using BadEcho.Odin.Configuration;
 namespace BadEcho.Odin.Extensibility.Configuration
 {
     /// <summary>
-    /// Provides a configuration section for the Extensibility framework.
+    /// Provides a configuration section for Odin's Extensibility framework.
     /// </summary>
     /// <suppresions>
     /// ReSharper disable ConstantNullCoalescingCondition
@@ -33,13 +33,13 @@ namespace BadEcho.Odin.Extensibility.Configuration
             => (NamedElementCollection<ContractElement>) base[CONTRACTS_CHILD_SCHEMA];
 
         /// <summary>
-        /// Gets the schema name for the Extensibility framework's configuration section.
+        /// Gets the schema name for Odin's Extensibility framework's configuration section.
         /// </summary>
         internal static string Schema
             => "extensibility";
 
         /// <summary>
-        /// Gets the full path to the Extensibility framework's configuration section.
+        /// Gets the full path to Odin's Extensibility framework's configuration section.
         /// </summary>
         internal static string SectionPath
             => $"{BadEchoSectionGroup.Schema}/{Schema}";

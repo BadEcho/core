@@ -12,7 +12,7 @@ using System.Threading;
 namespace BadEcho.Odin.Extensibility.Configuration
 {
     /// <summary>
-    /// Provides a configuration element for settings options on all instances of the Extensibility framework's
+    /// Provides a configuration element for settings options on all instances of Odin's Extensibility framework's
     /// plugin host.
     /// </summary>
     public sealed class HostElement : ConfigurationElement

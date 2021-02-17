@@ -36,6 +36,13 @@ namespace BadEcho.Odin.Extensibility.Configuration
         public bool Primary
             => (bool) base[PRIMARY_ATTRIBUTE_SCHEMA];
 
+        /// <summary>
+        /// Gets the schema name for the attribute indicating whether the plugin represented by this element is the primary
+        /// call-routable plugin for a particular contract.
+        /// </summary>
+        internal static string PrimaryAttributeSchema
+            => "primary";
+
         /// <inheritdoc/>
         protected override ConfigurationPropertyCollection Properties
             => _Properties.Value;
