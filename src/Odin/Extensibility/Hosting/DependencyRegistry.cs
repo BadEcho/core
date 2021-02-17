@@ -14,13 +14,13 @@ namespace BadEcho.Odin.Extensibility.Hosting
     /// Provides a means to register dependencies ahead of time for injection into pluggable parts during
     /// their initialization and exportation.
     /// </summary>
-    /// <typeparam name="TDependency">The type of object depended upon by a pluggable part.</typeparam>
-    public abstract class DependencyRegistry<TDependency> : IConventionProvider
+    /// <typeparam name="T">The type of object depended upon by a pluggable part.</typeparam>
+    public abstract class DependencyRegistry<T> : IConventionProvider
     {
         private readonly string _contractName;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DependencyRegistry{TDependency}"/> class.
+        /// Initializes a new instance of the <see cref="DependencyRegistry{T}"/> class.
         /// </summary>
         /// <param name="contractName">The contract name to export the dependency as.</param>
         protected DependencyRegistry(string contractName)
@@ -33,14 +33,14 @@ namespace BadEcho.Odin.Extensibility.Hosting
         /// <summary>
         /// Gets the loaded dependency object for injection into a pluggable part.
         /// </summary>
-        public TDependency? Dependency
+        public T? Dependency
          { get; }
 
         /// <summary>
         /// Gets or sets a dependency object armed for injection into a pluggable part.
         /// </summary>
         [field: ThreadStatic]
-        internal static TDependency? ArmedDependency
+        internal static T? ArmedDependency
         { get; set; }
 
         /// <inheritdoc/>
