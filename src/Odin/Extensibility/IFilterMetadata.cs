@@ -22,6 +22,6 @@ namespace BadEcho.Odin.Extensibility
         /// <summary>
         /// Gets the type identifier of the part being exported.
         /// </summary>
-        string? TypeIdentifier { get; }
+        Guid TypeIdentifier { get; }
     }
 }

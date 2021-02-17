@@ -64,8 +64,7 @@ namespace BadEcho.Odin.Extensibility.Hosting
                 
                 return filterableParts
                        .Where(filterablePart =>
-                                  Guid.TryParse(filterablePart.Metadata.TypeIdentifier, out var typeIdentifier)
-                                  && _typeIdentifier.Equals(typeIdentifier))
+                                  _typeIdentifier.Equals(filterablePart.Metadata.TypeIdentifier))
                        .Select(matchingPart => matchingPart.Metadata.PartType)
                        .WhereNotNull();
             }

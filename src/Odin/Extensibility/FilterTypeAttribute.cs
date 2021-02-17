@@ -7,6 +7,8 @@
 
 using System;
 using System.Composition;
+using BadEcho.Odin.Extensions;
+using BadEcho.Odin.Properties;
 
 namespace BadEcho.Odin.Extensibility
 {
@@ -27,7 +29,13 @@ namespace BadEcho.Odin.Extensibility
         {
             Require.NotNull(typeIdentifier, nameof(typeIdentifier));
 
-            TypeIdentifier = typeIdentifier;
+            if (!Guid.TryParse(typeIdentifier, out Guid parsedIdentifier))
+            {
+                throw new ArgumentException(Strings.TypeIdentifierNotValid.InvariantFormat(typeIdentifier),
+                                            nameof(typeIdentifier));
+            }
+
+            TypeIdentifier = parsedIdentifier;
         }
         
         /// <inheritdoc/>
@@ -35,7 +43,7 @@ namespace BadEcho.Odin.Extensibility
             => typeof(IFilterable);
 
         /// <inheritdoc/>
-        public string TypeIdentifier 
+        public Guid TypeIdentifier 
         { get; }
     }
 }

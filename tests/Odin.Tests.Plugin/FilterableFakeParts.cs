@@ -22,10 +22,8 @@ namespace BadEcho.Odin.Tests.Plugin
         public Guid TypeIdentifier
             => FakeIds.AlphaFakeId;
 
-        public int DoSomething()
-        {
-            return 54;
-        }
+        public int DoSomething() 
+            => 54;
     }
 
     [Export(typeof(IFilterableFakePart))]
@@ -36,10 +34,8 @@ namespace BadEcho.Odin.Tests.Plugin
         public Guid TypeIdentifier
             => FakeIds.BetaFakeId;
 
-        public int DoSomething()
-        {
-            return 29290892;
-        }
+        public int DoSomething() 
+            => 29290892;
     }
 
     [Export(typeof(IFilterableFakePart))]
@@ -50,10 +46,8 @@ namespace BadEcho.Odin.Tests.Plugin
         public Guid TypeIdentifier
             => FakeIds.DeltaFakeId;
 
-        public int DoSomething()
-        {
-            return -1;
-        }
+        public int DoSomething() 
+            => -1;
     }
 
     [Export(typeof(IFilterableFakePart))]
@@ -61,10 +55,8 @@ namespace BadEcho.Odin.Tests.Plugin
             FakeIds.GammaFakeIdValue)]
     public sealed class SharedGammaFakePart : IFilterableFakePart
     {
-        public int DoSomething()
-        {
-            return 0;
-        }
+        public int DoSomething() 
+            => 0;
 
         public Guid TypeIdentifier
             => FakeIds.GammaFakeId;

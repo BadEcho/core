@@ -16,13 +16,11 @@ namespace BadEcho.Odin.Extensibility
     public sealed class FilterMetadataView : IFilterMetadata
     {
         /// <inheritdoc/>
-        [DefaultValue(null)]
         public Type? PartType
         { get; set; }
         
         /// <inheritdoc/>
-        [DefaultValue(null)]
-        public string? TypeIdentifier 
+        public Guid TypeIdentifier 
         { get; set; }
     }
 }
