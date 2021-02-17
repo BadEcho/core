@@ -6,7 +6,9 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using System.Threading;
 using BadEcho.Odin.Configuration;
 
@@ -15,13 +17,16 @@ namespace BadEcho.Odin.Extensibility.Configuration
     /// <summary>
     /// Provides a configuration element for a call-routable plugin.
     /// </summary>
-    public sealed class RoutablePluginElement : GuidConfigurationElement
+    public sealed class RoutablePluginElement : GuidConfigurationElement, IRoutablePluginConfiguration
     {
         private const string METHOD_CLAIMS_CHILD_SCHEMA = "methodClaims";
         private const string PRIMARY_ATTRIBUTE_SCHEMA = "primary";
 
         private static readonly Lazy<ConfigurationPropertyCollection> _Properties
             = new(InitializeProperties, LazyThreadSafetyMode.PublicationOnly);
+
+        IEnumerable<string> IRoutablePluginConfiguration.MethodClaims
+            => MethodClaims.Select(m => m.Name);
 
         /// <summary>
         /// Gets the collection of methods claimed by the plugin represented by this element.

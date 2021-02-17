@@ -6,6 +6,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Threading;
 using BadEcho.Odin.Configuration;
@@ -18,7 +19,7 @@ namespace BadEcho.Odin.Extensibility.Configuration
     /// <suppresions>
     /// ReSharper disable ConstantNullCoalescingCondition
     /// </suppresions>
-    public sealed class ExtensibilitySection : BindableConfigurationSection
+    public sealed class ExtensibilitySection : BindableConfigurationSection//, IExtensibilityConfiguration
     {
         private const string HOST_CHILD_SCHEMA = "host";
         private const string CONTRACTS_CHILD_SCHEMA = "contracts";
@@ -26,10 +27,16 @@ namespace BadEcho.Odin.Extensibility.Configuration
         private static readonly Lazy<ConfigurationPropertyCollection> _Properties
             = new(InitializeProperties, LazyThreadSafetyMode.PublicationOnly);
 
+        //string IExtensibilityConfiguration.PluginDirectory 
+        //    => Host.PluginDirectory;
+
+        //ICollection<IContractConfiguration> IExtensibilityConfiguration.SegmentedContracts 
+        //    => SegmentedContracts;
+
         /// <summary>
         /// Gets the collection of contracts being segmented by call-routable plugins.
         /// </summary>
-        public NamedElementCollection<ContractElement> Contracts
+        public NamedElementCollection<ContractElement> SegmentedContracts
             => (NamedElementCollection<ContractElement>) base[CONTRACTS_CHILD_SCHEMA];
 
         /// <summary>
@@ -45,7 +52,7 @@ namespace BadEcho.Odin.Extensibility.Configuration
             => $"{BadEchoSectionGroup.Schema}/{Schema}";
 
         /// <inheritdoc/>
-        protected override ConfigurationPropertyCollection Properties 
+        protected override ConfigurationPropertyCollection Properties
             => _Properties.Value;
 
         /// <summary>

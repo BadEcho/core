@@ -77,7 +77,7 @@ namespace BadEcho.Odin.Extensibility.Hosting
             if (configuration == null)
                 throw new ConfigurationMissingException(MissingConfigurationType.Section, ExtensibilitySection.Schema);
 
-            ContractElement? contractElement = configuration.Contracts[contractName];
+            ContractElement? contractElement = configuration.SegmentedContracts[contractName];
 
             if (null == contractElement)
                 throw new ConfigurationMissingException(MissingConfigurationType.Element, contractName);
