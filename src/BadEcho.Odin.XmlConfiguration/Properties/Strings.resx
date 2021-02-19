@@ -98,61 +98,25 @@
 	<resheader name="writer">
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
-  <data name="EnumIntegralTypeNotInteger" xml:space="preserve">
-    <value>The enumeration type's underlying integral numeric type is not an integer.</value>
+  <data name="MissingConfigurationWhole" xml:space="preserve">
+    <value>No configuration at all could be found. Ensure that the required configuration provider (be it a file or whatnot) is accessible by the application.</value>
   </data>
-  <data name="JsonNotStartObject" xml:space="preserve">
-    <value>The provided JSON text does not begin with the start of a JSON object.</value>
+  <data name="MissingConfigurationSection" xml:space="preserve">
+    <value>A required configuration section is missing: '{0}'.</value>
   </data>
-  <data name="JsonMalformedText" xml:space="preserve">
-    <value>The provided JSON text is malformed. A collection of one or more key-value pairs is expected for an object.</value>
+  <data name="MissingConfigurationElement" xml:space="preserve">
+    <value>A required configuration element is missing: '{0}'.</value>
   </data>
-  <data name="JsonInvalidTypeName" xml:space="preserve">
-    <value>The '{0}' property found on the provided JSON object is not the expected type descriptor property '{1}'.</value>
+  <data name="MissingConfigurationAttribute" xml:space="preserve">
+    <value>A configuration element is missing a required attribute or part: '{0}'.</value>
   </data>
-	<data name="JsonTypeValueNotNumber" xml:space="preserve">
-    <value>The provided JSON object's type descriptor property is not a number.</value>
+  <data name="MultiplePrimaryRoutablePlugins" xml:space="preserve">
+    <value>More than one primary call-routable plugin was found in the configuration source.</value>
   </data>
-  <data name="JsonDataValueNotObject" xml:space="preserve">
-    <value>The provided JSON object's object data property is not a JSON object.</value>
+  <data name="MethodClaimedByMultiplePlugins" xml:space="preserve">
+    <value>A method was claimed by more than one call-routable plugin in the configuration source. Methods are only allowed to be claimed once across all registered call-routable plugins.</value>
   </data>
-  <data name="ArgumentStringEmpty" xml:space="preserve">
-    <value>The provided string cannot be empty.</value>
-  </data>
-  <data name="ArgumentExportValueNoObject" xml:space="preserve">
-    <value>Cannot retrieve a value from an export that isn't representing an object.</value>
-  </data>
-  <data name="LoggingMissingMessage" xml:space="preserve">
-    <value>Missing message payload.</value>
-  </data>
-  <data name="LoggingMissingException" xml:space="preserve">
-    <value>Missing exception payload.</value>
-  </data>
-	<data name="PluginFileLoadException" xml:space="preserve">
-    <value>The file '{0}' being scanned for pluggable exports failed to load.</value>
-  </data>
-	<data name="PluginBadImageException" xml:space="preserve">
-    <value>The file '{0}' being scanned for pluggable exports failed to load due to most likely not being a valid .NET assembly.</value>
-  </data>
-  <data name="RoutableProxyNotInitializedCorrectly" xml:space="preserve">
-    <value>RoutableProxy was not provided a IHostAdapter due to improper initialization. Use a static factory method such as RoutableProxy.Create instead to initialize the proxy properly.</value>
-  </data>
-  <data name="RoutableProxyNullMethodInfo" xml:space="preserve">
-    <value>RouteProxy instance was somehow invoked with null method information.</value>
-  </data>
-  <data name="HostAdapterUnregisteredMethod" xml:space="preserve">
-    <value>No routable plugin has been registered to handle calls made to '{0}'.</value>
-  </data>
-  <data name="EnumerationNotStarted" xml:space="preserve">
-    <value>Enumeration has not started. A call to MoveNext() must occur at least once prior to reading the Current object.</value>
-  </data>
-  <data name="EnumerationAtEnd" xml:space="preserve">
-    <value>Enumeration has already finished; no more objects exist in the sequence.</value>
-  </data>
-  <data name="TypeIdentifierNotValid" xml:space="preserve">
-    <value>'{0}' is not a valid pluggable type identity value. Values must be parseable as standard globally unique identifiers.</value>
-  </data>
-  <data name="NoContractInConfiguration" xml:space="preserve">
-    <value>Extensibility configuration lacks registration for contract '{0}'.</value>
+  <data name="RoutablePluginsCollectionWrongType" xml:space="preserve">
+    <value>The value for a contract element's routable plugins collection is not the correct type.</value>
   </data>
 </root>

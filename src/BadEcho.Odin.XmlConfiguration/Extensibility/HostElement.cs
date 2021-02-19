@@ -9,13 +9,13 @@ using System;
 using System.Configuration;
 using System.Threading;
 
-namespace BadEcho.Odin.Extensibility.Configuration
+namespace BadEcho.Odin.XmlConfiguration.Extensibility
 {
     /// <summary>
     /// Provides a configuration element for settings options on all instances of Odin's Extensibility framework's
     /// plugin host.
     /// </summary>
-    public sealed class HostElement : ConfigurationElement
+    internal sealed class HostElement : ConfigurationElement
     {
         private const string PLUGIN_DIRECTORY_ATTRIBUTE_SCHEMA = "pluginDirectory";
 

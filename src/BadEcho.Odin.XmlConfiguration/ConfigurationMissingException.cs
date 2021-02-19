@@ -8,9 +8,9 @@
 using System;
 using System.Runtime.Serialization;
 using BadEcho.Odin.Extensions;
-using BadEcho.Odin.Properties;
+using BadEcho.Odin.XmlConfiguration.Properties;
 
-namespace BadEcho.Odin.Configuration
+namespace BadEcho.Odin.XmlConfiguration
 {
     /// <summary>
     /// Provides an exception that is thrown when elements are missing from a component's configuration.
@@ -104,6 +104,8 @@ namespace BadEcho.Odin.Configuration
         /// <inheritdoc/>
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
+            Require.NotNull(info, nameof(info));
+
             info.AddValue(nameof(MissingType), MissingType);
             info.AddValue(nameof(MissingEntityExpression), MissingEntityExpression);
 

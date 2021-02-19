@@ -7,7 +7,7 @@
 
 using System.Configuration;
 
-namespace BadEcho.Odin.Configuration
+namespace BadEcho.Odin.XmlConfiguration
 {
     /// <summary>
     /// Provides a configuration section group for all Bad Echo related configuration sections.
@@ -15,7 +15,7 @@ namespace BadEcho.Odin.Configuration
     /// <suppresions>
     /// ReSharper disable ConstantNullCoalescingCondition
     /// </suppresions>
-    public sealed class BadEchoSectionGroup : ConfigurationSectionGroup
+    internal sealed class BadEchoSectionGroup : ConfigurationSectionGroup
     {
         /// <summary>
         /// Gets the schema name for Bad Echo's configuration section group.
@@ -28,7 +28,7 @@ namespace BadEcho.Odin.Configuration
         /// </summary>
         /// <param name="configuration">A configuration file in which this section group is declared.</param>
         /// <returns>This section group as it is declared in <c>configuration</c>.</returns>
-        public static BadEchoSectionGroup GetSectionGroup(System.Configuration.Configuration configuration)
+        public static BadEchoSectionGroup GetSectionGroup(Configuration configuration)
         {
             Require.NotNull(configuration, nameof(configuration));
 
@@ -41,7 +41,7 @@ namespace BadEcho.Odin.Configuration
         /// <returns>This section group as it is declared in the current application's default configuration.</returns>
         internal static BadEchoSectionGroup GetSectionGroup()
         {
-            System.Configuration.Configuration currentConfiguration
+            Configuration currentConfiguration
                 = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
             return (BadEchoSectionGroup) currentConfiguration.GetSectionGroup(Schema) ?? new BadEchoSectionGroup();

@@ -7,12 +7,12 @@
 
 using System.Configuration;
 
-namespace BadEcho.Odin.Configuration
+namespace BadEcho.Odin.XmlConfiguration
 {
     /// <summary>
     /// Provides a <see cref="ConfigurationElement"/> whose name is used as its key.
     /// </summary>
-    public class NamedConfigurationElement : ConfigurationElement
+    internal class NamedConfigurationElement : ConfigurationElement
     {
         private const string NAME_ATTRIBUTE_SCHEMA = "name";
 
@@ -24,7 +24,6 @@ namespace BadEcho.Odin.Configuration
         /// by derivations and/or consumers of this class.
         /// </remarks>
         [ConfigurationProperty(NAME_ATTRIBUTE_SCHEMA, IsKey = true, IsRequired = true)]
-        [StringValidator(MinLength = 1)]
         public string Name
         {
             get => (string) base[NAME_ATTRIBUTE_SCHEMA];
@@ -44,7 +43,7 @@ namespace BadEcho.Odin.Configuration
                    typeof(string),
                    string.Empty,
                    null,
-                   new StringValidator(1),
+                   null,
                    ConfigurationPropertyOptions.IsKey | ConfigurationPropertyOptions.IsRequired);
     }
 }

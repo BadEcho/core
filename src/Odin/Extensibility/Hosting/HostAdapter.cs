@@ -7,9 +7,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
-using BadEcho.Odin.Configuration;
 using BadEcho.Odin.Extensibility.Configuration;
 using BadEcho.Odin.Extensions;
 using BadEcho.Odin.Properties;
@@ -32,17 +30,21 @@ namespace BadEcho.Odin.Extensibility.Hosting
         /// Initializes a new instance of the <see cref="HostAdapter{T}"/> class.
         /// </summary>
         /// <param name="context">The context to access the routable adapters through.</param>
-        public HostAdapter(PluginContext context)
+        /// <param name="configuration">
+        /// Configuration for the Extensibility framework containing call-routable plugin information.
+        /// </param>
+        public HostAdapter(PluginContext context, IExtensibilityConfiguration configuration)
         {
             Require.NotNull(context, nameof(context));
+            Require.NotNull(configuration, nameof(configuration));
 
             IDictionary<Guid, IPluginAdapter<T>> adapters
                 = context.Load<IPluginAdapter<T>, RoutingMetadataView>()
                          .ToDictionary(k => k.Metadata.PluginIdentifier, v => v.Value);
 
-            ContractElement configuration = LoadContractConfiguration();
+            IContractConfiguration contractConfiguration = FindContractConfiguration(configuration);
 
-            _routingTable = CreateRoutingTable(configuration, adapters);
+            _routingTable = CreateRoutingTable(contractConfiguration, adapters);
         }
 
         object IHostAdapter.Route(string methodName) 
@@ -68,44 +70,36 @@ namespace BadEcho.Odin.Extensibility.Hosting
             return _routingTable[methodName].Contract;
         }
 
-        private static ContractElement LoadContractConfiguration()
+        private static IContractConfiguration FindContractConfiguration(IExtensibilityConfiguration configuration)
         {
             string contractName = typeof(T).Name;
 
-            ExtensibilitySection configuration = ExtensibilitySection.GetSection();
+            IContractConfiguration? contractConfiguration
+                = configuration.SegmentedContracts
+                               .FirstOrDefault(c => c.Name == contractName);
 
-            if (configuration == null)
-                throw new ConfigurationMissingException(MissingConfigurationType.Section, ExtensibilitySection.Schema);
+            if (contractConfiguration == null)
+            {
+                throw new ArgumentException(Strings.NoContractInConfiguration.InvariantFormat(contractName),
+                                            nameof(configuration));
+            }
 
-            ContractElement? contractElement = configuration.SegmentedContracts[contractName];
-
-            if (null == contractElement)
-                throw new ConfigurationMissingException(MissingConfigurationType.Element, contractName);
-
-            IEnumerable<IGrouping<string, MethodClaimElement>> claimsByName
-                = contractElement.RoutablePlugins
-                                 .SelectMany(p => p.MethodClaims)
-                                 .GroupBy(m => m.Name);
-
-            if (claimsByName.Any(m => m.Count() > 1))
-                throw new ConfigurationErrorsException(Strings.MethodClaimedByMultiplePlugins);
-
-            return contractElement;
+            return contractConfiguration;
         }
 
         private static IDictionary<string, IPluginAdapter<T>> CreateRoutingTable(
-            ContractElement configuration,
+            IContractConfiguration configuration,
             IDictionary<Guid, IPluginAdapter<T>> adapters)
         {
-            Guid primaryId = configuration.FindPrimaryPluginId();
-
-            IEnumerable<RoutablePluginElement> nonPrimaryPlugins
+            Guid primaryId = configuration.RoutablePlugins.First(p => p.Primary).Id;
+            
+            IEnumerable<IRoutablePluginConfiguration> nonPrimaryPlugins
                 = configuration.RoutablePlugins.Where(p => p.Id != primaryId);
 
             IDictionary<string, IPluginAdapter<T>> routingTable
                 = nonPrimaryPlugins
-                  .SelectMany(p => p.MethodClaims, (config, claim) => new {config.Id, claim.Name})
-                  .ToDictionary(k => k.Name, v => adapters[v.Id]);
+                  .SelectMany(p => p.MethodClaims, (config, method) => new {config.Id, Claim = method})
+                  .ToDictionary(k => k.Claim, v => adapters[v.Id]);
 
             IPluginAdapter<T> primaryAdapter = adapters[primaryId];
 

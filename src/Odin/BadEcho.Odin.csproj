@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <PackageReference Include="System.Composition" Version="5.0.1" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>

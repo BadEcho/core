@@ -1,0 +1,18 @@
+﻿{
+  "pluginDirectory": "plugins",
+  "segmentedContracts": [
+    {
+      "name": "ISegmentedContract",
+      "routablePlugins": [
+        {
+          "id": "BE157C54-2BC0-48B8-9E39-0AE53D8A4E61",
+          "primary": true
+        },
+        {
+          "id": "F544EC74-919E-4167-A421-FA74223F49C5",
+          "methodClaims": [ "SomeOtherMethod" ]
+        }
+      ]
+    }
+  ]
+}

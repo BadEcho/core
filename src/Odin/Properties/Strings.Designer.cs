@@ -178,56 +178,11 @@ namespace BadEcho.Odin.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A method was claimed by more than one call-routable plugin in the configuration source. Methods are only allowed to be claimed once across all registered call-routable plugins..
+        ///   Looks up a localized string similar to Extensibility configuration lacks registration for contract &apos;{0}&apos;..
         /// </summary>
-        internal static string MethodClaimedByMultiplePlugins {
+        internal static string NoContractInConfiguration {
             get {
-                return ResourceManager.GetString("MethodClaimedByMultiplePlugins", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A configuration element is missing a required attribute or part: &apos;{0}&apos;..
-        /// </summary>
-        internal static string MissingConfigurationAttribute {
-            get {
-                return ResourceManager.GetString("MissingConfigurationAttribute", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A required configuration element is missing: &apos;{0}&apos;..
-        /// </summary>
-        internal static string MissingConfigurationElement {
-            get {
-                return ResourceManager.GetString("MissingConfigurationElement", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A required configuration section is missing: &apos;{0}&apos;..
-        /// </summary>
-        internal static string MissingConfigurationSection {
-            get {
-                return ResourceManager.GetString("MissingConfigurationSection", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No configuration at all could be found. Ensure that the required configuration provider (be it a file or whatnot) is accessible by the application..
-        /// </summary>
-        internal static string MissingConfigurationWhole {
-            get {
-                return ResourceManager.GetString("MissingConfigurationWhole", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to More than one primary call-routable plugin was found in the configuration source..
-        /// </summary>
-        internal static string MultiplePrimaryRoutablePlugins {
-            get {
-                return ResourceManager.GetString("MultiplePrimaryRoutablePlugins", resourceCulture);
+                return ResourceManager.GetString("NoContractInConfiguration", resourceCulture);
             }
         }
         

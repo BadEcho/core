@@ -5,20 +5,21 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Configuration;
 
-namespace BadEcho.Odin.Configuration
+namespace BadEcho.Odin.XmlConfiguration
 {
     /// <summary>
-    /// Provides a collection of <see cref="NamedConfigurationElement"/> objects.
+    /// Provides a configuration element containing a collection of <see cref="GuidConfigurationElement"/> child elements.
     /// </summary>
     /// <typeparam name="TElement">The type of configuration element contained by the collection.</typeparam>
-    [ConfigurationCollection(typeof(NamedConfigurationElement))]
-    public sealed class NamedElementCollection<TElement> : ConfigurationElementCollection<TElement, string>
-        where TElement : NamedConfigurationElement
+    [ConfigurationCollection(typeof(GuidConfigurationElement))]
+    internal sealed class GuidElementCollection<TElement> : ConfigurationElementCollection<TElement, Guid>
+        where TElement : GuidConfigurationElement, new()
     {
         /// <inheritdoc/>
-        protected override string GetElementKey(TElement element) 
-            => element.Name;
+        protected override Guid GetElementKey(TElement element) 
+            => element.Id;
     }
 }

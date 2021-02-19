@@ -9,9 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Threading;
-using BadEcho.Odin.Configuration;
+using BadEcho.Odin.Extensibility.Configuration;
 
-namespace BadEcho.Odin.Extensibility.Configuration
+namespace BadEcho.Odin.XmlConfiguration.Extensibility
 {
     /// <summary>
     /// Provides a configuration section for Odin's Extensibility framework.
@@ -19,25 +19,25 @@ namespace BadEcho.Odin.Extensibility.Configuration
     /// <suppresions>
     /// ReSharper disable ConstantNullCoalescingCondition
     /// </suppresions>
-    public sealed class ExtensibilitySection : BindableConfigurationSection//, IExtensibilityConfiguration
+    internal sealed class ExtensibilitySection : BindableConfigurationSection, IExtensibilityConfiguration
     {
         private const string HOST_CHILD_SCHEMA = "host";
-        private const string CONTRACTS_CHILD_SCHEMA = "contracts";
+        private const string SEGMENTED_CONTRACTS_CHILD_SCHEMA = "segmentedContracts";
 
         private static readonly Lazy<ConfigurationPropertyCollection> _Properties
             = new(InitializeProperties, LazyThreadSafetyMode.PublicationOnly);
 
-        //string IExtensibilityConfiguration.PluginDirectory 
-        //    => Host.PluginDirectory;
+        string IExtensibilityConfiguration.PluginDirectory 
+            => Host.PluginDirectory;
 
-        //ICollection<IContractConfiguration> IExtensibilityConfiguration.SegmentedContracts 
-        //    => SegmentedContracts;
+        IEnumerable<IContractConfiguration> IExtensibilityConfiguration.SegmentedContracts 
+            => SegmentedContracts;
 
         /// <summary>
         /// Gets the collection of contracts being segmented by call-routable plugins.
         /// </summary>
         public NamedElementCollection<ContractElement> SegmentedContracts
-            => (NamedElementCollection<ContractElement>) base[CONTRACTS_CHILD_SCHEMA];
+            => (NamedElementCollection<ContractElement>) base[SEGMENTED_CONTRACTS_CHILD_SCHEMA];
 
         /// <summary>
         /// Gets the schema name for Odin's Extensibility framework's configuration section.
@@ -80,7 +80,7 @@ namespace BadEcho.Odin.Extensibility.Configuration
                                              null,
                                              null,
                                              ConfigurationPropertyOptions.None),
-                   new ConfigurationProperty(CONTRACTS_CHILD_SCHEMA,
+                   new ConfigurationProperty(SEGMENTED_CONTRACTS_CHILD_SCHEMA,
                                              typeof(NamedElementCollection<ContractElement>),
                                              new NamedElementCollection<ContractElement>(),
                                              null,

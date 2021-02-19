@@ -8,15 +8,14 @@
 using System;
 using System.Configuration;
 using System.Threading;
-using BadEcho.Odin.Configuration;
 
-namespace BadEcho.Odin.Extensibility.Configuration
+namespace BadEcho.Odin.XmlConfiguration.Extensibility
 {
     /// <summary>
     /// Provides a configuration element that expresses a claim of ownership over a segmented contract's
     /// method.
     /// </summary>
-    public sealed class MethodClaimElement : NamedConfigurationElement
+    internal sealed class MethodClaimElement : NamedConfigurationElement
     {
         private static readonly Lazy<ConfigurationPropertyCollection> _Properties
             = new(InitializeProperties, LazyThreadSafetyMode.PublicationOnly);

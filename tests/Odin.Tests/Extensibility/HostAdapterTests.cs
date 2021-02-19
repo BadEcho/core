@@ -16,7 +16,7 @@ namespace BadEcho.Odin.Tests.Extensibility
             var strategy = new EmptyPluginContextStrategy();
             var context = new PluginContext(strategy);
 
-            var hostAdapter = new HostAdapter<IFakePart>(context);
+            
         }
      
     }

@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="Configuration"
+    targetNamespace="http://schemas.badecho.com/configuration/"
+    elementFormDefault="qualified"
+    xmlns="http://schemas.badecho.com/configuration/"
+    xmlns:mstns="http://schemas.badecho.com/configuration/"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:vs="http://schemas.microsoft.com/Visual-Studio-Intellisense"
+    >
+  <xs:element name="badEcho">
+    <xs:complexType>
+      <xs:all minOccurs="0">
+        <xs:element name="extensibility" minOccurs="0">
+          <xs:complexType>
+            <xs:all minOccurs="1" maxOccurs="1">
+              <xs:element name="host" minOccurs="0">
+                <xs:complexType>
+                  <xs:attribute name="pluginDirectory" type="xs:string" use="optional"/>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="segmentedContracts" minOccurs="0">
+                <xs:complexType>
+                  <xs:choice minOccurs="1" maxOccurs="unbounded">
+                    <xs:element name="add">
+                      <xs:complexType>
+                        <xs:choice minOccurs="1">
+                          <xs:element name="routablePlugins" minOccurs="1">
+                            <xs:complexType>
+                              <xs:choice minOccurs="1" maxOccurs="unbounded">
+                                <xs:element name="add">
+                                  <xs:complexType>
+                                    <xs:choice minOccurs="0">
+                                      <xs:element name="methodClaims">
+                                        <xs:complexType>
+                                          <xs:choice minOccurs="1" maxOccurs="unbounded">
+                                            <xs:element name="add">
+                                              <xs:complexType>
+                                                <xs:attribute name="name" type="xs:string" use="required"/>
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:choice>
+                                        </xs:complexType>
+                                      </xs:element>
+                                    </xs:choice>
+                                    <xs:attribute name="id" type="xs:string" use="required"/>
+                                    <xs:attribute name="primary" type="xs:boolean" use="optional"/>
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:choice>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:choice>
+                        <xs:attribute name="name" type="xs:string" use="required"/>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:choice>
+                </xs:complexType>
+              </xs:element>
+            </xs:all>
+          </xs:complexType>
+        </xs:element>
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

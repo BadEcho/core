@@ -5,20 +5,19 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.Configuration;
 using BadEcho.Odin.Collections;
 
-namespace BadEcho.Odin.Configuration
+namespace BadEcho.Odin.XmlConfiguration
 {
     /// <summary>
     /// Provides a configuration element containing a collection of strongly-typed child elements.
     /// </summary>
     /// <typeparam name="TElement">The type of configuration element contained by the collection.</typeparam>
     /// <typeparam name="TKey">The type of key that identifies the elements contained by the collection.</typeparam>
-    public abstract class ConfigurationElementCollection<TElement, TKey> : ConfigurationElementCollection, IEnumerable<TElement>
-        where TElement : ConfigurationElement
+    internal abstract class ConfigurationElementCollection<TElement, TKey> : ConfigurationElementCollection, IEnumerable<TElement>
+        where TElement : ConfigurationElement, new()
         where TKey : notnull
     {
         /// <summary>
@@ -58,8 +57,8 @@ namespace BadEcho.Odin.Configuration
             => new GenericizedEnumerator<TElement>(this);
 
         /// <inheritdoc/>
-        protected override ConfigurationElement CreateNewElement() 
-            => Activator.CreateInstance<TElement>();
+        protected override ConfigurationElement CreateNewElement()
+            => new TElement();
 
         /// <inheritdoc/>
         protected override object GetElementKey(ConfigurationElement element)

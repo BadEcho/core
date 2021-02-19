@@ -10,14 +10,14 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Threading;
-using BadEcho.Odin.Configuration;
+using BadEcho.Odin.Extensibility.Configuration;
 
-namespace BadEcho.Odin.Extensibility.Configuration
+namespace BadEcho.Odin.XmlConfiguration.Extensibility
 {
     /// <summary>
     /// Provides a configuration element for a call-routable plugin.
     /// </summary>
-    public sealed class RoutablePluginElement : GuidConfigurationElement, IRoutablePluginConfiguration
+    internal sealed class RoutablePluginElement : GuidConfigurationElement, IRoutablePluginConfiguration
     {
         private const string METHOD_CLAIMS_CHILD_SCHEMA = "methodClaims";
         private const string PRIMARY_ATTRIBUTE_SCHEMA = "primary";

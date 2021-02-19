@@ -8,12 +8,12 @@
 using System.Configuration;
 using System.Xml.Serialization;
 
-namespace BadEcho.Odin.Configuration
+namespace BadEcho.Odin.XmlConfiguration
 {
     /// <summary>
     /// Provides a custom configuration section that supports being bound to an XML namespace.
     /// </summary>
-    public class BindableConfigurationSection : ConfigurationSection
+    internal class BindableConfigurationSection : ConfigurationSection
     {
         private const string XML_NAMESPACE_ATTRIBUTE_SCHEMA = "xmlns";
 

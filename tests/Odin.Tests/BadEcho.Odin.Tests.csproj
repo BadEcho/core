@@ -5,6 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
@@ -18,10 +20,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\BadEcho.Odin.XmlConfiguration\BadEcho.Odin.XmlConfiguration.csproj" />
     <ProjectReference Include="..\..\src\Odin\BadEcho.Odin.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="test.config">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="test.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <Target Name="BuildPlugin" AfterTargets="Build">
     <MSBuild Projects="..\Odin.Tests.Plugin\BadEcho.Odin.Tests.Plugin.csproj" Properties="Configuration=$(Configuration);Platform=$(Platform)" />
+    <Copy SourceFiles="test.config" DestinationFiles="$(OutputPath)\ReSharperTestRunner64.dll.config" />
   </Target>
 </Project>

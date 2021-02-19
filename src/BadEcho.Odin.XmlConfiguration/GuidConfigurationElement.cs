@@ -9,13 +9,13 @@ using System;
 using System.ComponentModel;
 using System.Configuration;
 
-namespace BadEcho.Odin.Configuration
+namespace BadEcho.Odin.XmlConfiguration
 {
     /// <summary>
     /// Provides a named <see cref="ConfigurationElement"/> where a unique <see cref="Guid"/> value is used as its
     /// key.
     /// </summary>
-    public class GuidConfigurationElement : ConfigurationElement
+    internal class GuidConfigurationElement : ConfigurationElement
     {
         private const string ID_ATTRIBUTE_SCHEMA = "id";
         private const string NAME_ATTRIBUTE_SCHEMA = "name";
