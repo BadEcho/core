@@ -8,6 +8,8 @@
 using System;
 using System.Composition.Hosting;
 using System.IO;
+using System.Linq;
+using BadEcho.Odin.Extensibility;
 using BadEcho.Odin.Extensibility.Hosting;
 using Xunit;
 
@@ -113,6 +115,15 @@ namespace BadEcho.Odin.Tests.Extensibility
             Assert.Equal(newDependency, newPart.Dependency);
             Assert.NotNull(part);
             Assert.NotEqual(part.Dependency, newPart.Dependency);
+        }
+
+        [Fact]
+        public void IFilterableFamily_ValidCount()
+        {
+            var container = _strategy.CreateContainer();
+            var families = container.GetExports<Lazy<IFilterableFamily, FilterableFamilyMetadataView>>();
+
+            Assert.Equal(4, families.Count());
         }
 
         private class ComposedDependency : IFakeDependency  
