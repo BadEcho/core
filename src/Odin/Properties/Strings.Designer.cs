@@ -106,6 +106,15 @@ namespace BadEcho.Odin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid filterable family identity value. Values must be parseable as standard globally unique identifiers..
+        /// </summary>
+        internal static string FamilyIdNotValid {
+            get {
+                return ResourceManager.GetString("FamilyIdNotValid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No routable plugin has been registered to handle calls made to &apos;{0}&apos;..
         /// </summary>
         internal static string HostAdapterUnregisteredMethod {
@@ -219,15 +228,6 @@ namespace BadEcho.Odin.Properties {
         internal static string RoutableProxyNullMethodInfo {
             get {
                 return ResourceManager.GetString("RoutableProxyNullMethodInfo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid pluggable type identity value. Values must be parseable as standard globally unique identifiers..
-        /// </summary>
-        internal static string TypeIdentifierNotValid {
-            get {
-                return ResourceManager.GetString("TypeIdentifierNotValid", resourceCulture);
             }
         }
     }

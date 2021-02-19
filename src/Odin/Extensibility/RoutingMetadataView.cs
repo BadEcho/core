@@ -15,7 +15,7 @@ namespace BadEcho.Odin.Extensibility
     public sealed class RoutingMetadataView : IRoutingMetadata
     {
         /// <inheritdoc/>
-        public Guid PluginIdentifier 
+        public Guid PluginId 
         { get; set; }
     }
 }

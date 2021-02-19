@@ -15,51 +15,47 @@ using BadEcho.Odin.Tests.Extensibility;
 namespace BadEcho.Odin.Tests.Plugin
 {
     [Export(typeof(IFilterableFakePart))]
-    [Filter(typeof(AlphaFakePart),
-            FakeIds.AlphaFakeIdValue)]
+    [Filterable(AlphaFamily.FamilyIdValue, typeof(AlphaFakePart))]
     public class AlphaFakePart : IFilterableFakePart
     {
-        public Guid TypeIdentifier
-            => FakeIds.AlphaFakeId;
+        public Guid FamilyId
+            => new(AlphaFamily.FamilyIdValue);
 
         public int DoSomething() 
             => 54;
     }
 
     [Export(typeof(IFilterableFakePart))]
-    [Filter(typeof(BetaFakePart),
-            FakeIds.BetaFakeIdValue)]
+    [Filterable(BetaFamily.FamilyIdValue, typeof(BetaFakePart))]
     public class BetaFakePart : IFilterableFakePart
     {
-        public Guid TypeIdentifier
-            => FakeIds.BetaFakeId;
+        public Guid FamilyId
+            => new(BetaFamily.FamilyIdValue);
 
         public int DoSomething() 
             => 29290892;
     }
 
     [Export(typeof(IFilterableFakePart))]
-    [Filter(typeof(DeltaFakePart),
-            FakeIds.DeltaFakeIdValue)]
+    [Filterable(DeltaFamily.FamilyIdValue, typeof(DeltaFakePart))]
     public class DeltaFakePart : IFilterableFakePart
     {
-        public Guid TypeIdentifier
-            => FakeIds.DeltaFakeId;
+        public Guid FamilyId
+            => new(DeltaFamily.FamilyIdValue);
 
         public int DoSomething() 
             => -1;
     }
 
     [Export(typeof(IFilterableFakePart))]
-    [Filter(typeof(SharedGammaFakePart),
-            FakeIds.GammaFakeIdValue)]
+    [Filterable(GammaFamily.FamilyIdValue, typeof(SharedGammaFakePart))]
     public sealed class SharedGammaFakePart : IFilterableFakePart
     {
         public int DoSomething() 
             => 0;
 
-        public Guid TypeIdentifier
-            => FakeIds.GammaFakeId;
+        public Guid FamilyId
+            => new(GammaFamily.FamilyIdValue);
 
         [Export(typeof(IConventionProvider))]
         private sealed class SharedConventionProvider : IConventionProvider

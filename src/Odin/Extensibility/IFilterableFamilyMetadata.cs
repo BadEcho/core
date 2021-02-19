@@ -10,13 +10,19 @@ using System;
 namespace BadEcho.Odin.Extensibility
 {
     /// <summary>
-    /// Defines metadata that describes a call-routable plugin to Odin's Extensibility framework.
+    /// Defines metadata that describes a filterable family of plugins used by Odin's Extensibility framework to
+    /// isolate plugins from each other.
     /// </summary>
-    public interface IRoutingMetadata
+    public interface IFilterableFamilyMetadata
     {
         /// <summary>
-        /// Gets the identity of the call-routable plugin being exported.
+        /// Gets the identity of the filterable family.
         /// </summary>
-        Guid PluginId { get; }
+        Guid FamilyId { get; }
+
+        /// <summary>
+        /// Gets the name of the filterable family.
+        /// </summary>
+        string Name { get; }
     }
 }

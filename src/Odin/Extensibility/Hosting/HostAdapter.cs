@@ -40,7 +40,7 @@ namespace BadEcho.Odin.Extensibility.Hosting
 
             IDictionary<Guid, IPluginAdapter<T>> adapters
                 = context.Load<IPluginAdapter<T>, RoutingMetadataView>()
-                         .ToDictionary(k => k.Metadata.PluginIdentifier, v => v.Value);
+                         .ToDictionary(k => k.Metadata.PluginId, v => v.Value);
 
             IContractConfiguration contractConfiguration = FindContractConfiguration(configuration);
 

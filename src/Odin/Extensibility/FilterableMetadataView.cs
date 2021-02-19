@@ -12,14 +12,14 @@ namespace BadEcho.Odin.Extensibility
     /// <summary>
     /// Provides a metadata view for a filterable export's metadata.
     /// </summary>
-    public sealed class FilterMetadataView : IFilterMetadata
+    public sealed class FilterableMetadataView : IFilterableMetadata
     {
         /// <inheritdoc/>
-        public Type? PartType
+        public Guid FamilyId
         { get; set; }
-        
+
         /// <inheritdoc/>
-        public Guid TypeIdentifier 
+        public Type? PartType
         { get; set; }
     }
 }

@@ -14,17 +14,15 @@ using BadEcho.Odin.Tests.Extensibility;
 namespace BadEcho.Odin.Tests.Plugin
 {
     [Export(typeof(IFilterableFakeDependency))]
-    [Filter(typeof(AlphaFakeDependency),
-            FakeIds.AlphaFakeIdValue)]
+    [Filterable(AlphaFamily.FamilyIdValue, typeof(AlphaFakeDependency))]
     public class AlphaFakeDependency : IFilterableFakeDependency
     {
-        public Guid TypeIdentifier
-            => FakeIds.AlphaFakeId;
+        public Guid FamilyId
+            => new(AlphaFamily.FamilyIdValue);
     }
 
     [Export(typeof(IFilterableFakePartWithDependencies))]
-    [Filter(typeof(AlphaFakePartWithDependencies),
-            FakeIds.AlphaFakeIdValue)]
+    [Filterable(AlphaFamily.FamilyIdValue, typeof(AlphaFakePartWithDependencies))]
     public class AlphaFakePartWithDependencies : IFilterableFakePartWithDependencies
     {
         [ImportingConstructor]
@@ -35,8 +33,8 @@ namespace BadEcho.Odin.Tests.Plugin
 
         public IFilterableFakeDependency Dependency { get; }
 
-        public Guid TypeIdentifier
-            => FakeIds.AlphaFakeId;
+        public Guid FamilyId
+            => new(AlphaFamily.FamilyIdValue);
 
         public int DoSomething()
         {
@@ -45,8 +43,7 @@ namespace BadEcho.Odin.Tests.Plugin
     }
 
     [Export(typeof(IFilterableFakePartWithComposedDependencies))]
-    [Filter(typeof(AlphaFakePartWithComposedDependencies),
-            FakeIds.AlphaFakeIdValue)]
+    [Filterable(AlphaFamily.FamilyIdValue, typeof(AlphaFakePartWithComposedDependencies))]
     public class AlphaFakePartWithComposedDependencies : IFilterableFakePartWithComposedDependencies
     {
         private const string DEPENDENCY_CONTRACT = "SuperFakeFilterableDependency";
@@ -59,8 +56,8 @@ namespace BadEcho.Odin.Tests.Plugin
 
         public IFilterableFakeDependency Dependency { get; }
 
-        public Guid TypeIdentifier
-            => FakeIds.AlphaFakeId;
+        public Guid FamilyId
+            => new(AlphaFamily.FamilyIdValue);
 
         public int DoSomething()
         {
@@ -68,20 +65,19 @@ namespace BadEcho.Odin.Tests.Plugin
         }
         
         [Export(typeof(IConventionProvider))]
-        [Filter(typeof(LocalDependencyRegistry), FakeIds.AlphaFakeIdValue)]
+        [Filterable(AlphaFamily.FamilyIdValue, typeof(LocalDependencyRegistry))]
         private class LocalDependencyRegistry : DependencyRegistry<IFilterableFakeDependency> , IFilterable
         {
             public LocalDependencyRegistry()
                 : base(DEPENDENCY_CONTRACT)
             { }
 
-            public Guid TypeIdentifier => FakeIds.AlphaFakeId;
+            public Guid FamilyId => new(AlphaFamily.FamilyIdValue);
         }
     }
 
     [Export(typeof(IFilterableFakePartWithNonFilterableDependencies))]
-    [Filter(typeof(AlphaFakePartWithNonFilterableDependencies),
-            FakeIds.AlphaFakeIdValue)]
+    [Filterable(AlphaFamily.FamilyIdValue, typeof(AlphaFakePartWithNonFilterableDependencies))]
     public class AlphaFakePartWithNonFilterableDependencies : IFilterableFakePartWithNonFilterableDependencies
     {
         private const string DEPENDENCY_CONTRACT = "SuperFakeNonFilterableDependency";
@@ -94,8 +90,8 @@ namespace BadEcho.Odin.Tests.Plugin
 
         public IFakeDependency Dependency { get; }
 
-        public Guid TypeIdentifier
-            => FakeIds.AlphaFakeId;
+        public Guid FamilyId
+            => new(AlphaFamily.FamilyIdValue);
 
         public int DoSomething()
         {
@@ -103,14 +99,14 @@ namespace BadEcho.Odin.Tests.Plugin
         }
 
         [Export(typeof(IConventionProvider))]
-        [Filter(typeof(LocalDependencyRegistry), FakeIds.AlphaFakeIdValue)]
+        [Filterable(AlphaFamily.FamilyIdValue, typeof(LocalDependencyRegistry))]
         private class LocalDependencyRegistry : DependencyRegistry<IFakeDependency>, IFilterable
         {
             public LocalDependencyRegistry()
                 : base(DEPENDENCY_CONTRACT)
             { }
 
-            public Guid TypeIdentifier => FakeIds.AlphaFakeId;
+            public Guid FamilyId => new(AlphaFamily.FamilyIdValue);
         }
     }
 }

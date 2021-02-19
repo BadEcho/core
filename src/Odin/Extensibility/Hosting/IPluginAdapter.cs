@@ -17,7 +17,7 @@ namespace BadEcho.Odin.Extensibility.Hosting
     public interface IPluginAdapter<out T>
     {
         /// <summary>
-        /// Gets the identifier of the call-routable plugin.
+        /// Gets the identity of the call-routable plugin.
         /// </summary>
         Guid PluginIdentifier { get; }
 

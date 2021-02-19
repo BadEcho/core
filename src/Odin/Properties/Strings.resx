@@ -149,8 +149,8 @@
   <data name="EnumerationAtEnd" xml:space="preserve">
     <value>Enumeration has already finished; no more objects exist in the sequence.</value>
   </data>
-  <data name="TypeIdentifierNotValid" xml:space="preserve">
-    <value>'{0}' is not a valid pluggable type identity value. Values must be parseable as standard globally unique identifiers.</value>
+  <data name="FamilyIdNotValid" xml:space="preserve">
+    <value>'{0}' is not a valid filterable family identity value. Values must be parseable as standard globally unique identifiers.</value>
   </data>
   <data name="NoContractInConfiguration" xml:space="preserve">
     <value>Extensibility configuration lacks registration for contract '{0}'.</value>

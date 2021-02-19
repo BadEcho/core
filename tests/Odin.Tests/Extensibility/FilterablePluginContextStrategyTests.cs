@@ -32,7 +32,7 @@ namespace BadEcho.Odin.Tests.Extensibility
             var parts = container.GetExports<IFilterableFakePart>();
 
             Assert.NotEmpty(parts);
-            Assert.All(parts, p => Assert.Equal(new Guid(fakeId), p.TypeIdentifier));
+            Assert.All(parts, p => Assert.Equal(new Guid(fakeId), p.FamilyId));
         }
 
         [Theory]
@@ -45,7 +45,7 @@ namespace BadEcho.Odin.Tests.Extensibility
             var part = container.GetExport<IFilterableFakePart>();
 
             Assert.NotNull(part);
-            Assert.Equal(new Guid(fakeId), part.TypeIdentifier);
+            Assert.Equal(new Guid(fakeId), part.FamilyId);
         }
 
         [Fact]

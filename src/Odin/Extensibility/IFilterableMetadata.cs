@@ -12,16 +12,16 @@ namespace BadEcho.Odin.Extensibility
     /// <summary>
     /// Defines metadata that describes a filterable export to Odin's Extensibility framework.
     /// </summary>
-    public interface IFilterMetadata
+    public interface IFilterableMetadata
     {
+        /// <summary>
+        /// Gets the identity of the filterable family that the part being exported belongs to.
+        /// </summary>
+        Guid FamilyId { get; }
+
         /// <summary>
         /// Gets the concrete type of the part exported.
         /// </summary>
         Type? PartType { get; }
-
-        /// <summary>
-        /// Gets the type identifier of the part being exported.
-        /// </summary>
-        Guid TypeIdentifier { get; }
     }
 }

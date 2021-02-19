@@ -19,36 +19,36 @@ namespace BadEcho.Odin.Extensibility
     [MetadataAttribute]
     [AttributeUsage(
         AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method | AttributeTargets.Class)]
-    public sealed class FilterAttribute : ExportAttribute, IFilterMetadata
+    public sealed class FilterableAttribute : ExportAttribute, IFilterableMetadata
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FilterAttribute"/> class.
+        /// Initializes a new instance of the <see cref="FilterableAttribute"/> class.
         /// </summary>
+        /// <param name="familyId">The identity of the filterable family that the part being exported belongs to.</param>
         /// <param name="partType">The concrete type of the part being exported.</param>
-        /// <param name="typeIdentifier">The type identifier of the part being exported.</param>
-        public FilterAttribute(Type partType, string typeIdentifier)
+        public FilterableAttribute(string familyId, Type partType)
             : base(typeof(IFilterable))
         {
             Require.NotNull(partType, nameof(partType));
-            Require.NotNull(typeIdentifier, nameof(typeIdentifier));
-
+            Require.NotNull(familyId, nameof(familyId));
+            
             PartType = partType;
 
-            if (!Guid.TryParse(typeIdentifier, out Guid parsedIdentifier))
+            if (!Guid.TryParse(familyId, out Guid parsedIdentifier))
             {
-                throw new ArgumentException(Strings.TypeIdentifierNotValid.InvariantFormat(typeIdentifier),
-                                            nameof(typeIdentifier));
+                throw new ArgumentException(Strings.FamilyIdNotValid.InvariantFormat(familyId),
+                                            nameof(familyId));
             }
 
-            TypeIdentifier = parsedIdentifier;
+            FamilyId = parsedIdentifier;
         }
-
+        
         /// <inheritdoc/>
-        public Type PartType 
+        public Guid FamilyId
         { get; }
 
         /// <inheritdoc/>
-        public Guid TypeIdentifier 
+        public Type PartType 
         { get; }
     }
 }
