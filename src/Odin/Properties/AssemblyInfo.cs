@@ -34,3 +34,9 @@ using System.Runtime.InteropServices;
                            Justification = "Rather disgusting when a generic type constraint is involved.", 
                            Scope = "member", 
                            Target = "~M:BadEcho.Odin.Extensions.ReflectionExtensions.GetAttribute``1(System.Reflection.ICustomAttributeProvider)~``0")]
+
+[assembly: SuppressMessage("Style", 
+                           "IDE0021:Use expression body for constructors", 
+                           Scope = "type", 
+                           Target = "~T:BadEcho.Odin.Collections.LazyConcurrentDictionary`2",
+                           Justification = "All the constructors make call to base constructors, and expression bodies don't look appetizing at all next to such invocations.")]

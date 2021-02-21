@@ -54,7 +54,7 @@ namespace BadEcho.Odin.XmlConfiguration
         /// </summary>
         /// <returns>An <see cref="IEnumerator{TElement}"/> that can be used to iterate through the collection.</returns>
         public new IEnumerator<TElement> GetEnumerator() 
-            => new GenericizedEnumerator<TElement>(this);
+            => new Enumerator<TElement>(this);
 
         /// <inheritdoc/>
         protected override ConfigurationElement CreateNewElement()
