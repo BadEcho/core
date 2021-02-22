@@ -33,15 +33,21 @@ namespace BadEcho.Odin.Tests.Collections
         }
 
         [Fact]
-        public void GetOrAdd_New()
+        public void GetOrAdd_NoFactoryUntilNewAccess()
         {
-            var value = _lazyDictionary.GetOrAdd(2, () => "Third");
+            var factoryRun = false;
+            var value = _lazyDictionary.GetOrAdd(2, () =>
+                                                    {
+                                                        factoryRun = true;
+                                                        return "Third";
+                                                    });
 
+            Assert.False(factoryRun);
             Assert.Equal("Third", value.Value);
         }
 
         [Fact]
-        public void GetOrAdd_ExistingLazy()
+        public void GetOrAddExplicitLazy_Existing()
         {
             var value = _lazyDictionary.GetOrAdd(0, _ => new Lazy<string>("Not First"));
 
@@ -51,7 +57,7 @@ namespace BadEcho.Odin.Tests.Collections
         }
 
         [Fact]
-        public void GetOrAdd_LazyUntilNewAccess()
+        public void GetOrAddExplicitLazy_NoFactoryUntilNewAccess()
         {
             var factoryRan = false;
             var value = _lazyDictionary
@@ -76,7 +82,7 @@ namespace BadEcho.Odin.Tests.Collections
         }
 
         [Fact]
-        public void IReadOnlyDictionary_Indexer_LazyUntilNewAccess()
+        public void IReadOnlyDictionary_Indexer_NoFactoryUntilNewAccess()
         {
             bool factoryRan = false;
 
@@ -116,7 +122,7 @@ namespace BadEcho.Odin.Tests.Collections
         }
 
         [Fact]
-        public void IReadOnlyDictionary_Enumerator_LazyUntilNewAccess()
+        public void IReadOnlyDictionary_Enumerator_NoFactoryUntilNewAccess()
         {
             bool factoryRan = false;
 

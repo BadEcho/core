@@ -40,3 +40,15 @@ using System.Runtime.InteropServices;
                            Scope = "type", 
                            Target = "~T:BadEcho.Odin.Collections.LazyConcurrentDictionary`2",
                            Justification = "All the constructors make call to base constructors, and expression bodies don't look appetizing at all next to such invocations.")]
+
+[assembly: SuppressMessage("Design", 
+                           "CA1019:Define accessors for attribute arguments", 
+                           Scope = "member", 
+                           Target = "~M:BadEcho.Odin.Extensibility.FilterableAttribute.#ctor(System.String,System.Type)",
+                           Justification = "Accessors are available for processed constructor input, which is an acceptable reason to suppress this warning as evidenced by several of Microsoft's own attributes that build non-primitive typed properties from primitive typed parameters. Performing validation of the string to ensure it is a valid GUID saves us loads of effort down the road when dealing with imported metadata. Implementing the property explicitly and creating a string property in order to satisfy this rule does not work as it breaks MEF's MetadataViewProvider.")]
+
+[assembly: SuppressMessage("Design", 
+                           "CA1019:Define accessors for attribute arguments",
+                           Scope = "member", 
+                           Target = "~M:BadEcho.Odin.Extensibility.FilterableFamilyAttribute.#ctor(System.String,System.String)",
+                           Justification = "Accessors are available for processed constructor input, which is an acceptable reason to suppress this warning as evidenced by several of Microsoft's own attributes that build non-primitive typed properties from primitive typed parameters. Performing validation of the string to ensure it is a valid GUID saves us loads of effort down the road when dealing with imported metadata. Implementing the property explicitly and creating a string property in order to satisfy this rule does not work as it breaks MEF's MetadataViewProvider.")]
