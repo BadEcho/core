@@ -21,7 +21,7 @@ namespace BadEcho.Odin.Extensibility.Configuration
 
         /// <inheritdoc/>
         public string PluginDirectory 
-        { get; set; } = string.Empty;
+        { get; set; } = IExtensibilityConfiguration.DefaultPluginDirectory;
 
         /// <inheritdoc cref="IExtensibilityConfiguration.SegmentedContracts"/>
         /// <remarks>

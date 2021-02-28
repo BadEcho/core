@@ -10,7 +10,7 @@ using BadEcho.Odin.Extensibility;
 
 namespace BadEcho.Odin.Tests.Extensibility
 {
-    public static class FakeIds
+    public static class FakeFilterableIds
     {
         public const string AlphaFakeIdValue = "7D638085-3744-41AB-AF6C-4AFC5C2FC806";
         public static Guid AlphaFakeId
@@ -77,4 +77,7 @@ namespace BadEcho.Odin.Tests.Extensibility
     {
         int DoSomething();
     }
+
+    public interface IUniqueRequirement
+    { }
 }

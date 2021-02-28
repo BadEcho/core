@@ -14,7 +14,7 @@ namespace BadEcho.Odin.Tests.Plugin
     [FilterableFamily(FamilyIdValue, NAME)]
     public class AlphaFamily : IFilterableFamily
     {
-        internal const string FamilyIdValue = FakeIds.AlphaFakeIdValue;
+        internal const string FamilyIdValue = FakeFilterableIds.AlphaFakeIdValue;
         private const string NAME = "Alpha";
 
         public Guid FamilyId
@@ -27,7 +27,7 @@ namespace BadEcho.Odin.Tests.Plugin
     [FilterableFamily(FamilyIdValue, NAME)]
     public class BetaFamily : IFilterableFamily
     {
-        internal const string FamilyIdValue = FakeIds.BetaFakeIdValue;
+        internal const string FamilyIdValue = FakeFilterableIds.BetaFakeIdValue;
         private const string NAME = "Beta";
 
         public Guid FamilyId
@@ -40,7 +40,7 @@ namespace BadEcho.Odin.Tests.Plugin
     [FilterableFamily(FamilyIdValue, NAME)]
     public class DeltaFamily : IFilterableFamily
     {
-        internal const string FamilyIdValue = FakeIds.DeltaFakeIdValue;
+        internal const string FamilyIdValue = FakeFilterableIds.DeltaFakeIdValue;
         private const string NAME = "Delta";
 
         public Guid FamilyId
@@ -53,7 +53,7 @@ namespace BadEcho.Odin.Tests.Plugin
     [FilterableFamily(FamilyIdValue, NAME)]
     public class GammaFamily : IFilterableFamily
     {
-        internal const string FamilyIdValue = FakeIds.GammaFakeIdValue;
+        internal const string FamilyIdValue = FakeFilterableIds.GammaFakeIdValue;
         private const string NAME = "Gamma";
 
         public Guid FamilyId

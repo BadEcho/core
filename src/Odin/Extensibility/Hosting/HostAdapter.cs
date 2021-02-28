@@ -21,7 +21,7 @@ namespace BadEcho.Odin.Extensibility.Hosting
     /// <typeparam name="T">
     /// The type of contract being segmented by the plugins connected through this adapter.
     /// </typeparam>
-    internal sealed class HostAdapter<T> : IHostAdapter
+    public sealed class HostAdapter<T> : IHostAdapter
         where T : notnull
     {
         private readonly IDictionary<string, IPluginAdapter<T>> _routingTable;
@@ -33,13 +33,13 @@ namespace BadEcho.Odin.Extensibility.Hosting
         /// <param name="configuration">
         /// Configuration for the Extensibility framework containing call-routable plugin information.
         /// </param>
-        public HostAdapter(PluginContext context, IExtensibilityConfiguration configuration)
+        internal HostAdapter(PluginContext context, IExtensibilityConfiguration configuration)
         {
             Require.NotNull(context, nameof(context));
             Require.NotNull(configuration, nameof(configuration));
 
             IDictionary<Guid, IPluginAdapter<T>> adapters
-                = context.Load<IPluginAdapter<T>, RoutingMetadataView>()
+                = context.Load<IPluginAdapter<T>, RoutableMetadataView>()
                          .ToDictionary(k => k.Metadata.PluginId, v => v.Value);
 
             IContractConfiguration contractConfiguration = FindContractConfiguration(configuration);

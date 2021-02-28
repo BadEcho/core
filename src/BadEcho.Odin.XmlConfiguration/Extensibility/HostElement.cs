@@ -8,6 +8,7 @@
 using System;
 using System.Configuration;
 using System.Threading;
+using BadEcho.Odin.Extensibility.Configuration;
 
 namespace BadEcho.Odin.XmlConfiguration.Extensibility
 {
@@ -26,10 +27,7 @@ namespace BadEcho.Odin.XmlConfiguration.Extensibility
         /// Gets or sets the path relative from the current application context's base directory to the
         /// directory where all plugins are stored.
         /// </summary>
-        /// <remarks>
-        /// If this configuration property is not set then it will be assumed that all plugins are stored in the
-        /// base directory of the current application context.
-        /// </remarks>
+        /// <inheritdoc cref="IExtensibilityConfiguration.PluginDirectory"/>
         public string PluginDirectory
         {
             get => (string) base[PLUGIN_DIRECTORY_ATTRIBUTE_SCHEMA];
@@ -45,7 +43,7 @@ namespace BadEcho.Odin.XmlConfiguration.Extensibility
                {
                    new ConfigurationProperty(PLUGIN_DIRECTORY_ATTRIBUTE_SCHEMA,
                                              typeof(string),
-                                             string.Empty,
+                                             IExtensibilityConfiguration.DefaultPluginDirectory,
                                              null,
                                              null,
                                              ConfigurationPropertyOptions.None)

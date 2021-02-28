@@ -1,9 +1,13 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright>
+//      Created by Matt Weber <matt@badecho.com>
+//      Copyright @ 2021 Bad Echo LLC. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using BadEcho.Odin.Collections;
 using Xunit;
 
@@ -25,7 +29,7 @@ namespace BadEcho.Odin.Tests.Collections
         }
 
         [Fact]
-        public void GetOrAdd_Existing()
+        public void GetOrAdd_Existing_ReturnsFirst()
         {
             var value = _lazyDictionary.GetOrAdd(0, () => "Not First");
 
@@ -33,7 +37,7 @@ namespace BadEcho.Odin.Tests.Collections
         }
 
         [Fact]
-        public void GetOrAdd_NoFactoryUntilNewAccess()
+        public void GetOrAdd_New_NoFactoryUntilAccess()
         {
             var factoryRun = false;
             var value = _lazyDictionary.GetOrAdd(2, () =>
@@ -47,7 +51,7 @@ namespace BadEcho.Odin.Tests.Collections
         }
 
         [Fact]
-        public void GetOrAddExplicitLazy_Existing()
+        public void GetOrAdd_ExistingLazy_ReturnsFirst()
         {
             var value = _lazyDictionary.GetOrAdd(0, _ => new Lazy<string>("Not First"));
 
@@ -57,7 +61,7 @@ namespace BadEcho.Odin.Tests.Collections
         }
 
         [Fact]
-        public void GetOrAddExplicitLazy_NoFactoryUntilNewAccess()
+        public void GetOrAdd_ExistingLazy_NotFactoryUntilAccess()
         {
             var factoryRan = false;
             var value = _lazyDictionary
@@ -73,16 +77,16 @@ namespace BadEcho.Odin.Tests.Collections
         }
 
         [Fact]
-        public void IReadOnlyDictionary_Indexer_Existing()
+        public void IReadOnlyDictionaryIndexer_Existing_ReturnsItems()
         {
-            IReadOnlyDictionary<int, string?> readOnly = _lazyDictionary;
+            IReadOnlyDictionary<int, string> readOnly = _lazyDictionary;
 
             Assert.Equal("First", readOnly[0]);
             Assert.Equal("Second", readOnly[1]);
         }
 
         [Fact]
-        public void IReadOnlyDictionary_Indexer_NoFactoryUntilNewAccess()
+        public void IReadOnlyDictionaryIndexer_New_NoFactoryUntilAccess()
         {
             bool factoryRan = false;
 
@@ -93,7 +97,7 @@ namespace BadEcho.Odin.Tests.Collections
                                          return "Third";
                                      });
 
-            IReadOnlyDictionary<int, string?> readOnly = _lazyDictionary;
+            IReadOnlyDictionary<int, string> readOnly = _lazyDictionary;
 
             Assert.Equal("First",readOnly[0]);
 
@@ -103,9 +107,9 @@ namespace BadEcho.Odin.Tests.Collections
         }
 
         [Fact]
-        public void IReadOnlyDictionary_Enumerator_Existing()
+        public void IReadOnlyDictionaryEnumerator_Existing_ReturnsItems()
         {
-            IReadOnlyDictionary<int, string?> readOnly = _lazyDictionary;
+            IReadOnlyDictionary<int, string> readOnly = _lazyDictionary;
 
             using (var enumerator = readOnly.GetEnumerator())
             {
@@ -122,7 +126,7 @@ namespace BadEcho.Odin.Tests.Collections
         }
 
         [Fact]
-        public void IReadOnlyDictionary_Enumerator_NoFactoryUntilNewAccess()
+        public void IReadOnlyDictionaryEnumerator_New_NoFactoryUntilAccess()
         {
             bool factoryRan = false;
 
@@ -133,7 +137,7 @@ namespace BadEcho.Odin.Tests.Collections
                                          return "Third";
                                      });
 
-            IReadOnlyDictionary<int, string?> readOnly = _lazyDictionary;
+            IReadOnlyDictionary<int, string> readOnly = _lazyDictionary;
 
             using (var enumerator = readOnly.GetEnumerator())
             {
@@ -163,7 +167,7 @@ namespace BadEcho.Odin.Tests.Collections
         }
 
         [Fact]
-        public void TryGetValue_Existing()
+        public void TryGetValue_Existing_ReturnsFirst()
         {
             Assert.True(_lazyDictionary.TryGetValue(0, out string? firstValue));
 
@@ -171,7 +175,7 @@ namespace BadEcho.Odin.Tests.Collections
         }
 
         [Fact]
-        public void TryGetValue_NonExisting()
+        public void TryGetValue_NonExisting_ReturnsNull()
         {
             Assert.False(_lazyDictionary.TryGetValue(2, out string? noValue));
             Assert.Null(noValue);

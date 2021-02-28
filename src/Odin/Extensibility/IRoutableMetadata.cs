@@ -12,7 +12,7 @@ namespace BadEcho.Odin.Extensibility
     /// <summary>
     /// Defines metadata that describes a call-routable plugin to Odin's Extensibility framework.
     /// </summary>
-    public interface IRoutingMetadata
+    public interface IRoutableMetadata
     {
         /// <summary>
         /// Gets the identity of the call-routable plugin being exported.

@@ -17,7 +17,7 @@ namespace BadEcho.Odin.Extensibility
     /// framework.
     /// </summary>
     [MetadataAttribute]
-    [AttributeUsage(AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     public sealed class FilterableFamilyAttribute : ExportAttribute, IFilterableFamilyMetadata
     {
         /// <summary>
@@ -31,13 +31,13 @@ namespace BadEcho.Odin.Extensibility
             Require.NotNullOrEmpty(name, nameof(name));
             Require.NotNull(familyId, nameof(familyId));
 
-            if (!Guid.TryParse(familyId, out Guid parsedIdentifier))
+            if (!Guid.TryParse(familyId, out Guid parsedId))
             {
                 throw new ArgumentException(Strings.FamilyIdNotValid.InvariantFormat(familyId),
                                             nameof(familyId));
             }
 
-            FamilyId = parsedIdentifier;
+            FamilyId = parsedId;
             Name = name;
         }
 

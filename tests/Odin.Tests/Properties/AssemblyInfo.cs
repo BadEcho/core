@@ -6,3 +6,4 @@ using System.Runtime.InteropServices;
 
 [assembly: SuppressMessage("Style", "IDE0022:Use expression body for methods", Scope = "module")]
 [assembly: SuppressMessage("Style", "IDE0021: Use expression body for constructors", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Scope = "module")]

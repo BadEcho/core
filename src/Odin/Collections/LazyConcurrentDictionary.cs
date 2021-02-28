@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 
@@ -18,7 +19,7 @@ namespace BadEcho.Odin.Collections
     /// </summary>
     /// <typeparam name="TKey">The type of the keys in the dictionary.</typeparam>
     /// <typeparam name="TValue">The type of the values to be initialized lazily in the dictionary.</typeparam>
-    public sealed class LazyConcurrentDictionary<TKey, TValue> : ConcurrentDictionary<TKey,Lazy<TValue>>, IReadOnlyDictionary<TKey,TValue?>
+    public sealed class LazyConcurrentDictionary<TKey, TValue> : ConcurrentDictionary<TKey,Lazy<TValue>>, IReadOnlyDictionary<TKey,TValue>
         where TKey : notnull
     {
         private readonly LazyThreadSafetyMode _lazyMode;
@@ -154,23 +155,23 @@ namespace BadEcho.Odin.Collections
             _lazyMode = lazyMode;
         }
 
-        TValue IReadOnlyDictionary<TKey, TValue?>.this[TKey key] 
+        TValue IReadOnlyDictionary<TKey, TValue>.this[TKey key] 
             => base[key].Value;
 
-        IEnumerable<TKey> IReadOnlyDictionary<TKey, TValue?>.Keys 
+        IEnumerable<TKey> IReadOnlyDictionary<TKey, TValue>.Keys 
             => Keys;
 
-        IEnumerable<TValue> IReadOnlyDictionary<TKey, TValue?>.Values
+        IEnumerable<TValue> IReadOnlyDictionary<TKey, TValue>.Values
             => Values.Select(lazyValue => lazyValue.Value).ToList();
 
-        IEnumerator<KeyValuePair<TKey, TValue?>> IEnumerable<KeyValuePair<TKey, TValue?>>.GetEnumerator()
-            => new Enumerator<KeyValuePair<TKey, TValue?>>(
+        IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator()
+            => new Enumerator<KeyValuePair<TKey, TValue>>(
                 this,
                 element =>
                 {
                     var (key, value) = (KeyValuePair<TKey, Lazy<TValue>>) element;
 
-                    return new KeyValuePair<TKey, TValue?>(key, value.Value);
+                    return new KeyValuePair<TKey, TValue>(key, value.Value);
                 });
 
         /// <summary>
@@ -201,14 +202,14 @@ namespace BadEcho.Odin.Collections
         /// <returns>
         /// True if <c>key</c> was found in the <see cref="LazyConcurrentDictionary{TKey, TValue}"/>; otherwise, false.
         /// </returns>
-        public bool TryGetValue(TKey key, out TValue? value)
+        public bool TryGetValue(TKey key, [MaybeNullWhen(false)]out TValue value)
         {
             value = default;
             bool success = TryGetValue(key, out Lazy<TValue>? lazyValue);
 
             if (success && lazyValue != null)
                 value = lazyValue.Value;
-            
+
             return success;
         }
     }

@@ -1,5 +1,5 @@
 ﻿{
-  "pluginDirectory": "plugins",
+  "pluginDirectory": "testPlugins",
   "segmentedContracts": [
     {
       "name": "ISegmentedContract",

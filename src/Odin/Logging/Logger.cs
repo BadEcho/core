@@ -84,5 +84,13 @@ namespace BadEcho.Odin.Logging
 
             Source.Critical(message, exception);
         }
+
+        /// <summary>
+        /// Disables the default event listener created when this logger is used.
+        /// </summary>
+        public static void DisableDefaultListener()
+        {
+            _Listener.DisableEvents(Source);
+        }
     }
 }

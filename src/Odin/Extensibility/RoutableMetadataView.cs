@@ -12,7 +12,7 @@ namespace BadEcho.Odin.Extensibility
     /// <summary>
     /// Provides a metadata view for a call-routable plugin's metadata.
     /// </summary>
-    public sealed class RoutingMetadataView : IRoutingMetadata
+    public sealed class RoutableMetadataView : IRoutableMetadata
     {
         /// <inheritdoc/>
         public Guid PluginId 

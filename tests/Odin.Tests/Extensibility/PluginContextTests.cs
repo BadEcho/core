@@ -6,49 +6,54 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Composition;
 using System.IO;
 using BadEcho.Odin.Extensibility.Hosting;
 using Xunit;
 
 namespace BadEcho.Odin.Tests.Extensibility
 {
+    /// <suppressions>
+    /// ReSharper disable UnusedAutoPropertyAccessor.Local
+    /// ReSharper disable AssignNullToNotNullAttribute
+    /// </suppressions>
     public class PluginContextTests
     {
         private readonly PluginContext _context;
 
         public PluginContextTests()
         {
-            var path = Path.Combine(Environment.CurrentDirectory, "plugins");
+            var path = Path.Combine(Environment.CurrentDirectory, "testPlugins");
             var strategy = new GlobalPluginContextStrategy(path);
 
             _context = new PluginContext(strategy);
         }
 
         [Fact]
-        public void PluggablePart_Inject()
+        public void Inject_PluggablePart_FakePartsImported()
         {
             var pluggablePart = new PluggablePart();
 
             _context.Inject(pluggablePart);
 
             Assert.NotNull(pluggablePart.FakeParts);
+            Assert.NotEmpty(pluggablePart.FakeParts);
         }
 
         [Fact]
-        public void IFakePart_Load()
+        public void Load_IFakePart_NotEmpty()
         {
             var parts = _context.Load<IFakePart>();
 
             Assert.NotEmpty(parts);
         }
-        
-        private sealed class PluggablePart
+
+        [Fact]
+        public void Load_NonExistentLazy_NotNullButEmpty()
         {
-            [ImportMany] 
-            public IEnumerable<IFakePart>? FakeParts 
-            { get; set; }
+            var parts = _context.Load<Lazy<ICloneable>>();
+
+            Assert.NotNull(parts);
+            Assert.Empty(parts);
         }
     }
 }

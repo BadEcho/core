@@ -12,6 +12,10 @@ using Xunit;
 
 namespace BadEcho.Odin.Tests.Logging
 {
+    /// <suppressions>
+    /// ReSharper disable LocalizableElement
+    /// ReSharper disable NotResolvedInText
+    /// </suppressions>
     public class LoggerTests : IDisposable
     {
         private readonly EventListenerStub _listener;
@@ -35,9 +39,23 @@ namespace BadEcho.Odin.Tests.Logging
         }
 
         [Fact]
+        public void Debug_Disabled()
+        {
+            DisableEventSource();
+            AssertEventNotWritten(() => Logger.Debug("Nothing."));
+        }
+
+        [Fact]
         public void Info()
         {
             AssertEventWritten(() => Logger.Info("Hello there. This is an informational message."));
+        }
+        
+        [Fact]
+        public void Info_Disabled()
+        {
+            DisableEventSource();
+            AssertEventNotWritten(() => Logger.Info("Nope."));
         }
 
         [Fact]
@@ -48,9 +66,23 @@ namespace BadEcho.Odin.Tests.Logging
         }
 
         [Fact]
+        public void Warning_Disabled()
+        {
+            DisableEventSource();
+            AssertEventNotWritten(() => Logger.Warning("Hello"));
+        }
+
+        [Fact]
         public void Error()
         {
             AssertEventWritten(() => Logger.Error("This does not compute. DOES NOT COMPUTE."));
+        }
+
+        [Fact]
+        public void Error_Disabled()
+        {
+            DisableEventSource();
+            AssertEventNotWritten(() => Logger.Error("Can't see this."));
         }
 
         [Fact]
@@ -64,9 +96,23 @@ namespace BadEcho.Odin.Tests.Logging
         }
 
         [Fact]
+        public void Error_ArgumentException_Disabled()
+        {
+            DisableEventSource();
+            AssertEventNotWritten(() => Logger.Error("No mess.", new Exception()));
+        }
+
+        [Fact]
         public void Critical()
         {
             AssertEventWritten(() => Logger.Critical("The computer has been unplugged from the wall!"));
+        }
+
+        [Fact]
+        public void Critical_Disabled()
+        {
+            DisableEventSource();
+            AssertEventNotWritten(() => Logger.Critical("Nope nope nope."));
         }
 
         [Fact]
@@ -79,11 +125,42 @@ namespace BadEcho.Odin.Tests.Logging
             AssertEventWritten(() => Logger.Critical("We're doomed.", argumentException));
         }
 
+        [Fact]
+        public void Critical_ArgumentException_Disabled()
+        {
+            DisableEventSource();
+            AssertEventNotWritten(() => Logger.Critical("Not doomed!", new Exception()));
+        }
+
         private void AssertEventWritten(Action loggingAction)
         {
             Assert.Raises<EventWrittenEventArgs>(handler => _listener.EventWritten += handler,
                                                  handler => _listener.EventWritten -= handler,
                                                  loggingAction);
+        }
+
+        private void AssertEventNotWritten(Action loggingAction)
+        {
+            bool eventRaised = false;
+
+            _listener.EventWritten += EventWrittenHandler;
+
+            loggingAction();
+
+            _listener.EventWritten -= EventWrittenHandler;
+
+            Assert.False(eventRaised);
+
+            void EventWrittenHandler(object? sender, EventWrittenEventArgs e)
+            {
+                eventRaised = true;
+            }
+        }
+
+        private void DisableEventSource()
+        {
+            _listener.DisableEvents(LogSource.Instance);
+            Logger.DisableDefaultListener();
         }
     }
 }

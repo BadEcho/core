@@ -21,12 +21,12 @@ namespace BadEcho.Odin.Tests.Extensibility
 
         public GlobalPluginContextStrategyTests()
         {
-            var path = Path.Combine(Environment.CurrentDirectory, "plugins");
+            var path = Path.Combine(Environment.CurrentDirectory, "testPlugins");
             _strategy = new GlobalPluginContextStrategy(path);
         }
 
         [Fact]
-        public void IFakePart_GetExports()
+        public void GetExports_IFakePart_ReturnsParts()
         {
             var container = _strategy.CreateContainer();
 
@@ -36,7 +36,7 @@ namespace BadEcho.Odin.Tests.Extensibility
         }
 
         [Fact]
-        public void IFakePart_GetExport()
+        public void GetExport_IFakePart_ThrowsException()
         {
             var container = _strategy.CreateContainer();
 
@@ -44,7 +44,7 @@ namespace BadEcho.Odin.Tests.Extensibility
         }
 
         [Fact]
-        public void INonSharedFakePart_IsNonShared()
+        public void GetExport_INonSharedFakePart_IsNonShared()
         {
             var container = _strategy.CreateContainer();
 
@@ -55,7 +55,7 @@ namespace BadEcho.Odin.Tests.Extensibility
         }
 
         [Fact]
-        public void ISharedFakePart_IsShared()
+        public void GetExport_ISharedFakePart_IsShared()
         {
             var container = _strategy.CreateContainer();
 
@@ -66,7 +66,7 @@ namespace BadEcho.Odin.Tests.Extensibility
         }
 
         [Fact]
-        public void IFakePartWithDependencies_GetExport()
+        public void GetExport_IFakePartWithDependencies_ReturnsPartWithDependency()
         {
             var container = _strategy.CreateContainer();
 
@@ -80,36 +80,40 @@ namespace BadEcho.Odin.Tests.Extensibility
         }
 
         [Fact]
-        public void IFakePartWithComposedDependencies_GetExport()
+        public void GetExport_IFakePartWithComposedDependencies_ReturnsPartWithDependency()
         {
             var composedDependency = new ComposedDependency();
 
-            DependencyRegistry<IFakeDependency>.ArmedDependency
-                = composedDependency;
+            DependencyRegistry<IFakeDependency>
+                .ExecuteWhileArmed(composedDependency,
+                                   () =>
+                                   {
+                                       var container = _strategy.CreateContainer();
+                                       var part = container.GetExport<IFakePartWithComposedDependencies>();
 
-            var container = _strategy.CreateContainer();
-            var part = container.GetExport<IFakePartWithComposedDependencies>();
-
-            Assert.NotNull(part);
-            Assert.Equal(composedDependency, part.Dependency);
+                                       Assert.NotNull(part);
+                                       Assert.Equal(composedDependency, part.Dependency);
+                                   });
         }
 
         [Fact]
-        public void IFakePartWithComposedDependencies_IsRecomposed()
+        public void GetExport_IFakePartWithComposedDependencies_IsRecomposed()
         {
-            DependencyRegistry<IFakeDependency>.ArmedDependency
-                = new ComposedDependency();
-
-            DependencyRegistry<IFakeDependency>.ArmedDependency = new ComposedDependency();
-            
             var container = _strategy.CreateContainer();
-            var part = container.GetExport<IFakePartWithComposedDependencies>();
+
+            IFakePartWithComposedDependencies part = null!;
+
+            DependencyRegistry<IFakeDependency>
+                .ExecuteWhileArmed(new ComposedDependency(),
+                                   () => part = container.GetExport<IFakePartWithComposedDependencies>());
+            
             var newDependency = new ComposedDependency();
 
-            DependencyRegistry<IFakeDependency>.ArmedDependency
-                = newDependency;
+            IFakePartWithComposedDependencies newPart = null!;
 
-            var newPart = container.GetExport<IFakePartWithComposedDependencies>();
+            DependencyRegistry<IFakeDependency>
+                    .ExecuteWhileArmed(newDependency,
+                        () => newPart = container.GetExport<IFakePartWithComposedDependencies>());
 
             Assert.NotNull(newPart);
             Assert.Equal(newDependency, newPart.Dependency);
@@ -118,7 +122,7 @@ namespace BadEcho.Odin.Tests.Extensibility
         }
 
         [Fact]
-        public void IFilterableFamily_ValidCount()
+        public void GetExports_IFilterableFamily_ValidCount()
         {
             var container = _strategy.CreateContainer();
             var families = container.GetExports<Lazy<IFilterableFamily, FilterableFamilyMetadataView>>();

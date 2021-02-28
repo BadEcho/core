@@ -17,6 +17,29 @@ namespace BadEcho.Odin.Extensions
     public static class EnumerableExtensions
     {
         /// <summary>
+        /// Checks if the provided sequence is empty.
+        /// </summary>
+        /// <typeparam name="T">The type of items enumerated.</typeparam>
+        /// <param name="source">The sequence to check for emptiness.</param>
+        /// <returns>True if <c>source</c> is empty; otherwise, false.</returns>
+        /// <remarks>
+        /// Interestingly, <see cref="Enumerable.Any{TSource}(IEnumerable{TSource})"/> used to not type check if
+        /// source is <see cref="ICollection{T}"/> or <see cref="ICollection"/>. But with .NET Core, it does.
+        /// So no need for us to do this optimization any longer. Just a simple call to aforementioned method.
+        /// </remarks>
+        public static bool IsEmpty<T>(this IEnumerable<T> source) 
+            => !source.Any();
+
+        /// <summary>
+        /// Determines if the sequence consists of only a single item.
+        /// </summary>
+        /// <typeparam name="T">The type of items enumerated.</typeparam>
+        /// <param name="source">The sequence to check for a single item.</param>
+        /// <returns>True if <c>source</c> consists of one and only one item; otherwise, false.</returns>
+        public static bool IsSingle<T>(this IEnumerable<T> source) 
+            => source.Take(2).Count() == 1;
+
+        /// <summary>
         /// Filters a sequence for all values that are not null.
         /// </summary>
         /// <typeparam name="T">The type of items enumerated.</typeparam>

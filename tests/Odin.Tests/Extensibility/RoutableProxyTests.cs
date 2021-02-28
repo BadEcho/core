@@ -14,34 +14,30 @@ namespace BadEcho.Odin.Tests.Extensibility
     public class RoutableProxyTests
     {
         private readonly ISegmentedContract _proxy;
-        private const string FIRST_SOME_METHOD = "First";
-        private const string FIRST_SOME_OTHER_METHOD = "StillFirst";
-        private const string SECOND_SOME_METHOD = "Second";
-        private const string SECOND_SOME_OTHER_METHOD = "StillSecond";
 
         public RoutableProxyTests() 
             => _proxy = RoutableProxy.Create<ISegmentedContract>(new HostAdapterStub());
 
         [Fact]
-        public void FirstContract_SomeMethod()
+        public void SomeMethod_FirstContract()
         {
             var result = _proxy.SomeMethod();
 
-            Assert.Equal(FIRST_SOME_METHOD, result);
+            Assert.Equal(ISegmentedContract.FirstSomeMethod, result);
         }
 
         [Fact]
-        public void SecondContract_SomeOtherMethod()
+        public void SomeOtherMethod_SecondContract()
         {
             var result = _proxy.SomeOtherMethod();
 
-            Assert.Equal(SECOND_SOME_OTHER_METHOD, result);
+            Assert.Equal(ISegmentedContract.SecondSomeOtherMethod, result);
         }
 
         private sealed class HostAdapterStub : IHostAdapter
         {
-            private readonly FirstContractStub _first = new FirstContractStub();
-            private readonly SecondContractStub _second = new SecondContractStub();
+            private readonly FirstContractStub _first = new();
+            private readonly SecondContractStub _second = new();
 
             public object Route(string methodName)
             {
@@ -57,29 +53,22 @@ namespace BadEcho.Odin.Tests.Extensibility
             }
         }
 
-        private interface ISegmentedContract
-        {
-            string SomeMethod();
-
-            string SomeOtherMethod();
-        }
-
         private sealed class FirstContractStub : ISegmentedContract
         {
-            public string SomeMethod() 
-                => FIRST_SOME_METHOD;
+            public string SomeMethod()
+                => ISegmentedContract.FirstSomeMethod;
 
-            public string SomeOtherMethod() 
-                => FIRST_SOME_OTHER_METHOD;
+            public string SomeOtherMethod()
+                => ISegmentedContract.FirstSomeOtherMethod;
         }
 
         private sealed class SecondContractStub : ISegmentedContract
         {
-            public string SomeMethod() 
-                => SECOND_SOME_METHOD;
+            public string SomeMethod()
+                => ISegmentedContract.SecondSomeMethod;
 
-            public string SomeOtherMethod() 
-                => SECOND_SOME_OTHER_METHOD;
+            public string SomeOtherMethod()
+                => ISegmentedContract.SecondSomeOtherMethod;
         }
     }
 }

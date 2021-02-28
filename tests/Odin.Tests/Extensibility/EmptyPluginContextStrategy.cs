@@ -1,9 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿//-----------------------------------------------------------------------
+// <copyright>
+//      Created by Matt Weber <matt@badecho.com>
+//      Copyright @ 2021 Bad Echo LLC. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
 using System.Composition.Hosting;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BadEcho.Odin.Extensibility.Hosting;
 
 namespace BadEcho.Odin.Tests.Extensibility

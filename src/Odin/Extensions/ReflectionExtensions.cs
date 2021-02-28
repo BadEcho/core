@@ -20,7 +20,7 @@ namespace BadEcho.Odin.Extensions
         private static readonly Dictionary<Type, ConstructorInfo> _TypeConstructorMap 
             = new();
 
-        private static readonly object _ConstructorSyncObject 
+        private static readonly object _ConstructorLock 
             = new();
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace BadEcho.Odin.Extensions
         {
             Require.NotNull(type, nameof(type));
 
-            lock (_ConstructorSyncObject)
+            lock (_ConstructorLock)
             {
                 if (_TypeConstructorMap.ContainsKey(type))
                     return _TypeConstructorMap[type];

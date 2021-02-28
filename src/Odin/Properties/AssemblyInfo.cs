@@ -30,10 +30,16 @@ using System.Runtime.InteropServices;
                            Justification = "If method info is null, I rather an exception be thrown prior to dynamic proxy creation.")]
 
 [assembly: SuppressMessage("Style", 
-                           "IDE0022:Use expression body for methods", 
-                           Justification = "Rather disgusting when a generic type constraint is involved.", 
+                           "IDE0022:Use expression body for methods",
                            Scope = "member", 
-                           Target = "~M:BadEcho.Odin.Extensions.ReflectionExtensions.GetAttribute``1(System.Reflection.ICustomAttributeProvider)~``0")]
+                           Target = "~M:BadEcho.Odin.Extensions.ReflectionExtensions.GetAttribute``1(System.Reflection.ICustomAttributeProvider)~``0",
+                           Justification = "Rather disgusting when a generic type constraint is involved.")]
+
+[assembly: SuppressMessage("Style",
+                           "IDE0022:Use expression body for methods",
+                           Scope = "member",
+                           Target = "~M:BadEcho.Odin.Extensibility.Hosting.PluginHost.LoadAdapter``1~BadEcho.Odin.Extensibility.Hosting.HostAdapter{``0}",
+                           Justification = "Rather disgusting when a generic type constraint is involved.")]
 
 [assembly: SuppressMessage("Style", 
                            "IDE0021:Use expression body for constructors", 
@@ -52,3 +58,9 @@ using System.Runtime.InteropServices;
                            Scope = "member", 
                            Target = "~M:BadEcho.Odin.Extensibility.FilterableFamilyAttribute.#ctor(System.String,System.String)",
                            Justification = "Accessors are available for processed constructor input, which is an acceptable reason to suppress this warning as evidenced by several of Microsoft's own attributes that build non-primitive typed properties from primitive typed parameters. Performing validation of the string to ensure it is a valid GUID saves us loads of effort down the road when dealing with imported metadata. Implementing the property explicitly and creating a string property in order to satisfy this rule does not work as it breaks MEF's MetadataViewProvider.")]
+
+[assembly: SuppressMessage("Design", 
+                           "CA1019:Define accessors for attribute arguments",
+                           Scope = "member", 
+                           Target = "~M:BadEcho.Odin.Extensibility.RoutableAttribute.#ctor(System.String,System.Type)",
+                           Justification = "Accessors are available for processed constructor input, which is an acceptable reason to suppress this warning as evidenced by several of Microsoft's own attributes that build non-primitive typed properties from primitive typed parameters. Performing validation of the string to ensure it is a valid GUID saves us loads of effort down the road when dealing with imported metadata. Implementing the property explicitly and creating a string property in order to satisfy this rule does not work as it breaks MEF's MetadataViewProvider. The segmented contract type parameter is also processed by the constructor, and accessors for it are available in the form of the base ExportAttribute class's ContractType property, which the segmented type influences.")]

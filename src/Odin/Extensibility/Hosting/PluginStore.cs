@@ -18,15 +18,18 @@ namespace BadEcho.Odin.Extensibility.Hosting
     /// <summary>
     /// Provides the primary container of the various contexts that make up Odin's Extensibility framework.
     /// </summary>
-    [FilterableFamily(name: "hi", familyId: "2")]
     internal sealed class PluginStore : IDisposable
     {
+        private const LazyThreadSafetyMode LAZY_MODE = LazyThreadSafetyMode.ExecutionAndPublication;
+
         private readonly ConcurrentDictionary<Type, IHostAdapter> _hostAdapters
             = new();
 
-        private readonly Lazy<LazyConcurrentDictionary<Guid, PluginContext>> _filterableContexts;
-        private readonly Lazy<PluginContext> _globalContext;
         private readonly IExtensibilityConfiguration _configuration;
+        
+        private readonly Lazy<PluginContext> _globalContext;
+        private readonly Lazy<LazyConcurrentDictionary<Guid, PluginContext>> _filterableContexts;
+        private readonly Lazy<IReadOnlyDictionary<Guid, IFilterableFamilyMetadata>> _filterableFamilies;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PluginStore"/> class.
@@ -40,14 +43,16 @@ namespace BadEcho.Odin.Extensibility.Hosting
             Require.NotNull(configuration, nameof(configuration));
 
             _configuration = configuration;
-            
+
             _globalContext = new Lazy<PluginContext>(
-                () => new PluginContext(new GlobalPluginContextStrategy(configuration.PluginDirectory)),
-                LazyThreadSafetyMode.ExecutionAndPublication);
+                () => new PluginContext(new GlobalPluginContextStrategy(configuration.GetFullPathToPlugins())),
+                LAZY_MODE);
+
+            _filterableFamilies = new Lazy<IReadOnlyDictionary<Guid, IFilterableFamilyMetadata>>(
+                InitializeFilterableFamilies, LAZY_MODE);
 
             _filterableContexts = new Lazy<LazyConcurrentDictionary<Guid, PluginContext>>(
-                InitializeFilterableContexts,
-                LazyThreadSafetyMode.ExecutionAndPublication);
+                InitializeFilterableContexts, LAZY_MODE);
         }
 
         /// <summary>
@@ -69,8 +74,14 @@ namespace BadEcho.Odin.Extensibility.Hosting
         /// belonging to their filterable family. Contexts are not initialized until an attempt to access them is made through this
         /// dictionary.
         /// </remarks>
-        public IReadOnlyDictionary<Guid, PluginContext?> FilterableContexts
+        public IReadOnlyDictionary<Guid, PluginContext> FilterableContexts
             => _filterableContexts.Value;
+
+        /// <summary>
+        /// Gets a dictionary containing filterable family identifiers paired with metadata describing the family.
+        /// </summary>
+        public IReadOnlyDictionary<Guid, IFilterableFamilyMetadata> FilterableFamilies
+            => _filterableFamilies.Value;
 
         /// <summary>
         /// Retrieves a host adapter for the specified segmented contract type, initializing a new host adapter instance if one does
@@ -111,17 +122,24 @@ namespace BadEcho.Odin.Extensibility.Hosting
                 }
             }
         }
+        
+        private Dictionary<Guid, IFilterableFamilyMetadata> InitializeFilterableFamilies()
+        {
+            return GlobalContext.Load<IFilterableFamily, FilterableFamilyMetadataView>()
+                                .Select(f => f.Metadata)
+                                .ToDictionary<IFilterableFamilyMetadata, Guid>(kv => kv.FamilyId);
+        }
 
         private LazyConcurrentDictionary<Guid, PluginContext> InitializeFilterableContexts()
         {
             var filterableContexts
-                = new LazyConcurrentDictionary<Guid, PluginContext>(LazyThreadSafetyMode.ExecutionAndPublication);
+                = new LazyConcurrentDictionary<Guid, PluginContext>(LAZY_MODE);
 
             IEnumerable<Guid> familyIds = GlobalContext.Load<IFilterableFamily, FilterableFamilyMetadataView>()
                                                        .Select(f => f.Metadata.FamilyId);
             foreach (var familyId in familyIds)
             {
-                var filterableStrategy = new FilterablePluginContextStrategy(_configuration.PluginDirectory, familyId);
+                var filterableStrategy = new FilterablePluginContextStrategy(_configuration.GetFullPathToPlugins(), familyId);
 
                 filterableContexts.GetOrAdd(familyId, () => new PluginContext(filterableStrategy));
             }

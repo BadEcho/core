@@ -18,7 +18,7 @@ namespace BadEcho.Odin.Tests.Configuration
     public class ConfigurationProviderTests
     {
         [Fact]
-        public void Json_GetExtensibilityConfiguration()
+        public void GetExtensibilityConfiguration_JsonReturnsValid()
         {
             var builder = new ConfigurationBuilder()
                           .SetBasePath(Directory.GetCurrentDirectory())
@@ -32,7 +32,7 @@ namespace BadEcho.Odin.Tests.Configuration
         }
 
         [Fact]
-        public void Xml_GetExtensibilityConfiguration()
+        public void GetExtensibilityConfiguration_Xml_ReturnsValid()
         {
             var extensibility = ExtensibilityConfigurationProvider.LoadConfiguration();
 
@@ -41,7 +41,7 @@ namespace BadEcho.Odin.Tests.Configuration
 
         private static void ValidateConfiguration(IExtensibilityConfiguration extensibility)
         {
-            Assert.Equal("plugins", extensibility.PluginDirectory);
+            Assert.Equal("testPlugins", extensibility.PluginDirectory);
             Assert.NotEmpty(extensibility.SegmentedContracts);
 
             var contract = extensibility.SegmentedContracts.First();

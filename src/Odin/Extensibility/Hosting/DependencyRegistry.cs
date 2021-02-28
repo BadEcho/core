@@ -17,6 +17,9 @@ namespace BadEcho.Odin.Extensibility.Hosting
     /// <typeparam name="T">The type of object depended upon by a pluggable part.</typeparam>
     public abstract class DependencyRegistry<T> : IConventionProvider
     {
+        private static readonly object _ArmedLock = new();
+        private static T? _ArmedDependency;
+
         private readonly string _contractName;
 
         /// <summary>
@@ -27,7 +30,7 @@ namespace BadEcho.Odin.Extensibility.Hosting
         {
             _contractName = contractName;
 
-            Dependency = ArmedDependency;
+            Dependency = _ArmedDependency;
         }
 
         /// <summary>
@@ -37,11 +40,40 @@ namespace BadEcho.Odin.Extensibility.Hosting
          { get; }
 
         /// <summary>
-        /// Gets or sets a dependency object armed for injection into a pluggable part.
+        /// Executes a method that is dependent on the provided dependency value within a context that guarantees
+        /// that the provided dependency value is armed throughout the method's execution.
         /// </summary>
-        [field: ThreadStatic]
-        internal static T? ArmedDependency
-        { get; set; }
+        /// <param name="dependency">
+        /// The dependency value to arm for the duration of the method's execution.
+        /// </param>
+        /// <param name="method">The method to execute within the armed context.</param>
+        internal static void ExecuteWhileArmed(T dependency, Action method)
+        {
+            lock (_ArmedLock)
+            {
+                _ArmedDependency = dependency;
+
+                method();
+            }
+        }
+
+        /// <summary>
+        /// Executes a method that is dependent on the provided dependency value within a context that guarantees
+        /// that the provided dependency value is armed throughout the method's execution.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the value returned by the provided method.</typeparam>
+        /// <param name="dependency">The dependency value to arm for the duration of the method's execution.</param>
+        /// <param name="method">The method to execute within the armed context.</param>
+        /// <returns>The results of executing <c>method</c> within the armed context.</returns>
+        internal static TResult ExecuteWhileArmed<TResult>(T dependency, Func<TResult> method)
+        {
+            lock (_ArmedLock)
+            {
+                _ArmedDependency = dependency;
+
+                return method();
+            }
+        }
 
         /// <inheritdoc/>
         public void ConfigureRules(ConventionBuilder conventions)

@@ -18,7 +18,7 @@ namespace BadEcho.Odin.Extensibility
     /// </summary>
     [MetadataAttribute]
     [AttributeUsage(
-        AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method | AttributeTargets.Class)]
+        AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method | AttributeTargets.Class, Inherited = false)]
     public sealed class FilterableAttribute : ExportAttribute, IFilterableMetadata
     {
         /// <summary>
@@ -29,18 +29,18 @@ namespace BadEcho.Odin.Extensibility
         public FilterableAttribute(string familyId, Type partType)
             : base(typeof(IFilterable))
         {
-            Require.NotNull(partType, nameof(partType));
             Require.NotNull(familyId, nameof(familyId));
+            Require.NotNull(partType, nameof(partType));
             
             PartType = partType;
 
-            if (!Guid.TryParse(familyId, out Guid parsedIdentifier))
+            if (!Guid.TryParse(familyId, out Guid parsedId))
             {
                 throw new ArgumentException(Strings.FamilyIdNotValid.InvariantFormat(familyId),
                                             nameof(familyId));
             }
 
-            FamilyId = parsedIdentifier;
+            FamilyId = parsedId;
         }
         
         /// <inheritdoc/>

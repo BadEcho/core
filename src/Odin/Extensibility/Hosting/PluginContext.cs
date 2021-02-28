@@ -27,7 +27,7 @@ namespace BadEcho.Odin.Extensibility.Hosting
             => _container = strategy.CreateContainer();
 
         /// <summary>
-        /// Retrieves all exports that match the specified generic type parameter.
+        /// Retrieves all exports that fulfill the specified generic contract type.
         /// </summary>
         /// <typeparam name="TContract">The contract type whose exports should be loaded.</typeparam>
         /// <returns>A collection of exported <typeparamref name="TContract"/> values.</returns>
@@ -35,7 +35,7 @@ namespace BadEcho.Odin.Extensibility.Hosting
             => _container.GetExports<TContract>();
 
         /// <summary>
-        /// Retrieves all exports and accompanying metadata that match the specified generic type parameter.
+        /// Retrieves all exports and accompanying metadata that fulfill the specified generic contract type.
         /// </summary>
         /// <typeparam name="TContract">The contract type whose exports should be loaded.</typeparam>
         /// <typeparam name="TMetadata">The metadata view type associated with the exported contract type.</typeparam>
@@ -44,11 +44,11 @@ namespace BadEcho.Odin.Extensibility.Hosting
             => _container.GetExports<Lazy<TContract, TMetadata>>();
 
         /// <summary>
-        /// Injects exports into the provided pluggable attributed parts.
+        /// Injects exports into the provided attributed pluggable part.
         /// </summary>
-        /// <param name="pluggableParts">An object containing loose import attributions.</param>
-        public void Inject(object pluggableParts) 
-            => _container.SatisfyImports(pluggableParts);
+        /// <param name="pluggablePart">An object containing loose import attributions.</param>
+        public void Inject(object pluggablePart) 
+            => _container.SatisfyImports(pluggablePart);
 
         /// <inheritdoc/>
         public void Dispose() 

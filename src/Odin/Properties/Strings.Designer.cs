@@ -106,6 +106,15 @@ namespace BadEcho.Odin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; is not a registered filterable family identity value. Registration of a filterable family requires a FilterableFamily export action..
+        /// </summary>
+        internal static string FamilyIdNotRegistered {
+            get {
+                return ResourceManager.GetString("FamilyIdNotRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid filterable family identity value. Values must be parseable as standard globally unique identifiers..
         /// </summary>
         internal static string FamilyIdNotValid {
@@ -120,6 +129,15 @@ namespace BadEcho.Odin.Properties {
         internal static string HostAdapterUnregisteredMethod {
             get {
                 return ResourceManager.GetString("HostAdapterUnregisteredMethod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Injection of exported parts into an attributed pluggable part of type &apos;{0}&apos; within a self-armed context requires said part to be assignable to the specified dependency value of type &apos;{1}&apos;..
+        /// </summary>
+        internal static string IncompatibleDependencyTypeForInjection {
+            get {
+                return ResourceManager.GetString("IncompatibleDependencyTypeForInjection", resourceCulture);
             }
         }
         
@@ -187,11 +205,47 @@ namespace BadEcho.Odin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Multiple exports for contract type &apos;{0}&apos; belong to the &apos;{1}&apos; filterable family; any part beyond the first of its type from a filterable context is ignored..
+        /// </summary>
+        internal static string MultipleExportsFoundForFamily {
+            get {
+                return ResourceManager.GetString("MultipleExportsFoundForFamily", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Multiple exports for required contract type &apos;{0}&apos; were found. Only a single provider should ever be available for contract types loaded as unique requirements..
+        /// </summary>
+        internal static string MultipleExportsFoundForRequiredContract {
+            get {
+                return ResourceManager.GetString("MultipleExportsFoundForRequiredContract", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Extensibility configuration lacks registration for contract &apos;{0}&apos;..
         /// </summary>
         internal static string NoContractInConfiguration {
             get {
                 return ResourceManager.GetString("NoContractInConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No export for contract type &apos;{0}&apos; belongs to the &apos;{1}&apos; filterable family..
+        /// </summary>
+        internal static string NoExportFoundForFamily {
+            get {
+                return ResourceManager.GetString("NoExportFoundForFamily", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No export for required contract type &apos;{0}&apos; was found. Components must be designed so that it isn&apos;t possible for required contracts to not be present, such as by exporting the required contract within the component&apos;s own assembly..
+        /// </summary>
+        internal static string NoExportFoundForRequiredContract {
+            get {
+                return ResourceManager.GetString("NoExportFoundForRequiredContract", resourceCulture);
             }
         }
         
@@ -210,6 +264,15 @@ namespace BadEcho.Odin.Properties {
         internal static string PluginFileLoadException {
             get {
                 return ResourceManager.GetString("PluginFileLoadException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid call-routable plugin identity value. Values must be parseable as standard globally unique identifiers..
+        /// </summary>
+        internal static string RoutablePluginIdNotValid {
+            get {
+                return ResourceManager.GetString("RoutablePluginIdNotValid", resourceCulture);
             }
         }
         
