@@ -88,9 +88,7 @@ namespace BadEcho.Odin.Logging
         /// <summary>
         /// Disables the default event listener created when this logger is used.
         /// </summary>
-        public static void DisableDefaultListener()
-        {
-            _Listener.DisableEvents(Source);
-        }
+        public static void DisableDefaultListener() 
+            => _Listener.DisableEvents(Source);
     }
 }
