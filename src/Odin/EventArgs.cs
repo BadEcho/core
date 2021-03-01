@@ -12,7 +12,7 @@ namespace BadEcho.Odin
     /// <summary>
     /// Provides a base generic class for classes that contain event data.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The event data type.</typeparam>
     public class EventArgs<T> : EventArgs
     {
         /// <summary>
