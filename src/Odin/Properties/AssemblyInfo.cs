@@ -70,3 +70,15 @@ using System.Runtime.InteropServices;
                            Scope = "member", 
                            Target = "~M:BadEcho.Odin.Logging.Logger.#cctor",
                            Justification = "Normally this is a good idea, however we must guarantee the listener's initialization upon any method of this class being used so it can capture the messages; static fields that are initialized inline are marked with the beforefieldinit flag, and don't actually get initialized until code is called that accesses the static field in question. Because the listener isn't actually used directly by the messaging methods of this class, it'll actually never end up being initialized so it can do its job. The static constructor is the only way; the convenience offered by this class for the crucial area of concern of diagnostic messaging is large, and merits us doing things just a tad bit differently, as long as we go about it carefully and correctly.")]
+
+[assembly: SuppressMessage("Style", 
+                           "IDE0060:Remove unused parameter",
+                           Scope = "member", 
+                           Target = "~M:BadEcho.Odin.Extensions.ObjectExtensions.GetHashCode``2(``0,``1)~System.Int32",
+                           Justification = "This is an extension method that provides code useful to all objects. Whether or not the parameter is used is moot, it is very much required to be here.")]
+
+[assembly: SuppressMessage("Style", 
+                           "IDE0060:Remove unused parameter", 
+                           Scope = "member", 
+                           Target = "~M:BadEcho.Odin.Extensions.ObjectExtensions.GetHashCode``3(``0,``1,``2)~System.Int32",
+                           Justification = "This is an extension method that provides code useful to all objects. Whether or not the parameter is used is moot, it is very much required to be here.")]
