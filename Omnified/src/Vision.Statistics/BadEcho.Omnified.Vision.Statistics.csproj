@@ -15,6 +15,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Fenestra\BadEcho.Fenestra.csproj" />
+    <ProjectReference Include="..\..\..\src\Odin\BadEcho.Odin.csproj" />
+    <ProjectReference Include="..\Vision\BadEcho.Omnified.Vision.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,6 +41,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Properties\DesignTimeResources.xaml" Condition="'$(DesignTime)'=='true' OR ('($(SolutionPath)'!='' AND Exists('$(SolutionPath)') AND '$(BuildingInsideVisualStudio)'!='true' AND '$(BuildingInsideExpressionBlend)'!='true')">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+      <ContainsDesignTimeResources>true</ContainsDesignTimeResources>
+    </Page>
     <Page Update="Themes\Default\StatNameTextStyle.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
