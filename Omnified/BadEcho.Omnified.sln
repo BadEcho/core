@@ -19,7 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B5CF34AE-C64
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Omnified.Vision.Statistics", "src\Vision.Statistics\BadEcho.Omnified.Vision.Statistics.csproj", "{7CB796CE-5891-409C-B7BC-BEFB9C8B43FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BadEcho.Odin.XmlConfiguration", "..\src\BadEcho.Odin.XmlConfiguration\BadEcho.Odin.XmlConfiguration.csproj", "{113136D9-F591-4951-9FFB-ED2636B294BC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BadEcho.Odin.XmlConfiguration", "..\src\Odin.XmlConfiguration\BadEcho.Odin.XmlConfiguration.csproj", "{113136D9-F591-4951-9FFB-ED2636B294BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

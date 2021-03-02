@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\BadEcho.Odin.XmlConfiguration\BadEcho.Odin.XmlConfiguration.csproj" />
+    <ProjectReference Include="..\..\src\Odin.XmlConfiguration\BadEcho.Odin.XmlConfiguration.csproj" />
     <ProjectReference Include="..\..\src\Odin\BadEcho.Odin.csproj" />
   </ItemGroup>
 
