@@ -12,7 +12,7 @@ namespace BadEcho.Odin.XmlConfiguration
 {
     /// <summary>
     /// Provides a custom configuration section that supports being bound to an XML namespace.
-    /// </summary>
+    /// </summary> 
     internal class BindableConfigurationSection : ConfigurationSection
     {
         private const string XML_NAMESPACE_ATTRIBUTE_SCHEMA = "xmlns";
