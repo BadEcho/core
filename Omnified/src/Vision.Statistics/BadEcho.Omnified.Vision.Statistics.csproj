@@ -46,11 +46,11 @@
       <SubType>Designer</SubType>
       <ContainsDesignTimeResources>true</ContainsDesignTimeResources>
     </Page>
-    <Page Update="Themes\Default\StatNameTextStyle.xaml">
+    <Page Update="Themes\Default\StatisticNameTextStyle.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Themes\Default\StatTextStyle.xaml">
+    <Page Update="Themes\Default\StatisticTextStyle.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
