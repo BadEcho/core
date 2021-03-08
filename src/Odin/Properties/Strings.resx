@@ -176,4 +176,7 @@
   <data name="IncompatibleDependencyTypeForInjection" xml:space="preserve">
     <value>Injection of exported parts into an attributed pluggable part of type '{0}' within a self-armed context requires said part to be assignable to the specified dependency value of type '{1}'.</value>
   </data>
+  <data name="ExtensibilityConfigurationDirectoryNotFound" xml:space="preserve">
+    <value>A plugin directory was explicitly specified in this application's configuration, however '{0}' does not exist. Please ensure that a desired plugin directory exists when configuring its use, or simply forego specifying an explicit plugin directory name if its existence cannot be guaranteed.</value>
+  </data>
 </root>

@@ -106,6 +106,15 @@ namespace BadEcho.Odin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A plugin directory was explicitly specified in this application&apos;s configuration, however &apos;{0}&apos; does not exist. Please ensure that a desired plugin directory exists when configuring its use, or simply forego specifying an explicit plugin directory name if its existence cannot be guaranteed..
+        /// </summary>
+        internal static string ExtensibilityConfigurationDirectoryNotFound {
+            get {
+                return ResourceManager.GetString("ExtensibilityConfigurationDirectoryNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; is not a registered filterable family identity value. Registration of a filterable family requires a FilterableFamily export action..
         /// </summary>
         internal static string FamilyIdNotRegistered {

@@ -12,7 +12,7 @@ using System.Windows.Markup;
                            "CA1501",
                            Scope = "type",
                            Target = "~T:BadEcho.Fenestra.Controls.OutlinedTextElement",
-                           Justification = "Base classes are Microsoft controlled, cannot influence their hierarchy.")]
+                           Justification = "Base classes are Microsoft controlled; cannot influence their hierarchy.")]
 
 [assembly:SuppressMessage("Microsoft.Design",
                           "CA1045",
