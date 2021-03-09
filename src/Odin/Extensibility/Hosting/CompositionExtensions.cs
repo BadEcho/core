@@ -10,8 +10,10 @@ using System.Collections.Generic;
 using System.Composition.Hosting;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
+using System.Threading;
 using BadEcho.Odin.Extensions;
 using BadEcho.Odin.Logging;
 using BadEcho.Odin.Properties;
@@ -24,6 +26,16 @@ namespace BadEcho.Odin.Extensibility.Hosting
     /// </summary>
     public static class CompositionExtensions
     {
+        private static readonly Lazy<IEnumerable<Assembly>> _ExtensibilityPointSnapshot
+            = new(CaptureExtensibilityPoints, LazyThreadSafetyMode.PublicationOnly);
+
+        /// <summary>
+        /// Gets all assemblies marked as extensibility points that were loaded at the time of the first Extensibility
+        /// operation.
+        /// </summary>
+        internal static IEnumerable<Assembly> ExtensibilityPointSnapshot
+            => _ExtensibilityPointSnapshot.Value;
+
         /// <summary>
         /// Adds part types from the assemblies found in the specified directory to this container configuration.
         /// </summary>
@@ -37,6 +49,17 @@ namespace BadEcho.Odin.Extensibility.Hosting
             return configuration.WithAssemblies(assemblies);
         }
 
+        /// <summary>
+        /// Adds part types from assemblies loaded into the current context that are marked as extensibility points.
+        /// </summary>
+        /// <param name="configuration">The current container configuration.</param>
+        /// <returns>An object that can be used to further configure the container.</returns>
+        public static ContainerConfiguration WithExtensibilityPoints(this ContainerConfiguration configuration)
+        {
+            Require.NotNull(configuration, nameof(configuration));
+
+            return configuration.WithAssemblies(ExtensibilityPointSnapshot);
+        }
 
         /// <summary>
         /// Loads all assemblies found in the specified directory for the purposes of exported part discovery.
@@ -70,6 +93,13 @@ namespace BadEcho.Odin.Extensibility.Hosting
             }
 
             return assemblies;
+        }
+        
+        private static IEnumerable<Assembly> CaptureExtensibilityPoints()
+        {
+            return AssemblyLoadContext.Default.Assemblies
+                                      .Where(assembly => assembly.GetCustomAttribute<ExtensibilityPointAttribute>() != null)
+                                      .ToList();
         }
     }
 }

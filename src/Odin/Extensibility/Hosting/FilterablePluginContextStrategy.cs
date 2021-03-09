@@ -38,7 +38,8 @@ namespace BadEcho.Odin.Extensibility.Hosting
         /// <inheritdoc/>
         public CompositionHost CreateContainer()
         {
-            var globalConfiguration = new ContainerConfiguration();
+            var globalConfiguration = new ContainerConfiguration()
+                .WithExtensibilityPoints();
 
             IEnumerable<Assembly> assemblies
                 = globalConfiguration.LoadFromDirectory(_pluginDirectory);

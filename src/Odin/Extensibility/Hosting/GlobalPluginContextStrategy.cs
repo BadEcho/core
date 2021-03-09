@@ -34,7 +34,8 @@ namespace BadEcho.Odin.Extensibility.Hosting
         public CompositionHost CreateContainer()
         {
             var configuration = new ContainerConfiguration()
-                .WithDirectory(_pluginDirectory);
+                .WithDirectory(_pluginDirectory)
+                .WithExtensibilityPoints();
 
             ConventionBuilder conventions = this.LoadConventions(configuration);
 
