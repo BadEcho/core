@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Odin\BadEcho.Odin.csproj" />
+  </ItemGroup>
+</Project>

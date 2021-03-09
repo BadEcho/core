@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using BadEcho.Odin.Extensibility;
 using BadEcho.Odin.Extensibility.Hosting;
+using BadEcho.Odin.Tests.ExtensibilityPoint;
 using Xunit;
 
 namespace BadEcho.Odin.Tests.Extensibility
@@ -128,6 +129,14 @@ namespace BadEcho.Odin.Tests.Extensibility
             var families = container.GetExports<Lazy<IFilterableFamily, FilterableFamilyMetadataView>>();
 
             Assert.Equal(4, families.Count());
+        }
+
+        [Fact]
+        public void GetExports_ExtensibilityPoint_ReturnsPart()
+        {
+            var container = _strategy.CreateContainer();
+            
+            Assert.NotNull(container.GetExport<IExtensibilityPart>());
         }
 
         private class ComposedDependency : IFakeDependency  

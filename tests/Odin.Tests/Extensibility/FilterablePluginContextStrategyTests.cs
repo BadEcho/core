@@ -9,6 +9,7 @@ using System;
 using System.IO;
 using System.Linq;
 using BadEcho.Odin.Extensibility.Hosting;
+using BadEcho.Odin.Tests.ExtensibilityPoint;
 using Xunit;
 
 namespace BadEcho.Odin.Tests.Extensibility
@@ -145,6 +146,15 @@ namespace BadEcho.Odin.Tests.Extensibility
                                        Assert.NotNull(part);
                                        Assert.Equal(dependency, part.Dependency);
                                    });
+        }
+
+        [Fact]
+        public void GetExports_ExtensibilityPart_ReturnsEmpty()
+        {
+            var strategy = new FilterablePluginContextStrategy(_path, FakeFilterableIds.AlphaFakeId);
+            var container = strategy.CreateContainer();
+
+            Assert.Empty(container.GetExports<IExtensibilityPart>());
         }
 
         private class ComposedDependency : IFakeDependency
