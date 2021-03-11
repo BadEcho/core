@@ -12,7 +12,7 @@ using BadEcho.Odin.Extensibility.Hosting;
 namespace BadEcho.Fenestra.Themes
 {
     /// <summary>
-    /// Provides a manager and importer of resources belonging to Fenestra applications and plugins.
+    /// Provides a manager and importer of resources belonging to Fenestra-powered applications and plugins.
     /// </summary>
     /// <remarks>
     /// <para>
@@ -23,15 +23,15 @@ namespace BadEcho.Fenestra.Themes
     /// <para>
     /// Naturally, this becomes difficult when operating within the context of a library (as the Fenestra framework itself does),
     /// as no notion of an <see cref="Application"/> definition exists within a library. The difficulty increases doubly so when
-    /// considering plugins that export graphical elements to the Fenestra application. Not only do these plugins lack an
+    /// considering plugins that export graphical elements to the WPF application. Not only do these plugins lack an
     /// <see cref="Application"/> definition, but they typically also lack an reference from the application hosting them. This
     /// means the host application has no way of accessing the resources if it wanted to explicitly merge them into its own
-    /// application-wide resource dictionary itself (which is a rather onerous and ridiculous requirement anyway that would only
+    /// application-scope resource dictionary itself (which is a rather onerous and ridiculous requirement anyway that would only
     /// tightly couple the host to the plugin).
     /// </para>
     /// <para>
     /// The <see cref="ResourceImporter"/> provides us with the means to get all of a library's resources merged into an
-    /// application-wide resource dictionary in a simple manner. All that is required by the library to engage in this process is
+    /// application-scoped resource dictionary in a simple manner. All that is required by the library to engage in this process is
     /// to export a <see cref="IResourceProvider"/> implementation that points to a root resource dictionary pointing to all other
     /// resources required by the assembly.
     /// </para>

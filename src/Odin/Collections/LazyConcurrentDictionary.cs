@@ -37,7 +37,7 @@ namespace BadEcho.Odin.Collections
         /// The <see cref="IEqualityComparer{T}"/> implementation to use when comparing keys.
         /// </param>
         /// <param name="lazyMode">
-        /// An enumeration values specifying how <see cref="Lazy{T}"/> instances synchronize access among multiple threads.
+        /// An enumeration value specifying how <see cref="Lazy{T}"/> instances synchronize access among multiple threads.
         /// </param>
         public LazyConcurrentDictionary(int concurrencyLevel,
                                         int capacity,
@@ -55,7 +55,7 @@ namespace BadEcho.Odin.Collections
         /// The <see cref="IEqualityComparer{T}"/> implementation to use when comparing keys.
         /// </param>
         /// <param name="lazyMode">
-        /// An enumeration values specifying how <see cref="Lazy{T}"/> instances synchronize access among multiple threads.
+        /// An enumeration value specifying how <see cref="Lazy{T}"/> instances synchronize access among multiple threads.
         /// </param>
         public LazyConcurrentDictionary(IEqualityComparer<TKey> comparer,
                                         LazyThreadSafetyMode lazyMode)
@@ -74,7 +74,7 @@ namespace BadEcho.Odin.Collections
         /// The initial number of elements that the <see cref="LazyConcurrentDictionary{TKey,TValue}"/> can contain.
         /// </param>
         /// <param name="lazyMode">
-        /// An enumeration values specifying how <see cref="Lazy{T}"/> instances synchronize access among multiple threads.
+        /// An enumeration value specifying how <see cref="Lazy{T}"/> instances synchronize access among multiple threads.
         /// </param>
         public LazyConcurrentDictionary(int concurrencyLevel,
                                         int capacity,
@@ -97,7 +97,7 @@ namespace BadEcho.Odin.Collections
         /// The <see cref="IEqualityComparer{T}"/> implementation to use when comparing keys.
         /// </param>
         /// <param name="lazyMode">
-        /// An enumeration values specifying how <see cref="Lazy{T}"/> instances synchronize access among multiple threads.
+        /// An enumeration value specifying how <see cref="Lazy{T}"/> instances synchronize access among multiple threads.
         /// </param>
         public LazyConcurrentDictionary(int concurrencyLevel,
                                         IEnumerable<KeyValuePair<TKey, Lazy<TValue>>> collection,
@@ -118,7 +118,7 @@ namespace BadEcho.Odin.Collections
         /// The <see cref="IEqualityComparer{T}"/> implementation to use when comparing keys.
         /// </param>
         /// <param name="lazyMode">
-        /// An enumeration values specifying how <see cref="Lazy{T}"/> instances synchronize access among multiple threads.
+        /// An enumeration value specifying how <see cref="Lazy{T}"/> instances synchronize access among multiple threads.
         /// </param>
         public LazyConcurrentDictionary(IEnumerable<KeyValuePair<TKey, Lazy<TValue>>> collection,
                                         IEqualityComparer<TKey> comparer,
@@ -135,7 +135,7 @@ namespace BadEcho.Odin.Collections
         /// A collection whose elements are copied to the new <see cref="LazyConcurrentDictionary{TKey, TValue}"/>.
         /// </param>
         /// <param name="lazyMode">
-        /// An enumeration values specifying how <see cref="Lazy{T}"/> instances synchronize access among multiple threads.
+        /// An enumeration value specifying how <see cref="Lazy{T}"/> instances synchronize access among multiple threads.
         /// </param>
         public LazyConcurrentDictionary(IEnumerable<KeyValuePair<TKey, Lazy<TValue>>> collection,
                                         LazyThreadSafetyMode lazyMode)
@@ -148,7 +148,7 @@ namespace BadEcho.Odin.Collections
         /// Initializes a new instance of the <see cref="LazyConcurrentDictionary{TKey, TValue}"/> class.
         /// </summary>
         /// <param name="lazyMode">
-        /// An enumeration values specifying how <see cref="Lazy{T}"/> instances synchronize access among multiple threads.
+        /// An enumeration value specifying how <see cref="Lazy{T}"/> instances synchronize access among multiple threads.
         /// </param>
         public LazyConcurrentDictionary(LazyThreadSafetyMode lazyMode)
         {

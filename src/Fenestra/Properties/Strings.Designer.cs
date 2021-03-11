@@ -68,5 +68,14 @@ namespace BadEcho.Fenestra.Properties {
                 return ResourceManager.GetString("ArgumentExceptionAlreadyBound", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pack URIs pointing to a referenced assembly resource file require the name of the assembly, which the provided assembly lacks..
+        /// </summary>
+        internal static string PackUriRequiresAssemblyName {
+            get {
+                return ResourceManager.GetString("PackUriRequiresAssemblyName", resourceCulture);
+            }
+        }
     }
 }

@@ -101,4 +101,7 @@
   <data name="ArgumentExceptionAlreadyBound" xml:space="preserve">
     <value>The provided data is already bound.</value>
   </data>
+  <data name="PackUriRequiresAssemblyName" xml:space="preserve">
+    <value>Pack URIs pointing to a referenced assembly resource file require the name of the assembly, which the provided assembly lacks.</value>
+  </data>
 </root>

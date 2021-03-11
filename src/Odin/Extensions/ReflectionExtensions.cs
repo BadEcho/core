@@ -110,5 +110,29 @@ namespace BadEcho.Odin.Extensions
         {
             return attributeProvider.GetAttributes<T>().FirstOrDefault();
         }
+
+        /// <summary>
+        /// Returns the identifiers that do not include any part of an assembly's name from the sequence of identifiers that make
+        /// up the <c>qualified-identifier</c> of the type's <c>namespace-declaration</c>.
+        /// </summary>
+        /// <param name="type">The type whose trailing namespace identifiers we're interested in.</param>
+        /// <returns>
+        /// The non-assembly related identifiers that make up the <c>qualified-identifier</c> of the <c>namespace-declaration</c>
+        /// of <c>type</c>; or an empty string if <c>type</c> has no namespace. 
+        /// </returns>
+        public static string GetNonAssemblyNamespaceIdentifiers(this Type type)
+        {
+            Require.NotNull(type, nameof(type));
+
+            // Technically if the assembly lacks a name, then there is nothing to remove from the namespace identifiers.
+            string assemblyShortName = type.Assembly.GetName().Name ?? string.Empty;
+            string[] assemblyIdentifiers = assemblyShortName.Split('.');
+
+            return type.Namespace?.Split('.')
+                       .Where(n => !assemblyIdentifiers.Contains(n))
+                       .DefaultIfEmpty(string.Empty)
+                       .Aggregate((x, y) => $"{x}.{y}")
+                ?? string.Empty;
+        }
     }
 }

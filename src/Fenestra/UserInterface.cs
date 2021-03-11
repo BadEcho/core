@@ -14,8 +14,8 @@ using System.Threading.Tasks;
 namespace BadEcho.Fenestra
 {
     /// <summary>
-    /// Provides a management interface and entry point for a hosted Fenestra application which will ensure that
-    /// the current application domain is in a state such that it becomes appropriate for using Fenestra-based
+    /// Provides a management interface and entry point for a Fenestra-powered application (whether hosted or standalone) which
+    /// will ensure that the current application context is in a state such that it becomes appropriate for using Fenestra-based
     /// objects.
     /// </summary>
     public static class UserInterface

@@ -2,11 +2,14 @@ using System.Diagnostics.CodeAnalysis;
 using BadEcho.Fenestra;
 using System.Windows;
 using System.Windows.Markup;
+using BadEcho.Odin.Extensibility;
 
 [assembly: XmlnsDefinition(Constants.Namespace, "BadEcho.Fenestra.Controls")]
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, 
                      ResourceDictionaryLocation.SourceAssembly)]
+
+[assembly: ExtensibilityPoint]
 
 [assembly: SuppressMessage("Microsoft.Maintainability",
                            "CA1501",
