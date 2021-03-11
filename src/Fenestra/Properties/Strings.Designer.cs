@@ -77,5 +77,14 @@ namespace BadEcho.Fenestra.Properties {
                 return ResourceManager.GetString("PackUriRequiresAssemblyName", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The imported resource URI  &apos;{0}&apos; is not a ResourceDictionary..
+        /// </summary>
+        internal static string ResourceUriNotResourceDictionary {
+            get {
+                return ResourceManager.GetString("ResourceUriNotResourceDictionary", resourceCulture);
+            }
+        }
     }
 }

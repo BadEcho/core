@@ -7,7 +7,7 @@
 
 using System;
 
-namespace BadEcho.Fenestra.Themes
+namespace BadEcho.Fenestra
 {
     /// <summary>
     /// Defines a provider of Fenestra-based resource information.

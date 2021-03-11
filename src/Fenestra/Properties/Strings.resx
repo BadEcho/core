@@ -104,4 +104,7 @@
   <data name="PackUriRequiresAssemblyName" xml:space="preserve">
     <value>Pack URIs pointing to a referenced assembly resource file require the name of the assembly, which the provided assembly lacks.</value>
   </data>
+  <data name="ResourceUriNotResourceDictionary" xml:space="preserve">
+    <value>The imported resource URI  '{0}' is not a ResourceDictionary.</value>
+  </data>
 </root>
