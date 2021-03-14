@@ -2,10 +2,10 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml">
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="StatTextStyle.xaml"/>
+        <ResourceDictionary Source="StatisticTextStyle.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
-    <Style x:Key="StatNameTextStyle" TargetType="{x:Type fenestra:OutlinedTextElement}" BasedOn="{StaticResource StatTextStyle}">
+    <Style x:Key="StatisticNameTextStyle" TargetType="{x:Type fenestra:OutlinedTextElement}" BasedOn="{StaticResource StatisticTextStyle}">
         <Setter Property="Margin" Value="15,15,0,0"/>
         <Setter Property="FontWeight" Value="Bold"/>
     </Style>

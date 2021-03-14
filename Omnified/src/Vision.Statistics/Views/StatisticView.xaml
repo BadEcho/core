@@ -8,6 +8,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <StackPanel Orientation="Horizontal">
-        <fenestra:OutlinedTextElement Style="{StaticResource StatNameTextStyle}" Text="Player Health"/>
+        <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}" Text="Player Health"/>
     </StackPanel>
 </UserControl>

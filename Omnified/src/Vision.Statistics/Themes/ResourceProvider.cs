@@ -7,21 +7,22 @@
 
 using System;
 using System.Composition;
+using BadEcho.Fenestra;
 
-namespace BadEcho.Fenestra.Themes
+namespace BadEcho.Omnified.Vision.Statistics.Themes
 {
     /// <summary>
-    /// Provides Fenestra framework resource access to a WPF application.
+    /// Provides access to resources belonging to the Statistics plugin for Vision.
     /// </summary>
-    [Export(typeof(DefaultResourceProvider))]
-    internal sealed class DefaultResourceProvider : IResourceProvider
+    [Export(typeof(IResourceProvider))]
+    internal sealed class ResourceProvider : IResourceProvider
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DefaultResourceProvider"/> class.
+        /// Initializes a new instance of the <see cref="ResourceProvider"/> class.
         /// </summary>
-        public DefaultResourceProvider()
+        public ResourceProvider()
         {
-            ResourceUri = PackUri.FromRelativePath<DefaultResourceProvider>("Root.xaml");
+            ResourceUri = PackUri.FromRelativePath<ResourceProvider>("Root.xaml");
         }
 
         /// <inheritdoc/>

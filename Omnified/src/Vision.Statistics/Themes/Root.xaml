@@ -6,6 +6,9 @@
 -->
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/BadEcho.Omnified.Vision.Statistics;component/Themes/Root.xaml"/>
+
+        <ResourceDictionary Source="Resources/StatisticTextStyle.xaml"/>
+        <ResourceDictionary Source="Resources/StatisticNameTextStyle.xaml"/>
+
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>
