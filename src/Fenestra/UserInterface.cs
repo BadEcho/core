@@ -103,6 +103,7 @@ namespace BadEcho.Fenestra
             // We want this behavior only to apply to standard TextBox controls.
             if (TEXT_BOX_VIEW_NAME != e.OriginalSource.GetType().Name)
                 return;
+
             // Text will be forcibly deselected if we let the standard event handlers run.
             e.Handled = true;
 
