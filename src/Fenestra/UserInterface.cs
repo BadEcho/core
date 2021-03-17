@@ -5,12 +5,15 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using BadEcho.Fenestra.Extensions;
+using BadEcho.Fenestra.Properties;
+using BadEcho.Odin.Threading;
 
 namespace BadEcho.Fenestra
 {
@@ -24,6 +27,11 @@ namespace BadEcho.Fenestra
         private const string TEXT_BOX_VIEW_NAME = "TextBoxView";
 
         private static readonly ResourceKey _Footprint = new FootprintKey();
+
+        /// <summary>
+        /// Occurs when an exception is thrown by the Fenestra-based application and not handled.
+        /// </summary>
+        public static event EventHandler<ThreadExceptionEventArgs>? UnhandledException;
 
         /// <summary>
         /// Ensures that an environment suitable for a Fenestra-powered application has been built by making sure that a properly
@@ -63,6 +71,8 @@ namespace BadEcho.Fenestra
             
             application.ImportResources();
             RegisterClassHandlers();
+
+            application.DispatcherUnhandledException += HandleDispatcherUnhandledException;
         }
 
         /// <summary>
@@ -120,6 +130,37 @@ namespace BadEcho.Fenestra
             TextBox textBox = (TextBox) e.OriginalSource;
 
             textBox.Invoke(textBox.SelectAll, DispatcherPriority.Input);
+        }
+
+        private static void HandleDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            var threadEventArgs = new ThreadExceptionEventArgs(e.Exception);
+            bool isProcessed = false;
+
+            EventHandler<ThreadExceptionEventArgs>? unhandledException = UnhandledException;
+
+            if (unhandledException != null)
+            {
+                isProcessed = true;
+                unhandledException(sender, threadEventArgs);
+            }
+
+            if (!threadEventArgs.Handled)
+            {
+                var dispatcher = (Dispatcher) sender;
+                dispatcher.UnhandledException -= HandleDispatcherUnhandledException;
+
+                if (e.Exception is EngineException {InnerException: { } innerException} engineException)
+                {
+                    throw new EngineException(engineException.Message,
+                                              innerException,
+                                              isProcessed);
+                }
+
+                throw new EngineException(Strings.FenestraDispatcherError, e.Exception, isProcessed);
+            }
+
+            e.Handled = true;
         }
 
         /// <summary>

@@ -84,9 +84,8 @@ namespace BadEcho.Odin.XmlConfiguration
         {
             MissingType 
                 = (MissingConfigurationType?) info.GetValue(nameof(MissingType), typeof(MissingConfigurationType));
-
-            MissingEntityExpression 
-                = (string?) info.GetValue(nameof(MissingEntityExpression), typeof(string));
+            
+            MissingEntityExpression = info.GetString(nameof(MissingEntityExpression));
         }
 
         /// <summary>

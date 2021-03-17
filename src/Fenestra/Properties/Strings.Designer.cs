@@ -70,6 +70,15 @@ namespace BadEcho.Fenestra.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Fenestra dispatcher must be shut down due to an unhandled error caused by one of its components..
+        /// </summary>
+        internal static string FenestraDispatcherError {
+            get {
+                return ResourceManager.GetString("FenestraDispatcherError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pack URIs pointing to a referenced assembly resource file require the name of the assembly, which the provided assembly lacks..
         /// </summary>
         internal static string PackUriRequiresAssemblyName {

@@ -45,7 +45,7 @@ using System.Runtime.InteropServices;
                            "IDE0021:Use expression body for constructors", 
                            Scope = "type", 
                            Target = "~T:BadEcho.Odin.Collections.LazyConcurrentDictionary`2",
-                           Justification = "All the constructors make call to base constructors, and expression bodies don't look appetizing at all next to such invocations.")]
+                           Justification = "All the constructors make calls to base constructors, and expression bodies don't look appetizing at all next to such invocations.")]
 
 [assembly: SuppressMessage("Design", 
                            "CA1019:Define accessors for attribute arguments", 
