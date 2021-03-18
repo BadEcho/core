@@ -20,9 +20,10 @@ namespace BadEcho.Omnified.Vision.Statistics.Views
     /// </summary>
     public partial class StatisticView : UserControl
     {
-        public StatisticView()
-        {
-            InitializeComponent();
-        }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StatisticView"/> class.
+        /// </summary>
+        public StatisticView() 
+            => InitializeComponent();
     }
 }

@@ -19,10 +19,8 @@ namespace BadEcho.Fenestra.Themes
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultResourceProvider"/> class.
         /// </summary>
-        public DefaultResourceProvider()
-        {
-            ResourceUri = PackUri.FromRelativePath<DefaultResourceProvider>("Root.xaml");
-        }
+        public DefaultResourceProvider() 
+            => ResourceUri = PackUri.FromRelativePath<DefaultResourceProvider>("Root.xaml");
 
         /// <inheritdoc/>
         public Uri ResourceUri 

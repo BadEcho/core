@@ -20,10 +20,8 @@ namespace BadEcho.Omnified.Vision.Statistics.Themes
         /// <summary>
         /// Initializes a new instance of the <see cref="ResourceProvider"/> class.
         /// </summary>
-        public ResourceProvider()
-        {
-            ResourceUri = PackUri.FromRelativePath<ResourceProvider>("Root.xaml");
-        }
+        public ResourceProvider() 
+            => ResourceUri = PackUri.FromRelativePath<ResourceProvider>("Root.xaml");
 
         /// <inheritdoc/>
         public Uri ResourceUri 
