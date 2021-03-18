@@ -5,10 +5,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using BadEcho.Odin.Extensions;
 using System.Collections.Generic;
-using BadEcho.Fenestra.Properties;
 using BadEcho.Odin;
 
 namespace BadEcho.Fenestra.ViewModels
@@ -36,16 +34,14 @@ namespace BadEcho.Fenestra.ViewModels
         {
             Require.NotNull(model, nameof(model));
 
-            // Rebinding bound data should never be done as a means to refresh the display of said data.
-            if (_boundData.Contains(model))
-                throw new ArgumentException(Strings.ArgumentExceptionAlreadyBound, nameof(model));
-
             if (UnbindOnBind && !model.Equals<T>(ActiveModel))
                 Unbind();
 
             OnBinding(model);
 
-            _boundData.Add(model);
+            if (!_boundData.Contains(model)) 
+                _boundData.Add(model);
+
             ActiveModel = model;
         }
 

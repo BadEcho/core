@@ -61,15 +61,6 @@ namespace BadEcho.Fenestra.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The provided data is already bound..
-        /// </summary>
-        internal static string ArgumentExceptionAlreadyBound {
-            get {
-                return ResourceManager.GetString("ArgumentExceptionAlreadyBound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The Fenestra dispatcher must be shut down due to an unhandled error caused by one of its components..
         /// </summary>
         internal static string FenestraDispatcherError {

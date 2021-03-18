@@ -231,7 +231,7 @@ namespace BadEcho.Fenestra.Controls
         public TextDecorationCollection TextDecorations
         {
             get => (TextDecorationCollection) GetValue(TextDecorationsProperty);
-            private set => SetValue(TextDecorationsProperty, value);
+            private init => SetValue(TextDecorationsProperty, value);
         }
 
         /// <summary>

@@ -21,9 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Omnified.Vision.Sta
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Odin.XmlConfiguration", "..\src\Odin.XmlConfiguration\BadEcho.Odin.XmlConfiguration.csproj", "{113136D9-F591-4951-9FFB-ED2636B294BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BadEcho.Odin.Tests.ExtensibilityPoint", "..\tests\Odin.Tests.ExtensibilityPoint\BadEcho.Odin.Tests.ExtensibilityPoint.csproj", "{2CF2BFEC-F723-4E82-AF70-3136F7786676}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Odin.Tests.ExtensibilityPoint", "..\tests\Odin.Tests.ExtensibilityPoint\BadEcho.Odin.Tests.ExtensibilityPoint.csproj", "{2CF2BFEC-F723-4E82-AF70-3136F7786676}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BadEcho.Fenestra.Tests", "..\tests\Fenestra.Tests\BadEcho.Fenestra.Tests.csproj", "{4B8FC7AE-8E29-46C3-8B4D-4F39FCAC1794}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Fenestra.Tests", "..\tests\Fenestra.Tests\BadEcho.Fenestra.Tests.csproj", "{4B8FC7AE-8E29-46C3-8B4D-4F39FCAC1794}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
