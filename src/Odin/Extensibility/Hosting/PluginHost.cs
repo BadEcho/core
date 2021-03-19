@@ -165,7 +165,7 @@ namespace BadEcho.Odin.Extensibility.Hosting
         public static TContract LoadRequirement<TContract>()
         {
             var parts = Store.GlobalContext.Load<TContract>();
-            TContract uniquePart = default;
+            TContract? uniquePart = default;
 
             foreach (var part in parts)
             {

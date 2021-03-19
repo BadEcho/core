@@ -49,10 +49,10 @@ namespace BadEcho.Fenestra.ViewModels
         /// Unbinds data from this view model, causing it to no longer be represented in a view.
         /// </summary>
         /// <param name="model">
-        /// Optional. The data to unbind from this view model, or <c>null</c> to unbind the current <see cref="ActiveModel"/>.
+        /// The data to unbind from this view model, or <c>null</c> to unbind the current <see cref="ActiveModel"/>.
         /// </param>
-        /// <returns>True if <c>model</c> or the current <see cref="ActiveModel"/> was unbound; otherwise, false.</returns>
-        public bool Unbind(T model = default)
+        /// <returns>True if <c>model</c> was unbound; otherwise, false.</returns>
+        public bool Unbind(T? model)
         {
             model ??= ActiveModel;
 
@@ -68,6 +68,13 @@ namespace BadEcho.Fenestra.ViewModels
 
             return true;
         }
+
+        /// <summary>
+        /// Unbinds the currently active model from the view model, causing it to no longer be represented in a view.
+        /// </summary>
+        /// <returns>True if the current <see cref="ActiveModel"/> was unbound; otherwise, false.</returns>
+        public bool Unbind()
+            => Unbind(ActiveModel);
 
         /// <summary>
         /// Gets a value indicating if existing data must be explicitly unbound before the binding of new data.
