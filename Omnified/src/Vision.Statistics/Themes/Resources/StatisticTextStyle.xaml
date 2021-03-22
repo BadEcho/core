@@ -11,7 +11,7 @@
     <FontFamily x:Key="Quattrocento">pack://application:,,,/Fonts/#Quattrocento Sans</FontFamily>
 
     <Style x:Key="StatisticTextStyle" TargetType="{x:Type fenestra:OutlinedTextElement}">
-        <Setter Property="Margin" Value="30,15,0,0"/>
+        <Setter Property="Margin" Value="15,15,0,0"/>
         <Setter Property="FontSize" Value="21.3"/>
         <Setter Property="Fill" Value="#f8f8ff"/>
         <Setter Property="Stroke" Value="#CC000000"/>

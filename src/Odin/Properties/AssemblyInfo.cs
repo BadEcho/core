@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 [assembly: Guid("c23f1588-7af9-4d9e-83af-15e922501b7f")]
 
 #if RELEASE
-[assembly: InternalsVisibleTo("BadEcho.Odin.Tests,PublicKey="+BuildInfo.PUBLIC_KEY)]
+[assembly: InternalsVisibleTo("BadEcho.Odin.Tests,PublicKey="+BuildInfo.PublicKey)]
 #else
 [assembly: InternalsVisibleTo("BadEcho.Odin.Tests")]
 #endif

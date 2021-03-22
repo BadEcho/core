@@ -24,5 +24,14 @@
         <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
                                       Text="{Binding Name}"
                                       />
+        <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
+                                      Text="{Binding CurrentValue}"
+                                      />
+        <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
+                                      Text="/"
+                                      />
+        <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
+                                      Text="{Binding MaximumValue}"
+                                      />
     </StackPanel>
 </fenestra:View>
