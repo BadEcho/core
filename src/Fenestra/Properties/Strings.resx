@@ -107,4 +107,7 @@
   <data name="FenestraDispatcherError" xml:space="preserve">
     <value>The Fenestra dispatcher must be shut down due to an unhandled error caused by one of its components.</value>
   </data>
+  <data name="CannotAddNonBindingToMultiBinding" xml:space="preserve">
+    <value>Cannot add non-binding related data to multi-binding collection.</value>
+  </data>
 </root>

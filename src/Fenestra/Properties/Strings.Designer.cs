@@ -61,6 +61,15 @@ namespace BadEcho.Fenestra.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot add non-binding related data to multi-binding collection..
+        /// </summary>
+        internal static string CannotAddNonBindingToMultiBinding {
+            get {
+                return ResourceManager.GetString("CannotAddNonBindingToMultiBinding", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Fenestra dispatcher must be shut down due to an unhandled error caused by one of its components..
         /// </summary>
         internal static string FenestraDispatcherError {

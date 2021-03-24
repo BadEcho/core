@@ -35,3 +35,15 @@ using BadEcho.Odin.Extensibility;
                            Scope = "member", 
                            Target = "~M:BadEcho.Fenestra.EngineException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)",
                            Justification = "This constructor makes a call to the base constructor, and expression bodies don't look appetizing at all next to such an invocation.")]
+
+[assembly: SuppressMessage("Design", 
+                           "CA1033:Interface methods should be callable by child types", 
+                           Scope = "member", 
+                           Target = "~M:BadEcho.Fenestra.Markup.MultiBindingExtension.System#Windows#Markup#IAddChild#AddChild(System.Object)",
+                           Justification = "This is a proper use of explicit interface implementation, and is exactly how Microsoft implements this very same interface in its own binding class analogues.")]
+
+[assembly: SuppressMessage("Design", 
+                           "CA1033:Interface methods should be callable by child types", 
+                           Scope = "member", 
+                           Target = "~M:BadEcho.Fenestra.Markup.MultiBindingExtension.System#Windows#Markup#IAddChild#AddText(System.String)",
+                           Justification = "This is a proper use of explicit interface implementation, and is exactly how Microsoft implements this very same interface in its own binding class analogues.")]
