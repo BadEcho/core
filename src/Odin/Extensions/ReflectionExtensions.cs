@@ -24,6 +24,42 @@ namespace BadEcho.Odin.Extensions
             = new();
 
         /// <summary>
+        /// Determines if null is a legal value for this type.
+        /// </summary>
+        /// <param name="type">The type to check for instance nullability.</param>
+        /// <returns>True if instances of <c>type</c> can be null; otherwise, false.</returns>
+        /// <remarks>
+        /// Be careful in the manner in which <c>type</c> is procured prior to invoking this method, as it may affect its accuracy.
+        /// If the type was retrieved through a <c>typeof</c> expression, no issues will arise. If, however, <c>type</c> was
+        /// obtained by invoking <see cref="object.GetType()"/>, then know that calling this method on a struct results in that
+        /// struct getting boxed. This has implications for <see cref="Nullable{T}"/> objects, which, due to internal boxing logic,
+        /// will have their underlying value types returned, not the <see cref="Nullable{T}"/> types themselves. Because a
+        /// <see cref="Nullable{T}"/> object's underlying value type cannot be set to null, this method will end up returning an
+        /// incorrect result for such objects.
+        /// </remarks>
+        public static bool IsNullable(this Type type)
+        {
+            Require.NotNull(type, nameof(type));
+
+            return !type.IsValueType || Nullable.GetUnderlyingType(type) != null;
+        }
+
+        /// <summary>
+        /// Retrieves the default value for this type.
+        /// </summary>
+        /// <param name="type">The type to get the default value for.</param>
+        /// <returns>The default value for <c>type</c>.</returns>
+        /// <remarks>
+        /// TODO: Comment on IsNullable use.
+        /// </remarks>
+        public static object? GetDefaultValue(this Type type)
+        {
+            Require.NotNull(type, nameof(type));
+
+            return type.IsNullable() ? null : Activator.CreateInstance(type);
+        }
+
+        /// <summary>
         /// Finds a constructor for this type which accepts the parameter types in the specified array.
         /// </summary>
         /// <param name="type">The type to find a constructor for.</param>
