@@ -6,6 +6,7 @@ using BadEcho.Odin.Extensibility;
 
 [assembly: XmlnsDefinition(Constants.Namespace, "BadEcho.Fenestra.Controls")]
 [assembly: XmlnsDefinition(Constants.Namespace, "BadEcho.Fenestra.Views")]
+[assembly: XmlnsDefinition(Constants.Namespace, "BadEcho.Fenestra.Markup")]
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, 
                      ResourceDictionaryLocation.SourceAssembly)]

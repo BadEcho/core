@@ -78,6 +78,12 @@ namespace BadEcho.Fenestra
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="TransientBinder"/> class.
+        /// </summary>
+        protected TransientBinder()
+        { }
+
+        /// <summary>
         /// Gets or sets the object to use as the binding source.
         /// </summary>
         public object? Source
@@ -134,7 +140,7 @@ namespace BadEcho.Fenestra
 
             if (sourceValue != GetValue(TargetProperty))
             {
-                BypassHandlers(() => SetValue(TargetProperty, sourceValue));
+                BypassHandlers(() => WriteTargetValue(sourceValue));
             }
         }
 
@@ -149,6 +155,34 @@ namespace BadEcho.Fenestra
             {
                 BypassHandlers(() => WriteSourceValue(targetValue));
             }
+        }
+
+        /// <summary>
+        /// Commits the provided value to the target property.
+        /// </summary>
+        /// <param name="value">The value to set the target property to.</param>
+        /// <remarks>
+        /// This method is executed by <see cref="TransientBinder"/> within a context where event handlers are bypassed, meaning
+        /// that any changes to the target property's value will not result in a binding update if one were to go off.
+        /// </remarks>
+        protected virtual void WriteTargetValue(object value)
+            => SetValue(TargetProperty, value);
+
+        /// <summary>
+        /// Commits the provided value to the source property.
+        /// </summary>
+        /// <param name="value">The value to set the source property to.</param>
+        /// <remarks>
+        /// This method is executed by <see cref="TransientBinder"/> within a context where event handlers are bypassed, meaning
+        /// that any changes to the source property's value will not result in a binding update if one were to go off.
+        /// </remarks>
+        protected virtual void WriteSourceValue(object value)
+        {
+            SetValue(SourceProperty, value);
+
+            BindingExpressionBase? bindingExpression = BindingOperations.GetBindingExpressionBase(this, SourceProperty);
+
+            bindingExpression?.UpdateSource();
         }
 
         /// <summary>
@@ -190,15 +224,6 @@ namespace BadEcho.Fenestra
             action();
 
             _handlersBypassed = false;
-        }
-
-        private void WriteSourceValue(object value)
-        {
-            SetValue(SourceProperty, value);
-
-            BindingExpressionBase? bindingExpression = BindingOperations.GetBindingExpressionBase(this, SourceProperty);
-
-            bindingExpression?.UpdateSource();
         }
     }
 }

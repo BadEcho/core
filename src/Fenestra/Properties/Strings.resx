@@ -110,4 +110,10 @@
   <data name="CannotAddNonBindingToMultiBinding" xml:space="preserve">
     <value>Cannot add non-binding related data to multi-binding collection.</value>
   </data>
+  <data name="NotSteppableSourceValue" xml:space="preserve">
+    <value>A stepped binding requires the source value be able to be converted to a 32-bit signed integer.</value>
+  </data>
+  <data name="NotSteppableTargetValue" xml:space="preserve">
+    <value>A stepped binding requires the target value be able to be converted to a 32-bit signed integer.</value>
+  </data>
 </root>

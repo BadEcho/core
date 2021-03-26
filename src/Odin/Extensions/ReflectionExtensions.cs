@@ -29,13 +29,18 @@ namespace BadEcho.Odin.Extensions
         /// <param name="type">The type to check for instance nullability.</param>
         /// <returns>True if instances of <c>type</c> can be null; otherwise, false.</returns>
         /// <remarks>
+        /// <para>
         /// Be careful in the manner in which <c>type</c> is procured prior to invoking this method, as it may affect its accuracy.
         /// If the type was retrieved through a <c>typeof</c> expression, no issues will arise. If, however, <c>type</c> was
         /// obtained by invoking <see cref="object.GetType()"/>, then know that calling this method on a struct results in that
-        /// struct getting boxed. This has implications for <see cref="Nullable{T}"/> objects, which, due to internal boxing logic,
+        /// struct getting boxed.
+        /// </para>
+        /// <para>
+        /// This has implications for <see cref="Nullable{T}"/> objects, which, due to internal boxing logic,
         /// will have their underlying value types returned, not the <see cref="Nullable{T}"/> types themselves. Because a
         /// <see cref="Nullable{T}"/> object's underlying value type cannot be set to null, this method will end up returning an
         /// incorrect result for such objects.
+        /// </para>
         /// </remarks>
         public static bool IsNullable(this Type type)
         {
@@ -50,7 +55,8 @@ namespace BadEcho.Odin.Extensions
         /// <param name="type">The type to get the default value for.</param>
         /// <returns>The default value for <c>type</c>.</returns>
         /// <remarks>
-        /// TODO: Comment on IsNullable use.
+        /// This method makes use of <see cref="IsNullable(Type)"/>; refer to that method's documentation for information on the
+        /// accuracy of results based on the origin of <c>type</c>.
         /// </remarks>
         public static object? GetDefaultValue(this Type type)
         {

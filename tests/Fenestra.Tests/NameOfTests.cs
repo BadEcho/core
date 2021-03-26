@@ -15,9 +15,7 @@ namespace BadEcho.Fenestra.Tests
         { get; set; } = string.Empty;
 
         [Fact]
-        public void ReadDependencyPropertyName_ValidName_NameWithoutProperty()
-        {
-            Assert.Equal("TextSize", NameOf.ReadDependencyPropertyName(() => TextSizeProperty));
-        }
+        public void ReadDependencyPropertyName_ValidName_NameWithoutProperty() 
+            => Assert.Equal("TextSize", NameOf.ReadDependencyPropertyName(() => TextSizeProperty));
     }
 }

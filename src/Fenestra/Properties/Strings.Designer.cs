@@ -79,6 +79,24 @@ namespace BadEcho.Fenestra.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A stepped binding requires the source value be able to be converted to a 32-bit signed integer..
+        /// </summary>
+        internal static string NotSteppableSourceValue {
+            get {
+                return ResourceManager.GetString("NotSteppableSourceValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A stepped binding requires the target value be able to be converted to a 32-bit signed integer..
+        /// </summary>
+        internal static string NotSteppableTargetValue {
+            get {
+                return ResourceManager.GetString("NotSteppableTargetValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pack URIs pointing to a referenced assembly resource file require the name of the assembly, which the provided assembly lacks..
         /// </summary>
         internal static string PackUriRequiresAssemblyName {
