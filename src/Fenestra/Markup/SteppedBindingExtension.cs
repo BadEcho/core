@@ -16,7 +16,7 @@ namespace BadEcho.Fenestra.Markup
     /// changes in a source numeric value will be propagated to the target property in a stepped, incremental fashion.
     /// </summary>
     /// <remarks>
-    /// The described stepped, incremental mechanism of change is applied in all appropriate directions as specified by the value 
+    /// The described stepped mechanism of change is applied in all appropriate directions as specified by the value 
     /// <see cref="BindingExtension.Mode"/> is set to.
     /// </remarks>
     public sealed class SteppedBindingExtension : BindingExtension

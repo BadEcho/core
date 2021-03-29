@@ -107,13 +107,16 @@
   <data name="FenestraDispatcherError" xml:space="preserve">
     <value>The Fenestra dispatcher must be shut down due to an unhandled error caused by one of its components.</value>
   </data>
+  <data name="FenestraDispatcherManuallyShutdown" xml:space="preserve">
+    <value>The Fenestra dispatcher has been manually shutdown.</value>
+  </data>
   <data name="CannotAddNonBindingToMultiBinding" xml:space="preserve">
     <value>Cannot add non-binding related data to multi-binding collection.</value>
   </data>
-  <data name="NotSteppableSourceValue" xml:space="preserve">
-    <value>A stepped binding requires the source value be able to be converted to a 32-bit signed integer.</value>
+  <data name="NotSteppablePropertyValue" xml:space="preserve">
+    <value>A stepped binding requires the value for the property '{0}' to be able to be converted to a 32-bit signed integer.</value>
   </data>
-  <data name="NotSteppableTargetValue" xml:space="preserve">
-    <value>A stepped binding requires the target value be able to be converted to a 32-bit signed integer.</value>
+  <data name="SteppingDurationCannotBeNegative" xml:space="preserve">
+    <value>The total duration of a binding update stepping sequence cannot be negative. That just doesn't make sense!</value>
   </data>
 </root>

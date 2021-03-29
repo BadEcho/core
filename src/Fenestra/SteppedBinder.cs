@@ -6,6 +6,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Windows;
@@ -13,17 +14,29 @@ using System.Windows.Data;
 using System.Windows.Threading;
 using BadEcho.Fenestra.Properties;
 using BadEcho.Odin;
+using BadEcho.Odin.Extensions;
 
 namespace BadEcho.Fenestra
 {
     /// <summary>
     /// Provides a freezable object that facilitates the realization of the impermanent state shared between source and target in
-    /// a incremental or decremental fashion.
+    /// an incremental or decremental fashion.
     /// </summary>
     /// <remarks>
-    /// In other words, this is an object that will cause changes in a source numeric value to be propagated to a target property in
-    /// a stepped fashion. The target property's value will be incremented or decremented until it reaches the new source property's value,
-    /// with some slight delay introduced between steps in order to give it a visually pleasing effect.
+    /// <para>
+    /// In other words, this is an object that will cause changes to a source property to be propagated to a target property in
+    /// a stepped fashion. The target property's value will be incremented or decremented in a sequential fashion until it reaches
+    /// the new source property's value, with some slight delay introduced between steps in order to give it a visually pleasing
+    /// effect. In light of the progressive nature of values assigned during this sequence, the source and target properties
+    /// must be able to both be assigned and provide numeric values.
+    /// </para>
+    /// <para>
+    /// The delay introduced between steps is determined by the total amount of time the binder is configured to allow for a stepping
+    /// sequence to take. Given the complexity in dealing with the external overhead that is part and parcel with WPF's complicated data
+    /// binding and visual presentation systems, this binder attempts its best to complete the sequence within the allowed time frame.
+    /// In order to achieve this, the binder maintains its own measurement of the time elapsed in a sequence's execution, allowing for it
+    /// to propagate values between source and target that fall inline with where the binder ought to be in the sequence.
+    /// </para>
     /// </remarks>
     internal sealed class SteppedBinder : TransientBinder
     {
@@ -31,11 +44,15 @@ namespace BadEcho.Fenestra
             = new();
         private readonly DispatcherTimer _sourceStepTimer
             = new();
+        private readonly Stopwatch _sequenceStopwatch 
+            = new();
 
         private readonly TimeSpan _steppingDuration;
+        private readonly object? _unsetTargetValue;
 
-        private bool _isIncremental;
-        private int _currentStepValue;
+        private bool _steppingEnabled;
+        private int _endingStepValue;
+        private int _startingStepValue;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SteppedBinder"/> class.
@@ -80,10 +97,13 @@ namespace BadEcho.Fenestra
                               BindingMode mode)
             : base(targetObject, targetProperty, binding, mode)
         {
+            if (steppingDuration < TimeSpan.Zero)
+                throw new ArgumentException(Strings.SteppingDurationCannotBeNegative, nameof(steppingDuration));
+            
             _steppingDuration = steppingDuration;
-
             _sourceStepTimer.Tick += HandleSourceStepTimerTick;
             _targetStepTimer.Tick += HandleTargetStepTimerTick;
+            _unsetTargetValue = targetProperty.DefaultMetadata.DefaultValue;
         }
 
         /// <summary>
@@ -101,19 +121,14 @@ namespace BadEcho.Fenestra
         {
             _sourceStepTimer.Stop();
 
-            object targetValue = GetValue(TargetProperty);
+            _steppingEnabled = StepChanges(SourceProperty, TargetProperty, _unsetTargetValue);
 
-            if (targetValue == null)
+            if (!_steppingEnabled)
             {
                 base.OnSourceChanged();
                 return;
             }
-
-            int sourceStepValue = GetSourceStepValue();
-            int targetStepValue = GetTargetStepValue();
-
-            LoadSteppingSequence(targetStepValue, sourceStepValue);
-
+            
             _targetStepTimer.Start();
         }
 
@@ -122,18 +137,13 @@ namespace BadEcho.Fenestra
         {
             _targetStepTimer.Stop();
 
-            object sourceValue = GetValue(TargetProperty);
+            _steppingEnabled = StepChanges(TargetProperty, SourceProperty, null);
 
-            if (sourceValue == null)
+            if (!_steppingEnabled)
             {
                 base.OnTargetChanged();
                 return;
             }
-
-            int sourceStepValue = GetSourceStepValue();
-            int targetStepValue = GetTargetStepValue();
-
-            LoadSteppingSequence(sourceStepValue, targetStepValue);
 
             _sourceStepTimer.Start();
         }
@@ -141,7 +151,7 @@ namespace BadEcho.Fenestra
         /// <inheritdoc/>
         protected override void WriteSourceValue(object value)
         {
-            int newValue = GetNextStepValue();
+            object newValue = GetNextStepValue(value);
 
             base.WriteSourceValue(newValue);
         }
@@ -149,7 +159,7 @@ namespace BadEcho.Fenestra
         /// <inheritdoc/>
         protected override void WriteTargetValue(object value)
         {
-            int newValue = GetNextStepValue();
+            object newValue = GetNextStepValue(value);
 
             base.WriteTargetValue(newValue);
         }
@@ -162,50 +172,87 @@ namespace BadEcho.Fenestra
             return binding;
         }
 
-        private int GetNextStepValue() 
-            => _isIncremental ? _currentStepValue++ : _currentStepValue--;
-
-        private int GetSourceStepValue()
+        private bool StepChanges(DependencyProperty changedProperty,
+                                 DependencyProperty receivingProperty,
+                                 object? unsetReceivingValue)
         {
-            object sourceValue = GetValue(SourceProperty);
+            object receivingValue = GetValue(receivingProperty);
 
-            if (sourceValue is not IConvertible sourceConvertible)
-                throw new InvalidOperationException(Strings.NotSteppableSourceValue);
+            if (receivingValue == unsetReceivingValue)
+                return false;
 
-            return sourceConvertible.ToInt32(CultureInfo.CurrentCulture);
-        }
+            int changedStepValue = GetStepValue(changedProperty);
+            int receivingStepValue = GetStepValue(receivingProperty);
 
-        private int GetTargetStepValue()
-        {
-            object targetValue = GetValue(TargetProperty);
+            if (changedStepValue == receivingStepValue)
+                return false;
 
-            if (targetValue is not IConvertible targetConvertible)
-                throw new InvalidOperationException(Strings.NotSteppableTargetValue);
+            int numberOfSteps = Math.Abs(changedStepValue - receivingStepValue);
 
-            return targetConvertible.ToInt32(CultureInfo.CurrentCulture);
-        }
-
-        private void LoadSteppingSequence(int startingStepValue, int endingStepValue)
-        {
-            int numberOfSteps = Math.Abs(endingStepValue - startingStepValue);
-
-            _isIncremental = endingStepValue > startingStepValue;
-            _currentStepValue = startingStepValue;
+            _startingStepValue = receivingStepValue;
+            _endingStepValue = changedStepValue;
             _targetStepTimer.Interval = _steppingDuration.Divide(numberOfSteps);
+
+            _sequenceStopwatch.Start();
+
+            return true;
+        }
+
+        private int GetStepValue(DependencyProperty property)
+        {
+            object value = GetValue(property);
+
+            if (value is not IConvertible convertible)
+            {
+                throw new InvalidOperationException(
+                    Strings.NotSteppablePropertyValue.InvariantFormat(property.Name));
+            }
+
+            return convertible.ToInt32(CultureInfo.CurrentCulture);
+        }
+
+        private object GetNextStepValue(object baseValue)
+        {
+            if (!_steppingEnabled)
+                return baseValue;
+
+            _sequenceStopwatch.Stop();
+
+            // Calculate where in the step sequence we should be given the time it's taken to get here.
+            double expectedStepDelta =
+                (_endingStepValue - _startingStepValue) * _sequenceStopwatch.Elapsed.Divide(_steppingDuration);
+            
+            // The expected delta evaluates to infinity if the configured sequence duration is zero.
+            int nextValue = double.IsInfinity(expectedStepDelta)
+                ? _endingStepValue
+                : _startingStepValue + (int) expectedStepDelta;
+
+            _sequenceStopwatch.Start();
+
+            // Ensure the time-corrected step value does not exceed the value marking the end of the sequence.
+            return _endingStepValue > _startingStepValue
+                ? Math.Min(_endingStepValue, nextValue)
+                : Math.Max(_endingStepValue, nextValue);
         }
 
         private void HandleSourceStepTimerTick(object? sender, EventArgs e)
         {
-            if (GetSourceStepValue() == _currentStepValue)
+            if (GetStepValue(SourceProperty) == _endingStepValue)
+            {
+                _sequenceStopwatch.Reset();
                 _sourceStepTimer.Stop();
+            }
             else
                 base.OnTargetChanged();
         }
 
         private void HandleTargetStepTimerTick(object? sender, EventArgs e)
         {
-            if (GetTargetStepValue() == _currentStepValue)
+            if (GetStepValue(TargetProperty) == _endingStepValue)
+            {
+                _sequenceStopwatch.Reset();
                 _targetStepTimer.Stop();
+            }
             else
                 base.OnSourceChanged();
         }

@@ -1,8 +1,15 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using BadEcho.Fenestra;
 using System.Windows;
 using System.Windows.Markup;
 using BadEcho.Odin.Extensibility;
+
+#if RELEASE
+[assembly: InternalsVisibleTo("BadEcho.Fenestra.Tests,PublicKey="+BuildInfo.PublicKey)]
+#else
+[assembly: InternalsVisibleTo("BadEcho.Fenestra.Tests")]
+#endif
 
 [assembly: XmlnsDefinition(Constants.Namespace, "BadEcho.Fenestra.Controls")]
 [assembly: XmlnsDefinition(Constants.Namespace, "BadEcho.Fenestra.Views")]

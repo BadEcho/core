@@ -20,7 +20,7 @@ namespace BadEcho.Fenestra.Extensions
         /// Executes the specified action action synchronously, at the specified priority, on the thread that the
         /// current object's <see cref="Dispatcher"/> is running on.
         /// </summary>
-        /// <param name="dispatcherObject">Th current object that is associated with a <see cref="Dispatcher"/>.</param>
+        /// <param name="dispatcherObject">The current object that is associated with a <see cref="Dispatcher"/>.</param>
         /// <param name="method">The action to invoke through the <see cref="Dispatcher"/>.</param>
         /// <param name="priority">
         /// The priority that determines in what order the specified callback is invoked relative to the other pending
@@ -33,5 +33,12 @@ namespace BadEcho.Fenestra.Extensions
 
             dispatcherObject.Dispatcher.Invoke(method, priority);
         }
+
+        /// <summary>
+        /// Process all messages currently queued in the message queue of the current object's <see cref="Dispatcher"/>.
+        /// </summary>
+        /// <param name="dispatcherObject">The current object that is associated with a <see cref="Dispatcher"/>.</param>
+        public static void ProcessMessages(this DispatcherObject dispatcherObject) 
+            => dispatcherObject.Invoke(() => { }, DispatcherPriority.Background);
     }
 }

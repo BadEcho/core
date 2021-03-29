@@ -79,20 +79,20 @@ namespace BadEcho.Fenestra.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A stepped binding requires the source value be able to be converted to a 32-bit signed integer..
+        ///   Looks up a localized string similar to The Fenestra dispatcher has been manually shutdown..
         /// </summary>
-        internal static string NotSteppableSourceValue {
+        internal static string FenestraDispatcherManuallyShutdown {
             get {
-                return ResourceManager.GetString("NotSteppableSourceValue", resourceCulture);
+                return ResourceManager.GetString("FenestraDispatcherManuallyShutdown", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A stepped binding requires the target value be able to be converted to a 32-bit signed integer..
+        ///   Looks up a localized string similar to A stepped binding requires the value for the property &apos;{0}&apos; to be able to be converted to a 32-bit signed integer..
         /// </summary>
-        internal static string NotSteppableTargetValue {
+        internal static string NotSteppablePropertyValue {
             get {
-                return ResourceManager.GetString("NotSteppableTargetValue", resourceCulture);
+                return ResourceManager.GetString("NotSteppablePropertyValue", resourceCulture);
             }
         }
         
@@ -111,6 +111,15 @@ namespace BadEcho.Fenestra.Properties {
         internal static string ResourceUriNotResourceDictionary {
             get {
                 return ResourceManager.GetString("ResourceUriNotResourceDictionary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The total duration of a binding update stepping sequence cannot be negative. That just doesn&apos;t make sense!.
+        /// </summary>
+        internal static string SteppingDurationCannotBeNegative {
+            get {
+                return ResourceManager.GetString("SteppingDurationCannotBeNegative", resourceCulture);
             }
         }
     }

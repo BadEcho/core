@@ -23,7 +23,7 @@ namespace BadEcho.Odin.Logging
         {
             base.OnEventSourceCreated(eventSource);
 
-            if (eventSource == LogSource.Instance)
+            if (eventSource.Name == LogSource.EventSourceName)
                 EnableEvents(eventSource, EventLevel.LogAlways, EventKeywords.All);
         }
 

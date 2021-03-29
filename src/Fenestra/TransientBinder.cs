@@ -73,8 +73,11 @@ namespace BadEcho.Fenestra
                                     Mode = BindingMode.TwoWay
                                 };
 
-            BindingOperations.SetBinding(this, TargetProperty, targetBinding);
-            BindingOperations.SetBinding(this, SourceProperty, binding);
+            BypassHandlers(() =>
+                           {
+                               BindingOperations.SetBinding(this, TargetProperty, targetBinding);
+                               BindingOperations.SetBinding(this, SourceProperty, binding);
+                           });
         }
 
         /// <summary>

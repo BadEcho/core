@@ -25,7 +25,7 @@
                                       Text="{Binding Name}"
                                       />
         <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
-                                      Text="{Binding CurrentValue}"
+                                      Text="{fenestra:SteppedBinding CurrentValue, SteppingDuration=00:00:02}"
                                       />
         <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
                                       Text="/"

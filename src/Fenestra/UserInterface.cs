@@ -7,13 +7,15 @@
 
 using System;
 using System.Reflection;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using BadEcho.Fenestra.Extensions;
 using BadEcho.Fenestra.Properties;
-using BadEcho.Odin.Threading;
+using BadEcho.Odin.Logging;
+using ThreadExceptionEventArgs = BadEcho.Odin.Threading.ThreadExceptionEventArgs;
 
 namespace BadEcho.Fenestra
 {
@@ -24,6 +26,7 @@ namespace BadEcho.Fenestra
     /// </summary>
     public static class UserInterface
     {
+        private const int HRESULT_DISPATCHER_SHUTDOWN = unchecked((int) 0x80131509);
         private const string TEXT_BOX_VIEW_NAME = "TextBoxView";
 
         private static readonly ResourceKey _Footprint = new FootprintKey();
@@ -32,6 +35,73 @@ namespace BadEcho.Fenestra
         /// Occurs when an exception is thrown by the Fenestra-based application and not handled.
         /// </summary>
         public static event EventHandler<ThreadExceptionEventArgs>? UnhandledException;
+
+        /// <summary>
+        /// Runs the provided UI-related function in a context appropriate for hosting UI components.
+        /// </summary>
+        /// <param name="uiFunction">The function to run in a UI appropriate context.</param>
+        /// <param name="isBlocking">
+        /// Value indicating whether the calling thread should be blocked until the action is complete.
+        /// </param>
+        /// <remarks>
+        /// <para>
+        /// This function meets the concerns of many UI components by executing the function in a separate STA thread, optionally
+        /// blocking the calling thread until the UI thread terminates.
+        /// </para>
+        /// <para>
+        /// If <c>uiFunction</c> throws an exception, the incident will be relayed to the caller through the
+        /// <see cref="UnhandledException"/> event. The STA thread will then immediately terminate.
+        /// </para>
+        /// </remarks>
+        public static void RunUIFunction(Action uiFunction, bool isBlocking)
+        {
+            var staThread = new Thread(() => UIFunctionRunner(uiFunction));
+
+            staThread.SetApartmentState(ApartmentState.STA);
+            staThread.Start();
+
+            if (isBlocking)
+                staThread.Join();
+
+            static void UIFunctionRunner(Action uiFunction)
+            {
+                try
+                {
+                    uiFunction();
+
+                    Dispatcher.Run();
+                }
+                catch (InvalidOperationException invalidEx)
+                {
+                    if (invalidEx.HResult != HRESULT_DISPATCHER_SHUTDOWN)
+                        throw;
+                    
+                    Logger.Debug(Strings.FenestraDispatcherManuallyShutdown);
+                }
+                catch (EngineException engineEx)
+                {
+                    if (!engineEx.IsProcessed)
+                        Logger.Critical(Strings.FenestraDispatcherError, engineEx.InnerException ?? engineEx);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Runs the provided UI-related function in a context appropriate for hosting UI components.
+        /// </summary>
+        /// <param name="uiFunction">The function to run in a UI appropriate context.</param>
+        /// <remarks>
+        /// <para>
+        /// This function meets the concerns of many UI components by executing the function in a separate STA thread without
+        /// blocking the calling thread.
+        /// </para>
+        /// <para>
+        /// If <c>uiFunction</c> throws an exception, the incident will be relayed to the caller through the
+        /// <see cref="UnhandledException"/> event. The STA thread will then immediately terminate.
+        /// </para>
+        /// </remarks>
+        public static void RunUIFunction(Action uiFunction)
+            => RunUIFunction(uiFunction, false);
 
         /// <summary>
         /// Ensures that an environment suitable for a Fenestra-powered application has been built by making sure that a properly
