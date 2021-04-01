@@ -43,7 +43,7 @@ namespace BadEcho.Odin.XmlConfiguration.Extensibility
                {
                    new ConfigurationProperty(PLUGIN_DIRECTORY_ATTRIBUTE_SCHEMA,
                                              typeof(string),
-                                             IExtensibilityConfiguration.DefaultPluginDirectory,
+                                             null,
                                              null,
                                              null,
                                              ConfigurationPropertyOptions.None)

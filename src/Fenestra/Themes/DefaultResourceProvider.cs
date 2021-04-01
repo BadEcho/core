@@ -13,7 +13,7 @@ namespace BadEcho.Fenestra.Themes
     /// <summary>
     /// Provides Fenestra framework resource access to a WPF application.
     /// </summary>
-    [Export(typeof(DefaultResourceProvider))]
+    [Export(typeof(IResourceProvider))]
     internal sealed class DefaultResourceProvider : IResourceProvider
     {
         /// <summary>

@@ -55,5 +55,8 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-
+  
+  <Target Name="CopyPlugin" AfterTargets="Build">
+    <Copy SourceFiles="$(OutputPath)\$(AssemblyName).dll" DestinationFolder="$(OutputPath)\plugins\" />
+  </Target>
 </Project>

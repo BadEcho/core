@@ -20,8 +20,8 @@ namespace BadEcho.Odin.Extensibility.Configuration
             => SegmentedContracts ?? Enumerable.Empty<IContractConfiguration>();
 
         /// <inheritdoc/>
-        public string PluginDirectory 
-        { get; set; } = IExtensibilityConfiguration.DefaultPluginDirectory;
+        public string? PluginDirectory 
+        { get; set; }
 
         /// <inheritdoc cref="IExtensibilityConfiguration.SegmentedContracts"/>
         /// <remarks>
