@@ -9,6 +9,7 @@ using System;
 using System.Windows;
 using System.Windows.Data;
 using BadEcho.Odin;
+using BadEcho.Odin.Extensions;
 
 namespace BadEcho.Fenestra
 {
@@ -49,6 +50,7 @@ namespace BadEcho.Fenestra
                                           typeof(TransientBinder),
                                           new PropertyMetadata(OnTargetChanged));
 
+        private readonly string _stringFormat;
         private readonly BindingMode _mode;
         private bool _handlersBypassed;
         
@@ -73,6 +75,8 @@ namespace BadEcho.Fenestra
                                     Mode = BindingMode.TwoWay
                                 };
 
+            _stringFormat = binding.StringFormat ?? "{0}";
+
             BypassHandlers(() =>
                            {
                                BindingOperations.SetBinding(this, TargetProperty, targetBinding);
@@ -84,7 +88,7 @@ namespace BadEcho.Fenestra
         /// Initializes a new instance of the <see cref="TransientBinder"/> class.
         /// </summary>
         protected TransientBinder()
-        { }
+            => _stringFormat = "{0}";
 
         /// <summary>
         /// Gets or sets the object to use as the binding source.
@@ -169,7 +173,7 @@ namespace BadEcho.Fenestra
         /// that any changes to the target property's value will not result in a binding update if one were to go off.
         /// </remarks>
         protected virtual void WriteTargetValue(object value)
-            => SetValue(TargetProperty, value);
+            => SetValue(TargetProperty, _stringFormat.CulturedFormat(value));
 
         /// <summary>
         /// Commits the provided value to the source property.

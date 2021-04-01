@@ -208,7 +208,7 @@ namespace BadEcho.Fenestra
                     Strings.NotSteppablePropertyValue.InvariantFormat(property.Name));
             }
 
-            return convertible.ToInt32(CultureInfo.CurrentCulture);
+            return convertible.ToInt32(CultureInfo.CurrentCulture, NumberStyles.AllowThousands);
         }
 
         private object GetNextStepValue(object baseValue)

@@ -6,6 +6,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Globalization;
 
 namespace BadEcho.Odin.Extensions
 {
@@ -39,5 +40,26 @@ namespace BadEcho.Odin.Extensions
         /// </returns>
         public static bool IsA<T>(this Type type) 
             => type.IsA(typeof(T));
+
+        /// <summary>
+        /// Converts the value of this instance to an equivalent 32-bit signed integer using the specified style and culture-specific
+        /// format.
+        /// </summary>
+        /// <param name="convertible">The <see cref="IConvertible"/> instance to convert.</param>
+        /// <param name="formatProvider">
+        /// An <see cref="IFormatProvider"/> interface implementation that supplies culture-specific formatting information.
+        /// </param>
+        /// <param name="style">
+        /// A bitwise combination of enumeration values that indicates the style elements that can be present.
+        /// </param>
+        /// <returns>A 32-bit signed integer equivalent to the number specified in <c>convertible</c>.</returns>
+        public static int ToInt32(this IConvertible convertible, IFormatProvider? formatProvider, NumberStyles style)
+        {
+            Require.NotNull(convertible, nameof(convertible));
+
+            string stringEquivalent = convertible.ToString(formatProvider);
+
+            return int.Parse(stringEquivalent, style, formatProvider);
+        }
     }
 }
