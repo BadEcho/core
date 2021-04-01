@@ -27,8 +27,14 @@ namespace BadEcho.Fenestra.Markup
         /// Initializes a new instance of the <see cref="BindingExtension"/> class.
         /// </summary>
         /// <param name="path">The path to the binding source property.</param>
-        protected BindingExtension(string path) 
-            => Path = new PropertyPath(path);
+        protected BindingExtension(PropertyPath path) 
+            => Path = path;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BindingExtension"/> class.
+        /// </summary>
+        protected BindingExtension()
+        { }
 
         /// <inheritdoc/>
         public override IValueConverter Converter

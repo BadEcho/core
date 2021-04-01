@@ -25,8 +25,14 @@ namespace BadEcho.Fenestra.Markup
         /// Initializes a new instance of the <see cref="SteppedBindingExtension"/> class.
         /// </summary>
         /// <param name="path">The path to the binding source property.</param>
-        public SteppedBindingExtension(string path) 
+        public SteppedBindingExtension(PropertyPath path) 
             : base(path)
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SteppedBindingExtension"/> class.
+        /// </summary>
+        public SteppedBindingExtension()
         { }
 
         /// <summary>
