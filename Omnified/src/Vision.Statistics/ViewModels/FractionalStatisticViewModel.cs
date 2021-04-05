@@ -42,6 +42,7 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
             MaximumValue = model.MaximumValue;
         }
 
+        /// <inheritdoc/>
         protected override void OnUnbind(FractionalStatistic model)
         {
             base.OnUnbind(model);

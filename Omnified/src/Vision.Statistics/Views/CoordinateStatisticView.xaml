@@ -1,0 +1,60 @@
+﻿<!--
+    <copyright>
+        Created by Matt Weber <matt@badecho.com>
+        Copyright @ 2021 Bad Echo LLC. All Rights Reserved.
+    </copyright>
+-->
+<fenestra:View x:Class="BadEcho.Omnified.Vision.Statistics.Views.CoordinateStatisticView"
+               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+               xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+               xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"                   
+               xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Statistics.ViewModels"
+               mc:Ignorable="d" 
+               d:DesignHeight="250" 
+               d:DesignWidth="400"
+               >
+    <d:DesignProperties.DataContext>
+        <vm:CoordinateStatisticViewModel Name="Coordinates:"
+                                         X="-1566.7635498047"
+                                         Y="0.10857523977757"
+                                         Z="1997.649169219"
+                                         />
+    </d:DesignProperties.DataContext>
+    <StackPanel Orientation="Vertical">
+        <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
+                                      Text="{Binding Name}"
+                                      />
+        <StackPanel Orientation="Horizontal" 
+                    Margin="15,0,0,0"
+                    >
+            <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
+                                          Text="X:"                                           
+                                          />
+            <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
+                                          Text="{Binding X}"
+                                          />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal"
+                    Margin="15,0,0,0"
+                    >
+            <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
+                                          Text="Y:"
+                                          />
+            <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
+                                          Text="{Binding Y}"
+                                          />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal"
+                    Margin="15,0,0,0"
+                    >
+            <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
+                                          Text="Z:"
+                                          />
+            <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
+                                          Text="{Binding Z}"
+                                          />
+        </StackPanel>
+    </StackPanel>
+</fenestra:View>

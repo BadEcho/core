@@ -12,12 +12,13 @@
                xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"                   
                xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Statistics.ViewModels"
                mc:Ignorable="d" 
-               d:DesignHeight="450" 
-               d:DesignWidth="800">
+               d:DesignHeight="250" 
+               d:DesignWidth="400"
+               >
     <d:DesignProperties.DataContext>
         <vm:FractionalStatisticViewModel Name="Player Health:"
                                          CurrentValue="86"
-                                         MaximumValue="100"
+                                         MaximumValue="1000"
                                          />
     </d:DesignProperties.DataContext>
     <StackPanel Orientation="Horizontal">
@@ -25,13 +26,13 @@
                                       Text="{Binding Name}"
                                       />
         <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
-                                      Text="{fenestra:SteppedBinding CurrentValue, SteppingDuration=00:00:02}"
+                                      Text="{fenestra:SteppedBinding CurrentValue, SteppingDuration=00:00:02, StringFormat={StaticResource StatisticNumberFormat}}"
                                       />
         <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
                                       Text="/"
                                       />
         <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
-                                      Text="{Binding MaximumValue}"
-                                      />
+                                      Text="{fenestra:SteppedBinding MaximumValue, SteppingDuration=00:00:02, StringFormat={StaticResource StatisticNumberFormat}}"
+                                      />        
     </StackPanel>
 </fenestra:View>

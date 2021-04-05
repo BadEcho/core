@@ -31,7 +31,4 @@
     </EmbeddedResource>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Themes\Resources\" />
-  </ItemGroup>
 </Project>
