@@ -13,6 +13,16 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
     internal sealed class WholeStatisticViewModel : StatisticViewModel<WholeStatistic>
     {
         private int _value;
+        private bool _isCritical;
+
+        /// <summary>
+        /// Gets or sets a value indicating if updates to the bound statistic is a critical event.
+        /// </summary>
+        public bool IsCritical
+        {
+            get => _isCritical;
+            set => NotifyIfChanged(ref _isCritical, value);
+        }
 
         /// <summary>
         /// Gets or sets the displayed whole numeric value for the bound statistic.
@@ -32,9 +42,9 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
         }
 
         /// <inheritdoc/>
-        protected override void OnUnbind(WholeStatistic model)
+        protected override void OnUnbound(WholeStatistic model)
         {
-            base.OnUnbind(model);
+            base.OnUnbound(model);
 
             Value = default;
         }

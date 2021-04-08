@@ -102,7 +102,7 @@
     <value>Pack URIs pointing to a referenced assembly resource file require the name of the assembly, which the provided assembly lacks.</value>
   </data>
   <data name="ResourceUriNotResourceDictionary" xml:space="preserve">
-    <value>The imported resource URI  '{0}' is not a ResourceDictionary.</value>
+    <value>The imported resource URI '{0}' is not a ResourceDictionary.</value>
   </data>
   <data name="FenestraDispatcherError" xml:space="preserve">
     <value>The Fenestra dispatcher must be shut down due to an unhandled error caused by one of its components.</value>
@@ -118,5 +118,23 @@
   </data>
   <data name="SteppingDurationCannotBeNegative" xml:space="preserve">
     <value>The total duration of a binding update stepping sequence cannot be negative. That just doesn't make sense!</value>
+  </data>
+  <data name="BehaviorCannotTargetMultipleObjects" xml:space="preserve">
+    <value>A single behavior instance cannot target more than one target dependency object.</value>
+  </data>
+  <data name="BehaviorUnsupportedTargetObject" xml:space="preserve">
+    <value>Behavior of type '{0}' only supports attachment to target objects of type '{1}'.</value>
+  </data>
+  <data name="CanOnlyConvertFenestraKeys" xml:space="preserve">
+    <value>Can only convert Fenestra specific resource key types.</value>
+  </data>
+  <data name="FenestraKeyIsInvalid" xml:space="preserve">
+    <value>Fenestra resource key descriptor is invalid.</value>
+  </data>
+  <data name="FenestraKeyCannotFindType" xml:space="preserve">
+    <value>Fenestra resource key descriptor does not describe a locatable provider type.</value>
+  </data>
+  <data name="FenestraKeyCannotFindField" xml:space="preserve">
+    <value>Fenestra resource key descriptor does not describe a locatable field on a key provider.</value>
   </data>
 </root>

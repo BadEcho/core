@@ -43,9 +43,9 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
         }
 
         /// <inheritdoc/>
-        protected override void OnUnbind(FractionalStatistic model)
+        protected override void OnUnbound(FractionalStatistic model)
         {
-            base.OnUnbind(model);
+            base.OnUnbound(model);
 
             CurrentValue = default;
             MaximumValue = default;

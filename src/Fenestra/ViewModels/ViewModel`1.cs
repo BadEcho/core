@@ -64,7 +64,7 @@ namespace BadEcho.Fenestra.ViewModels
 
             _boundData.Remove(model);
 
-            OnUnbind(model);
+            OnUnbound(model);
 
             return true;
         }
@@ -94,6 +94,6 @@ namespace BadEcho.Fenestra.ViewModels
         /// be represented in a view can be performed.
         /// </summary>
         /// <param name="model">The data unbound from the view model.</param>
-        protected abstract void OnUnbind(T model);
+        protected abstract void OnUnbound(T model);
     }
 }

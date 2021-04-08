@@ -36,7 +36,7 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
         }
 
         /// <inheritdoc/>
-        protected override void OnUnbind(TStatistic model) 
+        protected override void OnUnbound(TStatistic model) 
             => Name = string.Empty;
     }
 }

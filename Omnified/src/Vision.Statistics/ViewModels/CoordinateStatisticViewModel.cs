@@ -55,9 +55,9 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
         }
 
         /// <inheritdoc/>
-        protected override void OnUnbind(CoordinateStatistic model)
+        protected override void OnUnbound(CoordinateStatistic model)
         {
-            base.OnUnbind(model);
+            base.OnUnbound(model);
 
             X = default;
             Y = default;

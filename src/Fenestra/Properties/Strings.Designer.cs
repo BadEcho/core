@@ -61,11 +61,38 @@ namespace BadEcho.Fenestra.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A single behavior instance cannot target more than one target dependency object..
+        /// </summary>
+        internal static string BehaviorCannotTargetMultipleObjects {
+            get {
+                return ResourceManager.GetString("BehaviorCannotTargetMultipleObjects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Behavior of type &apos;{0}&apos; only supports attachment to target objects of type &apos;{1}&apos;..
+        /// </summary>
+        internal static string BehaviorUnsupportedTargetObject {
+            get {
+                return ResourceManager.GetString("BehaviorUnsupportedTargetObject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot add non-binding related data to multi-binding collection..
         /// </summary>
         internal static string CannotAddNonBindingToMultiBinding {
             get {
                 return ResourceManager.GetString("CannotAddNonBindingToMultiBinding", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Can only convert Fenestra specific resource key types..
+        /// </summary>
+        internal static string CanOnlyConvertFenestraKeys {
+            get {
+                return ResourceManager.GetString("CanOnlyConvertFenestraKeys", resourceCulture);
             }
         }
         
@@ -88,6 +115,33 @@ namespace BadEcho.Fenestra.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fenestra resource key descriptor does not describe a locatable field on a key provider..
+        /// </summary>
+        internal static string FenestraKeyCannotFindField {
+            get {
+                return ResourceManager.GetString("FenestraKeyCannotFindField", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fenestra resource key descriptor does not describe a locatable provider type..
+        /// </summary>
+        internal static string FenestraKeyCannotFindType {
+            get {
+                return ResourceManager.GetString("FenestraKeyCannotFindType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fenestra resource key descriptor is invalid..
+        /// </summary>
+        internal static string FenestraKeyIsInvalid {
+            get {
+                return ResourceManager.GetString("FenestraKeyIsInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A stepped binding requires the value for the property &apos;{0}&apos; to be able to be converted to a 32-bit signed integer..
         /// </summary>
         internal static string NotSteppablePropertyValue {
@@ -106,7 +160,7 @@ namespace BadEcho.Fenestra.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The imported resource URI  &apos;{0}&apos; is not a ResourceDictionary..
+        ///   Looks up a localized string similar to The imported resource URI &apos;{0}&apos; is not a ResourceDictionary..
         /// </summary>
         internal static string ResourceUriNotResourceDictionary {
             get {
