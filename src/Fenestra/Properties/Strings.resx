@@ -119,11 +119,14 @@
   <data name="SteppingDurationCannotBeNegative" xml:space="preserve">
     <value>The total duration of a binding update stepping sequence cannot be negative. That just doesn't make sense!</value>
   </data>
-  <data name="BehaviorCannotTargetMultipleObjects" xml:space="preserve">
-    <value>A single behavior instance cannot target more than one target dependency object.</value>
+  <data name="AttachableCannotTargetMultipleObjects" xml:space="preserve">
+    <value>A single attachable component instance cannot target more than one target dependency object.</value>
+  </data>
+  <data name="BehaviorAlreadyAttachedToTarget" xml:space="preserve">
+    <value>Behavior is already attached to the target dependency object.</value>
   </data>
   <data name="BehaviorUnsupportedTargetObject" xml:space="preserve">
-    <value>Behavior of type '{0}' only supports attachment to target objects of type '{1}'.</value>
+    <value>This behavior only supports attachment to target objects of type '{0}'.</value>
   </data>
   <data name="CanOnlyConvertFenestraKeys" xml:space="preserve">
     <value>Can only convert Fenestra specific resource key types.</value>
@@ -136,5 +139,8 @@
   </data>
   <data name="FenestraKeyCannotFindField" xml:space="preserve">
     <value>Fenestra resource key descriptor does not describe a locatable field on a key provider.</value>
+  </data>
+  <data name="CommandCannotExecute" xml:space="preserve">
+    <value>Either an invalid parameter was provided to a command, or the command was not in a state where execution was permitted.</value>
   </data>
 </root>

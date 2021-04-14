@@ -177,8 +177,7 @@ namespace BadEcho.Fenestra.Markup
         { get; }
 
         /// <summary>
-        /// Gets a value that indicates if a binding's extension requires that a valid target <see cref="DependencyObject"/> be
-        /// present.
+        /// Gets a value that indicates if a binding's extension requires that a valid target dependency object be present.
         /// </summary>
         /// <remarks>
         /// <para>

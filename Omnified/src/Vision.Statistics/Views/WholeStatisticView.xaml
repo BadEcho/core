@@ -21,20 +21,21 @@
                                     Value="29333882"
                                     />
     </d:DesignProperties.DataContext>
-    <fenestra:View.Resources>
-        <fenestra:BooleanToStyleConverter x:Key="BooleanStyleConverter"
-                                          StyleWhenTrue="{StaticResource CriticalStatisticTextStyle}"
-                                          StyleWhenFalse="{StaticResource StatisticTextStyle}"
-                                          />
-    </fenestra:View.Resources>
     <StackPanel Orientation="Horizontal">
         <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
                                       Text="{Binding Name}"
                                       />
         <fenestra:OutlinedTextElement x:Name="Value"
-                                      Style="{Binding IsCritical, Converter={StaticResource BooleanStyleConverter}}"                                      
-                                      Text="{fenestra:SteppedBinding Value, NotifyOnTargetUpdated=True, StringFormat={StaticResource StatisticNumberFormat}, SteppingDuration=00:00:02}" 
-                                      />
+                                      Style="{StaticResource StatisticTextStyle}"
+                                      Text="{fenestra:SteppedBinding    Value,
+                                                                        NotifyOnTargetUpdated=True, 
+                                                                        StringFormat={StaticResource StatisticNumberFormat}, 
+                                                                        SteppingDuration=00:00:02}">
+            <fenestra:TargetUpdatedEventBehavior.Actions>
+                <fenestra:ConditionAction IsEnabled="{Binding IsCritical}"/>
+                <fenestra:BeginStoryboardAction Storyboard="{StaticResource ExplodeTextAnimation}"/>
+            </fenestra:TargetUpdatedEventBehavior.Actions>
+        </fenestra:OutlinedTextElement>
     </StackPanel>
 
 </fenestra:View>

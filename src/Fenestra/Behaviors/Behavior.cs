@@ -6,6 +6,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media.Animation;
 using BadEcho.Fenestra.Properties;
@@ -14,15 +15,15 @@ using BadEcho.Odin.Extensions;
 namespace BadEcho.Fenestra.Behaviors
 {
     /// <summary>
-    /// Provides an infrastructure for attached properties that, when attached to a target object, directly influence the state and
-    /// functioning of said object.
+    /// Provides an infrastructure for attached properties that, when attached to a target dependency object, directly influence the
+    /// state and functioning of said object.
     /// </summary>
     /// <typeparam name="TTarget">The type of <see cref="DependencyObject"/> this behavior attaches to.</typeparam>
     /// <typeparam name="TProperty">The type of value accepted by this behavior as an attached property.</typeparam>
-    public abstract class Behavior<TTarget,TProperty> : Animatable
+    public abstract class Behavior<TTarget,TProperty> : Animatable, IAttachableComponent<TTarget>
         where TTarget: DependencyObject
     {
-        private TTarget? _targetObject;
+        private readonly Dictionary<TTarget, TProperty?> _targetMap = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Behavior{TTarget,TProperty}"/> class.
@@ -36,66 +37,87 @@ namespace BadEcho.Fenestra.Behaviors
         public PropertyMetadata DefaultMetadata
         { get; }
 
+        /// <inheritdoc/>
+        public void Attach(TTarget targetObject)
+        {
+            VerifyAccess();
+
+            if (TargetMap.ContainsKey(targetObject))
+                throw new InvalidOperationException(Strings.BehaviorAlreadyAttachedToTarget);
+
+            WritePreamble();
+            TargetMap.Add(targetObject, default);
+            WritePostscript();
+        }
+
+        /// <inheritdoc/>
+        public void Detach(TTarget targetObject)
+        {
+            VerifyAccess();
+
+            if (!TargetMap.ContainsKey(targetObject))
+                return;
+
+            var associatedValue = TargetMap[targetObject];
+
+            if (associatedValue != null)
+                OnValueDisassociated(targetObject, associatedValue);
+
+            WritePreamble();
+            TargetMap.Remove(targetObject);
+            WritePostscript();
+        }
+
         /// <summary>
-        /// Gets the target dependency object this behavior is attached to.
+        /// Gets a mapping between target dependency objects and associated values while assuring this <see cref="Freezable"/>
+        /// is being accessed appropriately.
         /// </summary>
-        protected TTarget? TargetObject
+        private IDictionary<TTarget, TProperty?> TargetMap
         {
             get
             {
                 ReadPreamble();
-                return _targetObject;
-            }
-            private set
-            {
-                if (TargetObject.Equals<TTarget>(value))
-                    return;
 
-                if (TargetObject != null)
-                    throw new InvalidOperationException(Strings.BehaviorCannotTargetMultipleObjects);
-
-                WritePreamble();
-                _targetObject = value;
-                WritePostscript();
+                return _targetMap;
             }
         }
 
         /// <summary>
-        /// Called when this behavior is being attached to a <see cref="DependencyObject"/> instance with the provided
+        /// Called when this behavior is being associated with a new local value being set on a <see cref="DependencyObject"/> instance
+        /// this behavior is attached to.
         /// value.
         /// </summary>
-        /// <param name="newValue">The value of the attached property.</param>
-        protected abstract void OnAttaching(TProperty newValue);
+        /// <param name="targetObject">A dependency object this behavior is attached to.</param>
+        /// <param name="newValue">The new local value of the attached property.</param>
+        protected abstract void OnValueAssociated(TTarget targetObject, TProperty newValue);
 
         /// <summary>
-        /// Called when this behavior is being detached from a <see cref="DependencyObject"/> instance that it was attached
-        /// to previously with the provided value.
+        /// Called when this behavior is being disassociated from a local value previously set on a <see cref="DependencyObject"/>
+        /// instance this behavior is attached to.
         /// </summary>
-        /// <param name="oldValue">The value that the attached property was previously set to.</param>
-        protected abstract void OnDetaching(TProperty oldValue);
+        /// <param name="targetObject">A dependency object this behavior is attached to.</param>
+        /// <param name="oldValue">The previous local value for the attached property.</param>
+        protected abstract void OnValueDisassociated(TTarget targetObject, TProperty oldValue);
 
-        private void OnAttachChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        private void OnAttachChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             if (sender is not TTarget targetObject)
-            {
-                throw new InvalidOperationException(
-                    Strings.BehaviorUnsupportedTargetObject.InvariantFormat(GetType(), typeof(TTarget)));
-            }
+                throw new InvalidOperationException(Strings.BehaviorUnsupportedTargetObject.InvariantFormat(typeof(TTarget)));
 
-            if (args.NewValue == args.OldValue)
+            if (e.NewValue == e.OldValue)
                 return;
+
+            Attach(targetObject);
             
-            TargetObject = targetObject;
+            TProperty? newValue = (TProperty?) e.NewValue;
 
-            TProperty? newValue = (TProperty?) args.NewValue;
-
-            if (args.OldValue is TProperty oldValue) 
-                OnDetaching(oldValue);
+            if (e.OldValue is TProperty oldValue) 
+                OnValueDisassociated(targetObject, oldValue);
 
             if (newValue == null)
-                TargetObject = null;
+                Detach(targetObject);
             else
-                OnAttaching(newValue);
+                OnValueAssociated(targetObject, newValue);
         }
     }
 }

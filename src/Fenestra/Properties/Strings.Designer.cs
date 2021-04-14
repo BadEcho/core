@@ -61,16 +61,25 @@ namespace BadEcho.Fenestra.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A single behavior instance cannot target more than one target dependency object..
+        ///   Looks up a localized string similar to A single attachable component instance cannot target more than one target dependency object..
         /// </summary>
-        internal static string BehaviorCannotTargetMultipleObjects {
+        internal static string AttachableCannotTargetMultipleObjects {
             get {
-                return ResourceManager.GetString("BehaviorCannotTargetMultipleObjects", resourceCulture);
+                return ResourceManager.GetString("AttachableCannotTargetMultipleObjects", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Behavior of type &apos;{0}&apos; only supports attachment to target objects of type &apos;{1}&apos;..
+        ///   Looks up a localized string similar to Behavior is already attached to the target dependency object..
+        /// </summary>
+        internal static string BehaviorAlreadyAttachedToTarget {
+            get {
+                return ResourceManager.GetString("BehaviorAlreadyAttachedToTarget", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This behavior only supports attachment to target objects of type &apos;{0}&apos;..
         /// </summary>
         internal static string BehaviorUnsupportedTargetObject {
             get {
@@ -93,6 +102,15 @@ namespace BadEcho.Fenestra.Properties {
         internal static string CanOnlyConvertFenestraKeys {
             get {
                 return ResourceManager.GetString("CanOnlyConvertFenestraKeys", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Either an invalid parameter was provided to a command, or the command was not in a state where execution was permitted..
+        /// </summary>
+        internal static string CommandCannotExecute {
+            get {
+                return ResourceManager.GetString("CommandCannotExecute", resourceCulture);
             }
         }
         

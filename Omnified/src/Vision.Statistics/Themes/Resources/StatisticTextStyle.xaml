@@ -14,42 +14,38 @@
 
     <system:String x:Key="StatisticNumberFormat">{0:N0}</system:String>
 
-    <Storyboard x:Key="BoomerText">
-        <DoubleAnimation Storyboard.TargetProperty="(fenestra:OutlinedTextElement.FontSize)"
-                             By="24.7"
-                             Duration="00:00:01.7">
+    <Storyboard x:Key="ExplodeTextAnimation">
+        <DoubleAnimation Storyboard.TargetName="Value" 
+                         Storyboard.TargetProperty="(fenestra:OutlinedTextElement.FontSize)"
+                         By="24.7"
+                         Duration="00:00:01.7">
             <DoubleAnimation.EasingFunction>
                 <ElasticEase EasingMode="EaseOut"/>
             </DoubleAnimation.EasingFunction>
         </DoubleAnimation>
-        <DoubleAnimation Storyboard.TargetProperty="(fenestra:OutlinedTextElement.FontSize)"
-                             By="-24.7"
-                             BeginTime="00:00:01.7"
-                             Duration="00:00:00.3">
+        <DoubleAnimation Storyboard.TargetName="Value" 
+                         Storyboard.TargetProperty="(fenestra:OutlinedTextElement.FontSize)"
+                         By="-24.7"
+                         BeginTime="00:00:01.7"
+                         Duration="00:00:00.3">
             <DoubleAnimation.EasingFunction>
                 <ElasticEase EasingMode="EaseOut"/>
             </DoubleAnimation.EasingFunction>
         </DoubleAnimation>
-        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)"
-                             From="10"
-                             To="-10"
-                             AutoReverse="True"
-                             RepeatBehavior="20x"
-                             Duration="00:00:00.05"                             
-                             FillBehavior="Stop">
+        <DoubleAnimation Storyboard.TargetName="Value" 
+                         Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)"
+                         From="10"
+                         To="-10"
+                         AutoReverse="True"
+                         RepeatBehavior="20x"
+                         Duration="00:00:00.05"                             
+                         FillBehavior="Stop">
             <DoubleAnimation.EasingFunction>
                 <BounceEase EasingMode="EaseInOut" Bounciness="2" Bounces="3"/>
             </DoubleAnimation.EasingFunction>
         </DoubleAnimation>
-        <!--<ColorAnimation Storyboard.TargetName="Value" Storyboard.TargetProperty="(fenestra:OutlinedTextElement.Fill).(SolidColorBrush.Color)"
-                            From="{DynamicResource {x:Static t:Colors.TextColorKey}}"
-                            To="{DynamicResource {x:Static t:Colors.CriticalTextColorKey}}"
-                            AutoReverse="True"
-                            Duration="00:00:00.2"
-                            FillBehavior="Stop"
-                            RepeatBehavior="5x"
-                            />-->
-        <ColorAnimation Storyboard.TargetProperty="(fenestra:OutlinedTextElement.Fill).(SolidColorBrush.Color)"
+        <ColorAnimation Storyboard.TargetName="Value" 
+                        Storyboard.TargetProperty="(fenestra:OutlinedTextElement.Fill).(SolidColorBrush.Color)"
                         From="{StaticResource {x:Static t:Colors.TextColorKey}}"
                         To="{StaticResource {x:Static t:Colors.CriticalTextColorKey}}"
                         AutoReverse="True"
@@ -66,14 +62,17 @@
         <Setter Property="Stroke" Value="#CC000000"/>
         <Setter Property="StrokeThickness" Value="2.6"/>
         <Setter Property="FontFamily" Value="{StaticResource Quattrocento}"/>
-    </Style>
-
-    <Style x:Key="BoomTextStyle" TargetType="{x:Type fenestra:OutlinedTextElement}" BasedOn="{StaticResource StatisticTextStyle}">
-        <Style.Triggers>
-            <EventTrigger RoutedEvent="Binding.TargetUpdated">
-                <BeginStoryboard Storyboard="{StaticResource BoomerText}"/>
-            </EventTrigger>
-        </Style.Triggers>
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+        <Setter Property="RenderTransform">
+            <Setter.Value>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Setter.Value>
+        </Setter>
     </Style>
 
 </ResourceDictionary>

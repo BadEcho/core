@@ -57,3 +57,9 @@ using BadEcho.Odin.Extensibility;
                            Scope = "member", 
                            Target = "~M:BadEcho.Fenestra.Markup.MultiBindingExtension.System#Windows#Markup#IAddChild#AddText(System.String)",
                            Justification = "This is a proper use of explicit interface implementation, and is exactly how Microsoft implements this very same interface in its own binding class analogues.")]
+
+[assembly: SuppressMessage("Maintainability", 
+                           "CA1508:Avoid dead conditional code", 
+                           Scope = "member", 
+                           Target = "~M:BadEcho.Fenestra.Behaviors.Behavior`2.Detach(`0)",
+                           Justification = "This is a strange false positive. The source of the value is clearly from a dictionary with NULLABLE values. So, a null check is required.")]
