@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"path": "framework"
+		},
+		{
+			"path": "targets"
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"**/log.txt": true
+		}
+	}
+}
