@@ -532,7 +532,7 @@ coordinatesAreDoubles:
   dd 0
   
 teleportitisDisplacementX:
-  dd (float)2.0
+  dd (float)1.0
     
 negativeOne:
   dd (float)-1.0
