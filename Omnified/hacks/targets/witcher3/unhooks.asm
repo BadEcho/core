@@ -68,3 +68,24 @@ omnifyApocalypseHook:
 unregistersymbol(omnifyApocalypseHook)
 
 dealloc(initiateApocalypse)
+
+
+// Cleanup of omnifyHumanoidPredatorHook
+omnifyHumanoidPredatorHook:
+  db 48 8B 43 08 48 89 86 B8 01 00 00
+
+unregistersymbol(omnifyHumanoidPredatorHook)
+unregistersymbol(playerSpeedX)
+
+dealloc(playerSpeedX)
+dealloc(identityValue)
+dealloc(initiatePredator)
+
+
+// Cleanup of omnifyPredatorHook
+omnifyPredatorHook:
+  db 8B 02 89 41 70
+
+unregistersymbol(omnifyPredatorHook)
+
+dealloc(initiatePredator)

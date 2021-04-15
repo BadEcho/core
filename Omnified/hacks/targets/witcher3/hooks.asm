@@ -364,3 +364,256 @@ negativeVerticalDisplacementEnabled:
 
 yIsVertical:
   dd 0
+
+
+// Initiates the Predator system for humanoids.
+// [rsi+1B8]: Start of target's current coordinates.
+// [rbx+8]: Start of target's new coordinates.
+define(omnifyHumanoidPredatorHook,"witcher3.exe"+F2971B)
+
+assert(omnifyHumanoidPredatorHook,48 8B 43 08 48 89 86 B8 01 00 00)
+alloc(initiateHumanoidPredator,$1000,omnifyHumanoidPredatorHook)
+alloc(playerSpeedX,8)
+alloc(identityValue,8)
+
+registersymbol(omnifyHumanoidPredatorHook)
+registersymbol(playerSpeedX)
+
+initiateHumanoidPredator:
+  pushf
+  jmp initiateHumanoidPredatorOriginalCode
+  push rax
+  mov rax,playerLocation
+  cmp rax,0
+  pop rax
+  je initiateHumanoidPredatorOriginalCode
+  // We'll need to back up a few SSE registers to aid double->float->double conversions.
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  sub rsp,10
+  movdqu [rsp],xmm2
+  sub rsp,10
+  movdqu [rsp],xmm3
+  sub rsp,10
+  movdqu [rsp],xmm4
+  push rax
+  push rbx
+  push rcx  
+  push rdx
+  // Backup rbx, which contains new coordinates values, since Predator will overwrite this register.
+  mov rdx,rbx
+  // Convert the new coordinates to floating point.
+  movupd xmm4,[rdx+8]
+  cvtpd2ps xmm0,xmm4
+  cvtsd2ss xmm1,[rdx+18]
+  movlhps xmm0,xmm1  
+  // Convert the current coordinates to floating point.
+  cvtpd2ps xmm2,[rsi+1B8]
+  cvtsd2ss xmm1,[rsi+1C8]
+  movlhps xmm2,xmm1  
+  // Back up the converted new coordinates for the target.
+  movups xmm3,xmm0  
+  // Calculate the movement offsets that were applied to the target's current coordinates.
+  subps xmm0,xmm2    
+  // Prevent the player from being processsed by the Predator system.
+  mov rax,playerLocation
+  cmp [rax],rsi
+  je applyPlayerSpeed
+  // Convert the player's current coordinate to floating point.
+  mov rbx,[rax]  
+  push rcx
+  lea rcx,[rbx+1B8]
+  call checkBadPointer
+  cmp ecx,0
+  pop rcx  
+  jne initiateHumanoidPredatorCleanup  
+  cvtpd2ps xmm1,[rbx+1B8]
+  cvtsd2ss xmm4,[rbx+1C8]
+  movlhps xmm1,xmm4  
+initiateHumanoidPredatorExecute:
+  // xmm0: Target movement offsets.
+  // xmm1: Player's current coordinates.
+  // xmm2: Target's current coordinates.
+  // xmm3: Target's new coordinates.
+  // Player coordinates are pushed as the first parameter.
+  movhlps xmm4,xmm1
+  sub rsp,8
+  movq [rsp],xmm1
+  sub rsp,8
+  movq [rsp],xmm4
+  // Target's current coordinates are pushed as the second parameter.
+  movhlps xmm4,xmm2
+  sub rsp,8
+  movq [rsp],xmm2
+  sub rsp,8
+  movq [rsp],xmm4
+  // An identity matrix is passed for the dimensional scale parameters as this game (probably) lacks true scaling.
+  movss xmm4,[identityValue]
+  shufps xmm4,xmm4,0
+  sub rsp,10
+  movdqu [rsp],xmm4
+  // Finally, we push those damn movement offsets to the god damn stack.
+  movhlps xmm4,xmm0
+  sub rsp,8
+  movq [rsp],xmm0
+  sub rsp,8
+  movq [rsp],xmm4
+  call executePredator
+  jmp initiateHumanoidPredatorExit
+applyPlayerSpeed:
+  // xmm0: Player movement offsets.
+  // xmm2: Player's current coordinates.
+  // xmm3: Player's new coordinates.
+  // Load player speed multiplier and multiply dem offsets!
+  movss xmm1,[playerSpeedX]
+  shufps xmm1,xmm1,0
+  mulps xmm0,xmm1
+  // Load the modified X, Y, and Z offsets to registers used to hold return values for Predator.
+  sub rsp,10
+  movups [rsp],xmm0
+  mov eax,[rsp]
+  mov ebx,[rsp+4]
+  mov ecx,[rsp+8]
+  add rsp,10
+initiateHumanoidPredatorExit:
+  sub rsp,10
+  mov [rsp],eax
+  mov [rsp+4],ebx
+  mov [rsp+8],ecx
+  movups xmm0,[rsp]
+  add rsp,10
+  addps xmm2,xmm0
+  cvtps2pd xmm3,xmm2
+  movhlps xmm2,xmm2
+  cvtss2sd xmm4,xmm2
+  movupd [rdx+8], xmm3
+  movsd [rdx+18], xmm4
+initiateHumanoidPredatorCleanup:
+  pop rdx
+  pop rcx
+  pop rbx
+  pop rax
+  movdqu xmm4,[rsp]
+  add rsp,10
+  movdqu xmm3,[rsp]
+  add rsp,10
+  movdqu xmm2,[rsp]
+  add rsp,10
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10  
+initiateHumanoidPredatorOriginalCode:
+  popf
+  mov rax,[rbx+08]
+  mov [rsi+000001B8],rax
+  jmp initiateHumanoidPredatorReturn
+
+omnifyHumanoidPredatorHook:
+  jmp initiateHumanoidPredator
+  nop 6
+initiateHumanoidPredatorReturn:
+
+playerSpeedX:
+  dd (float)1.0
+
+identityValue:
+  dd (float)1.0
+
+
+// Initiates the Predator system.
+define(omnifyPredatorHook,"witcher3.exe"+60E5C0)
+
+assert(omnifyPredatorHook,8B 02 89 41 70)
+alloc(initiatePredator,$1000,omnifyPredatorHook)
+
+registersymbol(omnifyPredatorHook)
+
+initiatePredator:
+  pushf 
+  push rax
+  mov rax,playerLocation
+  cmp rax,0
+  pop rax
+  je initiatePredatorOriginalCode
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  push rax
+  push rbx
+  push rcx
+  push rsi
+  mov rsi,rcx
+  mov rax,playerLocation
+  mov rbx,[rax]
+  push rcx
+  lea rcx,[rbx+1B8]
+  call checkBadPointer
+  cmp ecx,0
+  pop rcx  
+  jne initiatePredatorCleanup
+  cvtpd2ps xmm0,[rbx+1B8]
+  cvtsd2ss xmm1,[rbx+1C8]
+initiatePredatorExecute:
+  sub rsp,8
+  movq [rsp],xmm0
+  sub rsp,8
+  movq [rsp],xmm1
+  push [rsi+70]  
+  push [rsi+78]  
+  movss xmm0,[identityValue]  
+  shufps xmm0,xmm0,0
+  sub rsp,10
+  movdqu [rsp],xmm0  
+  movups xmm0,[rdx]
+  movups xmm1,[rsi+70]  
+  subps xmm0,xmm1
+  movhlps xmm1,xmm0
+  sub rsp,8
+  movq [rsp],xmm0
+  sub rsp,8
+  movq [rsp],xmm1
+  call executePredator
+  sub rsp,10
+  mov [rsp],eax
+  mov [rsp+4],ebx
+  mov [rsp+8],ecx
+  movups xmm0,[rsp]
+  add rsp,10
+  movups xmm1,[rsi+70]
+  addps xmm1,xmm0
+  movups [rdx],xmm1
+initiatePredatorCleanup:
+  pop rsi
+  pop rcx
+  pop rbx
+  pop rax
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+
+initiatePredatorOriginalCode:
+  popf
+  mov eax,[rdx]
+  mov [rcx+70],eax
+  jmp initiatePredatorReturn
+
+omnifyPredatorHook:
+  jmp initiatePredator  
+initiatePredatorReturn:
+
+threatDistance:
+  dd (float)1.5
+
+aggroDistance:
+  dd (float)5.5
+
+skipBoostY:
+  dd 0
+
+skipBoostZ:
+  dd 1

@@ -9,6 +9,7 @@
 	],
 	"settings": {
 		"files.exclude": {
+			"**/cedebug.txt": true,
 			"**/log.txt": true
 		}
 	}

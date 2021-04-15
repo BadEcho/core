@@ -1214,16 +1214,12 @@ isZPastLimit:
   ucomiss xmm2,[positiveLimit]
   jbe executePredatorCleanup
   mov ecx,[zero]
-  mov ebx,[zero]
-  mov eax,[zero]
   jmp executePredatorCleanup
 isZLessThanNegativeLimit:
   movd xmm2,ecx
   ucomiss xmm2,[negativeLimit]
   ja executePredatorCleanup
   mov ecx,[zero]
-  mov ebx,[zero]
-  mov eax,[zero]
 executePredatorCleanup:
   movdqu xmm8,[rsp]
   add rsp,10
