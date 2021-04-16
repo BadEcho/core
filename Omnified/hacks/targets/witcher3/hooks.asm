@@ -298,6 +298,11 @@ verifyPlayerDamaged:
   jne initiatePlayerApocalypse
   jmp initiateApocalypseExit  
 verifyCiriDamaged:
+  // If we're actually playing Geralt and we have both some toxicity and adrenaline, we might end up here.
+  // This will be 0 if we're actually Ciri.
+  mov rax,[rsp+412]
+  cmp eax,0
+  jne initiateApocalypseExit
   // For Ciri, this is not 0 (unlike Geralt) when (assumingly) stamina is changing.
   // If it is 0, then Ciri may be losing health.
   mov eax,[rsp+72]
@@ -381,7 +386,6 @@ registersymbol(playerSpeedX)
 
 initiateHumanoidPredator:
   pushf
-  jmp initiateHumanoidPredatorOriginalCode
   push rax
   mov rax,playerLocation
   cmp rax,0
@@ -420,7 +424,7 @@ initiateHumanoidPredator:
   // Prevent the player from being processsed by the Predator system.
   mov rax,playerLocation
   cmp [rax],rsi
-  je applyPlayerSpeed
+  jmp applyPlayerSpeed
   // Convert the player's current coordinate to floating point.
   mov rbx,[rax]  
   push rcx
@@ -607,10 +611,10 @@ omnifyPredatorHook:
 initiatePredatorReturn:
 
 threatDistance:
-  dd (float)1.5
+  dd (float)2.0
 
 aggroDistance:
-  dd (float)5.5
+  dd (float)6.0
 
 skipBoostY:
   dd 0
