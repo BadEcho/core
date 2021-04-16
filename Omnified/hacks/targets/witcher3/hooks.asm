@@ -371,26 +371,32 @@ yIsVertical:
   dd 0
 
 
-// Initiates the Predator system for humanoids.
-// [rsi+1B8]: Start of target's current coordinates.
-// [rbx+8]: Start of target's new coordinates.
-define(omnifyHumanoidPredatorHook,"witcher3.exe"+F2971B)
+// Applies a multipler to the player's speed.
+// This function is always called for the moving player -- this includes Roach (horse), but only while
+// the player is riding on Roach.
+// The coordinates of the moving player may not necessarily be the playerLocation pointer, as a distinct structure
+// in memory is used when the player is riding Roach.
+// [rsi+1B8]: Start of player's current coordinates.
+// [rbx+8]: Start of player's new coordinates.
+define(omnifyPlayerSpeedHook,"witcher3.exe"+F2971B)
 
-assert(omnifyHumanoidPredatorHook,48 8B 43 08 48 89 86 B8 01 00 00)
-alloc(initiateHumanoidPredator,$1000,omnifyHumanoidPredatorHook)
+assert(omnifyPlayerSpeedHook,48 8B 43 08 48 89 86 B8 01 00 00)
+alloc(applyPlayerSpeed,$1000,omnifyPlayerSpeedHook)
 alloc(playerSpeedX,8)
+alloc(playerVerticalX,8)
 alloc(identityValue,8)
 
-registersymbol(omnifyHumanoidPredatorHook)
+registersymbol(omnifyPlayerSpeedHook)
 registersymbol(playerSpeedX)
+registersymbol(playerVerticalX)
 
-initiateHumanoidPredator:
+applyPlayerSpeed:
   pushf
   push rax
   mov rax,playerLocation
   cmp rax,0
   pop rax
-  je initiateHumanoidPredatorOriginalCode
+  je applyPlayerSpeedOriginalCode
   // We'll need to back up a few SSE registers to aid double->float->double conversions.
   sub rsp,10
   movdqu [rsp],xmm0
@@ -400,107 +406,39 @@ initiateHumanoidPredator:
   movdqu [rsp],xmm2
   sub rsp,10
   movdqu [rsp],xmm3
-  sub rsp,10
-  movdqu [rsp],xmm4
-  push rax
-  push rbx
-  push rcx  
-  push rdx
-  // Backup rbx, which contains new coordinates values, since Predator will overwrite this register.
-  mov rdx,rbx
   // Convert the new coordinates to floating point.
-  movupd xmm4,[rdx+8]
-  cvtpd2ps xmm0,xmm4
-  cvtsd2ss xmm1,[rdx+18]
+  // This structure is not aligned properly, so need to unaligned-move it to an SSE first.
+  movupd xmm1,[rbx+8]
+  cvtpd2ps xmm0,xmm1
+  cvtsd2ss xmm1,[rbx+18]
   movlhps xmm0,xmm1  
   // Convert the current coordinates to floating point.
-  cvtpd2ps xmm2,[rsi+1B8]
-  cvtsd2ss xmm1,[rsi+1C8]
-  movlhps xmm2,xmm1  
-  // Back up the converted new coordinates for the target.
-  movups xmm3,xmm0  
+  cvtpd2ps xmm1,[rsi+1B8]
+  cvtsd2ss xmm2,[rsi+1C8]
+  movlhps xmm1,xmm2 
   // Calculate the movement offsets that were applied to the target's current coordinates.
-  subps xmm0,xmm2    
-  // Prevent the player from being processsed by the Predator system.
-  mov rax,playerLocation
-  cmp [rax],rsi
-  jmp applyPlayerSpeed
-  // Convert the player's current coordinate to floating point.
-  mov rbx,[rax]  
-  push rcx
-  lea rcx,[rbx+1B8]
-  call checkBadPointer
-  cmp ecx,0
-  pop rcx  
-  jne initiateHumanoidPredatorCleanup  
-  cvtpd2ps xmm1,[rbx+1B8]
-  cvtsd2ss xmm4,[rbx+1C8]
-  movlhps xmm1,xmm4  
-initiateHumanoidPredatorExecute:
-  // xmm0: Target movement offsets.
-  // xmm1: Player's current coordinates.
-  // xmm2: Target's current coordinates.
-  // xmm3: Target's new coordinates.
-  // Player coordinates are pushed as the first parameter.
-  movhlps xmm4,xmm1
-  sub rsp,8
-  movq [rsp],xmm1
-  sub rsp,8
-  movq [rsp],xmm4
-  // Target's current coordinates are pushed as the second parameter.
-  movhlps xmm4,xmm2
-  sub rsp,8
-  movq [rsp],xmm2
-  sub rsp,8
-  movq [rsp],xmm4
-  // An identity matrix is passed for the dimensional scale parameters as this game (probably) lacks true scaling.
-  movss xmm4,[identityValue]
-  shufps xmm4,xmm4,0
-  sub rsp,10
-  movdqu [rsp],xmm4
-  // Finally, we push those damn movement offsets to the god damn stack.
-  movhlps xmm4,xmm0
-  sub rsp,8
-  movq [rsp],xmm0
-  sub rsp,8
-  movq [rsp],xmm4
-  call executePredator
-  jmp initiateHumanoidPredatorExit
-applyPlayerSpeed:
-  // xmm0: Player movement offsets.
-  // xmm2: Player's current coordinates.
-  // xmm3: Player's new coordinates.
-  // Load player speed multiplier and multiply dem offsets!
-  movss xmm1,[playerSpeedX]
-  shufps xmm1,xmm1,0
-  mulps xmm0,xmm1
-  // Load the modified X, Y, and Z offsets to registers used to hold return values for Predator.
-  sub rsp,10
-  movups [rsp],xmm0
-  mov eax,[rsp]
-  mov ebx,[rsp+4]
-  mov ecx,[rsp+8]
-  add rsp,10
-initiateHumanoidPredatorExit:
-  sub rsp,10
-  mov [rsp],eax
-  mov [rsp+4],ebx
-  mov [rsp+8],ecx
-  movups xmm0,[rsp]
-  add rsp,10
-  addps xmm2,xmm0
-  cvtps2pd xmm3,xmm2
-  movhlps xmm2,xmm2
-  cvtss2sd xmm4,xmm2
-  movupd [rdx+8], xmm3
-  movsd [rdx+18], xmm4
-initiateHumanoidPredatorCleanup:
-  pop rdx
-  pop rcx
-  pop rbx
-  pop rax
-  movdqu xmm4,[rsp]
-  add rsp,10
+  subps xmm0,xmm1  
+  // Load the multiplier to be applied to the Z axis (typically 1x to prevent vertical boost, but we have it 
+  // configurable so I can entertain viewers with stupid high jumps) as well as a 1x multiplier for any hanger-on 
+  // value that may follow the X/Y/Z coords.
+  movss xmm3,[playerVerticalX]  
+  movss xmm2,[identityValue]
+  movlhps xmm3,xmm2
+  shufps xmm3,xmm3,0x88
+  // Load player speed multiplier...
+  movss xmm2,[playerSpeedX]
+  // Prime the multipliers.
+  shufps xmm2,xmm3,0x40
+  // Multiply dem offsets!
+  mulps xmm0,xmm2
+  // Add the potentially modified target offsets back to the original coordinates to get the new coordinates.
+  addps xmm0,xmm1
+  cvtps2pd xmm1,xmm0
+  movhlps xmm0,xmm0
+  cvtss2sd xmm2,xmm0
+  movupd [rbx+8], xmm1
+  movsd [rbx+18], xmm2
+applyPlayerSpeedCleanup:
   movdqu xmm3,[rsp]
   add rsp,10
   movdqu xmm2,[rsp]
@@ -509,20 +447,23 @@ initiateHumanoidPredatorCleanup:
   add rsp,10
   movdqu xmm0,[rsp]
   add rsp,10  
-initiateHumanoidPredatorOriginalCode:
+applyPlayerSpeedOriginalCode:
   popf
   mov rax,[rbx+08]
   mov [rsi+000001B8],rax
-  jmp initiateHumanoidPredatorReturn
+  jmp applyPlayerSpeedReturn
 
-omnifyHumanoidPredatorHook:
-  jmp initiateHumanoidPredator
+omnifyPlayerSpeedHook:
+  jmp applyPlayerSpeed
   nop 6
-initiateHumanoidPredatorReturn:
+applyPlayerSpeedReturn:
 
 playerSpeedX:
   dd (float)1.0
 
+playerVerticalX:
+  dd (float)1.0
+  
 identityValue:
   dd (float)1.0
 
