@@ -18,6 +18,7 @@ function activateLoggers()
 		local playerHealth = readFloat("[playerVitals]")
 		playerHealth = FloorIt(playerHealth)
 		local playerMaxHealth = readFloat("[playerVitals]+0x4")        
+		playerMaxHealth = FloorIt(playerMaxHealth)
 		local enemyHealth = readFloat("lastEnemyHealthValue")
 
 		enemyHealth = FloorIt(enemyHealth)

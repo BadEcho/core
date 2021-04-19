@@ -17,10 +17,17 @@ registersymbol(playerAbilityManager)
 getPlayerVitals:
   pushf
   push rbx
+  // When the player is defending someone, their health bar is added to the screen and interferes
+  // with this code. We use this field as an identifier.
+  mov rbx,[rax+0x20]
+  // A value of 0x5 indicates Keira. 
+  cmp rbx,0x5
+  je getPlayerVitalsExit
   mov rbx,playerVitals
   mov [rbx],rax
   mov rbx,playerAbilityManager
   mov [rbx],rcx
+getPlayerVitalsExit:
   pop rbx
 getPlayerVitalsOriginalCode:
   popf
@@ -189,7 +196,7 @@ changeXPReturn:
 
 
 xpX:
-  dd (float)0.5
+  dd (float)0.69
 
 
 // Initiates the Apocalypse system.
@@ -369,6 +376,9 @@ negativeVerticalDisplacementEnabled:
 
 yIsVertical:
   dd 0
+
+teleportitisDisplacementX:
+  dd (float)3.0
 
 
 // Applies a multipler to the player's speed.
