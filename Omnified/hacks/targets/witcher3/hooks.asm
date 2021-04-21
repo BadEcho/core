@@ -667,32 +667,49 @@ applyAbomnification:
   // Ensure that this actually points to a CRenderEntityGroup.
   mov rax,[rsi]
   cmp ax,0xBFE8
-  jne applyAbomnificationExit
+  jne applyAbomnificationExit  
   // The rendering group for that player, and only the player, can point to some properties here, the root player structure
   // being among them.
   mov rbx,[rsi+E0]    
   lea rcx,[rbx]
   call checkBadPointer
   cmp rcx,0
-  jne checkForPlayerTree
+  jne checkForTree
   // The root structure will be located here.
   mov rdx,[rbx+10]  
   lea rcx,[rdx]
   call checkBadPointer
   cmp rcx,0
-  jne checkForPlayerTree
+  jne checkForTree
   // Let's make sure this is actually a player root structure and not an NPC one.
   mov rax,[rdx]
   cmp ax,0xC418
   je applyAbomnificationExit
-checkForPlayerTree:
+checkForTree:
   // The player may also have a CR4BehTreeInstance located within the render group, which will also point to a root structure.
   mov rbx,[rsi+158]
   lea rcx,[rbx]
   call checkBadPointer
   cmp rcx,0
+  je checkForPlayerInTree  
+  // Sometimes the CR4BehTreeInstance can instead be found under an ICustomCameraScriptedPivotRotationController.
+  // Yes, quite the mouthful.
+  mov rdx,[rsi+118]
+  lea rcx,[rdx]
+  call checkBadPointer
+  cmp rcx,0
   jne allowMorphing
-  // The root structure will be found here.
+  // The tree may be located here within the camera controller.
+  mov rbx,[rdx+E8]
+  lea rcx,[rbx]
+  call checkBadPointer
+  cmp rcx,0
+  jne allowMorphing  
+checkForPlayerInTree:
+  mov rax,[rbx]
+  cmp ax,0x6068
+  jne checkForSelfUpdatingComponentOrJournal
+  // The root structure will be found here.  
   mov rdx,[rbx+88]
   lea rcx,[rdx]
   call checkBadPointer
@@ -700,6 +717,26 @@ checkForPlayerTree:
   jne allowMorphing
   // And, once again, let's make sure this is actually a player root structure.
   mov rax,[rdx]
+  cmp ax,0xC418
+  je applyAbomnificationExit
+checkForSelfUpdatingComponentOrJournal:
+  // Apparently this isn't a tree. If we can find either a CSelfUpdatingComponent or a CJournalResource, this may be the player.
+  mov rdx,[rbx+10]
+  lea rcx,[rdx]
+  call checkBadPointer
+  cmp rcx,0
+  jne allowMorphing
+  // If this is a journal resource, it is the player.
+  mov rax,[rdx]
+  cmp ax,0xADC8
+  je applyAbomnificationExit
+  // The root structure can be found here in a player component.
+  mov rbx,[rdx+30]
+  lea rcx,[rbx]
+  call checkBadPointer
+  cmp rcx,0
+  jne allowMorphing
+  mov rax,[rbx]
   cmp ax,0xC418
   je applyAbomnificationExit
 allowMorphing:
