@@ -488,56 +488,81 @@ registersymbol(omnifyPredatorHook)
 
 initiatePredator:
   pushf 
+  // An initialized playerLocation pointer is required prior to Predator execution.
   push rax
   mov rax,playerLocation
   cmp rax,0
   pop rax
   je initiatePredatorOriginalCode
+  // We'll need a few SSE registers in order to do double->float conversion.
   sub rsp,10
   movdqu [rsp],xmm0
   sub rsp,10
   movdqu [rsp],xmm1
+  // We'll need to backup the registers used by Predator to store its return values.
   push rax
   push rbx
   push rcx
+  // And another register to hold onto the current coordinates, since we'll need them to finish 
+  // calculating what the new coordinates should be following Predator execution.
   push rsi
   mov rsi,rcx
   mov rax,playerLocation
   mov rbx,[rax]
-  push rcx
+  // It is possible during a load screen following a death or area transition for a previously
+  // initialized player location pointer to no longer be pointing to a valid place in memory. 
+  // We'll need to wait in that case. Eventually, our player hook will correct this.
   lea rcx,[rbx+1B8]
   call checkBadPointer
   cmp ecx,0
-  pop rcx  
   jne initiatePredatorCleanup
+  // Our player's coordinates are stored as doubles. Predator expects them to be floats.
+  // A packed conversion to handle both X and Y at once...
   cvtpd2ps xmm0,[rbx+1B8]
+  // And then a single conversion to take care of Z.
   cvtsd2ss xmm1,[rbx+1C8]
 initiatePredatorExecute:
+  // With our player's coordinates converted, we'll push them as the first parameter to the stack.
+  // X and Y are pushed as quadwords first, followed by Z, as if they were pushed as two m64
+  // addresses.
   sub rsp,8
   movq [rsp],xmm0
   sub rsp,8
   movq [rsp],xmm1
+  // Next are the current coordinates for the target.
   push [rsi+70]  
   push [rsi+78]  
+  // An identity matrix is passed to represent the target's dimensional scales. True scaling is
+  // most likely not present in this game; the "artificial" size of the creature shouldn't 
+  // impact movement.
   movss xmm0,[identityValue]  
   shufps xmm0,xmm0,0
-  sub rsp,10
+  sub rsp,10  
   movdqu [rsp],xmm0  
+  // Time to produce the movement offsets, which act as the final parameter for the Predator system.
+  // Offsets are calculated as such: coordinatesNew - coordinatesCurrent = offsets.
   movups xmm0,[rdx]
   movups xmm1,[rsi+70]  
   subps xmm0,xmm1
+  // The offsets are on xmm0, they are pushed to the stack as if we were pushing two m64 addresses 
+  // in memory.
   movhlps xmm1,xmm0
   sub rsp,8
   movq [rsp],xmm0
   sub rsp,8
   movq [rsp],xmm1
+  // All parameters have been provided. Execute the Predator!
   call executePredator
+initializePredatorUpdateCoordinates:
+  // We make some room on the stack to help transfer updated offsets found in eax, ebx, and ecx
+  // to an SSE register.
   sub rsp,10
   mov [rsp],eax
   mov [rsp+4],ebx
   mov [rsp+8],ecx
   movups xmm0,[rsp]
   add rsp,10
+  // The updated offsets are then added to the current coordinates, giving us new target coordinates.
   movups xmm1,[rsi+70]
   addps xmm1,xmm0
   movups [rdx],xmm1
@@ -550,7 +575,6 @@ initiatePredatorCleanup:
   add rsp,10
   movdqu xmm0,[rsp]
   add rsp,10
-
 initiatePredatorOriginalCode:
   popf
   mov eax,[rdx]
@@ -668,77 +692,11 @@ applyAbomnification:
   mov rax,[rsi]
   cmp ax,0xBFE8
   jne applyAbomnificationExit  
-  // The rendering group for that player, and only the player, can point to some properties here, the root player structure
-  // being among them.
-  mov rbx,[rsi+E0]    
-  lea rcx,[rbx]
-  call checkBadPointer
-  cmp rcx,0
-  jne checkForTree
-  // The root structure will be located here.
-  mov rdx,[rbx+10]  
-  lea rcx,[rdx]
-  call checkBadPointer
-  cmp rcx,0
-  jne checkForTree
-  // Let's make sure this is actually a player root structure and not an NPC one.
-  mov rax,[rdx]
-  cmp ax,0xC418
-  je applyAbomnificationExit
-checkForTree:
-  // The player may also have a CR4BehTreeInstance located within the render group, which will also point to a root structure.
-  mov rbx,[rsi+158]
-  lea rcx,[rbx]
-  call checkBadPointer
-  cmp rcx,0
-  je checkForPlayerInTree  
-  // Sometimes the CR4BehTreeInstance can instead be found under an ICustomCameraScriptedPivotRotationController.
-  // Yes, quite the mouthful.
-  mov rdx,[rsi+118]
-  lea rcx,[rdx]
-  call checkBadPointer
-  cmp rcx,0
-  jne allowMorphing
-  // The tree may be located here within the camera controller.
-  mov rbx,[rdx+E8]
-  lea rcx,[rbx]
-  call checkBadPointer
-  cmp rcx,0
-  jne allowMorphing  
-checkForPlayerInTree:
-  mov rax,[rbx]
-  cmp ax,0x6068
-  jne checkForSelfUpdatingComponentOrJournal
-  // The root structure will be found here.  
-  mov rdx,[rbx+88]
-  lea rcx,[rdx]
-  call checkBadPointer
-  cmp rcx,0
-  jne allowMorphing
-  // And, once again, let's make sure this is actually a player root structure.
-  mov rax,[rdx]
-  cmp ax,0xC418
-  je applyAbomnificationExit
-checkForSelfUpdatingComponentOrJournal:
-  // Apparently this isn't a tree. If we can find either a CSelfUpdatingComponent or a CJournalResource, this may be the player.
-  mov rdx,[rbx+10]
-  lea rcx,[rdx]
-  call checkBadPointer
-  cmp rcx,0
-  jne allowMorphing
-  // If this is a journal resource, it is the player.
-  mov rax,[rdx]
-  cmp ax,0xADC8
-  je applyAbomnificationExit
-  // The root structure can be found here in a player component.
-  mov rbx,[rdx+30]
-  lea rcx,[rbx]
-  call checkBadPointer
-  cmp rcx,0
-  jne allowMorphing
-  mov rax,[rbx]
-  cmp ax,0xC418
-  je applyAbomnificationExit
+  // It seems that this will be set to 0x17 or greater for the player, and just for the player.
+  mov rax,[rsi+8]
+  cmp rax,0x17
+  jge applyAbomnificationExit
+  jmp allowMorphing  
 allowMorphing:
   // Push the identifying address parameter and get the Abomnified scales.
   push rsi
