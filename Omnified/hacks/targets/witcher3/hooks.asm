@@ -572,3 +572,222 @@ skipBoostY:
 
 skipBoostZ:
   dd 1
+
+
+// Initiates the Abomnification system.
+// The function we're hooking into appears to be responsbile for resetting properties on A
+// CRenderEntityGroup. It runs much less frequently than the actual rendering functions, so
+// it is appropriate to use for Abomnified scale generation progression.
+// [r14-50]: CRenderEntityGroup being updated.
+define(omnifyAbomnificationHook,"witcher3.exe"+C1A3D7)
+
+assert(omnifyAbomnificationHook,41 C7 06 FF FF 7F 7F)
+alloc(initiateAbomnification,$1000,omnifyAbomnificationHook)
+
+registersymbol(omnifyAbomnificationHook)
+
+initiateAbomnification:
+  pushf
+  // We don't apply the Abomnified scales here, we just generate them for later retrieval.
+  // Regardless, we need to backup the registers the Abomnification system uses to hold return values.
+  push rax
+  push rbx
+  push rcx
+  // The game maintains a CRenderEntityGroup for all renderings associated with a particular NPC.
+  // This makes it a very suitable identifier for the Abomnification system.
+  lea rax,[r14-50]
+  // Push the identifying address parameter and let's start up the Abomnification!
+  push rax
+  call executeAbomnification
+  pop rcx
+  pop rbx
+  pop rax
+initiateAbomnificationOriginalCode:
+  popf
+  mov [r14],7F7FFFFF
+  jmp initiateAbomnificationReturn
+
+omnifyAbomnificationHook:
+  jmp initiateAbomnification
+  nop 2
+initiateAbomnificationReturn:
+
+// Value change to actual height change is not 1:1, ~1.25x increase in value causes actual height to be ~2x.
+abominifyHeightResultUpper:
+  dd #125
+
+abominifyHeightResultLower:
+  dd #10
+
+unnaturalSmallX:
+  dd (float)1.4
+
+unnaturalBigX:
+  dd (float)0.6
+
+
+// Applies Abomnification generated scale multipliers.
+// rbx/rcx: The rendering unit, typically CRenderProxy_Mesh.
+define(omnifyApplyAbomnificationHook,"witcher3.exe"+CEEFC0)
+
+assert(omnifyApplyAbomnificationHook,41 8B 00 89 41 40)
+alloc(applyAbomnification,$1000,omnifyApplyAbomnificationHook)
+alloc(headHeightCoefficient,8)
+alloc(headHeightShifter,8)
+registersymbol(omnifyApplyAbomnificationHook)
+
+applyAbomnification:
+  pushf
+  // We'll need to back up two SSE registers: one for holding the scale multiplier, the other for the particular dimension
+  // we're modifying.
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  // Backing up the registers used by the Abomnification system to hold return values.
+  push rax
+  push rbx
+  push rcx
+  // And an additional one to support dereferencing pointers, as rax and rcx are needed by us for 2-byte value checking and
+  // pointer checking respectively.
+  push rdx
+  // rsi will hold the identifying address for the creature morphing -- in this case, its CRenderEntityGroup.
+  push rsi
+  // Our primary goal is the association of entity data with what's being rendered.
+  // Ensure the rendering unit is a CRenderProxy_Mesh type.
+  mov rax,[rbx]
+  cmp ax,0x4158
+  jne applyAbomnificationExit
+  // The majority of CRenderProxy_Mesh instances will point to the CRenderEntityGroup that they belong to here.  
+  mov rsi,[rbx+140]
+  lea rcx,[rsi]
+  call checkBadPointer
+  cmp rcx,0 
+  jne applyAbomnificationExit
+  // Ensure that this actually points to a CRenderEntityGroup.
+  mov rax,[rsi]
+  cmp ax,0xBFE8
+  jne applyAbomnificationExit
+  // The rendering group for that player, and only the player, can point to some properties here, the root player structure
+  // being among them.
+  mov rbx,[rsi+E0]    
+  lea rcx,[rbx]
+  call checkBadPointer
+  cmp rcx,0
+  jne checkForPlayerTree
+  // The root structure will be located here.
+  mov rdx,[rbx+10]  
+  lea rcx,[rdx]
+  call checkBadPointer
+  cmp rcx,0
+  jne checkForPlayerTree
+  // Let's make sure this is actually a player root structure and not an NPC one.
+  mov rax,[rdx]
+  cmp ax,0xC418
+  je applyAbomnificationExit
+checkForPlayerTree:
+  // The player may also have a CR4BehTreeInstance located within the render group, which will also point to a root structure.
+  mov rbx,[rsi+158]
+  lea rcx,[rbx]
+  call checkBadPointer
+  cmp rcx,0
+  jne allowMorphing
+  // The root structure will be found here.
+  mov rdx,[rbx+88]
+  lea rcx,[rdx]
+  call checkBadPointer
+  cmp rcx,0
+  jne allowMorphing
+  // And, once again, let's make sure this is actually a player root structure.
+  mov rax,[rdx]
+  cmp ax,0xC418
+  je applyAbomnificationExit
+allowMorphing:
+  // Push the identifying address parameter and get the Abomnified scales.
+  push rsi
+  call getAbomnifiedScales
+  // Load the Abomnified width.
+  movd xmm0,eax
+  // Now to apply the Abomnified width. Dimensions in this game are a bit complicated -- we aren't dealing with the
+  // the typical 3x4 matrix. The r8 register points to the model data we need to manipulate.
+  // [r8]: Width for the body when the character is facing north or south (yes, if character is facing east/west this has 0 
+  //       effect on the character's model. It has nothing to do with camera position. First time I've seen this kind of thing.
+  //       Hell though, ya'll know I'm not a game dev!)
+  // [r8+4]: Width for the body when character is facing east or west.
+  // [r8+20]: Width for the head when character is facing north or south.
+  // [r8+24]: Width for the head when character is facing east or west.
+  movss xmm1,[r8]
+  mulss xmm1,xmm0
+  movss [r8],xmm1
+  movss xmm1,[r8+4]
+  mulss xmm1,xmm0
+  movss [r8+4],xmm1
+  movss xmm1,[r8+20]
+  mulss xmm1,xmm0
+  movss [r8+20],xmm1
+  movss xmm1,[r8+24]
+  mulss xmm1,xmm0
+  movss [r8+24],xmm1
+  // Load the Abomnified height.
+  movd xmm0,ebx
+  // The height dimension has its own complications.
+  // [r8+8]: Height and vertical offset for the head. In order to keep in sync with the rest of the body's height, testing has shown
+  //         that the value going here needs to be plugged into a function. By charting values required in order to keep the head lined up
+  //         with the body, I derived a mathematical function that will more or less keep it in sync.
+  //         Note that the position of the head cannot be lowered without shrinking the head, and indeed, in order to continue keeping the
+  //         head lined up once the body height value shrinks below 0.8 requires a negative head value to be applied. That means, yes,
+  //         short bodies will have upside down heads. It's brilliant!
+  //      
+  //         heightHead = heightBody*3.2 - 2.12
+  //
+  // [r8+28]: Height for the body. Changes in this value vs changes in actual height on screen is not 1:1. 1.2x here increases height by ~2x
+  //          actually, etc.
+  mulss xmm0,[headHeightCoefficient]  
+  subss xmm0,[headHeightShifter]
+  movss xmm1,[r8+8]
+  mulss xmm1,xmm0  
+  movss [r8+8],xmm1
+  // Reset to Abomnified height for body height.
+  movd xmm0,ebx  
+  movss xmm1,[r8+28]
+  mulss xmm1,xmm0  
+  movss [r8+28],xmm1
+  // Load the Abomnified depth.
+  movd xmm0,ecx
+  // For the depth:
+  // [r8+10]: Depth for body and height when character is facing east or west.
+  // [r8+14]: Depth for body and height when character is facing north or south.
+  movss xmm1,[r8+10]
+  mulss xmm1,xmm0
+  movss [r8+10],xmm1
+  movss xmm1,[r8+14]
+  mulss xmm1,xmm0
+  movss [r8+14],xmm1
+  // That's all she wrote.
+applyAbomnificationExit:  
+  pop rsi
+  pop rdx
+  pop rcx
+  pop rbx
+  pop rax
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+applyAbomnificationOriginalCode:
+  popf
+  mov eax,[r8]
+  mov [rcx+40],eax
+  jmp applyAbomnificationReturn
+
+omnifyApplyAbomnificationHook:
+  jmp applyAbomnification
+  nop 
+applyAbomnificationReturn:
+
+
+headHeightCoefficient:
+  dd (float)3.2
+
+headHeightShifter:
+  dd (float)2.12

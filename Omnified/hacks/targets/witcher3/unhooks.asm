@@ -91,3 +91,23 @@ omnifyPredatorHook:
 unregistersymbol(omnifyPredatorHook)
 
 dealloc(initiatePredator)
+
+
+// Cleanup of omnifyAbomnificationHook
+omnifyAbomnificationHook:
+  db 41 C7 06 FF FF 7F 7F
+
+unregistersymbol(omnifyAbomnificationHook)
+
+dealloc(initiateAbomnification)
+
+
+// Cleanup of omnifyApplyAbomnificationHook
+omnifyApplyAbomnificationHook:
+  db 41 8B 00 89 41 40
+
+unregistersymbol(omnifyApplyAbomnificationHook)
+
+dealloc(headHeightCoefficient)
+dealloc(headHeightShifter)
+dealloc(applyAbomnification)
