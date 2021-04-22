@@ -23,6 +23,9 @@ getPlayerVitals:
   // A value of 0x5 indicates Keira. 
   cmp rbx,0x5
   je getPlayerVitalsExit
+  // A value of 0x74 indicates Princess (Goat).
+  cmp ebx,0x74
+  je getPlayerVitalsExit
   mov rbx,playerVitals
   mov [rbx],rax
   mov rbx,playerAbilityManager
@@ -678,16 +681,19 @@ applyAbomnification:
   // rsi will hold the identifying address for the creature morphing -- in this case, its CRenderEntityGroup.
   push rsi
   // Our primary goal is the association of entity data with what's being rendered.
-  // Ensure the rendering unit is a CRenderProxy_Mesh type.
-  mov rax,[rbx]
-  cmp ax,0x4158
-  jne applyAbomnificationExit
-  // The majority of CRenderProxy_Mesh instances will point to the CRenderEntityGroup that they belong to here.  
+  // The majority of CRenderProxy_Mesh (or like) instances will point to the CRenderEntityGroup that they belong to here.  
   mov rsi,[rbx+140]
   lea rcx,[rsi]
   call checkBadPointer
   cmp rcx,0 
+  je ensureGroup
+  // Some CRenderProxy_Mesh like instances will point to a group here instead.
+  mov rsi,[rbx+108]
+  lea rcx,[rsi]
+  call checkBadPointer
+  cmp rcx,0
   jne applyAbomnificationExit
+ensureGroup:
   // Ensure that this actually points to a CRenderEntityGroup.
   mov rax,[rsi]
   cmp ax,0xBFE8
@@ -750,8 +756,8 @@ allowMorphing:
   // Load the Abomnified depth.
   movd xmm0,ecx
   // For the depth:
-  // [r8+10]: Depth for body and height when character is facing east or west.
-  // [r8+14]: Depth for body and height when character is facing north or south.
+  // [r8+10]: Depth for body and head when character is facing east or west.
+  // [r8+14]: Depth for body and head when character is facing north or south.
   movss xmm1,[r8+10]
   mulss xmm1,xmm0
   movss [r8+10],xmm1
