@@ -698,15 +698,15 @@ ensureGroup:
   mov rax,[rsi]
   cmp ax,0xBFE8
   jne applyAbomnificationExit  
-  // It seems that this will be set to 0x17 or greater for the player, and just for the player.
+  // It seems that this will be set to 0x7 or less for all monster types. We only want to morph enemy monsters.
   mov rax,[rsi+8]
-  cmp rax,0x17
+  cmp rax,0x7
   jge applyAbomnificationExit
   jmp allowMorphing  
 allowMorphing:
   // Push the identifying address parameter and get the Abomnified scales.
   push rsi
-  call getAbomnifiedScales
+  call getAbomnifiedScales    
   // Load the Abomnified width.
   movd xmm0,eax
   // Now to apply the Abomnified width. Dimensions in this game are a bit complicated -- we aren't dealing with the
@@ -740,6 +740,7 @@ allowMorphing:
   //         short bodies will have upside down heads. It's brilliant!
   //      
   //         heightHead = heightBody*3.2 - 2.12
+  //         Note that most monsters seem to not have a separate head height value.
   //
   // [r8+28]: Height for the body. Changes in this value vs changes in actual height on screen is not 1:1. 1.2x here increases height by ~2x
   //          actually, etc.
