@@ -107,7 +107,9 @@ omnifyApplyAbomnificationHook:
   db 41 8B 00 89 41 40
 
 unregistersymbol(omnifyApplyAbomnificationHook)
+unregistersymbol(morphEverything)
 
+dealloc(morphEverything)
 dealloc(headHeightCoefficient)
 dealloc(headHeightShifter)
 dealloc(applyAbomnification)

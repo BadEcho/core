@@ -641,10 +641,16 @@ initiateAbomnificationReturn:
 
 // Value change to actual height change is not 1:1, ~1.25x increase in value causes actual height to be ~2x.
 abominifyHeightResultUpper:
-  dd #125
+  dd #160
 
 abominifyHeightResultLower:
   dd #10
+
+abominifyWidthResultUpper:
+  dd #400
+
+abominifyDepthResultUpper:
+  dd #400
 
 unnaturalSmallX:
   dd (float)1.4
@@ -661,7 +667,10 @@ assert(omnifyApplyAbomnificationHook,41 8B 00 89 41 40)
 alloc(applyAbomnification,$1000,omnifyApplyAbomnificationHook)
 alloc(headHeightCoefficient,8)
 alloc(headHeightShifter,8)
+alloc(morphEverything,8)
+
 registersymbol(omnifyApplyAbomnificationHook)
+registersymbol(morphEverything)
 
 applyAbomnification:
   pushf
@@ -698,9 +707,11 @@ ensureGroup:
   mov rax,[rsi]
   cmp ax,0xBFE8
   jne applyAbomnificationExit  
-  // It seems that this will be set to 0x7 or less for all monster types. We only want to morph enemy monsters.
+  cmp [morphEverything],1
+  je allowMorphing
+  // It seems that this will be set to 0x8 or less for all monster types. We only want to morph enemy monsters.
   mov rax,[rsi+8]
-  cmp rax,0x7
+  cmp rax,0x9
   jge applyAbomnificationExit
   jmp allowMorphing  
 allowMorphing:
@@ -742,6 +753,8 @@ allowMorphing:
   //         heightHead = heightBody*3.2 - 2.12
   //         Note that most monsters seem to not have a separate head height value.
   //
+  // [r8+18]: Height of equipment on back.
+  //
   // [r8+28]: Height for the body. Changes in this value vs changes in actual height on screen is not 1:1. 1.2x here increases height by ~2x
   //          actually, etc.
   mulss xmm0,[headHeightCoefficient]  
@@ -749,11 +762,14 @@ allowMorphing:
   movss xmm1,[r8+8]
   mulss xmm1,xmm0  
   movss [r8+8],xmm1
-  // Reset to Abomnified height for body height.
+  // Reset to Abomnified height for body and equipment height.
   movd xmm0,ebx  
   movss xmm1,[r8+28]
   mulss xmm1,xmm0  
   movss [r8+28],xmm1
+  movss xmm1,[r8+18]
+  mulss xmm1,xmm0  
+  movss [r8+18],xmm1
   // Load the Abomnified depth.
   movd xmm0,ecx
   // For the depth:
@@ -793,3 +809,6 @@ headHeightCoefficient:
 
 headHeightShifter:
   dd (float)2.12
+
+morphEverything:
+  dd 0
