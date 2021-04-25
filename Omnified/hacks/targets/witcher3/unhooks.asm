@@ -113,3 +113,14 @@ dealloc(morphEverything)
 dealloc(headHeightCoefficient)
 dealloc(headHeightShifter)
 dealloc(applyAbomnification)
+
+
+// Cleanup of omniPlayerLastLocationHook
+omniPlayerLastLocationHook:
+  db F3 41 0F 11 00
+
+unregistersymbol(omniPlayerLastLocationHook)
+unregistersymbol(playerLastLocation)
+
+dealloc(getPlayerLastLocation)
+dealloc(playerLastLocation)

@@ -172,7 +172,7 @@ function activateLoggers()
 							  lastVerticalDisplacement,
 							  ") causing ",
 							  apocalypseDamagedHealth)
-					if lastVerticalDisplacement > 7.5 then
+					if lastVerticalDisplacement > 10.0 then
 						playSound(findTableFile('freefallin.wav'))
 					end	
 				elseif apocalypseResult >= 7 and apocalypseResult <= 9 then

@@ -160,6 +160,9 @@ alloc(apocalypseResult,8)
 alloc(apocalypseResultUpper,8)
 alloc(apocalypseResultLower,8)
 alloc(teleported,8)
+alloc(teleportedX,8)
+alloc(teleportedY,8)
+alloc(teleportedZ,8)
 alloc(teleportitisResult,8)
 alloc(teleportitisResultUpper,8)
 alloc(teleportitisResultLower,8)
@@ -190,6 +193,9 @@ alloc(disableSixtyNine,8)
 registersymbol(executePlayerApocalypse)
 registersymbol(logApocalypse)
 registersymbol(teleported)
+registersymbol(teleportedX)
+registersymbol(teleportedY)
+registersymbol(teleportedZ)
 registersymbol(apocalypseResult)
 registersymbol(negativeVerticalDisplacementEnabled)
 registersymbol(yIsVertical)
@@ -309,6 +315,7 @@ addChangeToX:
   addss xmm2,xmm1
   // The updated X coordinate is committed back into the memory, which will 
   // move the player.
+  movss [teleportedX],xmm2
   cmp [coordinatesAreDoubles],1
   je commitXAsDouble
   movss [rbx],xmm2
@@ -358,6 +365,7 @@ addChangeToY:
   addss xmm2,xmm1
   // The updated Y coordinate is commited back into the memory, which will 
   // move the player.
+  movss [teleportedY],xmm2
   cmp [coordinatesAreDoubles],1
   je commitYAsDouble
   movss [rbx+4],xmm2
@@ -402,6 +410,7 @@ addChangeToZ:
   addss xmm2,xmm1
   // The updated Z coordinate is commited back into the memory, which will 
   // move the player.
+  movss [teleportedZ],xmm2
   cmp [coordinatesAreDoubles],1
   je commitZAsDouble
   movss [rbx+8],xmm2
@@ -521,6 +530,18 @@ teleportitisDivisor:
   
 teleportitisShifter:
   dd (float)5.0
+
+teleported:
+  dd 0
+
+teleportedX:
+  dd (float)0.0
+
+teleportedY:
+  dd (float)0.0
+
+teleportedZ:
+  dd (float)0.0
 
 negativeVerticalDisplacementEnabled:
   dd 1

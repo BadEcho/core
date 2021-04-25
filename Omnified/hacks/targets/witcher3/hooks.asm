@@ -121,6 +121,43 @@ omniPlayerHook:
   nop 3
 getPlayerReturn:
 
+
+// Gets the coordinates for the player's last position on solid ground.
+// r8: Last position structure.
+define(omniPlayerLastLocationHook,"witcher3.exe"+F50D1)
+
+assert(omniPlayerLastLocationHook,F3 41 0F 11 00)
+alloc(getPlayerLastLocation,$1000,omniPlayerLastLocationHook)
+alloc(playerLastLocation,8)
+
+registersymbol(omniPlayerLastLocationHook)
+registersymbol(playerLastLocation)
+
+getPlayerLastLocation:
+  pushf
+  push rax
+  push rbx
+  // This should point to the player's root structure if player location 
+  // is being accessed.
+  mov rax,[r8+80]
+  mov rbx,player
+  cmp [rbx],rax
+  jne getPlayerLastLocationExit
+  mov rax,playerLastLocation
+  mov [rax],r8
+getPlayerLastLocationExit:
+  pop rbx
+  pop rax
+getPlayerLastLocationOriginalCode:
+  popf
+  movss [r8],xmm0
+  jmp getPlayerLastLocationReturn
+
+omniPlayerLastLocationHook:
+  jmp getPlayerLastLocation
+getPlayerLastLocationReturn:
+
+
 // Gets the player's XP data.
 define(omniPlayerXPHook,"witcher3.exe"+AEB63)
 
@@ -343,6 +380,41 @@ initiatePlayerApocalypse:
   lea rax,[rbx+1B8]
   push rax
   call executePlayerApocalypse
+  // If teleportitis has occurred, the player's source-of-truth coordinates
+  // will have been updated, however we also need to update the player's immediate
+  // and last known position (on solid ground) coordinates if we want any resultant
+  // fall damage to count.
+  push rcx
+  mov rcx,teleported
+  cmp [rcx],0
+  pop rcx
+  je initiateApocalypseUpdateDamage
+  push rcx
+  push rdx
+  push rsi
+  push rdi
+  mov rcx,teleported
+  mov [rcx],0
+  mov rsi,playerLastLocation
+  mov rcx,[rsi]
+  mov rsi,playerPhysics
+  mov rdi,[rsi]
+  mov rdx,teleportedX
+  movss xmm1,[rdx]    
+  movss [rcx],xmm1
+  movss [rdi+190],xmm1
+  mov rdx,teleportedY
+  movss xmm1,[rdx]
+  movss [rcx+4],xmm1
+  movss [rdi+194],xmm1
+  mov rdx,teleportedZ
+  movss xmm1,[rdx]
+  movss [rcx+8],xmm1
+  movss [rdi+198],xmm1
+  pop rdi
+  pop rsi
+  pop rdx
+  pop rcx
   jmp initiateApocalypseUpdateDamage
 initiateEnemyApocalypse:  
   // Push the damage amount parameter.
@@ -381,7 +453,7 @@ yIsVertical:
   dd 0
 
 teleportitisDisplacementX:
-  dd (float)3.0
+  dd (float)2.0
 
 
 // Applies a multipler to the player's speed.
