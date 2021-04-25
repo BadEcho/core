@@ -1621,7 +1621,7 @@ stopMorphs:
   dd 0
   
 speedMorph:
-  dd 04
+  dd 0
   
 speedMorphDivisor:
   dd (float)4.0

@@ -639,18 +639,19 @@ omnifyAbomnificationHook:
   nop 2
 initiateAbomnificationReturn:
 
+
 // Value change to actual height change is not 1:1, ~1.25x increase in value causes actual height to be ~2x.
 abominifyHeightResultUpper:
   dd #160
 
 abominifyHeightResultLower:
-  dd #10
+  dd #30
 
 abominifyWidthResultUpper:
-  dd #400
+  dd #350
 
 abominifyDepthResultUpper:
-  dd #400
+  dd #350
 
 unnaturalSmallX:
   dd (float)1.4
@@ -709,11 +710,18 @@ ensureGroup:
   jne applyAbomnificationExit  
   cmp [morphEverything],1
   je allowMorphing
-  // It seems that this will be set to 0x8 or less for all monster types. We only want to morph enemy monsters.
-  mov rax,[rsi+8]
-  cmp rax,0x9
+  // After gathering numerous experimental data, it appears that 0x2C will be zeroed for hostile entites.
+  // Intewesting.
+  // A notable exception: the player character themselves, who will also always have 0x2C zeroed out.
+  mov rax,[rsi+0x2C]
+  cmp eax,0
+  jne applyAbomnificationExit
+  // This set to 0x17 or above (while 0x2C is 0) is a pretty strong indication that we're dealing with player renderings
+  // meshes.
+  mov rax,[rsi+0x8]
+  cmp eax,0x12
   jge applyAbomnificationExit
-  jmp allowMorphing  
+  jmp allowMorphing
 allowMorphing:
   // Push the identifying address parameter and get the Abomnified scales.
   push rsi
