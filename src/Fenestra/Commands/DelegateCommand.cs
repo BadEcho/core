@@ -23,6 +23,14 @@ namespace BadEcho.Fenestra.Commands
         /// Initializes a new instance of the <see cref="DelegateCommand"/> class.
         /// </summary>
         /// <param name="action">The action to invoke when this command is executed.</param>
+        public DelegateCommand(Action<object?> action)
+            : this(action, null)
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DelegateCommand"/> class.
+        /// </summary>
+        /// <param name="action">The action to invoke when this command is executed.</param>
         /// <param name="canExecute">The condition that must be met in order for execution to occur.</param>
         public DelegateCommand(Action<object?> action, Predicate<object?>? canExecute)
         {
@@ -31,14 +39,6 @@ namespace BadEcho.Fenestra.Commands
             if (canExecute != null)
                 _canExecute = canExecute;
         }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DelegateCommand"/> class.
-        /// </summary>
-        /// <param name="action">The action to invoke when this command is executed.</param>
-        public DelegateCommand(Action<object?> action)
-            : this(action, null)
-        { }
 
         /// <inheritdoc/>
         public event EventHandler? CanExecuteChanged

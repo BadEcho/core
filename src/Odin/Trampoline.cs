@@ -16,7 +16,7 @@ namespace BadEcho.Odin
     public sealed class Trampoline
     {
         /// <summary>
-        /// Executes a method that takes no arguments in a recursive fashion until the end of the trampolined call chain has been
+        /// Executes a method that takes no arguments in a tail-recursive fashion until the end of the trampolined call chain has been
         /// reached.
         /// </summary>
         /// <param name="method">The method to execute.</param>

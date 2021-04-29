@@ -35,10 +35,21 @@ namespace BadEcho.Fenestra.Extensions
         }
 
         /// <summary>
-        /// Process all messages currently queued in the message queue of the current object's <see cref="Dispatcher"/>.
+        /// Processes all messages currently queued in the message queue of the current object's <see cref="Dispatcher"/>.
         /// </summary>
         /// <param name="dispatcherObject">The current object that is associated with a <see cref="Dispatcher"/>.</param>
         public static void ProcessMessages(this DispatcherObject dispatcherObject) 
             => dispatcherObject.Invoke(() => { }, DispatcherPriority.Background);
+
+        /// <summary>
+        /// Processes all messages currently queued in the dispatcher's message queue.
+        /// </summary>
+        /// <param name="dispatcher">The dispatcher to process messages for.</param>
+        public static void ProcessMessages(this Dispatcher dispatcher)
+        {
+            Require.NotNull(dispatcher, nameof(dispatcher));
+
+            dispatcher.Invoke(() => { }, DispatcherPriority.Background);
+        }
     }
 }

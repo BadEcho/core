@@ -47,10 +47,10 @@ namespace BadEcho.Fenestra
         /// The path to the resource file, including the name of said file, relative to the root of the project folder for the
         /// assembly the resource is compiled into.
         /// </param>
-        /// <param name="uriKind">An enumeration value specifying the kind of URI to form.</param>
+        /// <remarks>This overload creates a URI of the <see cref="UriKind.Relative"/> variety.</remarks>
         /// <exception cref="ArgumentException"><c>resourceAssembly</c> does not have a name.</exception>
-        public PackUri(Assembly resourceAssembly, string path, UriKind uriKind)
-            : base(MakePackUri(resourceAssembly, path, uriKind == UriKind.Relative), uriKind)
+        public PackUri(Assembly resourceAssembly, string path)
+            : this(resourceAssembly, path, UriKind.Relative)
         { }
 
         /// <summary>
@@ -61,10 +61,10 @@ namespace BadEcho.Fenestra
         /// The path to the resource file, including the name of said file, relative to the root of the project folder for the
         /// assembly the resource is compiled into.
         /// </param>
-        /// <remarks>This overload creates a URI of the <see cref="UriKind.Relative"/> variety.</remarks>
+        /// <param name="uriKind">An enumeration value specifying the kind of URI to form.</param>
         /// <exception cref="ArgumentException"><c>resourceAssembly</c> does not have a name.</exception>
-        public PackUri(Assembly resourceAssembly, string path)
-            : this(resourceAssembly, path, UriKind.Relative)
+        public PackUri(Assembly resourceAssembly, string path, UriKind uriKind)
+            : base(MakePackUri(resourceAssembly, path, uriKind == UriKind.Relative), uriKind)
         { }
 
         /// <summary>
