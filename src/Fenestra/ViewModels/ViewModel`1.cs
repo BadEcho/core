@@ -12,24 +12,19 @@ using BadEcho.Odin;
 namespace BadEcho.Fenestra.ViewModels
 {
     /// <summary>
-    /// Provides a base view abstraction that automates communication between the view and bound
+    /// Provides a base view abstraction that automates communication between a view and bound
     /// <typeparamref name="T"/>-typed data.
     /// </summary>
     /// <typeparam name="T">The type of data bound to the view model for display on a view.</typeparam>
-    public abstract class ViewModel<T> : ViewModel
+    public abstract class ViewModel<T> : ViewModel, IViewModel<T>
     {
         private readonly List<T> _boundData = new();
 
-        /// <summary>
-        /// Gets data bound to the view model being actively emphasized for display on a view.
-        /// </summary>
+        /// <inheritdoc/>
         public T? ActiveModel
         { get; private set; }
 
-        /// <summary>
-        /// Binds the provided data to the view model, allowing for it to be represented in a view.
-        /// </summary>
-        /// <param name="model">The data to bind to this view model.</param>brush 
+        /// <inheritdoc/>
         public void Bind(T model)
         {
             Require.NotNull(model, nameof(model));
@@ -45,13 +40,7 @@ namespace BadEcho.Fenestra.ViewModels
             ActiveModel = model;
         }
 
-        /// <summary>
-        /// Unbinds data from this view model, causing it to no longer be represented in a view.
-        /// </summary>
-        /// <param name="model">
-        /// The data to unbind from this view model, or <c>null</c> to unbind the current <see cref="ActiveModel"/>.
-        /// </param>
-        /// <returns>True if <c>model</c> was unbound; otherwise, false.</returns>
+        /// <inheritdoc/>
         public bool Unbind(T? model)
         {
             model ??= ActiveModel;
@@ -69,10 +58,7 @@ namespace BadEcho.Fenestra.ViewModels
             return true;
         }
 
-        /// <summary>
-        /// Unbinds the currently active model from the view model, causing it to no longer be represented in a view.
-        /// </summary>
-        /// <returns>True if the current <see cref="ActiveModel"/> was unbound; otherwise, false.</returns>
+        /// <inheritdoc/>
         public bool Unbind()
             => Unbind(ActiveModel);
 

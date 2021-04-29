@@ -12,12 +12,15 @@ using BadEcho.Odin.Extensions;
 namespace BadEcho.Fenestra.ViewModels
 {
     /// <summary>
-    /// Provides a base view abstraction that automates communication between the view and bound data.
+    /// Provides a base view abstraction that automates communication between a view and bound data.
     /// </summary>
-    public abstract class ViewModel : INotifyPropertyChanged
+    public abstract class ViewModel : IViewModel
     {
         /// <inheritdoc/>
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        /// <inheritdoc/>
+        public abstract void Disconnect();
 
         /// <summary>
         /// Sets a property's backing field to the provided value, notifying the view of a change in value if one occurred. 
