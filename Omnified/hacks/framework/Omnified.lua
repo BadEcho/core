@@ -2,6 +2,50 @@
 -- Written By: Matt Weber (https://twitch.tv/omni)
 -- Copyright 2021 Bad Echo LLC
 
+-- These values are to be overridden in target .CT file registration routines.
+coordinatesAreDoubles = false
+playerCoordinatesX = "[example]+0x10"
+playerCoordinatesY = "[example]+0x14"
+playerCoordinatesZ = "[example]+0x18"
+
+function areNotNil(...)
+	for _,v in ipairs({...}) do
+		if v == nil then return false end
+	end
+
+	return true
+end
+
+function mark()
+	local currentX = not coordinatesAreDoubles 
+						and readFloat(playerCoordinatesX) 
+						or readDouble(playerCoordinatesX)
+		
+	local currentY = not coordinatesAreDoubles 
+						and readFloat(playerCoordinatesY) 
+						or readDouble(playerCoordinatesY)
+		
+	local currentZ = not coordinatesAreDoubles 
+						and readFloat(playerCoordinatesZ) 
+						or readDouble(playerCoordinatesZ)
+
+	if areNotNil(currentX,currentY,currentZ) then
+		if not coordinatesAreDoubles then
+			writeFloat("teleportX", currentX)						
+			writeFloat("teleportY", currentY)
+			writeFloat("teleportZ", currentZ)
+		else
+			writeDouble("teleportX", currentX)			 
+			writeDouble("teleportY", currentY)
+			writeDouble("teleportZ", currentZ)
+		end
+	end	
+end
+
+function recall()
+	writeInteger("teleport", 1)
+end
+
 function hook(hookFilePath)
   local hookFile = assert(io.open(hookFilePath))
 
@@ -51,7 +95,10 @@ targetHooksDisableInfo = nil
 
 function registerOmnification(targetHookFilePath)
 	if not frameworkRegistered then
-    frameworkRegistered, frameworkDisableInfo = hook("..\\..\\framework\\Omnified.hooks.asm")		
+		markHotkey = createHotkey(mark, VK_NUMPAD8)
+		recallHotkey = createHotkey(recall, VK_NUMPAD9)
+
+		frameworkRegistered, frameworkDisableInfo = hook("..\\..\\framework\\Omnified.hooks.asm")		
 		
 		if not frameworkRegistered then
 			print("Failed to register Omnified framework.")
@@ -92,6 +139,9 @@ end
 
 function unregisterOmnification(targetUnhookFilePath)
 	if frameworkRegistered and frameworkDisableInfo ~= nil then
+		markHotkey.destroy()
+		recallHotkey.destroy()
+
 		frameworkRegistered = unhook("..\\..\\framework\\Omnified.unhooks.asm", frameworkDisableInfo)
 		
 		if not frameworkRegistered then

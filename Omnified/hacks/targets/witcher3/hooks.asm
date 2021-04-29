@@ -106,6 +106,24 @@ getPlayer:
   mov rax,playerLocation
   add rcx,8
   mov [rax],rcx
+  mov rcx,teleport
+  cmp [rcx],1
+  jne getPlayerExit
+  mov [rcx],0
+  sub rsp,10
+  movdqu [rsp],xmm0
+  mov rbx,[rax]
+  mov rcx,teleportX
+  movsd xmm0,[rcx]
+  movsd [rbx+0x1B8],xmm0
+  mov rcx,teleportY
+  movsd xmm0,[rcx]
+  movsd [rbx+0x1C0],xmm0
+  mov rcx,teleportZ
+  movsd xmm0,[rcx]
+  movsd [rbx+0x1C8],xmm0
+  movdqu xmm0,[rsp]
+  add rsp,10
 getPlayerExit:
   pop rcx
   pop rbx

@@ -144,6 +144,19 @@ getRandomNumber:
   pop r13
   pop r12
   ret 18
+
+
+// Mark and recall symbols.
+alloc(teleport,8)
+alloc(teleportX,8)
+alloc(teleportY,8)
+alloc(teleportZ,8)
+
+registersymbol(teleport)
+registersymbol(teleportX)
+registersymbol(teleportY)
+registersymbol(teleportZ)
+
   
 // Player Apocalypse System Function
 // [rsp+48]: Player's coordinates (aligned at X-coord)

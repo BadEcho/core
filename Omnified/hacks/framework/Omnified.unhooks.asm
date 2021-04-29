@@ -3,7 +3,6 @@
 // Copyright 2021 Bad Echo LLC
 
 // Cleanup of global memory
-
 dealloc(zero)
 dealloc(damageThreshold)
 dealloc(areaBoostX)
@@ -17,6 +16,17 @@ dealloc(checkBadPointer)
 unregistersymbol(generateRandomNumber)
 
 dealloc(generateRandomNumber)
+
+// Cleanup of Mark and Recall symbols
+unregistersymbol(teleport)
+unregistersymbol(teleportX)
+unregistersymbol(teleportY)
+unregistersymbol(teleportZ)
+
+dealloc(teleport)
+dealloc(teleportX)
+dealloc(teleportY)
+dealloc(teleportZ)
 
 // Cleanup of Player Apocalypse System Function
 unregistersymbol(logApocalypse)
