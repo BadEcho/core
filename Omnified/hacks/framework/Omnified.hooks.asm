@@ -332,11 +332,11 @@ addChangeToX:
   cmp [coordinatesAreDoubles],1
   je commitXAsDouble
   movss [rbx],xmm2
-  jmp teleportY
+  jmp teleportitisY
 commitXAsDouble:
   cvtss2sd xmm1,xmm2
   movsd [rbx],xmm1
-teleportY:
+teleportitisY:
   // Load the parameters for generating the random displacement value to be 
   // applied to the Y coordinate. 
   push [teleportitisResultLower]
@@ -382,11 +382,11 @@ addChangeToY:
   cmp [coordinatesAreDoubles],1
   je commitYAsDouble
   movss [rbx+4],xmm2
-  jmp teleportZ
+  jmp teleportitisZ
 commitYAsDouble:
   cvtss2sd xmm1,xmm2  
   movsd [rbx+8],xmm1
-teleportZ:
+teleportitisZ:
   // Load the parameters for generating the random displacement value to be 
   // applied to the Z coordinate. 
   push [teleportitisResultLower]
