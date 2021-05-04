@@ -17,6 +17,19 @@ namespace BadEcho.Odin.Extensions
     public static class EnumerableExtensions
     {
         /// <summary>
+        /// Returns the item as a sequence where it is the sole occupant.
+        /// </summary>
+        /// <typeparam name="T">The type of item.</typeparam>
+        /// <param name="source">The item to return as the sole occupant of a sequence.</param>
+        /// <returns>A sequence containing only <c>source</c>.</returns>
+        /// <remarks>
+        /// This extension method creates an array containing the provided item as opposed to using a yield return iterator,
+        /// as that is a bit more complicated since it involves the use of compiler generated lambda expression enumerators.
+        /// </remarks>
+        public static IEnumerable<T> AsEnumerable<T>(this T source) 
+            => new[] {source};
+
+        /// <summary>
         /// Checks if the provided sequence is empty.
         /// </summary>
         /// <typeparam name="T">The type of items enumerated.</typeparam>

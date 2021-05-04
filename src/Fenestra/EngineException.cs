@@ -35,7 +35,7 @@ namespace BadEcho.Fenestra
         /// Initializes a new instance of the <see cref="EngineException"/> class.
         /// </summary>
         /// <inheritdoc/>
-        public EngineException(string message, Exception innerException)
+        public EngineException(string message, Exception? innerException)
             : base(message, innerException)
         { }
 

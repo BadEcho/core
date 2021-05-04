@@ -30,10 +30,7 @@ namespace BadEcho.Fenestra.Tests
         {
             int numberOfChanges = 0;
 
-            _collectionChanged.CollectionChanged += (_, _) =>
-                                                    {
-                                                        numberOfChanges++;
-                                                    };
+            _collectionChanged.CollectionChanged += (_, _) => numberOfChanges++;
 
             _collection.AddRange(new List<int> {1, 2, 3, 4, 5, 3, 1,2,4,5,1,23,4,3,2,1,2,3});
 
@@ -47,10 +44,7 @@ namespace BadEcho.Fenestra.Tests
 
             int numberOfChanges = 0;
 
-            _collectionChanged.CollectionChanged += (_, _) =>
-                                                    {
-                                                        numberOfChanges++;
-                                                    };
+            _collectionChanged.CollectionChanged += (_, _) => numberOfChanges++;
 
             _collection.RemoveRange(new List<int> {5, 3, 9, 2});
 
@@ -64,10 +58,7 @@ namespace BadEcho.Fenestra.Tests
             
             int numberOfChanges = 0;
 
-            _collectionChanged.CollectionChanged += (_, _) =>
-                                                   {
-                                                       numberOfChanges++;
-                                                   };
+            _collectionChanged.CollectionChanged += (_, _) => numberOfChanges++;
             _collection.OrderBy(i => i);
 
             Assert.Equal(1, numberOfChanges);
@@ -80,10 +71,7 @@ namespace BadEcho.Fenestra.Tests
 
             int numberOfChanges = 0;
 
-            _collectionChanged.CollectionChanged += (_, _) =>
-                                                    {
-                                                        numberOfChanges++;
-                                                    };
+            _collectionChanged.CollectionChanged += (_, _) => numberOfChanges++;
             _collection.OrderByDescending(i => i);
 
             Assert.Equal(1, numberOfChanges);
@@ -97,10 +85,7 @@ namespace BadEcho.Fenestra.Tests
             bool done = false;
 
             Task.Factory.StartNew(() => _collection.Add(2))
-                .ContinueWith(_ =>
-                              {
-                                  done = true;
-                              });
+                .ContinueWith(_ => done = true);
 
             
             while (!done)
@@ -119,7 +104,7 @@ namespace BadEcho.Fenestra.Tests
                                       var unused = Dispatcher.CurrentDispatcher;
                                       _collection.Add(2);
                                   })
-                .ContinueWith(_ => { done = true; });
+                .ContinueWith(_ => done = true);
 
 
             while (!done)

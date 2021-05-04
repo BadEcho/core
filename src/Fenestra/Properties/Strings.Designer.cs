@@ -106,11 +106,29 @@ namespace BadEcho.Fenestra.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The collection view model engine requires a valid collection property change handler to be specified in the provided options..
+        /// </summary>
+        internal static string CollectionViewModelEngineRequiresHandler {
+            get {
+                return ResourceManager.GetString("CollectionViewModelEngineRequiresHandler", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Either an invalid parameter was provided to a command, or the command was not in a state where execution was permitted..
         /// </summary>
         internal static string CommandCannotExecute {
             get {
                 return ResourceManager.GetString("CommandCannotExecute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Multiple copies of bound data assigned to children view models in a collection view model were encountered. Bound data should be distinctly represented by a single view model amongst the children of a collection view model..
+        /// </summary>
+        internal static string DuplicateModelInCollectionViewModel {
+            get {
+                return ResourceManager.GetString("DuplicateModelInCollectionViewModel", resourceCulture);
             }
         }
         

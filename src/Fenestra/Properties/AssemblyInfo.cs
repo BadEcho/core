@@ -63,3 +63,9 @@ using BadEcho.Odin.Extensibility;
                            Scope = "member", 
                            Target = "~M:BadEcho.Fenestra.Behaviors.Behavior`2.Detach(`0)",
                            Justification = "This is a strange false positive. The source of the value is clearly from a dictionary with NULLABLE values. So, a null check is required.")]
+
+[assembly: SuppressMessage("Maintainability", 
+                           "CA1508:Avoid dead conditional code", 
+                           Scope = "member", 
+                           Target = "~M:BadEcho.Fenestra.ViewModels.ViewModel`1.Disconnect",
+                           Justification = "This seems to be a false positive and bug in code analysis. We're doing a type conversion using the 'as' keyword of an object of generic type T to IViewModel. There is no guarantee at all, given the lack of generic constraints, that T is an IViewModel and won't be null.")]

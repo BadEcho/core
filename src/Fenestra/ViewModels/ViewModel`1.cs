@@ -7,6 +7,7 @@
 
 using BadEcho.Odin.Extensions;
 using System.Collections.Generic;
+using System.Linq;
 using BadEcho.Odin;
 
 namespace BadEcho.Fenestra.ViewModels
@@ -23,6 +24,24 @@ namespace BadEcho.Fenestra.ViewModels
         /// <inheritdoc/>
         public T? ActiveModel
         { get; private set; }
+
+        /// <inheritdoc/>
+        public override void Disconnect()
+        {
+            List<T> boundData = _boundData.ToList();
+
+            foreach (T boundDatum in boundData)
+            {
+                Unbind(boundDatum);
+
+                if (boundDatum is IViewModel viewModel) 
+                    viewModel.Disconnect();
+            }
+        }
+
+        /// <inheritdoc/>
+        public bool IsBound(T model)
+            => _boundData.Contains(model);
 
         /// <inheritdoc/>
         public void Bind(T model)

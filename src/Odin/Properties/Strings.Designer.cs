@@ -79,6 +79,15 @@ namespace BadEcho.Odin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid INotifyPropertyChanged implementation; event data is missing property name information..
+        /// </summary>
+        internal static string BadINotifyPropertyChangedImplementation {
+            get {
+                return ResourceManager.GetString("BadINotifyPropertyChangedImplementation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enumeration has already finished; no more objects exist in the sequence..
         /// </summary>
         internal static string EnumerationAtEnd {

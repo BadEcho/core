@@ -179,4 +179,7 @@
   <data name="ExtensibilityConfigurationDirectoryNotFound" xml:space="preserve">
     <value>A plugin directory was explicitly specified in this application's configuration, however '{0}' does not exist. Please ensure that a desired plugin directory exists when configuring its use, or simply forego specifying an explicit plugin directory name if its existence cannot be guaranteed.</value>
   </data>
+  <data name="BadINotifyPropertyChangedImplementation" xml:space="preserve">
+    <value>'{0}' is not a valid INotifyPropertyChanged implementation; event data is missing property name information.</value>
+  </data>
 </root>

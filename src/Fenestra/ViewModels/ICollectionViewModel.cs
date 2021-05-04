@@ -5,6 +5,12 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
+using System.Linq;
+using BadEcho.Fenestra.Properties;
+using BadEcho.Odin.Extensions;
+using BadEcho.Odin.Logging;
+
 namespace BadEcho.Fenestra.ViewModels
 {
     /// <summary>
@@ -47,6 +53,26 @@ namespace BadEcho.Fenestra.ViewModels
         /// Called when the results of a change operation have been committed to this collection view model's children so that it
         /// may prepare its contents for viewing.
         /// </summary>
-        void OnCollectionChanged();
+        void OnChangeCompleted();
+
+        /// <summary>
+        /// Searches for and returns the child view model belonging to the collection view model that is responsible for representing
+        /// the provided data. 
+        /// </summary>
+        /// <param name="model">The bound data of the child view model to search for.</param>
+        /// <returns>The child <typeparamref name="TChildViewModel"/> instance that <c>model</c> is bound to.</returns>
+        TChildViewModel? FindChild(TModel model)
+        {
+            try
+            {
+                return Children.SingleOrDefault(c => c.ActiveModel != null && c.ActiveModel.Equals<TModel>(model));
+            }
+            catch (InvalidOperationException ex)
+            {
+                Logger.Error(Strings.DuplicateModelInCollectionViewModel, ex);
+
+                return Children.First(c => c.ActiveModel != null && c.ActiveModel.Equals<TModel>(model));
+            }
+        }
     }
 }

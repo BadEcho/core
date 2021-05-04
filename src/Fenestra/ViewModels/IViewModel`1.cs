@@ -20,6 +20,13 @@ namespace BadEcho.Fenestra.ViewModels
         T? ActiveModel { get; }
 
         /// <summary>
+        /// Checks if the provided data is bound to this view model.
+        /// </summary>
+        /// <param name="model">The data to check for whether it is bound to this view model.</param>
+        /// <returns>True if <c>model</c> is bound; otherwise, false.</returns>
+        bool IsBound(T model);
+
+        /// <summary>
         /// Binds the provided data to the view model, allowing for it to be represented in a view.
         /// </summary>
         /// <param name="model">The data to bind to this view model.</param>brush 

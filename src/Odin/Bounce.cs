@@ -10,12 +10,12 @@ namespace BadEcho.Odin
     /// <summary>
     /// Provides a bouncing method used in a trampolined recursive operation.
     /// </summary>
-    public sealed class Bounce
+    public class Bounce
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Bounce"/> class.
         /// </summary>
-        private Bounce()
+        internal Bounce()
         { }
 
         /// <summary>
@@ -32,10 +32,28 @@ namespace BadEcho.Odin
             => new();
 
         /// <summary>
-        /// Bounces the final method in the call chain, marking the end of hte trampolined operation.
+        /// Bounces the next method in the call chain.
+        /// </summary>
+        /// <typeparam name="T">The type of result accepted and returned by the bouncing method.</typeparam>
+        /// <param name="result">The result to pass to the next method in the call chain.</param>
+        /// <returns>The <see cref="Bounce{T}"/> for the next method in the call chain.</returns>
+        public static Bounce<T> Continue<T>(T result)
+            => new(result);
+
+        /// <summary>
+        /// Bounces the final method in the call chain, marking the end of the trampolined operation.
         /// </summary>
         /// <returns>The final <see cref="Bounce"/> in the call chain.</returns>
         public static Bounce Finish()
             => new() {IsFinished = true};
+
+        /// <summary>
+        /// Bounces the final method in the call chain, marking the end of the trampolined operation.
+        /// </summary>
+        /// <typeparam name="T">The type of result accepted and returned by the bouncing method.</typeparam>
+        /// <param name="result">The result to pass to the final method in the call chain.</param>
+        /// <returns>THe <see cref="Bounce{T}"/> for the final method in the call chain.</returns>
+        public static Bounce<T> Finish<T>(T result)
+            => new(result) {IsFinished = true};
     }
 }

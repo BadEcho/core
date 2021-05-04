@@ -143,4 +143,10 @@
   <data name="CommandCannotExecute" xml:space="preserve">
     <value>Either an invalid parameter was provided to a command, or the command was not in a state where execution was permitted.</value>
   </data>
+  <data name="CollectionViewModelEngineRequiresHandler" xml:space="preserve">
+    <value>The collection view model engine requires a valid collection property change handler to be specified in the provided options.</value>
+  </data>
+  <data name="DuplicateModelInCollectionViewModel" xml:space="preserve">
+    <value>Multiple copies of bound data assigned to children view models in a collection view model were encountered. Bound data should be distinctly represented by a single view model amongst the children of a collection view model.</value>
+  </data>
 </root>

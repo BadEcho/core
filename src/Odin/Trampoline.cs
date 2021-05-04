@@ -31,5 +31,27 @@ namespace BadEcho.Odin
                 bouncingMethod = method();
             }
         }
+
+        /// <summary>
+        /// Executes a method that takes a single argument in a tail-recursive fashion until the end of the trampolined call chain has
+        /// been reached and a final result returned.
+        /// </summary>
+        /// <typeparam name="T">The type of result for the operation.</typeparam>
+        /// <param name="method">The method to execute.</param>
+        /// <param name="argument">The initial argument to be provided to the call chain.</param>
+        /// <returns>The result of the tail-recursive operation.</returns>
+        public static T Execute<T>(Func<T, Bounce<T>> method, T argument)
+        {
+            Require.NotNull(method, nameof(method));
+
+            Bounce<T> bouncingMethod = Bounce.Continue(argument);
+
+            while (!bouncingMethod.IsFinished)
+            {
+                bouncingMethod = method(bouncingMethod.Result);
+            }
+
+            return bouncingMethod.Result;
+        }
     }
 }
