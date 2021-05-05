@@ -79,7 +79,7 @@ function registerOmnification(targetAssemblyFilePath)
 		markHotkey = createHotkey(mark, VK_NUMPAD8)
 		recallHotkey = createHotkey(recall, VK_NUMPAD9)
 
-		frameworkRegistered, frameworkDisableInfo = assemble("..\\..\\framework\\Omnified.hooks.asm")		
+		frameworkRegistered, frameworkDisableInfo = assemble("..\\..\\framework\\Omnified.asm")		
 		
 		if not frameworkRegistered then
 			print("Failed to register Omnified framework.")
@@ -123,7 +123,7 @@ function unregisterOmnification(targetAssemblyFilePath)
 		markHotkey.destroy()
 		recallHotkey.destroy()
 
-		frameworkRegistered = assemble("..\\..\\framework\\Omnified.hooks.asm", frameworkDisableInfo)
+		frameworkRegistered = assemble("..\\..\\framework\\Omnified.asm", frameworkDisableInfo)
 		
 		if not frameworkRegistered then
 			print("Failed to unregister Omnified framework.")
