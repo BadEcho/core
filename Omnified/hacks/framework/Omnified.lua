@@ -46,59 +46,40 @@ function recall()
 	writeInteger("teleport", 1)
 end
 
-function hook(hookFilePath)
-  local hookFile = assert(io.open(hookFilePath))
+function assemble(assemblyFilePath, disableInfo)
+	local assemblyFile = assert(io.open(assemblyFilePath))
 
-  if hookFile == nil then 
-    print("Hook file located at ", hookFilePath, " was unable to be opened.")
-    do return end
-  end
+	if assemblyFile == nil then 
+	  print("Assembly file located at ", assemblyFilePath, " was unable to be opened.")
+	  do return end
+	end
+  
+	local assembly = assemblyFile:read("a")
+	assemblyFile.close()
+  
+	assembly = "[ENABLE]\n" .. assembly
 
-  local hooks = hookFile:read("a")
-  hookFile.close()
-
-  local registered, disableInfo = autoAssemble(hooks)
-
-  if registered == false then
-    print("Failed to register hooks located in ", hookFilePath)
-  end
-
-  return registered, disableInfo
-end
-
-
-function unhook(unhookFilePath, disableInfo)
-  local unhookFile = assert(io.open(unhookFilePath))
-
-  if unhookFile == nil then 
-    print("Unhook file located at ", unhookFilePath, " was unable to be opened.")
-    do return end
-  end
-
-  local unhooks = unhookFile:read("a")
-  unhookFile.close()
-
-  local unregistered = autoAssemble(unhooks, disableInfo)
-
-  if unregistered == false then
-    print("Failed to unregister hooks located in ", unhookFilePath)    
-  end
-    
-  return unregistered
+	local result, resultDisableInfo = autoAssemble(assembly, false, disableInfo)
+  
+	if result == false then
+	  print("Failed to assemble ", assemblyFilePath)
+	end
+  
+	return result, resultDisableInfo
 end
 
 frameworkRegistered = false
 frameworkDisableInfo = nil
 
-targetHooksRegistered = false
-targetHooksDisableInfo = nil
+targetAssemblyRegistered = false
+targetAssemblyDisableInfo = nil
 
-function registerOmnification(targetHookFilePath)
+function registerOmnification(targetAssemblyFilePath)
 	if not frameworkRegistered then
 		markHotkey = createHotkey(mark, VK_NUMPAD8)
 		recallHotkey = createHotkey(recall, VK_NUMPAD9)
 
-		frameworkRegistered, frameworkDisableInfo = hook("..\\..\\framework\\Omnified.hooks.asm")		
+		frameworkRegistered, frameworkDisableInfo = assemble("..\\..\\framework\\Omnified.hooks.asm")		
 		
 		if not frameworkRegistered then
 			print("Failed to register Omnified framework.")
@@ -128,21 +109,21 @@ function registerOmnification(targetHookFilePath)
 		end
 	end
 
-  if not targetHooksRegistered then
-    targetHooksRegistered, targetHooksDisableInfo = hook(targetHookFilePath)
+  if not targetAssemblyRegistered then
+    targetAssemblyRegistered, targetAssemblyDisableInfo = assemble(targetAssemblyFilePath)
 
-    if not targetHooksRegistered  then
-      print("Failed to register target hooks.")
+    if not targetAssemblyRegistered  then
+      print("Failed to register target assembly.")
     end
   end
 end
 
-function unregisterOmnification(targetUnhookFilePath)
+function unregisterOmnification(targetAssemblyFilePath)
 	if frameworkRegistered and frameworkDisableInfo ~= nil then
 		markHotkey.destroy()
 		recallHotkey.destroy()
 
-		frameworkRegistered = unhook("..\\..\\framework\\Omnified.unhooks.asm", frameworkDisableInfo)
+		frameworkRegistered = assemble("..\\..\\framework\\Omnified.hooks.asm", frameworkDisableInfo)
 		
 		if not frameworkRegistered then
 			print("Failed to unregister Omnified framework.")
@@ -164,13 +145,13 @@ function unregisterOmnification(targetUnhookFilePath)
 		print("Omnified framework already unregistered.")
 	end
 
-  if targetHooksRegistered and targetHooksDisableInfo ~= nil then
-    targetHooksRegistered = unhook(targetUnhookFilePath, targetHooksDisableInfo)
+  if targetAssemblyRegistered and targetAssemblyDisableInfo ~= nil then
+    targetAssemblyRegistered = assemble(targetAssemblyFilePath, targetAssemblyDisableInfo)
 
-    if not targetHooksRegistered then
-      print("Failed to unregister target hooks.")
+    if not targetAssemblyRegistered then
+      print("Failed to unregister target assembly.")
     else
-      targetHooksRegistered = false
+      targetAssemblyRegistered = false
     end
   end
 end
