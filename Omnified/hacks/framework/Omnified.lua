@@ -16,6 +16,41 @@ function areNotNil(...)
 	return true
 end
 
+-- Outputs a randomly selected item from the provided random settings structure.
+-- The structure of random_settings is composed of object, weighted probability values like so:
+-- random_settings = {
+--		{firstObject, 1},
+--		{secondObject, 3},
+-- }
+-- In this example, the second object is 3x more likely to be returned than the first object.
+-- Based on the items provided, a random number between 1 and 4 (inclusive) will be generated.
+-- If the random number is 1 then firstObject is returned. If it is 2, 3, or 4, secondObject is returned.
+function randomize(random_settings)
+	local indexedResults = {}
+	local totalWeight = 0
+	local lastIndex = 0
+
+	if not randomInitialized then
+		math.randomseed(os.time())
+		randomInitialized = true
+	end
+	
+	for k,v in pairs(random_settings) do
+		local resultObject = v[1]
+		local weight = v[2]
+
+		totalWeight = totalWeight + weight
+		while lastIndex ~= totalWeight do
+			lastIndex = lastIndex + 1
+			table.insert(indexedResults, lastIndex, resultObject)
+		end
+	end
+
+	local result = math.random(1, lastIndex)
+
+	return indexedResults[result]
+end
+
 function mark()
 	local currentX = not coordinatesAreDoubles 
 						and readFloat(playerCoordinatesX) 
