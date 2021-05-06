@@ -202,6 +202,7 @@ alloc(totalDamageToPlayer,8)
 alloc(playerGodMode,8)
 alloc(disableTeleportitis,8)
 alloc(disableSixtyNine,8)
+alloc(sixtyNineEveryTime,8)
 
 registersymbol(executePlayerApocalypse)
 registersymbol(logApocalypse)
@@ -226,6 +227,7 @@ registersymbol(coordinatesAreDoubles)
 registersymbol(playerGodMode)
 registersymbol(disableTeleportitis)
 registersymbol(disableSixtyNine)
+registersymbol(sixtyNineEveryTime)
 
 executePlayerApocalypse:
   // Backing up a few SSE registers we'll be using to
@@ -253,6 +255,13 @@ executePlayerApocalypse:
   xorps xmm0,xmm0
   jmp exitPlayerApocalypse  
 applyApocalypse:
+  // If "Sixty Nine Every Time!" mode is enabled, force a sixty nine effect.
+  cmp [sixtyNineEveryTime],1
+  jne checkFatalis
+  mov [apocalypseResult],8
+  mov [riskOfMurderResult],4
+  jmp sixtyNine
+checkFatalis:
   // If the player has the Fatalis debuff, all damage is fatal.
   cmp [fatalisState],1
   jne applyApocalypseRoll
@@ -584,7 +593,7 @@ fatalisResult:
   dd 0
   
 fatalisResultUpper:
-  dd 3
+  dd 4
   
 fatalisResultLower:
   dd 1
@@ -614,6 +623,9 @@ disableTeleportitis:
   dd 0
   
 disableSixtyNine:
+  dd 0
+
+sixtyNineEveryTime:
   dd 0
 
   
@@ -1771,6 +1783,7 @@ unregistersymbol(totalDamageToPlayer)
 unregistersymbol(executePlayerApocalypse)
 unregistersymbol(disableTeleportitis)
 unregistersymbol(disableSixtyNine)
+unregistersymbol(sixtyNineEveryTime)
 
 dealloc(playerApocalypseRandomState)
 dealloc(logApocalypse)
@@ -1806,6 +1819,7 @@ dealloc(lastDamageToPlayer)
 dealloc(totalDamageToPlayer)
 dealloc(disableTeleportitis)
 dealloc(disableSixtyNine)
+dealloc(sixtyNineEveryTime)
 dealloc(executePlayerApocalypse)
 dealloc(playerGodMode)
 

@@ -14,6 +14,10 @@ function activateLoggers()
 	loggersTimer.Interval = 400
 	loggersTimer.OnTimer = function()
 
+		if not randomInitialized then
+			math.randomseed(os.time())
+			randomInitialized = true
+		end
 
 		local playerHealth = readFloat("[playerVitals]")
 		playerHealth = FloorIt(playerHealth)
@@ -197,7 +201,11 @@ function activateLoggers()
 						log:write(riskOfMurderEnemyRoll,
 								  "HOLY SHIT! Player has been SIXTY NINED causing ",
 								  apocalypseDamagedHealth)
-								  playSound(findTableFile('Holyshit.wav'))
+								  local sixtyNineSound = math.random(1,5) >= 3
+								  							and "Holyshit.wav"
+															or "headshot.wav"
+								  
+								  playSound(findTableFile(sixtyNineSound))
 					end
 				else				
 						log:write(apocalypseEnemyRoll,
