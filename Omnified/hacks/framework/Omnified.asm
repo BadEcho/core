@@ -1,5 +1,5 @@
 // Omnified Framework Assembly Functions v. 0.5
-// Written By: Matt Weber
+// Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
 // Copyright 2021 Bad Echo LLC
 
 // Global memory.

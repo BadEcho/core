@@ -1,5 +1,5 @@
 // Hooks for Omnified Witcher 3
-// Written By: Matt Weber (https://twitch.tv/omni)
+// Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
 // Copyright 2021 Bad Echo LLC
 
 // Gets the player's vitals.

@@ -1,12 +1,12 @@
 -- Omnified Framework v0.5
--- Written By: Matt Weber (https://twitch.tv/omni)
+-- Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
 -- Copyright 2021 Bad Echo LLC
 
 -- These values are to be overridden in target .CT file registration routines.
 coordinatesAreDoubles = false
-playerCoordinatesX = "[example]+0x10"
-playerCoordinatesY = "[example]+0x14"
-playerCoordinatesZ = "[example]+0x18"
+playerCoordinatesXAddress = "[example]+0x10"
+playerCoordinatesYAddress = "[example]+0x14"
+playerCoordinatesZAddress = "[example]+0x18"
 
 function areNotNil(...)
 	for _,v in ipairs({...}) do
@@ -51,28 +51,36 @@ function randomize(random_settings)
 	return indexedResults[result]
 end
 
-function mark()
-	local currentX = not coordinatesAreDoubles 
-						and readFloat(playerCoordinatesX) 
-						or readDouble(playerCoordinatesX)
-		
-	local currentY = not coordinatesAreDoubles 
-						and readFloat(playerCoordinatesY) 
-						or readDouble(playerCoordinatesY)
-		
-	local currentZ = not coordinatesAreDoubles 
-						and readFloat(playerCoordinatesZ) 
-						or readDouble(playerCoordinatesZ)
+function readPlayerCoordinates()
+	local x = not coordinatesAreDoubles 
+				and readFloat(playerCoordinatesXAddress) 
+				or readDouble(playerCoordinatesXAddress)
 
-	if areNotNil(currentX,currentY,currentZ) then
+	local y = not coordinatesAreDoubles 
+				and readFloat(playerCoordinatesYAddress) 
+				or readDouble(playerCoordinatesYAddress)
+
+	local z = not coordinatesAreDoubles 
+				and readFloat(playerCoordinatesZAddress) 
+				or readDouble(playerCoordinatesZAddress)
+
+	local coordinates = { X = x, Y = y,	Z = z }
+
+	return coordinates
+end
+
+function mark()
+	local coordinates = readPlayerCoordinates()
+
+	if areNotNil(coordinates.X,coordinates.Y,coordinates.Z) then
 		if not coordinatesAreDoubles then
-			writeFloat("teleportX", currentX)						
-			writeFloat("teleportY", currentY)
-			writeFloat("teleportZ", currentZ)
+			writeFloat("teleportX", coordinates.X)						
+			writeFloat("teleportY", coordinates.Y)
+			writeFloat("teleportZ", coordinates.Z)
 		else
-			writeDouble("teleportX", currentX)			 
-			writeDouble("teleportY", currentY)
-			writeDouble("teleportZ", currentZ)
+			writeDouble("teleportX", coordinates.X)			 
+			writeDouble("teleportY", coordinates.Y)
+			writeDouble("teleportZ", coordinates.Z)
 		end
 	end	
 end

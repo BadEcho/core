@@ -1,3 +1,16 @@
+-- Omnified Display v0.5
+-- Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
+-- Copyright 2021 Bad Echo LLC
+-- These functions will mostly be replaced by Vision infrastructure when that is ready.
+
+require('Omnified')
+
+-- These values are to be overridden in target .CT file registration routines.
+playerHealthAddress = "[exampleHealth]+0x14"
+playerMaxHealthAddress = "[exampleHealth]+0x18"
+freeFallThreshold = 5.0
+
+
 function FloorIt(number)
 	if number ~= nil then
 		return math.floor(number)
@@ -6,8 +19,7 @@ function FloorIt(number)
 	return nil
 end
 
-function activateLoggers()
-	require('Omnified')
+function activateLoggers()	
 
 	if loggersTimer == nil then
 		loggersTimer = createTimer(getMainForm())
@@ -74,14 +86,12 @@ function activateLoggers()
 			stats:write( "Player Total Dmg: ", totalDamageByPlayer, "\n")
 		end
 
-		local xCoords = readFloat("[playerPhysics]+0x190")
-		local yCoords = readFloat("[playerPhysics]+0x194")
-		local zCoords = readFloat("[playerPhysics]+0x198")
+		local coordinates = readPlayerCoordinates()
 
-		if xCoords ~= nil and yCoords ~= nil and zCoords ~= nil then
-			stats:write( "X: ", xCoords, "\n")
-			stats:write( "Y: ", yCoords, "\n")
-			stats:write( "Z: ",  zCoords, "\n")
+		if coordinates.X ~= nil and coordinates.Y ~= nil and coordinates.Z ~= nil then
+			stats:write( "X: ", coordinates.X, "\n")
+			stats:write( "Y: ", coordinates.Y, "\n")
+			stats:write( "Z: ",  coordinates.Z, "\n")
 		end
 		
 		local playerDamageX = readFloat("playerDamageX")
@@ -174,7 +184,7 @@ function activateLoggers()
 							  lastVerticalDisplacement,
 							  ") causing ",
 							  apocalypseDamagedHealth)
-					if lastVerticalDisplacement > 10.0 then
+					if lastVerticalDisplacement > freeFallThreshold then
 						playSound(findTableFile('freefallin.wav'))
 					end	
 				elseif apocalypseResult >= 7 and apocalypseResult <= 9 then
@@ -206,7 +216,7 @@ function activateLoggers()
 								  }
 
 								  local sixtyNineSound = randomize(randomSixtyNine)
-								  
+
 								  playSound(findTableFile(sixtyNineSound))
 					end
 				else				
