@@ -161,7 +161,15 @@ function activateLoggers()
 		
 			if fatalisState == 1 and fatalisResult == 0 then
 				log:write(timestamp, "The player, afflicted with Fatalis, dies immediately from the enemy attack!\n")
-				playSound(findTableFile('fatalisDeath.wav'))						
+
+				local randomFatalis = {
+					{"wilhelm.wav", 1},
+					{"fatalisDeath.wav", 2}
+				}
+
+				local fatalisSound = randomize(randomFatalis)
+
+				playSound(findTableFile(fatalisSound))						
 			else
 				local apocalypseEnemyRoll =
 					string.format("%s%s %i: ", timestamp,
@@ -210,9 +218,10 @@ function activateLoggers()
 								  "HOLY SHIT! Player has been SIXTY NINED causing ",
 								  apocalypseDamagedHealth)
 
-								  local randomSixtyNine = {
+								  local randomSixtyNine = {									  
 									  {"headshot.wav", 2},
-									  {"Holyshit.wav", 3}
+									  {"Holyshit.wav", 2},
+									  {"vincentLaugh.wav", 1}
 								  }
 
 								  local sixtyNineSound = randomize(randomSixtyNine)
@@ -224,7 +233,15 @@ function activateLoggers()
 								  "WOW! Player achieves orgasm!\nPlayer is healed fully to ",
 								  playerHealth,
 								  " health.\n")
-								  playSound(findTableFile('Wow.wav'))
+
+								  local randomOrgasm = {
+									  {"tuturu.wav", 1},
+									  {"Wow.wav", 1}
+								  }
+
+								  local orgasmSound = randomize(randomOrgasm)
+
+								  playSound(findTableFile(orgasmSound))
 				end
 
 			end
@@ -246,7 +263,15 @@ function activateLoggers()
 						  "x) for ",
 						  lastDamageByPlayer,
 						  " damage!\n")
-            playSound(findTableFile('chocobo.wav'))
+				
+				local randomCrit = {
+					{"chocobo.wav", 2},
+					{"comboBreaker.wav", 1}
+				}
+
+				local critSound = randomize(randomCrit)
+
+				playSound(findTableFile(critSound))
 			end
 			
 			writeInteger("logPlayerCrit", 0)

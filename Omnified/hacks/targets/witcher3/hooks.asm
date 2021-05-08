@@ -20,8 +20,8 @@ getPlayerVitals:
   // When the player is defending someone, their health bar is added to the screen and interferes
   // with this code. We use this field as an identifier.
   mov rbx,[rax+0x20]
-  // A value of 0x5 indicates Keira. 
-  cmp rbx,0x5
+  // A value of 0x5 indicates Keira or Skellige warriors. 
+  cmp ebx,0x5
   je getPlayerVitalsExit
   // A value of 0x74 indicates Princess (Goat).
   cmp ebx,0x74
@@ -729,6 +729,10 @@ omnifyAbomnificationHook:
   nop 2
 initiateAbomnificationReturn:
 
+
+// Morphing execution rate is a bit high; will increase the number of steps.
+abominifyMorphStepsResultUpper:
+  dd #600
 
 // Value change to actual height change is not 1:1, ~1.25x increase in value causes actual height to be ~2x.
 abominifyHeightResultUpper:
