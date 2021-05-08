@@ -164,7 +164,8 @@ function activateLoggers()
 
 				local randomFatalis = {
 					{"wilhelm.wav", 1},
-					{"fatalisDeath.wav", 2}
+					{"fatalisDeath.wav", 2},
+					{"haha.wav", 1}
 				}
 
 				local fatalisSound = randomize(randomFatalis)
