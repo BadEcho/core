@@ -5,6 +5,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Collections.Generic;
+
 namespace BadEcho.Fenestra.ViewModels
 {
     /// <summary>
@@ -33,6 +35,12 @@ namespace BadEcho.Fenestra.ViewModels
         void Bind(T model);
 
         /// <summary>
+        /// Binds the provided sequence of data to the view model, allowing for them to be represented in a view.
+        /// </summary>
+        /// <param name="models">The sequence of data to bind to this view model.</param>
+        void Bind(IEnumerable<T> models);
+
+        /// <summary>
         /// Unbinds data from this view model, causing it to no longer be represented in a view.
         /// </summary>
         /// <param name="model">
@@ -40,6 +48,15 @@ namespace BadEcho.Fenestra.ViewModels
         /// </param>
         /// <returns>True if <c>model</c> was unbound; otherwise, false.</returns>
         bool Unbind(T? model);
+
+        /// <summary>
+        /// Unbinds the data found in the provided sequence from this view model, causing them to no longer be represented
+        /// in a view.
+        /// </summary>
+        /// <param name="models">
+        /// The sequence of data to unbind from this view model.
+        /// </param>
+        void Unbind(IEnumerable<T> models);
 
         /// <summary>
         /// Unbinds the currently active model from the view model, causing it to no longer be represented in a view.

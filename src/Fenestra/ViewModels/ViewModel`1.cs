@@ -60,6 +60,20 @@ namespace BadEcho.Fenestra.ViewModels
         }
 
         /// <inheritdoc/>
+        public void Bind(IEnumerable<T> models)
+        {
+            Require.NotNull(models, nameof(models));
+
+            if (OnBatchBinding(models))
+                return;
+
+            foreach (T model in models)
+            {
+                Bind(model);
+            }
+        }
+
+        /// <inheritdoc/>
         public bool Unbind(T? model)
         {
             model ??= ActiveModel;
@@ -78,6 +92,20 @@ namespace BadEcho.Fenestra.ViewModels
         }
 
         /// <inheritdoc/>
+        public void Unbind(IEnumerable<T> models)
+        {
+            Require.NotNull(models, nameof(models));
+
+            if (OnBatchUnbound(models))
+                return;
+
+            foreach (T model in models)
+            {
+                Unbind(model);
+            }
+        }
+
+        /// <inheritdoc/>
         public bool Unbind()
             => Unbind(ActiveModel);
 
@@ -85,6 +113,36 @@ namespace BadEcho.Fenestra.ViewModels
         /// Gets a value indicating if existing data must be explicitly unbound before the binding of new data.
         /// </summary>
         protected virtual bool UnbindOnBind
+            => false;
+
+        /// <summary>
+        /// Called when a sequence of new data is being bound to the view model so that any work required for the data
+        /// to be fully represented in a view can be performed.
+        /// </summary>
+        /// <param name="models">The sequence of new data being bound to the view model.</param>
+        /// <returns>Value indicating if <c>models</c> has been bound to the view model.</returns>
+        /// <remarks>
+        /// Derived classes can override this method to perform specialized batch binding work in place of the normal
+        /// binding logic. Returning true from this method will prevent the normal binding logic from occurring; returning
+        /// false indicates to the caller that its normal binding logic should happen. Further derived classes are expected
+        /// to participate in this behavior.
+        /// </remarks>
+        protected virtual bool OnBatchBinding([NoEnumeration]IEnumerable<T> models)
+            => false;
+
+        /// <summary>
+        /// Called when a sequence of data is being unbound from the view model so that any work required for the data
+        /// to no longer be represented in a view can be performed.
+        /// </summary>
+        /// <param name="models">The sequence of data unbound from the view model.</param>
+        /// <returns>Value indicating if <c>models</c> has been unbound from the view model.</returns>
+        /// <remarks>
+        /// Like <see cref="OnBatchBinding"/>, derived classes can override this method to perform specialized batch
+        /// unbinding work in place of normal binding logic. Returning true from this method will prevent the normal unbinding
+        /// logic from occurring; returning false indicates to the caller that its normal unbinding logic should happen. Further
+        /// derived classes are expected to participate in this behavior.
+        /// </remarks>
+        protected virtual bool OnBatchUnbound([NoEnumeration]IEnumerable<T> models)
             => false;
 
         /// <summary>

@@ -7,6 +7,7 @@
 
 using System;
 using System.Linq;
+using System.Windows.Threading;
 using BadEcho.Fenestra.Properties;
 using BadEcho.Odin.Extensions;
 using BadEcho.Odin.Logging;
@@ -48,6 +49,17 @@ namespace BadEcho.Fenestra.ViewModels
         /// <param name="model">The data to generate a child view model for.</param>
         /// <returns>A <typeparamref name="TChildViewModel"/> object with <c>model</c> bound to it.</returns>
         TChildViewModel CreateChild(TModel model);
+
+        /// <summary>
+        /// Changes the dispatcher currently in use by the view model to the provided one.
+        /// </summary>
+        /// <param name="dispatcher">The dispatcher that the view model should use to broadcast events.</param>
+        /// <remarks>
+        /// This method is meant to bring the mechanisms used by the view model to maintain its assigned collection into parity
+        /// with the collection views the view model is communicating with. If those collection views are running on a different
+        /// dispatcher than the one currently in use by the view model, then problems will typically occur.
+        /// </remarks>
+        void ChangeDispatcher(Dispatcher dispatcher);
 
         /// <summary>
         /// Called when the results of a change operation have been committed to this collection view model's children so that it

@@ -19,6 +19,18 @@ using BadEcho.Odin.Extensions;
 
 namespace BadEcho.Fenestra.ViewModels
 {
+    /// <summary>
+    /// Provides an engine used to power <see cref="ICollectionViewModel{TModel, TChildViewModel}"/> implementations through the
+    /// consolidation of functionalities of common interest.
+    /// </summary>
+    /// <typeparam name="TModel">
+    /// The type of item that can be bound to the <see cref="ICollectionViewModel{TModel, TChildViewModel}"/> view model powered
+    /// by this engine.
+    /// </typeparam>
+    /// <typeparam name="TChildViewModel">
+    /// The type of view model that the <see cref="ICollectionViewModel{TModel, TChildViewModel}"/> view model generates for its
+    /// children.
+    /// </typeparam>
     internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewModel<TChildViewModel>
         where TChildViewModel : class, IViewModel<TModel>
     {
