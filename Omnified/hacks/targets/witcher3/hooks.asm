@@ -154,11 +154,15 @@ registersymbol(playerLastLocation)
 getPlayerLastLocation:
   pushf
   push rax
-  push rbx
-  // This should point to the player's root structure if player location 
-  // is being accessed.
-  mov rax,[r8+80]
+  push rbx  
   mov rbx,player
+  // Non-player related data is being accessed if this doesn't point to our
+  // root structure.
+  cmp [rbx],r12
+  jne getPlayerLastLocationExit
+  // This should point to the player's root structure if player's last location 
+  // is being accessed.       
+  mov rax,[r8+80]
   cmp [rbx],rax
   jne getPlayerLastLocationExit
   mov rax,playerLastLocation
