@@ -160,10 +160,23 @@ getPlayerLastLocation:
   // root structure.
   cmp [rbx],r12
   jne getPlayerLastLocationExit
-  // This should point to the player's root structure if player's last location 
-  // is being accessed.       
-  mov rax,[r8+80]
-  cmp [rbx],rax
+  // [[r8+18]+10] will point to a CCurve (0x1028) if player's last location is being accessed.       
+  mov rax,[r8+18]  
+  push rcx
+  lea rcx,[rax]
+  call checkBadPointer
+  cmp rcx,0
+  pop rcx
+  jne getPlayerLastLocationExit
+  mov rbx,[rax+10]
+  push rcx
+  lea rcx,[rbx]
+  call checkBadPointer
+  cmp rcx,0
+  pop rcx
+  jne getPlayerLastLocationExit  
+  mov rax,[rbx]
+  cmp ax,0x1028
   jne getPlayerLastLocationExit
   mov rax,playerLastLocation
   mov [rax],r8
@@ -359,6 +372,11 @@ verifyPlayerDamaged:
   cmp ecx,0
   pop rcx  
   jne initiateApocalypseExit  
+  mov rax,epsilon
+  // Filter out high toxicity being cleared from meditation by checking for a non-zero value in xmm0.
+  movss xmm1,[rax]
+  ucomiss xmm0,xmm1
+  jbe initiateApocalypseExit
   // If this points to something, it must not be a function. If it is, then the operation is the result
   // of a recurring regenerative type function. If it isn't, then this operation is being caused by damage
   // from an enemy.

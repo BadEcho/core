@@ -4,11 +4,17 @@
 
 // Global memory.
 alloc(zero,8)
+alloc(epsilon,8)
 alloc(damageThreshold,8)
 alloc(areaBoostX,8)
 
+registersymbol(epsilon)
+
 zero:
   dd 0
+
+epsilon:
+  dd (float)0.001
 
 damageThreshold:
   dd (float)3.9
@@ -1734,7 +1740,10 @@ defaultScaleX:
 [DISABLE]
 
 // Cleanup of global memory
+unregistersymbol(epsilon)
+
 dealloc(zero)
+dealloc(epsilon)
 dealloc(damageThreshold)
 dealloc(areaBoostX)
 
