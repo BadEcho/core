@@ -32,7 +32,7 @@ namespace BadEcho.Fenestra.ViewModels
     /// children.
     /// </typeparam>
     internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewModel<TChildViewModel>
-        where TChildViewModel : class, IViewModel<TModel>
+        where TChildViewModel : class, IViewModel, IModelProvider<TModel>
     {
         private readonly ConcurrentQueue<TChildViewModel> _bindingQueue = new();
         private readonly List<TModel> _processedModels = new();

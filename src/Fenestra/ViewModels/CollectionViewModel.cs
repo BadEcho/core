@@ -22,7 +22,7 @@ namespace BadEcho.Fenestra.ViewModels
     /// The type of view model that this collection view model generates for its children.
     /// </typeparam>
     public abstract class CollectionViewModel<TModel, TChildViewModel> : ViewModel<TModel>, ICollectionViewModel<TModel,TChildViewModel>
-        where TChildViewModel : class, IViewModel<TModel>
+        where TChildViewModel : class, IViewModel, IModelProvider<TModel>
     {
         private readonly CollectionViewModelEngine<TModel, TChildViewModel> _engine;
 

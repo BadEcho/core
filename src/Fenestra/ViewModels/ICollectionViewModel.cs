@@ -24,7 +24,7 @@ namespace BadEcho.Fenestra.ViewModels
     /// The type of view model that this collection view model generates for its children.
     /// </typeparam>
     public interface ICollectionViewModel<TModel, TChildViewModel> : IViewModel<TModel>, IAncestorViewModel<TChildViewModel>
-        where TChildViewModel : class, IViewModel<TModel>
+        where TChildViewModel : class, IViewModel, IModelProvider<TModel>
     {
         /// <summary>
         /// Binds the provided view model to this collection view model, allowing for the child's bound data to be represented

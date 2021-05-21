@@ -14,13 +14,8 @@ namespace BadEcho.Fenestra.ViewModels
     /// data.
     /// </summary>
     /// <typeparam name="T">The type of data bound to the view model for display on a view.</typeparam>
-    public interface IViewModel<T> : IViewModel
+    public interface IViewModel<T> : IViewModel, IModelProvider<T>
     {
-        /// <summary>
-        /// Gets data bound to the view model being actively emphasized for display on a view.
-        /// </summary>
-        T? ActiveModel { get; }
-
         /// <summary>
         /// Checks if the provided data is bound to this view model.
         /// </summary>
@@ -44,7 +39,7 @@ namespace BadEcho.Fenestra.ViewModels
         /// Unbinds data from this view model, causing it to no longer be represented in a view.
         /// </summary>
         /// <param name="model">
-        /// The data to unbind from this view model, or <c>null</c> to unbind the current <see cref="ActiveModel"/>.
+        /// The data to unbind from this view model, or <c>null</c> to unbind the current <see cref="IModelProvider{T}.ActiveModel"/>.
         /// </param>
         /// <returns>True if <c>model</c> was unbound; otherwise, false.</returns>
         bool Unbind(T? model);
@@ -61,7 +56,7 @@ namespace BadEcho.Fenestra.ViewModels
         /// <summary>
         /// Unbinds the currently active model from the view model, causing it to no longer be represented in a view.
         /// </summary>
-        /// <returns>True if the current <see cref="ActiveModel"/> was unbound; otherwise, false.</returns>
+        /// <returns>True if the current <see cref="IModelProvider{T}.ActiveModel"/> was unbound; otherwise, false.</returns>
         bool Unbind();
     }
 }
