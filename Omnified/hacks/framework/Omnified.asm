@@ -178,6 +178,8 @@ alloc(negativeOne,8)
 alloc(apocalypseResult,8)
 alloc(apocalypseResultUpper,8)
 alloc(apocalypseResultLower,8)
+alloc(extraDamageSafetyThreshold,8)
+alloc(extraDamageResidualHealth,8)
 alloc(teleported,8)
 alloc(teleportedX,8)
 alloc(teleportedY,8)
@@ -212,6 +214,7 @@ alloc(sixtyNineEveryTime,8)
 
 registersymbol(executePlayerApocalypse)
 registersymbol(logApocalypse)
+registersymbol(extraDamageSafetyThreshold)
 registersymbol(teleported)
 registersymbol(teleportedX)
 registersymbol(teleportedY)
@@ -292,6 +295,32 @@ applyApocalypseRoll:
   jle riskOfMurder
   jmp suddenGasm
 extraDamage:
+  // Load the player's maximum health, check if current health is below that multiplied by
+  // the safety threshold.
+  movss xmm1,[rsp+50]
+  mulss xmm1,[extraDamageSafetyThreshold]
+  ucomiss xmm3,xmm1
+  jb applyExtraDamage  
+  // Check if the damage would normally kill us, even without the extra damage effect.  
+  movss xmm1,xmm3
+  subss xmm1,xmm0
+  movss xmm2,[epsilon]
+  ucomiss xmm1,xmm2
+  jb applyExtraDamage
+  // Normal damage wouldn't kill us, check if extra damage would, and then prevent it from doing so.
+  movss xmm1,xmm3
+  movss xmm2,xmm0
+  mulss xmm2,[extraDamageX]
+  subss xmm1,xmm2
+  movss xmm2,[epsilon]
+  ucomiss xmm1,xmm2
+  ja applyExtraDamage
+  // Set damage to be same as current health minus our "left over" health so that we end up with
+  // this health amount following application of damage to our health.
+  movss xmm0,xmm3
+  subss xmm0,[extraDamageResidualHealth]
+  jmp updateEnemyDamageStats
+applyExtraDamage:
   mulss xmm0,[extraDamageX]
   jmp updateEnemyDamageStats
 teleportitis:
@@ -543,6 +572,12 @@ apocalypseResultUpper:
   
 apocalypseResultLower:
   dd 1
+
+extraDamageResidualHealth:
+  dd (float)69.0
+
+extraDamageSafetyThreshold:
+  dd (float)0.9
   
 teleportitisResult:
   dd 0
@@ -1770,6 +1805,7 @@ dealloc(teleportZ)
 
 // Cleanup of Player Apocalypse System Function
 unregistersymbol(logApocalypse)
+unregistersymbol(extraDamageSafetyThreshold)
 unregistersymbol(teleported)
 unregistersymbol(teleportedX)
 unregistersymbol(teleportedY)
@@ -1803,6 +1839,8 @@ dealloc(telerpotedZ)
 dealloc(apocalypseResult)
 dealloc(apocalypseResultUpper)
 dealloc(apocalypseResultLower)
+dealloc(extraDamageResidualHealth)
+dealloc(extraDamageSafetyThreshold)
 dealloc(negativeOne)
 dealloc(teleportitisResult)
 dealloc(teleportitisResultUpper)
