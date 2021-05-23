@@ -163,7 +163,15 @@ registersymbol(teleportX)
 registersymbol(teleportY)
 registersymbol(teleportZ)
 
+// Global Apocalypse memory.
+alloc(playerDamageX,8)
+
+registersymbol(playerDamageX)
+
+playerDamageX:
+  dd (float)1.0
   
+
 // Player Apocalypse System Function
 // [rsp+48]: Player's coordinates (aligned at X-coord)
 // [rsp+50]: Max Player Health Amount
@@ -202,6 +210,8 @@ alloc(fatalisResultUpper,8)
 alloc(fatalisResultLower,8)
 // fatalisState: 0 = not active; 1 = active; 2 = cured (used for announcement, then set to 0)
 alloc(fatalisState,8)
+alloc(fatalisBloodlustDamageX,8)
+alloc(basePlayerDamageX,8)
 alloc(extraDamageX,8)
 alloc(sixtyNineDamageX,8)
 alloc(maxDamageToPlayer,8)
@@ -227,6 +237,7 @@ registersymbol(riskOfMurderResult)
 registersymbol(fatalisResult)
 registersymbol(fatalisResultUpper)
 registersymbol(fatalisState)
+registersymbol(fatalisBloodlustDamageX)
 registersymbol(extraDamageX)
 registersymbol(maxDamageToPlayer)
 registersymbol(lastDamageToPlayer)
@@ -506,6 +517,12 @@ riskOfMurder:
   cmp eax,[fatalisResultUpper]
   jne updateEnemyDamageStats
   mov [fatalisState],1
+  // The player, although made fragile by the scourge of Fatalis, enters a rage that increases their damage.
+  // Store current player damage for later restoration, and then increase it by 1.25x.
+  movss xmm1,[playerDamageX]
+  movss [basePlayerDamageX],xmm1
+  mulss xmm1,[fatalisBloodlustDamageX]
+  movss [playerDamageX],xmm1
   jmp updateEnemyDamageStats  
 sixtyNine:
   // Check if sixty nine is disabled, if so, just apply normal damage.
@@ -641,6 +658,9 @@ fatalisResultLower:
   
 fatalisState:
   dd 0
+
+fatalisBloodlustDamageX:
+  dd (float)1.25
   
 extraDamageX:
   dd (float)2.0
@@ -682,7 +702,6 @@ alloc(gokuResult,8)
 alloc(gokuResultUpper,8)
 alloc(gokuResultLower,8)
 alloc(gokuDamageX,8)
-alloc(playerDamageX,8)
 alloc(lastEnemyHealthValue,8)
 alloc(playerCritChanceResultUpper,8)
 alloc(playerCritChanceResultLower,8)
@@ -701,7 +720,6 @@ registersymbol(totalDamageByPlayer)
 registersymbol(logKamehameha)
 registersymbol(gokuDamageX)
 registersymbol(gokuResultUpper)
-registersymbol(playerDamageX)
 registersymbol(lastEnemyHealthValue)
 registersymbol(playerCritDamageResult)
 registersymbol(logPlayerCrit)
@@ -837,10 +855,7 @@ gokuResultLower:
   dd 0
   
 gokuDamageX:
-  dd (float)10000.0
-  
-playerDamageX:
-  dd (float)1.0
+  dd (float)10000.0  
   
 lastEnemyHealthValue:
   dd 0
@@ -1803,6 +1818,11 @@ dealloc(teleportX)
 dealloc(teleportY)
 dealloc(teleportZ)
 
+// Cleanup of global Apocalypse memory
+dealloc(playerDamageX)
+
+unregistersymbol(playerDamageX)
+
 // Cleanup of Player Apocalypse System Function
 unregistersymbol(logApocalypse)
 unregistersymbol(extraDamageSafetyThreshold)
@@ -1815,6 +1835,7 @@ unregistersymbol(riskOfMurderResult)
 unregistersymbol(fatalisResult)
 unregistersymbol(fatalisResultUpper)
 unregistersymbol(fatalisState)
+unregistersymbol(fatalisBloodlustDamageX)
 unregistersymbol(yIsVertical)
 unregistersymbol(lastVerticalDisplacement)
 unregistersymbol(coordinatesAreDoubles)
@@ -1855,6 +1876,8 @@ dealloc(teleportitisDisplacementX)
 dealloc(riskOfMurderResult)
 dealloc(riskOfMurderResultUpper)
 dealloc(riskOfMurderResultLower)
+dealloc(basePlayerDamageX)
+dealloc(fatalisBloodlustDamageX)
 dealloc(fatalisResult)
 dealloc(fatalisResultUpper)
 dealloc(fatalisResultLower)
@@ -1877,7 +1900,6 @@ unregistersymbol(totalDamageByPlayer)
 unregistersymbol(logKamehameha)
 unregistersymbol(gokuDamageX)
 unregistersymbol(gokuResultUpper)
-unregistersymbol(playerDamageX)
 unregistersymbol(lastEnemyHealthValue)
 unregistersymbol(playerCritDamageResult)
 unregistersymbol(logPlayerCrit)
@@ -1891,7 +1913,6 @@ dealloc(gokuResult)
 dealloc(gokuResultUpper)
 dealloc(gokuResultLower)
 dealloc(gokuDamageX)
-dealloc(playerDamageX)
 dealloc(lastEnemyHealthValue)
 dealloc(playerCritChanceResultUpper)
 dealloc(playerCritChanceResultLower)

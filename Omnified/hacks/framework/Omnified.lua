@@ -143,6 +143,11 @@ function registerOmnification(targetAssemblyFilePath)
 				fatalisTimer.Interval = 600000
 				fatalisTimer.OnTimer = function()
 					writeInteger("fatalisState",2)		
+					local previousPlayerDamageX =  readFloat("basePlayerDamageX")
+
+					if previousPlayerDamageX ~= nil then
+						writeFloat("playerDamageX", previousPlayerDamageX)
+					end 
 					
 					fatalisTimer.Enabled = false
 					fatalisTimer.Destroy()
