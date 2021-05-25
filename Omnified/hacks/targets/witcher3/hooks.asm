@@ -250,6 +250,15 @@ changeXP:
   cmp rbx,[rax]
   pop rax
   jne changeXPOriginalCode
+  // We only want the XP nerf to apply up until level 29. Numerous playthroughs have shown that this is 
+  // when available quest XP no longer outpaces the required level of the quests being proferred.
+  push rax
+  // This points to the total amount of XP accumulated, without consideration of XP earned towards the next level.
+  mov rax,[rbx+4]
+  // Level 29 requires a total of 42000 XP.
+  cmp eax,#42000  
+  pop rax
+  jl changeXPOriginalCode
   sub rsp,10
   movdqu [rsp],xmm0
   cvtsi2ss xmm0,eax
