@@ -69,3 +69,9 @@ using BadEcho.Odin.Extensibility;
                            Scope = "member", 
                            Target = "~M:BadEcho.Fenestra.ViewModels.ViewModel`1.Disconnect",
                            Justification = "This seems to be a false positive and bug in code analysis. We're doing a type conversion using the 'as' keyword of an object of generic type T to IViewModel. There is no guarantee at all, given the lack of generic constraints, that T is an IViewModel and won't be null.")]
+
+[assembly: SuppressMessage("Maintainability", 
+                           "CA1508:Avoid dead conditional code", 
+                           Scope = "member", 
+                           Target = "~M:BadEcho.Fenestra.ViewModels.CollectionViewModelEngine`2.HandleChildrenChanged(System.Object,BadEcho.Odin.Collections.CollectionPropertyChangedEventArgs)",
+                           Justification = "This is yet another a strange false positive. The source of the value is clearly from a property that has been marked as being a reference that can be null. So, a null check is required.")]

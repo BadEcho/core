@@ -70,9 +70,9 @@ namespace BadEcho.Fenestra.ViewModels
 
             Children = new AtomicObservableCollection<TChildViewModel>();
 
-            var collectionSubscriber = new CollectionPropertyChangeSubscriber<TChildViewModel>(Children);
+            var collectionChangePublisher = new CollectionPropertyChangePublisher<TChildViewModel>(Children);
 
-            collectionSubscriber.Changed += options.ChildrenChangedHandler;
+            collectionChangePublisher.Changed += options.ChildrenChangedHandler + HandleChildrenChanged;
         }
 
         /// <summary>
@@ -343,7 +343,36 @@ namespace BadEcho.Fenestra.ViewModels
             Dispatcher.BeginInvoke(() => throw new EngineException(Strings.FenestraDispatcherError, rootException),
                                    DispatcherPriority.Send);
         }
-        
+
+        private void HandleChildrenChanged(object? sender, CollectionPropertyChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case CollectionPropertyChangedAction.Add:
+                    
+                    break;
+            }
+
+            if (!_options.BindChildren)
+                return;
+
+            foreach (TChildViewModel childViewModel in e.NewItems)
+            {
+                if (childViewModel.ActiveModel == null)
+                    throw new InvalidOperationException(Strings.CollectionChildBindingRequiresActiveModel);
+
+                _viewModel.Bind(childViewModel.ActiveModel);
+            }
+
+            foreach (TChildViewModel childViewModel in e.OldItems)
+            {
+                if (childViewModel.ActiveModel == null)
+                    throw new InvalidOperationException(Strings.CollectionChildUnbindingRequiresActiveModel);
+
+                _viewModel.Unbind(childViewModel.ActiveModel);
+            }
+        }
+
         private void HandleBindingTimerTick(object? sender, EventArgs e)
         {
             if (!_bindingQueue.TryDequeue(out TChildViewModel? child))

@@ -15,23 +15,23 @@ using BadEcho.Odin.Properties;
 namespace BadEcho.Odin.Collections
 {
     /// <summary>
-    /// Provides a subscription service for <see cref="INotifyCollectionChanged"/> capable collections containing
+    /// Provides a publishing service for events pertaining to <see cref="INotifyCollectionChanged"/> capable collections containing
     /// <see cref="INotifyPropertyChanged"/> typed items.
     /// </summary>
     /// <typeparam name="T">The type of item in the <see cref="INotifyCollectionChanged"/> capable collection.</typeparam>
     /// <remarks>
-    /// This event subscription service marries the two separate notions of changes occurring to a collection's composition
+    /// This event publishing service marries the two separate notions of changes occurring to a collection's composition
     /// (<see cref="INotifyCollectionChanged"/>) and changes occurring to a particular item in a collection
     /// (<see cref="INotifyPropertyChanged"/>).
     /// </remarks>
-    public sealed class CollectionPropertyChangeSubscriber<T>
+    public sealed class CollectionPropertyChangePublisher<T>
         where T : INotifyPropertyChanged
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CollectionPropertyChangeSubscriber{T}"/> class.
+        /// Initializes a new instance of the <see cref="CollectionPropertyChangePublisher{T}"/> class.
         /// </summary>
         /// <param name="collection">A source for changes in the collection.</param>
-        public CollectionPropertyChangeSubscriber(INotifyCollectionChanged collection)
+        public CollectionPropertyChangePublisher(INotifyCollectionChanged collection)
         {
             Require.NotNull(collection, nameof(collection));
 
@@ -62,7 +62,8 @@ namespace BadEcho.Odin.Collections
                 }
             }
 
-            var changedArgs = new CollectionPropertyChangedEventArgs((CollectionPropertyChangedAction) e.Action);
+            var changedArgs =
+                new CollectionPropertyChangedEventArgs((CollectionPropertyChangedAction) e.Action, e.NewItems, e.OldItems);
 
             Changed?.Invoke(this, changedArgs);
         }

@@ -106,6 +106,24 @@ namespace BadEcho.Fenestra.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insertion of a view model into a child view model collection belonging to a collection view model which requires the binding of said view model bound data can only be done if the child view model has been bound to valid model data..
+        /// </summary>
+        internal static string CollectionChildBindingRequiresActiveModel {
+            get {
+                return ResourceManager.GetString("CollectionChildBindingRequiresActiveModel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Removal of a view model from a child view model collection whose model data is still bound to the collection view model can only be done while the child view model still has valid model data bound to it..
+        /// </summary>
+        internal static string CollectionChildUnbindingRequiresActiveModel {
+            get {
+                return ResourceManager.GetString("CollectionChildUnbindingRequiresActiveModel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The collection view model engine requires a valid collection property change handler to be specified in the provided options..
         /// </summary>
         internal static string CollectionViewModelEngineRequiresHandler {

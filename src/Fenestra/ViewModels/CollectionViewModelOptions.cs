@@ -48,7 +48,7 @@ namespace BadEcho.Fenestra.ViewModels
 
         /// <summary>
         /// Gets or sets a value indicating if the bound data of view models added to the child view model collection should be bound
-        /// to the view model itself.
+        /// to the collection view model itself.
         /// </summary>
         public bool BindChildren
         { get; set; } = true;

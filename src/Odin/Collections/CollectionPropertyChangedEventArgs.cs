@@ -6,6 +6,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections;
 
 namespace BadEcho.Odin.Collections
 {
@@ -31,7 +32,23 @@ namespace BadEcho.Odin.Collections
         /// Initializes a new instance of the <see cref="CollectionPropertyChangedEventArgs"/> class.
         /// </summary>
         /// <param name="action">The action that caused the event.</param>
-        public CollectionPropertyChangedEventArgs(CollectionPropertyChangedAction action)
+        /// <param name="newItems">The list of new items involved in the change.</param>
+        /// <param name="oldItems">The list of items affected by a replacement, removal, or movement of members within a collection.</param>
+        public CollectionPropertyChangedEventArgs(CollectionPropertyChangedAction action, IList? newItems, IList? oldItems)
+            : this(action)
+        {
+            if (newItems != null)
+                NewItems = newItems;
+
+            if (oldItems != null)
+                OldItems = oldItems;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CollectionPropertyChangedEventArgs"/> class.
+        /// </summary>
+        /// <param name="action">The action that caused the event.</param>
+        private CollectionPropertyChangedEventArgs(CollectionPropertyChangedAction action) 
             => Action = action;
 
         /// <summary>
@@ -39,6 +56,18 @@ namespace BadEcho.Odin.Collections
         /// </summary>
         public CollectionPropertyChangedAction Action
         { get; }
+
+        /// <summary>
+        /// Gets the list of new items involved in the change.
+        /// </summary>
+        public IList NewItems
+        { get; } = new ArrayList();
+
+        /// <summary>
+        /// Gets the list of items affected by a replacement, removal, or movement of members within a collection.
+        /// </summary>
+        public IList OldItems
+        { get; } = new ArrayList();
 
         /// <summary>
         /// Gets the name of the collection item's modified property at the source of the event.
