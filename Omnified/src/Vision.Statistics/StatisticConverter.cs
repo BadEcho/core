@@ -46,7 +46,7 @@ namespace BadEcho.Omnified.Vision.Statistics
                 WholeStatistic => StatisticType.Whole,
                 FractionalStatistic => StatisticType.Fractional,
                 CoordinateStatistic => StatisticType.Coordinate,
-                _ => throw new ArgumentException(Strings.ArgumentExceptionStatisticTypeUnsupported,
+                _ => throw new ArgumentException(Strings.StatisticTypeUnsupportedJson,
                                                  nameof(value))
             };
         }

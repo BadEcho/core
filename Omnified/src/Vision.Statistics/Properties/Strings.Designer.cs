@@ -63,9 +63,18 @@ namespace BadEcho.Omnified.Vision.Statistics.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The provided Statistic object type lacks support for describing in JSON..
         /// </summary>
-        internal static string ArgumentExceptionStatisticTypeUnsupported {
+        internal static string StatisticTypeUnsupportedJson {
             get {
-                return ResourceManager.GetString("ArgumentExceptionStatisticTypeUnsupported", resourceCulture);
+                return ResourceManager.GetString("StatisticTypeUnsupportedJson", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The provided Statistic object type lacks a supported view model..
+        /// </summary>
+        internal static string StatisticTypeUnsupportedViewModel {
+            get {
+                return ResourceManager.GetString("StatisticTypeUnsupportedViewModel", resourceCulture);
             }
         }
     }

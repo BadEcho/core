@@ -7,6 +7,8 @@
 
 using System;
 using BadEcho.Fenestra.ViewModels;
+using BadEcho.Odin;
+using BadEcho.Omnified.Vision.Statistics.Properties;
 
 namespace BadEcho.Omnified.Vision.Statistics.ViewModels
 {
@@ -24,17 +26,23 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
         public StatisticsViewModel(CollectionViewModelOptions options) 
             : base(options)
         { }
-
+        
         /// <inheritdoc/>
         public override IStatisticViewModel CreateChild(Statistic model)
         {
-            throw new NotImplementedException();
+            Require.NotNull(model, nameof(model));
+
+            return model switch
+            {
+                WholeStatistic whole => new WholeStatisticViewModel(whole),
+                FractionalStatistic fractional => new FractionalStatisticViewModel(fractional),
+                CoordinateStatistic coordinate => new CoordinateStatisticViewModel(coordinate),
+                _ => throw new ArgumentException(Strings.StatisticTypeUnsupportedViewModel, nameof(model))
+            };
         }
 
         /// <inheritdoc/>
         public override void OnChangeCompleted()
-        {
-            throw new NotImplementedException();
-        }
+        { }
     }
 }

@@ -5,6 +5,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Odin;
+
 namespace BadEcho.Omnified.Vision.Statistics.ViewModels
 {
     /// <summary>
@@ -16,6 +18,23 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
         private float _x;
         private float _y;
         private float _z;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CoordinateStatisticViewModel"/> class.
+        /// </summary>
+        /// <param name="statistic">The coordinate statistic to bind to the view model.</param>
+        public CoordinateStatisticViewModel(CoordinateStatistic statistic)
+        {
+            Require.NotNull(statistic, nameof(statistic));
+
+            Bind(statistic);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CoordinateStatisticViewModel"/> class.
+        /// </summary>
+        public CoordinateStatisticViewModel()
+        { }
 
         /// <summary>
         /// Gets or sets the displayed X coordinate value for the bound statistic.

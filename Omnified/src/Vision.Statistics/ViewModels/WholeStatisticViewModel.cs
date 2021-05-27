@@ -5,6 +5,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Odin;
+
 namespace BadEcho.Omnified.Vision.Statistics.ViewModels
 {
     /// <summary>
@@ -14,6 +16,23 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
     {
         private int _value;
         private bool _isCritical;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WholeStatisticViewModel"/> class.
+        /// </summary>
+        /// <param name="statistic">The whole statistic to bind to the view model.</param>
+        public WholeStatisticViewModel(WholeStatistic statistic)
+        {
+            Require.NotNull(statistic, nameof(statistic));
+
+            Bind(statistic);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WholeStatisticViewModel"/> class.
+        /// </summary>
+        public WholeStatisticViewModel()
+        { }
 
         /// <summary>
         /// Gets or sets a value indicating if updates to the bound statistic is a critical event.

@@ -5,6 +5,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Odin;
+
 namespace BadEcho.Omnified.Vision.Statistics.ViewModels
 {
     /// <summary>
@@ -14,6 +16,23 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
     {
         private int _currentValue;
         private int _maximumValue;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FractionalStatisticViewModel"/> class.
+        /// </summary>
+        /// <param name="statistic">The fractional statistic to bind to the view model.</param>
+        public FractionalStatisticViewModel(FractionalStatistic statistic)
+        {
+            Require.NotNull(statistic, nameof(statistic));
+
+            Bind(statistic);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FractionalStatisticViewModel"/> class.
+        /// </summary>
+        public FractionalStatisticViewModel()
+        { }
 
         /// <summary>
         /// Gets or sets the displayed current numeric value for the bound statistic.
