@@ -271,7 +271,7 @@ function activateLoggers()
 
 				local critDamageRange = playerCritDamageResultUpper - playerCritDamageResultLower
 
-				local critHighDamageMinimum = critDamageRange * (2/3)
+				local critHighDamageMinimum = playerCritDamageResultUpper - (critDamageRange * (1/3))
 
 				if (playerCritDamageResult >= critHighDamageMinimum) then
 					critSound = "mudboneCrit.wav"
