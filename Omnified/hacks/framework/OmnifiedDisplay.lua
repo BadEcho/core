@@ -256,8 +256,10 @@ function activateLoggers()
 		if logPlayerCrit == 1 and lastDamageByPlayer ~= nil then		
 
 			local playerCritDamageResult = readInteger("playerCritDamageResult")
+			local playerCritDamageResultUpper = readInteger("playerCritDamageResultUpper")
+			local playerCritDamageResultLower = readInteger("playerCritDamageResultLower")
 
-			if playerCritDamageResult ~= nil then
+			if areNotNil(playerCritDamageResult, playerCritDamageResultUpper, playerCritDamageResultLower) then
 				log:write(timestamp,
 						  "Enemy has been critically hit (",
 						  playerCritDamageResult/10.0,
@@ -265,12 +267,22 @@ function activateLoggers()
 						  lastDamageByPlayer,
 						  " damage!\n")
 				
-				local randomCrit = {
-					{"chocobo.wav", 2},
-					{"comboBreaker.wav", 1}
-				}
+				local critSound = nil
 
-				local critSound = randomize(randomCrit)
+				local critDamageRange = playerCritDamageResultUpper - playerCritDamageResultLower
+
+				local critHighDamageMinimum = critDamageRange * (2/3)
+
+				if (playerCritDamageResult >= critHighDamageMinimum) then
+					critSound = "mudboneCrit.wav"
+				else
+					local randomLowCrit = {
+						{"chocobo.wav", 2},
+						{"comboBreaker.wav", 1}
+					}
+
+					critSound = randomize(randomLowCrit)
+				end
 
 				playSound(findTableFile(critSound))
 			end
