@@ -652,7 +652,7 @@ fatalisResult:
   dd 0
   
 fatalisResultUpper:
-  dd #8
+  dd #7
   
 fatalisResultLower:
   dd 1
