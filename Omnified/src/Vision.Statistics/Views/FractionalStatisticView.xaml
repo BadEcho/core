@@ -21,14 +21,10 @@
                                          MaximumValue="1000"
                                          />
     </d:DesignProperties.DataContext>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition SharedSizeGroup="NameColumn"/>
-            <ColumnDefinition SharedSizeGroup="ValueColumn"/>
-        </Grid.ColumnDefinitions>
+    <Grid Style="{StaticResource StatisticSharedColumnGridStyle}">
         <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
                                       Text="{Binding Name}"
-                                      Grid.Column="0"
+                                      Grid.Column="0"        
                                       />
         <StackPanel Orientation="Horizontal"
                     Grid.Column="1">

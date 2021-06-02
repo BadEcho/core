@@ -16,7 +16,7 @@ namespace BadEcho.Fenestra.Behaviors
     /// </summary>
     /// <typeparam name="TTarget">The type of <see cref="DependencyObject"/> the auxiliary component attaches to.</typeparam>
     /// <typeparam name="TAttachableComponent">The type of attachable component controlled by this behavior.</typeparam>
-    public abstract class CompoundBehavior<TTarget, TAttachableComponent> : Behavior<TTarget,TAttachableComponent>
+    public abstract class CompoundBehavior<TTarget, TAttachableComponent> : Behavior<TTarget, TAttachableComponent>
         where TTarget : DependencyObject
         where TAttachableComponent : class, IAttachableComponent<TTarget>, new()
     {

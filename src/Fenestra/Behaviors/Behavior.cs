@@ -58,7 +58,7 @@ namespace BadEcho.Fenestra.Behaviors
             if (!TargetMap.ContainsKey(targetObject))
                 return;
 
-            var associatedValue = TargetMap[targetObject];
+            TProperty? associatedValue = TargetMap[targetObject];
 
             if (associatedValue != null)
                 OnValueDisassociated(targetObject, associatedValue);
@@ -85,7 +85,6 @@ namespace BadEcho.Fenestra.Behaviors
         /// <summary>
         /// Called when this behavior is being associated with a new local value being set on a <see cref="DependencyObject"/> instance
         /// this behavior is attached to.
-        /// value.
         /// </summary>
         /// <param name="targetObject">A dependency object this behavior is attached to.</param>
         /// <param name="newValue">The new local value of the attached property.</param>
@@ -108,8 +107,8 @@ namespace BadEcho.Fenestra.Behaviors
                 return;
 
             Attach(targetObject);
-            
-            TProperty? newValue = (TProperty?) e.NewValue;
+
+            var newValue = (TProperty?) e.NewValue;
 
             if (e.OldValue is TProperty oldValue) 
                 OnValueDisassociated(targetObject, oldValue);

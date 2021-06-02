@@ -22,15 +22,12 @@
                                          Z="1997.649169219"
                                          />
     </d:DesignProperties.DataContext>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition SharedSizeGroup="NameColumn"/>
-            <ColumnDefinition SharedSizeGroup="ValueColumn"/>
-        </Grid.ColumnDefinitions>
+    <Grid Style="{StaticResource StatisticSharedColumnGridStyle}">
         <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
                                       Text="{Binding Name}"
                                       Grid.Column="0"
                                       />
+        
         <StackPanel Orientation="Vertical"
                     Grid.Column="1"
                     >

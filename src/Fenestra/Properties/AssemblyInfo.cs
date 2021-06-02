@@ -16,6 +16,7 @@ using BadEcho.Odin.Extensibility;
 [assembly: XmlnsDefinition(Constants.Namespace, "BadEcho.Fenestra.Markup")]
 [assembly: XmlnsDefinition(Constants.Namespace, "BadEcho.Fenestra.Behaviors")]
 [assembly: XmlnsDefinition(Constants.Namespace, "BadEcho.Fenestra.Converters")]
+[assembly: XmlnsDefinition(Constants.Namespace, "BadEcho.Fenestra")]
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, 
                      ResourceDictionaryLocation.SourceAssembly)]
