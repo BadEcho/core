@@ -26,7 +26,7 @@ namespace BadEcho.Fenestra.Tests
         }
 
         [Fact]
-        public void Empty_AddRange_SingleChange()
+        public void AddRange_Empty_SingleChange()
         {
             int numberOfChanges = 0;
 
@@ -38,7 +38,7 @@ namespace BadEcho.Fenestra.Tests
         }
 
         [Fact]
-        public void NotEmpty_RemoveRange_SingleChange()
+        public void RemoveRange_NotEmpty_SingleChange()
         {
             _collection.AddRange(new List<int> { 2, 5, 1, 3, 9, 4 });
 
@@ -52,7 +52,7 @@ namespace BadEcho.Fenestra.Tests
         }
 
         [Fact]
-        public void Unordered_OrderBy_SingleChange()
+        public void OrderBy_Unordered_SingleChange()
         {
             _collection.AddRange(new List<int> {2, 5, 1, 3, 9, 4});
             
@@ -65,7 +65,7 @@ namespace BadEcho.Fenestra.Tests
         }
 
         [Fact]
-        public void Unordered_OrderByDescending_SingleChange()
+        public void OrderByDescending_Unordered_SingleChange()
         {
             _collection.AddRange(new List<int> { 2, 5, 1, 3, 9, 4 });
 
@@ -78,7 +78,7 @@ namespace BadEcho.Fenestra.Tests
         }
 
         [Fact]
-        public void ForeignThread_Add_NoException()
+        public void Add_ForeignThread_NoException()
         {
             _collection.ChangeDispatcher(Dispatcher.CurrentDispatcher);
 
@@ -87,13 +87,12 @@ namespace BadEcho.Fenestra.Tests
             Task.Factory.StartNew(() => _collection.Add(2))
                 .ContinueWith(_ => done = true);
 
-            
             while (!done)
                 Dispatcher.CurrentDispatcher.ProcessMessages();
         }
 
         [Fact]
-        public void ForeignThreadWithDispatcher_Add_NoException()
+        public void Add_ForeignThreadWithDispatcher_NoException()
         {
             _collection.ChangeDispatcher(Dispatcher.CurrentDispatcher);
 
@@ -105,7 +104,6 @@ namespace BadEcho.Fenestra.Tests
                                       _collection.Add(2);
                                   })
                 .ContinueWith(_ => done = true);
-
 
             while (!done)
                 Dispatcher.CurrentDispatcher.ProcessMessages();

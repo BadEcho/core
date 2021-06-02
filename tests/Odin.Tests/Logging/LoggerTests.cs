@@ -162,5 +162,8 @@ namespace BadEcho.Odin.Tests.Logging
             _listener.DisableEvents(LogSource.Instance);
             Logger.DisableDefaultListener();
         }
+
+        private sealed class EventListenerStub : EventListener
+        { }
     }
 }
