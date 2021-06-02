@@ -263,6 +263,8 @@ namespace BadEcho.Fenestra.ViewModels
             {
                 Children.Add(viewModel);
                 _viewModel.OnChangeCompleted();
+
+                return;
             }
 
             _bindingQueue.Enqueue(viewModel);
@@ -350,9 +352,6 @@ namespace BadEcho.Fenestra.ViewModels
             if (DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
                 return;
 
-            if (!_options.BindChildren)
-                return;
-
             foreach (TChildViewModel childViewModel in e.OldItems)
             {
                 if (childViewModel.ActiveModel == null)
@@ -366,7 +365,14 @@ namespace BadEcho.Fenestra.ViewModels
                 if (childViewModel.ActiveModel == null)
                     throw new InvalidOperationException(Strings.CollectionChildBindingRequiresActiveModel);
 
-                _viewModel.Bind(childViewModel.ActiveModel);
+                lock (_processedModelsLock)
+                {
+                    if (!_processedModels.Contains(childViewModel.ActiveModel))
+                        _processedModels.Add(childViewModel.ActiveModel);
+                }
+
+                if (_options.BindChildren)
+                    _viewModel.Bind(childViewModel.ActiveModel);
             }
         }
 

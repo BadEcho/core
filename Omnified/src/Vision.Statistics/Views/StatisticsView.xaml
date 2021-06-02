@@ -10,25 +10,35 @@
                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
                xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"                   
-               xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Statistics.ViewModels"
+               xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Statistics.ViewModels"                              
                mc:Ignorable="d" 
                >
     <d:DesignProperties.DataContext>
         <vm:StatisticsViewModel>
             <vm:StatisticsViewModel.Children>
-                <vm:FractionalStatisticViewModel />
-                <vm:WholeStatisticViewModel />
-                <vm:CoordinateStatisticViewModel/>
+                <vm:FractionalStatisticViewModel Name="Player Health:"
+                                                 CurrentValue="86"
+                                                 MaximumValue="1000"
+                                                 />
+                <vm:WholeStatisticViewModel Name="Total Damage Done:"
+                                            IsCritical="False"
+                                            Value="29333882"
+                                            />
+                <vm:CoordinateStatisticViewModel Name="Coordinates:"
+                                                 X="-1566.7635498047"
+                                                 Y="0.10857523977757"
+                                                 Z="1997.649169219"
+                                                 />
             </vm:StatisticsViewModel.Children>
-        </vm:StatisticsViewModel>
+        </vm:StatisticsViewModel>        
     </d:DesignProperties.DataContext>
-    <Grid>
+    <Grid>        
         <ItemsControl  ItemsSource="{Binding Children}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Grid.IsSharedSizeScope="True"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
-        </ItemsControl>
+        </ItemsControl>        
     </Grid>
 </fenestra:View>
