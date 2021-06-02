@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -346,23 +347,11 @@ namespace BadEcho.Fenestra.ViewModels
 
         private void HandleChildrenChanged(object? sender, CollectionPropertyChangedEventArgs e)
         {
-            switch (e.Action)
-            {
-                case CollectionPropertyChangedAction.Add:
-                    
-                    break;
-            }
+            if (DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
+                return;
 
             if (!_options.BindChildren)
                 return;
-
-            foreach (TChildViewModel childViewModel in e.NewItems)
-            {
-                if (childViewModel.ActiveModel == null)
-                    throw new InvalidOperationException(Strings.CollectionChildBindingRequiresActiveModel);
-
-                _viewModel.Bind(childViewModel.ActiveModel);
-            }
 
             foreach (TChildViewModel childViewModel in e.OldItems)
             {
@@ -370,6 +359,14 @@ namespace BadEcho.Fenestra.ViewModels
                     throw new InvalidOperationException(Strings.CollectionChildUnbindingRequiresActiveModel);
 
                 _viewModel.Unbind(childViewModel.ActiveModel);
+            }
+
+            foreach (TChildViewModel childViewModel in e.NewItems)
+            {
+                if (childViewModel.ActiveModel == null)
+                    throw new InvalidOperationException(Strings.CollectionChildBindingRequiresActiveModel);
+
+                _viewModel.Bind(childViewModel.ActiveModel);
             }
         }
 

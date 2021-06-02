@@ -22,39 +22,42 @@
                                          Z="1997.649169219"
                                          />
     </d:DesignProperties.DataContext>
-    <StackPanel Orientation="Vertical">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition SharedSizeGroup="NameColumn"/>
+            <ColumnDefinition SharedSizeGroup="ValueColumn"/>
+        </Grid.ColumnDefinitions>
         <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
                                       Text="{Binding Name}"
+                                      Grid.Column="0"
                                       />
-        <StackPanel Orientation="Horizontal" 
-                    Margin="15,0,0,0"
+        <StackPanel Orientation="Vertical"
+                    Grid.Column="1"
                     >
-            <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
-                                          Text="X:"                                           
-                                          />
-            <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
-                                          Text="{Binding X}"
-                                          />
+            <StackPanel Orientation="Horizontal">
+                <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
+                                              Text="X:"                                           
+                                              />
+                <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
+                                              Text="{Binding X}"
+                                              />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
+                                              Text="Y:"
+                                              />
+                <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
+                                              Text="{Binding Y}"
+                                              />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
+                                              Text="Z:"
+                                              />
+                <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
+                                              Text="{Binding Z}"
+                                              />
+            </StackPanel>
         </StackPanel>
-        <StackPanel Orientation="Horizontal"
-                    Margin="15,0,0,0"
-                    >
-            <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
-                                          Text="Y:"
-                                          />
-            <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
-                                          Text="{Binding Y}"
-                                          />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal"
-                    Margin="15,0,0,0"
-                    >
-            <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
-                                          Text="Z:"
-                                          />
-            <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
-                                          Text="{Binding Z}"
-                                          />
-        </StackPanel>
-    </StackPanel>
+    </Grid>
 </fenestra:View>

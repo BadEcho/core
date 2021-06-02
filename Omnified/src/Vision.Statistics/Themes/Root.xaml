@@ -9,7 +9,8 @@
 
         <ResourceDictionary Source="Resources/StatisticTextStyle.xaml"/>
         <ResourceDictionary Source="Resources/StatisticNameTextStyle.xaml"/>
-        <ResourceDictionary Source="Resources/CriticalStatisticTextStyle.xaml"/>
+
+        <ResourceDictionary Source="Resources/ViewContexts.xaml"/>
 
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

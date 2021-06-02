@@ -106,7 +106,7 @@ namespace BadEcho.Fenestra.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Insertion of a view model into a child view model collection belonging to a collection view model which requires the binding of said view model bound data can only be done if the child view model has been bound to valid model data..
+        ///   Looks up a localized string similar to Insertion of a view model into a child view model collection belonging to a collection view model which requires the binding of said view model bound data can only be done if valid model data has been bound to child view model..
         /// </summary>
         internal static string CollectionChildBindingRequiresActiveModel {
             get {

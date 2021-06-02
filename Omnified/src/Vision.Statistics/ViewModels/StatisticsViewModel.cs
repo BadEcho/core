@@ -26,6 +26,13 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
         public StatisticsViewModel(CollectionViewModelOptions options) 
             : base(options)
         { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StatisticsViewModel"/> class.
+        /// </summary>
+        public StatisticsViewModel()
+            : base(new CollectionViewModelOptions())
+        { }
         
         /// <inheritdoc/>
         public override IStatisticViewModel CreateChild(Statistic model)

@@ -21,18 +21,26 @@
                                          MaximumValue="1000"
                                          />
     </d:DesignProperties.DataContext>
-    <StackPanel Orientation="Horizontal">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition SharedSizeGroup="NameColumn"/>
+            <ColumnDefinition SharedSizeGroup="ValueColumn"/>
+        </Grid.ColumnDefinitions>
         <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
                                       Text="{Binding Name}"
+                                      Grid.Column="0"
                                       />
-        <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
-                                      Text="{fenestra:SteppedBinding CurrentValue, SteppingDuration=00:00:02, StringFormat={StaticResource StatisticNumberFormat}}"
-                                      />
-        <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
-                                      Text="/"
-                                      />
-        <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
-                                      Text="{fenestra:SteppedBinding MaximumValue, SteppingDuration=00:00:02, StringFormat={StaticResource StatisticNumberFormat}}"
-                                      />        
-    </StackPanel>
+        <StackPanel Orientation="Horizontal"
+                    Grid.Column="1">
+            <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
+                                          Text="{fenestra:SteppedBinding CurrentValue, SteppingDuration=00:00:02, StringFormat={StaticResource StatisticNumberFormat}}"
+                                          />
+            <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
+                                          Text="/"
+                                          />
+            <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
+                                          Text="{fenestra:SteppedBinding MaximumValue, SteppingDuration=00:00:02, StringFormat={StaticResource StatisticNumberFormat}}"
+                                          />
+        </StackPanel>
+    </Grid>
 </fenestra:View>
