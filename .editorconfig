@@ -731,3 +731,15 @@ dotnet_diagnostic.CA2016.severity = warning
 dotnet_diagnostic.CA2200.severity = warning
 
 dotnet_code_quality.null_check_validation_methods = NotNull|NotNullOrEmpty
+
+# IDE0011: Add braces
+dotnet_diagnostic.IDE0011.severity = none
+
+# IDE0058: Expression value is never used
+dotnet_diagnostic.IDE0058.severity = none
+
+# IDE0007: Use implicit type
+dotnet_diagnostic.IDE0007.severity = none
+
+# IDE0055: Fix formatting
+dotnet_diagnostic.IDE0055.severity = none
