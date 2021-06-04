@@ -6,7 +6,7 @@
 -->
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:t="clr-namespace:BadEcho.Omnified.Vision.Themes;assembly=BadEcho.Omnified.Vision"
+                    xmlns:t="clr-namespace:BadEcho.Omnified.Vision.Extensibility.Themes;assembly=BadEcho.Omnified.Vision.Extensibility"
                     xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
     

@@ -9,7 +9,7 @@ using System.Windows;
 using System.Windows.Media;
 using BadEcho.Fenestra.Markup;
 
-namespace BadEcho.Omnified.Vision.Themes
+namespace BadEcho.Omnified.Vision.Extensibility.Themes
 {
     /// <summary>
     /// Provides resource keys for <see cref="Brush"/> resources used by Vision and its modules.

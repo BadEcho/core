@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Fenestra.Tests", ".
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "vision", "vision", "{3543386E-8839-46B9-85DA-224C0D5440B5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BadEcho.Omnified.Vision.Extensibility", "src\Vision.Extensibility\BadEcho.Omnified.Vision.Extensibility.csproj", "{C6B82EEF-C115-4842-9023-032C87F8C6E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{4B8FC7AE-8E29-46C3-8B4D-4F39FCAC1794}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B8FC7AE-8E29-46C3-8B4D-4F39FCAC1794}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B8FC7AE-8E29-46C3-8B4D-4F39FCAC1794}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6B82EEF-C115-4842-9023-032C87F8C6E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6B82EEF-C115-4842-9023-032C87F8C6E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6B82EEF-C115-4842-9023-032C87F8C6E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6B82EEF-C115-4842-9023-032C87F8C6E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -84,6 +90,7 @@ Global
 		{2CF2BFEC-F723-4E82-AF70-3136F7786676} = {89F4C425-A0FF-4930-97D3-D115214D9AC5}
 		{4B8FC7AE-8E29-46C3-8B4D-4F39FCAC1794} = {89F4C425-A0FF-4930-97D3-D115214D9AC5}
 		{3543386E-8839-46B9-85DA-224C0D5440B5} = {B5CF34AE-C64C-44AC-87E0-E3C5A682ED81}
+		{C6B82EEF-C115-4842-9023-032C87F8C6E7} = {3543386E-8839-46B9-85DA-224C0D5440B5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {975D5FCE-8519-47CC-95A7-876F8CDC17D0}

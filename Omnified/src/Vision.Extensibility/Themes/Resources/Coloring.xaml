@@ -6,7 +6,7 @@
 -->
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:t="clr-namespace:BadEcho.Omnified.Vision.Themes"
+                    xmlns:t="clr-namespace:BadEcho.Omnified.Vision.Extensibility.Themes"
                     xmlns:f="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options">
 
     <Color x:Key="{x:Static t:Colors.TextColorKey}">GhostWhite</Color>
