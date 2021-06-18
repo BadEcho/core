@@ -1245,16 +1245,13 @@ commitYChange:
   movd xmm2,eax
   ucomiss xmm2,[positiveLimit]
   jbe isYPastLimit
-  mov eax,[zero]
-  mov ebx,[zero]
-  mov ecx,[zero]
-  jmp executePredatorCleanup
+  mov eax,[positiveLimitCorrection]
+  jmp isYPastLimit
 isXLessThanNegativeLimit:
   movd xmm2,eax
   ucomiss xmm2,[negativeLimit]
   ja isYPastLimit
   mov eax,[negativeLimitCorrection]
-  mov ebx,[zero]
 isYPastLimit:
   cmp [yIsVertical],1
   je isZPastLimit
@@ -1274,6 +1271,8 @@ isYLessThanNegativeLimit:
   ja isZPastLimit
   mov ebx,[negativeLimitCorrection]
 isZPastLimit:
+  cmp [yIsVertical],0
+  je executePredatorCleanup
   push rcx
   shr ecx,1F
   test ecx,ecx
@@ -1282,13 +1281,13 @@ isZPastLimit:
   movd xmm2,ecx
   ucomiss xmm2,[positiveLimit]
   jbe executePredatorCleanup
-  mov ecx,[zero]
+  mov ecx,[positiveLimitCorrection]
   jmp executePredatorCleanup
 isZLessThanNegativeLimit:
   movd xmm2,ecx
   ucomiss xmm2,[negativeLimit]
   ja executePredatorCleanup
-  mov ecx,[zero]
+  mov ecx,[negativeLimitCorrection]
 executePredatorCleanup:
   movdqu xmm8,[rsp]
   add rsp,10
