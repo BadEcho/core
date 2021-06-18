@@ -6,7 +6,6 @@
 alloc(zero,8)
 alloc(epsilon,8)
 alloc(damageThreshold,8)
-alloc(areaBoostX,8)
 alloc(yIsVertical,8)
 
 registersymbol(epsilon)
@@ -20,9 +19,6 @@ epsilon:
 
 damageThreshold:
   dd (float)3.9
-  
-areaBoostX:
-  dd (float)2.0
 
 yIsVertical:
   dd 1
@@ -1137,6 +1133,7 @@ isMovingTowardsExit:
 alloc(executePredator,$1000)
 alloc(indifferenceDistanceX,8)
 alloc(defaultSpeedX,8)
+alloc(areaBoostX,8)
 alloc(aggressionSpeedX,8)
 alloc(positiveLimit,8)
 alloc(negativeLimit,8)
@@ -1317,6 +1314,9 @@ defaultSpeedX:
   dd (float)1.0
 
 indifferenceDistanceX:
+  dd (float)2.0
+
+areaBoostX:
   dd (float)2.0
 
 positiveLimit:
@@ -1766,7 +1766,6 @@ unregistersymbol(yIsVertical)
 dealloc(zero)
 dealloc(epsilon)
 dealloc(damageThreshold)
-dealloc(areaBoostX)
 dealloc(yIsVertical)
 
 // Cleanup of checkBadPointer
@@ -1932,6 +1931,7 @@ dealloc(threatDistance)
 dealloc(indifferenceDistanceX)
 dealloc(defaultSpeedX)
 dealloc(aggressionSpeedX)
+dealloc(areaBoostX)
 dealloc(positiveLimit)
 dealloc(negativeLimit)
 dealloc(positiveLimitCorrection)
