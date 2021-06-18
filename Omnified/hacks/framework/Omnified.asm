@@ -102,9 +102,9 @@ checkBadPointerExit:
 // Random number generation function.
 // After r12-r14 pushes:
 // [rsp+20]: initialization state address, 0 if first time
-// [rsp+28]: upper bounds
-// [rsp+30]: lower bounds
-// return value is in EAX
+// [rsp+28]: Upper bounds
+// [rsp+30]: Lower bounds
+// Return value is in EAX
 alloc(generateRandomNumber,$1000)
 
 registersymbol(generateRandomNumber)
@@ -175,10 +175,10 @@ playerDamageX:
   
 
 // Player Apocalypse System Function
-// [rsp+48]: Player's coordinates (aligned at X-coord)
-// [rsp+50]: Max Player Health Amount
-// [rsp+58]: Player's Health Amount
-// [rsp+60]: Damage Amount
+// [rsp+48]: Player's coordinates (aligned at x-coordinate)
+// [rsp+50]: Max player health amount
+// [rsp+58]: Player's health amount
+// [rsp+60]: Damage amount
 // Updated damage is in EAX. 
 // Updated health before damage is in EBX.
 alloc(executePlayerApocalypse,$1000)
@@ -353,7 +353,7 @@ commitTeleportitis:
   // Load the player coordinates address parameter.
   mov rbx,[rsp+48]
   // Load the parameters for generating the random displacement value to be 
-  // applied to the X coordinate.
+  // applied to the x-coordinate.
   push [teleportitisResultLower]
   push [teleportitisResultUpper]
   mov rax,playerApocalypseRandomState
@@ -370,9 +370,9 @@ commitTeleportitis:
   subss xmm1,[teleportitisShifter]
   // We finally take what we have and then multiply it by the displacement 
   // multiplier to get the final displacement value to apply to the player's 
-  // X coordinate.
+  // x-coordinate.
   mulss xmm1,[teleportitisDisplacementX]
-  // We then take the player's current X coordinate from memory and add the
+  // We then take the player's current x-coordinate from memory and add the
   // displacement value to it.
   cmp [coordinatesAreDoubles],1
   je loadXAsDouble
@@ -382,7 +382,7 @@ loadXAsDouble:
   cvtsd2ss xmm2,[rbx]
 addChangeToX:
   addss xmm2,xmm1
-  // The updated X coordinate is committed back into the memory, which will 
+  // The updated x-coordinate is committed back into the memory, which will 
   // move the player.
   movss [teleportedX],xmm2
   cmp [coordinatesAreDoubles],1
@@ -394,7 +394,7 @@ commitXAsDouble:
   movsd [rbx],xmm1
 teleportitisY:
   // Load the parameters for generating the random displacement value to be 
-  // applied to the Y coordinate. 
+  // applied to the y-coordinate. 
   push [teleportitisResultLower]
   push [teleportitisResultUpper]
   mov rax,playerApocalypseRandomState
@@ -422,7 +422,7 @@ skipNegativeVerticalYDisplacement:
   jne skipLastYVerticalDisplacement
   movss [lastVerticalDisplacement],xmm1
 skipLastYVerticalDisplacement:
-  // We then take the player's current Y coordinate from memory and add the
+  // We then take the player's current y-coordinate from memory and add the
   // displacement value to it.
   cmp [coordinatesAreDoubles],1
   je loadYAsDouble
@@ -432,7 +432,7 @@ loadYAsDouble:
   cvtsd2ss xmm2,[rbx+8]
 addChangeToY:
   addss xmm2,xmm1
-  // The updated Y coordinate is commited back into the memory, which will 
+  // The updated y-coordinate is commited back into the memory, which will 
   // move the player.
   movss [teleportedY],xmm2
   cmp [coordinatesAreDoubles],1
@@ -444,7 +444,7 @@ commitYAsDouble:
   movsd [rbx+8],xmm1
 teleportitisZ:
   // Load the parameters for generating the random displacement value to be 
-  // applied to the Z coordinate. 
+  // applied to the z-coordinate. 
   push [teleportitisResultLower]
   push [teleportitisResultUpper]
   mov rax,playerApocalypseRandomState
@@ -453,8 +453,8 @@ teleportitisZ:
   mov [teleportitisResult],eax
   cvtsi2ss xmm1,[teleportitisResult]
   divss xmm1,[teleportitisDivisor]
-  // Like the Y-axis, the Z-axis can sometimes be the vertical axis. So checks 
-  // similar to the ones made in the Y coordinate displacement code are made.
+  // Like the y-axis, the z-axis can sometimes be the vertical axis. So checks 
+  // similar to the ones made in the y-coordinate displacement code are made.
   cmp [yIsVertical],0
   jne skipZSkipCheck
   cmp [negativeVerticalDisplacementEnabled],1
@@ -467,7 +467,7 @@ skipNegativeVerticalZDisplacement:
   jne skipLastZVerticalDisplacement
   movss [lastVerticalDisplacement],xmm1
 skipLastZVerticalDisplacement:
-  // We then take the player's current Z coordinate from memory and add the
+  // We then take the player's current z-coordinate from memory and add the
   // displacement value to it.
   cmp [coordinatesAreDoubles],1
   je loadZAsDouble
@@ -477,7 +477,7 @@ loadZAsDouble:
   cvtsd2ss xmm2,[rbx+10]
 addChangeToZ:
   addss xmm2,xmm1
-  // The updated Z coordinate is commited back into the memory, which will 
+  // The updated z-coordinate is commited back into the memory, which will 
   // move the player.
   movss [teleportedZ],xmm2
   cmp [coordinatesAreDoubles],1
@@ -689,8 +689,8 @@ sixtyNineEveryTime:
 
   
 // Enemy Apocalypse System Function
-// [rsp+38]: Target Health Value
-// [rsp+40]: Damage Amount
+// [rsp+38]: Target health value
+// [rsp+40]: Damage amount
 alloc(executeEnemyApocalypse,$1000)
 alloc(maxDamageByPlayer,8)
 alloc(lastDamageByPlayer,8)
@@ -906,14 +906,15 @@ threatDistance:
   dd (float)2.5
   
 
-// Determines the distance between the player and another
-// creature.
-// [rsp+28]: Enemy Z Coordinate
-// [rsp+30]: Enemy X Coordinate
-// [rsp+34]: Enemy Y Coordinate
-// [rsp+38]: Player Z Coordinate
-// [rsp+40]: Player X Coordinate
-// [rsp+44]: Player Y Coordinate
+// Determines the distance between the player and another creature.
+// This function's parameters are most easily loaded onto the stack
+// from an SSE register: the player's coordinates first, and then the enemy's.
+// [rsp+28]: Enemy z-coordinate value
+// [rsp+30]: Enemy x-coordinate value
+// [rsp+34]: Enemy y-coordinate value
+// [rsp+38]: Player z-coordinate value
+// [rsp+40]: Player x-coordinate value
+// [rsp+44]: Player y-coordinate value
 // Distance is in EAX
 alloc(findCoordinateDistance,$1000)
 
@@ -924,15 +925,24 @@ findCoordinateDistance:
   movdqu [rsp],xmm0
   sub rsp,10
   movdqu [rsp],xmm1
+  // Load enemy's coordinates into xmm0, and player's into xmm1.
   movups xmm0,[rsp+28]
   movups xmm1,[rsp+38]
+  // Take the difference between the two sets of coordinates.
   subps xmm0,xmm1
+  // Square the differences.
   mulps xmm0,xmm0
+  // Then we proceed to add the various squared differences to each other.
   movdqu xmm1,xmm0
+  // Shuffle the y-coordinate results to the lowest doubleword for adding to the 
+  // running total.
   shufps xmm1,xmm0,0xB
   addss xmm0,xmm1
+  // Shuffle the x-coordinate results to the lowest doubleword for adding to the
+  // running total.
   shufps xmm1,xmm1,0x1
   addss xmm0,xmm1
+  // Take the square root of everything, and we have our distance!
   sqrtss xmm0,xmm0
   movd eax,xmm0
   movdqu xmm1,[rsp]
@@ -941,10 +951,11 @@ findCoordinateDistance:
   add rsp,10
   ret 20
 
+
 // Calculates the scaled base speed.
-// [rsp+28]: Enemy Depth Scale
-// [rsp+30]: Enemy Width Scale
-// [rsp+34]: Enemy Height Scale
+// [rsp+28]: Enemy depth scale
+// [rsp+30]: Enemy width scale
+// [rsp+34]: Enemy height scale
 // Scaled speed is in EAX.
 alloc(calculateScaledSpeed,$1000)
 alloc(averageScaleDivisor,8)
@@ -979,15 +990,15 @@ averageScaleDivisor:
 
 
 // Determines if enemy is moving towards the player.
-// [rsp+38]: Change to Enemy's Z
-// [rsp+40]: Change to Enemy's X
-// [rsp+44]: Change to Enemy's Y
-// [rsp+48]: Enemy's Z Coordinate
-// [rsp+50]: Enemy's X Coordinate
-// [rsp+54]: Enemy's Y Coordinate
-// [rsp+58]: Player's Z Coordinate
-// [rsp+60]: Player's X Coordinate
-// [rsp+64]: Player's Y Coordinate
+// [rsp+38]: Change to enemy's z-coordinate value
+// [rsp+40]: Change to enemy's x-coordinate value
+// [rsp+44]: Change to enemy's y-coordinate value
+// [rsp+48]: Enemy's z-coordinate value
+// [rsp+50]: Enemy's x-coordinate value
+// [rsp+54]: Enemy's y-coordinate value
+// [rsp+58]: Player's z-coordinate value
+// [rsp+60]: Player's x-coordinate value
+// [rsp+64]: Player's y-coordinate value
 // EAX is 1 if enemy is moving towards player, otherwise 0.
 alloc(isMovingTowards,$1000)
 
@@ -1000,15 +1011,22 @@ isMovingTowards:
   movdqu [rsp],xmm1
   sub rsp,10
   movdqu [rsp],xmm2
+  // Load player's coordinates into xmm0, and enemy's into xmm1.
   movups xmm0,[rsp+58]
   movups xmm1,[rsp+48]
+  // We take the difference between each set to find distances on each axis.
   subps xmm0,xmm1
+  // We square the results so that we aren't bothered by any notion of signs.
   mulps xmm0,xmm0
-  // xmm0: (zp-ze)^2 | 0 | (xp-xe)^2 | (yp-ye)^2
+  // Contents of xmm0 register: (zp-ze)^2 | 0 | (xp-xe)^2 | (yp-ye)^2
   movups xmm1,xmm0
   shufps xmm1,xmm0,0x87
-  // xmm1: (yp-ye)^2 | 0 | (zp-ze)^2 | (xp-xe)^2 
+  // Contents of xmm1 register: (yp-ye)^2 | 0 | (zp-ze)^2 | (xp-xe)^2 
   cmpps xmm0,xmm1,6
+  // This compare instruction will create a bitmask telling us: 
+  // -If the z-coordinate distance is greater than the y-coordinate distance
+  // -If the x-coordinate distance is greater than the z-coordinate distance
+  // -If the y-coordinate distance is greater than the x-coordinate distance 
   sub rsp,10
   movups [rsp],xmm0  
 isYGreaterThanX:
@@ -1115,21 +1133,22 @@ isMovingTowardsExit:
   ret 30
 
 
-// Main Predator System Function
-// [rsp+98]: Change to Enemy's Z
-// [rsp+A0]: Change to Enemy's X
-// [rsp+A4]: Change to Enemy's Y
-// [rsp+A8]: Enemy Depth Scale
-// [rsp+B0]: Enemy Width Scale
-// [rsp+B4]: Enemy Height Scale
-// [rsp+B8]: Enemy's Z Coordinate
-// [rsp+C0]: Enemy's X Coordinate
-// [rsp+C4]: Enemy's Y Coordinate
-// [rsp+C8]: Player's Z Coordinate
-// [rsp+D0]: Player's X Coordinate
-// [rsp+D4]: Player's Y Coordinate
-// EAX has updated change to enemy X, EBX has updated
-// change to enemy Y, ECX has updated change to enemy Z
+// Main Predator system function.
+// [rsp+98]: Change to enemy's z-coordinate value
+// [rsp+A0]: Change to enemy's x-coordinate value
+// [rsp+A4]: Change to enemy's y-coordinate value
+// [rsp+A8]: Enemy depth scale
+// [rsp+B0]: Enemy width scale
+// [rsp+B4]: Enemy height scale
+// [rsp+B8]: Enemy's z-coordinate value
+// [rsp+C0]: Enemy's x-coordinate value
+// [rsp+C4]: Enemy's y-coordinate value
+// [rsp+C8]: Player's z-coordinate value
+// [rsp+D0]: Player's x-coordinate value
+// [rsp+D4]: Player's y-coordinate value
+// EAX has updated change to enemy's x-coordinate value
+// EBX has updated change to enemy's y-coordinate value
+// ECX has updated change to enemy's z-coordinate value 
 alloc(executePredator,$1000)
 alloc(indifferenceDistanceX,8)
 alloc(defaultSpeedX,8)
@@ -1168,31 +1187,49 @@ executePredator:
   sub rsp,10
   movdqu [rsp],xmm8
   xorps xmm8,xmm8
+  // xmm8 will hold the speed buff multiplier to be applied.
   movss xmm8,[defaultSpeedX]
+  // Load the player's coordinates into xmm0.
   movups xmm0,[rsp+C8]
+  // Load the enemy's coordinates into xmm1.
   movups xmm1,[rsp+B8]
+  // Load the enemy's scales into xmm2.
   movups xmm2,[rsp+A8]
+  // Load the movement offsets into xmm3.
   movups xmm3,[rsp+98]
+  // Submit the scales as a parameter for calculating the scaled speed.
   sub rsp,10
   movdqu [rsp],xmm2
   call calculateScaledSpeed
+  // The scaled base speed boost will be held in xmm4 for the remainder
+  // of this function's execution.
   movd xmm4,eax
+  // Next we submit the player and enemy coordinates are parameters for
+  // finding the distance between them.
   sub rsp,10
   movdqu [rsp],xmm0
   sub rsp,10
   movdqu [rsp],xmm1
   call findCoordinateDistance
+  // The distance between enemy and player will be held in xmm5 for the
+  // remainder of this function's execution.
   movd xmm5,eax
+  // Is the enemy within the area of aggro?
   ucomiss xmm5,[aggroDistance]
   jbe areaOfAggro
+  // If not, are we between the area of indifference and aggro?
   movss xmm7,[aggroDistance]
   mulss xmm7,[indifferenceDistanceX]
   ucomiss xmm5,xmm7
   jb areaOfSketchiness
 areaOfIndifference:
+  // If not, we're in the area of indifference. The scaled base speed boost
+  // becomes the effective speed boost.
   movss xmm8,xmm4
   jmp executePredatorExit
 areaOfSketchiness:
+  // In the area of sketchiness, the scaled base speed boost is the effective
+  // speed boost, unless the enemy is moving towards the player.
   movss xmm8,xmm4
   sub rsp,10
   movdqu [rsp],xmm0
@@ -1207,9 +1244,12 @@ areaOfSketchiness:
   mulss xmm8,[aggressionSpeedX]
   jmp executePredatorExit
 areaOfAggro:
+  // If the enemy is in the area of threat, there is no speed boost applied.
   ucomiss xmm5,[threatDistance]
   jbe executePredatorExit
-  movss xmm8,[defaultSpeedX]
+  // Otherwise, in the area of aggro, we either double the boost observed within
+  // the area of sketchiness with the enemy moving towards the player, or we strip
+  // all speed boosts if the enemy isn't moving towards the player.
   sub rsp,10
   movdqu [rsp],xmm0
   sub rsp,10
@@ -1218,12 +1258,15 @@ areaOfAggro:
   movdqu [rsp],xmm3
   call isMovingTowards
   cmp eax,0
+  // If the enemy isn't moving towards the player, remember that we still have defaultSpeedX
+  // loaded into xmm8, so exiting out now will result in no speed buff.
   je executePredatorExit
   movss xmm8,xmm4  
   mulss xmm8,[areaBoostX]
   mulss xmm8,[areaBoostX]
   mulss xmm8,[aggressionSpeedX]
 executePredatorExit:
+  // No speed buff is applied to the axis set as the vertical axis.
   cmp [yIsVertical],0
   je commitZChange
   mulss xmm3,xmm8
@@ -1238,6 +1281,7 @@ commitYChange:
   shufps xmm3,xmm3,0x87
   mulss xmm3,xmm8
   movd eax,xmm3
+  // We now test whether x, y, or z offsets violate designated speed limits.
   push rax
   shr eax,1F
   test eax,eax
@@ -1333,6 +1377,7 @@ negativeLimitCorrection:
   
 aggressionSpeedX:
   dd (float)1.0
+  
   
 // Abomnification Scale Data
 alloc(morphScaleData,$33FFCC)
