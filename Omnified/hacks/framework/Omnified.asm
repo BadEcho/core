@@ -7,8 +7,10 @@ alloc(zero,8)
 alloc(epsilon,8)
 alloc(damageThreshold,8)
 alloc(areaBoostX,8)
+alloc(yIsVertical,8)
 
 registersymbol(epsilon)
+registersymbol(yIsVertical)
 
 zero:
   dd 0
@@ -21,6 +23,10 @@ damageThreshold:
   
 areaBoostX:
   dd (float)2.0
+
+yIsVertical:
+  dd 1
+
   
 // Checks if the loaded address is a valid pointer.
 // rcx: The address to check.
@@ -199,7 +205,6 @@ alloc(teleportitisDivisor,8)
 alloc(teleportitisShifter,8)
 alloc(lastVerticalDisplacement,8)
 alloc(negativeVerticalDisplacementEnabled,8)
-alloc(yIsVertical,8)
 alloc(teleportitisDisplacementX,8)
 alloc(coordinatesAreDoubles,8)
 alloc(riskOfMurderResult,8)
@@ -231,7 +236,6 @@ registersymbol(teleportedY)
 registersymbol(teleportedZ)
 registersymbol(apocalypseResult)
 registersymbol(negativeVerticalDisplacementEnabled)
-registersymbol(yIsVertical)
 registersymbol(teleportitisDisplacementX)
 registersymbol(riskOfMurderResult)
 registersymbol(fatalisResult)
@@ -625,10 +629,7 @@ teleportedZ:
   dd (float)0.0
 
 negativeVerticalDisplacementEnabled:
-  dd 1
-  
-yIsVertical:
-  dd 1
+  dd 1  
 
 coordinatesAreDoubles:
   dd 0
@@ -894,12 +895,8 @@ enemyApocalypseRandomState:
 alloc(enemySpeedX,8)
 alloc(aggroDistance,8)
 alloc(threatDistance,8)
-alloc(skipBoostY,8)
-alloc(skipBoostZ,8)
 
 registersymbol(enemySpeedX)
-registersymbol(skipBoostY)
-registersymbol(skipBoostZ)
 registersymbol(threatDistance)
 registersymbol(aggroDistance)
 
@@ -911,13 +908,7 @@ aggroDistance:
 
 threatDistance:
   dd (float)2.5
-
-skipBoostY:
-  dd 1
   
-skipBoostZ:
-  dd 0
-
 
 // Determines the distance between the player and another
 // creature.
@@ -1235,13 +1226,13 @@ areaOfAggro:
   mulss xmm8,[areaBoostX]
   mulss xmm8,[aggressionSpeedX]
 executePredatorExit:
-  cmp [skipBoostZ],1
+  cmp [yIsVertical],0
   je commitZChange
   mulss xmm3,xmm8
 commitZChange:
   movd ecx,xmm3
   shufps xmm3,xmm3,0x87
-  cmp [skipBoostY],1
+  cmp [yIsVertical],1
   je commitYChange
   mulss xmm3,xmm8
 commitYChange:
@@ -1268,7 +1259,7 @@ isXLessThanNegativeLimit:
   mov eax,[negativeLimitCorrection]
   mov ebx,[zero]
 isYPastLimit:
-  cmp [skipBoostY],1
+  cmp [yIsVertical],1
   je isZPastLimit
   push rbx
   shr ebx,1F  
@@ -1770,11 +1761,13 @@ defaultScaleX:
 
 // Cleanup of global memory
 unregistersymbol(epsilon)
+unregistersymbol(yIsVertical)
 
 dealloc(zero)
 dealloc(epsilon)
 dealloc(damageThreshold)
 dealloc(areaBoostX)
+dealloc(yIsVertical)
 
 // Cleanup of checkBadPointer
 unregistersymbol(checkBadPointer)
@@ -1816,7 +1809,6 @@ unregistersymbol(fatalisResultUpper)
 unregistersymbol(fatalisState)
 unregistersymbol(fatalisBloodlustDamageX)
 unregistersymbol(basePlayerDamageX)
-unregistersymbol(yIsVertical)
 unregistersymbol(lastVerticalDisplacement)
 unregistersymbol(coordinatesAreDoubles)
 unregistersymbol(negativeVerticalDisplacementEnabled)
@@ -1850,7 +1842,6 @@ dealloc(teleportitisDivisor)
 dealloc(teleportitisShifter)
 dealloc(lastVerticalDisplacement)
 dealloc(coordinatesAreDoubles)
-dealloc(yIsVertical)
 dealloc(negativeVerticalDisplacementEnabled)
 dealloc(teleportitisDisplacementX)
 dealloc(riskOfMurderResult)
@@ -1927,8 +1918,6 @@ dealloc(isMovingTowards)
 // Cleanup of Predator System Function
 unregistersymbol(executePredator)
 unregistersymbol(enemySpeedX)
-unregistersymbol(skipBoostY)
-unregistersymbol(skipBoostZ)
 unregistersymbol(threatDistance)
 unregistersymbol(aggroDistance)
 unregistersymbol(positiveLimit)
@@ -1938,8 +1927,6 @@ unregistersymbol(negativeLimitCorrection)
 unregistersymbol(aggressionSpeedX)
 
 dealloc(enemySpeedX)
-dealloc(skipBoostY)
-dealloc(skipBoostZ)
 dealloc(aggroDistance)
 dealloc(threatDistance)
 dealloc(indifferenceDistanceX)

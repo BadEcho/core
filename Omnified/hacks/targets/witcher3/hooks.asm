@@ -715,12 +715,6 @@ threatDistance:
 aggroDistance:
   dd (float)6.0
 
-skipBoostY:
-  dd 0
-
-skipBoostZ:
-  dd 1
-
 
 // Initiates the Abomnification system.
 // The function we're hooking into appears to be responsbile for resetting properties on A
