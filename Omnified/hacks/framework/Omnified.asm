@@ -894,7 +894,6 @@ enemyApocalypseRandomState:
 alloc(enemySpeedX,8)
 alloc(aggroDistance,8)
 alloc(threatDistance,8)
-alloc(speedNormalizationDivisor,8)
 alloc(skipBoostY,8)
 alloc(skipBoostZ,8)
 
@@ -912,9 +911,6 @@ aggroDistance:
 
 threatDistance:
   dd (float)2.5
-
-speedNormalizationDivisor:
-  dd (float)3.0
 
 skipBoostY:
   dd 1
@@ -965,9 +961,6 @@ findCoordinateDistance:
 // Scaled speed is in EAX.
 alloc(calculateScaledSpeed,$1000)
 alloc(averageScaleDivisor,8)
-alloc(averageScaleX,8)
-alloc(scaledShifter,8)
-alloc(scaledSpeedWhenNegative,8)
 
 registersymbol(calculateScaledSpeed)
 
@@ -983,19 +976,10 @@ calculateScaledSpeed:
   movss xmm1,[rsp+34]
   addss xmm0,xmm1
   divss xmm0,[averageScaleDivisor]
-  // Plug the scale average into the scaled speed formula.
-  mulss xmm0,[averageScaleX]
-  addss xmm0,[scaledShifter]
-  mulss xmm0,[enemySpeedX]
-  divss xmm0,[speedNormalizationDivisor]
-  movss xmm1,xmm0
-  movd eax,xmm1
-  shr eax,1F
-  test eax,eax
-  je commitScaledSpeed
-  movss xmm0,[scaledSpeedWhenNegative]
-commitScaledSpeed:
-  movd eax,xmm0
+  // Load the base enemy speed boost and divide it by the average scale.
+  movss xmm1,[enemySpeedX]
+  divss xmm1,xmm0
+  movd eax,xmm1  
   movdqu xmm1,[rsp]
   add rsp,10
   movdqu xmm0,[rsp]
@@ -1006,14 +990,6 @@ commitScaledSpeed:
 averageScaleDivisor:
   dd (float)3.0
 
-averageScaleX:
-  dd (float)-1.67
-
-scaledShifter:
-  dd (float)4.675
-
-scaledSpeedWhenNegative:
-  dd (float)0.5
 
 // Determines if enemy is moving towards the player.
 // [rsp+38]: Change to Enemy's Z
@@ -1940,9 +1916,6 @@ dealloc(findCoordinateDistance)
 unregistersymbol(calculateScaledSpeed)
 
 dealloc(averageScaleDivisor)
-dealloc(averageScaleX)
-dealloc(scaledShifter)
-dealloc(scaledSpeedWhenNegative)
 dealloc(calculateScaledSpeed)
 
 // Cleanup of isMovingTowards
@@ -1970,7 +1943,6 @@ dealloc(skipBoostZ)
 dealloc(aggroDistance)
 dealloc(threatDistance)
 dealloc(indifferenceDistanceX)
-dealloc(speedNormalizationDivisor)
 dealloc(defaultSpeedX)
 dealloc(aggressionSpeedX)
 dealloc(positiveLimit)
