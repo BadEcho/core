@@ -7,12 +7,12 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <None Include="..\..\..\.editorconfig" Link=".editorconfig" />
+    <None Include="..\..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\Fenestra\BadEcho.Fenestra.csproj" />
-    <ProjectReference Include="..\..\..\src\Odin\BadEcho.Odin.csproj" />
+    <ProjectReference Include="..\Fenestra\BadEcho.Fenestra.csproj" />
+    <ProjectReference Include="..\Odin\BadEcho.Odin.csproj" />
     <ProjectReference Include="..\Vision.Extensibility\BadEcho.Omnified.Vision.Extensibility.csproj" />
   </ItemGroup>
 </Project>
