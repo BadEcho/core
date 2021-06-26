@@ -8,12 +8,24 @@ playerCoordinatesXAddress = "[example]+0x10"
 playerCoordinatesYAddress = "[example]+0x14"
 playerCoordinatesZAddress = "[example]+0x18"
 
-function areNotNil(...)
+local function evaluateNil(valueIfNil, ...)
 	for _,v in ipairs({...}) do
-		if v == nil then return false end
+		if v == nil then return valueIfNil end
 	end
 
 	return true
+end
+
+function areNotNil(...)
+	return evaluateNil(false, ...)
+end
+
+function areTrue(...)
+	return areNotNil(...)
+end
+
+function anyNil(...)
+	return not evaluateNil(true, ...)
 end
 
 -- Outputs a randomly selected item from the provided random settings structure.
@@ -69,7 +81,7 @@ function readPlayerCoordinates()
 	return coordinates
 end
 
-function mark()
+local function mark()
 	local coordinates = readPlayerCoordinates()
 
 	if areNotNil(coordinates.X,coordinates.Y,coordinates.Z) then
@@ -85,11 +97,11 @@ function mark()
 	end	
 end
 
-function recall()
+local function recall()
 	writeInteger("teleport", 1)
 end
 
-function assemble(assemblyFilePath, disableInfo)
+local function assemble(assemblyFilePath, disableInfo)
 	local assemblyFile = assert(io.open(assemblyFilePath))
 
 	if assemblyFile == nil then 
@@ -111,21 +123,18 @@ function assemble(assemblyFilePath, disableInfo)
 	return result, resultDisableInfo
 end
 
-frameworkRegistered = false
-frameworkDisableInfo = nil
-
-targetAssemblyRegistered = false
-targetAssemblyDisableInfo = nil
-
 function registerOmnification(targetAssemblyFilePath)
-	if not frameworkRegistered then
+	if not omnifiedRegistered then
 		markHotkey = createHotkey(mark, VK_NUMPAD8)
 		recallHotkey = createHotkey(recall, VK_NUMPAD9)
 
-		frameworkRegistered, frameworkDisableInfo = assemble("..\\..\\framework\\Omnified.asm")		
+		omnifiedRegistered, omnifiedDisableInfo = assemble("..\\..\\framework\\Omnified.asm")
+		apocalypseRegistered, apocalypseDisableInfo = assemble("..\\..\\framework\\Apocalypse.asm")		
+		predatorRegistered, predatorDisableInfo = assemble("..\\..\\framework\\Predator.asm")
+		abomnificationRegistered, abomnificationDisableInfo = assemble("..\\..\\framework\\Abomnification.asm")
 		
-		if not frameworkRegistered then
-			print("Failed to register Omnified framework.")
+		if anyNil(omnifiedRegistered, apocalypseRegistered, predatorRegistered, abomnificationRegistered) then
+			print("Failed to register the Omnified framework.")
 			do return end
 		end
 		
@@ -161,22 +170,25 @@ function registerOmnification(targetAssemblyFilePath)
     targetAssemblyRegistered, targetAssemblyDisableInfo = assemble(targetAssemblyFilePath)
 
     if not targetAssemblyRegistered  then
-      print("Failed to register target assembly.")
+      print("Failed to register the target assembly.")
     end
   end
 end
 
 function unregisterOmnification(targetAssemblyFilePath)
-	if frameworkRegistered and frameworkDisableInfo ~= nil then
+	if	areTrue(omnifiedRegistered, apocalypseRegistered, predatorRegistered, abomnificationRegistered) then
 		markHotkey.destroy()
 		recallHotkey.destroy()
 
-		frameworkRegistered = assemble("..\\..\\framework\\Omnified.asm", frameworkDisableInfo)
+		omnifiedRegistered = assemble("..\\..\\framework\\Omnified.asm", omnifiedDisableInfo)
+		apocalypseRegistered = assemble("..\\..\\framework\\Apocalypse.asm", apocalypseDisableInfo)
+		predatorRegistered = assemble("..\\..\\framework\\Predator.asm", predatorDisableInfo)
+		abomnificationDisableInfo = assemble("..\\..\\framework\\Abomnification.asm", abomnificationDisableInfo)
 		
-		if not frameworkRegistered then
-			print("Failed to unregister Omnified framework.")
+		if not omnifiedRegistered then
+			print("Failed to unregister the Omnified framework.")
 		else 
-			frameworkRegistered = false
+			omnifiedRegistered, apocalypseRegistered, predatorRegistered, abomnificationRegistered = false
 			
 			if statusTimer ~= nil then
 				if fatalisTimer ~= nil then
@@ -193,13 +205,13 @@ function unregisterOmnification(targetAssemblyFilePath)
 		print("Omnified framework already unregistered.")
 	end
 
-  if targetAssemblyRegistered and targetAssemblyDisableInfo ~= nil then
-    targetAssemblyRegistered = assemble(targetAssemblyFilePath, targetAssemblyDisableInfo)
-
-    if not targetAssemblyRegistered then
-      print("Failed to unregister target assembly.")
-    else
-      targetAssemblyRegistered = false
-    end
-  end
+  	if targetAssemblyRegistered  then
+    	targetAssemblyRegistered = assemble(targetAssemblyFilePath, targetAssemblyDisableInfo)
+		
+		if not targetAssemblyRegistered then
+			print("Failed to unregister the target assembly.")
+    	else
+      		targetAssemblyRegistered = false
+    	end
+  	end
 end
