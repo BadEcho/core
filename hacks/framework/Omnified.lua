@@ -129,9 +129,9 @@ function registerOmnification(targetAssemblyFilePath)
 		recallHotkey = createHotkey(recall, VK_NUMPAD9)
 
 		omnifiedRegistered, omnifiedDisableInfo = assemble("..\\..\\framework\\Omnified.asm")
-		apocalypseRegistered, apocalypseDisableInfo = assemble("..\\..\\framework\\Apocalypse.asm")		
-		predatorRegistered, predatorDisableInfo = assemble("..\\..\\framework\\Predator.asm")
-		abomnificationRegistered, abomnificationDisableInfo = assemble("..\\..\\framework\\Abomnification.asm")
+		apocalypseRegistered, apocalypseDisableInfo = assemble("..\\..\\framework\\systems\\Apocalypse.asm")		
+		predatorRegistered, predatorDisableInfo = assemble("..\\..\\framework\\systems\\Predator.asm")
+		abomnificationRegistered, abomnificationDisableInfo = assemble("..\\..\\framework\\systems\\Abomnification.asm")
 		
 		if anyNil(omnifiedRegistered, apocalypseRegistered, predatorRegistered, abomnificationRegistered) then
 			print("Failed to register the Omnified framework.")
@@ -181,9 +181,9 @@ function unregisterOmnification(targetAssemblyFilePath)
 		recallHotkey.destroy()
 
 		omnifiedRegistered = assemble("..\\..\\framework\\Omnified.asm", omnifiedDisableInfo)
-		apocalypseRegistered = assemble("..\\..\\framework\\Apocalypse.asm", apocalypseDisableInfo)
-		predatorRegistered = assemble("..\\..\\framework\\Predator.asm", predatorDisableInfo)
-		abomnificationDisableInfo = assemble("..\\..\\framework\\Abomnification.asm", abomnificationDisableInfo)
+		apocalypseRegistered = assemble("..\\..\\framework\\systems\\Apocalypse.asm", apocalypseDisableInfo)
+		predatorRegistered = assemble("..\\..\\framework\\systems\\Predator.asm", predatorDisableInfo)
+		abomnificationDisableInfo = assemble("..\\..\\framework\\systems\\Abomnification.asm", abomnificationDisableInfo)
 		
 		if not omnifiedRegistered then
 			print("Failed to unregister the Omnified framework.")
