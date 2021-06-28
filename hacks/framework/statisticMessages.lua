@@ -3,7 +3,7 @@
 -- Copyright 2021 Bad Echo LLC
 
 
-require('Omnified')
+require("omnified")
 
 StatType = define_enum {
     "Whole",
@@ -20,5 +20,5 @@ function createFractionalStat(name, currentValue, maximumValue)
 end
 
 function createCoordinateStat(name, x, y, z)
-    
+
 end

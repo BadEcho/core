@@ -138,10 +138,10 @@ function registerOmnification(targetAssemblyFilePath)
 		markHotkey = createHotkey(mark, VK_NUMPAD8)
 		recallHotkey = createHotkey(recall, VK_NUMPAD9)
 
-		omnifiedRegistered, omnifiedDisableInfo = assemble("..\\..\\framework\\Omnified.asm")
-		apocalypseRegistered, apocalypseDisableInfo = assemble("..\\..\\framework\\systems\\Apocalypse.asm")		
-		predatorRegistered, predatorDisableInfo = assemble("..\\..\\framework\\systems\\Predator.asm")
-		abomnificationRegistered, abomnificationDisableInfo = assemble("..\\..\\framework\\systems\\Abomnification.asm")
+		omnifiedRegistered, omnifiedDisableInfo = assemble("..\\..\\framework\\omnified.asm")
+		apocalypseRegistered, apocalypseDisableInfo = assemble("..\\..\\framework\\systems\\apocalypse.asm")		
+		predatorRegistered, predatorDisableInfo = assemble("..\\..\\framework\\systems\\predator.asm")
+		abomnificationRegistered, abomnificationDisableInfo = assemble("..\\..\\framework\\systems\\abomnification.asm")
 		
 		if anyNil(omnifiedRegistered, apocalypseRegistered, predatorRegistered, abomnificationRegistered) then
 			print("Failed to register the Omnified framework.")
@@ -190,10 +190,10 @@ function unregisterOmnification(targetAssemblyFilePath)
 		markHotkey.destroy()
 		recallHotkey.destroy()
 
-		omnifiedRegistered = assemble("..\\..\\framework\\Omnified.asm", omnifiedDisableInfo)
-		apocalypseRegistered = assemble("..\\..\\framework\\systems\\Apocalypse.asm", apocalypseDisableInfo)
-		predatorRegistered = assemble("..\\..\\framework\\systems\\Predator.asm", predatorDisableInfo)
-		abomnificationDisableInfo = assemble("..\\..\\framework\\systems\\Abomnification.asm", abomnificationDisableInfo)
+		omnifiedRegistered = assemble("..\\..\\framework\\omnified.asm", omnifiedDisableInfo)
+		apocalypseRegistered = assemble("..\\..\\framework\\systems\\apocalypse.asm", apocalypseDisableInfo)
+		predatorRegistered = assemble("..\\..\\framework\\systems\\predator.asm", predatorDisableInfo)
+		abomnificationDisableInfo = assemble("..\\..\\framework\\systems\\abomnification.asm", abomnificationDisableInfo)
 		
 		if not omnifiedRegistered then
 			print("Failed to unregister the Omnified framework.")

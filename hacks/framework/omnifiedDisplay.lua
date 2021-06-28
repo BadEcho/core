@@ -3,7 +3,7 @@
 -- Copyright 2021 Bad Echo LLC
 -- These functions will mostly be replaced by Vision infrastructure when that is ready.
 
-require('Omnified')
+require("omnified")
 
 -- These values are to be overridden in target .CT file registration routines.
 playerHealthAddress = "[exampleHealth]+0x14"
