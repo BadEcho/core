@@ -1,4 +1,4 @@
--- Omnified Display v0.5
+-- Omnified Display
 -- Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
 -- Copyright 2021 Bad Echo LLC
 -- These functions will mostly be replaced by Vision infrastructure when that is ready.

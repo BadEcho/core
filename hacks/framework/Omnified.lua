@@ -1,4 +1,4 @@
--- Omnified Framework v0.5
+-- Omnified Framework
 -- Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
 -- Copyright 2021 Bad Echo LLC
 
@@ -26,6 +26,16 @@ end
 
 function anyNil(...)
 	return not evaluateNil(true, ...)
+end
+
+-- Allows us to define enumerations in a C-style manner.
+-- Accepts a table of string names for each enum member.
+function define_enum(members)
+	local membersLength = #members
+	for i = 1, membersLength do
+		local member = members[i]
+		members[member] = i-1
+	end
 end
 
 -- Outputs a randomly selected item from the provided random settings structure.
