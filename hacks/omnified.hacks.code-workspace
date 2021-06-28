@@ -11,6 +11,7 @@
 		"files.exclude": {
 			"**/cedebug.txt": true,
 			"**/log.txt": true
-		}
+		},		
+		"lua-local.interpreter": "lua54"
 	}
 }

@@ -2,77 +2,15 @@
 -- Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
 -- Copyright 2021 Bad Echo LLC
 
+require("utility")
+
 -- These values are to be overridden in target .CT file registration routines.
 coordinatesAreDoubles = false
 playerCoordinatesXAddress = "[example]+0x10"
 playerCoordinatesYAddress = "[example]+0x14"
 playerCoordinatesZAddress = "[example]+0x18"
 
-local function evaluateNil(valueIfNil, ...)
-	for _,v in ipairs({...}) do
-		if v == nil then return valueIfNil end
-	end
-
-	return true
-end
-
-function areNotNil(...)
-	return evaluateNil(false, ...)
-end
-
-function areTrue(...)
-	return areNotNil(...)
-end
-
-function anyNil(...)
-	return not evaluateNil(true, ...)
-end
-
--- Allows us to define enumerations in a C-style manner.
--- Accepts a table of string names for each enum member.
-function define_enum(members)
-	local membersLength = #members
-	for i = 1, membersLength do
-		local member = members[i]
-		members[member] = i-1
-	end
-end
-
--- Outputs a randomly selected item from the provided random settings structure.
--- The structure of random_settings is composed of object, weighted probability values like so:
--- random_settings = {
---		{firstObject, 1},
---		{secondObject, 3},
--- }
--- In this example, the second object is 3x more likely to be returned than the first object.
--- Based on the items provided, a random number between 1 and 4 (inclusive) will be generated.
--- If the random number is 1 then firstObject is returned. If it is 2, 3, or 4, secondObject is returned.
-function randomize(random_settings)
-	local indexedResults = {}
-	local totalWeight = 0
-	local lastIndex = 0
-
-	if not randomInitialized then
-		math.randomseed(os.time())
-		randomInitialized = true
-	end
-	
-	for k,v in pairs(random_settings) do
-		local resultObject = v[1]
-		local weight = v[2]
-
-		totalWeight = totalWeight + weight
-		while lastIndex ~= totalWeight do
-			lastIndex = lastIndex + 1
-			table.insert(indexedResults, lastIndex, resultObject)
-		end
-	end
-
-	local result = math.random(1, lastIndex)
-
-	return indexedResults[result]
-end
-
+ 
 function readPlayerCoordinates()
 	local x = not coordinatesAreDoubles 
 				and readFloat(playerCoordinatesXAddress) 
