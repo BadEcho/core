@@ -104,24 +104,24 @@ function jsonEncode(value)
     end
 
     if valueType == "table" then
-        local returnValue = {}
+        local currentElement = {}
         local array, length = isJsonArray(value)
 
         if array then 
             for i = 1, length do
-                table.insert(returnValue, jsonEncode(value[i]))
+                table.insert(currentElement, jsonEncode(value[i]))
             end
         else
             for i, j in pairs(value) do
                 if isJsonEncodable(i) and isJsonEncodable(j) then
-                    table.insert(returnValue, '"' .. jsonEncodeString(i) .. '":' .. jsonEncode(j))
+                    table.insert(currentElement, '"' .. jsonEncodeString(i) .. '":' .. jsonEncode(j))
                 end
             end
         end
         if array then
-            return "[" .. table.concat(returnValue, ",") .. "]"
+            return "[" .. table.concat(currentElement, ",") .. "]"
         else
-            return "{" .. table.concat(returnValue, ",") .. "}"
+            return "{" .. table.concat(currentElement, ",") .. "}"
         end
     end
 
