@@ -43,40 +43,41 @@ namespace BadEcho.Odin.Serialization
         public override TBase? Read(
             ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
+            Utf8JsonReader dataPropertyReader = default;
+
             if (reader.TokenType != JsonTokenType.StartObject)
                 throw new JsonException(Strings.JsonNotStartObject);
             
-            reader.Read();
-            if (reader.TokenType != JsonTokenType.PropertyName)
-                throw new JsonException(Strings.JsonMalformedText);
-            
-            string? typePropertyName = reader.GetString();
+            string typePropertyName = ReadPropertyName(ref reader);
+
+            if (typePropertyName == DataPropertyName)
+            {   // Store for later and skip to the next property.
+                dataPropertyReader = reader;
+
+                SkipToNextElement(ref reader);
+                typePropertyName = ReadPropertyName(ref reader);
+            }
+
             if (typePropertyName != TypePropertyName)
-                throw new JsonException(Strings.JsonInvalidTypeName.CulturedFormat(typePropertyName!, TypePropertyName));
+                throw new JsonException(Strings.JsonInvalidTypeName.CulturedFormat(typePropertyName, TypePropertyName));
 
             reader.Read();
             if (reader.TokenType != JsonTokenType.Number)
                 throw new JsonException(Strings.JsonTypeValueNotNumber);
 
             var typeDescriptor = reader.GetInt32().ToEnum<TTypeDescriptor>();
-            reader.Read();
 
-            if (reader.TokenType != JsonTokenType.PropertyName)
-                throw new JsonException(Strings.JsonMalformedText);
-            
-            string? dataPropertyName = reader.GetString();
+            if (dataPropertyReader.TokenType != JsonTokenType.None)
+            {
+                reader.Read();
+                return ReadDataProperty(ref dataPropertyReader, typeDescriptor);
+            }
+
+            string dataPropertyName = ReadPropertyName(ref reader);
             if (dataPropertyName != DataPropertyName)
-                throw new JsonException(Strings.JsonInvalidTypeName.CulturedFormat(dataPropertyName!, DataPropertyName));
+                throw new JsonException(Strings.JsonInvalidTypeName.CulturedFormat(dataPropertyName, DataPropertyName));
 
-            reader.Read();
-
-            if (reader.TokenType != JsonTokenType.StartObject)
-                throw new JsonException(Strings.JsonDataValueNotObject);
-
-            TBase? readValue = ReadFromDescriptor(ref reader, typeDescriptor);
-            reader.Read();
-            
-            return readValue;
+            return ReadDataProperty(ref reader, typeDescriptor);
         }
 
         /// <inheritdoc/>
@@ -117,5 +118,44 @@ namespace BadEcho.Odin.Serialization
         /// A <typeparamref name="TTypeDescriptor"/> value that specifies the type of <c>value</c> in JSON.
         /// </returns>
         protected abstract TTypeDescriptor DescriptorFromValue(TBase value);
+
+        private static void SkipToNextElement(ref Utf8JsonReader reader)
+        {
+            int levelsDeep = 1;
+
+            reader.Read();
+
+            while (levelsDeep != 0)
+            {
+                reader.Read();
+
+                if (reader.TokenType == JsonTokenType.StartObject)
+                    levelsDeep++;
+                else if (reader.TokenType == JsonTokenType.EndObject)
+                    levelsDeep--;
+            }
+        }
+        
+        private static string ReadPropertyName(ref Utf8JsonReader reader)
+        {
+            reader.Read();
+            if (reader.TokenType != JsonTokenType.PropertyName)
+                throw new JsonException(Strings.JsonMalformedText);
+
+            return reader.GetString() ?? string.Empty;
+        }
+
+        private TBase? ReadDataProperty(ref Utf8JsonReader reader, TTypeDescriptor typeDescriptor)
+        {
+            reader.Read();
+            if (reader.TokenType != JsonTokenType.StartObject)
+                throw new JsonException(Strings.JsonDataValueNotObject);
+
+            TBase? readValue = ReadFromDescriptor(ref reader, typeDescriptor);
+
+            reader.Read();
+
+            return readValue;
+        }
     }
 }

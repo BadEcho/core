@@ -15,10 +15,8 @@ namespace BadEcho.Fenestra.Tests.ViewModels
     {
         private readonly FakeCollectionViewModel _viewModel;
 
-        public CollectionViewModelTests()
-        {
-            _viewModel = new FakeCollectionViewModel();
-        }
+        public CollectionViewModelTests() 
+            => _viewModel = new FakeCollectionViewModel();
 
         [Fact]
         public void Bind_Model_AddedToChildrenOnce()
