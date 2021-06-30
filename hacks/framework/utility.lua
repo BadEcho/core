@@ -42,6 +42,8 @@ function define_enum(members)
 		local member = members[i]
 		members[member] = i-1
 	end
+
+    return members
 end
 
 -- Outputs a randomly selected item from the provided random settings structure.
