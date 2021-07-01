@@ -300,9 +300,9 @@ function activateLoggers()
 					  gokuDamageX,
 					  "x extra damage for a total of ",
 					  lastDamageByPlayer,
-					  " damage!\n")
-            playSound(findTableFile('kame.wav'))
-			writeInteger("logKamehameha", 0)
+						" damage!\n")
+				playSound(findTableFile('kame.wav'))
+				writeInteger("logKamehameha", 0)
 		end
 
 		log:close()

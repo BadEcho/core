@@ -34,9 +34,17 @@ function areTrue(...)
 	return evalValues(function (v) return not v end, false, true, ...)
 end
 
+function floor(number)
+    if number ~= nil then
+        return math.floor(number)
+    end
+
+    return 0
+end
+
 -- Allows us to define enumerations in a C-style manner.
 -- Accepts a table of string names for each enum member.
-function define_enum(members)
+function defineEnum(members)
 	local membersLength = #members
 	for i = 1, membersLength do
 		local member = members[i]

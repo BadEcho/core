@@ -2,14 +2,8 @@
 -- Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
 -- Copyright 2021 Bad Echo LLC
 
+require("defines")
 require("utility")
-
--- These values are to be overridden in target .CT file registration routines.
-coordinatesAreDoubles = false
-playerCoordinatesXAddress = "[example]+0x10"
-playerCoordinatesYAddress = "[example]+0x14"
-playerCoordinatesZAddress = "[example]+0x18"
-
  
 function readPlayerCoordinates()
 	local x = not coordinatesAreDoubles 
@@ -142,6 +136,7 @@ function unregisterOmnification(targetAssemblyFilePath)
 				if fatalisTimer ~= nil then
 					fatalisTimer.Enabled = false
 					fatalisTimer.Destroy()
+					fatalisTimer = nil
 				end
 				
 				statusTimer.Enabled = false

@@ -10,7 +10,8 @@
 	"settings": {
 		"files.exclude": {
 			"**/cedebug.txt": true,
-			"**/log.txt": true
+			"**/log.txt": true,
+			"**/statistics.json": true
 		},		
 		"lua-local.interpreter": "lua54"
 	}

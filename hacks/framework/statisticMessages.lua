@@ -1,17 +1,17 @@
--- General-purpose Omnified statistic message definitions.
+-- Defines the Omnified game statistic messaging schema.
 -- Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
 -- Copyright 2021 Bad Echo LLC
 
-require("omnified")
+require("utility")
 
-StatisticType = define_enum {
+StatisticType = defineEnum {
     "Whole",
     "Fractional",
     "Coordinate"
 }
 
-function createWholeStat(name, value)
-    local wholeStat = {
+function WholeStatistic(name, value)
+    local wholeStatistic = {
         Type = StatisticType.Whole,
         Statistic = {
             Name = name,
@@ -19,11 +19,11 @@ function createWholeStat(name, value)
         }
     }
     
-    return wholeStat
+    return wholeStatistic
 end
 
-function createFractionalStat(name, currentValue, maximumValue)
-    local fractionalStat = {
+function FractionalStatistic(name, currentValue, maximumValue)
+    local fractionalStatistic = {
         Type = StatisticType.Fractional,
         Statistic = {
             Name = name,
@@ -32,11 +32,11 @@ function createFractionalStat(name, currentValue, maximumValue)
         }
     }
 
-    return fractionalStat
+    return fractionalStatistic
 end
 
-function createCoordinateStat(name, x, y, z)
-    local coordinateStat = {
+function CoordinateStatistic(name, x, y, z)
+    local coordinateStatistic = {
         Type = StatisticType.Coordinate,
         Statistic = {
             Name = name,
@@ -46,5 +46,5 @@ function createCoordinateStat(name, x, y, z)
         }
     }
 
-    return coordinateStat
+    return coordinateStatistic
 end
