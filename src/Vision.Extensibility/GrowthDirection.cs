@@ -10,10 +10,10 @@ namespace BadEcho.Omnified.Vision.Extensibility
     /// <summary>
     /// Specifies the direction a Vision module grows from its anchor point.
     /// </summary>
-    public enum ModuleGrowthDirection
+    public enum GrowthDirection
     {
         /// <summary>
-        /// The module does  not grow.
+        /// The module does not grow.
         /// </summary>
         None,
         /// <summary>
