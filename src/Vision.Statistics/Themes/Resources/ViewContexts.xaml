@@ -20,5 +20,9 @@
     <DataTemplate DataType="{x:Type vm:CoordinateStatisticViewModel}">
         <v:CoordinateStatisticView />
     </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:StatisticsViewModel}">
+        <v:StatisticsView/>
+    </DataTemplate>
     
 </ResourceDictionary>
