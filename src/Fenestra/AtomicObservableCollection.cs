@@ -46,13 +46,11 @@ namespace BadEcho.Fenestra
     /// exception.
     /// </para>
     /// </remarks>
-    public sealed class AtomicObservableCollection<T> : ObservableCollection<T>
+    public sealed class AtomicObservableCollection<T> : ObservableCollection<T>, IHandlerBypassable
     {
         private readonly object _dispatcherLock = new();
 
         private Dispatcher? _dispatcher = Dispatcher.FromThread(Thread.CurrentThread);
-
-        private bool _bypassChangeNotification;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AtomicObservableCollection{T}"/> class.
@@ -228,7 +226,7 @@ namespace BadEcho.Fenestra
         /// <inheritdoc/>
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
-            if (!_bypassChangeNotification)
+            if (!this.IsHandlingBypassed())
                 base.OnCollectionChanged(e);
         }
 
@@ -289,33 +287,33 @@ namespace BadEcho.Fenestra
 
         private void AddSilently(IEnumerable<T> items)
         {
-            BypassChangeNotification(() =>
-                                     {
-                                         int currentCount = Count;
+            this.BypassHandlers(() =>
+                                {
+                                    int currentCount = Count;
 
-                                         foreach (T item in items)
-                                         {
-                                             BoundedInsertItem(currentCount, item);
-                                             currentCount++;
-                                         }
-                                     });
+                                    foreach (T item in items)
+                                    {
+                                        BoundedInsertItem(currentCount, item);
+                                        currentCount++;
+                                    }
+                                });
         }
 
         private void RemoveSilently(IEnumerable<T> items)
         {
-            BypassChangeNotification(() =>
-                                     {
-                                         foreach (T item in items)
-                                         {
-                                             Items.Remove(item);
-                                         }
-                                     });
+            this.BypassHandlers(() =>
+                                {
+                                    foreach (T item in items)
+                                    {
+                                        Items.Remove(item);
+                                    }
+                                });
         }
 
         private void CommitSort(IEnumerable<T> sortedItems)
         {
             // Apparently base virtual method calls in lambda expressions no longer produces unverifiable code.
-            BypassChangeNotification(Clear);
+            this.BypassHandlers(Clear);
 
             AddSilently(sortedItems);
 
@@ -330,16 +328,9 @@ namespace BadEcho.Fenestra
                 _dispatcher.Invoke(OnCollectionReset, DispatcherPriority.Background);
 
             void OnCollectionReset()
-                => OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-        }
-
-        private void BypassChangeNotification(Action action)
-        {
-            _bypassChangeNotification = true;
-
-            action();
-
-            _bypassChangeNotification = false;
+            {
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            }
         }
 
         private void SynchronizeOperation(Action operation)

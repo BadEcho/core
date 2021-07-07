@@ -5,7 +5,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Windows;
 using System.Windows.Data;
 using BadEcho.Odin;
@@ -23,7 +22,7 @@ namespace BadEcho.Fenestra
     /// attaching a <see cref="TransientBinder"/> instance would result in completely vanilla binding update behavior. Derive
     /// from this class in order to customize what exactly occurs during source-to-target and target-to-source binding updates.
     /// </remarks>
-    internal abstract class TransientBinder : Freezable
+    internal abstract class TransientBinder : Freezable, IHandlerBypassable
     {
         /// <summary>
         /// Identifies the attached property that gets or sets a <see cref="DependencyObject"/> instance's collection of custom
@@ -52,8 +51,7 @@ namespace BadEcho.Fenestra
 
         private readonly string _stringFormat;
         private readonly BindingMode _mode;
-        private bool _handlersBypassed;
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="TransientBinder"/> class.
         /// </summary>
@@ -77,11 +75,11 @@ namespace BadEcho.Fenestra
 
             _stringFormat = binding.StringFormat ?? "{0}";
 
-            BypassHandlers(() =>
-                           {
-                               BindingOperations.SetBinding(this, TargetProperty, targetBinding);
-                               BindingOperations.SetBinding(this, SourceProperty, binding);
-                           });
+            this.BypassHandlers(() =>
+                                {
+                                    BindingOperations.SetBinding(this, TargetProperty, targetBinding);
+                                    BindingOperations.SetBinding(this, SourceProperty, binding);
+                                });
         }
 
         /// <summary>
@@ -147,7 +145,7 @@ namespace BadEcho.Fenestra
 
             if (sourceValue != GetValue(TargetProperty))
             {
-                BypassHandlers(() => WriteTargetValue(sourceValue));
+                this.BypassHandlers(() => WriteTargetValue(sourceValue));
             }
         }
 
@@ -160,7 +158,7 @@ namespace BadEcho.Fenestra
 
             if (targetValue != GetValue(SourceProperty))
             {
-                BypassHandlers(() => WriteSourceValue(targetValue));
+                this.BypassHandlers(() => WriteSourceValue(targetValue));
             }
         }
 
@@ -205,7 +203,7 @@ namespace BadEcho.Fenestra
             if (binder._mode == BindingMode.OneWayToSource)
                 return;
 
-            if (binder._handlersBypassed)
+            if (binder.IsHandlingBypassed())
                 return;
 
             binder.OnSourceChanged();
@@ -218,19 +216,10 @@ namespace BadEcho.Fenestra
             if (binder._mode is not BindingMode.TwoWay and not BindingMode.OneWayToSource)
                 return;
 
-            if (binder._handlersBypassed)
+            if (binder.IsHandlingBypassed())
                 return;
 
             binder.OnTargetChanged();
-        }
-
-        private void BypassHandlers(Action action)
-        {
-            _handlersBypassed = true;
-
-            action();
-
-            _handlersBypassed = false;
         }
     }
 }
