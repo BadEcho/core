@@ -155,4 +155,7 @@
   <data name="CollectionChildUnbindingRequiresActiveModel" xml:space="preserve">
     <value>Removal of a view model from a child view model collection whose model data is still bound to the collection view model can only be done while the child view model still has valid model data bound to it.</value>
   </data>
+  <data name="IncompatibleDataContextType" xml:space="preserve">
+    <value>An attempt to bind a data context of an incompatible type to a context-specific Fenestra window was made.</value>
+  </data>
 </root>

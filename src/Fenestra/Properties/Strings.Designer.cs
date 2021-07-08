@@ -196,6 +196,15 @@ namespace BadEcho.Fenestra.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An attempt to bind a data context of an incompatible type to a context-specific Fenestra window was made..
+        /// </summary>
+        internal static string IncompatibleDataContextType {
+            get {
+                return ResourceManager.GetString("IncompatibleDataContextType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A stepped binding requires the value for the property &apos;{0}&apos; to be able to be converted to a 32-bit signed integer..
         /// </summary>
         internal static string NotSteppablePropertyValue {
