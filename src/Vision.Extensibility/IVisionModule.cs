@@ -5,14 +5,14 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Odin.Extensibility;
+using BadEcho.Fenestra.ViewModels;
 
 namespace BadEcho.Omnified.Vision.Extensibility
 {
     /// <summary>
     /// Defines a snap-in module granting vision to Omnified data.
     /// </summary>
-    public interface IVisionModule : IFilterableFamily
+    public interface IVisionModule
     {
         /// <summary>
         /// Gets the default location of the module's anchor point.
@@ -34,5 +34,15 @@ namespace BadEcho.Omnified.Vision.Extensibility
         /// the Vision module's file is updated.
         /// </summary>
         bool ProcessNewMessagesOnly { get; }
+
+        /// <summary>
+        /// Brings the Vision module online by giving it a live message file provider, causing a view model to be returned
+        /// that can be used to display the Vision module.
+        /// </summary>
+        /// <param name="messageProvider">
+        /// A live message provider that will feed the module with new messages being posted.
+        /// </param>
+        /// <returns>A view model that allows for the displaying of the Vision module.</returns>
+        IViewModel EnableModule(IMessageFileProvider messageProvider);
     }
 }

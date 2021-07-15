@@ -60,7 +60,7 @@
         <Setter Property="FontSize" Value="21.3"/>
         <Setter Property="Fill" Value="{DynamicResource {x:Static t:Brushes.TextForegroundKey}}"/>
         <Setter Property="Stroke" Value="#CC000000"/>
-        <Setter Property="StrokeThickness" Value="2.6"/>
+        <Setter Property="StrokeThickness" Value="4"/>
         <Setter Property="FontFamily" Value="{StaticResource Quattrocento}"/>
         <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
         <Setter Property="RenderTransform">

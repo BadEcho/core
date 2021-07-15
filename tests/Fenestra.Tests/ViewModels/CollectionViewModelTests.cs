@@ -5,39 +5,45 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Collections.Generic;
 using System.Linq;
 using BadEcho.Fenestra.ViewModels;
+using BadEcho.Odin.Extensions;
 using Xunit;
 
 namespace BadEcho.Fenestra.Tests.ViewModels
 {
     public class CollectionViewModelTests
     {
-        private readonly FakeCollectionViewModel _viewModel;
+        private readonly FakeCollectionViewModel _collectionViewModel;
 
         public CollectionViewModelTests() 
-            => _viewModel = new FakeCollectionViewModel();
+            => _collectionViewModel = new FakeCollectionViewModel();
 
         [Fact]
         public void Bind_Model_AddedToChildrenOnce()
         {
-            _viewModel.Bind(2);
+            var model = new ModelStub("Test", 2);
 
-            var child = _viewModel.Children.SingleOrDefault(vm => vm.ActiveModel == 2);
+            _collectionViewModel.Bind(model);
+
+            var child = _collectionViewModel.Children.SingleOrDefault(vm => Equals(vm.ActiveModel, model));
 
             Assert.NotNull(child);
+            Assert.Equal(2, _collectionViewModel.Children[0].Value);
         }
 
         [Fact]
         public void Bind_ViewModel_AddedToChildrenOnce()
         {
-            var stub = new ViewModelStub();
+            var model = new ModelStub("Test", 2);
+            var viewModel = new ViewModelStub();
 
-            stub.Bind(2);
+            viewModel.Bind(model);
 
-            _viewModel.Bind(stub);
+            _collectionViewModel.Bind(viewModel);
 
-            var child = _viewModel.Children.Single(vm => vm.ActiveModel == 2);
+            var child = _collectionViewModel.Children.Single(vm => Equals(vm.ActiveModel, model));
 
             Assert.NotNull(child);
         }
@@ -45,14 +51,15 @@ namespace BadEcho.Fenestra.Tests.ViewModels
         [Fact]
         public void Bind_ViewModelTwice_AddedToChildrenOnce()
         {
-            var stub = new ViewModelStub();
+            var model = new ModelStub("Test", 2);
+            var viewModel = new ViewModelStub();
 
-            stub.Bind(2);
+            viewModel.Bind(model);
 
-            _viewModel.Bind(stub);
-            _viewModel.Bind(stub);
+            _collectionViewModel.Bind(viewModel);
+            _collectionViewModel.Bind(viewModel);
 
-            var child = _viewModel.Children.Single(vm => vm.ActiveModel == 2);
+            var child = _collectionViewModel.Children.Single(vm => Equals(vm.ActiveModel, model));
 
             Assert.NotNull(child);
         }
@@ -60,67 +67,113 @@ namespace BadEcho.Fenestra.Tests.ViewModels
         [Fact]
         public void Bind_Model_ModelIsBound()
         {
-            _viewModel.Bind(2);
+            var model = new ModelStub("Test", 2);
 
-            Assert.True(_viewModel.IsBound(2));
+            _collectionViewModel.Bind(model);
+
+            Assert.True(_collectionViewModel.IsBound(model));
         }
 
         [Fact]
         public void Bind_ViewModel_ModelIsBound()
         {
-            var stub = new ViewModelStub();
+            var model = new ModelStub("Test", 2);
+            var viewModel = new ViewModelStub();
 
-            stub.Bind(2);
+            viewModel.Bind(model);
 
-            _viewModel.Bind(stub);
+            _collectionViewModel.Bind(viewModel);
 
-            Assert.True(_viewModel.IsBound(2));
+            Assert.True(_collectionViewModel.IsBound(model));
+        }
+
+        [Fact]
+        public void Bind_ExistingModel_UpdatesOnly()
+        {
+            var model = new ModelStub("Test", 2);
+
+            _collectionViewModel.Bind(model);
+
+            Assert.Single(_collectionViewModel.Children);
+            Assert.Equal(2, _collectionViewModel.Children[0].Value);
+
+            model.Value = 3;
+
+            _collectionViewModel.Bind(model);
+
+            Assert.Single(_collectionViewModel.Children);
+            Assert.Equal(3, _collectionViewModel.Children[0].Value);
+        }
+
+        [Fact]
+        public void BindMany_ExistingModel_UpdatesOnly()
+        {
+            var models = new List<ModelStub> {new("Test", 2), new("Another", 4)};
+
+            _collectionViewModel.Bind(models);
+
+            Assert.Equal(2, _collectionViewModel.Children.Count);
+            Assert.Equal(2, _collectionViewModel.Children[0].Value);
+
+            models[0].Value = 3;
+
+            _collectionViewModel.Bind(models);
+
+            Assert.Equal(2, _collectionViewModel.Children.Count);
+            Assert.Equal(3, _collectionViewModel.Children[0].Value);
         }
 
         [Fact]
         public void AddChildren_ViewModel_ModelIsBound()
         {
-            var stub = new ViewModelStub();
+            var model = new ModelStub("Test", 2);
+            var viewModel = new ViewModelStub();
 
-            stub.Bind(2);
+            viewModel.Bind(model);
 
-            _viewModel.Children.Add(stub);
+            _collectionViewModel.Children.Add(viewModel);
             
-            Assert.True(_viewModel.IsBound(2));
+            Assert.True(_collectionViewModel.IsBound(model));
         }
 
         [Fact]
         public void RemoveChildren_ViewModel_ModelUnbound()
         {
-            _viewModel.Bind(2);
+            var model = new ModelStub("Test", 2);
 
-            _viewModel.Children.Remove(_viewModel.Children.First());
+            _collectionViewModel.Bind(model);
 
-            Assert.False(_viewModel.IsBound(2));
+            _collectionViewModel.Children.Remove(_collectionViewModel.Children.First());
+
+            Assert.False(_collectionViewModel.IsBound(model));
         }
 
         [Fact]
         public void Unbind_ViewModel_ModelUnbound()
         {
-            _viewModel.Bind(2);
+            var model = new ModelStub("Test", 2);
 
-            var child = _viewModel.Children.First();
+            _collectionViewModel.Bind(model);
 
-            _viewModel.Unbind(child);
+            var child = _collectionViewModel.Children.First();
 
-            Assert.False(_viewModel.IsBound(2));
+            _collectionViewModel.Unbind(child);
+
+            Assert.False(_collectionViewModel.IsBound(model));
         }
 
         [Fact]
         public void Unbind_ViewModel_RemovedFromChildren()
         {
-            _viewModel.Bind(2);
+            var model = new ModelStub("Test", 2);
 
-            var child = _viewModel.Children.First();
+            _collectionViewModel.Bind(model);
 
-            _viewModel.Unbind(child);
+            var child = _collectionViewModel.Children.First();
 
-            child = _viewModel.Children.FirstOrDefault(vm => vm.ActiveModel == 2);
+            _collectionViewModel.Unbind(child);
+
+            child = _collectionViewModel.Children.FirstOrDefault(vm => Equals(vm.ActiveModel, model));
 
             Assert.Null(child);
         }
@@ -128,22 +181,24 @@ namespace BadEcho.Fenestra.Tests.ViewModels
         [Fact]
         public void Unbind_Model_RemovedFromChildren()
         {
-            _viewModel.Bind(2);
+            var model = new ModelStub("Test", 2);
 
-            _viewModel.Unbind(2);
+            _collectionViewModel.Bind(model);
 
-            var child = _viewModel.Children.FirstOrDefault(vm => vm.ActiveModel == 2);
+            _collectionViewModel.Unbind(model);
+
+            var child = _collectionViewModel.Children.FirstOrDefault(vm => Equals(vm.ActiveModel, model));
 
             Assert.Null(child);
         }
 
         
-        private sealed class FakeCollectionViewModel : CollectionViewModel<int, ViewModelStub>
+        private sealed class FakeCollectionViewModel : CollectionViewModel<ModelStub, ViewModelStub>
         {
-            public FakeCollectionViewModel() : base(new CollectionViewModelOptions())
+            public FakeCollectionViewModel() : base(new CollectionViewModelOptions{AsyncBatchBindings = false})
             { }
 
-            public override ViewModelStub CreateChild(int model)
+            public override ViewModelStub CreateChild(ModelStub model)
             {
                 var stub = new ViewModelStub();
 
@@ -152,17 +207,52 @@ namespace BadEcho.Fenestra.Tests.ViewModels
                 return stub;
             }
 
+            public override void UpdateChild(ModelStub model)
+            {
+                var existingChild = FindChild<ViewModelStub>(model);
+
+                existingChild?.Bind(model);
+            }
+
             public override void OnChangeCompleted()
             { }
         }
 
-        private sealed class ViewModelStub : ViewModel<int>
+        private sealed class ViewModelStub : ViewModel<ModelStub>
         {
-            protected override void OnBinding(int model)
-            { }
+            public int Value
+            { get; private set; }
 
-            protected override void OnUnbound(int model)
-            { }
+            protected override void OnBinding(ModelStub model) 
+                => Value = model.Value;
+
+            protected override void OnUnbound(ModelStub model) 
+                => Value = 0;
+        }
+
+        private sealed class ModelStub
+        {
+            private readonly string _name;
+
+            public ModelStub(string name, int value)
+            {
+                _name = name;
+                Value = value;
+            }
+
+            public int Value
+            { get; set; }
+
+            public override bool Equals(object? obj)
+            {
+                if (obj is not ModelStub otherModel)
+                    return false;
+
+                return _name == otherModel._name;
+            }
+
+            public override int GetHashCode() 
+                => this.GetHashCode(_name);
         }
     }
 }

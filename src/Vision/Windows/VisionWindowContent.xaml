@@ -1,0 +1,29 @@
+﻿<!--
+    <copyright>
+        Created by Matt Weber <matt@badecho.com>
+        Copyright @ 2021 Bad Echo LLC. All Rights Reserved.
+    </copyright>
+-->
+<Grid xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.ViewModels" 
+      d:DataContext="{d:DesignInstance Type=vm:VisionViewModel}"
+      mc:Ignorable="d"
+      >
+    <ItemsControl ItemsSource="{Binding Children}">
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <DataTemplate.Resources>
+                    <fenestra:ViewContextTemplateSelector x:Key="ContextSelector"/>
+                </DataTemplate.Resources>
+                <UserControl Content="{Binding ModuleViewModel}"
+                             ContentTemplateSelector="{StaticResource ContextSelector}"
+                             />
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
+
+</Grid>

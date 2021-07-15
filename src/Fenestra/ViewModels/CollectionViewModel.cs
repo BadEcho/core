@@ -58,7 +58,17 @@ namespace BadEcho.Fenestra.ViewModels
             => _engine.ChangeDispatcher(dispatcher);
 
         /// <inheritdoc/>
+        public TChildViewModelImpl? FindChild<TChildViewModelImpl>(TModel model) 
+            where TChildViewModelImpl : TChildViewModel
+        {
+            return _engine.FindChild<TChildViewModelImpl>(model);
+        }
+
+        /// <inheritdoc/>
         public abstract TChildViewModel CreateChild(TModel model);
+
+        /// <inheritdoc/>
+        public abstract void UpdateChild(TModel model);
 
         /// <inheritdoc/>
         public abstract void OnChangeCompleted();
@@ -92,7 +102,7 @@ namespace BadEcho.Fenestra.ViewModels
 
             return true;
         }
-
+        
         /// <summary>
         /// Called when there is a change to either the collection's composition or a property value of one of this view model's children.
         /// </summary>

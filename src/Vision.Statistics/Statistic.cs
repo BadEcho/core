@@ -5,6 +5,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Odin.Extensions;
+
 namespace BadEcho.Omnified.Vision.Statistics
 {
     /// <summary>
@@ -16,6 +18,19 @@ namespace BadEcho.Omnified.Vision.Statistics
         /// Gets or sets the display name of the statistic.
         /// </summary>
         public string Name
-        { get; set; } = string.Empty;
+        { get; init; } = string.Empty;
+
+        /// <inheritdoc/>
+        /// <remarks>
+        /// We override the equality methods to establish the name of the statistic to essentially be its identity,
+        /// and to allow for in-place rebindings of the view models responsible for displaying statistics with updated
+        /// statistical data.
+        /// </remarks>
+        public override bool Equals(object? obj) 
+            => obj is Statistic other && Name == other.Name;
+
+        /// <inheritdoc/>
+        public override int GetHashCode()
+            => this.GetHashCode(Name);
     }
 }

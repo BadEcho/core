@@ -81,6 +81,5 @@ namespace BadEcho.Odin.Collections
 
             Changed?.Invoke(this, changedArgs);
         }
-
     }
 }

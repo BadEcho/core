@@ -8,6 +8,7 @@
 using System;
 using BadEcho.Fenestra.ViewModels;
 using BadEcho.Odin;
+using BadEcho.Odin.Extensions;
 using BadEcho.Omnified.Vision.Statistics.Properties;
 
 namespace BadEcho.Omnified.Vision.Statistics.ViewModels
@@ -49,7 +50,43 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
         }
 
         /// <inheritdoc/>
+        public override void UpdateChild(Statistic model)
+        {
+            Require.NotNull(model, nameof(model));
+
+            switch (model)
+            {
+                case WholeStatistic whole:
+                    UpdateChild<WholeStatisticViewModel, WholeStatistic>(whole);
+                    break;
+
+                case FractionalStatistic fractional:
+                    UpdateChild<FractionalStatisticViewModel, FractionalStatistic>(fractional);
+                    break;
+
+                case CoordinateStatistic coordinate:
+                    UpdateChild<CoordinateStatisticViewModel, CoordinateStatistic>(coordinate);
+                    break;
+            }
+        }
+
+        /// <inheritdoc/>
         public override void OnChangeCompleted()
         { }
+
+        private void UpdateChild<TStatisticViewModel, TStatistic>(TStatistic model)
+            where TStatistic : Statistic
+            where TStatisticViewModel : ViewModel<TStatistic>, IStatisticViewModel
+        {
+            var existingChild = FindChild<TStatisticViewModel>(model);
+
+            if (existingChild == null)
+            {
+                throw new ArgumentException(Strings.CannotUpdateUnboundStatistic.InvariantFormat(model.Name),
+                                            nameof(model));
+            }
+
+            existingChild.Bind(model);
+        }
     }
 }

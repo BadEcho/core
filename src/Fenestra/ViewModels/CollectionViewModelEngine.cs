@@ -17,6 +17,7 @@ using BadEcho.Fenestra.Properties;
 using BadEcho.Odin;
 using BadEcho.Odin.Collections;
 using BadEcho.Odin.Extensions;
+using BadEcho.Odin.Logging;
 
 namespace BadEcho.Fenestra.ViewModels
 {
@@ -128,13 +129,20 @@ namespace BadEcho.Fenestra.ViewModels
         public void Bind(TModel model)
         {
             Require.NotNull(model, nameof(model));
+            bool update = false;
 
             lock (_processedModelsLock)
             {
                 if (_processedModels.Contains(model))
-                    return;
+                    update = true;
+                else
+                    _processedModels.Add(model);
+            }
 
-                _processedModels.Add(model);
+            if (update)
+            {
+                _viewModel.UpdateChild(model);
+                return;
             }
 
             TChildViewModel childViewModel = _viewModel.CreateChild(model);
@@ -154,14 +162,14 @@ namespace BadEcho.Fenestra.ViewModels
 
             if (_options.AsyncBatchBindings)
             {
-                Task.Run(() => BindRunner(models))
+                Task.Run(() => BindRunner(models.ToList()))
                     .ContinueWith(ProcessFailedBinding,
                                   CancellationToken.None,
                                   TaskContinuationOptions.OnlyOnFaulted,
                                   TaskScheduler.Default);
             }
             else
-                BindRunner(models);
+                BindRunner(models.ToList());
         }
 
         /// <summary>
@@ -180,7 +188,7 @@ namespace BadEcho.Fenestra.ViewModels
                     return;
             }
 
-            TChildViewModel? childToUnbind = _viewModel.FindChild(model);
+            TChildViewModel? childToUnbind = _viewModel.FindChild<TChildViewModel>(model);
 
             if (null == childToUnbind)
             {
@@ -208,7 +216,7 @@ namespace BadEcho.Fenestra.ViewModels
                 processedModels = models.Where(_processedModels.Remove).ToList();
             }
 
-            List<TChildViewModel> childrenToUnbind = processedModels.Select(m => _viewModel.FindChild(m))
+            List<TChildViewModel> childrenToUnbind = processedModels.Select(m => _viewModel.FindChild<TChildViewModel>(m))
                                                                     .WhereNotNull()
                                                                     .ToList();
 
@@ -251,6 +259,32 @@ namespace BadEcho.Fenestra.ViewModels
             }
         }
 
+        /// <summary>
+        /// Searches for and returns the child view model responsible for representing the provided data within the
+        /// <see cref="ICollectionViewModel{TModel, TChildViewModel}"/> view model being powered by this engine.
+        /// </summary>
+        /// <typeparam name="TChildViewModelImpl">The specific type of child view model to look for.</typeparam>
+        /// <param name="model">The bound data of the child view model to search for.</param>
+        /// <returns>
+        /// The <typeparamref name="TChildViewModelImpl"/> instance that <c>model</c> is bound to, or null if nothing was found.
+        /// </returns>
+        public TChildViewModelImpl? FindChild<TChildViewModelImpl>(TModel model)
+            where TChildViewModelImpl : TChildViewModel
+        {
+            try
+            {
+                return Children.OfType<TChildViewModelImpl>()
+                               .SingleOrDefault(c => c.ActiveModel != null && c.ActiveModel.Equals<TModel>(model));
+            }
+            catch (InvalidOperationException ex)
+            {
+                Logger.Error(Strings.DuplicateModelInCollectionViewModel, ex);
+
+                return Children.OfType<TChildViewModelImpl>()
+                               .First(c => c.ActiveModel != null && c.ActiveModel.Equals<TModel>(model));
+            }
+        }
+
         /// <inheritdoc/>
         protected override void OnBinding(TChildViewModel viewModel)
         {
@@ -280,33 +314,24 @@ namespace BadEcho.Fenestra.ViewModels
             _viewModel.OnChangeCompleted();
         }
 
-        private void BindRunner(IEnumerable<TModel> models)
+        private void BindRunner(IReadOnlyCollection<TModel> models)
         {
-            List<TModel> modelsToBind;
+            List<TModel> newChildrenModels;
+            List<TModel> existingChildrenModels;
 
             lock (_processedModelsLock)
             {
-                modelsToBind = models.Except(_processedModels).ToList();
+                newChildrenModels = models.Except(_processedModels).ToList();
+                existingChildrenModels = models.Intersect(_processedModels).ToList();
 
-                _processedModels.AddRange(modelsToBind);
+                _processedModels.AddRange(newChildrenModels);
             }
 
-            if (modelsToBind.Count == 0)
+            if (newChildrenModels.Count == 0 && existingChildrenModels.Count == 0)
                 return;
 
-            TChildViewModel[] createdChildren = new TChildViewModel[modelsToBind.Count];
-            if (modelsToBind.Count >= _options.BindingParallelizationThreshold)
-            {
-                Parallel.For(0,
-                             createdChildren.Length,
-                             i => createdChildren[i] = _viewModel.CreateChild(modelsToBind[i]));
-
-            }
-            else
-            {
-                for (int i = 0; i < modelsToBind.Count; i++)
-                    createdChildren[i] = _viewModel.CreateChild(modelsToBind[i]);
-            }
+            IReadOnlyCollection<TChildViewModel> createdChildren = BindNewChildren(newChildrenModels);
+            BindExistingChildren(existingChildrenModels);
 
             if (!DelayBindings)
                 Children.AddRange(createdChildren, false);
@@ -314,6 +339,39 @@ namespace BadEcho.Fenestra.ViewModels
             foreach (TChildViewModel createdChild in createdChildren)
             {
                 Bind(createdChild);
+            }
+        }
+
+        private IReadOnlyCollection<TChildViewModel> BindNewChildren(IList<TModel> models)
+        {
+            TChildViewModel[] createdChildren = new TChildViewModel[models.Count];
+            if (models.Count >= _options.BindingParallelizationThreshold)
+            {
+                Parallel.For(0,
+                             createdChildren.Length,
+                             i => createdChildren[i] = _viewModel.CreateChild(models[i]));
+            }
+            else
+            {
+                for (int i = 0; i < models.Count; i++)
+                    createdChildren[i] = _viewModel.CreateChild(models[i]);
+            }
+
+            return createdChildren;
+        }
+
+        private void BindExistingChildren(IList<TModel> models)
+        {
+            if (models.Count >= _options.BindingParallelizationThreshold)
+            {
+                Parallel.For(0,
+                             models.Count,
+                             i => _viewModel.UpdateChild(models[i]));
+            }
+            else
+            {
+                foreach (var modelToUpdate in models)
+                    _viewModel.UpdateChild(modelToUpdate);
             }
         }
 

@@ -158,4 +158,7 @@
   <data name="IncompatibleDataContextType" xml:space="preserve">
     <value>An attempt to bind a data context of an incompatible type to a context-specific Fenestra window was made.</value>
   </data>
+  <data name="WrongXamlRootType" xml:space="preserve">
+    <value>The type of object found at the root of the XAML's corresponding object tree does not match the specified generic type parameter.</value>
+  </data>
 </root>

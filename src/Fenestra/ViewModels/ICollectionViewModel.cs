@@ -5,12 +5,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
-using System.Linq;
 using System.Windows.Threading;
-using BadEcho.Fenestra.Properties;
-using BadEcho.Odin.Extensions;
-using BadEcho.Odin.Logging;
 
 namespace BadEcho.Fenestra.ViewModels
 {
@@ -51,6 +46,12 @@ namespace BadEcho.Fenestra.ViewModels
         TChildViewModel CreateChild(TModel model);
 
         /// <summary>
+        /// Updates an existing child view model to use the provided data.
+        /// </summary>
+        /// <param name="model">The data to update an existing child view model with.</param>
+        void UpdateChild(TModel model);
+
+        /// <summary>
         /// Changes the dispatcher currently in use by the view model to the provided one.
         /// </summary>
         /// <param name="dispatcher">The dispatcher that the view model should use to broadcast events.</param>
@@ -68,23 +69,14 @@ namespace BadEcho.Fenestra.ViewModels
         void OnChangeCompleted();
 
         /// <summary>
-        /// Searches for and returns the child view model belonging to the collection view model that is responsible for representing
-        /// the provided data. 
+        /// Searches for and returns the child view model responsible for representing the provided data within the collection
+        /// view model.
         /// </summary>
+        /// <typeparam name="TChildViewModelImpl">The specific type of child view model to look for.</typeparam>
         /// <param name="model">The bound data of the child view model to search for.</param>
-        /// <returns>The child <typeparamref name="TChildViewModel"/> instance that <c>model</c> is bound to.</returns>
-        TChildViewModel? FindChild(TModel model)
-        {
-            try
-            {
-                return Children.SingleOrDefault(c => c.ActiveModel != null && c.ActiveModel.Equals<TModel>(model));
-            }
-            catch (InvalidOperationException ex)
-            {
-                Logger.Error(Strings.DuplicateModelInCollectionViewModel, ex);
-
-                return Children.First(c => c.ActiveModel != null && c.ActiveModel.Equals<TModel>(model));
-            }
-        }
+        /// <returns>
+        /// The <typeparamref name="TChildViewModelImpl"/> instance that <c>model</c> is bound to, or null if nothing was found.
+        /// </returns>
+        TChildViewModelImpl? FindChild<TChildViewModelImpl>(TModel model) where TChildViewModelImpl : TChildViewModel;
     }
 }

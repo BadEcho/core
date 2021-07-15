@@ -33,7 +33,7 @@
         </vm:StatisticsViewModel>        
     </d:DesignProperties.DataContext>
     <Grid>        
-        <ItemsControl  ItemsSource="{Binding Children}">
+        <ItemsControl ItemsSource="{Binding Children}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Grid.IsSharedSizeScope="True"/>

@@ -31,7 +31,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Omnified.Vision.Sta
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "omnified", "omnified", "{D85B8374-DA6C-4A05-9814-D057B4CCE499}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BadEcho.Omnified.Vision.Tests", "tests\Vision.Tests\BadEcho.Omnified.Vision.Tests.csproj", "{E9635411-FF91-4E8F-9144-F00D909C968D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Omnified.Vision.Tests", "tests\Vision.Tests\BadEcho.Omnified.Vision.Tests.csproj", "{E9635411-FF91-4E8F-9144-F00D909C968D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

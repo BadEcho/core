@@ -5,6 +5,11 @@
 	  <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Page Remove="Windows\VisionWindowContent.xaml" />
+    <Page Remove="Windows\VisionWindowStyle.xaml" />
+  </ItemGroup>
   
   <ItemGroup>
     <None Include="..\..\.editorconfig" Link=".editorconfig" />
@@ -14,5 +19,29 @@
     <ProjectReference Include="..\Fenestra\BadEcho.Fenestra.csproj" />
     <ProjectReference Include="..\Odin\BadEcho.Odin.csproj" />
     <ProjectReference Include="..\Vision.Extensibility\BadEcho.Omnified.Vision.Extensibility.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Resource Include="Windows\VisionWindowContent.xaml">
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Resource>
+    <Resource Include="Windows\VisionWindowStyle.xaml">
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Resource>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Update="Properties\Xaml.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Xaml.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Xaml.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Xaml.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

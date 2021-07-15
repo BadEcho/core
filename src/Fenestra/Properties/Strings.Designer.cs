@@ -239,5 +239,14 @@ namespace BadEcho.Fenestra.Properties {
                 return ResourceManager.GetString("SteppingDurationCannotBeNegative", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The type of object found at the root of the XAML&apos;s corresponding object tree does not match the specified generic type parameter..
+        /// </summary>
+        internal static string WrongXamlRootType {
+            get {
+                return ResourceManager.GetString("WrongXamlRootType", resourceCulture);
+            }
+        }
     }
 }

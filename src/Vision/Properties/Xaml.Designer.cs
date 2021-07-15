@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace BadEcho.Omnified.Vision.Statistics.Properties {
+namespace BadEcho.Omnified.Vision.Properties {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace BadEcho.Omnified.Vision.Statistics.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Strings {
+    internal class Xaml {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Strings() {
+        internal Xaml() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace BadEcho.Omnified.Vision.Statistics.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("BadEcho.Omnified.Vision.Statistics.Properties.Strings", typeof(Strings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("BadEcho.Omnified.Vision.Properties.Xaml", typeof(Xaml).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,38 +61,42 @@ namespace BadEcho.Omnified.Vision.Statistics.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot update the &apos;{0}&apos; statistic as it currently isn&apos;t bound to a child view model..
+        ///   Looks up a localized string similar to &lt;!--
+        ///    &lt;copyright&gt;
+        ///        Created by Matt Weber &lt;matt@badecho.com&gt;
+        ///        Copyright @ 2021 Bad Echo LLC. All Rights Reserved.
+        ///    &lt;/copyright&gt;
+        ///--&gt;
+        ///&lt;Grid xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;&gt;
+        ///    
+        ///    &lt;ItemsControl ItemsSource=&quot;{Binding Children}&quot; /&gt;
+        ///
+        ///&lt;/Grid&gt;.
         /// </summary>
-        internal static string CannotUpdateUnboundStatistic {
+        internal static string VisionWindowContent {
             get {
-                return ResourceManager.GetString("CannotUpdateUnboundStatistic", resourceCulture);
+                return ResourceManager.GetString("VisionWindowContent", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following JSON does not adhere to the Omnified game statistics messaging schema: {0}.
+        ///   Looks up a localized string similar to &lt;!--
+        ///    &lt;copyright&gt;
+        ///        Created by Matt Weber &lt;matt@badecho.com&gt;
+        ///        Copyright @ 2021 Bad Echo LLC. All Rights Reserved.
+        ///    &lt;/copyright&gt;
+        ///--&gt;
+        ///&lt;Style TargetType=&quot;{x:Type Window}&quot;
+        ///           xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;
+        ///           xmlns:x=&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;&gt;
+        ///    &lt;Setter Property=&quot;AllowsTransparency&quot; Value=&quot;True&quot;/&gt;
+        ///    &lt;Setter Property=&quot;Background&quot; Value=&quot;Transparent&quot;/&gt;
+        ///    &lt;Setter Property=&quot;WindowState&quot; Value=&quot;Maximized&quot;/&gt;
+        ///  [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string JsonNotStatisticsSchema {
+        internal static string VisionWindowStyle {
             get {
-                return ResourceManager.GetString("JsonNotStatisticsSchema", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The provided Statistic object type lacks support for describing in JSON..
-        /// </summary>
-        internal static string StatisticTypeUnsupportedJson {
-            get {
-                return ResourceManager.GetString("StatisticTypeUnsupportedJson", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The provided Statistic object type lacks a supported view model..
-        /// </summary>
-        internal static string StatisticTypeUnsupportedViewModel {
-            get {
-                return ResourceManager.GetString("StatisticTypeUnsupportedViewModel", resourceCulture);
+                return ResourceManager.GetString("VisionWindowStyle", resourceCulture);
             }
         }
     }
