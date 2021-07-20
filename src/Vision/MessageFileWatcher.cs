@@ -8,6 +8,7 @@
 using System;
 using System.IO;
 using BadEcho.Odin;
+using BadEcho.Odin.Extensions;
 using BadEcho.Omnified.Vision.Extensibility;
 
 namespace BadEcho.Omnified.Vision
@@ -55,9 +56,13 @@ namespace BadEcho.Omnified.Vision
 
         private void HandleMessageFileChanged(object sender, FileSystemEventArgs e)
         {
-            CurrentMessages = File.ReadAllText(e.FullPath);
+            var messageFile = new FileInfo(e.FullPath);
+
+            CurrentMessages = messageFile.ReadAllText(FileShare.ReadWrite);
+
             // TODO: Add mechanism to return only new messages if ProcessNewMessagesOnly is true.
-            NewMessages?.Invoke(this, new EventArgs<string>(CurrentMessages));
+            if (!string.IsNullOrEmpty(CurrentMessages))
+                NewMessages?.Invoke(this, new EventArgs<string>(CurrentMessages));
         }
     }
 }

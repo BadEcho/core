@@ -21,18 +21,8 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="StatisticsViewModel"/> class.
         /// </summary>
-        /// <param name="options">
-        /// A <see cref="CollectionViewModelOptions"/> instance that configures this collection of statistic view model.
-        /// </param>
-        public StatisticsViewModel(CollectionViewModelOptions options) 
-            : base(options)
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StatisticsViewModel"/> class.
-        /// </summary>
         public StatisticsViewModel()
-            : base(new CollectionViewModelOptions())
+            : base(new CollectionViewModelOptions {AsyncBatchBindings = false})
         { }
         
         /// <inheritdoc/>
