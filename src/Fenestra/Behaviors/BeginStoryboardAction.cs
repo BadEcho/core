@@ -38,8 +38,17 @@ namespace BadEcho.Fenestra.Behaviors
         {
             if (Storyboard == null)
                 return false;
-            
-            Storyboard.Begin();
+
+            // The object we're attached to, if possible, will become the inheritance context for the Storyboard, allowing us
+            // to make use of Storyboards defined in separate ResourceDictionaries. 
+            // That being said, we should only be targeting properties that can actually be found within the very same dependency object
+            // we're attached to. If we wish to animate something outside the scope of said containing object, then simply attach another
+            // action-triggering behavior to the outside object with a storyboard only targeting those properties.
+            if (TargetObject is FrameworkElement containingObject)
+                Storyboard.Begin(containingObject);
+            else
+                Storyboard.Begin();
+
             return true;
         }
 

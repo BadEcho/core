@@ -9,7 +9,7 @@
 
         <ResourceDictionary Source="Resources/StatisticTextStyle.xaml"/>
         <ResourceDictionary Source="Resources/StatisticNameTextStyle.xaml"/>
-        <ResourceDictionary Source="Resources/StatisticSharedColumnGridStyle.xaml"/>
+        <ResourceDictionary Source="Resources/StatisticSharedGridStyles.xaml"/>
 
         <ResourceDictionary Source="Resources/ViewContexts.xaml"/>
 

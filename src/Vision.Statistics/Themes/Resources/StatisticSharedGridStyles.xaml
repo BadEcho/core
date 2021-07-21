@@ -7,7 +7,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-
+    
     <Style x:Key="StatisticSharedColumnGridStyle" TargetType="{x:Type Grid}">
         <Setter Property="fenestra:GridBehaviors.ColumnDefinitions">
             <Setter.Value>
@@ -18,5 +18,20 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
+    <Style x:Key="StatisticSharedRowGridStyle" TargetType="{x:Type Grid}">
+        <Setter Property="fenestra:GridBehaviors.RowDefinitions">
+            <Setter.Value>
+                <fenestra:SizeDefinitionCollection>
+                    <fenestra:SizeDefinition SharedSizeGroup="NameRow"/>
+                    <fenestra:SizeDefinition SharedSizeGroup="ValueRow"/>
+                </fenestra:SizeDefinitionCollection>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <fenestra:BooleanToStyleConverter x:Key="IsCompactStyleConverter"
+                                      StyleWhenFalse="{StaticResource StatisticSharedColumnGridStyle}"
+                                      StyleWhenTrue="{StaticResource StatisticSharedRowGridStyle}"
+                                      />
 </ResourceDictionary>

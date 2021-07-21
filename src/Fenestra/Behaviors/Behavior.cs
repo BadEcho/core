@@ -106,17 +106,20 @@ namespace BadEcho.Fenestra.Behaviors
             if (e.NewValue == e.OldValue)
                 return;
 
-            Attach(targetObject);
-
-            var newValue = (TProperty?) e.NewValue;
-
-            if (e.OldValue is TProperty oldValue) 
+            if (e.OldValue is TProperty oldValue)
                 OnValueDisassociated(targetObject, oldValue);
+            
+            var newValue = (TProperty?)e.NewValue;
 
             if (newValue == null)
+            {
                 Detach(targetObject);
-            else
-                OnValueAssociated(targetObject, newValue);
+                return;
+            }
+            
+            Attach(targetObject);
+            
+            OnValueAssociated(targetObject, newValue);
         }
     }
 }

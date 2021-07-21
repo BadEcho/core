@@ -56,7 +56,7 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
         protected override void OnBinding(WholeStatistic model)
         {
             base.OnBinding(model);
-
+            
             Value = model.Value;
         }
 

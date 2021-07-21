@@ -22,25 +22,11 @@ namespace BadEcho.Fenestra.Converters
     {
         /// <inheritdoc/>
         public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is not TInput)
-                return DependencyProperty.UnsetValue;
-
-            var inputValue = (TInput)value;
-
-            return Convert(inputValue, parameter, culture);
-        }
+            => value is TInput inputValue ? Convert(inputValue, parameter, culture) : DependencyProperty.UnsetValue;
 
         /// <inheritdoc/>
-        public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is not TOutput)
-                return DependencyProperty.UnsetValue;
-
-            TOutput outputValue = (TOutput)value;
-
-            return ConvertBack(outputValue, parameter, culture);
-        }
+        public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) 
+            => value is TOutput outputValue ? ConvertBack(outputValue, parameter, culture) : DependencyProperty.UnsetValue;
 
         /// <summary>
         /// Converts the provided input value into its <typeparamref name="TOutput"/> typed form.

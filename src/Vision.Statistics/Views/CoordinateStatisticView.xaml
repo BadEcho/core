@@ -22,15 +22,16 @@
                                          Z="1997.649169219"
                                          />
     </d:DesignProperties.DataContext>
-    <Grid Style="{StaticResource StatisticSharedColumnGridStyle}">
+    <Grid Style="{Binding IsCompact, Converter={StaticResource IsCompactStyleConverter}}">
         <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
                                       Text="{Binding Name}"
                                       Grid.Column="0"
+                                      Grid.Row="0"
                                       />
         
         <StackPanel Orientation="Vertical"
                     Grid.Column="1"
-                    >
+                    Grid.Row="1">
             <StackPanel Orientation="Horizontal">
                 <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
                                               Text="X:"                                           
