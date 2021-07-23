@@ -27,11 +27,11 @@ namespace BadEcho.Fenestra.Views
         protected View() 
             => UserInterface.BuildEnvironment();
 
-        private static object OnCoerceDataContext(DependencyObject d, object e)
+        private static object OnCoerceDataContext(DependencyObject d, object baseValue)
         {
             View view = (View) d;
 
-            return view.EnsureNonLocalContext(e);
+            return view.EnsureNonLocalContext(baseValue);
         }
 
         /// <summary>

@@ -52,19 +52,23 @@ namespace BadEcho.Fenestra
         /// </returns>
         /// <remarks>
         /// <para>
-        /// Attached properties are supposed to feature public accessors in the form of <c>GetNameOfProperty</c> and <c>SetNameOfProperty</c>
-        /// in order to allow to code to interact with them. One might even assume such accessors are hard requirements in order for the
-        /// attached property to function, and that we can expect them to be invoked during run-time for elements defined in XAML.
+        /// Attached properties are supposed to feature public accessors in the form of <c>GetNameOfProperty</c> and <c>SetNameOfProperty</c>.
+        /// These accessors are commonly described, by Microsoft as well as others, as being absolute requirements for the complete and proper
+        /// functioning of whatever attached property we're defining. One might assume, given that these accessors are described as essential,
+        /// that any declarations of a particular attached property in XAML would result in said property's accessors being accessed
+        /// at run-time.
         /// </para>
         /// <para>
         /// This is not the case, however, as attached properties used in XAML do not actually get their accessors invoked; this is done
-        /// purposely as an optimization by the XAML parser. This can result in problems if the attached property has been designed
-        /// such that proper operation requires invocation of an accessor prior to the property being referenced and used.
+        /// purposely as an optimization by the XAML parser. The only time they're actually invoked, outside of any calls we make to them
+        /// in our own code, is at design-time by the XAML designer, when data binding is occurring on the property. This optimization by the
+        /// XAML parser can result in problems if the attached property has been designed such that proper operation requires invocation of an
+        /// accessor prior to the property being referenced and used.
         /// </para>
         /// <para>
         /// For example, if the attached property is meant to be declared and configured using property element syntax as a collection,
         /// the collection must be initialized upon its first access by the XAML parser. The most straightforward way one might facilitate this
-        /// would be to ensure its initialized in its accessor. Because the accessors are never called by the parser, the property will remain
+        /// would be to ensure it's initialized in its accessor. Because the accessors are never called by the parser, the property will remain
         /// null and an error will occur.
         /// </para>
         /// <para>
