@@ -14,6 +14,7 @@ using System.Windows.Documents;
 using System.Windows.Markup;
 using System.Windows.Media;
 using BadEcho.Odin;
+using BadEcho.Odin.Extensions;
 
 namespace BadEcho.Fenestra.Controls
 {
@@ -23,6 +24,8 @@ namespace BadEcho.Fenestra.Controls
     [ContentProperty(nameof(Text))]
     public sealed class OutlinedTextElement : FrameworkElement
     {
+        private const string SELF_FORMAT_ITEM = "{0}";
+
         /// <summary>
         /// Identifies the <see cref="Fill"/> dependency property.
         /// </summary>
@@ -96,6 +99,14 @@ namespace BadEcho.Fenestra.Controls
                                           typeof(string),
                                           typeof(OutlinedTextElement),
                                           new FrameworkPropertyMetadata(OnTextInvalidated));
+        /// <summary>
+        /// Identifies the <see cref="TextFormatString"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty TextFormatStringProperty
+            = DependencyProperty.Register(nameof(TextFormatString),
+                                          typeof(string),
+                                          typeof(OutlinedTextElement),
+                                          new FrameworkPropertyMetadata(SELF_FORMAT_ITEM, OnTextInvalidated, OnCoerceTextFormatString));
         /// <summary>
         /// Identifies the <see cref="TextAlignment"/> dependency property.
         /// </summary>
@@ -244,6 +255,19 @@ namespace BadEcho.Fenestra.Controls
         }
 
         /// <summary>
+        /// Gets or sets a string that specifies how to format the text contents of this element.
+        /// </summary>
+        /// <remarks>
+        /// Leaving this property unset, or setting it back to its default value, will result in no formatting being applied to
+        /// the <see cref="Text"/> property.
+        /// </remarks>
+        public string TextFormatString
+        {
+            get => (string) GetValue(TextFormatStringProperty);
+            set => SetValue(TextFormatStringProperty, value);
+        }
+
+        /// <summary>
         /// Gets or sets a value that specifies the horizontal alignment of text content.
         /// </summary>
         public TextAlignment TextAlignment
@@ -282,7 +306,9 @@ namespace BadEcho.Fenestra.Controls
 
                 DpiScale dpi = VisualTreeHelper.GetDpi(this);
 
-                _formattedText = new FormattedText(Text ?? string.Empty,
+                var text = !string.IsNullOrEmpty(Text) ? TextFormatString.CulturedFormat(Text) : string.Empty;
+
+                _formattedText = new FormattedText(text,
                                                    CultureInfo.CurrentUICulture,
                                                    FlowDirection,
                                                    new Typeface(FontFamily, FontStyle, FontWeight, FontStretch),
@@ -376,6 +402,11 @@ namespace BadEcho.Fenestra.Controls
 
             textElement.UpdateTextPen();
         }
+
+        private static object OnCoerceTextFormatString(DependencyObject d, object baseValue)
+            => string.IsNullOrEmpty((string) baseValue)
+                ? SELF_FORMAT_ITEM
+                : baseValue;
 
         private void ResetText(bool reuseFormattedText)
         {
