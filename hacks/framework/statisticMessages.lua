@@ -7,14 +7,16 @@ require("utility")
 StatisticType = defineEnum {
     "Whole",
     "Fractional",
-    "Coordinate"
+    "Coordinate",
+    "Group"
 }
 
-function WholeStatistic(name, value)
+function WholeStatistic(name, value, isCritical)
     local wholeStatistic = {
         Type = StatisticType.Whole,
         Statistic = {
             Name = name,
+            IsCritical = isCritical,
             Value = value
         }
     }
@@ -47,4 +49,16 @@ function CoordinateStatistic(name, x, y, z)
     }
 
     return coordinateStatistic
+end
+
+function StatisticGroup(name, statistics)
+    local statisticGroup = {
+        Type = StatisticType.Group,        
+        Statistic = {
+            Name = name,
+            Children = statistics
+        }
+    }
+
+    return statisticGroup
 end

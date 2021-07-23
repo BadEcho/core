@@ -16,7 +16,7 @@ local function dumpStatistics()
                                 or readInteger(playerMaxHealthAddress)
 
     -- Last damaged enemy health always floating point, as it is maintained by the Apocalypse system.
-    local enemyHealth = floor(readFloat(lastEnemyHealthValue))
+    local enemyHealth = floor(readFloat("lastEnemyHealthValue"))
 
     local lastDamageToPlayer = floor(readFloat("lastDamageToPlayer"))
     local maxDamageToPlayer = floor(readFloat("maxDamageToPlayer"))
@@ -31,11 +31,15 @@ local function dumpStatistics()
     local statistics = {
         FractionalStatistic("Health", playerHealth, playerMaxHealth),
         WholeStatistic("Enemy Health", enemyHealth),
-        WholeStatistic("Last Damage Taken", lastDamageToPlayer),
-        WholeStatistic("Max Damage Taken", maxDamageToPlayer),
-        WholeStatistic("Last Damage Done", lastDamageByPlayer),
-        WholeStatistic("Max Damage Done", maxDamageByPlayer),
-        WholeStatistic("Total Damage Done", totalDamageByPlayer),
+        StatisticGroup("Damage Taken", { 
+            WholeStatistic("Last", lastDamageToPlayer), 
+            WholeStatistic("Max", maxDamageToPlayer, true),
+        }),
+        StatisticGroup("Damage Inflicted", {
+            WholeStatistic("Last", lastDamageByPlayer),
+            WholeStatistic("Max", maxDamageByPlayer),
+            WholeStatistic("Total", totalDamageByPlayer)
+        }),
         CoordinateStatistic("Coordinates", playerCoordinates.X, playerCoordinates.Y, playerCoordinates.Z)
     }
 
