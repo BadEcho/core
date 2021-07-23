@@ -16,7 +16,7 @@ namespace BadEcho.Omnified.Vision.Statistics
     /// <summary>
     /// Provides a converter of <see cref="Statistic"/> objects to or from JSON.
     /// </summary>
-    public sealed class StatisticConverter : JsonPolymorphicConverter<StatisticType,Statistic>
+    public sealed class StatisticConverter : JsonPolymorphicConverter<StatisticType,IStatistic>
     {
         private const string STATISTIC_DATA_PROPERTY_NAME = "Statistic";
 
@@ -25,13 +25,19 @@ namespace BadEcho.Omnified.Vision.Statistics
             => STATISTIC_DATA_PROPERTY_NAME;
 
         /// <inheritdoc/>
-        protected override Statistic? ReadFromDescriptor(ref Utf8JsonReader reader, StatisticType typeDescriptor)
+        protected override IStatistic? ReadFromDescriptor(ref Utf8JsonReader reader, StatisticType typeDescriptor)
         {
+            var options = new JsonSerializerOptions
+                          {
+                              Converters = { new StatisticConverter() }
+                          };
+
             return typeDescriptor switch
             {
                 StatisticType.Whole => JsonSerializer.Deserialize<WholeStatistic>(ref reader),
                 StatisticType.Fractional => JsonSerializer.Deserialize<FractionalStatistic>(ref reader),
                 StatisticType.Coordinate => JsonSerializer.Deserialize<CoordinateStatistic>(ref reader),
+                StatisticType.Group => JsonSerializer.Deserialize<StatisticGroup>(ref reader, options),
                 _ => throw new InvalidEnumArgumentException(nameof(typeDescriptor), 
                                                             (int) typeDescriptor, 
                                                             typeof(StatisticType))
@@ -39,13 +45,14 @@ namespace BadEcho.Omnified.Vision.Statistics
         }
 
         /// <inheritdoc/>
-        protected override StatisticType DescriptorFromValue(Statistic value)
+        protected override StatisticType DescriptorFromValue(IStatistic value)
         {
             return value switch
             {
                 WholeStatistic => StatisticType.Whole,
                 FractionalStatistic => StatisticType.Fractional,
                 CoordinateStatistic => StatisticType.Coordinate,
+                StatisticGroup => StatisticType.Group,
                 _ => throw new ArgumentException(Strings.StatisticTypeUnsupportedJson,
                                                  nameof(value))
             };

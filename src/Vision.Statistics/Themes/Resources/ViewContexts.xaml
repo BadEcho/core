@@ -24,5 +24,9 @@
     <DataTemplate DataType="{x:Type vm:StatisticsViewModel}">
         <v:StatisticsView/>
     </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:StatisticGroupViewModel}">
+        <v:StatisticGroupView/>
+    </DataTemplate>
     
 </ResourceDictionary>

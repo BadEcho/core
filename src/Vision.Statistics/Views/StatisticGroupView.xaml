@@ -1,0 +1,44 @@
+﻿<!--
+    <copyright>
+        Created by Matt Weber <matt@badecho.com>
+        Copyright @ 2021 Bad Echo LLC. All Rights Reserved.
+    </copyright>
+-->
+<fenestra:View x:Class="BadEcho.Omnified.Vision.Statistics.Views.StatisticGroupView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                 xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"      
+                 xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Statistics.ViewModels"
+                 xmlns:v="clr-namespace:BadEcho.Omnified.Vision.Statistics.Views"
+                 mc:Ignorable="d" 
+                 >
+    <d:DesignProperties.DataContext>
+        <vm:StatisticGroupViewModel Name="Damage Taken">
+            <vm:StatisticGroupViewModel.Statistics>
+                <vm:StatisticsViewModel>
+                    <vm:StatisticsViewModel.Children>
+                        <vm:WholeStatisticViewModel Name="Last" Value="3031"/>
+                        <vm:WholeStatisticViewModel Name="Max" Value="293939339"/>
+                    </vm:StatisticsViewModel.Children>
+                </vm:StatisticsViewModel>
+            </vm:StatisticGroupViewModel.Statistics>
+        </vm:StatisticGroupViewModel>
+    </d:DesignProperties.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
+                                      Text="{Binding Name}"
+                                      Grid.Row="0"
+                                      />
+        <v:StatisticsView v:StatisticLayout.IsCompact="True"
+                          DataContext="{Binding Statistics}"
+                          Margin="25,0,0,0"
+                          Grid.Row="1"
+                          />
+    </Grid>
+</fenestra:View>

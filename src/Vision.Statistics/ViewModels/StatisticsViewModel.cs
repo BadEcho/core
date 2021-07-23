@@ -16,7 +16,7 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
     /// <summary>
     /// Provides a view model that displays statistics exported from an Omnified game.
     /// </summary>
-    internal sealed class StatisticsViewModel : CollectionViewModel<Statistic,IStatisticViewModel>
+    internal sealed class StatisticsViewModel : CollectionViewModel<IStatistic,IStatisticViewModel>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="StatisticsViewModel"/> class.
@@ -24,9 +24,9 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
         public StatisticsViewModel()
             : base(new CollectionViewModelOptions {AsyncBatchBindings = false})
         { }
-        
+
         /// <inheritdoc/>
-        public override IStatisticViewModel CreateChild(Statistic model)
+        public override IStatisticViewModel CreateChild(IStatistic model)
         {
             Require.NotNull(model, nameof(model));
 
@@ -35,12 +35,13 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
                 WholeStatistic whole => new WholeStatisticViewModel(whole),
                 FractionalStatistic fractional => new FractionalStatisticViewModel(fractional),
                 CoordinateStatistic coordinate => new CoordinateStatisticViewModel(coordinate),
+                StatisticGroup group => new StatisticGroupViewModel(group),
                 _ => throw new ArgumentException(Strings.StatisticTypeUnsupportedViewModel, nameof(model))
             };
         }
 
         /// <inheritdoc/>
-        public override void UpdateChild(Statistic model)
+        public override void UpdateChild(IStatistic model)
         {
             Require.NotNull(model, nameof(model));
 
@@ -57,6 +58,10 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
                 case CoordinateStatistic coordinate:
                     UpdateChild<CoordinateStatisticViewModel, CoordinateStatistic>(coordinate);
                     break;
+
+                case StatisticGroup group:
+                    UpdateChild<StatisticGroupViewModel, StatisticGroup>(group);
+                    break;
             }
         }
 
@@ -65,7 +70,7 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
         { }
 
         private void UpdateChild<TStatisticViewModel, TStatistic>(TStatistic model)
-            where TStatistic : Statistic
+            where TStatistic : IStatistic
             where TStatisticViewModel : ViewModel<TStatistic>, IStatisticViewModel
         {
             var existingChild = FindChild<TStatisticViewModel>(model);

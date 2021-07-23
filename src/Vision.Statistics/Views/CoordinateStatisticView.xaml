@@ -11,18 +11,21 @@
                xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"                   
                xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Statistics.ViewModels"
+               xmlns:v="clr-namespace:BadEcho.Omnified.Vision.Statistics.Views"
                mc:Ignorable="d" 
                d:DesignHeight="250" 
                d:DesignWidth="400"
                >
     <d:DesignProperties.DataContext>
-        <vm:CoordinateStatisticViewModel Name="Coordinates:"
+        <vm:CoordinateStatisticViewModel Name="Coordinates"
                                          X="-1566.7635498047"
                                          Y="0.10857523977757"
                                          Z="1997.649169219"
                                          />
     </d:DesignProperties.DataContext>
-    <Grid Style="{Binding IsCompact, Converter={StaticResource IsCompactStyleConverter}}">
+    <Grid Style="{Binding (v:StatisticLayout.IsCompact), 
+                          RelativeSource={RelativeSource AncestorType=UserControl}, 
+                          Converter={StaticResource IsCompactGridStyleConverter}}">
         <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
                                       Text="{Binding Name}"
                                       Grid.Column="0"
@@ -34,7 +37,7 @@
                     Grid.Row="1">
             <StackPanel Orientation="Horizontal">
                 <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
-                                              Text="X:"                                           
+                                              Text="X"                                           
                                               />
                 <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
                                               Text="{Binding X}"
@@ -42,7 +45,7 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
-                                              Text="Y:"
+                                              Text="Y"
                                               />
                 <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
                                               Text="{Binding Y}"
@@ -50,7 +53,7 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
-                                              Text="Z:"
+                                              Text="Z"
                                               />
                 <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
                                               Text="{Binding Z}"

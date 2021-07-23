@@ -23,6 +23,10 @@ namespace BadEcho.Omnified.Vision.Statistics
         /// <summary>
         /// A coordinate triplet value statistic.
         /// </summary>
-        Coordinate
+        Coordinate,
+        /// <summary>
+        /// A grouping of similar statistics.
+        /// </summary>
+        Group
     }
 }

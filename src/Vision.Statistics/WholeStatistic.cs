@@ -13,6 +13,12 @@ namespace BadEcho.Omnified.Vision.Statistics
     public sealed class WholeStatistic : Statistic
     {
         /// <summary>
+        /// Gets or set a value indicating if updates to this statistic are critical events.
+        /// </summary>
+        public bool IsCritical
+        { get; set; }
+
+        /// <summary>
         /// Gets or sets the whole numeric value for the statistic.
         /// </summary>
         public int Value

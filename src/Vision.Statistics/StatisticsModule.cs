@@ -55,14 +55,14 @@ namespace BadEcho.Omnified.Vision.Statistics
             return _viewModel;
         }
 
-        private static IEnumerable<Statistic> ReadStatistics(string messages)
+        private static IEnumerable<IStatistic> ReadStatistics(string messages)
         {
             var options = new JsonSerializerOptions
                           {
                               Converters = {new StatisticConverter()}
                           };
 
-            var statistics = JsonSerializer.Deserialize<IEnumerable<Statistic>>(messages, options);
+            var statistics = JsonSerializer.Deserialize<IEnumerable<IStatistic>>(messages, options);
 
             return statistics
                 ?? throw new ArgumentException(Strings.JsonNotStatisticsSchema.InvariantFormat(messages), nameof(messages));

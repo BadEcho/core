@@ -56,7 +56,7 @@ function StatisticGroup(name, statistics)
         Type = StatisticType.Group,        
         Statistic = {
             Name = name,
-            Children = statistics
+            Statistics = statistics
         }
     }
 

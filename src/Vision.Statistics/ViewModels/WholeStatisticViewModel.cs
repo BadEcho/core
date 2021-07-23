@@ -35,7 +35,7 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
         { }
 
         /// <summary>
-        /// Gets or sets a value indicating if updates to the bound statistic is a critical event.
+        /// Gets or sets a value indicating if updates to the bound statistic are critical events.
         /// </summary>
         public bool IsCritical
         {
@@ -56,7 +56,8 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
         protected override void OnBinding(WholeStatistic model)
         {
             base.OnBinding(model);
-            
+
+            IsCritical = model.IsCritical;
             Value = model.Value;
         }
 
@@ -65,6 +66,7 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
         {
             base.OnUnbound(model);
 
+            IsCritical = false;
             Value = default;
         }
     }

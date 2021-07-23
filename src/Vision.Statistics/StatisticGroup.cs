@@ -5,18 +5,26 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using BadEcho.Odin.Extensions;
 
 namespace BadEcho.Omnified.Vision.Statistics
 {
     /// <summary>
-    /// Provides an individual statistic exported from an Omnified game.
+    /// Provides a grouping of similar statistics exported from an Omnified game.
     /// </summary>
-    public abstract class Statistic : IStatistic
+    public sealed class StatisticGroup : IStatistic
     {
         /// <inheritdoc/>
         public string Name
         { get; init; } = string.Empty;
+
+        /// <summary>
+        /// Gets a sequence of individual statistics that comprise this group.
+        /// </summary>
+        public IEnumerable<IStatistic> Statistics 
+        { get; init; } = new Collection<IStatistic>();
 
         /// <inheritdoc/>
         /// <remarks>
@@ -24,8 +32,8 @@ namespace BadEcho.Omnified.Vision.Statistics
         /// and to allow for in-place rebindings of the view models responsible for displaying statistics with updated
         /// statistical data.
         /// </remarks>
-        public override bool Equals(object? obj) 
-            => obj is Statistic other && Name == other.Name;
+        public override bool Equals(object? obj)
+            => obj is StatisticGroup other && Name == other.Name;
 
         /// <inheritdoc/>
         public override int GetHashCode()

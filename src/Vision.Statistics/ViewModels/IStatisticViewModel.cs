@@ -13,6 +13,11 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
     /// <summary>
     /// Defines a view model that facilitates the display of an individual statistic exported from an Omnified game.
     /// </summary>
-    internal interface IStatisticViewModel : IViewModel, IModelProvider<Statistic>
-    { }
+    internal interface IStatisticViewModel : IViewModel, IModelProvider<IStatistic>
+    {
+        /// <summary>
+        /// Gets or sets the displayed name for the bound statistic.
+        /// </summary>
+        string Name { get; set; }
+    }
 }

@@ -5,17 +5,16 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Omnified.Vision.Statistics.Views
+namespace BadEcho.Omnified.Vision.Statistics
 {
     /// <summary>
-    /// Provides a view for a collection of statistics exported from an Omnified game.
+    /// Defines an individual statistic exported from an Omnified game.
     /// </summary>
-    public partial class StatisticsView
+    public interface IStatistic
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="StatisticsView"/> class.
+        /// Gets or sets the display name of the statistic.
         /// </summary>
-        public StatisticsView() 
-            => InitializeComponent();
+        string Name { get; }
     }
 }
