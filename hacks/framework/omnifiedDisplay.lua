@@ -47,21 +47,6 @@ function activateLoggers()
 		
 		deathcounter:close()	
 		
-		
-		local stats = assert(io.open("\\\\parsec\\c$\\streamData\\stats.txt","w"))		
-		
-		if playerHealth ~= nil and playerHealth == 0xFFFFFFFF then
-			playerHealth = 0
-		end		
-
-		if playerHealth ~= nil and playerMaxHealth ~= nil then
-			stats:write("Health: ", playerHealth, "/", playerMaxHealth, "\n")
-		end
-
-		if enemyHealth ~= nil then
-           stats:write( "Enemy: ", enemyHealth, "\n")
-		end
-
 		local lastDamageToPlayer = readFloat("lastDamageToPlayer")
 		local maxDamageToPlayer = readFloat("maxDamageToPlayer")
 		local lastDamageByPlayer = readFloat("lastDamageByPlayer")
@@ -73,42 +58,6 @@ function activateLoggers()
 		lastDamageByPlayer = FloorIt(lastDamageByPlayer)
 		maxDamageByPlayer = FloorIt(maxDamageByPlayer)
 		totalDamageByPlayer = FloorIt(totalDamageByPlayer)
-
-		if lastDamageToPlayer ~= nil and maxDamageToPlayer ~= nil then
-			stats:write( "Enemy L/M Dmg: ", lastDamageToPlayer, "/", maxDamageToPlayer, "\n")
-		end
-
-		if lastDamageByPlayer ~= nil and maxDamageByPlayer ~= nil then
-			stats:write( "Player L/M Dmg: ", lastDamageByPlayer, "/", maxDamageByPlayer, "\n")
-		end
-
-		if totalDamageByPlayer ~= nil then
-			stats:write( "Player Total Dmg: ", totalDamageByPlayer, "\n")
-		end
-
-		local coordinates = readPlayerCoordinates()
-
-		if coordinates.X ~= nil and coordinates.Y ~= nil and coordinates.Z ~= nil then
-			stats:write( "X: ", coordinates.X, "\n")
-			stats:write( "Y: ", coordinates.Y, "\n")
-			stats:write( "Z: ",  coordinates.Z, "\n")
-		end
-		
-		local playerDamageX = readFloat("playerDamageX")
-		
-		if playerDamageX ~= nil then
-			playerDamageX = math.floor(playerDamageX*10)/10
-			stats:write("Player Damage: ", playerDamageX, "x\n")
-		end
-		
-		--local souls = readInteger("[[player]+0x1FA0]+0x74")
-		
-		if souls ~= nil then
-			stats:write("Souls: ", souls, "\n")
-		end
-
-
-		stats:close()
 
 		local log = assert(io.open("log.txt", "a"))
 
