@@ -6,7 +6,9 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Windows.Interop;
 using BadEcho.Fenestra.Windows;
+using BadEcho.Odin.Interop;
 using BadEcho.Omnified.Vision.Properties;
 using BadEcho.Omnified.Vision.ViewModels;
 
@@ -37,6 +39,17 @@ namespace BadEcho.Omnified.Vision.Windows
 
             Topmost = true;
             Activate();
+        }
+
+        /// <inheritdoc/>
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+
+            IntPtr handle = new WindowInteropHelper(this).Handle;
+            var nativeWindow = new NativeWindow(handle);
+
+            nativeWindow.MakeOverlay();
         }
     }
 }
