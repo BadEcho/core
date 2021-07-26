@@ -18,6 +18,9 @@ namespace BadEcho.Fenestra.Views
     {
         private object? _localDesignContext;
 
+        /// <summary>
+        /// Initializes the <see cref="View"/> class.
+        /// </summary>
         static View() 
             => DataContextProperty.OverrideMetadata(typeof(View), new FrameworkPropertyMetadata(null, OnCoerceDataContext));
 
