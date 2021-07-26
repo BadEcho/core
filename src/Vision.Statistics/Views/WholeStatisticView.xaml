@@ -13,8 +13,6 @@
                xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Statistics.ViewModels"
                xmlns:v="clr-namespace:BadEcho.Omnified.Vision.Statistics.Views"
                mc:Ignorable="d" 
-               d:DesignHeight="250" 
-               d:DesignWidth="600"
                >    
     <d:DesignProperties.DataContext>
         <vm:WholeStatisticViewModel Name="Total Damage Done"

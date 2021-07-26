@@ -27,7 +27,7 @@ namespace BadEcho.Fenestra.Views
         protected View() 
             => UserInterface.BuildEnvironment();
 
-        private static object OnCoerceDataContext(DependencyObject d, object baseValue)
+        private static object? OnCoerceDataContext(DependencyObject d, object? baseValue)
         {
             View view = (View) d;
 
@@ -75,14 +75,14 @@ namespace BadEcho.Fenestra.Views
         /// present in almost all but the most trivial of views.
         /// </para>
         /// </remarks>
-        private object EnsureNonLocalContext(object newContext)
+        private object? EnsureNonLocalContext(object? newContext)
         {
             if (!DesignerProperties.GetIsInDesignMode(this))
                 return newContext;
 
             if (_localDesignContext != null)
             {
-                if (_localDesignContext.GetType() != newContext.GetType())
+                if (_localDesignContext.GetType() != newContext?.GetType())
                     _localDesignContext = newContext;
 
                 return _localDesignContext;
