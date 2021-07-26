@@ -31,7 +31,7 @@ namespace BadEcho.Fenestra.Views
         {
             View view = (View) d;
 
-            return view.EnsureNonLocalContext(baseValue);
+            return view.EnsureLocalContext(baseValue);
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace BadEcho.Fenestra.Views
         /// present in almost all but the most trivial of views.
         /// </para>
         /// </remarks>
-        private object? EnsureNonLocalContext(object? newContext)
+        private object? EnsureLocalContext(object? newContext)
         {
             if (!DesignerProperties.GetIsInDesignMode(this))
                 return newContext;
