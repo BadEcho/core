@@ -12,7 +12,7 @@ namespace BadEcho.Odin.Extensibility.Configuration
 {
     /// <summary>
     /// Provides configuration settings for Odin's Extensibility framework suitable for binding against with a
-    /// generic configuration provider (i.e. Microsoft's IConfiguration binder).
+    /// generic configuration provider (i.e. Microsoft's IConfiguration binder, or even just a JSON deserializer).
     /// </summary>
     public sealed class ExtensibilityConfiguration : IExtensibilityConfiguration
     {

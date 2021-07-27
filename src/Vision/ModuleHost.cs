@@ -23,11 +23,12 @@ namespace BadEcho.Omnified.Vision
         /// Initializes a new instance of the <see cref="ModuleHost"/> class.
         /// </summary>
         /// <param name="module">The Vision module to be hosted.</param>
-        public ModuleHost(IVisionModule module)
+        /// <param name="configuration">Configuration settings for the Vision application.</param>
+        public ModuleHost(IVisionModule module, VisionConfiguration configuration)
         {
             Require.NotNull(module, nameof(module));
 
-            _messageFileWatcher = new MessageFileWatcher(module);
+            _messageFileWatcher = new MessageFileWatcher(module, configuration.MessageFilesDirectory);
 
             ModuleViewModel = module.EnableModule(_messageFileWatcher);
         }

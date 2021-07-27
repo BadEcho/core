@@ -21,12 +21,13 @@ namespace BadEcho.Omnified.Vision.Windows
         /// <inheritdoc/>
         public VisionViewModel Assemble(Dispatcher dispatcher)
         {
+            var configuration = VisionConfiguration.Load();
             var viewModel = new VisionViewModel();
             var modules = PluginHost.Load<IVisionModule>();
 
             foreach (var module in modules)
             {
-                var moduleHost = new ModuleHost(module);
+                var moduleHost = new ModuleHost(module, configuration);
 
                 viewModel.Bind(moduleHost);
             }

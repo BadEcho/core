@@ -24,7 +24,7 @@ namespace BadEcho.Omnified.Vision.Tests
         {
             _module = new FakeVisionModule();
 
-            _watcher = new MessageFileWatcher(_module);
+            _watcher = new MessageFileWatcher(_module, string.Empty);
         }
         
         public void Dispose() 

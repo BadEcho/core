@@ -31,22 +31,27 @@ namespace BadEcho.Omnified.Vision
         /// Initializes a new instance of the <see cref="MessageFileWatcher"/> class.
         /// </summary>
         /// <param name="module">The vision module whose message file this watcher will be monitoring.</param>
-        public MessageFileWatcher(IVisionModule module)
+        /// <param name="messageFilesDirectory"
+        /// >The path relative from Vision's base directory to the directory where all message files are being written to.
+        /// </param>
+        public MessageFileWatcher(IVisionModule module, string messageFilesDirectory)
         {
             Require.NotNull(module, nameof(module));
+            Require.NotNull(messageFilesDirectory, nameof(messageFilesDirectory));
 
-            if (File.Exists(module.MessageFile))
-                CurrentMessages = File.ReadAllText(module.MessageFile);
+            string messageFilePath = Path.Combine(messageFilesDirectory, module.MessageFile);
+
+            if (File.Exists(messageFilePath))
+                CurrentMessages = File.ReadAllText(messageFilePath);
 
             _watcher = new FileSystemWatcher
                        {
                            Filter = module.MessageFile,
                            NotifyFilter = NotifyFilters.LastWrite,
-                           Path = AppContext.BaseDirectory
+                           Path = messageFilesDirectory
                        };
 
             _watcher.Changed += HandleMessageFileChanged;
-
             _watcher.EnableRaisingEvents = true;
         }
 
@@ -58,6 +63,8 @@ namespace BadEcho.Omnified.Vision
         {
             var messageFile = new FileInfo(e.FullPath);
 
+            // Injected Omnified code will be writing to the message file at high frequency, so we should assume the file is
+            // almost always open by that process.
             CurrentMessages = messageFile.ReadAllText(FileShare.ReadWrite);
 
             // TODO: Add mechanism to return only new messages if ProcessNewMessagesOnly is true.

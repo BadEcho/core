@@ -6,6 +6,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using BadEcho.Odin.Extensibility.Configuration;
@@ -18,7 +19,7 @@ namespace BadEcho.Odin.Tests.Configuration
     public class ConfigurationProviderTests
     {
         [Fact]
-        public void GetExtensibilityConfiguration_JsonReturnsValid()
+        public void GetExtensibilityConfiguration_Json_ReturnsValid()
         {
             var builder = new ConfigurationBuilder()
                           .SetBasePath(Directory.GetCurrentDirectory())
@@ -29,6 +30,21 @@ namespace BadEcho.Odin.Tests.Configuration
             var extensibility = configuration.Get<ExtensibilityConfiguration>();
 
             ValidateConfiguration(extensibility);
+        }
+
+        [Fact]
+        public void GetContractSection_Json_ReturnsValid()
+        {
+            var builder = new ConfigurationBuilder()
+                          .SetBasePath(Directory.GetCurrentDirectory())
+                          .AddJsonFile("test.json");
+
+            var configuration = builder.Build();
+
+            var contracts = configuration.GetSection("segmentedContracts")
+                                         .Get<IEnumerable<ContractConfiguration>>();
+
+            Assert.Single(contracts);
         }
 
         [Fact]
