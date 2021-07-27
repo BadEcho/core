@@ -37,7 +37,10 @@ namespace BadEcho.Omnified.Vision
         public MessageFileWatcher(IVisionModule module, string messageFilesDirectory)
         {
             Require.NotNull(module, nameof(module));
-            Require.NotNull(messageFilesDirectory, nameof(messageFilesDirectory));
+
+            // FileSystemWatcher requires a valid path value -- it doesn't treat an empty path as the current directory.
+            if (string.IsNullOrEmpty(messageFilesDirectory)) 
+                messageFilesDirectory = AppContext.BaseDirectory;
 
             string messageFilePath = Path.Combine(messageFilesDirectory, module.MessageFile);
 
