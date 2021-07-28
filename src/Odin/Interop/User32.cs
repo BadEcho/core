@@ -18,6 +18,15 @@ namespace BadEcho.Odin.Interop
         private const string LIBRARY_NAME = "user32";
 
         /// <summary>
+        /// Retrieves the specified system metric or configuration setting.
+        /// </summary>
+        /// <param name="nIndex">The system metric or configuration setting to retrieve.</param>
+        /// <returns>If successful, the request system metric or configuration setting; otherwise, zero.</returns>
+        [DllImport(LIBRARY_NAME, ExactSpelling = true)]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+        public static extern int GetSystemMetrics(SystemMetric nIndex);
+
+        /// <summary>
         /// Retrieves the dimensions of the bounding rectangle of the specified window.
         /// </summary>
         /// <param name="hWnd">A handle to the window.</param>
