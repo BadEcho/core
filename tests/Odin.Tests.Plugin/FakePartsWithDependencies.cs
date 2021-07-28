@@ -26,7 +26,8 @@ namespace BadEcho.Odin.Tests.Plugin
     [Export(typeof(IFakePartWithComposedDependencies))]
     public class FakePartWithComposedDependencies : IFakePartWithComposedDependencies
     {
-        private const string DEPENDENCY_CONTRACT = "SuperFakeDependency";
+        private const string DEPENDENCY_CONTRACT 
+            = nameof(FakePartWithComposedDependencies) + nameof(LocalDependency);
 
         [ImportingConstructor]
         public FakePartWithComposedDependencies([Import(DEPENDENCY_CONTRACT)] IFakeDependency dependency)
@@ -36,10 +37,13 @@ namespace BadEcho.Odin.Tests.Plugin
 
         public IFakeDependency Dependency { get; }
 
+        /// <suppressions>
+        /// ReSharper disable ClassNeverInstantiated.Local
+        /// </suppressions>
         [Export(typeof(IConventionProvider))]
-        private class LocalDependencyRegistry : DependencyRegistry<IFakeDependency>
+        private class LocalDependency : DependencyRegistry<IFakeDependency>
         {
-            public LocalDependencyRegistry()
+            public LocalDependency()
                 : base(DEPENDENCY_CONTRACT)
             { }
         }

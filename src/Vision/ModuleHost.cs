@@ -6,6 +6,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using BadEcho.Fenestra.ViewModels;
 using BadEcho.Odin;
 using BadEcho.Omnified.Vision.Extensibility;
@@ -30,6 +31,7 @@ namespace BadEcho.Omnified.Vision
 
             _messageFileWatcher = new MessageFileWatcher(module, configuration.MessageFilesDirectory);
 
+            Location = module.DefaultLocation;
             ModuleViewModel = module.EnableModule(_messageFileWatcher);
         }
 
@@ -37,6 +39,12 @@ namespace BadEcho.Omnified.Vision
         /// Gets the view model exported by an activated Vision module.
         /// </summary>
         public IViewModel ModuleViewModel
+        { get; }
+
+        /// <summary>
+        /// Gets the location of the anchor point for the Vision module.
+        /// </summary>
+        public AnchorPointLocation Location
         { get; }
 
         /// <inheritdoc/>

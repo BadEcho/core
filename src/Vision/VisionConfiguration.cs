@@ -5,27 +5,27 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using BadEcho.Omnified.Vision.Extensibility;
 
 namespace BadEcho.Omnified.Vision
 {
     /// <summary>
     /// Provides configuration settings for the Vision application.
     /// </summary>
-    internal sealed class VisionConfiguration
+    internal sealed class VisionConfiguration : IVisionConfiguration
     {
         private const string SETTINGS_FILE = "settings.json";
 
-        /// <summary>
-        /// Gets or sets the path relative from Vision's base directory to the directory where all message files
-        /// are being written to.
-        /// </summary>
-        /// <remarks>
-        /// Message files are most often found in the directory containing the injected hacking code for the targeted
-        /// binary. This must be set to that directory if we wish to gain vision into it.
-        /// </remarks>
-        public string MessageFilesDirectory { get; set; } = string.Empty;
+        /// <inheritdoc/>
+        public string MessageFilesDirectory 
+        { get; set; } = string.Empty;
+
+        /// <inheritdoc/>
+        public IDictionary<string, VisionModuleConfiguration> Modules 
+        { get; init; }  = new Dictionary<string, VisionModuleConfiguration>();
 
         /// <summary>
         /// Loads an instance of the configuration for this application as it exists on disk.

@@ -8,11 +8,16 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:c="clr-namespace:BadEcho.Omnified.Vision.Converters;assembly=BadEcho.Omnified.Vision"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.ViewModels" 
       d:DataContext="{d:DesignInstance Type=vm:VisionViewModel}"
       mc:Ignorable="d"
       >
+    <Grid.Resources>
+        <c:LocationToHorizontalAlignmentConverter x:Key="LocationHorizontalConverter"/>
+        <c:LocationToVerticalAlignmentConverter x:Key="LocationVerticalConverter"/>
+    </Grid.Resources>
     <ItemsControl ItemsSource="{Binding Children}">
         <ItemsControl.ItemTemplate>
             <DataTemplate>
@@ -21,6 +26,8 @@
                 </DataTemplate.Resources>
                 <UserControl Content="{Binding ModuleViewModel}"
                              ContentTemplateSelector="{StaticResource ContextSelector}"
+                             HorizontalAlignment="{Binding Location, Converter={StaticResource LocationHorizontalConverter}}"
+                             VerticalAlignment="{Binding Location, Converter={StaticResource LocationVerticalConverter}}"
                              />
             </DataTemplate>
         </ItemsControl.ItemTemplate>

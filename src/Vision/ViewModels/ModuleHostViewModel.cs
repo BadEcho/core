@@ -6,6 +6,7 @@
 //-----------------------------------------------------------------------
 
 using BadEcho.Fenestra.ViewModels;
+using BadEcho.Omnified.Vision.Extensibility;
 
 namespace BadEcho.Omnified.Vision.ViewModels
 {
@@ -15,6 +16,7 @@ namespace BadEcho.Omnified.Vision.ViewModels
     internal sealed class ModuleHostViewModel : ViewModel<ModuleHost>
     {
         private IViewModel? _moduleViewModel;
+        private AnchorPointLocation _location;
 
         /// <summary>
         /// Gets or sets the view model exported by the bound hosted Vision module.
@@ -25,12 +27,27 @@ namespace BadEcho.Omnified.Vision.ViewModels
             set => NotifyIfChanged(ref _moduleViewModel, value);
         }
 
-        /// <inheritdoc/>
-        protected override void OnBinding(ModuleHost model) 
-            => ModuleViewModel = model.ModuleViewModel;
+        /// <summary>
+        /// Gets the location of the anchor point for the bound hosted Vision module.
+        /// </summary>
+        public AnchorPointLocation Location
+        {
+            get => _location;
+            set => NotifyIfChanged(ref _location, value);
+        }
 
         /// <inheritdoc/>
-        protected override void OnUnbound(ModuleHost model) 
-            => ModuleViewModel = null;
+        protected override void OnBinding(ModuleHost model)
+        {
+            ModuleViewModel = model.ModuleViewModel;
+            Location = model.Location;
+        }
+
+        /// <inheritdoc/>
+        protected override void OnUnbound(ModuleHost model)
+        {
+            ModuleViewModel = null;
+            Location = default;
+        }
     }
 }

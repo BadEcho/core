@@ -46,7 +46,8 @@ namespace BadEcho.Odin.Tests.Plugin
     [Filterable(AlphaFamily.FamilyIdValue, typeof(AlphaFakePartWithComposedDependencies))]
     public class AlphaFakePartWithComposedDependencies : IFilterableFakePartWithComposedDependencies
     {
-        private const string DEPENDENCY_CONTRACT = "SuperFakeFilterableDependency";
+        private const string DEPENDENCY_CONTRACT 
+            = nameof(AlphaFakePartWithComposedDependencies) + nameof(LocalDependency);
 
         [ImportingConstructor]
         public AlphaFakePartWithComposedDependencies([Import(DEPENDENCY_CONTRACT)]IFilterableFakeDependency dependency)
@@ -65,10 +66,10 @@ namespace BadEcho.Odin.Tests.Plugin
         }
         
         [Export(typeof(IConventionProvider))]
-        [Filterable(AlphaFamily.FamilyIdValue, typeof(LocalDependencyRegistry))]
-        private class LocalDependencyRegistry : DependencyRegistry<IFilterableFakeDependency> , IFilterable
+        [Filterable(AlphaFamily.FamilyIdValue, typeof(LocalDependency))]
+        private class LocalDependency : DependencyRegistry<IFilterableFakeDependency> , IFilterable
         {
-            public LocalDependencyRegistry()
+            public LocalDependency()
                 : base(DEPENDENCY_CONTRACT)
             { }
 
@@ -80,7 +81,8 @@ namespace BadEcho.Odin.Tests.Plugin
     [Filterable(AlphaFamily.FamilyIdValue, typeof(AlphaFakePartWithNonFilterableDependencies))]
     public class AlphaFakePartWithNonFilterableDependencies : IFilterableFakePartWithNonFilterableDependencies
     {
-        private const string DEPENDENCY_CONTRACT = "SuperFakeNonFilterableDependency";
+        private const string DEPENDENCY_CONTRACT 
+            = nameof(AlphaFakePartWithNonFilterableDependencies) + nameof(LocalDependency);
 
         [ImportingConstructor]
         public AlphaFakePartWithNonFilterableDependencies([Import(DEPENDENCY_CONTRACT)] IFakeDependency dependency)
@@ -99,10 +101,10 @@ namespace BadEcho.Odin.Tests.Plugin
         }
 
         [Export(typeof(IConventionProvider))]
-        [Filterable(AlphaFamily.FamilyIdValue, typeof(LocalDependencyRegistry))]
-        private class LocalDependencyRegistry : DependencyRegistry<IFakeDependency>, IFilterable
+        [Filterable(AlphaFamily.FamilyIdValue, typeof(LocalDependency))]
+        private class LocalDependency : DependencyRegistry<IFakeDependency>, IFilterable
         {
-            public LocalDependencyRegistry()
+            public LocalDependency()
                 : base(DEPENDENCY_CONTRACT)
             { }
 

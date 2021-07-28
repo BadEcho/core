@@ -1,3 +1,8 @@
 {
-  "messageFilesDirectory": "..\\..\\hacks\\targets\\witcher3"
+  "messageFilesDirectory": "..\\..\\hacks\\targets\\witcher3",
+  "modules": {
+    "BadEcho.Omnified.Vision.Statistics": {
+      "location": "TopRight"
+    }
+  }
 }

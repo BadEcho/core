@@ -12,7 +12,8 @@ using System.Windows.Data;
 namespace BadEcho.Fenestra.Converters
 {
     /// <summary>
-    /// Provides a value converter that produces <see cref="Style"/> objects to and from provided binary equivalents.
+    /// Provides a value converter that produces <see cref="Style"/> objects equivalent to the Boolean values provided, and vice
+    /// versa.
     /// </summary>
     [ValueConversion(typeof(bool), typeof(Style))]
     public sealed class BooleanToStyleConverter : ValueConverter<bool,Style?>
