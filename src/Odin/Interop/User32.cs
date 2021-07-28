@@ -18,6 +18,20 @@ namespace BadEcho.Odin.Interop
         private const string LIBRARY_NAME = "user32";
 
         /// <summary>
+        /// Retrieves the dimensions of the bounding rectangle of the specified window.
+        /// </summary>
+        /// <param name="hWnd">A handle to the window.</param>
+        /// <param name="lpRect">
+        /// A <see cref="RECT"/> structure that receives the screen coordinates of the upper-left and lower-right corners of
+        /// the window.
+        /// </param>
+        /// <returns>True if the function succeeds; otherwise, false.</returns>
+        [DllImport(LIBRARY_NAME, ExactSpelling = true, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+        public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+
+        /// <summary>
         /// Retrieves information about a specified window.
         /// </summary>
         /// <param name="hWnd">A handle to the window and, indirectly, the class to which the window belongs.</param>

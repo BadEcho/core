@@ -182,4 +182,7 @@
   <data name="BadINotifyPropertyChangedImplementation" xml:space="preserve">
     <value>'{0}' is not a valid INotifyPropertyChanged implementation; event data is missing property name information.</value>
   </data>
+  <data name="NoExceptionFromSuccessfulResult" xml:space="preserve">
+    <value>No comparable exception class can be mapped to the provided HRESULT as it does not represent a failed operation.</value>
+  </data>
 </root>

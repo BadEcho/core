@@ -250,6 +250,15 @@ namespace BadEcho.Odin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No comparable exception class can be mapped to the provided HRESULT as it does not represent a failed operation..
+        /// </summary>
+        internal static string NoExceptionFromSuccessfulResult {
+            get {
+                return ResourceManager.GetString("NoExceptionFromSuccessfulResult", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No export for contract type &apos;{0}&apos; belongs to the &apos;{1}&apos; filterable family..
         /// </summary>
         internal static string NoExportFoundForFamily {

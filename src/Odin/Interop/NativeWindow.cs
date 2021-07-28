@@ -6,6 +6,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace BadEcho.Odin.Interop
 {
@@ -20,12 +21,46 @@ namespace BadEcho.Odin.Interop
         /// </summary>
         /// <param name="handle">The handle to the window.</param>
         public NativeWindow(IntPtr handle)
-            => Handle = handle;
+        {
+            Handle = handle;
+
+            if (!User32.GetWindowRect(handle, out RECT rect))
+                throw ((ResultHandle) Marshal.GetHRForLastWin32Error()).GetException();
+
+            Left = rect.Left;
+            Top = rect.Top;
+            Width = rect.Width;
+            Height = rect.Height;
+        }
 
         /// <summary>
         /// Gets the handle to the window.
         /// </summary>
         public IntPtr Handle
+        { get; }
+
+        /// <summary>
+        /// Gets the position of the window's left edge.
+        /// </summary>
+        public int Left
+        { get; }
+
+        /// <summary>
+        /// Gets the position of the window's top edge.
+        /// </summary>
+        public int Top
+        { get; }
+
+        /// <summary>
+        /// Gets the width of the window.
+        /// </summary>
+        public int Width
+        { get; }
+
+        /// <summary>
+        /// Gets the height of the window.
+        /// </summary>
+        public int Height
         { get; }
 
         /// <summary>
