@@ -14,19 +14,19 @@ namespace BadEcho.Omnified.Vision.Statistics
     public sealed class CoordinateStatistic : Statistic
     {
         /// <summary>
-        /// Gets or sets the value for the X coordinate.
+        /// Gets or sets the value for the x-coordinate.
         /// </summary>
         public float X
         { get; set; }
 
         /// <summary>
-        /// Gets or sets the value for the Y coordinate.
+        /// Gets or sets the value for the y-coordinate.
         /// </summary>
         public float Y
         { get; set; }
 
         /// <summary>
-        /// Gets or sets the value for the Z coordinate.
+        /// Gets or sets the value for the z-coordinate.
         /// </summary>
         public float Z
         { get; set; }
