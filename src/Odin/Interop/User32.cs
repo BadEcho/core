@@ -18,6 +18,33 @@ namespace BadEcho.Odin.Interop
         private const string LIBRARY_NAME = "user32";
 
         /// <summary>
+        /// Enumerates display monitors (including invisible pseudo-monitors associated with the mirroring drivers) that intersect
+        /// a region formed by the intersection of a specified clipping rectangle and the visible region of a device context.
+        /// </summary>
+        /// <param name="hdc">Handle to a display device context that defines the visible region of interest.</param>
+        /// <param name="lprcClip">Pointer to a <see cref="RECT"/> structure that specifies a clipping rectangle.</param>
+        /// <param name="lpfnEnum">Callback invoked by this method with monitor information.</param>
+        /// <param name="lParam">Application-defined data that is passed to the provided callback.</param>
+        /// <returns>True if successful; otherwise, false.</returns>
+        [DllImport(LIBRARY_NAME, CallingConvention = CallingConvention.Winapi, ExactSpelling = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+        public static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumProc lpfnEnum, IntPtr lParam);
+
+        /// <summary>
+        /// Retrieves information about a display monitor.
+        /// </summary>
+        /// <param name="hMonitor">Handle to the display monitor of interest.</param>
+        /// <param name="lpmi">
+        /// Pointer to a properly initialized <see cref="MONITORINFOEX"/> structure, which is written to by this function.
+        /// </param>
+        /// <returns>True if successful; otherwise, false.</returns>
+        [DllImport(LIBRARY_NAME, CharSet = CharSet.Auto, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+        public static extern bool GetMonitorInfo(IntPtr hMonitor, [In, Out] ref MONITORINFOEX lpmi);
+
+        /// <summary>
         /// Retrieves the specified system metric or configuration setting.
         /// </summary>
         /// <param name="nIndex">The system metric or configuration setting to retrieve.</param>
@@ -38,7 +65,7 @@ namespace BadEcho.Odin.Interop
         [DllImport(LIBRARY_NAME, ExactSpelling = true, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-        public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+        public static extern bool GetWindowRect(IntPtr hWnd, [Out] out RECT lpRect);
 
         /// <summary>
         /// Retrieves information about a specified window.
