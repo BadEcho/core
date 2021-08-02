@@ -21,7 +21,6 @@ playerDamageX:
 alloc(executePlayerApocalypse,$1000)
 alloc(playerApocalypseRandomState,8)
 alloc(logApocalypse,8)
-alloc(negativeOne,8)
 alloc(apocalypseResult,8)
 alloc(apocalypseResultUpper,8)
 alloc(apocalypseResultLower,8)
@@ -39,6 +38,7 @@ alloc(teleportitisShifter,8)
 alloc(lastVerticalDisplacement,8)
 alloc(negativeVerticalDisplacementEnabled,8)
 alloc(teleportitisDisplacementX,8)
+alloc(verticalTeleportitisDisplacementX,8)
 alloc(coordinatesAreDoubles,8)
 alloc(riskOfMurderResult,8)
 alloc(riskOfMurderResultUpper,8)
@@ -70,6 +70,7 @@ registersymbol(teleportedZ)
 registersymbol(apocalypseResult)
 registersymbol(negativeVerticalDisplacementEnabled)
 registersymbol(teleportitisDisplacementX)
+registersymbol(verticalTeleportitisDisplacementX)
 registersymbol(riskOfMurderResult)
 registersymbol(fatalisResult)
 registersymbol(fatalisResultUpper)
@@ -257,6 +258,7 @@ skipNegativeVerticalYDisplacement:
   // the vertical one before logging it.
   cmp [yIsVertical],1
   jne skipLastYVerticalDisplacement
+  mulss xmm1,[verticalTeleportitisDisplacementX]
   movss [lastVerticalDisplacement],xmm1
 skipLastYVerticalDisplacement:
   // We then take the player's current y-coordinate from memory and add the
@@ -302,6 +304,7 @@ skipNegativeVerticalZDisplacement:
   mulss xmm1,[teleportitisDisplacementX]
   cmp [yIsVertical],0
   jne skipLastZVerticalDisplacement
+  mulss xmm1,[verticalTeleportitisDisplacementX]
   movss [lastVerticalDisplacement],xmm1
 skipLastZVerticalDisplacement:
   // We then take the player's current z-coordinate from memory and add the
@@ -468,10 +471,10 @@ coordinatesAreDoubles:
   dd 0
   
 teleportitisDisplacementX:
+  dd (float)1.0    
+
+verticalTeleportitisDisplacementX:
   dd (float)1.0
-    
-negativeOne:
-  dd (float)-1.0
 
 riskOfMurderResult:
   dd 0
@@ -768,6 +771,7 @@ unregistersymbol(lastVerticalDisplacement)
 unregistersymbol(coordinatesAreDoubles)
 unregistersymbol(negativeVerticalDisplacementEnabled)
 unregistersymbol(teleportitisDisplacementX)
+unregistersymbol(verticalTeleportitisDisplacementX)
 unregistersymbol(extraDamageX)
 unregistersymbol(maxDamageToPlayer)
 unregistersymbol(playerGodMode)
@@ -789,7 +793,6 @@ dealloc(apocalypseResultUpper)
 dealloc(apocalypseResultLower)
 dealloc(extraDamageResidualHealth)
 dealloc(extraDamageSafetyThreshold)
-dealloc(negativeOne)
 dealloc(teleportitisResult)
 dealloc(teleportitisResultUpper)
 dealloc(teleportitisResultLower)
@@ -799,6 +802,7 @@ dealloc(lastVerticalDisplacement)
 dealloc(coordinatesAreDoubles)
 dealloc(negativeVerticalDisplacementEnabled)
 dealloc(teleportitisDisplacementX)
+dealloc(verticalTeleportitisDisplacementX)
 dealloc(riskOfMurderResult)
 dealloc(riskOfMurderResultUpper)
 dealloc(riskOfMurderResultLower)

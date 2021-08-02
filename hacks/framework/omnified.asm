@@ -7,10 +7,14 @@ alloc(zero,8)
 alloc(epsilon,8)
 alloc(damageThreshold,8)
 alloc(yIsVertical,8)
+alloc(negativeOne,8)
+alloc(percentageDivisor,8)
 
 registersymbol(epsilon)
 registersymbol(damageThreshold)
 registersymbol(yIsVertical)
+registersymbol(negativeOne)
+registersymbol(percentageDivisor)
 
 zero:
   dd 0
@@ -23,6 +27,12 @@ damageThreshold:
 
 yIsVertical:
   dd 1
+  
+negativeOne:
+  dd (float)-1.0
+  
+percentageDivisor:
+    dd (float)100.0
 
   
 // Checks if the loaded address is a valid pointer.
@@ -178,13 +188,17 @@ playerDamageX:
 [DISABLE]
 
 // Cleanup of global memory
+unregistersymbol(percentageDivisor)
 unregistersymbol(epsilon)
 unregistersymbol(yIsVertical)
+unregistersymbol(negativeOne)
 
 dealloc(zero)
+dealloc(percentageDivisor)
 dealloc(epsilon)
 dealloc(damageThreshold)
 dealloc(yIsVertical)
+dealloc(negativeOne)
 
 // Cleanup of checkBadPointer
 unregistersymbol(checkBadPointer)

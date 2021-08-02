@@ -5,12 +5,6 @@
 
 require("omnified")
 
--- These values are to be overridden in target .CT file registration routines.
-playerHealthAddress = "[exampleHealth]+0x14"
-playerMaxHealthAddress = "[exampleHealth]+0x18"
-freeFallThreshold = 5.0
-
-
 function FloorIt(number)
 	if number ~= nil then
 		return math.floor(number)
@@ -29,9 +23,9 @@ function activateLoggers()
 	loggersTimer.OnTimer = function()
 
 
-		local playerHealth = readFloat("[playerVitals]")
+		local playerHealth = readFloat(playerHealthAddress)
 		playerHealth = FloorIt(playerHealth)
-		local playerMaxHealth = readFloat("[playerVitals]+0x4")        
+		local playerMaxHealth = readFloat(playerMaxHealthAddress)        
 		playerMaxHealth = FloorIt(playerMaxHealth)
 		local enemyHealth = readFloat("lastEnemyHealthValue")
 
