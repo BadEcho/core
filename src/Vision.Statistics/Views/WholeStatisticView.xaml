@@ -22,12 +22,16 @@
     </d:DesignProperties.DataContext>
     <Grid Style="{Binding (v:StatisticLayout.IsCompact), 
                           RelativeSource={RelativeSource AncestorType=UserControl}, 
-                          Converter={StaticResource IsCompactGridStyleConverter}}">
-        <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
+                          Converter={StaticResource GridCompactStyleConverter}}">
+
+        <fenestra:OutlinedTextElement Style="{Binding (v:StatisticLayout.IsCompact),
+                                                      RelativeSource={RelativeSource AncestorType=UserControl},
+                                                      Converter={StaticResource StatisticNameCompactStyleConverter}}"
                                       Text="{Binding Name}"
                                       Grid.Column="0"
                                       Grid.Row="0"
                                       />
+
         <fenestra:OutlinedTextElement x:Name="Value"
                                       Style="{StaticResource StatisticTextStyle}"
                                       Text="{fenestra:SteppedBinding    Value,

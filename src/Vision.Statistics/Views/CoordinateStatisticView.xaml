@@ -25,8 +25,11 @@
     </d:DesignProperties.DataContext>
     <Grid Style="{Binding (v:StatisticLayout.IsCompact), 
                           RelativeSource={RelativeSource AncestorType=UserControl}, 
-                          Converter={StaticResource IsCompactGridStyleConverter}}">
-        <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
+                          Converter={StaticResource GridCompactStyleConverter}}">
+
+        <fenestra:OutlinedTextElement Style="{Binding (v:StatisticLayout.IsCompact),
+                                                      RelativeSource={RelativeSource AncestorType=UserControl},
+                                                      Converter={StaticResource StatisticNameCompactStyleConverter}}"
                                       Text="{Binding Name}"
                                       Grid.Column="0"
                                       Grid.Row="0"
@@ -36,7 +39,9 @@
                     Grid.Column="1"
                     Grid.Row="1">
             <StackPanel Orientation="Horizontal">
-                <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
+                <fenestra:OutlinedTextElement Style="{Binding (v:StatisticLayout.IsCompact),
+                                                              RelativeSource={RelativeSource AncestorType=UserControl},
+                                                              Converter={StaticResource StatisticNameCompactStyleConverter}}"
                                               Text="X"                                           
                                               />
                 <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
@@ -44,7 +49,9 @@
                                               />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
+                <fenestra:OutlinedTextElement Style="{Binding (v:StatisticLayout.IsCompact),
+                                                              RelativeSource={RelativeSource AncestorType=UserControl},
+                                                              Converter={StaticResource StatisticNameCompactStyleConverter}}"
                                               Text="Y"
                                               />
                 <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
@@ -52,7 +59,9 @@
                                               />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
+                <fenestra:OutlinedTextElement Style="{Binding (v:StatisticLayout.IsCompact),
+                                                              RelativeSource={RelativeSource AncestorType=UserControl},
+                                                              Converter={StaticResource StatisticNameCompactStyleConverter}}"
                                               Text="Z"
                                               />
                 <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"

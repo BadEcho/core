@@ -22,5 +22,14 @@
             </DataTrigger>
         </Style.Triggers>
     </Style>
-    
+
+    <Style x:Key="StatisticNameCompactTextStyle" TargetType="{x:Type fenestra:OutlinedTextElement}" BasedOn="{StaticResource StatisticNameTextStyle}">
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+    </Style>
+
+    <fenestra:BooleanToStyleConverter x:Key="StatisticNameCompactStyleConverter"
+                                      StyleWhenFalse="{StaticResource StatisticNameTextStyle}"
+                                      StyleWhenTrue="{StaticResource StatisticNameCompactTextStyle}"
+                                      />
 </ResourceDictionary>

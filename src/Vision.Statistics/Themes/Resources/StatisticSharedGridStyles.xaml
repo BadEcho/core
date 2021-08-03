@@ -30,7 +30,7 @@
         </Setter>
     </Style>
 
-    <fenestra:BooleanToStyleConverter x:Key="IsCompactGridStyleConverter"
+    <fenestra:BooleanToStyleConverter x:Key="GridCompactStyleConverter"
                                       StyleWhenFalse="{StaticResource StatisticSharedColumnGridStyle}"
                                       StyleWhenTrue="{StaticResource StatisticSharedRowGridStyle}"
                                       />
