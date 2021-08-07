@@ -10,10 +10,12 @@ assert(omniPlayerHook,4C 8B 0E 48 C7 C5 FF FF FF FF)
 alloc(getPlayer,$1000,omniPlayerHook)
 alloc(player,8)
 alloc(playerMaxStamina,8)
+alloc(playerStaminaValue,8)
 
 registersymbol(omniPlayerHook)
 registersymbol(player)
 registersymbol(playerMaxStamina)
+registersymbol(playerStaminaValue)
 
 getPlayer:
     pushf 
@@ -73,7 +75,18 @@ isStatisticFound:
     lea rbx,[rcx+rax*8+0xC]
     // Let's create a pointer directly to the max stamina statistic.
     mov rax,playerMaxStamina
+    // Is this a freshly allocated maximum stamina stat? If so, we'll load it and also set our current 
+    // stamina value to reflect the maximum, as there is a very good chance that the active stamina structure 
+    // has not been loaded yet, which leaves us with an ugly 0 current stamina value.
+    cmp [rax],rbx
+    je getPlayerCleanup
+loadNewStamina:
     mov [rax],rbx
+    mov rax,playerStaminaValue
+    // Thankfully, no need to convert percentages here...whew...
+    mov rcx,[rbx]
+    mov [rax],rcx
+getPlayerCleanup:
     pop rdi
     pop rdx
     pop rcx
@@ -143,11 +156,9 @@ define(omniPlayerStaminaHook,"Cyberpunk2077.exe"+1B622E7)
 assert(omniPlayerStaminaHook,F3 0F 10 BF 90 01 00 00)
 alloc(getPlayerStamina,$1000,omniPlayerStaminaHook)
 alloc(playerStamina,8)
-alloc(playerStaminaValue,8)
 
 registersymbol(omniPlayerStaminaHook)
 registersymbol(playerStamina)
-registersymbol(playerStaminaValue)
 
 getPlayerStamina:
     pushf
@@ -374,6 +385,59 @@ playerVitalsUpdateReturn:
 
 punchInTheFaceThreshold:
     dd (float)-5.0
+
+
+// Hooks into the player's location update function, allowing us to set our speed as well as
+// preventing the player physics system from interfering with teleportitis effects.
+define(omnifyPlayerLocationUpdateHook,"PhysX3CharacterKinematic_x64.dll"+7B99)
+
+assert(omnifyPlayerLocationUpdateHook,0F 11 86 08 02 00 00)
+alloc(playerLocationUpdate,$1000,omnifyPlayerLocationUpdateHook)
+alloc(movementFramesToSkip,8)
+
+registersymbol(omnifyPlayerLocationUpdateHook)
+
+playerLocationUpdate:
+    pushf
+    push rax
+    mov rax,movementFramesToSkip
+    cmp [rax],0
+    pop rax    
+    jg skipMovementFrame
+    jmp checkForTeleported
+skipMovementFrame:
+    push rax
+    mov rax,movementFramesToSkip
+    dec [rax]
+    pop rax
+    movups xmm0,[rsi+208]
+    jmp playerLocationUpdateOriginalCode
+checkForTeleported:
+    push rax
+    mov rax,teleported
+    cmp [rax],1
+    pop rax    
+    jne playerLocationUpdateOriginalCode
+    push rax
+    mov rax,teleported
+    mov [rax],0    
+    mov rax,movementFramesToSkip
+    mov [rax],2
+    pop rax
+    jmp skipMovementFrame
+playerLocationUpdateOriginalCode:
+    popf
+    movups [rsi+00000208],xmm0
+    jmp playerLocationUpdateReturn
+
+omnifyPlayerLocationUpdateHook:
+    jmp playerLocationUpdate
+    nop 2
+playerLocationUpdateReturn:
+
+
+movementFramesToSkip:
+    dd 0
 
 
 // Initiates the Apocalypse system.
@@ -603,6 +667,16 @@ unregistersymbol(playerAttacking)
 dealloc(playerAttacking)
 
 
+// Cleanup of omnifyPlayerLocationUpdateHook
+omnifyPlayerLocationUpdateHook:
+    db 0F 11 86 08 02 00 00
+
+unregistersymbol(omnifyPlayerLocationUpdateHook)
+
+dealloc(movementFramesToSkip)
+dealloc(playerLocationUpdate)
+
+
 // Cleanup of omnifyApocalypseHook
 omnifyApocalypseHook:
     db F3 0F 58 89 90 01 00 00
@@ -640,9 +714,7 @@ omniPlayerStaminaHook:
 
 unregistersymbol(omniPlayerStaminaHook)
 unregistersymbol(playerStamina)
-unregistersymbol(playerStaminaValue)
 
-dealloc(playerStaminaValue)
 dealloc(playerStamina)
 dealloc(getPlayerStamina)
 
@@ -654,7 +726,9 @@ omniPlayerHook:
 unregistersymbol(omniPlayerHook)
 unregistersymbol(player)
 unregistersymbol(playerMaxStamina)
+unregistersymbol(playerStaminaValue)
 
 dealloc(player)
 dealloc(playerMaxStamina)
+dealloc(playerStaminaValue)
 dealloc(getPlayer)
