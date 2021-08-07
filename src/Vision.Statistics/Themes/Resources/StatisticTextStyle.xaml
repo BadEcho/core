@@ -21,7 +21,7 @@
     <Storyboard x:Key="ExplodeTextAnimation">
         <DoubleAnimation Storyboard.TargetName="Value" 
                          Storyboard.TargetProperty="(fenestra:OutlinedTextElement.FontSize)"
-                         By="24.7"
+                         By="49.4"
                          Duration="00:00:01.7">
             <DoubleAnimation.EasingFunction>
                 <ElasticEase EasingMode="EaseOut"/>
@@ -29,7 +29,7 @@
         </DoubleAnimation>
         <DoubleAnimation Storyboard.TargetName="Value" 
                          Storyboard.TargetProperty="(fenestra:OutlinedTextElement.FontSize)"
-                         By="-24.7"
+                         By="-49.4"
                          BeginTime="00:00:01.7"
                          Duration="00:00:00.3">
             <DoubleAnimation.EasingFunction>
