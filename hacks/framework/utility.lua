@@ -34,9 +34,24 @@ function areTrue(...)
 	return evalValues(function (v) return not v end, false, true, ...)
 end
 
-function round(number)
+local MIN_INT = -2^31
+local MAX_INT = 2^31-1
+
+function toInt(number)
     if number ~= nil then
+        if number < MIN_INT or number > MAX_INT or number ~= number then return 0 end
+
         return math.floor(number + 0.5)
+    end
+
+    return 0
+end
+
+function round(number, decimals)
+    if number ~= nil then 
+        if number ~= number then return 0 end
+
+        return (math.floor(number*10^decimals) / (10^decimals))
     end
 
     return 0
