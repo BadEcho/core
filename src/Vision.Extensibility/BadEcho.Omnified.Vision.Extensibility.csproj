@@ -6,11 +6,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Themes\Resources\QuattrocentoSans.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Fenestra\BadEcho.Fenestra.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Themes\Resources\QuattrocentoSans.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>

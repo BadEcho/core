@@ -6,7 +6,6 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Linq;
 using BadEcho.Fenestra.ViewModels;
 using BadEcho.Odin;
 using BadEcho.Omnified.Vision.Extensibility;
@@ -25,7 +24,7 @@ namespace BadEcho.Omnified.Vision
         /// </summary>
         /// <param name="module">The Vision module to be hosted.</param>
         /// <param name="configuration">Configuration settings for the Vision application.</param>
-        public ModuleHost(IVisionModule module, VisionConfiguration configuration)
+        public ModuleHost(IVisionModule module, IVisionConfiguration configuration)
         {
             Require.NotNull(module, nameof(module));
 

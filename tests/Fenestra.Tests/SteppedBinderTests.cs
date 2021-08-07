@@ -176,7 +176,7 @@ namespace BadEcho.Fenestra.Tests
         private SteppedBinder InitializeBinder(TimeSpan steppingDuration)
         {
             var textBox = new TextBox {Text = null};
-            return new SteppedBinder(textBox, TextBox.TextProperty, _innerBinding, steppingDuration);
+            return new SteppedBinder(textBox, TextBox.TextProperty, _innerBinding, new SteppingOptions(steppingDuration, 0));
         }
 
         private TimeSpan UpdateSource(string initialTargetValue, int newSourceValue, TimeSpan steppingDuration)
@@ -184,7 +184,7 @@ namespace BadEcho.Fenestra.Tests
             bool updatedToFinalValue = false;
 
             var textBox = new TextBox { Text = initialTargetValue };
-            var binder = new SteppedBinder(textBox, TextBox.TextProperty, _innerBinding, steppingDuration);
+            var binder = new SteppedBinder(textBox, TextBox.TextProperty, _innerBinding, new SteppingOptions(steppingDuration,0));
             var stopwatch = new Stopwatch();
 
             binder.Changed += (_, _) =>
@@ -214,7 +214,12 @@ namespace BadEcho.Fenestra.Tests
 
             _sourceObject.Value = initialSourceValue;
             var textBox = new TextBox { Text = initialTargetValue };
-            var binder = new SteppedBinder(textBox, TextBox.TextProperty, _innerBinding, steppingDuration);
+            
+            var binder = new SteppedBinder(textBox,
+                                           TextBox.TextProperty,
+                                           _innerBinding,
+                                           new SteppingOptions(steppingDuration, 0));
+
             var stopwatch = new Stopwatch();
             
             binder.Changed += (_, _) =>

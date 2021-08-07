@@ -21,7 +21,7 @@ namespace BadEcho.Odin.Interop
         /// Enumerates display monitors (including invisible pseudo-monitors associated with the mirroring drivers) that intersect
         /// a region formed by the intersection of a specified clipping rectangle and the visible region of a device context.
         /// </summary>
-        /// <param name="hdc">Handle to a display device context that defines the visible region of interest.</param>
+        /// <param name="hdc">A handle to a display device context that defines the visible region of interest.</param>
         /// <param name="lprcClip">Pointer to a <see cref="RECT"/> structure that specifies a clipping rectangle.</param>
         /// <param name="lpfnEnum">Callback invoked by this method with monitor information.</param>
         /// <param name="lParam">Application-defined data that is passed to the provided callback.</param>
@@ -29,12 +29,12 @@ namespace BadEcho.Odin.Interop
         [DllImport(LIBRARY_NAME, CallingConvention = CallingConvention.Winapi, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-        public static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumProc lpfnEnum, IntPtr lParam);
+        public static extern bool EnumDisplayMonitors(DeviceContextHandle hdc, IntPtr lprcClip, MonitorEnumProc lpfnEnum, IntPtr lParam);
 
         /// <summary>
         /// Retrieves information about a display monitor.
         /// </summary>
-        /// <param name="hMonitor">Handle to the display monitor of interest.</param>
+        /// <param name="hMonitor">A handle to the display monitor of interest.</param>
         /// <param name="lpmi">
         /// Pointer to a properly initialized <see cref="MONITORINFOEX"/> structure, which is written to by this function.
         /// </param>
@@ -47,7 +47,7 @@ namespace BadEcho.Odin.Interop
         /// <summary>
         /// Retrieves the specified system metric or configuration setting.
         /// </summary>
-        /// <param name="nIndex">The system metric or configuration setting to retrieve.</param>
+        /// <param name="nIndex">An enumeration value that specifies the system metric or configuration setting to retrieve.</param>
         /// <returns>If successful, the request system metric or configuration setting; otherwise, zero.</returns>
         [DllImport(LIBRARY_NAME, ExactSpelling = true)]
         [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
@@ -66,6 +66,28 @@ namespace BadEcho.Odin.Interop
         [return: MarshalAs(UnmanagedType.Bool)]
         [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
         public static extern bool GetWindowRect(IntPtr hWnd, [Out] out RECT lpRect);
+
+        /// <summary>
+        /// Retrieves a handle to a device context (DC) for the client area of either a specified window or for the entire screen.
+        /// </summary>
+        /// <param name="hWnd">
+        /// A handle to the window whose DC is to be retrieved. A value of <see cref="IntPtr.Zero"/> will retrieve the DC for the entire
+        /// screen.
+        /// </param>
+        /// <returns>If successful, a handle to the DC; otherwise, null.</returns>
+        [DllImport(LIBRARY_NAME, ExactSpelling = true, SetLastError = true)]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+        public static extern DeviceContextHandle GetDC(IntPtr hWnd);
+
+        /// <summary>
+        /// Releases a device context (DC), freeing it for use by other applications.
+        /// </summary>
+        /// <param name="hWnd">A handle to the window whose DC is to be released.</param>
+        /// <param name="hdc">A handle to the DC to be released.</param>
+        /// <returns>A return value of one if successful; otherwise, zero.</returns>
+        [DllImport(LIBRARY_NAME, ExactSpelling = true)]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+        public static extern int ReleaseDC(IntPtr hWnd, IntPtr hdc);
 
         /// <summary>
         /// Retrieves information about a specified window.

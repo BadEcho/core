@@ -8,17 +8,21 @@
 namespace BadEcho.Odin.Interop
 {
     /// <summary>
-    /// Specifies a system metric or configuration setting that can be requested through <see cref="User32.GetSystemMetrics"/>.
+    /// Specifies a type of device-specific information that can be requested through <see cref="Gdi32.GetDeviceCaps"/>.
     /// </summary>
-    internal enum SystemMetric
+    public enum DeviceInformation
     {
         /// <summary>
-        /// The width of the screen of the primary display monitor.
+        /// The device driver version.
         /// </summary>
-        PrimaryScreenWidth = 0,
+        DriverVersion = 0,
         /// <summary>
-        /// The number of display monitors on the desktop.
+        /// Number of pixels per logical inch along the screen width.
         /// </summary>
-        NumberOfMonitors = 80
+        PpiWidth = 88,
+        /// <summary>
+        /// Number of pixels per logical inch along the screen height.
+        /// </summary>
+        PpiHeight = 90
     }
 }

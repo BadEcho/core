@@ -48,6 +48,7 @@ namespace BadEcho.Fenestra
             = new();
 
         private readonly TimeSpan _steppingDuration;
+        private readonly int _minimumSteps;
         private readonly object? _unsetTargetValue;
 
         private bool _steppingEnabled;
@@ -60,12 +61,12 @@ namespace BadEcho.Fenestra
         /// <param name="targetObject">The target dependency object containing the property to bind.</param>
         /// <param name="targetProperty">The target dependency property to bind.</param>
         /// <param name="binding">The underlying binding to augment.</param>
-        /// <param name="steppingDuration">The total duration of a binding update stepping sequence.</param>
+        /// <param name="options">Stepping sequence options related to timing for the stepped binder.</param>
         public SteppedBinder(DependencyObject targetObject,
                              DependencyProperty targetProperty,
                              Binding binding,
-                             TimeSpan steppingDuration)
-            : this(targetObject, targetProperty, binding, steppingDuration, EnsureBinding(binding).Mode)
+                             SteppingOptions options)
+            : this(targetObject, targetProperty, binding, options, EnsureBinding(binding).Mode)
         { }
 
         /// <summary>
@@ -74,12 +75,12 @@ namespace BadEcho.Fenestra
         /// <param name="targetObject">The target dependency object containing the property to bind.</param>
         /// <param name="targetProperty">The target dependency property to bind.</param>
         /// <param name="binding">The underlying binding to augment.</param>
-        /// <param name="steppingDuration">The total duration of a binding update stepping sequence.</param>
+        /// <param name="options">Stepping sequence options related to timing for the stepped binder.</param>
         public SteppedBinder(DependencyObject targetObject,
                              DependencyProperty targetProperty,
                              MultiBinding binding,
-                             TimeSpan steppingDuration)
-            : this(targetObject, targetProperty, binding, steppingDuration, EnsureBinding(binding).Mode)
+                             SteppingOptions options)
+            : this(targetObject, targetProperty, binding, options, EnsureBinding(binding).Mode)
         { }
 
         /// <summary>
@@ -88,19 +89,22 @@ namespace BadEcho.Fenestra
         /// <param name="targetObject">The target dependency object containing the property to bind.</param>
         /// <param name="targetProperty">The target dependency property to bind.</param>
         /// <param name="binding">The underlying binding to augment.</param>
-        /// <param name="steppingDuration">The total duration of a binding update stepping sequence.</param>
+        /// <param name="options">Stepping sequence options related to timing for the stepped binder.</param>
         /// <param name="mode">The mode of binding being used.</param>
         private SteppedBinder(DependencyObject targetObject,
                               DependencyProperty targetProperty,
                               BindingBase binding,
-                              TimeSpan steppingDuration,
+                              SteppingOptions options,
                               BindingMode mode)
             : base(targetObject, targetProperty, binding, mode)
         {
-            if (steppingDuration < TimeSpan.Zero)
-                throw new ArgumentException(Strings.SteppingDurationCannotBeNegative, nameof(steppingDuration));
+            Require.NotNull(options, nameof(options));
+
+            if (options.SteppingDuration < TimeSpan.Zero)
+                throw new ArgumentException(Strings.SteppingDurationCannotBeNegative, nameof(options));
             
-            _steppingDuration = steppingDuration;
+            _steppingDuration = options.SteppingDuration;
+            _minimumSteps = options.MinimumSteps;
             _sourceStepTimer.Tick += HandleSourceStepTimerTick;
             _targetStepTimer.Tick += HandleTargetStepTimerTick;
             _unsetTargetValue = targetProperty.DefaultMetadata.DefaultValue;
@@ -188,6 +192,9 @@ namespace BadEcho.Fenestra
                 return false;
 
             int numberOfSteps = Math.Abs(changedStepValue - receivingStepValue);
+
+            if (numberOfSteps < _minimumSteps)
+                return false;
 
             _startingStepValue = receivingStepValue;
             _endingStepValue = changedStepValue;

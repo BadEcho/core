@@ -1,8 +1,9 @@
 {
-  "messageFilesDirectory": "..\\..\\hacks\\targets\\witcher3",
+  "launchDisplay": 0, 
+  "messageFilesDirectory": "..\\..\\hacks\\targets\\cyberpunk",
   "modules": {
     "BadEcho.Omnified.Vision.Statistics": {
-      "location": "TopRight"
+      "location": "TopLeft"
     }
   }
 }

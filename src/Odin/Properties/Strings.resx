@@ -185,4 +185,10 @@
   <data name="NoExceptionFromSuccessfulResult" xml:space="preserve">
     <value>No comparable exception class can be mapped to the provided HRESULT as it does not represent a failed operation.</value>
   </data>
+  <data name="DisplayGetDpiForMonitorFailed" xml:space="preserve">
+    <value>HRESULT of {0} returned when attempting to query for a monitor's DPI. Because of this, display device will default to using the system-wide DPI.</value>
+  </data>
+  <data name="DisplayEnumDisplayMonitorsFailed" xml:space="preserve">
+    <value>EnumDisplayMonitors failed unexpectedly.</value>
+  </data>
 </root>

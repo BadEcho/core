@@ -17,8 +17,6 @@ namespace BadEcho.Omnified.Vision
     /// </summary>
     internal sealed class VisionConfiguration : IVisionConfiguration
     {
-        private const string SETTINGS_FILE = "settings.json";
-
         /// <inheritdoc/>
         public string MessageFilesDirectory 
         { get; set; } = string.Empty;
@@ -38,10 +36,10 @@ namespace BadEcho.Omnified.Vision
         {
             VisionConfiguration? configuration = null;
 
-            if (File.Exists(SETTINGS_FILE))
+            if (File.Exists(App.SettingsFile))
             {
                 configuration = JsonSerializer.Deserialize<VisionConfiguration>(
-                    File.ReadAllText(SETTINGS_FILE),
+                    File.ReadAllText(App.SettingsFile),
                     new JsonSerializerOptions {PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
             }
 

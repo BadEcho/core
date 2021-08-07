@@ -10,15 +10,28 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:c="clr-namespace:BadEcho.Omnified.Vision.Converters;assembly=BadEcho.Omnified.Vision"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.ViewModels" 
+      xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.ViewModels"
+      xmlns:r="clr-namespace:BadEcho.Omnified.Vision.Properties;assembly=BadEcho.Omnified.Vision"
       d:DataContext="{d:DesignInstance Type=vm:VisionViewModel}"
       mc:Ignorable="d"
-      >
+      VerticalAlignment="Top">
     <Grid.Resources>
         <c:LocationToHorizontalAlignmentConverter x:Key="LocationHorizontalConverter"/>
         <c:LocationToVerticalAlignmentConverter x:Key="LocationVerticalConverter"/>
     </Grid.Resources>
-    <ItemsControl ItemsSource="{Binding Children}">
+    <Grid.RowDefinitions>
+        <RowDefinition/>
+        <RowDefinition/>
+    </Grid.RowDefinitions>
+    <fenestra:OutlinedTextElement Style="{StaticResource VisionTitleTextStyle}"
+                                  Text="{x:Static r:Strings.VisionTitle}"
+                                  FontSize="28"
+                                  FontWeight="Bold"
+                                  Margin="15,0,0,0"
+                                  Grid.Row="0"
+                                  />
+    <ItemsControl ItemsSource="{Binding Children}"
+                  Grid.Row="1">
         <ItemsControl.ItemTemplate>
             <DataTemplate>
                 <DataTemplate.Resources>

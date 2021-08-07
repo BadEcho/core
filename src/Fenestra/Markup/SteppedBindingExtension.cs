@@ -41,6 +41,17 @@ namespace BadEcho.Fenestra.Markup
         public TimeSpan SteppingDuration
         { get; set; }
 
+        /// <summary>
+        /// Gets or sets the minimum number of steps required in order for a stepping sequence to be executed.
+        /// </summary>
+        /// <remarks>
+        /// If the number of steps falls short of this setting, then any binding update changes are immediately propagated
+        /// to the target property in a single step. Setting this equal to or less than its default value of 0 results in
+        /// a stepping sequence always being executed in response to a change, regardless of the number of steps involved.
+        /// </remarks>
+        public int MinimumSteps 
+        { get; set; }
+
         /// <inheritdoc/>
         protected override object ExtendBinding(IServiceProvider serviceProvider, DependencyObject? targetObject, DependencyProperty targetProperty)
         {
@@ -49,7 +60,10 @@ namespace BadEcho.Fenestra.Markup
 
             UpdateBindingMode(targetObject, targetProperty);
 
-            var binder = new SteppedBinder(targetObject, targetProperty, ActualBinding, SteppingDuration);
+            var binder = new SteppedBinder(targetObject,
+                                           targetProperty,
+                                           ActualBinding,
+                                           new SteppingOptions(SteppingDuration, MinimumSteps));
 
             FreezableCollection<TransientBinder> binders = TransientBinder.GetBinders(targetObject);
 

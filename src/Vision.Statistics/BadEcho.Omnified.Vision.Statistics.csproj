@@ -6,10 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Fonts\QuattrocentoSans.ttf" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="..\..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
@@ -17,12 +13,6 @@
     <ProjectReference Include="..\Fenestra\BadEcho.Fenestra.csproj" />
     <ProjectReference Include="..\Odin\BadEcho.Odin.csproj" />
     <ProjectReference Include="..\Vision.Extensibility\BadEcho.Omnified.Vision.Extensibility.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Fonts\QuattrocentoSans.ttf">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
   </ItemGroup>
 
   <ItemGroup>

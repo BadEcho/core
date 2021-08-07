@@ -13,7 +13,7 @@
     </ResourceDictionary.MergedDictionaries>
 
     <Style x:Key="StatisticNameTextStyle" TargetType="{x:Type fenestra:OutlinedTextElement}" BasedOn="{StaticResource StatisticTextStyle}">
-        <Setter Property="Margin" Value="15,15,15,0"/>
+        <Setter Property="Margin" Value="15,0,15,0"/>
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="TextFormatString" Value="{}{0}:"/>
         <Style.Triggers>

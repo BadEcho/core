@@ -88,6 +88,24 @@ namespace BadEcho.Odin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to EnumDisplayMonitors failed unexpectedly..
+        /// </summary>
+        internal static string DisplayEnumDisplayMonitorsFailed {
+            get {
+                return ResourceManager.GetString("DisplayEnumDisplayMonitorsFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to HRESULT of {0} returned when attempting to query for a monitor&apos;s DPI. Because of this, display device will default to using the system-wide DPI..
+        /// </summary>
+        internal static string DisplayGetDpiForMonitorFailed {
+            get {
+                return ResourceManager.GetString("DisplayGetDpiForMonitorFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enumeration has already finished; no more objects exist in the sequence..
         /// </summary>
         internal static string EnumerationAtEnd {

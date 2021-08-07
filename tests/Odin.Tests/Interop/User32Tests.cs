@@ -6,56 +6,42 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using BadEcho.Odin.Interop;
 using Xunit;
 
 namespace BadEcho.Odin.Tests.Interop
 {
+    /// <summary>
+    /// These methods are less for testing the unmanaged functions in question (which one should assume Microsoft themselves have tested),
+    /// and more for testing my P/Invoke signatures.
+    /// </summary>
     public class User32Tests
     {
         [Fact]
         public void EnumDisplayMonitors_ReturnsTrue()
         {
-            var closure = new TestCallbackClosure();
+            var closure = new MonitorCallbackClosure();
 
-            Assert.True(User32.EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, closure.Callback, IntPtr.Zero));
+            Assert.True(User32.EnumDisplayMonitors(DeviceContextHandle.Null, IntPtr.Zero, closure.Callback, IntPtr.Zero));
         }
 
         [Fact]
         public void EnumDisplayMonitors_ReturnsMonitors()
         {
-            var closure = new TestCallbackClosure();
+            var monitors = UnmanagedHelper.EnumerateMonitors();
 
-            User32.EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, closure.Callback, IntPtr.Zero);
-
-            Assert.NotEmpty(closure.Monitors);
+            Assert.NotEmpty(monitors);
         }
 
         [Fact]
         public void GetMonitorInfo_ReturnsTrue()
         {
-            var closure = new TestCallbackClosure();
-            
-            User32.EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, closure.Callback, IntPtr.Zero);
+            var monitors = UnmanagedHelper.EnumerateMonitors();
 
             var monitorInfo = MONITORINFOEX.CreateWritable();
             
-            Assert.True(User32.GetMonitorInfo(closure.Monitors.First(), ref monitorInfo));
-        }
-
-        private sealed class TestCallbackClosure
-        {
-            public ICollection<IntPtr> Monitors
-            { get; } = new List<IntPtr>();
-
-            public bool Callback(IntPtr hMonitor, IntPtr hdcMonitor, IntPtr lprcMonitor, IntPtr lParam)
-            {
-                Monitors.Add(hMonitor);
-
-                return true;
-            }
+            Assert.True(User32.GetMonitorInfo(monitors.First(), ref monitorInfo));
         }
     }
 }

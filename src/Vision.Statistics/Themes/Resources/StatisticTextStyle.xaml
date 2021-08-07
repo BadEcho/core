@@ -9,8 +9,6 @@
                     xmlns:t="clr-namespace:BadEcho.Omnified.Vision.Extensibility.Themes;assembly=BadEcho.Omnified.Vision.Extensibility"
                     xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
-    
-    <FontFamily x:Key="Quattrocento">pack://application:,,,/Fonts/#Quattrocento Sans</FontFamily>
 
     <system:String x:Key="StatisticNumberFormat">{0:N0}</system:String>
 
@@ -56,12 +54,12 @@
     </Storyboard>
 
     <Style x:Key="StatisticTextStyle" TargetType="{x:Type fenestra:OutlinedTextElement}">
-        <Setter Property="Margin" Value="15,15,0,0"/>
-        <Setter Property="FontSize" Value="21.3"/>
         <Setter Property="Fill" Value="{DynamicResource {x:Static t:Brushes.TextForegroundKey}}"/>
-        <Setter Property="Stroke" Value="#CC000000"/>
+        <Setter Property="Stroke" Value="{DynamicResource {x:Static t:Brushes.OutlinedTextStrokeKey}}"/>
         <Setter Property="StrokeThickness" Value="4"/>
-        <Setter Property="FontFamily" Value="{StaticResource Quattrocento}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource {x:Static t:Fonts.FontFamilyKey}}"/>
+        <Setter Property="Margin" Value="15,0,0,0"/>
+        <Setter Property="FontSize" Value="21.3"/>
         <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
         <Setter Property="RenderTransform">
             <Setter.Value>

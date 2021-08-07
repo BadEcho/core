@@ -19,7 +19,7 @@ namespace BadEcho.Omnified.Vision.Extensibility.Themes
         private static readonly FenestraKeyProvider _Provider = new(typeof(Colors));
 
         /// <summary>
-        /// The standard color for text appearing in Vision.
+        /// The standard color for standard text appearing in Vision.
         /// </summary>
         public static readonly ResourceKey TextColorKey =
             _Provider.CreateKey(nameof(TextColorKey));
@@ -29,5 +29,11 @@ namespace BadEcho.Omnified.Vision.Extensibility.Themes
         /// </summary>
         public static readonly ResourceKey CriticalTextColorKey =
             _Provider.CreateKey(nameof(CriticalTextColorKey));
+
+        /// <summary>
+        /// The color used for outlining standard text appearing in Vision.
+        /// </summary>
+        public static readonly ResourceKey OutlineColorKey =
+            _Provider.CreateKey(nameof(OutlineColorKey));
     }
 }

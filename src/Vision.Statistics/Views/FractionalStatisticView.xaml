@@ -38,13 +38,19 @@
                     Grid.Column="1"
                     Grid.Row="1">
             <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
-                                          Text="{fenestra:SteppedBinding CurrentValue, SteppingDuration=00:00:02, StringFormat={StaticResource StatisticNumberFormat}}"
+                                          Text="{fenestra:SteppedBinding CurrentValue, 
+                                                                         SteppingDuration=00:00:02, 
+                                                                         MinimumSteps=10, 
+                                                                         StringFormat={StaticResource StatisticNumberFormat}}"
                                           />
             <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
                                           Text="/"
                                           />
             <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
-                                          Text="{fenestra:SteppedBinding MaximumValue, SteppingDuration=00:00:02, StringFormat={StaticResource StatisticNumberFormat}}"
+                                          Text="{fenestra:SteppedBinding MaximumValue, 
+                                                                         SteppingDuration=00:00:02, 
+                                                                         MinimumSteps=10, 
+                                                                         StringFormat={StaticResource StatisticNumberFormat}}"
                                           />
         </StackPanel>
     </Grid>

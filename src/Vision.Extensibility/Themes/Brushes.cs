@@ -19,7 +19,7 @@ namespace BadEcho.Omnified.Vision.Extensibility.Themes
         private static readonly FenestraKeyProvider _Provider = new(typeof(Brushes));
 
         /// <summary>
-        /// The foreground brush used for text appearing in Vision.
+        /// The foreground brush used for standard text appearing in Vision.
         /// </summary>
         public static readonly ResourceKey TextForegroundKey =
             _Provider.CreateKey(nameof(TextForegroundKey));
@@ -29,5 +29,11 @@ namespace BadEcho.Omnified.Vision.Extensibility.Themes
         /// </summary>
         public static readonly ResourceKey CriticalTextForegroundKey =
             _Provider.CreateKey(nameof(CriticalTextForegroundKey));
+
+        /// <summary>
+        /// The brush used to outline standard text appearing in Vision.
+        /// </summary>
+        public static readonly ResourceKey OutlinedTextStrokeKey =
+            _Provider.CreateKey(nameof(OutlinedTextStrokeKey));
     }
 }

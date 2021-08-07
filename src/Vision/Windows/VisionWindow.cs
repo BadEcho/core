@@ -40,7 +40,7 @@ namespace BadEcho.Omnified.Vision.Windows
             Topmost = true;
             Activate();
         }
-
+        
         /// <inheritdoc/>
         protected override void OnSourceInitialized(EventArgs e)
         {

@@ -1,0 +1,12 @@
+﻿<!--
+    <copyright>
+        Created by Matt Weber <matt@badecho.com>
+        Copyright @ 2021 Bad Echo LLC. All Rights Reserved.
+    </copyright>
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <FontFamily x:Key="Quattrocento">pack://application:,,,/Fonts/#Quattrocento Sans</FontFamily>
+
+</ResourceDictionary>

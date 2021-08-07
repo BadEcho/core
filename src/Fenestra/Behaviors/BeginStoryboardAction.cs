@@ -16,6 +16,8 @@ namespace BadEcho.Fenestra.Behaviors
     /// </summary>
     public sealed class BeginStoryboardAction : BehaviorAction<DependencyObject>
     {
+        private bool _isActive;
+
         /// <summary>
         /// Identifies the <see cref="Storyboard"/> dependency property.
         /// </summary>
@@ -23,7 +25,6 @@ namespace BadEcho.Fenestra.Behaviors
             = DependencyProperty.Register(nameof(Storyboard),
                                           typeof(Storyboard),
                                           typeof(BeginStoryboardAction));
-
         /// <summary>
         /// Gets or sets the <see cref="Storyboard"/> that will have its animations applied when this action is executed.
         /// </summary>
@@ -34,10 +35,28 @@ namespace BadEcho.Fenestra.Behaviors
         }
 
         /// <inheritdoc/>
+        /// <remarks>
+        /// <para>
+        /// This action will only allow a single animation execution to occur at any given point in time. All requests to
+        /// initiate another animation are ignored until the current animation sequence completes.
+        /// </para>
+        /// <para>
+        /// This is done so that any animation designed to revert affected properties back to their original states is not interrupted
+        /// in doing so, lest the original values for said properties become lost forever.
+        /// </para>
+        /// </remarks>
         public override bool Execute()
         {
             if (Storyboard == null)
                 return false;
+
+            if (_isActive)
+                return true;
+
+            // Remember, Storyboard is a Freezable, so subscribing to one of its events results in a PropertyChangeCallback.
+            // This makes the idea of subscribing and unsubscribing to events inside such a callback quite untenable.
+            // Therefore, we subscribe and unsubscribe to events in response to requests for animation.
+            Storyboard.Completed += HandleStoryboardCompleted;
 
             // The object we're attached to, if possible, will become the inheritance context for the Storyboard, allowing us
             // to make use of Storyboards defined in separate ResourceDictionaries. 
@@ -49,11 +68,21 @@ namespace BadEcho.Fenestra.Behaviors
             else
                 Storyboard.Begin();
 
+            _isActive = true;
+
             return true;
         }
-
+        
         /// <inheritdoc/>
         protected override Freezable CreateInstanceCore()
             => new BeginStoryboardAction();
+
+        private void HandleStoryboardCompleted(object? sender, System.EventArgs e)
+        {
+            _isActive = false;
+            
+            if (Storyboard != null)
+                Storyboard.Completed -= HandleStoryboardCompleted;
+        }
     }
 }
