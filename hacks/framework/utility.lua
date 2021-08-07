@@ -34,9 +34,9 @@ function areTrue(...)
 	return evalValues(function (v) return not v end, false, true, ...)
 end
 
-function floor(number)
+function round(number)
     if number ~= nil then
-        return math.floor(number)
+        return math.floor(number + 0.5)
     end
 
     return 0

@@ -2,28 +2,92 @@
 // Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
 // Copyright 2021 Bad Echo LLC
 
-// Gets the player's root structure. n
-// UNIQUE AOB: 00 41 B8 0A 00 00 00 48 8B 01
-define(omniPlayerHook,"Cyberpunk2077.exe"+1A5A190)
+// Gets the player's root and statistical structures.
+// Magic numbers: 0x36A is Stamina's house address on Happy Stats Street.
+define(omniPlayerHook,"Cyberpunk2077.exe"+1A03A28)
 
-assert(omniPlayerHook,41 B8 0A 00 00 00)
+assert(omniPlayerHook,4C 8B 0E 48 C7 C5 FF FF FF FF)
 alloc(getPlayer,$1000,omniPlayerHook)
 alloc(player,8)
+alloc(playerMaxStamina,8)
 
 registersymbol(omniPlayerHook)
 registersymbol(player)
+registersymbol(playerMaxStamina)
 
 getPlayer:
-    push rax
-    mov rax,player    
-    pop rax
+    pushf 
+    // Isolate the player root structure through pinpointed comparing of comparable comaprables.
+    cmp r13,0
+    jne getPlayerOriginalCode
+    // This is a constant identifying another statistic that is constantly queried for.
+    // We're going to piggyback off of it in order to find the statistics we care about.
+    cmp r14,0x1c9
+    jne getPlayerOriginalCode
+    push rax 
+    push rbx
+    push rcx
+    push rdx
+    push rdi
+    mov rax,player
+    mov [rax],rsi    
+    // Load the "address book" for statistics.
+    mov rax,[rsi]
+    // Get the number of address book entries.
+    mov ebx,[rsi+C]
+    mov rcx,rbx    
+    // This is the constant used to identify the stamina statistic.
+    mov rdx,0x36A
+searchStatistics:
+    // Divide and conquer! Cleaveth the search areath in halfeth!
+    mov rbx,rcx
+    sar rbx,1
+    // Check if the current element is what we're looking for.
+    cmp [rax+rbx*4],edx
+    // Save our position in case we need to search the upper half.
+    lea rdi,[rax+rbx*4]
+    jae moveToLowerHalf
+    // The current element was below what we're looking for, so we move to the upper half.
+    sub rcx,rbx
+    sub rcx,0x1
+    lea rax,[rdi+0x4]
+    jmp isStatisticFound
+moveToLowerHalf:
+    mov rcx,rbx
+isStatisticFound:
+    test rcx,rcx
+    // Continue the search unless we've found our match or have already looked everywhere
+    // (leaving us with, yup, no match).
+    jg searchStatistics
+    // From my observations, the stamina statistic will always be found, additional logic
+    // that will handle failed searches will be added if needed.
+    mov rcx,[rsi]
+    // rax holds the addressKey, we then have the base address of the address book subtracted from it.
+    sub rax,rcx
+    // Taking one half of this value gives us the index to the desired data in the statistics array.
+    sar rax,2
+    add rax,rax
+    // Here's our statistics array.
+    mov rcx,[rsi+0x10]    
+    // And here's the address to our desired statistic. Hooray.
+    lea rbx,[rcx+rax*8+0xC]
+    // Let's create a pointer directly to the max stamina statistic.
+    mov rax,playerMaxStamina
+    mov [rax],rbx
+    pop rdi
+    pop rdx
+    pop rcx
+    pop rbx
+    pop rax    
 getPlayerOriginalCode:
-    mov r8d,0000000A
+    popf
+    mov r9,[rsi]
+    mov rbp,FFFFFFFFFFFFFFFF
     jmp getPlayerReturn
 
 omniPlayerHook:
     jmp getPlayer
-    nop
+    nop 5
 getPlayerReturn:
 
 
@@ -34,16 +98,35 @@ define(omniPlayerHealthHook,"Cyberpunk2077.exe"+1B5F32B)
 assert(omniPlayerHealthHook,F3 0F 10 80 90 01 00 00)
 alloc(getPlayerHealth,$1000,omniPlayerHealthHook)
 alloc(playerHealth,8)
+alloc(playerHealthValue,8)
 
 registersymbol(omniPlayerHealthHook)
 registersymbol(playerHealth)
+registersymbol(playerHealthValue)
 
 getPlayerHealth:
-    push rbx
+    pushf
+    cmp r8,0
+    jne getPlayerHealthOriginalCode
+    sub rsp,10
+    movdqu [rsp],xmm0
+    push rbx    
     mov rbx,playerHealth
     mov [rbx],rax
+    // Convert the health percentage into a discrete value for display purposes.
+    mov rbx,percentageDivisor    
+    // We take the current health percentage and convert it into a useable percentage value (0-1).
+    movss xmm0,[rax+190]
+    divss xmm0,[rbx]
+    // Multiplying this percentage by the maximum health gives us a discrete current health value.
+    mulss xmm0,[rax+188]
+    mov rbx,playerHealthValue
+    movss [rbx],xmm0
     pop rbx
+    movdqu xmm0,[rsp]
+    add rsp,10
 getPlayerHealthOriginalCode:
+    popf
     movss xmm0,[rax+00000190]
     jmp getPlayerHealthReturn
 
@@ -54,24 +137,45 @@ getPlayerHealthReturn:
 
 
 // Gets the player's stamina structure.
-// UNIQUE AOB: 48 89 44 24 70 48 89 7C 24 78 E8 B6
+// UNIQUE AOB: F3 0F 10 BF 90 01 00 00
 define(omniPlayerStaminaHook,"Cyberpunk2077.exe"+1B622E7)
 
 assert(omniPlayerStaminaHook,F3 0F 10 BF 90 01 00 00)
 alloc(getPlayerStamina,$1000,omniPlayerStaminaHook)
 alloc(playerStamina,8)
+alloc(playerStaminaValue,8)
 
 registersymbol(omniPlayerStaminaHook)
 registersymbol(playerStamina)
+registersymbol(playerStaminaValue)
 
 getPlayerStamina:
     pushf
     cmp r12,1
     jne getPlayerStaminaOriginalCode
+    cmp r8,0x18
+    jne getPlayerStaminaOriginalCode
+    sub rsp,10
+    movdqu [rsp],xmm0
     push rax
+    mov rax,playerHealth
+    cmp [rax],rdi
+    je getPlayerStaminaCleanup
     mov rax,playerStamina
     mov [rax],rdi
+    // Convert the stamina percentage into a discrete value for display purposes.
+    mov rax,percentageDivisor
+    // We take the current stamina percentage and convert it into a useable percentage value (0-1).
+    movss xmm0,[rdi+190]
+    divss xmm0,[rax]
+    // Multiplying this percentage by the maximum stamina gives us a discrete current stamina value.
+    mulss xmm0,[rdi+188]
+    mov rax,playerStaminaValue
+    movss [rax],xmm0
+getPlayerStaminaCleanup:
     pop rax
+    movdqu xmm0,[rsp]
+    add rsp,10
 getPlayerStaminaOriginalCode:
     popf
     movss xmm7,[rdi+00000190]
@@ -95,13 +199,11 @@ registersymbol(omniPlayerLocationHook)
 registersymbol(playerLocation)
 
 getPlayerLocation:
-    pushf
     push rax
     mov rax,playerLocation
     mov [rax],rcx
     pop rax
 getPlayerLocationOriginalCode:
-    popf
     movups xmm0,[rcx+00000210]
     jmp getPlayerLocationReturn
 
@@ -111,15 +213,41 @@ omniPlayerLocationHook:
 getPlayerLocationReturn:
 
 
-// Gets the player's magazine.
-// UNIQUE AOB: 0F B7 8E 40 03 00 00
-define(omniPlayerMagazineHook,"Cyberpunk2077.exe"+1AF82D3)
+// Gets a structure for the player's location that contains values normalized to the NPC coordinate plane.
+// UNIQUE AOB: F3 0F 5C 83 08 01 00 00
+define(omniPlayerLocationNormalizedHook,"Cyberpunk2077.exe"+4A3CED)
 
-assert(omniPlayerMagazineHook,0F B7 8E 40 03 00 00)
-alloc(getPlayerMagazine,$1000,omniPlayerMagazineHook)
+assert(omniPlayerLocationNormalizedHook,F3 0F 5C 83 08 01 00 00)
+alloc(getPlayerLocationNormalized,$1000,omniPlayerLocationNormalizedHook)
+alloc(playerLocationNormalized,8)
+
+registersymbol(omniPlayerLocationNormalizedHook)
+registersymbol(playerLocationNormalized)
+
+getPlayerLocationNormalized:
+    push rax
+    mov rax,playerLocationNormalized
+    mov [rax],rbx
+    pop rax
+getPlayerLocationNormalizedOriginalCode:
+    subss xmm0,[rbx+00000108]
+    jmp getPlayerLocationNormalizedReturn
+
+omniPlayerLocationNormalizedHook:
+    jmp getPlayerLocationNormalized
+    nop 3
+getPlayerLocationNormalizedReturn:
+
+
+// Gets the player's magazine prior to a gun firing.
+// UNIQUE AOB: 0F B7 8E 40 03 00 00
+define(omniPlayerMagazineBeforeFireHook,"Cyberpunk2077.exe"+1AF82D3)
+
+assert(omniPlayerMagazineBeforeFireHook,0F B7 8E 40 03 00 00)
+alloc(getPlayerMagazine,$1000,omniPlayerMagazineBeforeFireHook)
 alloc(playerMagazine,8)
 
-registersymbol(omniPlayerMagazineHook)
+registersymbol(omniPlayerMagazineBeforeFireHook)
 registersymbol(playerMagazine)
 
 getPlayerMagazine:
@@ -137,10 +265,43 @@ getPlayerMagazineOriginalCode:
     movzx ecx,word ptr [rsi+00000340]
     jmp getPlayerMagazineReturn
 
-omniPlayerMagazineHook:
+omniPlayerMagazineBeforeFireHook:
     jmp getPlayerMagazine
     nop 2
 getPlayerMagazineReturn:
+
+
+// Gets the player's magazine when swapping to a new weapon.
+// UNIQUE AOB: 41 89 3F 48 8B BE C0 02 00 00
+define(omniPlayerMagazineAfterSwapHook,"Cyberpunk2077.exe"+1AFADD8)
+
+assert(omniPlayerMagazineAfterSwapHook,41 89 3F 48 8B BE C0 02 00 00)
+alloc(getPlayerMagazineAfterSwap,$1000,omniPlayerMagazineAfterSwapHook)
+
+registersymbol(omniPlayerMagazineAfterSwapHook)
+
+getPlayerMagazineAfterSwap:
+    pushf
+    cmp r13d,-0x1
+    je getPlayerMagazineAfterSwapOriginalCode
+    push rax
+    push rbx
+    mov rax,playerMagazine
+    mov rbx,r15
+    sub rbx,0x340
+    mov [rax],rbx
+    pop rbx
+    pop rax    
+getPlayerMagazineAfterSwapOriginalCode:
+    popf
+    mov [r15],edi
+    mov rdi,[rsi+000002C0]
+    jmp getPlayerMagazineAfterSwapReturn
+
+omniPlayerMagazineAfterSwapHook:
+    jmp getPlayerMagazineAfterSwap
+    nop 5
+getPlayerMagazineAfterSwapReturn:
 
 
 // Hit detection globals.
@@ -164,11 +325,8 @@ detectPlayerFire:
     mov rax,playerMagazine
     cmp [rax],rsi
     pop rax
-    jne resetPlayerAttacking
+    jne detectPlayerFireOriginalCode
     mov [playerAttacking],1
-    jmp detectPlayerFireOriginalCode
-resetPlayerAttacking:
-    mov [playerAttacking],0
 detectPlayerFireOriginalCode:
     popf
     mov [rsi+00000340],r12d
@@ -195,15 +353,11 @@ playerVitalsUpdate:
     // Make sure stamina has been initialized.
     push rax
     mov rax,playerStamina
-    cmp rax,0
-    pop rax
-    je playerVitalsUpdateOriginalCode
-    // Check if we're punching someone in the face. See if stamina is being updated.
-    push rax
-    mov rax,playerStamina
     cmp [rax],rdx
     pop rax
-    jne playerVitalsUpdateOriginalCode
+    jne playerVitalsUpdateOriginalCode    
+checkForFacePunch:
+    // Check if we're punching someone in the face. See if enough stamina is being expended.
     ucomiss xmm6,[punchInTheFaceThreshold]
     ja playerVitalsUpdateOriginalCode
     mov [playerAttacking],1
@@ -246,6 +400,12 @@ initiateApocalypse:
     cmp [rax],0
     pop rax
     je initiateApocalypseOriginalCode    
+    // Changes to stamina are also tallied here. We only care about health.
+    push rax
+    mov rax,playerStamina
+    cmp [rax],rcx
+    pop rax
+    je initiateApocalypseOriginalCode
     sub rsp,10
     movdqu [rsp],xmm0
     sub rsp,10
@@ -328,6 +488,9 @@ omnifyApocalypseHook:
 initiateApocalypseReturn:
 
 
+damageThreshold:
+    dd (float)0.2
+
 coordinatesAreDoubles:
     dd 1
 
@@ -344,6 +507,32 @@ verticalTeleportitisDisplacementX:
     dd (float)5.0
 
 
+// Initiates the Predator system.
+// UNIQUE AOB: C1 0F 11 07 48 8B 5C 24 50
+// This is yet to be implemented. Adding this now in order to bookmark the NPC movement function.
+// NPC coordinates begin at [rdi].
+define(omnifyPredatorHook,"Cyberpunk2077.exe"+1BF2AB2)
+
+assert(omnifyPredatorHook,0F 14 C1 0F 11 07)
+alloc(initiatePredator,$1000,omnifyPredatorHook)
+
+registersymbol(omnifyPredatorHook)
+
+initiatePredator:
+    pushf
+
+initiatePredatorOriginalCode:
+    popf
+    unpcklps xmm0,xmm1
+    movups [rdi],xmm0
+    jmp initiatePredatorReturn
+
+omnifyPredatorHook:
+    jmp initiatePredator
+    nop 
+initiatePredatorReturn:
+
+
 [DISABLE]
 
 
@@ -358,26 +547,35 @@ dealloc(playerLocation)
 dealloc(getPlayerLocation)
 
 
-// Cleanup of omniPlayerHook
-omniPlayerHook:
-    db 41 B8 0A 00 00 00
+// Cleanup of omniPlayerLocationNormalizedHook
+omniPlayerLocationNormalizedHook:
+    db F3 0F 5C 83 08 01 00 00
 
-unregistersymbol(omniPlayerHook)
-unregistersymbol(player)
+unregistersymbol(omniPlayerLocationNormalizedHook)
+unregistersymbol(playerLocationNormalized)
 
-dealloc(player)
-dealloc(getPlayer)
+dealloc(playerLocationNormalized)
+dealloc(getPlayerLocationNormalized)
 
 
-// Cleanup of omniPlayerMagazineHook
-omniPlayerMagazineHook:
+// Cleanup of omniPlayerMagazineBeforeFireHook
+omniPlayerMagazineBeforeFireHook:
     db 0F B7 8E 40 03 00 00
 
-unregistersymbol(omniPlayerMagazineHook)
+unregistersymbol(omniPlayerMagazineBeforeFireHook)
 unregistersymbol(playerMagazine)
 
 dealloc(getPlayerMagazine)
 dealloc(playerMagazine)
+
+
+// Cleanup of omniPlayerMagazineAfterSwapHook
+omniPlayerMagazineAfterSwapHook:
+    db 41 89 3F 48 8B BE C0 02 00 00
+
+unregistersymbol(omniPlayerMagazineAfterSwapHook)
+
+dealloc(getPlayerMagazineAfterSwap)
 
 
 // Cleanup of omniDetectPlayerFire
@@ -414,23 +612,49 @@ unregistersymbol(omnifyApocalypseHook)
 dealloc(initiateApocalypse)
 
 
+// Cleanup of omnifyPredatorHook
+omnifyPredatorHook:
+    db 0F 14 C1 0F 11 07
+
+unregistersymbol(omnifyPredatorHook)
+
+dealloc(initiatePredator)
+
+
 // Cleanup of omniPlayerHealthHook
 omniPlayerHealthHook:
     db F3 0F 10 80 90 01 00 00
 
 unregistersymbol(omniPlayerHealthHook)
 unregistersymbol(playerHealth)
+unregistersymbol(playerHealthValue)
 
+dealloc(playerHealthValue)
 dealloc(playerHealth)
 dealloc(getPlayerHealth)
 
 
 // Cleanup of omniPlayerStaminaHook
 omniPlayerStaminaHook:
-    db 48 89 44 24 70
+    db F3 0F 10 BF 90 01 00 00
 
 unregistersymbol(omniPlayerStaminaHook)
 unregistersymbol(playerStamina)
+unregistersymbol(playerStaminaValue)
 
+dealloc(playerStaminaValue)
 dealloc(playerStamina)
 dealloc(getPlayerStamina)
+
+
+// Cleanup of omniPlayerHook
+omniPlayerHook:
+    db 4C 8B 0E 48 C7 C5 FF FF FF FF
+
+unregistersymbol(omniPlayerHook)
+unregistersymbol(player)
+unregistersymbol(playerMaxStamina)
+
+dealloc(player)
+dealloc(playerMaxStamina)
+dealloc(getPlayer)

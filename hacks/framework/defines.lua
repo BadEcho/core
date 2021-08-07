@@ -16,3 +16,10 @@ healthIsInteger = false
 -- Exportation of player health requires these to be set to addresses in memory where coordinates are stored.
 playerHealthAddress = "[exampleHealth]+0x14"
 playerMaxHealthAddress = "[exampleHealth]+0x18"
+
+--Stamina values are assumed to be floating point, unless this is set to be true.
+staminaIsInteger = false
+
+-- Exportation of player stamina requires these to also be set to addresses in memory where coordinates are stoerd.
+playerStaminaAddress = "[exampleStamina]+0x14"
+playerMaxStaminaAddress = "[exampleStamina]+0x18"

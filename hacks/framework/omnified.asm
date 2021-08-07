@@ -11,6 +11,7 @@ alloc(negativeOne,8)
 alloc(percentageDivisor,8)
 
 registersymbol(epsilon)
+registersymbol(zero)
 registersymbol(damageThreshold)
 registersymbol(yIsVertical)
 registersymbol(negativeOne)
@@ -32,7 +33,7 @@ negativeOne:
   dd (float)-1.0
   
 percentageDivisor:
-    dd (float)100.0
+  dd (float)100.0
 
   
 // Checks if the loaded address is a valid pointer.
@@ -192,6 +193,7 @@ unregistersymbol(percentageDivisor)
 unregistersymbol(epsilon)
 unregistersymbol(yIsVertical)
 unregistersymbol(negativeOne)
+unregistersymbol(zero)
 
 dealloc(zero)
 dealloc(percentageDivisor)

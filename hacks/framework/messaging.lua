@@ -8,21 +8,29 @@ require("statisticMessages")
 -- Creates a JSON-encoded dump of hacked game statistics.
 local function dumpStatistics()
     local playerHealth = not healthIsInteger
-                            and floor(readFloat(playerHealthAddress))
+                            and round(readFloat(playerHealthAddress))
                             or readInteger(playerHealthAddress)
 
     local playerMaxHealth = not healthIsInteger
-                                and floor(readFloat(playerMaxHealthAddress))
+                                and round(readFloat(playerMaxHealthAddress))
                                 or readInteger(playerMaxHealthAddress)
 
-    -- Last damaged enemy health always floating point, as it is maintained by the Apocalypse system.
-    local enemyHealth = floor(readFloat("lastEnemyHealthValue"))
+    local playerStamina = not staminaIsInteger
+                            and round(readFloat(playerStaminaAddress))
+                            or readInteger(playerStaminaAddress)
 
-    local lastDamageToPlayer = floor(readFloat("lastDamageToPlayer"))
-    local maxDamageToPlayer = floor(readFloat("maxDamageToPlayer"))
-    local lastDamageByPlayer = floor(readFloat("lastDamageByPlayer"))
-    local maxDamageByPlayer = floor(readFloat("maxDamageByPlayer"))
-    local totalDamageByPlayer = floor(readFloat("totalDamageByPlayer"))
+    local playerMaxStamina = not staminaIsInteger
+                                and round(readFloat(playerMaxStaminaAddress))
+                                or readInteger(playerMaxStaminaAddress)    
+
+    -- Last damaged enemy health always floating point, as it is maintained by the Apocalypse system.
+    local enemyHealth = round(readFloat("lastEnemyHealthValue"))
+
+    local lastDamageToPlayer = round(readFloat("lastDamageToPlayer"))
+    local maxDamageToPlayer = round(readFloat("maxDamageToPlayer"))
+    local lastDamageByPlayer = round(readFloat("lastDamageByPlayer"))
+    local maxDamageByPlayer = round(readFloat("maxDamageByPlayer"))
+    local totalDamageByPlayer = round(readFloat("totalDamageByPlayer"))
 
     local playerCoordinates = readPlayerCoordinates()
 
@@ -30,6 +38,7 @@ local function dumpStatistics()
 
     local statistics = {
         FractionalStatistic("Health", playerHealth, playerMaxHealth),
+        FractionalStatistic("Stamina", playerStamina, playerMaxStamina),
         WholeStatistic("Enemy Health", enemyHealth),
         StatisticGroup("Damage Taken", { 
             WholeStatistic("Last", lastDamageToPlayer), 
@@ -37,11 +46,15 @@ local function dumpStatistics()
         }),
         StatisticGroup("Damage Inflicted", {
             WholeStatistic("Last", lastDamageByPlayer),
-            WholeStatistic("Max", maxDamageByPlayer),
+            WholeStatistic("Max", maxDamageByPlayer, true),
             WholeStatistic("Total", totalDamageByPlayer)
         }),
         CoordinateStatistic("Coordinates", playerCoordinates.X, playerCoordinates.Y, playerCoordinates.Z)
     }
+
+    for _, v in pairs(AdditionalStatistics()) do
+        table.insert(statistics, v)
+    end
 
     return jsonEncode(statistics)
 end

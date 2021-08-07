@@ -18,6 +18,10 @@ function readPlayerCoordinates()
 				and readFloat(playerCoordinatesZAddress) 
 				or readDouble(playerCoordinatesZAddress)
 
+	if x ~= x then x = 0 end
+	if y ~= y then y = 0 end
+	if z ~= z then z = 0 end
+
 	local coordinates = { X = x, Y = y,	Z = z }
 
 	return coordinates
@@ -113,6 +117,7 @@ function registerOmnification(targetAssemblyFilePath)
 
     if not targetAssemblyRegistered  then
       print("Failed to register the target assembly.")
+	  print(targetAssemblyDisableInfo)
     end
   end
 end
