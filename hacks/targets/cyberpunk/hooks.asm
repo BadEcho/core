@@ -568,33 +568,53 @@ teleportitisDisplacementX:
     dd (float)0.5
 
 verticalTeleportitisDisplacementX:
-    dd (float)5.0
+    dd (float)2.5
 
 
-// Initiates the Predator system.
-// UNIQUE AOB: C1 0F 11 07 48 8B 5C 24 50
-// This is yet to be implemented. Adding this now in order to bookmark the NPC movement function.
-// NPC coordinates begin at [rdi].
-define(omnifyPredatorHook,"Cyberpunk2077.exe"+1BF2AB2)
+// Initiates the Predator system for dangerous, evil (well, maybe friendly too) NPCs.
+// UNIQUE AOB: 0F 58 02 0F 29 74 24 70
+// [rdx]: Movement offsets, xmm0: current working coordinates for target
+define(omnifyPredatorHook,"Cyberpunk2077.exe"+1B96C27)
 
-assert(omnifyPredatorHook,0F 14 C1 0F 11 07)
+assert(omnifyPredatorHook,0F 58 02 0F 29 74 24 70)
 alloc(initiatePredator,$1000,omnifyPredatorHook)
 
 registersymbol(omnifyPredatorHook)
 
 initiatePredator:
-    pushf
-
+    
 initiatePredatorOriginalCode:
-    popf
-    unpcklps xmm0,xmm1
-    movups [rdi],xmm0
+    addps xmm0,[rdx]
+    movaps [rsp+70],xmm6
     jmp initiatePredatorReturn
 
 omnifyPredatorHook:
     jmp initiatePredator
-    nop 
+    nop 3
 initiatePredatorReturn:
+
+
+// Initiates the Predator system for stupid, harmless NPCs.
+// UNIQUE AOB: E0 0F 58 20 0F 28 D4
+// xmm4: Movement offsets, [rax]: current working coordinates for target
+define(omnifyCrowdPredatorHook,"Cyberpunk2077.exe"+1BF2A98)
+
+assert(omnifyCrowdPredatorHook,0F 58 20 0F 28 D4)
+alloc(initiateCrowdPredator,$1000,omnifyCrowdPredatorHook)
+
+registersymbol(omnifyCrowdPredatorHook)
+
+initiateCrowdPredator:
+
+initiateCrowdPredatorOriginalCode:
+    addps xmm4,[rax]
+    movaps xmm2,xmm4
+    jmp initiateCrowdPredatorReturn
+
+omnifyCrowdPredatorHook:
+    jmp initiateCrowdPredator
+    nop 
+initiateCrowdPredatorReturn:
 
 
 [DISABLE]
@@ -688,11 +708,20 @@ dealloc(initiateApocalypse)
 
 // Cleanup of omnifyPredatorHook
 omnifyPredatorHook:
-    db 0F 14 C1 0F 11 07
+    db 0F 58 02 0F 29 74 24 70
 
 unregistersymbol(omnifyPredatorHook)
 
 dealloc(initiatePredator)
+
+
+// Cleanup of omnifyCrowdPredatorHook
+omnifyCrowdPredatorHook:
+    db 0F 58 20 0F 28 D4
+
+unregistersymbol(omnifyCrowdPredatorHook)
+
+dealloc(initiateCrowdPredator)
 
 
 // Cleanup of omniPlayerHealthHook
