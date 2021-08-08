@@ -5,8 +5,6 @@
 require("defines")
 require("utility")
 
-local DEFAULT_FRAMEWORK_PATH = "..\\..\\framework\\"
- 
 function readPlayerCoordinates()
 	local x = not coordinatesAreDoubles 
 				and readFloat(playerCoordinatesXAddress) 
@@ -50,11 +48,10 @@ local function recall()
 end
 
 local function assemble(assemblyFilePath, disableInfo)
-	local assemblyFile = assert(io.open(assemblyFilePath))
+	local assemblyFile = io.open(assemblyFilePath)
 
-	if assemblyFile == nil then 
-	  print("Assembly file located at ", assemblyFilePath, " was unable to be opened.")
-	  do return end
+	if assemblyFile == nil then 		
+	  return false, "Assembly file location at " .. assemblyFilePath ..  " was unable to be opened."	  
 	end
   
 	local assembly = assemblyFile:read("a")
@@ -62,14 +59,35 @@ local function assemble(assemblyFilePath, disableInfo)
   
 	assembly = "[ENABLE]\n" .. assembly
 
-	local result, resultDisableInfo = autoAssemble(assembly, false, disableInfo)
-  
-	if result == false then
-	  print("Failed to assemble ", assemblyFilePath)
+	return autoAssemble(assembly, false, disableInfo)
+end
+
+local function registerModule(modulePath, moduleName)
+	local result, resultDisableInfo = assemble(modulePath)
+
+	if not result then 
+		print(string.format("Failed to register %s:\r\n%s", moduleName, resultDisableInfo))
 	end
-  
+
 	return result, resultDisableInfo
 end
+
+local function unregisterModule(modulePath, moduleName, disableInfo)
+	local result, resultDisableInfo = assemble(modulePath, disableInfo)
+
+	if not result then
+		print(string.format("Failed to unregister %s:\r\n%s", moduleName, resultDisableInfo))
+	end
+
+	return not result
+end
+
+local DEFAULT_FRAMEWORK_PATH = "..\\..\\framework\\"
+local OMNIFIED_MODULE_NAME = "Omnified framework assembly functions"
+local APOCALYPSE_MODULE_NAME = "Apocalypse system"
+local PREDATOR_MODULE_NAME = "Predator system"
+local ABOMNIFICATION_MODULE_NAME = "Abomnification system"
+local TARGET_MODULE_NAME = "target binary"
 
 function registerOmnification(targetAssemblyFilePath, pathToFramework)
 	if not omnifiedRegistered then
@@ -78,16 +96,22 @@ function registerOmnification(targetAssemblyFilePath, pathToFramework)
 
 		if pathToFramework == nil then pathToFramework = DEFAULT_FRAMEWORK_PATH end
 
-		omnifiedRegistered, omnifiedDisableInfo = assemble(pathToFramework .. "omnified.asm")
-		apocalypseRegistered, apocalypseDisableInfo = assemble(pathToFramework .. "systems\\apocalypse.asm")		
-		predatorRegistered, predatorDisableInfo = assemble(pathToFramework .. "systems\\predator.asm")
-		abomnificationRegistered, abomnificationDisableInfo = assemble(pathToFramework .. "systems\\abomnification.asm")
+		omnifiedRegistered, omnifiedDisableInfo 
+			= registerModule(pathToFramework .. "omnified.asm", OMNIFIED_MODULE_NAME)
+
+		apocalypseRegistered, apocalypseDisableInfo
+			= registerModule(pathToFramework .. "systems\\apocalypse.asm", APOCALYPSE_MODULE_NAME)
 		
-		if anyNil(omnifiedRegistered, apocalypseRegistered, predatorRegistered, abomnificationRegistered) then
-			print("Failed to register the Omnified framework.")
+		predatorRegistered, predatorDisableInfo 
+			= registerModule(pathToFramework .. "systems\\predator.asm", PREDATOR_MODULE_NAME)			
+
+		abomnificationRegistered, abomnificationDisableInfo 
+			= registerModule(pathToFramework .. "systems\\abomnification.asm", ABOMNIFICATION_MODULE_NAME)			
+
+		if not areTrue(omnifiedRegistered, apocalypseRegistered, predatorRegistered, abomnificationRegistered) then
 			do return end
 		end
-		
+
 		if statusTimer == nil then
 			statusTimer = createTimer(getMainForm())
 		end
@@ -117,55 +141,57 @@ function registerOmnification(targetAssemblyFilePath, pathToFramework)
 	end
 
   if not targetAssemblyRegistered then
-    targetAssemblyRegistered, targetAssemblyDisableInfo = assemble(targetAssemblyFilePath)
-
-    if not targetAssemblyRegistered  then
-      print("Failed to register the target assembly.")
-	  print(targetAssemblyDisableInfo)
-    end
+    targetAssemblyRegistered, targetAssemblyDisableInfo 
+		= registerModule(targetAssemblyFilePath, TARGET_MODULE_NAME)
   end
 end
 
 function unregisterOmnification(targetAssemblyFilePath, pathToFramework)
-	if	areTrue(omnifiedRegistered, apocalypseRegistered, predatorRegistered, abomnificationRegistered) then
-		markHotkey.destroy()
-		recallHotkey.destroy()
+	if pathToFramework == nil then pathToFramework = DEFAULT_FRAMEWORK_PATH end
 
-		if pathToFramework == nil then pathToFramework = DEFAULT_FRAMEWORK_PATH end
-
-		omnifiedRegistered = assemble(pathToFramework .."omnified.asm", omnifiedDisableInfo)
-		apocalypseRegistered = assemble(pathToFramework .. "systems\\apocalypse.asm", apocalypseDisableInfo)
-		predatorRegistered = assemble(pathToFramework .. "systems\\predator.asm", predatorDisableInfo)
-		abomnificationDisableInfo = assemble(pathToFramework .. "systems\\abomnification.asm", abomnificationDisableInfo)
-		
-		if not omnifiedRegistered then
-			print("Failed to unregister the Omnified framework.")
-		else 
-			omnifiedRegistered, apocalypseRegistered, predatorRegistered, abomnificationRegistered = false
-			
-			if statusTimer ~= nil then
-				if fatalisTimer ~= nil then
-					fatalisTimer.Enabled = false
-					fatalisTimer.Destroy()
-					fatalisTimer = nil
-				end
-				
-				statusTimer.Enabled = false
-				statusTimer.Destroy()
-				statusTimer = nil
-			end
-		end		
-	else 
-		print("Omnified framework already unregistered.")
+	if omnifiedRegistered then
+		omnifiedRegistered 
+			= unregisterModule(pathToFramework .. "omnified.asm", OMNIFIED_MODULE_NAME, omnifiedDisableInfo)
 	end
 
-  	if targetAssemblyRegistered  then
-    	targetAssemblyRegistered = assemble(targetAssemblyFilePath, targetAssemblyDisableInfo)
+	if apocalypseRegistered then
+		apocalypseRegistered 
+			= unregisterModule(pathToFramework .. "systems\\apocalypse.asm", APOCALYPSE_MODULE_NAME, apocalypseDisableInfo)
+	end
+
+	if predatorRegistered then
+		predatorRegistered
+			= unregisterModule(pathToFramework .. "systems\\predator.asm", PREDATOR_MODULE_NAME, predatorDisableInfo)
+	end
+
+	if abomnificationRegistered then
+		abomnificationRegistered
+			= unregisterModule(pathToFramework .. "systems\\abomnification.asm", ABOMNIFICATION_MODULE_NAME, abomnificationDisableInfo)
+	end
+
+	if markHotkey ~= nil then
+		markHotkey.destroy()
+		markHotkey = nil
+	end
+
+	if recallHotkey ~= nil then
+		recallHotkey.destroy()
+		recallHotkey = nil
+	end
+
+	if statusTimer ~= nil then
+		if fatalisTimer ~= nil then
+			fatalisTimer.Enabled = false
+			fatalisTimer.Destroy()
+			fatalisTimer = nil
+		end
 		
-		if not targetAssemblyRegistered then
-			print("Failed to unregister the target assembly.")
-    	else
-      		targetAssemblyRegistered = false
-    	end
-  	end
+		statusTimer.Enabled = false
+		statusTimer.Destroy()
+		statusTimer = nil
+	end
+
+	if targetAssemblyRegistered then
+		targetAssemblyRegistered = unregisterModule(targetAssemblyFilePath, TARGET_MODULE_NAME, targetAssemblyDisableInfo)
+	end
 end
