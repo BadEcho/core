@@ -150,10 +150,10 @@ getPlayerHealthReturn:
 
 
 // Gets the player's stamina structure.
-// UNIQUE AOB: F3 0F 10 BF 90 01 00 00
-define(omniPlayerStaminaHook,"Cyberpunk2077.exe"+1B622E7)
+// UNIQUE AOB: F3 0F 10 80 90 01 00 00 F3 0F 11 45 E0
+define(omniPlayerStaminaHook,"Cyberpunk2077.exe"+1B5BFF5)
 
-assert(omniPlayerStaminaHook,F3 0F 10 BF 90 01 00 00)
+assert(omniPlayerStaminaHook,F3 0F 10 80 90 01 00 00)
 alloc(getPlayerStamina,$1000,omniPlayerStaminaHook)
 alloc(playerStamina,8)
 
@@ -161,35 +161,33 @@ registersymbol(omniPlayerStaminaHook)
 registersymbol(playerStamina)
 
 getPlayerStamina:
-    pushf
-    cmp r12,1
-    jne getPlayerStaminaOriginalCode
+    pushf    
     cmp r8,0x18
     jne getPlayerStaminaOriginalCode
     sub rsp,10
     movdqu [rsp],xmm0
-    push rax
-    mov rax,playerHealth
-    cmp [rax],rdi
+    push rbx
+    mov rbx,playerHealth
+    cmp [rbx],rax
     je getPlayerStaminaCleanup
-    mov rax,playerStamina
-    mov [rax],rdi
+    mov rbx,playerStamina
+    mov [rbx],rax
     // Convert the stamina percentage into a discrete value for display purposes.
-    mov rax,percentageDivisor
+    mov rbx,percentageDivisor
     // We take the current stamina percentage and convert it into a useable percentage value (0-1).
-    movss xmm0,[rdi+190]
-    divss xmm0,[rax]
+    movss xmm0,[rax+190]
+    divss xmm0,[rbx]
     // Multiplying this percentage by the maximum stamina gives us a discrete current stamina value.
-    mulss xmm0,[rdi+188]
-    mov rax,playerStaminaValue
-    movss [rax],xmm0
+    mulss xmm0,[rax+188]
+    mov rbx,playerStaminaValue
+    movss [rbx],xmm0
 getPlayerStaminaCleanup:
-    pop rax
+    pop rbx
     movdqu xmm0,[rsp]
     add rsp,10
 getPlayerStaminaOriginalCode:
     popf
-    movss xmm7,[rdi+00000190]
+    movss xmm0,[rax+00000190]
     jmp getPlayerStaminaReturn
 
 omniPlayerStaminaHook:
@@ -337,7 +335,7 @@ detectPlayerFire:
     cmp [rax],rsi
     pop rax
     jne detectPlayerFireOriginalCode
-    mov [playerAttacking],1
+    mov [playerAttacking],4
 detectPlayerFireOriginalCode:
     popf
     mov [rsi+00000340],r12d
@@ -349,7 +347,8 @@ omniDetectPlayerFire:
 detectPlayerFireReturn:
 
 
-// Hooks into the vitals update code to perform tasks such as player melee hit detection.
+// Hooks into the vitals update code to perform tasks such as player melee hit detection and stamina
+// discrete value updates.
 // UNIQUE AOB: F3 0F 11 82 90 01 00 00
 define(omnifyPlayerVitalsUpdateHook,"Cyberpunk2077.exe"+19CCF3A)
 
@@ -367,11 +366,40 @@ playerVitalsUpdate:
     cmp [rax],rdx
     pop rax
     jne playerVitalsUpdateOriginalCode    
-checkForFacePunch:
+    sub rsp,10
+    movdqu [rsp],xmm1
+    push rax
+processStamina:    
+    // Convert the stamina percentage into a discrete value for display purposes.
+    mov rax,percentageDivisor
+    // We take the current stamina percentage and convert it into a useable percentage value (0-1).
+    movss xmm1,xmm0
+    divss xmm1,[rax]
+    // Multiplying this percentage by the maximum stamina gives us a discrete current stamina value.
+    mulss xmm1,[rdx+188]
+    mov rax,playerStaminaValue
+    movss [rax],xmm1    
+    // Check if the change is negative, otherwise there's no chance of this being a player attack.
+    movd eax,xmm6
+    shr eax,1F
+    test eax,eax
+    jne checkFacePunch
+    jmp playerVitalsUpdateCleanup
+checkFacePunch:
+    // Now convert the change to stamina to a discrete value, in order to see if it passes our face punch
+    // threshold.
+    mov rax,percentageDivisor
+    movss xmm1,xmm6
+    divss xmm1,[rax]
+    mulss xmm1,[rdx+188]
     // Check if we're punching someone in the face. See if enough stamina is being expended.
-    ucomiss xmm6,[punchInTheFaceThreshold]
-    ja playerVitalsUpdateOriginalCode
-    mov [playerAttacking],1
+    ucomiss xmm1,[punchInTheFaceThreshold]
+    ja playerVitalsUpdateCleanup
+    mov [playerAttacking],4
+playerVitalsUpdateCleanup:
+    pop rax
+    movdqu xmm1,[rsp]
+    add rsp,10
 playerVitalsUpdateOriginalCode:
     popf
     movss [rdx+00000190],xmm0
@@ -384,7 +412,7 @@ playerVitalsUpdateReturn:
 
 
 punchInTheFaceThreshold:
-    dd (float)-5.0
+    dd (float)-5.15
 
 
 // Hooks into the player's location update function, allowing us to set our speed as well as
@@ -393,26 +421,11 @@ define(omnifyPlayerLocationUpdateHook,"PhysX3CharacterKinematic_x64.dll"+7B99)
 
 assert(omnifyPlayerLocationUpdateHook,0F 11 86 08 02 00 00)
 alloc(playerLocationUpdate,$1000,omnifyPlayerLocationUpdateHook)
-alloc(movementFramesToSkip,8)
 
 registersymbol(omnifyPlayerLocationUpdateHook)
 
 playerLocationUpdate:
     pushf
-    push rax
-    mov rax,movementFramesToSkip
-    cmp [rax],0
-    pop rax    
-    jg skipMovementFrame
-    jmp checkForTeleported
-skipMovementFrame:
-    push rax
-    mov rax,movementFramesToSkip
-    dec [rax]
-    pop rax
-    movups xmm0,[rsi+208]
-    jmp playerLocationUpdateOriginalCode
-checkForTeleported:
     push rax
     mov rax,teleported
     cmp [rax],1
@@ -421,10 +434,8 @@ checkForTeleported:
     push rax
     mov rax,teleported
     mov [rax],0    
-    mov rax,movementFramesToSkip
-    mov [rax],2
     pop rax
-    jmp skipMovementFrame
+    movups xmm0,[rsi+208]
 playerLocationUpdateOriginalCode:
     popf
     movups [rsi+00000208],xmm0
@@ -434,10 +445,6 @@ omnifyPlayerLocationUpdateHook:
     jmp playerLocationUpdate
     nop 2
 playerLocationUpdateReturn:
-
-
-movementFramesToSkip:
-    dd 0
 
 
 // Initiates the Apocalypse system.
@@ -494,9 +501,8 @@ initiateApocalypse:
     cmp [rax],rcx
     je initiatePlayerApocalypse
     mov rax,playerAttacking
-    cmp [rax],1
-    jne initiateApocalypseCleanup
-    mov [rax],0
+    cmp [rax],0
+    je initiateApocalypseCleanup
     jmp initiateEnemyApocalypse
 initiatePlayerApocalypse:
     // Load the damage amount parameter.
@@ -568,7 +574,7 @@ teleportitisDisplacementX:
     dd (float)0.5
 
 verticalTeleportitisDisplacementX:
-    dd (float)2.5
+    dd (float)3.25
 
 
 // Initiates the Predator system for dangerous, evil (well, maybe friendly too) NPCs.
@@ -693,7 +699,6 @@ omnifyPlayerLocationUpdateHook:
 
 unregistersymbol(omnifyPlayerLocationUpdateHook)
 
-dealloc(movementFramesToSkip)
 dealloc(playerLocationUpdate)
 
 
@@ -739,7 +744,7 @@ dealloc(getPlayerHealth)
 
 // Cleanup of omniPlayerStaminaHook
 omniPlayerStaminaHook:
-    db F3 0F 10 BF 90 01 00 00
+    db F3 0F 10 80 90 01 00 00
 
 unregistersymbol(omniPlayerStaminaHook)
 unregistersymbol(playerStamina)
