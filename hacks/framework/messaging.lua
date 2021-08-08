@@ -26,6 +26,13 @@ local function dumpStatistics()
     -- Last damaged enemy health always floating point, as it is maintained by the Apocalypse system.
     local enemyHealth = toInt(readFloat("lastEnemyHealthValue"))
 
+    local lastDamageByPlayerNew = readFloat("lastDamageByPlayerNew")
+
+    if lastDamageByPlayerNew ~= nil and lastDamageByPlayerNew > 0 then
+        writeFloat("lastDamageByPlayer", lastDamageByPlayerNew)        
+        writeFloat("lastDamageByPlayerNew", 0)
+    end
+
     local lastDamageToPlayer = toInt(readFloat("lastDamageToPlayer"))
     local maxDamageToPlayer = toInt(readFloat("maxDamageToPlayer"))
     local lastDamageByPlayer = toInt(readFloat("lastDamageByPlayer"))
