@@ -104,6 +104,22 @@ function randomize(random_settings)
 	return indexedResults[result]
 end
 
+-- Determines if a library of LUA code identified by the parameter is available for loading.
+function isPackageAvailable(packageName) 
+    if package.loaded[packageName] then 
+        return true
+    else
+        for _, searcher in ipairs(package.searchers or package.loaders) do
+            local packageLoader = searcher(packageName)
+            if type(loader) == 'function' then
+                return true
+            end
+        end
+
+        return false
+    end
+end
+
 -- JSON parsing.
 local next = next
 

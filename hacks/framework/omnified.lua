@@ -82,6 +82,40 @@ local function unregisterModule(modulePath, moduleName, disableInfo)
 	return not result
 end
 
+local function registerExports()
+	if not isPackageAvailable("exports") then
+		do return end
+	end
+
+	require("exports")
+
+	if registerExports == nil then
+		print(	"Exports file does not conform to Omnified target binary configuration interface. " ..
+				"Registration method should be named 'registerExports'.")
+	else 
+		registerExports()
+	end	
+end
+
+local function unregisterExports()
+	if not package.loaded["exports"] then
+		do return end
+	end
+
+	if unregisterExports == nil then 
+		print(	"Exports file does not conform to Omnified target binary configuration interface. " ..
+				"Unregistration method should be named 'unregisterExports'.")
+		do return end
+	end
+
+	unregisterExports()
+
+	if package.loaded["exports"] then
+		package.loaded["exports"] = nil
+		_G["exports"] = nil
+	end
+end
+
 local DEFAULT_FRAMEWORK_PATH = "..\\..\\framework\\"
 local OMNIFIED_MODULE_NAME = "Omnified framework assembly functions"
 local APOCALYPSE_MODULE_NAME = "Apocalypse system"
@@ -140,10 +174,12 @@ function registerOmnification(targetAssemblyFilePath, pathToFramework)
 		end
 	end
 
-  if not targetAssemblyRegistered then
-    targetAssemblyRegistered, targetAssemblyDisableInfo 
-		= registerModule(targetAssemblyFilePath, TARGET_MODULE_NAME)
-  end
+  	if not targetAssemblyRegistered then
+    	targetAssemblyRegistered, targetAssemblyDisableInfo 
+			= registerModule(targetAssemblyFilePath, TARGET_MODULE_NAME)
+  	end
+
+  	registerExports()
 end
 
 function unregisterOmnification(targetAssemblyFilePath, pathToFramework)
@@ -194,4 +230,6 @@ function unregisterOmnification(targetAssemblyFilePath, pathToFramework)
 	if targetAssemblyRegistered then
 		targetAssemblyRegistered = unregisterModule(targetAssemblyFilePath, TARGET_MODULE_NAME, targetAssemblyDisableInfo)
 	end
+
+	unregisterExports()
 end
