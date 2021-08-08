@@ -41,11 +41,11 @@ function activateLoggers()
 		
 		deathcounter:close()	
 		
-		local lastDamageToPlayer = readFloat("lastDamageToPlayer")
-		local maxDamageToPlayer = readFloat("maxDamageToPlayer")
-		local lastDamageByPlayer = readFloat("lastDamageByPlayer")
-		local maxDamageByPlayer = readFloat("maxDamageByPlayer")
-		local totalDamageByPlayer = readFloat("totalDamageByPlayer")
+		local lastDamageToPlayer = toInt(readFloat("lastDamageToPlayer"))
+		local maxDamageToPlayer = toInt(readFloat("maxDamageToPlayer"))
+		local lastDamageByPlayer = toInt(readFloat("lastDamageByPlayer"))
+		local maxDamageByPlayer = toInt(readFloat("maxDamageByPlayer"))
+		local totalDamageByPlayer = toInt(readFloat("totalDamageByPlayer"))
 
 		lastDamageToPlayer = FloorIt(lastDamageToPlayer)
 		maxDamageToPlayer = FloorIt(maxDamageToPlayer)
