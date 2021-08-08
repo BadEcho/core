@@ -62,8 +62,11 @@ local function dumpStatistics()
         CoordinateStatistic("Coordinates", playerX, playerY, playerZ)
     }
 
+    local additionalIndex = 2
+
     for _, v in pairs(AdditionalStatistics()) do
-        table.insert(statistics, v)
+        additionalIndex = additionalIndex + 1
+        table.insert(statistics, additionalIndex, v)
     end
 
     return jsonEncode(statistics)
