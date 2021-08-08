@@ -534,6 +534,7 @@ sixtyNineEveryTime:
 alloc(executeEnemyApocalypse,$1000)
 alloc(maxDamageByPlayer,8)
 alloc(lastDamageByPlayer,8)
+alloc(lastDamageByPlayerNew,8)
 alloc(totalDamageByPlayer,8)
 alloc(logKamehameha,8)
 alloc(gokuResult,8)
@@ -554,6 +555,7 @@ alloc(enemyApocalypseRandomState,8)
 registersymbol(executeEnemyApocalypse)
 registersymbol(maxDamageByPlayer)
 registersymbol(lastDamageByPlayer)
+registersymbol(lastDamageByPlayerNew)
 registersymbol(totalDamageByPlayer)
 registersymbol(logKamehameha)
 registersymbol(gokuDamageX)
@@ -641,16 +643,19 @@ updatePlayerDamageStats:
   // "lastEnemyHealthValue" symbol. We perform a mock damage application here and 
   // store it there.
   subss xmm1,xmm0
-  movss [lastEnemyHealthValue],xmm1
-  // If the final damage amount is less than or equal to the current max damage 
-  // from the player, it doesn't need to be updated obviously!
-  ucomiss xmm0,[maxDamageByPlayer]
-  jna skipMaxPlayerDamageUpdate
-  movss [maxDamageByPlayer],xmm0
-skipMaxPlayerDamageUpdate:
+  movss [lastEnemyHealthValue],xmm1  
   // We save the final damage amount as the last damage to be done from the 
   // player, and add it to the running total.
-  movss [lastDamageByPlayer],xmm0
+  movss xmm1,[lastDamageByPlayerNew]
+  movss xmm2,xmm0
+  addss xmm2,xmm1
+  movss [lastDamageByPlayerNew],xmm2
+  // If the final damage amount is less than or equal to the current max damage 
+  // from the player, it doesn't need to be updated obviously!
+  ucomiss xmm2,[maxDamageByPlayer]
+  jna skipMaxPlayerDamageUpdate
+  movss [maxDamageByPlayer],xmm2
+skipMaxPlayerDamageUpdate:
   movss xmm1,xmm0
   addss xmm1,[totalDamageByPlayer]
   movss [totalDamageByPlayer],xmm1
@@ -681,6 +686,9 @@ maxDamageByPlayer:
   
 lastDamageByPlayer:
   dd 0  
+
+lastDamageByPlayerNew:
+  dd (float)0.0
 
 logKamehameha:
   dd 0
@@ -826,6 +834,7 @@ dealloc(playerGodMode)
 // Cleanup of Enemy Apocalypse System Function
 unregistersymbol(maxDamageByPlayer)
 unregistersymbol(lastDamageByPlayer)
+unregistersymbol(lastDamageByPlayerNew)
 unregistersymbol(totalDamageByPlayer)
 unregistersymbol(logKamehameha)
 unregistersymbol(gokuDamageX)
@@ -839,6 +848,7 @@ unregistersymbol(executeEnemyApocalypse)
 
 dealloc(maxDamageByPlayer)
 dealloc(lastDamageByPlayer)
+dealloc(lastDamageByPlayerNew)
 dealloc(totalDamageByPlayer)
 dealloc(logKamehameha)
 dealloc(gokuResult)
