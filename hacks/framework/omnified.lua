@@ -82,7 +82,7 @@ local function unregisterModule(modulePath, moduleName, disableInfo)
 	return not result
 end
 
-local function registerExports()
+local function registerTargetExports()
 	if not isPackageAvailable("exports") then
 		do return end
 	end
@@ -97,7 +97,7 @@ local function registerExports()
 	end	
 end
 
-local function unregisterExports()
+local function unregisterTargetExports()
 	if not package.loaded["exports"] then
 		do return end
 	end
@@ -179,7 +179,7 @@ function registerOmnification(targetAssemblyFilePath, pathToFramework)
 			= registerModule(targetAssemblyFilePath, TARGET_MODULE_NAME)
   	end
 
-  	registerExports()
+  	registerTargetExports()
 end
 
 function unregisterOmnification(targetAssemblyFilePath, pathToFramework)
@@ -231,5 +231,5 @@ function unregisterOmnification(targetAssemblyFilePath, pathToFramework)
 		targetAssemblyRegistered = unregisterModule(targetAssemblyFilePath, TARGET_MODULE_NAME, targetAssemblyDisableInfo)
 	end
 
-	unregisterExports()
+	unregisterTargetExports()
 end

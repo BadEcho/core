@@ -111,7 +111,7 @@ function isPackageAvailable(packageName)
     else
         for _, searcher in ipairs(package.searchers or package.loaders) do
             local packageLoader = searcher(packageName)
-            if type(loader) == 'function' then
+            if type(packageLoader) == 'function' then
                 return true
             end
         end
