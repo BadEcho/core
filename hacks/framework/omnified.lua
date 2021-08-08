@@ -4,6 +4,8 @@
 
 require("defines")
 require("utility")
+
+local DEFAULT_FRAMEWORK_PATH = "..\\..\\framework\\"
  
 function readPlayerCoordinates()
 	local x = not coordinatesAreDoubles 
@@ -69,15 +71,17 @@ local function assemble(assemblyFilePath, disableInfo)
 	return result, resultDisableInfo
 end
 
-function registerOmnification(targetAssemblyFilePath)
+function registerOmnification(targetAssemblyFilePath, pathToFramework)
 	if not omnifiedRegistered then
 		markHotkey = createHotkey(mark, VK_NUMPAD8)
 		recallHotkey = createHotkey(recall, VK_NUMPAD9)
 
-		omnifiedRegistered, omnifiedDisableInfo = assemble("..\\..\\framework\\omnified.asm")
-		apocalypseRegistered, apocalypseDisableInfo = assemble("..\\..\\framework\\systems\\apocalypse.asm")		
-		predatorRegistered, predatorDisableInfo = assemble("..\\..\\framework\\systems\\predator.asm")
-		abomnificationRegistered, abomnificationDisableInfo = assemble("..\\..\\framework\\systems\\abomnification.asm")
+		if pathToFramework == nil then pathToFramework = DEFAULT_FRAMEWORK_PATH end
+
+		omnifiedRegistered, omnifiedDisableInfo = assemble(pathToFramework .. "omnified.asm")
+		apocalypseRegistered, apocalypseDisableInfo = assemble(pathToFramework .. "systems\\apocalypse.asm")		
+		predatorRegistered, predatorDisableInfo = assemble(pathToFramework .. "systems\\predator.asm")
+		abomnificationRegistered, abomnificationDisableInfo = assemble(pathToFramework .. "systems\\abomnification.asm")
 		
 		if anyNil(omnifiedRegistered, apocalypseRegistered, predatorRegistered, abomnificationRegistered) then
 			print("Failed to register the Omnified framework.")
@@ -122,15 +126,17 @@ function registerOmnification(targetAssemblyFilePath)
   end
 end
 
-function unregisterOmnification(targetAssemblyFilePath)
+function unregisterOmnification(targetAssemblyFilePath, pathToFramework)
 	if	areTrue(omnifiedRegistered, apocalypseRegistered, predatorRegistered, abomnificationRegistered) then
 		markHotkey.destroy()
 		recallHotkey.destroy()
 
-		omnifiedRegistered = assemble("..\\..\\framework\\omnified.asm", omnifiedDisableInfo)
-		apocalypseRegistered = assemble("..\\..\\framework\\systems\\apocalypse.asm", apocalypseDisableInfo)
-		predatorRegistered = assemble("..\\..\\framework\\systems\\predator.asm", predatorDisableInfo)
-		abomnificationDisableInfo = assemble("..\\..\\framework\\systems\\abomnification.asm", abomnificationDisableInfo)
+		if pathToFramework == nil then pathToFramework = DEFAULT_FRAMEWORK_PATH end
+
+		omnifiedRegistered = assemble(pathToFramework .."omnified.asm", omnifiedDisableInfo)
+		apocalypseRegistered = assemble(pathToFramework .. "systems\\apocalypse.asm", apocalypseDisableInfo)
+		predatorRegistered = assemble(pathToFramework .. "systems\\predator.asm", predatorDisableInfo)
+		abomnificationDisableInfo = assemble(pathToFramework .. "systems\\abomnification.asm", abomnificationDisableInfo)
 		
 		if not omnifiedRegistered then
 			print("Failed to unregister the Omnified framework.")
