@@ -382,13 +382,19 @@ areaOfAggro:
   mulss xmm8,[aggressionSpeedX]
 executePredatorExit:
   // No speed buff is applied to the axis set as the vertical axis.
-  cmp [yIsVertical],0
+  push rax
+  mov rax,yIsVertical  
+  cmp [rax],0
+  pop rax
   je commitZChange
   mulss xmm3,xmm8
 commitZChange:
   movd ecx,xmm3
   shufps xmm3,xmm3,0x87
-  cmp [yIsVertical],1
+  push rax
+  mov rax,yIsVertical
+  cmp [rax],1
+  pop rax
   je commitYChange
   mulss xmm3,xmm8
 commitYChange:
@@ -413,7 +419,10 @@ isXLessThanNegativeLimit:
   ja isYPastLimit
   mov eax,[negativeLimitCorrection]
 isYPastLimit:
-  cmp [yIsVertical],1
+  push rax
+  mov rax,yIsVertical  
+  cmp [rax],1
+  pop rax
   je isZPastLimit
   push rbx
   shr ebx,1F  
@@ -431,7 +440,10 @@ isYLessThanNegativeLimit:
   ja isZPastLimit
   mov ebx,[negativeLimitCorrection]
 isZPastLimit:
-  cmp [yIsVertical],0
+  push rax
+  mov rax,yIsVertical
+  cmp [rax],0
+  pop rax
   je executePredatorCleanup
   push rcx
   shr ecx,1F
