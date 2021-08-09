@@ -4,25 +4,7 @@
 
 require("statisticMessages")
 
-function registerExports()
-    -- Hit detection (from player attacks) timer.
-    if playerAttackingTimer == nil then
-        playerAttackingTimer = createTimer(getMainForm())
-    end
-    
-    playerAttackingTimer.Interval = 100
-    playerAttackingTimer.OnTimer = function()
-        local playerAttacking = readInteger("playerAttacking")
-                
-        if playerAttacking == nil or playerAttacking == 0 then
-            do return end
-        else
-            playerAttacking = playerAttacking - 1            
-
-            writeInteger("playerAttacking", playerAttacking)
-        end
-    end
-
+function registerExports()    
     -- Custom statistics.
     AdditionalStatistics = function()
         local magazine = readInteger("[playerMagazine]+0x340")
@@ -38,9 +20,5 @@ function registerExports()
 end
 
 function unregisterExports()    
-    if playerAttackingTimer ~= nil then
-        playerAttackingTimer.Enabled = false
-        playerAttackingTimer.destroy()
-        playerAttackingTimer = nil 
-    end
+    
 end

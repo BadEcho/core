@@ -331,43 +331,6 @@ omniPlayerMagazineAfterSwapHook:
 getPlayerMagazineAfterSwapReturn:
 
 
-// Hit detection globals.
-alloc(playerAttacking,8)
-
-registersymbol(playerAttacking)
-
-
-// Detects a gunshot from the player.
-// Unique AOB: 44 89 A6 40 03 00 00
-define(omniDetectPlayerFire,"Cyberpunk2077.exe"+1AF82F7)
-
-assert(omniDetectPlayerFire,44 89 A6 40 03 00 00)
-alloc(detectPlayerFire,$1000,omniDetectPlayerFire)
-
-registersymbol(omniDetectPlayerFire)
-
-detectPlayerFire:
-    pushf
-    push rax
-    mov rax,playerMagazine
-    cmp [rax],rsi
-    pop rax
-    jne resetPlayerAttacking
-    mov [playerAttacking],4
-    jmp detectPlayerFireOriginalCode
-resetPlayerAttacking:
-    mov [playerAttacking],0
-detectPlayerFireOriginalCode:
-    popf
-    mov [rsi+00000340],r12d
-    jmp detectPlayerFireReturn
-
-omniDetectPlayerFire:
-    jmp detectPlayerFire
-    nop 2
-detectPlayerFireReturn:
-
-
 // Hooks into the vitals update code to perform tasks such as player melee hit detection and stamina
 // discrete value updates.
 // UNIQUE AOB: F3 0F 11 82 90 01 00 00
@@ -375,7 +338,6 @@ define(omnifyPlayerVitalsUpdateHook,"Cyberpunk2077.exe"+19CCF3A)
 
 assert(omnifyPlayerVitalsUpdateHook,F3 0F 11 82 90 01 00 00)
 alloc(playerVitalsUpdate,$1000,omnifyPlayerVitalsUpdateHook)
-alloc(punchInTheFaceThreshold,8)
 
 registersymbol(omnifyPlayerVitalsUpdateHook)
 
@@ -399,24 +361,7 @@ processStamina:
     // Multiplying this percentage by the maximum stamina gives us a discrete current stamina value.
     mulss xmm1,[rdx+188]
     mov rax,playerStaminaValue
-    movss [rax],xmm1    
-    // Check if the change is negative, otherwise there's no chance of this being a player attack.
-    movd eax,xmm6
-    shr eax,1F
-    test eax,eax
-    jne checkFacePunch
-    jmp playerVitalsUpdateCleanup
-checkFacePunch:
-    // Now convert the change to stamina to a discrete value, in order to see if it passes our face punch
-    // threshold.
-    mov rax,percentageDivisor
-    movss xmm1,xmm6
-    divss xmm1,[rax]
-    mulss xmm1,[rdx+188]
-    // Check if we're punching someone in the face. See if enough stamina is being expended.
-    ucomiss xmm1,[punchInTheFaceThreshold]
-    ja playerVitalsUpdateCleanup
-    mov [playerAttacking],4
+    movss [rax],xmm1       
 playerVitalsUpdateCleanup:
     pop rax
     movdqu xmm1,[rsp]
@@ -430,10 +375,6 @@ omnifyPlayerVitalsUpdateHook:
     jmp playerVitalsUpdate
     nop 3
 playerVitalsUpdateReturn:
-
-
-punchInTheFaceThreshold:
-    dd (float)-5.15
 
 
 // Hooks into the player's location update function, allowing us to set our speed as well as
@@ -485,6 +426,33 @@ omnifyPlayerLocationUpdateHook:
 playerLocationUpdateReturn:
 
 
+// Gets the player's identifying attack structure.
+define(omniPlayerAttackHook,"Cyberpunk2077.exe"+2D154B0)
+
+assert(omniPlayerAttackHook,48 8B 01 FF 90 20 01 00 00)
+alloc(getPlayerAttack,$1000,omniPlayerAttackHook)
+alloc(playerAttack,8)
+
+registersymbol(omniPlayerAttackHook)
+registersymbol(playerAttack)
+
+getPlayerAttack:
+    push rax
+    mov rax,playerAttack
+    mov [rax],rcx
+    pop rax
+getPlayerAttackOriginalCode:
+  mov rax,[rcx]
+  call qword ptr [rax+00000120]
+    jmp getPlayerAttackReturn
+
+omniPlayerAttackHook:
+    jmp getPlayerAttack
+    nop 4
+getPlayerAttackReturn:
+
+
+
 // Initiates the Apocalypse system.
 // xmm1: Damage percentage.
 // [rcx+190]: Working health percentage.
@@ -493,6 +461,7 @@ define(omnifyApocalypseHook,"Cyberpunk2077.exe"+19C9590)
 
 assert(omnifyApocalypseHook,F3 0F 58 89 90 01 00 00)
 alloc(initiateApocalypse,$1000,omnifyApocalypseHook)
+alloc(scriptedDamage,8)
 
 registersymbol(omnifyApocalypseHook)
 
@@ -538,9 +507,16 @@ initiateApocalypse:
     mov rax,playerHealth
     cmp [rax],rcx
     je initiatePlayerApocalypse
-    mov rax,playerAttacking
-    cmp [rax],0
-    je initiateApocalypseCleanup
+    // The temporary working memory register at rdi points to an identifying
+    // attack source.
+    mov rax,[rdi+10]
+    mov rbx,playerAttack
+    cmp [rbx],rax
+    jne initiateApocalypseCleanup
+    // Some scripted damage occurs (first battle with mechs) to make things a bit easier, filter that out.
+    // Easily identified by its ridiculous magnitude.
+    ucomiss xmm2,[scriptedDamage]
+    ja initiateApocalypseCleanup
     jmp initiateEnemyApocalypse
 initiatePlayerApocalypse:
     // Load the damage amount parameter.
@@ -613,6 +589,9 @@ teleportitisDisplacementX:
 
 verticalTeleportitisDisplacementX:
     dd (float)3.25
+
+scriptedDamage:
+    dd (float)1000.0
 
 
 // Initiates the Predator system for dangerous, evil (well, maybe friendly too) NPCs.
@@ -706,29 +685,13 @@ unregistersymbol(omniPlayerMagazineAfterSwapHook)
 dealloc(getPlayerMagazineAfterSwap)
 
 
-// Cleanup of omniDetectPlayerFire
-omniDetectPlayerFire:
-    db 44 89 A6 40 03 00 00
-
-unregistersymbol(omniDetectPlayerFire)
-
-dealloc(detectPlayerFire)
-
-
 // Cleanup of omnifyPlayerVitalsUpdateHook
 omnifyPlayerVitalsUpdateHook:
     db F3 0F 11 82 90 01 00 00
 
 unregistersymbol(omnifyPlayerVitalsUpdateHook)
 
-dealloc(punchInTheFaceThreshold)
 dealloc(playerVitalsUpdate)
-
-
-// Cleanup of hit detection globals
-unregistersymbol(playerAttacking)
-
-dealloc(playerAttacking)
 
 
 // Cleanup of omnifyPlayerLocationUpdateHook
@@ -747,6 +710,7 @@ omnifyApocalypseHook:
 
 unregistersymbol(omnifyApocalypseHook)
 
+dealloc(scriptedDamage)
 dealloc(initiateApocalypse)
 
 
@@ -805,3 +769,15 @@ dealloc(player)
 dealloc(playerMaxStamina)
 dealloc(playerStaminaValue)
 dealloc(getPlayer)
+
+
+
+// Cleanup of omniPlayerAttackHook
+omniPlayerAttackHook:
+    db 48 8B 01 FF 90 20 01 00 00
+
+unregistersymbol(omniPlayerAttackHook)
+unregistersymbol(playerAttack)
+
+dealloc(playerAttack)
+dealloc(getPlayerAttack)
