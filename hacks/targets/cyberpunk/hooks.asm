@@ -442,11 +442,26 @@ define(omnifyPlayerLocationUpdateHook,"PhysX3CharacterKinematic_x64.dll"+7B99)
 
 assert(omnifyPlayerLocationUpdateHook,0F 11 86 08 02 00 00)
 alloc(playerLocationUpdate,$1000,omnifyPlayerLocationUpdateHook)
+alloc(movementFramesToSkip,8)
 
 registersymbol(omnifyPlayerLocationUpdateHook)
 
 playerLocationUpdate:
     pushf
+    push rax
+    mov rax,movementFramesToSkip
+    cmp [rax],0
+    pop rax    
+    jg skipMovementFrame
+    jmp checkForTeleported
+skipMovementFrame:
+    push rax
+    mov rax,movementFramesToSkip
+    dec [rax]
+    pop rax
+    movups xmm0,[rsi+208]
+    jmp playerLocationUpdateOriginalCode
+checkForTeleported:
     push rax
     mov rax,teleported
     cmp [rax],1
@@ -455,8 +470,10 @@ playerLocationUpdate:
     push rax
     mov rax,teleported
     mov [rax],0    
+    mov rax,movementFramesToSkip
+    mov [rax],2
     pop rax
-    movups xmm0,[rsi+208]
+    jmp skipMovementFrame
 playerLocationUpdateOriginalCode:
     popf
     movups [rsi+00000208],xmm0
@@ -720,6 +737,7 @@ omnifyPlayerLocationUpdateHook:
 
 unregistersymbol(omnifyPlayerLocationUpdateHook)
 
+dealloc(movementFramesToSkip)
 dealloc(playerLocationUpdate)
 
 
