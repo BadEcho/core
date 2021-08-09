@@ -10,7 +10,7 @@ function registerExports()
         playerAttackingTimer = createTimer(getMainForm())
     end
     
-    playerAttackingTimer.Interval = 500
+    playerAttackingTimer.Interval = 100
     playerAttackingTimer.OnTimer = function()
         local playerAttacking = readInteger("playerAttacking")
                 

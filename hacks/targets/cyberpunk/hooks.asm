@@ -121,6 +121,24 @@ getPlayerHealth:
     pushf
     cmp r8,0
     jne getPlayerHealthOriginalCode
+    // Additional health filters to support Dum Dum lol.
+    // Maybe not specific to Dum Dum, but his ass is when it
+    // all started.
+    push rax
+    mov rax,r14
+    cmp eax,-1
+    pop rax    
+    je getPlayerHealthOriginalCode
+    push rax
+    mov rax,r15
+    cmp eax,-1
+    pop rax
+    je getPlayerHealthOriginalCode
+    push rbx
+    mov rbx,[rax+F0]
+    cmp rbx,0
+    pop rbx
+    je getPlayerHealthOriginalCode
     sub rsp,10
     movdqu [rsp],xmm0
     push rbx    
@@ -334,8 +352,11 @@ detectPlayerFire:
     mov rax,playerMagazine
     cmp [rax],rsi
     pop rax
-    jne detectPlayerFireOriginalCode
+    jne resetPlayerAttacking
     mov [playerAttacking],4
+    jmp detectPlayerFireOriginalCode
+resetPlayerAttacking:
+    mov [playerAttacking],0
 detectPlayerFireOriginalCode:
     popf
     mov [rsi+00000340],r12d
@@ -521,7 +542,7 @@ initiatePlayerApocalypse:
     call executePlayerApocalypse    
     jmp initiateApocalypseUpdateDamage
 initiateEnemyApocalypse:
-    // Load the damage amount parameter.
+    // Load the damage amount parameter.    
     sub rsp,8
     movd [rsp],xmm2
     // Load the working health amount parameter.
