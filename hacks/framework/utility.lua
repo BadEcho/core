@@ -1,6 +1,14 @@
--- Utility functions employed by the Omnified framework.
--- Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
--- Copyright 2021 Bad Echo LLC
+--[[
+    Utility functions employed by the Omnified framework.
+    Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
+    Copyright 2021 Bad Echo LLC
+    
+    Bad Echo Technologies are licensed under a
+    Creative Commons Attribution-NonCommercial 4.0 International License.
+    
+    See accompanying file LICENSE.md or a copy at:
+    http://creativecommons.org/licenses/by-nc/4.0/
+--]]
 
 local function evalValues(eval, valueIfTrue, valueIfFalse, ...)    
     -- Key-value pair iterators aren't an option since we may be dealing with

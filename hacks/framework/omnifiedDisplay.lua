@@ -1,7 +1,14 @@
--- Omnified Display
--- Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
--- Copyright 2021 Bad Echo LLC
--- These functions will mostly be replaced by Vision infrastructure when that is ready.
+--[[
+	Omnified Display
+    Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
+    Copyright 2021 Bad Echo LLC
+    
+    Bad Echo Technologies are licensed under a
+    Creative Commons Attribution-NonCommercial 4.0 International License.
+    
+    See accompanying file LICENSE.md or a copy at:
+    http://creativecommons.org/licenses/by-nc/4.0/
+--]]
 
 require("omnified")
 
