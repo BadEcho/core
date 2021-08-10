@@ -615,7 +615,7 @@ initiatePredator:
   // An initialized playerLocation pointer is required prior to Predator execution.
   push rax
   mov rax,playerLocation
-  cmp rax,0
+  cmp [rax],0
   pop rax
   je initiatePredatorOriginalCode
   // We'll need a few SSE registers in order to do double->float conversion.
