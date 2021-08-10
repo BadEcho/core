@@ -594,50 +594,107 @@ scriptedDamage:
     dd (float)1000.0
 
 
-// Initiates the Predator system for dangerous, evil (well, maybe friendly too) NPCs.
-// UNIQUE AOB: 0F 58 02 0F 29 74 24 70
-// [rdx]: Movement offsets, xmm0: current working coordinates for target
-define(omnifyPredatorHook,"Cyberpunk2077.exe"+1B96C27)
+// Initiates the Predator system for NPCs.
+// UNIQUE AOB: E0 0F 58 20 0F 28 D4
+// [rax]: Working desired coordinates, xmm4: Movement offsets
+define(omnifyPredatorHook,"Cyberpunk2077.exe"+1BF2A98)
 
-assert(omnifyPredatorHook,0F 58 02 0F 29 74 24 70)
+assert(omnifyPredatorHook,0F 58 20 0F 28 D4)
 alloc(initiatePredator,$1000,omnifyPredatorHook)
+alloc(disablePredator,8)
+alloc(identityValue,8)
 
 registersymbol(omnifyPredatorHook)
+registersymbol(disablePredator)
 
 initiatePredator:
-    
+    // The normalized player location coordinates are required before we can engage the
+    // Predator system.
+    pushf
+    push rax
+    mov rax,playerLocationNormalized
+    cmp [rax],0
+    pop rax
+    je initiatePredatorOriginalCode
+    cmp [disablePredator],1
+    je initiatePredatorOriginalCode
+    // Make sure we backup the registers Predator writes to -- we'll need an additional SSE register
+    // to pass the target's coordinates as parameters to the Predator function.
+    sub rsp,10
+    movdqu [rsp],xmm0
+    push rax
+    push rbx
+    push rcx
+    mov rbx,playerLocationNormalized
+    mov rcx,[rbx]
+    // The first parameter is our player's coordinates. These normalized coordinates, from which our x-coordinate
+    // can be found at 0x108, are comparable to NPC coordinates as they exist on the NPC coordinate plane, which 
+    // is a completely separate coordinate plane from whether the player's source-of-truth coordinates live.
+    push [rcx+108]
+    push [rcx+110]
+    // The next parameter is the target NPC's coordinates. Note that these are not directly related to the
+    // NPC's source-of-truth coordinates, but rather another set that I termed the "desired" coordinates. These
+    // are independently tracked and managed by the game, and while not actually the source-of-truth, they essentially
+    // become so indirectly as the game will always push changes to these as changes to the source-of-truth coordinates.
+    push [rax]
+    push [rax+8]    
+    // The third parameter is the NPC's dimensional scales. If this game offers True Scaling, then we'll update this
+    // to provide real values; until such a discovery is made, we settle for an identity matrix of 1's.
+    movss xmm0,[identityValue]
+    shufps xmm0,xmm0,0
+    sub rsp,10
+    movdqu [rsp],xmm0
+    // The final parameter is the NPC's movement offsets. The Predator system expects coordinate-related parameters to 
+    // be pushed to the stack as two m64 addresses. Therefore, we place the highwords onto the SSE we backed up, and then
+    // push the NPC's movement offsets, in order, as quadwords to the stack.
+    movhlps xmm0,xmm4
+    sub rsp,8
+    movq [rsp],xmm4
+    sub rsp,8
+    movq [rsp],xmm0
+    call executePredator
+    // The updated movement offsets needed to be loaded onto the xmm4 register. We'll do this
+    // by dumping the Predator return values onto the stack and then loading them onto xmm4.
+    sub rsp,10
+    // We dump xmm4 onto the stack first so we can preserve the fourth double word.
+    movups [rsp],xmm4
+    mov [rsp],eax
+    mov [rsp+4],ebx
+    mov [rsp+8],ecx
+    movups xmm4,[rsp]
+    add rsp,10    
+    pop rcx
+    pop rbx
+    pop rax
+    movdqu xmm0,[rsp]
+    add rsp,10
 initiatePredatorOriginalCode:
-    addps xmm0,[rdx]
-    movaps [rsp+70],xmm6
+    popf
+    addps xmm4,[rax]
+    movaps xmm2,xmm4
     jmp initiatePredatorReturn
 
 omnifyPredatorHook:
     jmp initiatePredator
-    nop 3
+    nop
 initiatePredatorReturn:
 
 
-// Initiates the Predator system for stupid, harmless NPCs.
-// UNIQUE AOB: E0 0F 58 20 0F 28 D4
-// xmm4: Movement offsets, [rax]: current working coordinates for target
-define(omnifyCrowdPredatorHook,"Cyberpunk2077.exe"+1BF2A98)
+identityValue:
+    dd (float)1.0
 
-assert(omnifyCrowdPredatorHook,0F 58 20 0F 28 D4)
-alloc(initiateCrowdPredator,$1000,omnifyCrowdPredatorHook)
+// This places the limits of the area of sketchiness at around 20 units, which is still well within the limits 
+// of how far NPCs can spot the player. Around 10 units is where it seems like a good place to enable a charge of death.
+aggroDistance:
+    dd (float)10.0
 
-registersymbol(omnifyCrowdPredatorHook)
+// I'm able to hit things with my katana at ~1.1 units away from my player. We pad that number a bit in order to give the
+// enemy the opportunity to come to a stop, and we have an ideal threat distance. Testing will be needed.
+threatDistance:
+    dd (float)1.5
 
-initiateCrowdPredator:
-
-initiateCrowdPredatorOriginalCode:
-    addps xmm4,[rax]
-    movaps xmm2,xmm4
-    jmp initiateCrowdPredatorReturn
-
-omnifyCrowdPredatorHook:
-    jmp initiateCrowdPredator
-    nop 
-initiateCrowdPredatorReturn:
+disablePredator:
+    dd 1
 
 
 [DISABLE]
@@ -716,20 +773,14 @@ dealloc(initiateApocalypse)
 
 // Cleanup of omnifyPredatorHook
 omnifyPredatorHook:
-    db 0F 58 02 0F 29 74 24 70
-
-unregistersymbol(omnifyPredatorHook)
-
-dealloc(initiatePredator)
-
-
-// Cleanup of omnifyCrowdPredatorHook
-omnifyCrowdPredatorHook:
     db 0F 58 20 0F 28 D4
 
-unregistersymbol(omnifyCrowdPredatorHook)
+unregistersymbol(omnifyPredatorHook)
+unregistersymbol(disablePredator)
 
-dealloc(initiateCrowdPredator)
+dealloc(identityValue)
+dealloc(disablePredator)
+dealloc(initiatePredator)
 
 
 // Cleanup of omniPlayerHealthHook
