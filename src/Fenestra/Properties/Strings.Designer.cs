@@ -232,6 +232,15 @@ namespace BadEcho.Fenestra.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This window message handler hook has already been registered with the Presentation window wrapper..
+        /// </summary>
+        internal static string PresentationWindowWrapperDuplicateHook {
+            get {
+                return ResourceManager.GetString("PresentationWindowWrapperDuplicateHook", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The imported resource URI &apos;{0}&apos; is not a ResourceDictionary..
         /// </summary>
         internal static string ResourceUriNotResourceDictionary {
@@ -246,6 +255,15 @@ namespace BadEcho.Fenestra.Properties {
         internal static string SteppingDurationCannotBeNegative {
             get {
                 return ResourceManager.GetString("SteppingDurationCannotBeNegative", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The provided handle does not belong to a window created by WPF..
+        /// </summary>
+        internal static string WindowNotPresentation {
+            get {
+                return ResourceManager.GetString("WindowNotPresentation", resourceCulture);
             }
         }
         

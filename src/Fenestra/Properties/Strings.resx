@@ -164,4 +164,10 @@
   <data name="OutlinedTextBadFormatString" xml:space="preserve">
     <value>An outlined text element control was provided with an improper format string: {0}</value>
   </data>
+  <data name="PresentationWindowWrapperDuplicateHook" xml:space="preserve">
+    <value>This window message handler hook has already been registered with the Presentation window wrapper.</value>
+  </data>
+  <data name="WindowNotPresentation" xml:space="preserve">
+    <value>The provided handle does not belong to a window created by WPF.</value>
+  </data>
 </root>
