@@ -11,20 +11,20 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
-
 namespace BadEcho.Odin.Interop
 {
     /// <summary>
-    /// Specifies extended styling configurations for windows that can be set using
-    /// <see cref="User32.SetWindowLongPtr(WindowHandle, WindowAttribute, IntPtr)"/>.
+    /// Specifies a virtual key, which may be anything from an actual keyboard key to a button on the mouse.
     /// </summary>
-    [Flags]
-    public enum ExtendedWindowStyles
+    public enum VirtualKey : uint
     {
         /// <summary>
-        /// The window should not be painted until siblings beneath the window created by the same thread have been painted.
+        /// A key that does not exist. The complete absence of a key. A key with no name, no purpose, and no hope.
         /// </summary>
-        Transparent = 0x00000020
+        None = 0,
+        /// <summary>
+        /// The L key.
+        /// </summary>
+        L = 0x4C
     }
 }

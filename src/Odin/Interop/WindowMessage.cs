@@ -11,20 +11,20 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
-
 namespace BadEcho.Odin.Interop
 {
     /// <summary>
-    /// Specifies extended styling configurations for windows that can be set using
-    /// <see cref="User32.SetWindowLongPtr(WindowHandle, WindowAttribute, IntPtr)"/>.
+    /// Indicates a type of standard message value used when sending or posting messages to windows.
     /// </summary>
-    [Flags]
-    public enum ExtendedWindowStyles
+    public enum WindowMessage
     {
         /// <summary>
-        /// The window should not be painted until siblings beneath the window created by the same thread have been painted.
+        /// Indicates a window message corresponding to WM_NULL.
         /// </summary>
-        Transparent = 0x00000020
+        Null = 0,
+        /// <summary>
+        /// Indicates a window message indicating a hot key has been pressed, corresponding to WM_HOTKEY.
+        /// </summary>
+        HotKey = 0x312
     }
 }

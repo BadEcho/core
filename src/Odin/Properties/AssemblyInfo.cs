@@ -82,3 +82,15 @@ using System.Runtime.InteropServices;
                            Scope = "member", 
                            Target = "~M:BadEcho.Odin.Extensions.ObjectExtensions.GetHashCode``3(``0,``1,``2)~System.Int32",
                            Justification = "This is an extension method that provides code useful to all objects. Whether or not the parameter is used is moot, it is very much required to be here.")]
+
+[assembly: SuppressMessage("Design", 
+                           "CA1028:Enum Storage should be Int32", 
+                           Scope = "type", 
+                           Target = "~T:BadEcho.Odin.Interop.VirtualKey",
+                           Justification = "Native unmanaged functions expect a virtual key code in the form of an unsigned integer, and there's no way I'm going the WPF route and creating an int-based enum coupled with a static mapping class containing the largest switch statement ever seen by man.")]
+
+[assembly: SuppressMessage("Style", 
+                           "IDE0021:Use expression body for constructors",
+                           Scope = "member", 
+                           Target = "~M:BadEcho.Odin.Interop.WindowHandle.#ctor(System.IntPtr,System.Boolean)",
+                           Justification = "The constructor makes a call to a constructor overload, and expression bodies don't look appetizing at all next to such an invocation.")]

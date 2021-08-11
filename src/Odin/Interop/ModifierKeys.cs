@@ -16,15 +16,30 @@ using System;
 namespace BadEcho.Odin.Interop
 {
     /// <summary>
-    /// Specifies extended styling configurations for windows that can be set using
-    /// <see cref="User32.SetWindowLongPtr(WindowHandle, WindowAttribute, IntPtr)"/>.
+    /// Specifies keys that modify the action of another key when pressed together.
     /// </summary>
     [Flags]
-    public enum ExtendedWindowStyles
+    public enum ModifierKeys
     {
         /// <summary>
-        /// The window should not be painted until siblings beneath the window created by the same thread have been painted.
+        /// No modifier keys.
         /// </summary>
-        Transparent = 0x00000020
+        None = 0,
+        /// <summary>
+        /// The ALT key.
+        /// </summary>
+        Alt = 1,
+        /// <summary>
+        /// The CTRL key.
+        /// </summary>
+        Control = 2,
+        /// <summary>
+        /// The SHIFT key.
+        /// </summary>
+        Shift = 4,
+        /// <summary>
+        /// The Windows logo key.
+        /// </summary>
+        Windows = 8
     }
 }

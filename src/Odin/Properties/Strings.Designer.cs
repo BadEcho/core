@@ -338,5 +338,23 @@ namespace BadEcho.Odin.Properties {
                 return ResourceManager.GetString("RoutableProxyNullMethodInfo", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Weak list enumerator requires a strong reference to enumerate..
+        /// </summary>
+        internal static string WeakListEnumeratorNoReference {
+            get {
+                return ResourceManager.GetString("WeakListEnumeratorNoReference", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A hot key has already been registered with the identifier &apos;{0}&apos;..
+        /// </summary>
+        internal static string WindowHotKeyDuplicateId {
+            get {
+                return ResourceManager.GetString("WindowHotKeyDuplicateId", resourceCulture);
+            }
+        }
     }
 }

@@ -12,7 +12,10 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using BadEcho.Odin.Extensions;
+using BadEcho.Odin.Properties;
 
 namespace BadEcho.Odin.Interop
 {
@@ -22,13 +25,20 @@ namespace BadEcho.Odin.Interop
     /// </summary>
     public sealed class NativeWindow
     {
+        private readonly List<int> _hotKeyIds = new();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="NativeWindow"/> class.
         /// </summary>
         /// <param name="handle">The handle to the window.</param>
-        public NativeWindow(IntPtr handle)
+        /// <param name="windowWrapper">A wrapper able to receive messages being sent to the window.</param>
+        public NativeWindow(IntPtr handle, IWindowWrapper windowWrapper)
         {
-            Handle = handle;
+            Require.NotNull(windowWrapper, nameof(windowWrapper));
+
+            Handle = new WindowHandle(handle, false);
+
+            windowWrapper.AddHook(WndProc);
 
             if (!User32.GetWindowRect(handle, out RECT rect))
                 throw ((ResultHandle) Marshal.GetHRForLastWin32Error()).GetException();
@@ -40,9 +50,14 @@ namespace BadEcho.Odin.Interop
         }
 
         /// <summary>
+        /// Occurs when a registered hot key has been pressed.
+        /// </summary>
+        public event EventHandler<EventArgs<int>>? HotKeyPressed;
+
+        /// <summary>
         /// Gets the handle to the window.
         /// </summary>
-        public IntPtr Handle
+        public WindowHandle Handle
         { get; }
 
         /// <summary>
@@ -76,7 +91,7 @@ namespace BadEcho.Odin.Interop
         /// <para>
         /// Some user interface frameworks, such as WPF, allow for the developer to set a window to transparent, which is something
         /// we may wish to do if we are interested in constructing a transparent overlay showing information. Simply setting a window
-        /// as transparent (at least in WPF's case), is not sufficient to create a true overlay, as the window can still grab focus,
+        /// as transparent (at least in the case of WPF), is not sufficient to create a true overlay, as the window can still grab focus,
         /// preventing a total click-through experience, especially if there are any controls on the window (which there is a pretty
         /// good chance of).
         /// </para>
@@ -99,6 +114,51 @@ namespace BadEcho.Odin.Interop
             User32.SetWindowLongPtr(Handle,
                                     WindowAttribute.ExtendedStyle,
                                     new IntPtr((int) extendedStyle));
+        }
+
+        /// <summary>
+        /// Defines a system-wide hot key for this window.
+        /// </summary>
+        /// <param name="id">The identifier of the hot key.</param>
+        /// <param name="modifiers">The keys that must be pressed in combination with the specified virtual key.</param>
+        /// <param name="key">The virtual-key code of the hot key.</param>
+        public void RegisterHotKey(int id, ModifierKeys modifiers, VirtualKey key)
+        {
+            if (_hotKeyIds.Contains(id))
+                throw new ArgumentException(Strings.WindowHotKeyDuplicateId.InvariantFormat(id), nameof(id));
+
+            _hotKeyIds.Add(id);
+
+            if (!User32.RegisterHotKey(Handle, id, modifiers, key))
+                throw ((ResultHandle) Marshal.GetHRForLastWin32Error()).GetException();
+        }
+
+        /// <summary>
+        /// Frees a hot key previously registered for this window.
+        /// </summary>
+        /// <param name="id">The identifier of the hot key to be freed.</param>
+        public void UnregisterHotKey(int id)
+        {
+            if (!User32.UnregisterHotKey(Handle, id))
+                throw ((ResultHandle) Marshal.GetHRForLastWin32Error()).GetException();
+        }
+
+        private IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+        {
+            var message = (WindowMessage) msg;
+
+            switch (message)
+            {
+                case WindowMessage.HotKey:
+                    int hotKeyId = wParam.ToInt32();
+
+                    if (_hotKeyIds.Contains(hotKeyId))
+                        HotKeyPressed?.Invoke(this, new EventArgs<int>(hotKeyId));
+
+                    break;
+            }
+
+            return IntPtr.Zero;
         }
     }
 }
