@@ -48,10 +48,7 @@ local function dumpStatistics()
     local totalDamageByPlayer = toInt(readFloat("totalDamageByPlayer"))
 
     local playerCoordinates = readPlayerCoordinates()
-    local playerX = round(playerCoordinates.X, 2)
-    local playerY = round(playerCoordinates.Y, 2)
-    local playerZ = round(playerCoordinates.Z, 2)
-
+        
     local playerDamageX = readFloat("playerDamageX")
 
     local statistics = {
@@ -67,7 +64,7 @@ local function dumpStatistics()
             WholeStatistic("Max", maxDamageByPlayer, true),
             WholeStatistic("Total", totalDamageByPlayer)
         }),
-        CoordinateStatistic("Coordinates", playerX, playerY, playerZ)
+        CoordinateStatistic("Coordinates", playerCoordinates.X, playerCoordinates.Y, playerCoordinates.Z)
     }
 
     local additionalIndex = 2

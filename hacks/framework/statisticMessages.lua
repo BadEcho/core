@@ -47,9 +47,10 @@ end
 
 function CoordinateStatistic(name, x, y, z)
     local coordinateStatistic = {
-        Type = StatisticType.Coordinate,
+        Type = StatisticType.Coordinate,        
         Statistic = {
             Name = name,
+            Format = "{0:0.000}",
             X = x,
             Y = y,
             Z = z
