@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0-windows</TargetFramework>
@@ -6,7 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Themes\Resources\QuattrocentoSans.ttf" />
+    <None Remove="Themes\Resources\Hacked.ttf" />
+    <None Remove="Themes\Resources\Visionista.otf" Condition="Exists('Themes\Resources\Visionista.otf')"/>
   </ItemGroup>
 
   <ItemGroup>
@@ -18,7 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Themes\Resources\QuattrocentoSans.ttf">
+    <Resource Include="Themes\Resources\Hacked.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Themes\Resources\Visionista.otf" Condition="Exists('Themes\Resources\Visionista.otf')">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

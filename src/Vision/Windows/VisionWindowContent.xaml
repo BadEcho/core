@@ -31,8 +31,6 @@
     </Grid.RowDefinitions>
     <fenestra:OutlinedTextElement Style="{StaticResource VisionTitleTextStyle}"
                                   Text="{x:Static r:Strings.VisionTitle}"
-                                  FontSize="28"
-                                  FontWeight="Bold"
                                   Margin="15,0,0,0"
                                   Grid.Row="0"
                                   />

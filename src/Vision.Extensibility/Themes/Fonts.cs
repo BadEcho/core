@@ -28,5 +28,11 @@ namespace BadEcho.Omnified.Vision.Extensibility.Themes
         /// </summary>
         public static readonly ResourceKey FontFamilyKey =
             _Provider.CreateKey(nameof(FontFamilyKey));
+
+        /// <summary>
+        /// The font family for the Vision application's title text.
+        /// </summary>
+        public static readonly ResourceKey VisionTitleFontFamilyKey =
+            _Provider.CreateKey(nameof(VisionTitleFontFamilyKey));
     }
 }
