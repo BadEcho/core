@@ -19,8 +19,10 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Markup;
 using System.Windows.Media;
+using BadEcho.Fenestra.Properties;
 using BadEcho.Odin;
 using BadEcho.Odin.Extensions;
+using BadEcho.Odin.Logging;
 
 namespace BadEcho.Fenestra.Controls
 {
@@ -312,8 +314,8 @@ namespace BadEcho.Fenestra.Controls
 
                 DpiScale dpi = VisualTreeHelper.GetDpi(this);
 
-                var text = !string.IsNullOrEmpty(Text) ? TextFormatString.CulturedFormat(Text) : string.Empty;
-
+                var text = !string.IsNullOrEmpty(Text) ? FormatText(Text, TextFormatString) : string.Empty;
+                
                 _formattedText = new FormattedText(text,
                                                    CultureInfo.CurrentUICulture,
                                                    FlowDirection,
@@ -336,7 +338,7 @@ namespace BadEcho.Fenestra.Controls
             {
                 if (_textGeometry != null)
                     return _textGeometry;
-
+                
                 _textGeometry = FormattedText.BuildGeometry(new Point(0, 0));
 
                 return _textGeometry;
@@ -386,6 +388,32 @@ namespace BadEcho.Fenestra.Controls
             drawingContext.DrawGeometry(Fill, null, TextGeometry);
             
             base.OnRender(drawingContext);
+        }
+
+        private static string FormatText(string text, string formatString)
+        {
+            try
+            {
+                // In the event that our format string is actually a numeric format string, we'll want to convert our text
+                // to the appropriate numeric type before formatting it.
+                if (int.TryParse(text, NumberStyles.Integer, CultureInfo.CurrentCulture, out int integerText))
+                    return formatString.CulturedFormat(integerText);
+
+                // If the text cannot be converted to an integer, then it is either a number containing a fractional part, or not a number at all
+                // (at least, not completely a number, i.e., a mix of both letters and numbers).
+                return double.TryParse(text, NumberStyles.Float, CultureInfo.CurrentCulture, out double floatingPointText)
+                    ? formatString.CulturedFormat(floatingPointText)
+                    : formatString.CulturedFormat(text);
+            }
+            catch (FormatException formatEx)
+            {   // Given the complexity of format strings, there is really no way to check if a given format string is valid for a given string
+                // value prior to actually attempting to format said value with it. We do want to catch any format errors, however, as a mistyped
+                // format string will result in the WPF designer being unable to render the particular control instance until the WpfSurface process 
+                // gets recycled.
+                Logger.Error(Strings.OutlinedTextBadFormatString.InvariantFormat(formatString), formatEx);
+
+                return text;
+            }
         }
 
         private static void OnTextFormatUpdated(DependencyObject sender, DependencyPropertyChangedEventArgs e)
