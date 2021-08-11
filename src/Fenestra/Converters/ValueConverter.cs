@@ -27,11 +27,11 @@ namespace BadEcho.Fenestra.Converters
     public abstract class ValueConverter<TInput,TOutput> : IValueConverter
     {
         /// <inheritdoc/>
-        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public virtual object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
             => value is TInput inputValue ? Convert(inputValue, parameter, culture) : DependencyProperty.UnsetValue;
 
         /// <inheritdoc/>
-        public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) 
+        public virtual object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) 
             => value is TOutput outputValue ? ConvertBack(outputValue, parameter, culture) : DependencyProperty.UnsetValue;
 
         /// <summary>

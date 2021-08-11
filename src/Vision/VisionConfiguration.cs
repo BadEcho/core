@@ -28,6 +28,10 @@ namespace BadEcho.Omnified.Vision
         { get; set; } = string.Empty;
 
         /// <inheritdoc/>
+        public double LeftAnchorVerticalOffset 
+        { get; set; }
+
+        /// <inheritdoc/>
         public IDictionary<string, VisionModuleConfiguration> Modules 
         { get; init; }  = new Dictionary<string, VisionModuleConfiguration>();
 

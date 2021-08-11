@@ -12,6 +12,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Windows;
 using System.Windows.Interop;
 using BadEcho.Fenestra.Windows;
 using BadEcho.Odin;
@@ -27,8 +28,25 @@ namespace BadEcho.Omnified.Vision.Windows
     /// </summary>
     internal sealed class VisionWindow : Window<VisionViewModel>
     {
+        /// <summary>
+        /// Identifies the <see cref="Entering"/> routed event.
+        /// </summary>
+        public static readonly RoutedEvent EnteringEvent
+            = EventManager.RegisterRoutedEvent(nameof(Entering),
+                                               RoutingStrategy.Tunnel,
+                                               typeof(RoutedEventHandler),
+                                               typeof(VisionWindow));
+        /// <summary>
+        /// Identifies the <see cref="Leaving"/> routed event.
+        /// </summary>
+        public static readonly RoutedEvent LeavingEvent
+            = EventManager.RegisterRoutedEvent(nameof(Leaving),
+                                               RoutingStrategy.Tunnel,
+                                               typeof(RoutedEventHandler),
+                                               typeof(VisionWindow));
         private NativeWindow? _native;
-        
+        private bool _hidden;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="VisionWindow"/> class.
         /// </summary>
@@ -36,6 +54,24 @@ namespace BadEcho.Omnified.Vision.Windows
             : base(Xaml.VisionWindowContent, Xaml.VisionWindowStyle)
         {
             InitializeComponent();
+        }
+
+        /// <summary>
+        /// Occurs when the Vision application is being brought back into view onto the screen.
+        /// </summary>
+        public event RoutedEventHandler Entering
+        {
+            add => AddHandler(EnteringEvent, value);
+            remove => RemoveHandler(EnteringEvent, value);
+        }
+
+        /// <summary>
+        /// Occurs when the Vision application is moving out of view off the screen.
+        /// </summary>
+        public event RoutedEventHandler Leaving
+        {
+            add => AddHandler(LeavingEvent, value);
+            remove => RemoveHandler(LeavingEvent, value);
         }
 
         /// <inheritdoc/>
@@ -46,7 +82,7 @@ namespace BadEcho.Omnified.Vision.Windows
         protected override void OnDeactivated(EventArgs e)
         {
             base.OnDeactivated(e);
-
+            
             Topmost = true;
             Activate();
         }
@@ -73,12 +109,15 @@ namespace BadEcho.Omnified.Vision.Windows
 
             base.OnClosed(e);
         }
-
+        
         private void ToggleVisibility()
         {
-            Visibility = Visibility == System.Windows.Visibility.Visible
-                ? System.Windows.Visibility.Collapsed
-                : System.Windows.Visibility.Visible;
+            var args = _hidden 
+                ? new RoutedEventArgs(EnteringEvent) : new RoutedEventArgs(LeavingEvent);
+
+            _hidden = !_hidden;
+
+            RaiseEvent(args);
         }
 
         private void HandleHotKeyPressed(object? sender, EventArgs<int> e)
