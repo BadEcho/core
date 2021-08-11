@@ -27,6 +27,7 @@
                                          X="-1566.7635498047"
                                          Y="0.10857523977757"
                                          Z="1997.649169219"
+                                         Format="{}{0:0.000}"
                                          />
     </d:DesignProperties.DataContext>
     <Grid Style="{Binding (v:StatisticLayout.IsCompact), 

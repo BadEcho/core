@@ -22,19 +22,22 @@ namespace BadEcho.Omnified.Vision.Statistics
         /// <summary>
         /// Gets or sets the value for the x-coordinate.
         /// </summary>
-        public float X
+        /// <seealso cref="WholeStatistic.Value" href="Remarks">On the nature of statistic numeric property values.</seealso>
+        public double X
         { get; set; }
 
         /// <summary>
         /// Gets or sets the value for the y-coordinate.
         /// </summary>
-        public float Y
+        /// <seealso cref="WholeStatistic.Value">On the nature of statistic numeric property values.</seealso>
+        public double Y
         { get; set; }
 
         /// <summary>
         /// Gets or sets the value for the z-coordinate.
         /// </summary>
-        public float Z
+        /// <seealso cref="WholeStatistic.Value">On the nature of statistic numeric property values.</seealso>
+        public double Z
         { get; set; }
     }
 }

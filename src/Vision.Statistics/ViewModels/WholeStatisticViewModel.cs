@@ -20,7 +20,7 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
     /// </summary>
     internal sealed class WholeStatisticViewModel : StatisticViewModel<WholeStatistic>
     {
-        private int _value;
+        private double _value;
         private bool _isCritical;
 
         /// <summary>
@@ -50,9 +50,9 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
         }
 
         /// <summary>
-        /// Gets or sets the displayed whole numeric value for the bound statistic.
+        /// Gets or sets the displayed numeric value for the bound whole statistic.
         /// </summary>
-        public int Value
+        public double Value
         {
             get => _value;
             set => NotifyIfChanged(ref _value, value);

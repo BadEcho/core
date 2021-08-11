@@ -26,6 +26,10 @@ namespace BadEcho.Omnified.Vision.Statistics
         public string Name
         { get; init; } = string.Empty;
 
+        /// <inheritdoc/>
+        public string Format
+        { get; init; } = string.Empty;
+
         /// <summary>
         /// Gets a sequence of individual statistics that comprise this group.
         /// </summary>

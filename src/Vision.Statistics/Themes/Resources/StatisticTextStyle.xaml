@@ -60,6 +60,7 @@
     </Storyboard>
 
     <Style x:Key="StatisticTextStyle" TargetType="{x:Type fenestra:OutlinedTextElement}">
+        <Setter Property="TextFormatString" Value="{Binding Format}"/>
         <Setter Property="Fill" Value="{DynamicResource {x:Static t:Brushes.TextForegroundKey}}"/>
         <Setter Property="Stroke" Value="{DynamicResource {x:Static t:Brushes.OutlinedTextStrokeKey}}"/>
         <Setter Property="StrokeThickness" Value="4"/>

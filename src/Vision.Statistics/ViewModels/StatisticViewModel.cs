@@ -22,25 +22,37 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
     internal abstract class StatisticViewModel<TStatistic> : ViewModel<IStatistic,TStatistic>, IStatisticViewModel
         where TStatistic : IStatistic
     {
-        private string? _name;
+        private string _name = string.Empty;
+        private string _format = string.Empty;
 
         /// <inheritdoc/>
         public string Name
         {
-            get => _name ?? string.Empty;
+            get => _name;
             set => NotifyIfChanged(ref _name, value);
+        }
+
+        /// <inheritdoc/>
+        public string Format
+        {
+            get => _format;
+            set => NotifyIfChanged(ref _format, value);
         }
         
         /// <inheritdoc/>
         protected override void OnBinding(TStatistic model)
         {
             Require.NotNull(model, nameof(model));
-
+            
             Name = model.Name;
+            Format = model.Format;
         }
 
         /// <inheritdoc/>
-        protected override void OnUnbound(TStatistic model) 
-            => Name = string.Empty;
+        protected override void OnUnbound(TStatistic model)
+        {
+            Name = string.Empty;
+            Format = string.Empty;
+        }
     }
 }

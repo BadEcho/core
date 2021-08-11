@@ -21,9 +21,9 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
     /// </summary>
     internal sealed class CoordinateStatisticViewModel : StatisticViewModel<CoordinateStatistic>
     {
-        private float _x;
-        private float _y;
-        private float _z;
+        private double _x;
+        private double _y;
+        private double _z;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CoordinateStatisticViewModel"/> class.
@@ -43,27 +43,27 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
         { }
 
         /// <summary>
-        /// Gets or sets the displayed x-coordinate value for the bound statistic.
+        /// Gets or sets the displayed x-coordinate value for the bound coordinate statistic.
         /// </summary>
-        public float X
+        public double X
         {
             get => _x;
             set => NotifyIfChanged(ref _x, value);
         }
 
         /// <summary>
-        /// Gets or sets the displayed y-coordinate value for the bound statistic.
+        /// Gets or sets the displayed y-coordinate value for the bound coordinate statistic.
         /// </summary>
-        public float Y
+        public double Y
         {
             get => _y;
             set => NotifyIfChanged(ref _y, value);
         }
 
         /// <summary>
-        /// Gets or sets the displayed z-coordinate value for the bound statistic.
+        /// Gets or sets the displayed z-coordinate value for the bound coordinate statistic.
         /// </summary>
-        public float Z
+        public double Z
         {
             get => _z;
             set => NotifyIfChanged(ref _z, value);

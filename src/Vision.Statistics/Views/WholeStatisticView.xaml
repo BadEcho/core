@@ -23,7 +23,8 @@
     <d:DesignProperties.DataContext>
         <vm:WholeStatisticViewModel Name="Total Damage Done"
                                     IsCritical="False"
-                                    Value="29333882"
+                                    Value="293338"
+                                    Format="{}{0} butt loads"
                                     />
     </d:DesignProperties.DataContext>
     <Grid Style="{Binding (v:StatisticLayout.IsCompact), 

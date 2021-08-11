@@ -25,5 +25,10 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
         /// Gets or sets the displayed name for the bound statistic.
         /// </summary>
         string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets any formatting that should be applied to the value of the bound statistic.
+        /// </summary>
+        string Format { get; set; }
     }
 }

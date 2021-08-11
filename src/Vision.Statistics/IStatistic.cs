@@ -19,8 +19,13 @@ namespace BadEcho.Omnified.Vision.Statistics
     public interface IStatistic
     {
         /// <summary>
-        /// Gets or sets the display name of the statistic.
+        /// Gets the display name of the statistic.
         /// </summary>
         string Name { get; }
+
+        /// <summary>
+        /// Gets any formatting that should be applied to the value of the statistic.
+        /// </summary>
+        string Format { get; }
     }
 }

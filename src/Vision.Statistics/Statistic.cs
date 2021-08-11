@@ -25,6 +25,10 @@ namespace BadEcho.Omnified.Vision.Statistics
         { get; init; } = string.Empty;
 
         /// <inheritdoc/>
+        public string Format
+        { get; init; } = string.Empty;
+
+        /// <inheritdoc/>
         /// <remarks>
         /// We override the equality methods to establish the name of the statistic to essentially be its identity,
         /// and to allow for in-place rebindings of the view models responsible for displaying statistics with updated
