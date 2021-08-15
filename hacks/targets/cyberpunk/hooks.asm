@@ -714,6 +714,77 @@ disablePredator:
     dd 0
 
 
+// Implements a modifier for the player's vehicle speed.
+// Updated coordinate values are found starting at [rsi+60]
+// Source-of-truth coordinate values are found starting at [rdx+10]
+define(omnifyPlayerVehicleSpeedHook,"PhysX3_x64.dll"+1D9C58)
+
+assert(omnifyPlayerVehicleSpeedHook,8B 46 60 89 42 10)
+alloc(setPlayerVehicleSpeed,$1000,omnifyPlayerVehicleSpeedHook)
+alloc(playerVehicleSpeedX, 8)
+alloc(playerVehicleVerticalSpeedX, 8)
+
+registersymbol(omnifyPlayerVehicleSpeedHook)
+registersymbol(playerVehicleSpeedX)
+registersymbol(playerVehicleVerticalSpeedX)
+
+setPlayerVehicleSpeed:
+    pushf
+    // This is essentially a hook into the location update code for the player's vehicle.
+    // It is not used to update the location of vehicles driven by NPCs, sadly. It is also
+    // more than likely responsible for updating the location of as-of-yet unknown entities,
+    // however I haven't observed anything negatively affecting the gameplay experience
+    // when manipulating the speed modifier. So, no need to figure out what these other entities are.
+    sub rsp,10
+    movdqu [rsp],xmm0
+    sub rsp,10
+    movdqu [rsp],xmm1
+    sub rsp,10
+    movdqu [rsp],xmm2
+    // First we prime our multiplication register. We use a separate multiplier for the z-coordinate, as we often
+    // do not want to multiply changes made to the veritcal axis, unless we wish to go flying off into the air.
+    // Also, note that it is safe to leave the highest word set to 0, as it appears the the highest word is always
+    // zero in both the updated and current location values.    
+    movss xmm0,[playerVehicleSpeedX]
+    shufps xmm0,xmm0,0
+    movss xmm1,[playerVehicleVerticalSpeedX]
+    movlhps xmm0,xmm1
+    // End result is [playerVehicleSpeedX] | [playerVehicleSpeedX] | [playerVehicleVerticalSpeedX] | 0
+    movups xmm2,[rdx+10]
+    movups xmm1,[rsi+60]
+    // First, we find the difference between the new and old location values.
+    subps xmm1,xmm2
+    // Then, we multiply the difference by our multiplier register.
+    mulps xmm1,xmm0
+    // Adding the multiplied difference to the original values gives us new, updated location values.
+    addps xmm2,xmm1
+    // We commit our new, updated location values.
+    movups [rsi+60],xmm2    
+    movdqu xmm2,[rsp]
+    add rsp,10
+    movdqu xmm1,[rsp]
+    add rsp,10
+    movdqu xmm0,[rsp]
+    add rsp,10
+setPlayerVehicleSpeedOriginalCode:
+    popf
+    mov eax,[rsi+60]
+    mov [rdx+10],eax
+    jmp setPlayerVehicleSpeedReturn
+
+omnifyPlayerVehicleSpeedHook:
+    jmp setPlayerVehicleSpeed
+    nop 
+setPlayerVehicleSpeedReturn:
+
+
+playerVehicleSpeedX:
+  dd (float)1.0
+
+playerVehicleVerticalSpeedX:
+  dd (float)1.0
+
+
 [DISABLE]
 
 
@@ -837,6 +908,18 @@ dealloc(playerMaxStamina)
 dealloc(playerStaminaValue)
 dealloc(getPlayer)
 
+
+// Cleanup of omnifyPlayerVehicleSpeedHook
+omnifyPlayerVehicleSpeedHook:
+    db 8B 46 60 89 42 10
+
+unregistersymbol(omnifyPlayerVehicleSpeedHook)
+unregistersymbol(playerVehicleSpeedX)
+unregistersymbol(playerVehicleVerticalSpeedX)
+
+dealloc(playerVehicleSpeedX)
+dealloc(playerVehicleVerticalSpeedX)
+dealloc(setPlayerVehicleSpeed)
 
 
 // Cleanup of omniPlayerAttackHook
