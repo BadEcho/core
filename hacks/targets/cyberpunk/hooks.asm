@@ -598,6 +598,20 @@ verticalTeleportitisDisplacementX:
 
 
 // Initiates the Predator system for NPCs.
+// Sadly this only applies to simple NPCs you can find wandering Night City in the open world.
+// Cyberpunk 2077 has overly strict pregenerated pathing for NPCs with complex movement.
+// These NPCs must adhere to the correct point along their pregenerated paths at a particular
+// point in time. 
+// The Predator system only supports movment systems that feature dynamic pathing adherence,
+// where paths are evaluted per movement frame. Remember, one of the tenets of the Predator system
+// is that the speed is determined by where the player is in conjunction to where the the enemy is
+// and the direction the enemy is moving. This is not possible to determine ahead of time, which
+// you would need to do with a pregenerated path, as it would require seeing into the future.
+//
+// Support for non-dynamic, strict pathing adherent movement systems will be added to the Predator
+// system if I come across this kind of system in any additional games, or if any game made by
+// Hidetaki Miyazaki features it. It would require generating our own paths and ignoring the corrective
+// offsets being offered to us by the game.
 // UNIQUE AOB: E0 0F 58 20 0F 28 D4
 // [rax]: Working desired coordinates, xmm4: Movement offsets
 define(omnifyPredatorHook,"Cyberpunk2077.exe"+1BF2A98)
@@ -611,9 +625,9 @@ registersymbol(omnifyPredatorHook)
 registersymbol(disablePredator)
 
 initiatePredator:
-    // The normalized player location coordinates are required before we can engage the
-    // Predator system.
     pushf
+    // The normalized player location coordinates are required before we can engage the
+    // Predator system.    
     push rax
     mov rax,playerLocationNormalized
     cmp [rax],0
