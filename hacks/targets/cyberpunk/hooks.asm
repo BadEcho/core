@@ -389,11 +389,16 @@ omnifyPlayerVitalsUpdateHook:
 playerVitalsUpdateReturn:
 
 
-// Hooks into the player's location update function, allowing us to set our speed as well as
-// preventing the player physics system from interfering with teleportitis effects.
-define(omnifyPlayerLocationUpdateHook,"PhysX3CharacterKinematic_x64.dll"+7B99)
+// Hooks into the player's location update function, allowing us to prevent the player physics system 
+// from interfering with teleportitis effects.
+// Current values for x and y are located at [rsi+208].
+// Updated values for x and y are located at [r15+08].
+// Current values for z are located at [rsi+218].
+// Updated values for z are located at [r15+18].
+// UNIQUE AOB: 41 0F 10 47 08
+define(omnifyPlayerLocationUpdateHook,"PhysX3CharacterKinematic_x64.dll"+7B8D)
 
-assert(omnifyPlayerLocationUpdateHook,0F 11 86 08 02 00 00)
+assert(omnifyPlayerLocationUpdateHook,41 0F 10 47 08)
 alloc(playerLocationUpdate,$1000,omnifyPlayerLocationUpdateHook)
 alloc(movementFramesToSkip,8)
 
@@ -401,6 +406,8 @@ registersymbol(omnifyPlayerLocationUpdateHook)
 
 playerLocationUpdate:
     pushf
+    sub rsp,10
+    movdqu [rsp],xmm0
     push rax
     mov rax,movementFramesToSkip
     cmp [rax],0
@@ -412,14 +419,17 @@ skipMovementFrame:
     mov rax,movementFramesToSkip
     dec [rax]
     pop rax
-    movups xmm0,[rsi+208]
-    jmp playerLocationUpdateOriginalCode
+    movupd xmm0,[rsi+208]
+    movupd [r15+08],xmm0
+    movupd xmm0,[rsi+218]
+    movupd [r15+18],xmm0
+    jmp playerLocationUpdateCleanup
 checkForTeleported:
     push rax
     mov rax,teleported
     cmp [rax],1
     pop rax    
-    jne playerLocationUpdateOriginalCode
+    jne playerLocationUpdateCleanup
     push rax
     mov rax,teleported
     mov [rax],0    
@@ -427,14 +437,16 @@ checkForTeleported:
     mov [rax],2
     pop rax
     jmp skipMovementFrame
+playerLocationUpdateCleanup:
+    movdqu xmm0,[rsp]
+    add rsp,10
 playerLocationUpdateOriginalCode:
     popf
-    movups [rsi+00000208],xmm0
+    movups xmm0,[r15+08]
     jmp playerLocationUpdateReturn
 
 omnifyPlayerLocationUpdateHook:
     jmp playerLocationUpdate
-    nop 2
 playerLocationUpdateReturn:
 
 
@@ -841,7 +853,7 @@ dealloc(playerVitalsUpdate)
 
 // Cleanup of omnifyPlayerLocationUpdateHook
 omnifyPlayerLocationUpdateHook:
-    db 0F 11 86 08 02 00 00
+    db 41 0F 10 47 08
 
 unregistersymbol(omnifyPlayerLocationUpdateHook)
 
