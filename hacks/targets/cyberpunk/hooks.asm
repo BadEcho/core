@@ -127,8 +127,6 @@ registersymbol(playerHealthValue)
 
 getPlayerHealth:
     pushf
-    cmp r8,0
-    jne getPlayerHealthOriginalCode
     // Additional health filters to support Dum Dum lol.
     // Maybe not specific to Dum Dum, but his ass is when it
     // all started.
@@ -188,8 +186,14 @@ registersymbol(playerStamina)
 
 getPlayerStamina:
     pushf    
-    cmp r8,0x18
-    jne getPlayerStaminaOriginalCode
+    cmp r8,0    
+    je getPlayerStaminaOriginalCode
+    // Player data will have a non-zero value stored at this location.
+    push rbx
+    mov rbx,[rax+F0]
+    cmp rbx,0
+    pop rbx
+    je getPlayerStaminaOriginalCode
     sub rsp,10
     movdqu [rsp],xmm0
     push rbx
@@ -460,7 +464,6 @@ omniPlayerAttackHook:
 getPlayerAttackReturn:
 
 
-
 // Initiates the Apocalypse system.
 // xmm1: Damage percentage.
 // [rcx+190]: Working health percentage.
@@ -469,7 +472,6 @@ define(omnifyApocalypseHook,"Cyberpunk2077.exe"+19C9590)
 
 assert(omnifyApocalypseHook,F3 0F 58 89 90 01 00 00)
 alloc(initiateApocalypse,$1000,omnifyApocalypseHook)
-alloc(scriptedDamage,8)
 
 registersymbol(omnifyApocalypseHook)
 
@@ -520,11 +522,7 @@ initiateApocalypse:
     mov rax,[rdi+10]
     mov rbx,playerAttack
     cmp [rbx],rax
-    jne initiateApocalypseCleanup
-    // Some scripted damage occurs (first battle with mechs) to make things a bit easier, filter that out.
-    // Easily identified by its ridiculous magnitude.
-    ucomiss xmm2,[scriptedDamage]
-    ja initiateApocalypseCleanup
+    jne initiateApocalypseCleanup    
     jmp initiateEnemyApocalypse
 initiatePlayerApocalypse:
     // Load the damage amount parameter.
@@ -597,9 +595,6 @@ teleportitisDisplacementX:
 
 verticalTeleportitisDisplacementX:
     dd (float)3.25
-
-scriptedDamage:
-    dd (float)1000.0
 
 
 // Initiates the Predator system for NPCs.
@@ -702,7 +697,7 @@ threatDistance:
     dd (float)1.5
 
 disablePredator:
-    dd 1
+    dd 0
 
 
 [DISABLE]
@@ -775,7 +770,6 @@ omnifyApocalypseHook:
 
 unregistersymbol(omnifyApocalypseHook)
 
-dealloc(scriptedDamage)
 dealloc(initiateApocalypse)
 
 
