@@ -278,6 +278,92 @@ omniPlayerLocationNormalizedHook:
 getPlayerLocationNormalizedReturn:
 
 
+// Gets the player's vehicle's coordinates.
+// Coordinates are found starting at [rdx+10]
+define(omniPlayerLocationVehicleHook,"PhysX3_x64.dll"+1D9C19)
+
+assert(omniPlayerLocationVehicleHook,8B 02 89 01 8B 42 04)
+alloc(getPlayerLocationVehicle,$1000,omniPlayerLocationVehicleHook)
+alloc(playerLocationVehicle,8)
+alloc(positiveVehicleDistanceTolerance,8)
+alloc(negativeVehicleDistanceTolerance,8)
+
+registersymbol(omniPlayerLocationVehicleHook)
+registersymbol(playerLocationVehicle)
+
+getPlayerLocationVehicle:
+    pushf
+    // Make sure our player's coordinate pointer has been initialized.
+    push rax
+    mov rax,playerLocation
+    cmp [rax],0
+    pop rax
+    je getPlayerLocationVehicleOriginalCode
+    // We'll need two SSE registers in order to convert from double to float and also to pass the parameters
+    // correctly.
+    sub rsp,10
+    movdqu [rsp],xmm0
+    sub rsp,10
+    movdqu [rsp],xmm1
+    // We'll need two CPU registers so we can dereference our player's location pointer, and also preserve
+    // data in light of the coordinate distance call using EAX as an output.
+    push rax
+    push rbx
+    mov rax,playerLocation
+    mov rbx,[rax]
+    // Convert the player's x and y coordinates to float.
+    cvtpd2ps xmm0,[rbx+210]
+    // Convert the player's z-coordinate to float.
+    cvtsd2ss xmm1,[rbx+220]
+    // Pass the first parameter, the player's coordinates, as if they were being passed as two m64 addresses.
+    sub rsp,8
+    movq [rsp],xmm0
+    sub rsp,8
+    movq [rsp],xmm1
+    // Pass the second parameter, the reference coordinates.
+    push [rdx+10]
+    push [rdx+18]
+    call findCoordinateDistance    
+    movd xmm0,eax
+    shr eax,1F
+    test eax,eax
+    jne checkNegativeVehicleDistanceTolerance
+    ucomiss xmm0,[positiveVehicleDistanceTolerance]
+    ja getPlayerLocationVehicleCleanup
+    jmp registerNewPlayerLocationVehicle
+checkNegativeVehicleDistanceTolerance:
+    ucomiss xmm0,[negativeVehicleDistanceTolerance]
+    jb getPlayerLocationVehicleCleanup
+registerNewPlayerLocationVehicle:
+    mov rax,playerLocationVehicle
+    mov [rax],rdx
+getPlayerLocationVehicleCleanup:
+    pop rbx
+    pop rax
+    movdqu xmm1,[rsp]
+    add rsp,10
+    movdqu xmm0,[rsp]
+    add rsp,10
+getPlayerLocationVehicleOriginalCode:
+    popf
+    mov eax,[rdx]
+    mov [rcx],eax
+    mov eax,[rdx+04]
+    jmp getPlayerLocationVehicleReturn
+
+omniPlayerLocationVehicleHook:
+    jmp getPlayerLocationVehicle
+    nop 2
+getPlayerLocationVehicleReturn:
+
+
+positiveVehicleDistanceTolerance:
+    dd (float)2.0
+
+negativeVehicleDistanceTolerance:
+    dd (float)-2.0
+
+
 // Gets the player's magazine prior to a gun firing.
 // UNIQUE AOB: 0F B7 8E 40 03 00 00
 define(omniPlayerMagazineBeforeFireHook,"Cyberpunk2077.exe"+1AF82D3)
@@ -859,6 +945,19 @@ unregistersymbol(omnifyPlayerLocationUpdateHook)
 
 dealloc(movementFramesToSkip)
 dealloc(playerLocationUpdate)
+
+
+// Cleanup of omniPlayerLocationVehicleHook
+omniPlayerLocationVehicleHook:
+    db 8B 02 89 01 8B 42 04
+
+unregistersymbol(omniPlayerLocationVehicleHook)
+unregistersymbol(playerLocationVehicle)
+
+dealloc(playerLocationVehicle)
+dealloc(positiveVehicleDistanceTolerance)
+dealloc(negativeVehicleDistanceTolerance)
+dealloc(getPlayerLocationVehicle)
 
 
 // Cleanup of omnifyApocalypseHook
