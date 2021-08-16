@@ -19,12 +19,13 @@ StatisticType = defineEnum {
     "Group"
 }
 
-function WholeStatistic(name, value, isCritical)
+function WholeStatistic(name, value, isCritical, format)
     local wholeStatistic = {
         Type = StatisticType.Whole,
         Statistic = {
             Name = name,
             IsCritical = isCritical,
+            Format = format,
             Value = value
         }
     }

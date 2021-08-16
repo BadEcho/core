@@ -20,9 +20,11 @@ function registerExports()
         -- A ridiculous value indicates that the previous place in memory has been freshly reallocated.
         if magazine ~= nil and magazine > 1000 then magazine = 0 end
 
+        local playerVehicleSpeedX = readFloat("playerVehicleSpeedX")
 
         return {
-            WholeStatistic("Magazine", magazine)
+            WholeStatistic("Magazine", magazine),
+            WholeStatistic("Vehicle Speed", playerVehicleSpeedX, true, "{0}x")
         }
     end
 end
