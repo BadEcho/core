@@ -226,6 +226,81 @@ omniPlayerStaminaHook:
 getPlayerStaminaReturn:
 
 
+// Gets the player's experience data structure.
+define(omniPlayerExperienceDataHook,"Cyberpunk2077.exe"+21310D)
+
+assert(omniPlayerExperienceDataHook,48 8B 3F 48 03 E8)
+alloc(getPlayerExperienceData,$1000,omniPlayerExperienceDataHook)
+alloc(playerExperienceData,8)
+
+registersymbol(omniPlayerExperienceDataHook)
+registersymbol(playerExperienceData)
+
+getPlayerExperienceData:
+    pushf
+    cmp rcx,1
+    jne getPlayerExperienceDataOriginalCode
+    cmp rsi,4
+    jne getPlayerExperienceDataOriginalCode
+    cmp r8,0xC
+    jne getPlayerExperienceDataOriginalCode
+    push rax
+    mov rax,playerExperienceData
+    mov [rax],rdi
+    pop rax
+getPlayerExperienceDataOriginalCode:
+    popf
+    mov rdi,[rdi]
+    add rbp,rax
+    jmp getPlayerExperienceDataReturn
+
+omniPlayerExperienceDataHook:
+    jmp getPlayerExperienceData
+    nop 
+getPlayerExperienceDataReturn:
+
+
+// Gets the player's experience and street cred.
+// Discriminator is at r8. rcx contains base address for finding desired stat.
+define(omniPlayerExperienceHook,"Cyberpunk2077.exe"+29763D)
+
+assert(omniPlayerExperienceHook,88 5E 60 48 85 C9)
+alloc(getPlayerExperience,$1000,omniPlayerExperienceHook)
+alloc(playerExperience,8)
+
+registersymbol(omniPlayerExperienceHook)
+registersymbol(playerExperience)
+
+getPlayerExperience:
+    pushf
+    push rax
+    mov rax,playerExperienceData
+    cmp [rax],rdi
+    pop rax
+    jne getPlayerExperienceOriginalCode
+    // r8 is 0xB if it's retrieving the experience.
+    cmp r8,0xB
+    jne getPlayerExperienceOriginalCode
+    push rax
+    push rbx
+    mov rax,[rdi+20]
+    add rax,rcx
+    mov rbx,playerExperience
+    mov [rbx],rax
+    pop rbx
+    pop rax
+getPlayerExperienceOriginalCode:
+    popf
+    mov [rsi+60],bl
+    test rcx,rcx
+    jmp getPlayerExperienceReturn
+
+omniPlayerExperienceHook:
+    jmp getPlayerExperience
+    nop
+getPlayerExperienceReturn:
+
+
 // Get the player's location structure.
 // Unique AOB: 0F 10 81 10 02 00 00 F2 0F 10 89 20 02 00 00 0F 11 02 F3
 define(omniPlayerLocationHook,"PhysX3CharacterKinematic_x64.dll"+1EE0)
@@ -884,6 +959,28 @@ playerVehicleVerticalSpeedX:
 
 
 [DISABLE]
+
+
+// Cleanup of omniPlayerExperienceHook
+omniPlayerExperienceHook:
+    db 88 5E 60 48 85 C9
+
+unregistersymbol(omniPlayerExperienceHook)
+unregistersymbol(playerExperience)
+
+dealloc(playerExperience)
+dealloc(getPlayerExperience)
+
+
+// Cleanup of omniPlayerExperienceDataHook
+omniPlayerExperienceDataHook:
+    db 48 8B 3F 48 03 E8
+
+unregistersymbol(omniPlayerExperienceDataHook)
+unregistersymbol(playerExperienceData)
+
+dealloc(playerExperienceData)
+dealloc(getPlayerExperienceData)
 
 
 // Cleanup of omniPlayerLocationHook

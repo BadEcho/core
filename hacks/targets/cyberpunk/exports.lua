@@ -21,10 +21,17 @@ function registerExports()
         if magazine ~= nil and magazine > 1000 then magazine = 0 end
 
         local playerVehicleSpeedX = readFloat("playerVehicleSpeedX")
+        local playerExperience = readInteger("[playerExperience]")
+        local playerExperienceNext = readInteger("[playerExperience]+0x4")
+
+        if (areNotNil(playerExperience, playerExperienceNext)) then
+            playerExperienceNext = playerExperienceNext + playerExperience
+        end        
 
         return {
             WholeStatistic("Magazine", magazine),
-            WholeStatistic("Vehicle Speed", playerVehicleSpeedX, true, "{0}x")
+            WholeStatistic("Vehicle Speed", playerVehicleSpeedX, true, "{0}x"),
+            FractionalStatistic("Experience", playerExperience, playerExperienceNext)
         }
     end
 end
