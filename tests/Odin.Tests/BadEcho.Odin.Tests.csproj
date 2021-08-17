@@ -35,7 +35,6 @@
   </ItemGroup>
 
   <Target Name="BuildPlugin" AfterTargets="Build">
-    <MSBuild Projects="..\Odin.Tests.Plugin\BadEcho.Odin.Tests.Plugin.csproj" Properties="Configuration=$(Configuration);Platform=$(Platform)" />
     <Copy SourceFiles="test.config" DestinationFiles="$(OutputPath)\ReSharperTestRunner64.dll.config" />
   </Target>
 </Project>
