@@ -34,7 +34,7 @@ namespace BadEcho.Odin.XmlConfiguration
         /// </summary>
         /// <param name="configuration">A configuration file in which this section group is declared.</param>
         /// <returns>This section group as it is declared in <c>configuration</c>.</returns>
-        public static BadEchoSectionGroup GetSectionGroup(Configuration configuration)
+        public static BadEchoSectionGroup GetSectionGroup(System.Configuration.Configuration configuration)
         {
             Require.NotNull(configuration, nameof(configuration));
 
@@ -47,7 +47,7 @@ namespace BadEcho.Odin.XmlConfiguration
         /// <returns>This section group as it is declared in the current application's default configuration.</returns>
         internal static BadEchoSectionGroup GetSectionGroup()
         {
-            Configuration currentConfiguration
+            System.Configuration.Configuration currentConfiguration
                 = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
             return (BadEchoSectionGroup) currentConfiguration.GetSectionGroup(Schema) ?? new BadEchoSectionGroup();
