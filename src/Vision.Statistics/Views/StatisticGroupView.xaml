@@ -43,7 +43,7 @@
                                       />
         <v:StatisticsView v:StatisticLayout.IsCompact="True"
                           DataContext="{Binding Statistics}"
-                          Margin="25,0,0,0"
+                          Margin="10,0,0,0"
                           Grid.Row="1"
                           />
     </Grid>

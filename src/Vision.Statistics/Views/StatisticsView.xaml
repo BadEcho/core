@@ -27,15 +27,32 @@
                                                  CurrentValue="86"
                                                  MaximumValue="1000"
                                                  />
-                <vm:WholeStatisticViewModel Name="Total Damage Done"
+                <vm:WholeStatisticViewModel Name="Money"
                                             IsCritical="False"
                                             Value="29333882"
                                             />
+                <vm:StatisticGroupViewModel Name="Damage Taken">
+                    <vm:StatisticGroupViewModel.Statistics>
+                        <vm:StatisticsViewModel>
+                            <vm:StatisticsViewModel.Children>
+                                <vm:WholeStatisticViewModel Name="Last"
+                                                            Value="100"
+                                                            />
+                                <vm:WholeStatisticViewModel Name="Max"
+                                                            Value="200"
+                                                            />
+                                <vm:WholeStatisticViewModel Name="Total"
+                                                            Value="300"
+                                                            />
+                            </vm:StatisticsViewModel.Children>
+                        </vm:StatisticsViewModel>
+                    </vm:StatisticGroupViewModel.Statistics>
+                </vm:StatisticGroupViewModel>
                 <vm:CoordinateStatisticViewModel Name="Coordinates"
                                                  X="-1566.7635498047"
                                                  Y="0.10857523977757"
                                                  Z="1997.649169219"
-                                                 />
+                />
             </vm:StatisticsViewModel.Children>
         </vm:StatisticsViewModel>        
     </d:DesignProperties.DataContext>

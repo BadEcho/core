@@ -19,9 +19,7 @@
                xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Statistics.ViewModels"
                xmlns:v="clr-namespace:BadEcho.Omnified.Vision.Statistics.Views"
                mc:Ignorable="d" 
-               d:DesignHeight="250" 
-               d:DesignWidth="400"
-               >
+>
     <d:DesignProperties.DataContext>
         <vm:CoordinateStatisticViewModel Name="Coordinates"
                                          X="-1566.7635498047"
@@ -50,6 +48,7 @@
                                                               RelativeSource={RelativeSource AncestorType=UserControl},
                                                               Converter={StaticResource StatisticNameCompactStyleConverter}}"
                                               Text="X"                                           
+                                              Margin="15,0,15,0"
                                               />
                 <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
                                               Text="{Binding X}"
@@ -60,6 +59,7 @@
                                                               RelativeSource={RelativeSource AncestorType=UserControl},
                                                               Converter={StaticResource StatisticNameCompactStyleConverter}}"
                                               Text="Y"
+                                              Margin="15,0,15,0"
                                               />
                 <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
                                               Text="{Binding Y}"
@@ -70,6 +70,7 @@
                                                               RelativeSource={RelativeSource AncestorType=UserControl},
                                                               Converter={StaticResource StatisticNameCompactStyleConverter}}"
                                               Text="Z"
+                                              Margin="15,0,15,0"
                                               />
                 <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
                                               Text="{Binding Z}"
