@@ -14,11 +14,13 @@
 using System;
 using System.Collections.Generic;
 using System.Composition;
+using System.Linq;
 using System.Text.Json;
 using BadEcho.Fenestra.ViewModels;
 using BadEcho.Odin;
 using BadEcho.Odin.Extensibility.Hosting;
 using BadEcho.Odin.Extensions;
+using BadEcho.Odin.Logging;
 using BadEcho.Omnified.Vision.Extensibility;
 using BadEcho.Omnified.Vision.Statistics.Properties;
 using BadEcho.Omnified.Vision.Statistics.ViewModels;
@@ -87,11 +89,20 @@ namespace BadEcho.Omnified.Vision.Statistics
                           {
                               Converters = {new StatisticConverter()}
                           };
+            try
+            {
+                var statistics = JsonSerializer.Deserialize<IEnumerable<IStatistic>>(messages, options);
 
-            var statistics = JsonSerializer.Deserialize<IEnumerable<IStatistic>>(messages, options);
+                return statistics
+                    ?? throw new ArgumentException(Strings.JsonNotStatisticsSchema.InvariantFormat(messages), nameof(messages));
+            }
+            catch (JsonException jsonEx)
+            {
+                Logger.Error(Strings.StatisticsReadMessagesFailure
+                                    .InvariantFormat(Environment.NewLine, messages), jsonEx);
 
-            return statistics
-                ?? throw new ArgumentException(Strings.JsonNotStatisticsSchema.InvariantFormat(messages), nameof(messages));
+                return Enumerable.Empty<IStatistic>();
+            }
         }
 
         private void HandleNewMessages(object? sender, EventArgs<string> e)

@@ -110,4 +110,7 @@
   <data name="CannotUpdateUnboundStatistic" xml:space="preserve">
     <value>Cannot update the '{0}' statistic as it currently isn't bound to a child view model.</value>
   </data>
+  <data name="StatisticsReadMessagesFailure" xml:space="preserve">
+    <value>Statistics module had problems parsing the following message file contents:{0}{1}</value>
+  </data>
 </root>
