@@ -22,23 +22,34 @@ namespace BadEcho.Omnified.Vision.ViewModels
     /// </summary>
     internal sealed class VisionViewModel : CollectionViewModel<ModuleHost, ModuleHostViewModel>
     {
+        private double _anchorBoxVerticalOffset;
+        private AnchorPointLocation _titleLocation;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="VisionViewModel"/> class.
         /// </summary>
-        public VisionViewModel(IVisionConfiguration configuration)
+        public VisionViewModel()
             : base(new CollectionViewModelOptions())
+        { }
+
+        /// <summary>
+        /// Gets or sets the distance between the anchor box that the bound Vision components are hosted in and the top of the
+        /// screen.
+        /// </summary>
+        public double AnchorBoxVerticalOffset
         {
-            Require.NotNull(configuration, nameof(configuration));
-            
-            LeftAnchorVerticalOffset = configuration.LeftAnchorVerticalOffset;
+            get => _anchorBoxVerticalOffset;
+            set => NotifyIfChanged(ref _anchorBoxVerticalOffset, value);
         }
 
         /// <summary>
-        /// Gets or sets the distance between Vision components anchored to the left side of the screen and the top of
-        /// the screen.
+        /// Gets or sets the location for the Vision application title's anchor point.
         /// </summary>
-        public double LeftAnchorVerticalOffset
-        { get; set; }
+        public AnchorPointLocation TitleLocation
+        {
+            get => _titleLocation;
+            set => NotifyIfChanged(ref _titleLocation, value);
+        }
 
         /// <inheritdoc/>
         public override ModuleHostViewModel CreateChild(ModuleHost model)
@@ -61,5 +72,17 @@ namespace BadEcho.Omnified.Vision.ViewModels
         /// <inheritdoc/>
         public override void OnChangeCompleted()
         { }
+
+        /// <summary>
+        /// Applies the provided Vision application configuration to this root view model instance.
+        /// </summary>
+        /// <param name="configuration">The Vision application configuration to apply to this view model.</param>
+        public void ApplyConfiguration(IVisionConfiguration configuration)
+        {
+            Require.NotNull(configuration, nameof(configuration));
+
+            AnchorBoxVerticalOffset = configuration.AnchorBoxVerticalOffset;
+            TitleLocation = configuration.TitleLocation;
+        }
     }
 }

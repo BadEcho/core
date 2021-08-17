@@ -27,7 +27,7 @@ namespace BadEcho.Omnified.Vision.Extensibility
         { get; init; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets the location for module's anchor point, overriding the default location defined by the module itself.
+        /// Gets or sets the location for the module's anchor point, overriding the default location defined by the module itself.
         /// </summary>
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public AnchorPointLocation? Location

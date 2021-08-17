@@ -11,12 +11,14 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.IO;
+using System;
 using System.Linq;
-using System.Text.Json;
 using System.Windows;
+using System.Windows.Threading;
 using BadEcho.Fenestra.Configuration;
 using BadEcho.Fenestra.Extensions;
+using BadEcho.Odin.Configuration;
+using BadEcho.Odin.Extensibility.Hosting;
 using BadEcho.Odin.Interop;
 using BadEcho.Omnified.Vision.Windows;
 
@@ -27,12 +29,23 @@ namespace BadEcho.Omnified.Vision
     /// </summary>
     public partial class App
     {
-        /// <summary>
-        /// Gets the name of the file containing configuration settings for Vision.
-        /// </summary>
-        internal static string SettingsFile
-            => "settings.json";
+        private static void ApplyConfiguration(Window window, IConfigurationProvider configurationProvider)
+        {
+            FenestraConfiguration configuration
+                = configurationProvider.GetConfiguration<FenestraConfiguration>();
 
+            var launchDisplay = Display.Devices.Skip(configuration.LaunchDisplay)
+                                       .First();
+
+            window.MoveToDisplay(launchDisplay);
+        }
+
+        /// <summary>
+        /// Initializes a <see cref="VisionWindow"/> instance to act as Vision's <see cref="Application.MainWindow"/>, and then fires
+        /// off a context assembler purposed for loading the Vision application environment.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="StartupEventArgs"/> instance containing the event data.</param>
         private void HandleStartup(object sender, StartupEventArgs e)
         {
             var window = new VisionWindow();
@@ -40,29 +53,22 @@ namespace BadEcho.Omnified.Vision
 
             window.AssembleContext(contextAssembler);
 
-            ApplyConfiguration(window);
+            IConfigurationProvider configurationProvider
+                = PluginHost.LoadRequirement<IConfigurationProvider>(true);
 
+            configurationProvider.ConfigurationChanged += HandleConfigurationChanged;
+
+            ApplyConfiguration(window, configurationProvider);
             window.Show();
         }
 
-        private static void ApplyConfiguration(Window window)
+        private void HandleConfigurationChanged(object? sender, EventArgs e)
         {
-            FenestraConfiguration? configuration = null;
-
-            if (File.Exists(SettingsFile))
-            {
-                configuration = JsonSerializer.Deserialize<FenestraConfiguration>(
-                    File.ReadAllText(SettingsFile),
-                    new JsonSerializerOptions {PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
-            }
-
-            if (configuration == null)
+            if (sender is not IConfigurationProvider configurationProvider)
                 return;
 
-            var launchDisplay = Display.Devices.Skip(configuration.LaunchDisplay)
-                                       .First();
-
-            window.MoveToDisplay(launchDisplay);
+            if (MainWindow != null)
+                this.Invoke(() => ApplyConfiguration(MainWindow, configurationProvider), DispatcherPriority.Background);
         }
     }
 }

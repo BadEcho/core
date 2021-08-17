@@ -28,19 +28,22 @@
                                              Scope="Top"
                                              />
     </Grid.Resources>
-    <Grid x:Name="LeftAnchor"
-          Margin="{Binding LeftAnchorVerticalOffset, Converter={StaticResource DoubleToTopConverter}}">
+    <Grid x:Name="AnchorBox"
+          Margin="{Binding AnchorBoxVerticalOffset, Converter={StaticResource DoubleToTopConverter}}">
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <fenestra:OutlinedTextElement Style="{StaticResource VisionTitleTextStyle}"
                                       Text="{x:Static r:Strings.VisionTitle}"
-                                      Margin="15,0,0,0"
+                                      HorizontalAlignment="{Binding TitleLocation, Converter={StaticResource LocationHorizontalConverter}}"
+                                      VerticalAlignment="{Binding TitleLocation, Converter={StaticResource LocationVerticalConverter}}"
+                                      Margin="15,0,15,0"
                                       Grid.Row="0"
                                       />
         <ItemsControl ItemsSource="{Binding Children}"
-                      Grid.Row="1">
+                      Grid.Row="1"
+                      Margin="15,0,15,0">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <DataTemplate.Resources>

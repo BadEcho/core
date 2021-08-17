@@ -11,8 +11,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Windows.Threading;
 using BadEcho.Fenestra.Windows;
+using BadEcho.Odin.Configuration;
 using BadEcho.Odin.Extensibility.Hosting;
 using BadEcho.Omnified.Vision.Extensibility;
 using BadEcho.Omnified.Vision.ViewModels;
@@ -24,11 +26,35 @@ namespace BadEcho.Omnified.Vision.Windows
     /// </summary>
     internal sealed class VisionContextAssembler : IContextAssembler<VisionViewModel>
     {
+        private readonly VisionViewModel _viewModel = new();
+
+        private bool _isAssembled;
+        
         /// <inheritdoc/>
         public VisionViewModel Assemble(Dispatcher dispatcher)
         {
-            var configuration = VisionConfiguration.Load();
-            var viewModel = new VisionViewModel(configuration);
+            if (_isAssembled)
+                return _viewModel;
+
+            IConfigurationProvider configurationProvider
+                = PluginHost.LoadRequirement<IConfigurationProvider>(true);
+
+            configurationProvider.ConfigurationChanged += HandleConfigurationChanged;
+
+            ApplyConfiguration(configurationProvider);
+
+            _isAssembled = true;
+
+            return _viewModel;
+        }
+
+        private void ApplyConfiguration(IConfigurationProvider configurationProvider)
+        {
+            VisionConfiguration configuration
+                = configurationProvider.GetConfiguration<VisionConfiguration>();
+
+            _viewModel.Disconnect();
+            _viewModel.ApplyConfiguration(configuration);
 
             var modules
                 = PluginHost.ArmedLoad<IVisionModule, IVisionConfiguration>(configuration);
@@ -37,10 +63,16 @@ namespace BadEcho.Omnified.Vision.Windows
             {
                 var moduleHost = new ModuleHost(module, configuration);
 
-                viewModel.Bind(moduleHost);
+                _viewModel.Bind(moduleHost);
             }
+        }
 
-            return viewModel;
+        private void HandleConfigurationChanged(object? sender, EventArgs e)
+        {
+            if (sender is not IConfigurationProvider configurationProvider)
+                return;
+
+            ApplyConfiguration(configurationProvider);
         }
     }
 }

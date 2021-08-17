@@ -1,6 +1,7 @@
 {
-  "launchDisplay": 1, 
-  "leftAnchorVerticalOffset": 80, 
+  "launchDisplay": 1,
+  "anchorBoxVerticalOffset": 80, 
+  "titleLocation": "TopLeft",
   "messageFilesDirectory": "..\\..\\hacks\\targets\\cyberpunk",
   "modules": {
     "BadEcho.Omnified.Vision.Statistics": {
