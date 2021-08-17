@@ -14,6 +14,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using BadEcho.Odin.Extensibility.Configuration;
 using BadEcho.Odin.Extensions;
@@ -144,7 +146,7 @@ namespace BadEcho.Odin.Extensibility.Hosting
         }
 
         /// <summary>
-        /// Retrieves a globally available plugin-provided export fulfilling the specified generic contract that is required by
+        /// Retrieves a globally available plugin-provided export fulfilling the specified generic contract that is required by 
         /// the caller in order to ensure its proper operation, with the expectation that the contract implementation can only
         /// be considered valid if there is one and only one export available.
         /// </summary>
@@ -169,8 +171,42 @@ namespace BadEcho.Odin.Extensibility.Hosting
         /// </para>
         /// </remarks>
         public static TContract LoadRequirement<TContract>()
+            => LoadRequirement<TContract>(false);
+
+        /// <summary>
+        /// Retrieves a locally or globally available plugin-provided export fulfilling the specified generic contract that is required
+        /// by the caller in order to ensure its proper operation, with the expectation that the contract implementation can only
+        /// be considered valid if there is one and only one export available.
+        /// </summary>
+        /// <typeparam name="TContract">The contract type whose export should be loaded.</typeparam>
+        /// <param name="isLocal">Value indicating if the context to search in is local to the caller.</param>
+        /// <returns>The sole, exported <typeparamref name="TContract"/> value.</returns>
+        /// <remarks>
+        /// <para>
+        /// This method should only be used for contracts that have been designed such that their consumers depend on them for
+        /// correct operation, whether at a system-wide or feature level, and that only a single provider should ever exist in
+        /// a given operating environment. It is not intended to be used by a centralized host responsible for consuming numerous
+        /// external plugins, but rather by a one-off endpoint to load contracts that are specific to that endpoint.
+        /// </para>
+        /// <para>
+        /// An example usage for this method would be from within a plugin, targeting an extension to the plugin itself that provides
+        /// a type of service that is specific to the context in which the plugin is loaded, such as a desktop user interface
+        /// communication contract for interoperability with a desktop application.
+        /// </para>
+        /// <para>
+        /// If the capabilities provided by <typeparamref name="TContract"/> is such that its availability is optional to the overall
+        /// operation, support for these capabilities can be determined ahead of time by querying <see cref="IsSupported{TContract}"/>
+        /// prior to calling this method.
+        /// </para>
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static TContract LoadRequirement<TContract>(bool isLocal)
         {
-            var parts = Store.GlobalContext.Load<TContract>();
+            PluginContext context = isLocal
+                ? Store.LoadContext(Assembly.GetCallingAssembly())
+                : Store.GlobalContext;
+
+            var parts = context.Load<TContract>();
             TContract? uniquePart = default;
 
             foreach (var part in parts)

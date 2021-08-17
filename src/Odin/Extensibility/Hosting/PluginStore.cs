@@ -15,6 +15,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using BadEcho.Odin.Collections;
 using BadEcho.Odin.Extensibility.Configuration;
@@ -32,7 +33,10 @@ namespace BadEcho.Odin.Extensibility.Hosting
             = new();
 
         private readonly IExtensibilityConfiguration _configuration;
-        
+
+        private readonly ConcurrentDictionary<Assembly, PluginContext> _localContexts 
+            = new();
+
         private readonly Lazy<PluginContext> _globalContext;
         private readonly Lazy<LazyConcurrentDictionary<Guid, PluginContext>> _filterableContexts;
         private readonly Lazy<IReadOnlyDictionary<Guid, IFilterableFamilyMetadata>> _filterableFamilies;
@@ -108,6 +112,16 @@ namespace BadEcho.Odin.Extensibility.Hosting
 
             return (HostAdapter<T>) hostAdapter;
         }
+
+        /// <summary>
+        /// Retrieves a plugin context used to service requests for plugins discoverable within the provided assembly.
+        /// </summary>
+        /// <param name="assembly">
+        /// The assembly that is to act as the local context from which pluggable parts are loaded.
+        /// </param>
+        /// <returns></returns>
+        public PluginContext LoadContext(Assembly assembly) 
+            => _localContexts.GetOrAdd(assembly, x => new PluginContext(new LocalPluginContextStrategy(x)));
 
         /// <inheritdoc/>
         public void Dispose()
