@@ -16,8 +16,8 @@ using System;
 namespace BadEcho.Odin.Interop
 {
     /// <summary>
-    /// Specifies an attribute of a window that can be retrieved with <see cref="User32.GetWindowLongPtr(IntPtr, WindowAttribute)"/>
-    /// and modified with <see cref="User32.SetWindowLongPtr(IntPtr, WindowAttribute, IntPtr)"/>.
+    /// Specifies an attribute of a window that can be retrieved with <see cref="User32.GetWindowLongPtr(WindowHandle, WindowAttribute)"/>
+    /// and modified with <see cref="User32.SetWindowLongPtr(WindowHandle, WindowAttribute, IntPtr)"/>.
     /// </summary>
     internal enum WindowAttribute
     {
@@ -31,7 +31,7 @@ namespace BadEcho.Odin.Interop
         Instance = -6,
         /// <summary>
         /// A handle to the parent window, if one exists.
-        /// This cannot be set through <see cref="User32.SetWindowLongPtr(IntPtr, WindowAttribute, IntPtr)"/>.
+        /// This cannot be set through <see cref="User32.SetWindowLongPtr(WindowHandle, WindowAttribute, IntPtr)"/>.
         /// </summary>
         Parent = -8,
         /// <summary>
