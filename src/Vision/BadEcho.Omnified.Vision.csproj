@@ -4,7 +4,13 @@
     <OutputType>WinExe</OutputType>
 	  <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <ApplicationManifest>Manifests\debug.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <ApplicationManifest>Manifests\release.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>
