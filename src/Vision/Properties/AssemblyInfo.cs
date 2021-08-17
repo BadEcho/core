@@ -1,8 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Windows;
-
 #if RELEASE
+using BadEcho.Odin.Properties;
+
 [assembly: InternalsVisibleTo("BadEcho.Omnified.Vision.Tests,PublicKey="+BuildInfo.PublicKey)]
 #else
 [assembly: InternalsVisibleTo("BadEcho.Omnified.Vision.Tests")]

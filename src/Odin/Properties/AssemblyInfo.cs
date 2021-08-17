@@ -1,15 +1,16 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-
-[assembly: ComVisible(false)]
-[assembly: Guid("c23f1588-7af9-4d9e-83af-15e922501b7f")]
-
 #if RELEASE
+using BadEcho.Odin.Properties;
+
 [assembly: InternalsVisibleTo("BadEcho.Odin.Tests,PublicKey="+BuildInfo.PublicKey)]
 #else
 [assembly: InternalsVisibleTo("BadEcho.Odin.Tests")]
 #endif
+
+[assembly: ComVisible(false)]
+[assembly: Guid("c23f1588-7af9-4d9e-83af-15e922501b7f")]
 
 [assembly: SuppressMessage("Microsoft.Design",
                            "CA1045",

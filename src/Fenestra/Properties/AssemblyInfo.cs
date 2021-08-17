@@ -4,8 +4,9 @@ using BadEcho.Fenestra;
 using System.Windows;
 using System.Windows.Markup;
 using BadEcho.Odin.Extensibility;
-
 #if RELEASE
+using BadEcho.Odin.Properties;
+
 [assembly: InternalsVisibleTo("BadEcho.Fenestra.Tests,PublicKey="+BuildInfo.PublicKey)]
 #else
 [assembly: InternalsVisibleTo("BadEcho.Fenestra.Tests")]
