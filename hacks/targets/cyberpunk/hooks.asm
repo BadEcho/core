@@ -12,6 +12,8 @@
 
 // Gets the player's root and statistical structures.
 // Magic numbers: 0x36A is Stamina's house address on Happy Stats Street.
+// UNIQUE AOB: 48 C7 C5 FF FF FF FF 8B 46 0C 4D 8D 14 81 49 8B C1 49 8B D2 49 2B D1 48 C1 FA 02 48 85 D2
+// AOB results in 3 matches, 6 instructions up should be 48 8D 71 50
 define(omniPlayerHook,"Cyberpunk2077.exe"+1A03A28)
 
 assert(omniPlayerHook,4C 8B 0E 48 C7 C5 FF FF FF FF)
@@ -227,6 +229,8 @@ getPlayerStaminaReturn:
 
 
 // Gets the player's experience data structure.
+// UNIQUE AOB: 49 8B C6 8B 6F 20 48 8B 3F 48 03 E8 48 8B D5 48 8B CF 48 8B 07 FF 50 38 48 8B 07 48 8B CF FF 50 20 3C 03
+// AOB will give two results, the one we want is executing constantly when player idles.
 define(omniPlayerExperienceDataHook,"Cyberpunk2077.exe"+21310D)
 
 assert(omniPlayerExperienceDataHook,48 8B 3F 48 03 E8)
@@ -262,6 +266,7 @@ getPlayerExperienceDataReturn:
 
 // Gets the player's experience and street cred.
 // Discriminator is at r8. rcx contains base address for finding desired stat.
+// UNIQUE AOB: 88 5E 60 48 85 C9
 define(omniPlayerExperienceHook,"Cyberpunk2077.exe"+29763D)
 
 assert(omniPlayerExperienceHook,88 5E 60 48 85 C9)
@@ -355,6 +360,7 @@ getPlayerLocationNormalizedReturn:
 
 // Gets the player's vehicle's coordinates.
 // Coordinates are found starting at [rdx+10]
+// UNIQUE AOB: 28 8B 02 89 01 8B 42 04
 define(omniPlayerLocationVehicleHook,"PhysX3_x64.dll"+1D9C19)
 
 assert(omniPlayerLocationVehicleHook,8B 02 89 01 8B 42 04)
@@ -612,6 +618,7 @@ playerLocationUpdateReturn:
 
 
 // Gets the player's identifying attack structure.
+// UNIQUE AOB: 48 8B 01 FF 90 20 01 00 00 48 8D 4B
 define(omniPlayerAttackHook,"Cyberpunk2077.exe"+2D154B0)
 
 assert(omniPlayerAttackHook,48 8B 01 FF 90 20 01 00 00)
@@ -903,6 +910,7 @@ disablePredator:
 // Implements a modifier for the player's vehicle speed.
 // Updated coordinate values are found starting at [rsi+60]
 // Source-of-truth coordinate values are found starting at [rdx+10]
+// UNIQUE AOB: 8B 46 60 89 42 10
 define(omnifyPlayerVehicleSpeedHook,"PhysX3_x64.dll"+1D9C58)
 
 assert(omnifyPlayerVehicleSpeedHook,8B 46 60 89 42 10)
