@@ -645,8 +645,10 @@ define(omnifyApocalypseHook,"Cyberpunk2077.exe"+19C9590)
 
 assert(omnifyApocalypseHook,F3 0F 58 89 90 01 00 00)
 alloc(initiateApocalypse,$1000,omnifyApocalypseHook)
+alloc(vehicleDamageX,8)
 
 registersymbol(omnifyApocalypseHook)
+registersymbol(vehicleDamageX)
 
 initiateApocalypse:
     pushf
@@ -696,7 +698,15 @@ initiateApocalypse:
     mov rbx,playerAttack
     cmp [rbx],rax
     jne initiateApocalypseCleanup    
-    jmp initiateEnemyApocalypse
+    // The value found at this location in the health structure will be zero for vehicles.
+    mov eax,[rcx+18C]
+    cmp eax,0
+    jne initiateEnemyApocalypse
+    // We're damaging a vehicle. Let the Carpocalypse commence.
+    mulss xmm2,[vehicleDamageX]
+    movd eax,xmm2
+    movd ebx,xmm0    
+    jmp initiateApocalypseUpdateDamage
 initiatePlayerApocalypse:
     // Load the damage amount parameter.
     sub rsp,8
@@ -768,6 +778,9 @@ teleportitisDisplacementX:
 
 verticalTeleportitisDisplacementX:
     dd (float)3.25
+
+vehicleDamageX:
+    dd (float)50.0
 
 
 // Initiates the Predator system for NPCs.
@@ -1062,8 +1075,10 @@ omnifyApocalypseHook:
     db F3 0F 58 89 90 01 00 00
 
 unregistersymbol(omnifyApocalypseHook)
+unregistersymbol(vehicleDamageX)
 
 dealloc(initiateApocalypse)
+dealloc(vehicleDamageX)
 
 
 // Cleanup of omnifyPredatorHook

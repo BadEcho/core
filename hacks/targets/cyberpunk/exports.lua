@@ -15,14 +15,15 @@ require("statisticMessages")
 function registerExports()    
     -- Custom statistics.
     AdditionalStatistics = function()
-        local magazine = readInteger("[playerMagazine]+0x340")
+        local magazine = toInt(readInteger("[playerMagazine]+0x340"))
 
         -- A ridiculous value indicates that the previous place in memory has been freshly reallocated.
         if magazine ~= nil and magazine > 1000 then magazine = 0 end
 
         local playerVehicleSpeedX = readFloat("playerVehicleSpeedX")
-        local playerExperience = readInteger("[playerExperience]")
-        local playerExperienceNext = readInteger("[playerExperience]+0x4")
+        local vehicleDamageX = readFloat("vehicleDamageX")
+        local playerExperience = toInt(readInteger("[playerExperience]"))
+        local playerExperienceNext = toInt(readInteger("[playerExperience]+0x4"))
 
         if (areNotNil(playerExperience, playerExperienceNext)) then
             playerExperienceNext = playerExperienceNext + playerExperience
@@ -30,7 +31,10 @@ function registerExports()
 
         return {
             WholeStatistic("Magazine", magazine),
-            WholeStatistic("Vehicle Speed", playerVehicleSpeedX, true, "{0}x"),
+            StatisticGroup("Vehicle", {
+                WholeStatistic("Speed", playerVehicleSpeedX, true, "{0}x"),
+                WholeStatistic("Damage", vehicleDamageX, false, "{0}x"),
+            }),            
             FractionalStatistic("Experience", playerExperience, playerExperienceNext)
         }
     end
