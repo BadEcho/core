@@ -14,7 +14,7 @@
 // Magic numbers: 0x36A is Stamina's house address on Happy Stats Street.
 // UNIQUE AOB: 48 C7 C5 FF FF FF FF 8B 46 0C 4D 8D 14 81 49 8B C1 49 8B D2 49 2B D1 48 C1 FA 02 48 85 D2
 // AOB results in 3 matches, 6 instructions up should be 48 8D 71 50
-define(omniPlayerHook,"Cyberpunk2077.exe"+1A03A28)
+define(omniPlayerHook,"Cyberpunk2077.exe"+1A965E8)
 
 assert(omniPlayerHook,4C 8B 0E 48 C7 C5 FF FF FF FF)
 alloc(getPlayer,$1000,omniPlayerHook)
@@ -116,7 +116,7 @@ getPlayerReturn:
 
 // Gets the player's health structure.
 // UNIQUE AOB: F3 0F 10 80 90 01 00 00 0F 54
-define(omniPlayerHealthHook,"Cyberpunk2077.exe"+1B5F32B)
+define(omniPlayerHealthHook,"Cyberpunk2077.exe"+1C0159B)
 
 assert(omniPlayerHealthHook,F3 0F 10 80 90 01 00 00)
 alloc(getPlayerHealth,$1000,omniPlayerHealthHook)
@@ -176,8 +176,9 @@ getPlayerHealthReturn:
 
 
 // Gets the player's stamina structure.
-// UNIQUE AOB: F3 0F 10 80 90 01 00 00 F3 0F 11 45 E0
-define(omniPlayerStaminaHook,"Cyberpunk2077.exe"+1B5BFF5)
+// UNIQUE AOB: F3 0F 10 80 90 01 00 00 F3 0F 11 45
+// Will have 2 results. The one we want has a "je" instruction preceding it.
+define(omniPlayerStaminaHook,"Cyberpunk2077.exe"+1BFDFB8)
 
 assert(omniPlayerStaminaHook,F3 0F 10 80 90 01 00 00)
 alloc(getPlayerStamina,$1000,omniPlayerStaminaHook)
@@ -231,7 +232,7 @@ getPlayerStaminaReturn:
 // Gets the player's experience data structure.
 // UNIQUE AOB: 49 8B C6 8B 6F 20 48 8B 3F 48 03 E8 48 8B D5 48 8B CF 48 8B 07 FF 50 38 48 8B 07 48 8B CF FF 50 20 3C 03
 // AOB will give two results, the one we want is executing constantly when player idles.
-define(omniPlayerExperienceDataHook,"Cyberpunk2077.exe"+21310D)
+define(omniPlayerExperienceDataHook,"Cyberpunk2077.exe"+21D0AD)
 
 assert(omniPlayerExperienceDataHook,48 8B 3F 48 03 E8)
 alloc(getPlayerExperienceData,$1000,omniPlayerExperienceDataHook)
@@ -266,10 +267,10 @@ getPlayerExperienceDataReturn:
 
 // Gets the player's experience and street cred.
 // Discriminator is at r8. rcx contains base address for finding desired stat.
-// UNIQUE AOB: 88 5E 60 48 85 C9
-define(omniPlayerExperienceHook,"Cyberpunk2077.exe"+29763D)
+// UNIQUE AOB: 88 5E 63 48 85 C9
+define(omniPlayerExperienceHook,"Cyberpunk2077.exe"+2A363D)
 
-assert(omniPlayerExperienceHook,88 5E 60 48 85 C9)
+assert(omniPlayerExperienceHook,88 5E 63 48 85 C9)
 alloc(getPlayerExperience,$1000,omniPlayerExperienceHook)
 alloc(playerExperience,8)
 
@@ -296,7 +297,7 @@ getPlayerExperience:
     pop rax
 getPlayerExperienceOriginalCode:
     popf
-    mov [rsi+60],bl
+    mov [rsi+63],bl
     test rcx,rcx
     jmp getPlayerExperienceReturn
 
@@ -334,7 +335,7 @@ getPlayerLocationReturn:
 
 // Gets a structure for the player's location that contains values normalized to the NPC coordinate plane.
 // UNIQUE AOB: F3 0F 5C 83 08 01 00 00
-define(omniPlayerLocationNormalizedHook,"Cyberpunk2077.exe"+4A3CED)
+define(omniPlayerLocationNormalizedHook,"Cyberpunk2077.exe"+4B45FD)
 
 assert(omniPlayerLocationNormalizedHook,F3 0F 5C 83 08 01 00 00)
 alloc(getPlayerLocationNormalized,$1000,omniPlayerLocationNormalizedHook)
@@ -446,10 +447,10 @@ negativeVehicleDistanceTolerance:
 
 
 // Gets the player's magazine prior to a gun firing.
-// UNIQUE AOB: 0F B7 8E 40 03 00 00
-define(omniPlayerMagazineBeforeFireHook,"Cyberpunk2077.exe"+1AF82D3)
+// UNIQUE AOB: 0F B7 8E 50 03 00 00
+define(omniPlayerMagazineBeforeFireHook,"Cyberpunk2077.exe"+1B95E93)
 
-assert(omniPlayerMagazineBeforeFireHook,0F B7 8E 40 03 00 00)
+assert(omniPlayerMagazineBeforeFireHook,0F B7 8E 50 03 00 00)
 alloc(getPlayerMagazine,$1000,omniPlayerMagazineBeforeFireHook)
 alloc(playerMagazine,8)
 
@@ -468,7 +469,7 @@ getPlayerMagazine:
     pop rax
 getPlayerMagazineOriginalCode:
     popf
-    movzx ecx,word ptr [rsi+00000340]
+    movzx ecx,word ptr [rsi+00000350]
     jmp getPlayerMagazineReturn
 
 omniPlayerMagazineBeforeFireHook:
@@ -478,10 +479,10 @@ getPlayerMagazineReturn:
 
 
 // Gets the player's magazine when swapping to a new weapon.
-// UNIQUE AOB: 41 89 3F 48 8B BE C0 02 00 00
-define(omniPlayerMagazineAfterSwapHook,"Cyberpunk2077.exe"+1AFADD8)
+// UNIQUE AOB: 41 89 3F 48 8B BE D0 02 00 00
+define(omniPlayerMagazineAfterSwapHook,"Cyberpunk2077.exe"+1B98968)
 
-assert(omniPlayerMagazineAfterSwapHook,41 89 3F 48 8B BE C0 02 00 00)
+assert(omniPlayerMagazineAfterSwapHook,41 89 3F 48 8B BE D0 02 00 00)
 alloc(getPlayerMagazineAfterSwap,$1000,omniPlayerMagazineAfterSwapHook)
 
 registersymbol(omniPlayerMagazineAfterSwapHook)
@@ -494,14 +495,14 @@ getPlayerMagazineAfterSwap:
     push rbx
     mov rax,playerMagazine
     mov rbx,r15
-    sub rbx,0x340
+    sub rbx,0x350
     mov [rax],rbx
     pop rbx
     pop rax    
 getPlayerMagazineAfterSwapOriginalCode:
     popf
     mov [r15],edi
-    mov rdi,[rsi+000002C0]
+    mov rdi,[rsi+000002D0]
     jmp getPlayerMagazineAfterSwapReturn
 
 omniPlayerMagazineAfterSwapHook:
@@ -513,7 +514,7 @@ getPlayerMagazineAfterSwapReturn:
 // Hooks into the vitals update code to perform tasks such as player melee hit detection and stamina
 // discrete value updates.
 // UNIQUE AOB: F3 0F 11 82 90 01 00 00
-define(omnifyPlayerVitalsUpdateHook,"Cyberpunk2077.exe"+19CCF3A)
+define(omnifyPlayerVitalsUpdateHook,"Cyberpunk2077.exe"+1A50F6A)
 
 assert(omnifyPlayerVitalsUpdateHook,F3 0F 11 82 90 01 00 00)
 alloc(playerVitalsUpdate,$1000,omnifyPlayerVitalsUpdateHook)
@@ -619,7 +620,7 @@ playerLocationUpdateReturn:
 
 // Gets the player's identifying attack structure.
 // UNIQUE AOB: 48 8B 01 FF 90 20 01 00 00 48 8D 4B
-define(omniPlayerAttackHook,"Cyberpunk2077.exe"+2D154B0)
+define(omniPlayerAttackHook,"Cyberpunk2077.exe"+2DFB970)
 
 assert(omniPlayerAttackHook,48 8B 01 FF 90 20 01 00 00)
 alloc(getPlayerAttack,$1000,omniPlayerAttackHook)
@@ -648,7 +649,7 @@ getPlayerAttackReturn:
 // xmm1: Damage percentage.
 // [rcx+190]: Working health percentage.
 // UNIQUE AOB: F3 0F 58 89 90 01 00 00 45
-define(omnifyApocalypseHook,"Cyberpunk2077.exe"+19C9590)
+define(omnifyApocalypseHook,"Cyberpunk2077.exe"+1A4D9F0)
 
 assert(omnifyApocalypseHook,F3 0F 58 89 90 01 00 00)
 alloc(initiateApocalypse,$1000,omnifyApocalypseHook)
@@ -807,7 +808,7 @@ vehicleDamageX:
 // offsets being offered to us by the game.
 // UNIQUE AOB: E0 0F 58 20 0F 28 D4
 // [rax]: Working desired coordinates, xmm4: Movement offsets
-define(omnifyPredatorHook,"Cyberpunk2077.exe"+1BF2A98)
+define(omnifyPredatorHook,"Cyberpunk2077.exe"+1C9EEB8)
 
 assert(omnifyPredatorHook,0F 58 20 0F 28 D4)
 alloc(initiatePredator,$1000,omnifyPredatorHook)
@@ -984,7 +985,7 @@ playerVehicleVerticalSpeedX:
 
 // Cleanup of omniPlayerExperienceHook
 omniPlayerExperienceHook:
-    db 88 5E 60 48 85 C9
+    db 88 5E 63 48 85 C9
 
 unregistersymbol(omniPlayerExperienceHook)
 unregistersymbol(playerExperience)
@@ -1028,7 +1029,7 @@ dealloc(getPlayerLocationNormalized)
 
 // Cleanup of omniPlayerMagazineBeforeFireHook
 omniPlayerMagazineBeforeFireHook:
-    db 0F B7 8E 40 03 00 00
+    db 0F B7 8E 50 03 00 00
 
 unregistersymbol(omniPlayerMagazineBeforeFireHook)
 unregistersymbol(playerMagazine)
@@ -1039,7 +1040,7 @@ dealloc(playerMagazine)
 
 // Cleanup of omniPlayerMagazineAfterSwapHook
 omniPlayerMagazineAfterSwapHook:
-    db 41 89 3F 48 8B BE C0 02 00 00
+    db 41 89 3F 48 8B BE D0 02 00 00
 
 unregistersymbol(omniPlayerMagazineAfterSwapHook)
 

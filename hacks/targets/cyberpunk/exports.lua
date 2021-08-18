@@ -15,7 +15,7 @@ require("statisticMessages")
 function registerExports()    
     -- Custom statistics.
     AdditionalStatistics = function()
-        local magazine = toInt(readInteger("[playerMagazine]+0x340"))
+        local magazine = toInt(readInteger("[playerMagazine]+0x350"))
 
         -- A ridiculous value indicates that the previous place in memory has been freshly reallocated.
         if magazine ~= nil and magazine > 1000 then magazine = 0 end
