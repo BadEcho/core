@@ -31,8 +31,8 @@
     <Grid x:Name="AnchorBox"
           Margin="{Binding AnchorBoxVerticalOffset, Converter={StaticResource DoubleToTopConverter}}">
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <fenestra:OutlinedTextElement Style="{StaticResource VisionTitleTextStyle}"
                                       Text="{x:Static r:Strings.VisionTitle}"
