@@ -34,35 +34,44 @@
         <EventTrigger RoutedEvent="FrameworkElement.Loaded">
             <BeginStoryboard>
                 <Storyboard>
-                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)">
-                        <EasingDoubleKeyFrame KeyTime="00:00:01" Value="1"/>
-                    </DoubleAnimationUsingKeyFrames>
+                    <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)"
+                                     To="1.0"
+                                     Duration="00:00:01"
+                                     />
                 </Storyboard>
             </BeginStoryboard>
         </EventTrigger>
         <EventTrigger RoutedEvent="w:VisionWindow.Entering">
             <BeginStoryboard>
                 <Storyboard>
-                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)">
-                        <EasingDoubleKeyFrame KeyTime="00:00:01" Value="1"/>
-                    </DoubleAnimationUsingKeyFrames>
-                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
-                        <EasingDoubleKeyFrame KeyTime="00:00:00.5" Value="-100"/>
-                        <EasingDoubleKeyFrame KeyTime="00:00:01" Value="0"/>
-                    </DoubleAnimationUsingKeyFrames>
+                    <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)"
+                                     To="1"
+                                     Duration="00:00:01"
+                                     />
+                    <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" 
+                                     To="1.0" 
+                                     Duration="00:00:01">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseInOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
                 </Storyboard>
             </BeginStoryboard>
         </EventTrigger>
         <EventTrigger RoutedEvent="w:VisionWindow.Leaving">
             <BeginStoryboard>
                 <Storyboard>
-                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)">
-                        <EasingDoubleKeyFrame KeyTime="00:00:01" Value="0"/>
-                    </DoubleAnimationUsingKeyFrames>
-                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
-                        <EasingDoubleKeyFrame KeyTime="00:00:00.5" Value="-100"/>
-                        <EasingDoubleKeyFrame KeyTime="00:00:01" Value="-200"/>
-                    </DoubleAnimationUsingKeyFrames>
+                    <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)"
+                                     To="0"
+                                     Duration="00:00:01"
+                                     />
+                    <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" 
+                                     To="0" 
+                                     Duration="00:00:01">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseInOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
                 </Storyboard>
             </BeginStoryboard>
         </EventTrigger>
