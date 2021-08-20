@@ -1032,7 +1032,7 @@ playerVehicleVerticalSpeedX:
   dd (float)1.0
 
 
-i // Detects when the player is driving a vehicle.
+// Detects when the player is driving a vehicle.
 // UNIQUE AOB: F3 0F 11 B1 08 01 00 00
 define(omniDetectPlayerDriving,"Cyberpunk2077.exe"+4B564A)
 
