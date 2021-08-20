@@ -509,6 +509,60 @@ omniPlayerMagazineAfterSwapHook:
 getPlayerMagazineAfterSwapReturn:
 
 
+// Detects when the game is paused.
+// The game is considered "paused" when the player is in the escape menu.
+// The game is not considered "paused" when character-related screens such as
+// stats, inventory, or the map are open.
+// UNIQUE AOB: 80 79 08 00 ** ** C6 41 08 01
+define(omniDetectPausedGame,"Cyberpunk2077.exe"+28370F0)
+
+assert(omniDetectPausedGame,80 79 08 00 75 04)
+alloc(detectGamePaused,$1000,omniDetectPausedGame)
+alloc(gamePaused,8)
+
+registersymbol(omniDetectPausedGame)
+registersymbol(gamePaused)
+
+detectGamePaused:
+    push rax
+    mov rax,gamePaused
+    mov [rax],1
+    pop rax
+detectGamePausedOriginalCode:
+    cmp byte ptr [rcx+08],00
+    jmp detectGamePausedReturn
+
+omniDetectPausedGame:
+    jmp detectGamePaused
+    nop
+detectGamePausedReturn:
+
+
+// Detects when the game is unpaused.
+// The game becomes unpaused when exiting the escape menu.
+define(omniDetectUnpausedGame,"Cyberpunk2077.exe"+2836C50)
+
+assert(omniDetectUnpausedGame,80 79 08 00 74 04)
+alloc(detectGameUnpaused,$1000,omniDetectUnpausedGame)
+
+registersymbol(omniDetectUnpausedGame)
+
+detectGameUnpaused:
+    push rax
+    mov rax,gamePaused
+    mov [rax],0
+    pop rax
+detectGameUnpausedOriginalCode:
+    cmp byte ptr [rcx+08],00
+    je Cyberpunk2077.exe+2836C5A 
+    jmp detectGameUnpausedReturn
+
+omniDetectUnpausedGame:
+    jmp detectGameUnpaused
+    nop
+detectGameUnpausedReturn:
+
+
 // Hooks into the vitals update code to perform tasks such as player melee hit detection and stamina
 // discrete value updates.
 // UNIQUE AOB: F3 0F 11 82 90 01 00 00
@@ -978,6 +1032,99 @@ playerVehicleVerticalSpeedX:
   dd (float)1.0
 
 
+i // Detects when the player is driving a vehicle.
+// UNIQUE AOB: F3 0F 11 B1 08 01 00 00
+define(omniDetectPlayerDriving,"Cyberpunk2077.exe"+4B564A)
+
+assert(omniDetectPlayerDriving,F3 0F 11 B1 08 01 00 00)
+alloc(detectPlayerDriving,$1000,omniDetectPlayerDriving)
+alloc(playerDriving,8)
+
+registersymbol(omniDetectPlayerDriving)
+registersymbol(playerDriving)
+
+detectPlayerDriving:
+    // See if we're moving; we only consider ourselves to be "driving" if we're moving.
+    pushf
+    push rax
+    push rbx
+    movd eax,xmm6
+    // There will be slight deviations in the value even at rest, so we essentially truncate
+    // the less significant parts of the value, only proceeding if the change itself is significant.
+    shr eax,4
+    mov ebx,[rcx+108]
+    shr ebx,4    
+    cmp eax,ebx
+    pop rbx
+    pop rax    
+    je playerDrivingButNotMoving
+    push rax
+    mov rax,playerDriving
+    mov [rax],1
+    pop rax
+    jmp detectPlayerDrivingOriginalCode
+playerDrivingButNotMoving:
+    push rax
+    mov rax,playerDriving
+    mov [rax],0
+    pop rax
+detectPlayerDrivingOriginalCode:
+    popf
+    movss [rcx+00000108],xmm6
+    jmp detectPlayerDrivingReturn
+
+omniDetectPlayerDriving:
+    jmp detectPlayerDriving
+    nop 3
+detectPlayerDrivingReturn:
+
+
+// Detects when the player is no longer driving a vehicle.
+// UNIQUE AOB: F3 44 0F 11 93 08 01 00 00
+define(omniDetectPlayerNotDrivingHook,"Cyberpunk2077.exe"+4B46B5)
+
+assert(omniDetectPlayerNotDrivingHook,F3 44 0F 11 93 08 01 00 00)
+alloc(detectPlayerNotDriving,$1000,omniDetectPlayerNotDrivingHook)
+alloc(defaultPlayerVehicleSpeedX, 8)
+
+registersymbol(omniDetectPlayerNotDrivingHook)
+
+detectPlayerNotDriving:
+    pushf
+    push rax
+    mov rax,playerLocationNormalized
+    cmp [rax],rbx
+    pop rax
+    jne detectPlayerNotDrivingOriginalCode
+    // If we're at this point, we're not longer driving. We're on our feet!
+    push rax
+    mov rax,playerDriving
+    mov [rax],0
+    pop rax
+    // Reset any changes made to the vehicle speed.
+    push rax
+    push rbx
+    mov rax,defaultPlayerVehicleSpeedX
+    mov rbx,[rax]
+    mov rax,playerVehicleSpeedX
+    mov [rax],rbx
+    pop rbx
+    pop rax
+detectPlayerNotDrivingOriginalCode:
+    popf
+    movss [rbx+00000108],xmm10
+    jmp detectPlayerNotDrivingReturn
+
+omniDetectPlayerNotDrivingHook:
+    jmp detectPlayerNotDriving
+    nop 4
+detectPlayerNotDrivingReturn:
+
+
+defaultPlayerVehicleSpeedX:
+    dd (float)1.0
+
+
 [DISABLE]
 
 
@@ -1023,6 +1170,26 @@ unregistersymbol(playerLocationNormalized)
 
 dealloc(playerLocationNormalized)
 dealloc(getPlayerLocationNormalized)
+
+
+// Cleanup of omniDetectPausedGame
+omniDetectPausedGame:
+    db 80 79 08 00 75 04
+
+unregistersymbol(omniDetectPausedGame)
+unregistersymbol(gamePaused)
+
+dealloc(gamePaused)
+dealloc(detectGamePaused)
+
+
+// Cleanup of omniDetectUnpausedGame
+omniDetectUnpausedGame:
+    db 80 79 08 00 74 04
+
+unregistersymbol(omniDetectUnpausedGame)
+
+dealloc(detectGameUnpaused)
 
 
 // Cleanup of omniPlayerMagazineBeforeFireHook
@@ -1137,6 +1304,27 @@ dealloc(player)
 dealloc(playerMaxStamina)
 dealloc(playerStaminaValue)
 dealloc(getPlayer)
+
+
+// Cleanup of omniDetectPlayerDriving
+omniDetectPlayerDriving:
+    db F3 0F 11 B1 08 01 00 00
+
+unregistersymbol(omniDetectPlayerDriving)
+unregistersymbol(playerDriving)
+
+dealloc(playerDriving)
+dealloc(detectPlayerDriving)
+
+
+// Cleanup of omniDetectPlayerNotDrivingHook
+omniDetectPlayerNotDrivingHook:
+    db F3 44 0F 11 93 08 01 00 00
+
+unregistersymbol(omniDetectPlayerNotDrivingHook)
+
+dealloc(defaultPlayerVehicleSpeedX)
+dealloc(detectPlayerNotDriving)
 
 
 // Cleanup of omnifyPlayerVehicleSpeedHook
