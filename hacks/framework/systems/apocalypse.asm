@@ -134,7 +134,7 @@ checkFatalis:
   jne applyApocalypseRoll
   // To make good on the Fatalis debuff, we set the damage equal to the health.
   movss xmm0,xmm3
-  jmp updateEnemyDamageStats
+  jmp updatePlayerDamageStats
 applyApocalypseRoll:
   // Load the parameters for generating the dice roll random number.
   push [apocalypseResultLower]
@@ -177,10 +177,10 @@ extraDamage:
   // this health amount following application of damage to our health.
   movss xmm0,xmm3
   subss xmm0,[extraDamageResidualHealth]
-  jmp updateEnemyDamageStats
+  jmp updatePlayerDamageStats
 applyExtraDamage:
   mulss xmm0,[extraDamageX]
-  jmp updateEnemyDamageStats
+  jmp updatePlayerDamageStats
 teleportitis:
   // Check if teleportitis is disabled. If so, we instead apply extra damage.
   cmp [disableTeleportitis],1
@@ -331,11 +331,11 @@ addChangeToZ:
   cmp [coordinatesAreDoubles],1
   je commitZAsDouble
   movss [rbx+8],xmm2
-  jmp updateEnemyDamageStats
+  jmp updatePlayerDamageStats
 commitZAsDouble:
   cvtss2sd xmm1,xmm2
   movsd [rbx+10],xmm1  
-  jmp updateEnemyDamageStats
+  jmp updatePlayerDamageStats
 riskOfMurder:
   // Load the parameters for generating the Risk of Murder dice roll random 
   // number.
@@ -353,7 +353,7 @@ riskOfMurder:
   // Otherwise, normal damage applies, however there is also now a very slight chance
   // of Fatalis being applied, but only if it is not already active.  
   cmp [fatalisState],1
-  je updateEnemyDamageStats
+  je updatePlayerDamageStats
   push [fatalisResultLower]
   push [fatalisResultUpper]
   mov rax,playerApocalypseRandomState
@@ -364,7 +364,7 @@ riskOfMurder:
   mov [fatalisResult],eax
   // Fatalis will only be applied if the roll landed on the maximum possible value.
   cmp eax,[fatalisResultUpper]
-  jne updateEnemyDamageStats
+  jne updatePlayerDamageStats
   mov [fatalisState],1
   // The player, although made fragile by the scourge of Fatalis, enters a rage that increases their damage.
   // Store current player damage for later restoration, and then increase it by 1.25x.
@@ -372,16 +372,16 @@ riskOfMurder:
   movss [basePlayerDamageX],xmm1
   mulss xmm1,[fatalisBloodlustDamageX]
   movss [playerDamageX],xmm1
-  jmp updateEnemyDamageStats  
+  jmp updatePlayerDamageStats  
 sixtyNine:
   // Check if sixty nine is disabled, if so, just apply normal damage.
   cmp [disableSixtyNine],1
   jne commitSixtyNine
   mov [riskOfMurderResult],1
-  jmp updateEnemyDamageStats
+  jmp updatePlayerDamageStats
 commitSixtyNine:
   mulss xmm0,[sixtyNineDamageX]
-  jmp updateEnemyDamageStats
+  jmp updatePlayerDamageStats
 suddenGasm:  
   // Load the player's maximum health parameter. This is stored in the final 
   // player health (prior to damage applied) register.
@@ -389,13 +389,13 @@ suddenGasm:
   // We zero out our final damage amount register.
   xorps xmm0,xmm0
   jmp applyPlayerApocalypseExit
-updateEnemyDamageStats:
+updatePlayerDamageStats:
   // If the final damage amount is less than or equal to the current max damage 
   // to the player, it doesn't need to be updated obviously!
   ucomiss xmm0,[maxDamageToPlayer]
-  jna skipMaxEnemyDamageUpdate
+  jna skipMaxPlayerDamageUpdate
   movss [maxDamageToPlayer],xmm0
-skipMaxEnemyDamageUpdate:
+skipMaxPlayerDamageUpdate:
   // We save the final damage amount as the last damage to be done to the player,
   // and add it to the running total.
   movss [lastDamageToPlayer],xmm0
@@ -537,13 +537,24 @@ sixtyNineEveryTime:
 
   
 // Enemy Apocalypse System Function
-// [rsp+38]: Target health value
-// [rsp+40]: Damage amount
+// [rsp+58]: Target health value
+// [rsp+60]: Damage amount
 alloc(executeEnemyApocalypse,$1000)
-alloc(maxDamageByPlayer,8)
-alloc(lastDamageByPlayer,8)
-alloc(lastDamageByPlayerNew,8)
-alloc(totalDamageByPlayer,8)
+alloc(lastEnemyDamageEvent,8)
+alloc(lastEnemyDamageEventBonusX,8)
+alloc(lastEnemyDamageEventBonusAmount,8)
+alloc(newEnemyDamagePulse,8)
+alloc(newEnemyDamagePulseBonusAmount,8)
+alloc(newEnemyDamageEvent,8)
+alloc(newEnemyDamageEventHasBonus,8)
+alloc(newEnemyDamageEventBonusX,8)
+alloc(newEnemyDamageEventBonusAmount,8)
+alloc(newEnemyDamageEventNotProcessed,8)
+alloc(newEnemyDamageEventBonusNotProcessed,8)
+alloc(maxEnemyDamageEvent,8)
+alloc(maxEnemyDamageEventBonusAmount,8)
+alloc(totalEnemyDamage,8)
+alloc(totalEnemyDamageBonusAmount,8)
 alloc(logKamehameha,8)
 alloc(gokuResult,8)
 alloc(gokuResultUpper,8)
@@ -561,10 +572,21 @@ alloc(logPlayerCrit,8)
 alloc(enemyApocalypseRandomState,8)
 
 registersymbol(executeEnemyApocalypse)
-registersymbol(maxDamageByPlayer)
-registersymbol(lastDamageByPlayer)
-registersymbol(lastDamageByPlayerNew)
-registersymbol(totalDamageByPlayer)
+registersymbol(lastEnemyDamageEvent)
+registersymbol(lastEnemyDamageEventBonusX)
+registersymbol(lastEnemyDamageEventBonusAmount)
+registersymbol(newEnemyDamagePulse)
+registersymbol(newEnemyDamagePulseBonusAmount)
+registersymbol(newEnemyDamageEvent)
+registersymbol(newEnemyDamageEventHasBonus)
+registersymbol(newEnemyDamageEventBonusX)
+registersymbol(newEnemyDamageEventBonusAmount)
+registersymbol(newEnemyDamageEventNotProcessed)
+registersymbol(newEnemyDamageEventBonusNotProcessed)
+registersymbol(maxEnemyDamageEvent)
+registersymbol(maxEnemyDamageEventBonusAmount)
+registersymbol(totalEnemyDamage)
+registersymbol(totalEnemyDamageBonusAmount)
 registersymbol(logKamehameha)
 registersymbol(gokuDamageX)
 registersymbol(gokuResultUpper)
@@ -583,17 +605,39 @@ executeEnemyApocalypse:
   movdqu [rsp],xmm1  
   sub rsp,10
   movdqu [rsp],xmm2
+  sub rsp,10
+  movdqu [rsp],xmm3
+  sub rsp,10
+  movdqu [rsp],xmm4
   // Load the enemy's health parameter.  
-  movss xmm1,[rsp+38]
+  movss xmm1,[rsp+58]
   // Load the damage amount parameter.
-  movss xmm0,[rsp+40]
+  movss xmm0,[rsp+60]
   // Check if the damage being done is enough to warrant Apocalypse execution.
   mov rax,damageThreshold
   ucomiss xmm0,[rax]  
   jbe exitEnemyApocalypse  
-applyPlayerDamage:
+checkForNewEvent:
+  cmp [newEnemyDamageEventNotProcessed],0
+  jne checkIfEventBonusProcessed
+  mov [newEnemyDamageEvent],0
+  mov [newEnemyDamageEventNotProcessed],1
+checkIfEventBonusProcessed:
+  cmp [newEnemyDamageEventBonusNotProcessed],0
+  jne applyDamageByPlayer
+  mov [newEnemyDamageEventBonusAmount],0
+  mov [newEnemyDamageEventBonusX],0
+  mov [newEnemyDamageEventHasBonus],0
+  mov [newEnemyDamageEventBonusNotProcessed],1
+applyDamageByPlayer:
+  // Clear out the register that will eventually hold any bonus damage amount.
+  xorps xmm3,xmm3
   // Apply our base player damage multiplier to the damage amount.
   mulss xmm0,[playerDamageX]
+  // If the current damage pulse is part of an event which already has a bonus multiplier, then there is no need 
+  // to roll for bonuses again.
+  cmp [newEnemyDamageEventHasBonus],1
+  je applyExistingBonus
   // Load the parameters for generating the critical hit check.
   push [playerCritChanceResultLower]
   push [playerCritChanceResultUpper]
@@ -624,10 +668,12 @@ applyPlayerDamage:
   // precision.
   cvtsi2ss xmm2,[playerCritDamageResult]
   divss xmm2,[playerCritDamageDivisor]
-  mulss xmm0,xmm2
+  movss [newEnemyDamageEventBonusX],xmm2
+  mov [newEnemyDamageEventHasBonus],1
   // We signal to the event logging system that a crit occurred by setting
   // the "logPlayerCrit" symbol to 1.
   mov [logPlayerCrit],1  
+  jmp applyNewBonus
 checkKamehameha:
   // Load the parameters for generating the Kamehameha check.
   push [gokuResultLower]
@@ -640,42 +686,89 @@ checkKamehameha:
   mov [gokuResult],eax
   // If the roll is exactly 69, a Kamehameha has occurred! Big damage time baby.
   cmp eax,#69
-  jne updatePlayerDamageStats
+  jne updateEnemyDamageStats
+  movss xmm2,[gokuDamageX]
+  movss [newEnemyDamageEventBonusX],xmm2
+  mov [newEnemyDamageEventHasBonus],1
   // We signal to the event logging system that a Kamehameha occurred by setting
   // the "logKamehameha" symbol to 1.
   mov [logKamehameha],1
-  mulss xmm0,[gokuDamageX]  
-updatePlayerDamageStats:
+applyNewBonus:
+  // If there were any previous damage pulses, we'll want to apply the bonus to these amounts retroactively too.
+  // So, we take all damage previously done and subtract that from all previous damage multiplied by the bonus.
+  movss xmm4,[newEnemyDamageEvent]
+  movss xmm3,xmm4
+  mulss xmm3,xmm2
+  subss xmm3,xmm4
+  // We add the current pulse's pre-bonus damage to the previous pulses' pre-bonus damage, so we
+  // can figure out the amount of additional bonus damage being applied during this pulse.  
+  addss xmm4,xmm0
+  // We then apply the bonus to the current pulse's damage, and add the additional bonus damage from previous pulses to it.
+  mulss xmm0,xmm2
+  addss xmm0,xmm3
+  // Now, to figure out this pulse's additional bonus damage, we subtract the pre-bonus damage (which includes pre-bonus amounts
+  // from previous pulses, as well the pre-bonus damage from this pulse) from the just calculated amount for this pulse.
+  movss xmm3,xmm0
+  subss xmm3,xmm4
+  jmp updateEnemyDamageStats
+applyExistingBonus:
+  movss xmm4,xmm0
+  // Apply the bonus to the current pulse's damage.
+  movss xmm2,[newEnemyDamageEventBonusX]
+  mulss xmm0,xmm2
+  // We then figure out this pulse's additional bonus damage by subtracting the post-bonus damage from the pre-bonus damage.
+  movss xmm3,xmm0
+  subss xmm3,xmm4
+updateEnemyDamageStats:
+  // At this point, the following registers hold the following values:
+  // xmm0: The current pulse's final damage amount (including any bonus damage amount).
+  // xmm1: The current pulse's target health value.
+  // xmm3: The current pulse's bonus damage amount.
   // Sometimes the enemy health is hidden from the player by the game. Well I like
   // flexing my muscle and displaying it anyway on stream with the 
   // "lastEnemyHealthValue" symbol. We perform a mock damage application here and 
   // store it there.
   subss xmm1,xmm0
   movss [lastEnemyHealthValue],xmm1  
-  // We save the final damage amount as the last damage to be done from the 
-  // player, and add it to the running total.
-  movss xmm1,[lastDamageByPlayerNew]
-  movss xmm2,xmm0
-  addss xmm2,xmm1
-  movss [lastDamageByPlayerNew],xmm2
-  // If the final damage amount is less than or equal to the current max damage 
-  // from the player, it doesn't need to be updated obviously!
-  ucomiss xmm2,[maxDamageByPlayer]
-  jna skipMaxPlayerDamageUpdate
-  movss [maxDamageByPlayer],xmm2
-skipMaxPlayerDamageUpdate:
+  // We publish the current pulse's final and bonus damage amounts to their respective symbols.
+  movss [newEnemyDamagePulse],xmm0
+  movss [newEnemyDamagePulseBonusAmount],xmm3   
+  // Add the final damage amount from this pulse to the running total damage associated with the event.
+  movss xmm2,[newEnemyDamageEvent]
+  addss xmm2,xmm0
+  movss [newEnemyDamageEvent],xmm2
+  // Add the bonus damage amount from this pulse to the running total bonus damage associated with this event.
+  movss xmm4,[newEnemyDamageEventBonusAmount]
+  addss xmm4,xmm3
+  movss [newEnemyDamageEventBonusAmount],xmm4
+  // If the total damage amount associated with the event is less than or equal to the current max damage event
+  // amount, then we don't need to update the max damage event obviously!
+  ucomiss xmm2,[maxEnemyDamageEvent]
+  jna skipMaxEnemyDamageUpdate
+  movss [maxEnemyDamageEvent],xmm2
+  movss [maxEnemyDamageEventBonusAmount],xmm4
+skipMaxEnemyDamageUpdate:
+  // Add the final damage amount from this pulse to the total damage done to enemies.
   movss xmm1,xmm0
-  addss xmm1,[totalDamageByPlayer]
-  movss [totalDamageByPlayer],xmm1
+  addss xmm1,[totalEnemyDamage]
+  movss [totalEnemyDamage],xmm1
+  // Add the bonus damage amount from this pulse to the total bonus damage done to enemies.
+  movss xmm1,xmm3
+  addss xmm1,[totalEnemyDamageBonusAmount]
+  movss [totalEnemyDamageBonusAmount],xmm1
 exitEnemyApocalypse:
   // We commit our final damage amount to eax.
   movd eax,xmm0
-  // We commit our final damage amount to ebx, which actually never changes. It
-  // is simply used to calculate what the health will be to display with the
+  // We commit our final target health value to ebx, which actually never changes.
+  // It is simply used to calculate what the health will be to display with the
   // "lastEnemyHealthValue" stat, and also for purposes of polymorphism, in a 
   // manner of speaking.
-  movss xmm1,[rsp+38]
+  movss xmm1,[rsp+58]
   movd ebx,xmm1
+  movdqu xmm4,[rsp]
+  add rsp,10
+  movdqu xmm3,[rsp]
+  add rsp,10
   movdqu xmm2,[rsp]
   add rsp,10
   movdqu xmm1,[rsp]
@@ -685,17 +778,50 @@ exitEnemyApocalypse:
   // This function has 2 parameters, each require 8 bytes. 2x8 == 10 (hex).
   ret 10
 
+
+lastEnemyDamageEvent:
+  dd (float)0.0
+
+lastEnemyDamageEventBonusX:
+  dd (float)0.0
+
+lastEnemyDamageEventBonusAmount:
+  dd (float)0.0
+
+newEnemyDamagePulse:
+  dd (float)0.0
+
+newEnemyDamagePulseBonusAmount:
+  dd (float)0.0
+
+newEnemyDamageEvent:
+  dd (float)0.0
+
+newEnemyDamageEventHasBonus:
+  dd 0
+
+newEnemyDamageEventBonusX:
+  dd (float)0.0
+
+newEnemyDamageEventBonusAmount:
+  dd (float)0.0
+
+newEnemyDamageEventNotProcessed:
+  dd 0
+
+newEnemyDamageEventBonusNotProcessed:
+  dd 0
  
-totalDamageByPlayer:
-  dd 0
+maxEnemyDamageEvent:
+  dd (float)0.0
 
-maxDamageByPlayer:
-  dd 0
-  
-lastDamageByPlayer:
-  dd 0  
+maxEnemyDamageEventBonusAmount:
+  dd (float)0.0
 
-lastDamageByPlayerNew:
+totalEnemyDamage:
+  dd (float)0.0
+
+totalEnemyDamageBonusAmount:
   dd (float)0.0
 
 logKamehameha:
@@ -742,24 +868,6 @@ logPlayerCrit:
   
 enemyApocalypseRandomState:
   dd 0
-  
-// Predator System Functions
-alloc(enemySpeedX,8)
-alloc(aggroDistance,8)
-alloc(threatDistance,8)
-
-registersymbol(enemySpeedX)
-registersymbol(threatDistance)
-registersymbol(aggroDistance)
-
-enemySpeedX:
-  dd (float)1.25
-
-aggroDistance:
-  dd (float)10.0
-
-threatDistance:
-  dd (float)2.5
 
   
   [DISABLE]
@@ -840,10 +948,21 @@ dealloc(executePlayerApocalypse)
 dealloc(playerGodMode)
 
 // Cleanup of Enemy Apocalypse System Function
-unregistersymbol(maxDamageByPlayer)
-unregistersymbol(lastDamageByPlayer)
-unregistersymbol(lastDamageByPlayerNew)
-unregistersymbol(totalDamageByPlayer)
+unregistersymbol(lastEnemyDamageEvent)
+unregistersymbol(lastEnemyDamageEventBonusX)
+unregistersymbol(lastEnemyDamageEventBonusAmount)
+unregistersymbol(newEnemyDamagePulse)
+unregistersymbol(newEnemyDamagePulseBonusAmount)
+unregistersymbol(newEnemyDamageEvent)
+unregistersymbol(newEnemyDamageEventHasBonus)
+unregistersymbol(newEnemyDamageEventBonusX)
+unregistersymbol(newEnemyDamageEventBonusAmount)
+unregistersymbol(newEnemyDamageEventNotProcessed)
+unregistersymbol(newEnemyDamageEventBonusNotProcessed)
+unregistersymbol(maxEnemyDamageEvent)
+unregistersymbol(maxEnemyDamageEventBonusAmount)
+unregistersymbol(totalEnemyDamage)
+unregistersymbol(totalEnemyDamageBonusAmount)
 unregistersymbol(logKamehameha)
 unregistersymbol(gokuDamageX)
 unregistersymbol(gokuResultUpper)
@@ -854,10 +973,21 @@ unregistersymbol(playerCritDamageResultUpper)
 unregistersymbol(logPlayerCrit)
 unregistersymbol(executeEnemyApocalypse)
 
-dealloc(maxDamageByPlayer)
-dealloc(lastDamageByPlayer)
-dealloc(lastDamageByPlayerNew)
-dealloc(totalDamageByPlayer)
+dealloc(lastEnemyDamageEvent)
+dealloc(lastEnemyDamageEventBonusX)
+dealloc(lastEnemyDamageEventBonusAmount)
+dealloc(newEnemyDamagePulse)
+dealloc(newEnemyDamagePulseBonusAmount)
+dealloc(newEnemyDamageEvent)
+dealloc(newEnemyDamageEventHasBonus)
+dealloc(newEnemyDamageEventBonusX)
+dealloc(newEnemyDamageEventBonusAmount)
+dealloc(newEnemyDamageEventNotProcessed)
+dealloc(newEnemyDamageEventBonusNotProcessed)
+dealloc(maxEnemyDamageEvent)
+dealloc(maxEnemyDamageEventBonusAmount)
+dealloc(totalEnemyDamage)
+dealloc(totalEnemyDamageBonusAmount)
 dealloc(logKamehameha)
 dealloc(gokuResult)
 dealloc(gokuResultUpper)

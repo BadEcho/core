@@ -48,17 +48,28 @@ function activateLoggers()
 		
 		deathcounter:close()	
 		
-		local lastDamageToPlayer = toInt(readFloat("lastDamageToPlayer"))
-		local maxDamageToPlayer = toInt(readFloat("maxDamageToPlayer"))
-		local lastDamageByPlayer = toInt(readFloat("lastDamageByPlayer"))
-		local maxDamageByPlayer = toInt(readFloat("maxDamageByPlayer"))
-		local totalDamageByPlayer = toInt(readFloat("totalDamageByPlayer"))
+		local newEnemyDamageEventBonusNotProcessed = readInteger("newEnemyDamageEventBonusNotProcessed")
 
-		lastDamageToPlayer = FloorIt(lastDamageToPlayer)
-		maxDamageToPlayer = FloorIt(maxDamageToPlayer)
-		lastDamageByPlayer = FloorIt(lastDamageByPlayer)
-		maxDamageByPlayer = FloorIt(maxDamageByPlayer)
-		totalDamageByPlayer = FloorIt(totalDamageByPlayer)
+		if newEnemyDamageEventBonusNotProcessed ~= nil and newEnemyDamageEventBonusNotProcessed == 1 then
+			local newEnemyDamageEventBonusAmount = readFloat("newEnemyDamageEventBonusAmount")
+
+			if newEnemyDamageEventBonusAmount ~= nil then
+				writeFloat("lastEnemyDamageEventBonusAmount", newEnemyDamageEventBonusAmount)			
+			end
+		
+			local newEnemyDamageEventBonusX = readFloat("newEnemyDamageEventBonusX")
+
+			if newEnemyDamageEventBonusX ~= nil then
+				writeFloat("lastEnemyDamageEventBonusX", newEnemyDamageEventBonusX)
+			end
+
+			writeInteger("newEnemyDamageEventBonusNotProcessed", 0)
+		end
+
+		local lastDamageToPlayer = toInt(readFloat("lastDamageToPlayer"))		
+		local lastEnemyDamageEvent = toInt(readFloat("lastEnemyDamageEvent"))	
+		local lastEnemyDamageEventBonusAmount = toInt(readFloat("lastEnemyDamageEventBonusAmount"))		
+		local lastEnemyDamageEventBonusX = round(readFloat("lastEnemyDamageEventBonusX"),1)
 
 		local log = assert(io.open("log.txt", "a"))
 
@@ -203,7 +214,7 @@ function activateLoggers()
 
 		local logPlayerCrit = readInteger("logPlayerCrit")
 
-		if logPlayerCrit == 1 and lastDamageByPlayer ~= nil then		
+		if logPlayerCrit == 1 and lastEnemyDamageEvent ~= nil and lastEnemyDamageEventBonusX ~= nil and lastEnemyDamageEventBonusAmount ~= nil then		
 
 			local playerCritDamageResult = readInteger("playerCritDamageResult")
 			local playerCritDamageResultUpper = readInteger("playerCritDamageResultUpper")
@@ -212,9 +223,9 @@ function activateLoggers()
 			if areNotNil(playerCritDamageResult, playerCritDamageResultUpper, playerCritDamageResultLower) then
 				log:write(timestamp,
 						  "Enemy has been critically hit (",
-						  playerCritDamageResult/10.0,
-						  "x) for ",
-						  lastDamageByPlayer,
+						  lastEnemyDamageEventBonusX,
+						  "x) causing an additional ",
+						  lastEnemyDamageEventBonusAmount,
 						  " damage!\n")
 				
 				local critSound = nil
@@ -243,13 +254,15 @@ function activateLoggers()
 		local logKamehameha = readInteger("logKamehameha")
 		local gokuDamageX = readFloat("gokuDamageX")
 
-		if logKamehameha == 1 and lastDamageByPlayer ~= nil
+		if logKamehameha == 1 and lastEnemyDamageEvent ~= nil
+							  and lastEnemyDamageEventBonusAmount ~= nil
+							  and lastEnemyDamageEventBonusX ~= nil
 							  and timestamp ~= nil then
 			log:write(timestamp,
 					  "Player has unlocked his inner Goku and performs a devastating KAMEHAMEHAAAAA attack causing ",
-					  gokuDamageX,
-					  "x extra damage for a total of ",
-					  lastDamageByPlayer,
+					  lastEnemyDamageEventBonusX,
+					  "x extra damage and resulting in an additional ",
+					  lastEnemyDamageEventBonusAmount,
 						" damage!\n")
 				playSound(findTableFile('kame.wav'))
 				writeInteger("logKamehameha", 0)

@@ -33,19 +33,26 @@ local function dumpStatistics()
 
     -- Last damaged enemy health always floating point, as it is maintained by the Apocalypse system.
     local enemyHealth = toInt(readFloat("lastEnemyHealthValue"))
+    
+    local newEnemyDamageEventNotProcessed = readInteger("newEnemyDamageEventNotProcessed")
 
-    local lastDamageByPlayerNew = readFloat("lastDamageByPlayerNew")
+    if newEnemyDamageEventNotProcessed ~= nil and newEnemyDamageEventNotProcessed == 1 then
+        local newEnemyDamageEvent = readFloat("newEnemyDamageEvent")
 
-    if lastDamageByPlayerNew ~= nil and lastDamageByPlayerNew > 0 then
-        writeFloat("lastDamageByPlayer", lastDamageByPlayerNew)        
-        writeFloat("lastDamageByPlayerNew", 0)
+        if newEnemyDamageEvent ~= nil and newEnemyDamageEvent > 0 then
+            writeFloat("lastEnemyDamageEvent", newEnemyDamageEvent)
+        end
+
+        writeInteger("newEnemyDamageEventNotProcessed",0)
+        -- Other new enemy damage event related symbols, such as those pertaining to bonus damage, are cleared by
+        -- the entities responsible for reporting on them.
     end
 
     local lastDamageToPlayer = toInt(readFloat("lastDamageToPlayer"))
     local maxDamageToPlayer = toInt(readFloat("maxDamageToPlayer"))
-    local lastDamageByPlayer = toInt(readFloat("lastDamageByPlayer"))
-    local maxDamageByPlayer = toInt(readFloat("maxDamageByPlayer"))
-    local totalDamageByPlayer = toInt(readFloat("totalDamageByPlayer"))
+    local lastEnemyDamageEvent = toInt(readFloat("lastEnemyDamageEvent"))
+    local maxEnemyDamageEvent = toInt(readFloat("maxEnemyDamageEvent"))
+    local totalEnemyDamage = toInt(readFloat("totalEnemyDamage"))
 
     local playerCoordinates = readPlayerCoordinates()
         
@@ -60,9 +67,9 @@ local function dumpStatistics()
             WholeStatistic("Max", maxDamageToPlayer, true),
         }),
         StatisticGroup("Damage Inflicted", {
-            WholeStatistic("Last", lastDamageByPlayer),
-            WholeStatistic("Max", maxDamageByPlayer, true),
-            WholeStatistic("Total", totalDamageByPlayer)
+            WholeStatistic("Last", lastEnemyDamageEvent),
+            WholeStatistic("Max", maxEnemyDamageEvent, true),
+            WholeStatistic("Total", totalEnemyDamage)
         }),
         CoordinateStatistic("Coordinates", playerCoordinates.X, playerCoordinates.Y, playerCoordinates.Z)
     }
