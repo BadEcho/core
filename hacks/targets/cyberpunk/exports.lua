@@ -22,7 +22,7 @@ function registerExports()
     -- there is a small chance that an evil enemy hacker will manage to hack into our car and suddenly
     -- change our speed! Remember, Carpocalypse is in effect (50x damage to vehicles), so any mistake will
     -- lead to certain death!
-    playerCarHackTimer.Interval = 5000
+    playerCarHackTimer.Interval = 2500
     playerCarHackTimer.OnTimer = function()
         local playerDriving = readInteger("playerDriving")
 
@@ -39,7 +39,7 @@ function registerExports()
         end
 
         local randomCarHack = {
-            {false, 50},
+            {false, 34},
             {true, 1}
         }
 
@@ -49,17 +49,18 @@ function registerExports()
             do return end
         end
         
-        -- Our car has been hacked! The evil enemy hacker now sets our speed to a random value.
+        -- Our car has been hacked! The evil enemy hacker will now add a random amount of speed to our car.
         local randomCarHackSpeedBoost = {
-            {2.0, 5},
-            {3.0, 3},
-            {4.0, 2},
-            {5.0, 1}
+            {1.0, 5},
+            {2.0, 3},
+            {3.0, 2},
+            {4.0, 1}
         }
 
         local carHackSpeedBoost = randomize(randomCarHackSpeedBoost)
+        local currentVehicleSpeedX = readFloat("playerVehicleSpeedX")
 
-        writeFloat("playerVehicleSpeedX", carHackSpeedBoost)
+        writeFloat("playerVehicleSpeedX", carHackSpeedBoost + currentVehicleSpeedX)
         playSound(findTableFile("carHackedSiren.wav"))
     end
 
