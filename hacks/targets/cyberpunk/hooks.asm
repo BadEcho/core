@@ -762,6 +762,9 @@ initiateApocalypse:
     mov eax,[rcx+18C]
     cmp eax,0
     jne initiateEnemyApocalypse
+    mov rax,[rcx+170]
+    cmp eax,0x01000001
+    jne initiateEnemyApocalypse
     // We're damaging a vehicle. Let the Carpocalypse commence.
     mulss xmm2,[vehicleDamageX]
     movd eax,xmm2
