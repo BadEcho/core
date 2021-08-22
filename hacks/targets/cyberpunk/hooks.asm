@@ -869,9 +869,11 @@ assert(omnifyPredatorHook,0F 58 20 0F 28 D4)
 alloc(initiatePredator,$1000,omnifyPredatorHook)
 alloc(disablePredator,8)
 alloc(identityValue,8)
+alloc(verticalBoost,8)
 
 registersymbol(omnifyPredatorHook)
 registersymbol(disablePredator)
+registersymbol(verticalBoost)
 
 initiatePredator:
     pushf
@@ -926,6 +928,10 @@ initiatePredator:
     movups [rsp],xmm4
     mov [rsp],eax
     mov [rsp+4],ebx
+    // Optionally send the NPCs floating to the sky. For fun.
+    movd xmm0,ecx
+    addss xmm0,[verticalBoost]
+    movd ecx,xmm0
     mov [rsp+8],ecx
     movups xmm4,[rsp]
     add rsp,10    
@@ -961,6 +967,9 @@ threatDistance:
 
 disablePredator:
     dd 0
+
+verticalBoost:
+    dd (float)0.0
 
 
 // Implements a modifier for the player's vehicle speed.
@@ -1099,6 +1108,10 @@ detectPlayerNotDriving:
     cmp [rax],rbx
     pop rax
     jne detectPlayerNotDrivingOriginalCode
+    // If r10 is 0, then we may still be in the vehicle -- loading a save where we're already riding a vehicle
+    // will cause this.
+    cmp r10,0
+    je detectPlayerNotDrivingOriginalCode
     // If we're at this point, we're not longer driving. We're on our feet!
     push rax
     mov rax,playerDriving
@@ -1264,9 +1277,11 @@ omnifyPredatorHook:
 
 unregistersymbol(omnifyPredatorHook)
 unregistersymbol(disablePredator)
+unregistersymbol(verticalBoost)
 
 dealloc(identityValue)
 dealloc(disablePredator)
+dealloc(verticalBoost)
 dealloc(initiatePredator)
 
 
