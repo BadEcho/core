@@ -142,9 +142,9 @@ getPlayerHealth:
     je getPlayerHealthOriginalCode
     push rbx
     mov rbx,[rax+F0]
-    cmp rbx,0
+    cmp rbx,0x1000101
     pop rbx
-    je getPlayerHealthOriginalCode
+    jne getPlayerHealthOriginalCode
     sub rsp,10
     movdqu [rsp],xmm0
     push rbx    
