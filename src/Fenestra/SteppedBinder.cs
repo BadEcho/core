@@ -15,6 +15,7 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Timers;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Threading;
@@ -38,20 +39,25 @@ namespace BadEcho.Fenestra
     /// </para>
     /// <para>
     /// The delay introduced between steps is determined by the total amount of time the binder is configured to allow for a stepping
-    /// sequence to take. Given the complexity in dealing with the external overhead that is part and parcel with WPF's complicated data
-    /// binding and visual presentation systems, this binder attempts its best to complete the sequence within the allowed time frame.
-    /// In order to achieve this, the binder maintains its own measurement of the time elapsed in a sequence's execution, allowing for it
-    /// to propagate values between source and target that fall inline with where the binder ought to be in the sequence.
+    /// sequence to take. Given the complexity in dealing with the external overhead that is part and parcel with the complicated data
+    /// binding and visual presentation systems offered by WPF, this binder attempts its best to complete the sequence within the allowed
+    /// time frame. In order to achieve this, the binder maintains its own measurement of the time elapsed in a sequence's execution, allowing
+    /// for it to propagate values between source and target that fall inline with where the binder ought to be in the sequence.
     /// </para>
     /// </remarks>
     internal sealed class SteppedBinder : TransientBinder
     {
-        private readonly DispatcherTimer _targetStepTimer
+        private readonly Timer _targetStepTimer
             = new();
-        private readonly DispatcherTimer _sourceStepTimer
+
+        private readonly Timer _sourceStepTimer
             = new();
+
         private readonly Stopwatch _sequenceStopwatch 
             = new();
+
+        private readonly Dispatcher _dispatcher
+            = Dispatcher.CurrentDispatcher;
 
         private readonly TimeSpan _steppingDuration;
         private readonly int _minimumSteps;
@@ -105,14 +111,14 @@ namespace BadEcho.Fenestra
             : base(targetObject, targetProperty, binding, mode)
         {
             Require.NotNull(options, nameof(options));
-
+            
             if (options.SteppingDuration < TimeSpan.Zero)
                 throw new ArgumentException(Strings.SteppingDurationCannotBeNegative, nameof(options));
             
             _steppingDuration = options.SteppingDuration;
             _minimumSteps = options.MinimumSteps;
-            _sourceStepTimer.Tick += HandleSourceStepTimerTick;
-            _targetStepTimer.Tick += HandleTargetStepTimerTick;
+            _sourceStepTimer.Elapsed += HandleSourceStepTimerTick;
+            _targetStepTimer.Elapsed += HandleTargetStepTimerTick;
             _unsetTargetValue = targetProperty.DefaultMetadata.DefaultValue;
         }
 
@@ -204,7 +210,7 @@ namespace BadEcho.Fenestra
 
             _startingStepValue = receivingStepValue;
             _endingStepValue = changedStepValue;
-            _targetStepTimer.Interval = _steppingDuration.Divide(numberOfSteps);
+            _targetStepTimer.Interval = _steppingDuration.Divide(numberOfSteps).TotalMilliseconds;
 
             _sequenceStopwatch.Start();
 
@@ -248,7 +254,7 @@ namespace BadEcho.Fenestra
                 : Math.Max(_endingStepValue, nextValue);
         }
 
-        private void HandleSourceStepTimerTick(object? sender, EventArgs e)
+        private void StepSource()
         {
             if (GetStepValue(SourceProperty) == _endingStepValue)
             {
@@ -259,7 +265,7 @@ namespace BadEcho.Fenestra
                 base.OnTargetChanged();
         }
 
-        private void HandleTargetStepTimerTick(object? sender, EventArgs e)
+        private void StepTarget()
         {
             if (GetStepValue(TargetProperty) == _endingStepValue)
             {
@@ -269,5 +275,11 @@ namespace BadEcho.Fenestra
             else
                 base.OnSourceChanged();
         }
+
+        private void HandleSourceStepTimerTick(object? sender, EventArgs e) 
+            => _dispatcher.BeginInvoke(StepSource, DispatcherPriority.DataBind);
+
+        private void HandleTargetStepTimerTick(object? sender, EventArgs e) 
+            => _dispatcher.BeginInvoke(StepTarget, DispatcherPriority.DataBind);
     }
 }
