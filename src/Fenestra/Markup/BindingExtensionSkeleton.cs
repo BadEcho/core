@@ -20,6 +20,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Markup;
+using BadEcho.Fenestra.Properties;
+using BadEcho.Odin;
+using BadEcho.Odin.Logging;
 
 namespace BadEcho.Fenestra.Markup
 {
@@ -32,12 +35,12 @@ namespace BadEcho.Fenestra.Markup
     /// <typeparam name="TValueConverter">The value converter type to be used by the binding.</typeparam>
     [MarkupExtensionReturnType(typeof(object))]
     [Localizability(LocalizationCategory.None, Modifiability = Modifiability.Unmodifiable, Readability = Readability.Unreadable)]
-    public abstract class BindingExtensionSkeleton<TBinding, TValueConverter> : MarkupExtension
+    public abstract class BindingExtensionSkeleton<TBinding, TValueConverter> : MarkupExtension, IBinding
         where TBinding : BindingBase
     {
-        /// <summary>
-        /// Gets or sets the name of the <see cref="BindingGroup"/> to which this binding belongs.
-        /// </summary>
+        private BindingExpressionBase? _bindingExpression;
+
+        /// <inheritdoc/>
         [DefaultValue("")]
         public string BindingGroupName
         {
@@ -45,13 +48,7 @@ namespace BadEcho.Fenestra.Markup
             set => ActualBinding.BindingGroupName = value;
         }
 
-        /// <summary>
-        /// Gets or sets the amount of time, in milliseconds, to wait before updating the binding source after the value on the
-        /// target changes.
-        /// </summary>
-        /// <remarks>
-        /// This property only affects <see cref="BindingMode.TwoWay"/> bindings that use property change triggered updates.
-        /// </remarks>
+        /// <inheritdoc/>
         [DefaultValue(0)]
         public int Delay
         {
@@ -59,29 +56,23 @@ namespace BadEcho.Fenestra.Markup
             set => ActualBinding.Delay = value;
         }
 
-        /// <summary>
-        /// Gets or sets the value to use when the binding is unable to return a value.
-        /// </summary>
+        /// <inheritdoc/>
         public object FallbackValue
         {
             get => ActualBinding.FallbackValue;
             set => ActualBinding.FallbackValue = value;
         }
 
-        /// <summary>
-        /// Gets or sets the value that is used in the target when the value of the source is null.
-        /// </summary>
+        /// <inheritdoc/>
         public object TargetNullValue
         {
             get => ActualBinding.TargetNullValue;
             set => ActualBinding.TargetNullValue = value;
         }
 
-        /// <summary>
-        /// Gets or sets a string that specifies how to format the binding if it displays the bound value as a string.
-        /// </summary>
+        /// <inheritdoc/>
         [DefaultValue(null)]
-        public string StringFormat
+        public string? StringFormat
         {
             get => ActualBinding.StringFormat;
             set => ActualBinding.StringFormat = value;
@@ -94,91 +85,63 @@ namespace BadEcho.Fenestra.Markup
         public abstract TValueConverter Converter
         { get; set; }
 
-        /// <summary>
-        /// Gets or sets the culture in which to evaluate the converter.
-        /// </summary>
+        /// <inheritdoc/>
         [DefaultValue(null)]
         [TypeConverter(typeof(CultureInfoIetfLanguageTagConverter))]
         public abstract CultureInfo ConverterCulture
         { get; set; }
 
-        /// <summary>
-        /// Gets or sets the parameter to pass to the <see cref="Converter"/>.
-        /// </summary>
+        /// <inheritdoc/>
         [DefaultValue(null)]
-        public abstract object ConverterParameter
+        public abstract object? ConverterParameter
         { get; set; }
 
-        /// <summary>
-        /// Gets or sets a value that indicates the direction of the data flow in the binding.
-        /// </summary>
+        /// <inheritdoc/>
         [DefaultValue(BindingMode.Default)]
         public abstract BindingMode Mode
         { get; set; }
 
-        /// <summary>
-        /// Gets or sets a value that indicates whether to raise a source updated event when a value is transferred from
-        /// the binding target to the binding source.
-        /// </summary>
+        /// <inheritdoc/>
         [DefaultValue(false)]
         public abstract bool NotifyOnSourceUpdated
         { get; set; }
 
-        /// <summary>
-        /// Gets or sets a value that indicates whether to raise a target updated event when a value is transferred from the
-        /// binding source to the binding target.
-        /// </summary>
+        /// <inheritdoc/>
         [DefaultValue(false)]
         public abstract bool NotifyOnTargetUpdated
         { get; set; }
 
-        /// <summary>
-        /// Gets or sets a value that indicates whether to raise the <see cref="Validation.ErrorEvent"/> attached event on the bound object.
-        /// </summary>
+        /// <inheritdoc/>
         [DefaultValue(false)]
         public abstract bool NotifyOnValidationError
         { get; set; }
 
-        /// <summary>
-        /// Gets or sets a handler you can use to provide custom logic for handling exceptions that the binding engine encounters during the
-        /// update of the binding source value. This is only applicable if you have an associated <see cref="ExceptionValidationRule"/> with
-        /// your binding.
-        /// </summary>
+        /// <inheritdoc/>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public abstract UpdateSourceExceptionFilterCallback UpdateSourceExceptionFilter
+        public abstract UpdateSourceExceptionFilterCallback? UpdateSourceExceptionFilter
         { get; set; }
 
-        /// <summary>
-        /// Gets or sets a value that determines the timing of binding source updates.
-        /// </summary>
+        /// <inheritdoc/>
         [DefaultValue(UpdateSourceTrigger.Default)]
         public abstract UpdateSourceTrigger UpdateSourceTrigger
         { get; set; }
 
-        /// <summary>
-        /// Gets or sets a value that indicates whether to include the <see cref="DataErrorValidationRule"/>.
-        /// </summary>
+        /// <inheritdoc/>
         [DefaultValue(false)]
         public abstract bool ValidatesOnDataErrors
         { get; set; }
 
-        /// <summary>
-        /// Gets or sets a value that indicates whether to include the <see cref="ExceptionValidationRule"/>.
-        /// </summary>
+        /// <inheritdoc/>
         [DefaultValue(false)]
         public abstract bool ValidatesOnExceptions
         { get; set; }
 
-        /// <summary>
-        /// Gets or sets a value that indicates whether to include the <see cref="NotifyDataErrorValidationRule"/>.
-        /// </summary>
+        /// <inheritdoc/>
         [DefaultValue(true)]
         public abstract bool ValidatesOnNotifyDataErrors
         { get; set; }
 
-        /// <summary>
-        /// Gets a collection of rules that check the validity of the user input.
-        /// </summary>
+        /// <inheritdoc/>
         public abstract Collection<ValidationRule> ValidationRules
         { get; }
 
@@ -188,7 +151,7 @@ namespace BadEcho.Fenestra.Markup
         /// <remarks>
         /// <para>
         /// Data binding mechanisms will only be extended by this type if a target <see cref="DependencyObject"/> is found. Execution
-        /// will be deferred to WPF's built-in data binding routines for proper handling if no target object has been made available.
+        /// will be deferred to the built-in data binding routines of WPF for proper handling if no target object has been made available.
         /// If, however, a derived class overrides this property to return true, the binding extension is allowed to continue, even if
         /// no <see cref="DependencyObject"/> is present. This can be most useful when there is a need to fulfill an auxiliary type of
         /// function such as further configuration of the binder.
@@ -224,7 +187,7 @@ namespace BadEcho.Fenestra.Markup
             
             IProvideValueTarget? valueProvider
                 = (IProvideValueTarget?) serviceProvider.GetService(typeof(IProvideValueTarget));
-
+            
             if (valueProvider == null)
             {
                 // While it is not entirely clear from the WPF source as to when or why the IProvideValueTarget service might not
@@ -240,6 +203,32 @@ namespace BadEcho.Fenestra.Markup
                 : ActualBinding.ProvideValue(serviceProvider);
         }
 
+        /// <inheritdoc/>
+        public bool DoBindingAction(Func<bool> bindingAction)
+        {
+            Require.NotNull(bindingAction, nameof(bindingAction));
+
+            try
+            {
+                return bindingAction();
+            }
+            catch (Exception ex)
+            {
+                ProcessExceptionValidation(ex);
+
+                Logger.Error(Strings.BindingActionError, ex);
+                return false;
+            }
+            // Although the WPF framework source code has an additional general catch clause to catch all "non-CLS compliant exceptions", 
+            // this actually is no longer needed in order to catch non-CLS compliant exceptions since .NET 2.0. All non-CLS compliant exceptions
+            // will be wrapped up in a RunTimeWrappedException instance, unless the RuntimeCompatibility assembly attribute is set to false,
+            // which is not the case with Fenestra.
+        }
+
+        /// <inheritdoc/>
+        public BindingExpressionBase SetBinding(DependencyObject targetObject, DependencyProperty targetProperty) 
+            => _bindingExpression = BindingOperations.SetBinding(targetObject, targetProperty, ActualBinding);
+
         /// <summary>
         /// Creates and returns a binding with extended mechanics for the provided target object and property.
         /// </summary>
@@ -250,6 +239,39 @@ namespace BadEcho.Fenestra.Markup
         protected abstract object ExtendBinding(IServiceProvider serviceProvider,
                                                 DependencyObject? targetObject,
                                                 DependencyProperty targetProperty);
+
+        private void ProcessExceptionValidation(Exception ex)
+        {
+            ValidationError? validationError = null;
+            object? filteredException = null;
+
+            // Interestingly, WPF seems to ignore ValidatesOnExceptions and adds a validation error anyway if it has managed to retrieve
+            // a validation error from an exception filter. For ourselves, we'll only proceed with adding a validation error for a thrown
+            // exception if the ValidatesOnExceptions property is set to true, or if we're part of a binding group.
+            if (_bindingExpression == null || !ValidatesOnExceptions && string.IsNullOrEmpty(BindingGroupName))
+                return;
+
+            if (UpdateSourceExceptionFilter != null)
+            {
+                filteredException = UpdateSourceExceptionFilter(ActualBinding, ex);
+
+                if (filteredException == null)
+                    return;
+
+                validationError = filteredException as ValidationError;
+            }
+
+            if (validationError == null)
+            {
+                var validationRule = new ExceptionValidationRule();
+
+                validationError = filteredException == null
+                    ? new ValidationError(validationRule, ActualBinding, ex.Message, ex)
+                    : new ValidationError(validationRule, ActualBinding, filteredException, ex);
+            }
+
+            Validation.MarkInvalid(_bindingExpression, validationError);
+        }
 
         private bool CanExtendBinding(DependencyObject? targetObject, [NotNullWhen(true)]DependencyProperty? targetProperty)
         {

@@ -68,9 +68,8 @@ namespace BadEcho.Fenestra.Markup
 
             var binder = new SteppedBinder(targetObject,
                                            targetProperty,
-                                           ActualBinding,
-                                           new SteppingOptions(SteppingDuration, MinimumSteps));
-
+                                           new SteppingOptions(SteppingDuration, MinimumSteps, this));
+            
             FreezableCollection<TransientBinder> binders = TransientBinder.GetBinders(targetObject);
 
             binders.Add(binder);

@@ -12,9 +12,12 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Threading;
@@ -27,18 +30,14 @@ namespace BadEcho.Fenestra.Tests
     {
         // A time drift of 125 ms is deemed acceptable.
         private const double DRIFT_TOLERANCE = 125;
-
-        private readonly Binding _innerBinding;
+        
         private readonly SourceObject _sourceObject;
+        private readonly IBinding _binding;
 
         public SteppedBinderTests()
         {
             _sourceObject = new SourceObject();
-            _innerBinding = new Binding(nameof(SourceObject.Value))
-                                {
-                                    Source = _sourceObject,
-                                    Mode = BindingMode.TwoWay
-                                };
+            _binding = new FakeBinding(_sourceObject);
         }
 
         [Theory]
@@ -182,7 +181,7 @@ namespace BadEcho.Fenestra.Tests
         private SteppedBinder InitializeBinder(TimeSpan steppingDuration)
         {
             var textBox = new TextBox {Text = null};
-            return new SteppedBinder(textBox, TextBox.TextProperty, _innerBinding, new SteppingOptions(steppingDuration, 0));
+            return new SteppedBinder(textBox, TextBox.TextProperty, new SteppingOptions(steppingDuration, 0, _binding));
         }
 
         private TimeSpan UpdateSource(string initialTargetValue, int newSourceValue, TimeSpan steppingDuration)
@@ -190,7 +189,8 @@ namespace BadEcho.Fenestra.Tests
             bool updatedToFinalValue = false;
 
             var textBox = new TextBox { Text = initialTargetValue };
-            var binder = new SteppedBinder(textBox, TextBox.TextProperty, _innerBinding, new SteppingOptions(steppingDuration,0));
+            textBox.TextChanged += TextBox_TextChanged; 
+            var binder = new SteppedBinder(textBox, TextBox.TextProperty, new SteppingOptions(steppingDuration,0, _binding));
             var stopwatch = new Stopwatch();
 
             binder.Changed += (_, _) =>
@@ -214,6 +214,11 @@ namespace BadEcho.Fenestra.Tests
             return stopwatch.Elapsed;
         }
 
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
         private TimeSpan UpdateTarget(int initialSourceValue, string initialTargetValue, string newTargetValue, TimeSpan steppingDuration)
         {
             bool updatedToFinalValue = false;
@@ -223,8 +228,7 @@ namespace BadEcho.Fenestra.Tests
             
             var binder = new SteppedBinder(textBox,
                                            TextBox.TextProperty,
-                                           _innerBinding,
-                                           new SteppingOptions(steppingDuration, 0));
+                                           new SteppingOptions(steppingDuration, 0, _binding));
 
             var stopwatch = new Stopwatch();
             
@@ -271,6 +275,80 @@ namespace BadEcho.Fenestra.Tests
 
             private void OnPropertyChanged([CallerMemberName] string? propertyName = null) 
                 => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private sealed class FakeBinding : IBinding
+        {
+            private readonly Binding _binding;
+
+            public FakeBinding(SourceObject sourceObject)
+            {
+                _binding = new Binding(nameof(SourceObject.Value))
+                           {
+                               Source = sourceObject,
+                               Mode = BindingMode.TwoWay
+                           };
+            }
+
+            public string BindingGroupName
+            { get; set; } = string.Empty;
+
+            public int Delay
+            { get; set; }
+
+            public object FallbackValue
+            { get; set; } = new();
+
+            public object TargetNullValue
+            { get; set; } = new();
+
+            public string? StringFormat
+            {
+                get;
+                set;
+            } = string.Empty;
+
+            public CultureInfo ConverterCulture
+            { get; set; } = CultureInfo.InvariantCulture;
+
+            public object? ConverterParameter
+            { get; set; }
+
+            public BindingMode Mode
+            { get; set; }
+
+            public bool NotifyOnSourceUpdated
+            { get; set; }
+
+            public bool NotifyOnTargetUpdated
+            { get; set; }
+
+            public bool NotifyOnValidationError
+            { get; set; }
+
+            public UpdateSourceExceptionFilterCallback? UpdateSourceExceptionFilter
+            { get; set; }
+
+            public UpdateSourceTrigger UpdateSourceTrigger
+            { get; set; }
+
+            public bool ValidatesOnDataErrors
+            { get; set; }
+
+            public bool ValidatesOnExceptions
+            { get; set; }
+
+            public bool ValidatesOnNotifyDataErrors
+            { get; set; }
+
+            public Collection<ValidationRule> ValidationRules
+                => new();
+
+            public bool DoBindingAction(Func<bool> bindingAction) 
+                => bindingAction();
+
+            public BindingExpressionBase SetBinding(DependencyObject targetObject, DependencyProperty targetProperty) 
+                => BindingOperations.SetBinding(targetObject, targetProperty, _binding);
         }
     }
 }

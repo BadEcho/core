@@ -170,4 +170,7 @@
   <data name="WindowNotPresentation" xml:space="preserve">
     <value>The provided handle does not belong to a window created by WPF.</value>
   </data>
+  <data name="BindingActionError" xml:space="preserve">
+    <value>An error occurred during a data binding action.</value>
+  </data>
 </root>

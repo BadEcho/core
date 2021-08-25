@@ -88,6 +88,15 @@ namespace BadEcho.Fenestra.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An error occurred during a data binding action..
+        /// </summary>
+        internal static string BindingActionError {
+            get {
+                return ResourceManager.GetString("BindingActionError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot add non-binding related data to multi-binding collection..
         /// </summary>
         internal static string CannotAddNonBindingToMultiBinding {

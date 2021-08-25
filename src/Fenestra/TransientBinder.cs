@@ -1,4 +1,4 @@
-﻿//-----------------------------------------------------------------------
+﻿    //-----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
 //      Copyright @ 2021 Bad Echo LLC. All rights reserved.
@@ -10,7 +10,7 @@
 //		http://creativecommons.org/licenses/by-nc/4.0/
 // </copyright>
 //-----------------------------------------------------------------------
-
+    
 using System.Windows;
 using System.Windows.Data;
 using BadEcho.Odin;
@@ -38,6 +38,7 @@ namespace BadEcho.Fenestra
             = DependencyProperty.RegisterAttached(NameOf.ReadDependencyPropertyName(() => BindersProperty),
                                                   typeof(FreezableCollection<TransientBinder>),
                                                   typeof(TransientBinder));
+
         /// <summary>
         /// Identifies the <see cref="Source"/> dependency property.
         /// </summary>
@@ -46,6 +47,7 @@ namespace BadEcho.Fenestra
                                           typeof(object),
                                           typeof(TransientBinder),
                                           new PropertyMetadata(OnSourceChanged));
+
         /// <summary>
         /// Identifies the <see cref="Target"/> dependency property.
         /// </summary>
@@ -55,22 +57,17 @@ namespace BadEcho.Fenestra
                                           typeof(TransientBinder),
                                           new PropertyMetadata(OnTargetChanged));
 
-        private readonly string _stringFormat;
-        private readonly BindingMode _mode;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="TransientBinder"/> class.
         /// </summary>
         /// <param name="targetObject">The target dependency object containing the property to bind.</param>
         /// <param name="targetProperty">The target dependency property to bind.</param>
         /// <param name="binding">The underlying binding to augment.</param>
-        /// <param name="mode">The mode of binding being used.</param>
-        protected TransientBinder(DependencyObject targetObject, DependencyProperty targetProperty, BindingBase binding, BindingMode mode)
+        protected TransientBinder(DependencyObject targetObject, DependencyProperty targetProperty, IBinding binding)
         {
-            Require.NotNull(targetProperty, nameof(targetProperty));
             Require.NotNull(binding, nameof(binding));
 
-            _mode = mode;
+            Binding = binding;
 
             var targetBinding = new Binding
                                 {
@@ -79,32 +76,53 @@ namespace BadEcho.Fenestra
                                     Mode = BindingMode.TwoWay
                                 };
 
-            _stringFormat = binding.StringFormat ?? "{0}";
-
             this.BypassHandlers(() =>
                                 {
                                     BindingOperations.SetBinding(this, TargetProperty, targetBinding);
-                                    BindingOperations.SetBinding(this, SourceProperty, binding);
+                                    binding.SetBinding(this, SourceProperty);
                                 });
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TransientBinder"/> class.
         /// </summary>
-        protected TransientBinder()
-            => _stringFormat = "{0}";
+        protected TransientBinder() 
+        { }
 
         /// <summary>
         /// Gets or sets the object to use as the binding source.
         /// </summary>
-        public object? Source
+        public object? Source 
         { get; set; }
 
         /// <summary>
         /// Gets or sets the object to use as the binding target.
         /// </summary>
-        public object? Target
+        public object? Target 
         { get; set; }
+
+        /// <summary>
+        /// Gets the underlying binding being augmented.
+        /// </summary>
+        protected IBinding? Binding
+        { get; private set; }
+
+        /// <summary>
+        /// Gets the string that specifies how to format the binding if it displays the bound value as a string, or, if none was
+        /// provided to the binding, a default format string containing a single format item.
+        /// </summary>
+        private string StringFormat
+        {
+            get
+            {
+                var stringFormat = "{0}";
+
+                if (Binding != null && !string.IsNullOrEmpty(Binding.StringFormat))
+                    stringFormat = Binding.StringFormat;
+
+                return stringFormat;
+            }
+        }
 
         /// <summary>
         /// Gets the value of the <see cref="BindersProperty"/> attached property from a given <see cref="DependencyObject"/>.
@@ -142,6 +160,28 @@ namespace BadEcho.Fenestra
         protected override Freezable CreateInstanceCore()
             => CreateBinder();
 
+        /// <inheritdoc/>
+        /// <remarks>
+        /// I'm having issues finding any Microsoft-provided freezables that have any difference at all between <see cref="CloneCore(Freezable)"/>
+        /// and <see cref="CloneCurrentValueCore(Freezable)"/>. We only begin to see differences when we start to look at the base clone methods,
+        /// defined in <see cref="Freezable"/>. An impressive amount of redundant code!
+        /// </remarks>
+        protected override void CloneCore(Freezable sourceFreezable)
+        {
+            base.CloneCore(sourceFreezable);
+
+            Clone(sourceFreezable);
+        }
+
+        /// <inheritdoc/>
+        /// <seealso cref="CloneCore(Freezable)"/>
+        protected override void CloneCurrentValueCore(Freezable sourceFreezable)
+        {
+            base.CloneCurrentValueCore(sourceFreezable);
+
+            Clone(sourceFreezable);
+        }
+
         /// <summary>
         /// Called in response to a change in the source property that will, by default, update the target property.
         /// </summary>
@@ -167,7 +207,7 @@ namespace BadEcho.Fenestra
                 this.BypassHandlers(() => WriteSourceValue(targetValue));
             }
         }
-
+        
         /// <summary>
         /// Commits the provided value to the target property.
         /// </summary>
@@ -177,7 +217,7 @@ namespace BadEcho.Fenestra
         /// that any changes to the target property's value will not result in a binding update if one were to go off.
         /// </remarks>
         protected virtual void WriteTargetValue(object value)
-            => SetValue(TargetProperty, _stringFormat.CulturedFormat(value));
+            => SetValue(TargetProperty, StringFormat.CulturedFormat(value));
 
         /// <summary>
         /// Commits the provided value to the source property.
@@ -206,7 +246,7 @@ namespace BadEcho.Fenestra
         {
             TransientBinder binder = (TransientBinder) sender;
 
-            if (binder._mode == BindingMode.OneWayToSource)
+            if (binder.Binding?.Mode == BindingMode.OneWayToSource)
                 return;
 
             if (binder.IsHandlingBypassed())
@@ -218,14 +258,22 @@ namespace BadEcho.Fenestra
         private static void OnTargetChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             TransientBinder binder = (TransientBinder) sender;
-            
-            if (binder._mode is not BindingMode.TwoWay and not BindingMode.OneWayToSource)
+
+            if (binder.Binding?.Mode is not BindingMode.TwoWay and not BindingMode.OneWayToSource)
                 return;
 
             if (binder.IsHandlingBypassed())
                 return;
 
             binder.OnTargetChanged();
+
+        }
+        
+        private void Clone(Freezable sourceFreezable)
+        {
+            var binder = (TransientBinder)sourceFreezable;
+
+            binder.Binding = Binding;
         }
     }
 }

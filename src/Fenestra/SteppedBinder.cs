@@ -13,11 +13,9 @@
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Timers;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Threading;
 using BadEcho.Fenestra.Properties;
 using BadEcho.Odin;
@@ -72,43 +70,11 @@ namespace BadEcho.Fenestra
         /// </summary>
         /// <param name="targetObject">The target dependency object containing the property to bind.</param>
         /// <param name="targetProperty">The target dependency property to bind.</param>
-        /// <param name="binding">The underlying binding to augment.</param>
         /// <param name="options">Stepping sequence options related to timing for the stepped binder.</param>
         public SteppedBinder(DependencyObject targetObject,
                              DependencyProperty targetProperty,
-                             Binding binding,
                              SteppingOptions options)
-            : this(targetObject, targetProperty, binding, options, EnsureBinding(binding).Mode)
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SteppedBinder"/> class.
-        /// </summary>
-        /// <param name="targetObject">The target dependency object containing the property to bind.</param>
-        /// <param name="targetProperty">The target dependency property to bind.</param>
-        /// <param name="binding">The underlying binding to augment.</param>
-        /// <param name="options">Stepping sequence options related to timing for the stepped binder.</param>
-        public SteppedBinder(DependencyObject targetObject,
-                             DependencyProperty targetProperty,
-                             MultiBinding binding,
-                             SteppingOptions options)
-            : this(targetObject, targetProperty, binding, options, EnsureBinding(binding).Mode)
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SteppedBinder"/> class.
-        /// </summary>
-        /// <param name="targetObject">The target dependency object containing the property to bind.</param>
-        /// <param name="targetProperty">The target dependency property to bind.</param>
-        /// <param name="binding">The underlying binding to augment.</param>
-        /// <param name="options">Stepping sequence options related to timing for the stepped binder.</param>
-        /// <param name="mode">The mode of binding being used.</param>
-        private SteppedBinder(DependencyObject targetObject,
-                              DependencyProperty targetProperty,
-                              BindingBase binding,
-                              SteppingOptions options,
-                              BindingMode mode)
-            : base(targetObject, targetProperty, binding, mode)
+            : base(targetObject, targetProperty, options.Binding)
         {
             Require.NotNull(options, nameof(options));
             
@@ -137,7 +103,8 @@ namespace BadEcho.Fenestra
         {
             _sourceStepTimer.Stop();
 
-            _steppingEnabled = StepChanges(SourceProperty, TargetProperty, _unsetTargetValue);
+            _steppingEnabled = Binding != null
+                && Binding.DoBindingAction(() => StepChanges(SourceProperty, TargetProperty, _unsetTargetValue));
 
             if (!_steppingEnabled)
             {
@@ -153,7 +120,8 @@ namespace BadEcho.Fenestra
         {
             _targetStepTimer.Stop();
 
-            _steppingEnabled = StepChanges(TargetProperty, SourceProperty, null);
+            _steppingEnabled = Binding != null
+                && Binding.DoBindingAction(() => StepChanges(TargetProperty, SourceProperty, null));
 
             if (!_steppingEnabled)
             {
@@ -180,14 +148,6 @@ namespace BadEcho.Fenestra
             base.WriteTargetValue(newValue);
         }
 
-        private static TBinding EnsureBinding<TBinding>([NotNull]TBinding binding)
-            where TBinding : BindingBase
-        {
-            Require.NotNull(binding, nameof(binding));
-
-            return binding;
-        }
-
         private bool StepChanges(DependencyProperty changedProperty,
                                  DependencyProperty receivingProperty,
                                  object? unsetReceivingValue)
@@ -210,7 +170,7 @@ namespace BadEcho.Fenestra
 
             _startingStepValue = receivingStepValue;
             _endingStepValue = changedStepValue;
-            _targetStepTimer.Interval = _steppingDuration.Divide(numberOfSteps).TotalMilliseconds;
+            _targetStepTimer.Interval = Math.Max(_steppingDuration.Divide(numberOfSteps).TotalMilliseconds, 1);
 
             _sequenceStopwatch.Start();
 

@@ -57,7 +57,7 @@ namespace BadEcho.Fenestra.Markup
         }
 
         /// <inheritdoc/>
-        public override object ConverterParameter
+        public override object? ConverterParameter
         {
             get => ActualBinding.ConverterParameter;
             set => ActualBinding.ConverterParameter = value;
@@ -92,7 +92,7 @@ namespace BadEcho.Fenestra.Markup
         }
 
         /// <inheritdoc/>
-        public override UpdateSourceExceptionFilterCallback UpdateSourceExceptionFilter
+        public override UpdateSourceExceptionFilterCallback? UpdateSourceExceptionFilter
         {
             get => ActualBinding.UpdateSourceExceptionFilter;
             set => ActualBinding.UpdateSourceExceptionFilter = value;

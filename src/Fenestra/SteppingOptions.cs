@@ -12,11 +12,12 @@
 //-----------------------------------------------------------------------
 
 using System;
+using BadEcho.Odin;
 
 namespace BadEcho.Fenestra
 {
     /// <summary>
-    /// Provides stepping sequence options related to timing.
+    /// Provides stepping sequence options related to the timing of a binding.
     /// </summary>
     internal sealed class SteppingOptions
     {
@@ -27,10 +28,14 @@ namespace BadEcho.Fenestra
         /// <param name="minimumSteps">
         /// The minimum number of steps required in order for a stepping sequence to be executed.
         /// </param>
-        public SteppingOptions(TimeSpan steppingDuration, int minimumSteps)
+        /// <param name="binding">The binding that will have its changes propagated in a stepped fashion.</param>
+        public SteppingOptions(TimeSpan steppingDuration, int minimumSteps, IBinding binding)
         {
+            Require.NotNull(binding, nameof(binding));
+
             SteppingDuration = steppingDuration;
             MinimumSteps = minimumSteps;
+            Binding = binding;
         }
 
         /// <summary>
@@ -43,6 +48,12 @@ namespace BadEcho.Fenestra
         /// Gets the minimum number of steps required in order for a stepping sequence to be executed.
         /// </summary>
         public int MinimumSteps
+        { get; }
+
+        /// <summary>
+        /// Gets the binding that will have its changes propagated in a stepped fashion.
+        /// </summary>
+        public IBinding Binding
         { get; }
     }
 }
