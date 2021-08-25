@@ -281,14 +281,12 @@ namespace BadEcho.Fenestra.Tests
         {
             private readonly Binding _binding;
 
-            public FakeBinding(SourceObject sourceObject)
-            {
-                _binding = new Binding(nameof(SourceObject.Value))
-                           {
-                               Source = sourceObject,
-                               Mode = BindingMode.TwoWay
-                           };
-            }
+            public FakeBinding(SourceObject sourceObject) 
+                => _binding = new Binding(nameof(SourceObject.Value))
+                              {
+                                  Source = sourceObject,
+                                  Mode = BindingMode.TwoWay
+                              };
 
             public string BindingGroupName
             { get; set; } = string.Empty;
