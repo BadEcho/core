@@ -159,7 +159,8 @@ extraDamage:
   // Check if the damage would normally kill us, even without the extra damage effect.  
   movss xmm1,xmm3
   subss xmm1,xmm0
-  movss xmm2,[epsilon]
+  mov rax,epsilon
+  movss xmm2,[rax]
   ucomiss xmm1,xmm2
   jb applyExtraDamage
   // Normal damage wouldn't kill us, check if extra damage would, and then prevent it from doing so.
@@ -167,7 +168,7 @@ extraDamage:
   movss xmm2,xmm0
   mulss xmm2,[extraDamageX]
   subss xmm1,xmm2
-  movss xmm2,[epsilon]
+  movss xmm2,[rax]
   ucomiss xmm1,xmm2
   ja applyExtraDamage
   // Set damage to be same as current health minus our "left over" health so that we end up with
