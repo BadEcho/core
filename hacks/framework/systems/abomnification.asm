@@ -28,7 +28,6 @@ morphScaleIndex:
 // ebx: Updated height scale
 // ecx: Updated depth scale
 alloc(executeAbomnification,$1000)
-alloc(abominifyRandomState,8)
 alloc(abominifyMorphStepsResultUpper,8)
 alloc(abominifyMorphStepsResultLower,8)
 alloc(abominifyHeightResultUpper,8)
@@ -175,8 +174,6 @@ skipInitializeDefaultScales:
   ja skipGenerateMorphSteps
   push [abominifyMorphStepsResultLower]
   push [abominifyMorphStepsResultUpper]
-  mov rax,abominifyRandomState
-  push rax
   call generateRandomNumber
   cvtsi2ss xmm0,eax
   movss [rdx+20],xmm0
@@ -196,8 +193,6 @@ generateMonsterMorphTargets:
   mov [rdx],eax
   push [abominifyHeightResultLower]
   push [abominifyHeightResultUpper]
-  mov rax,abominifyRandomState
-  push rax
   call generateRandomNumber
   cvtsi2ss xmm0,eax
   divss xmm0,[abominifyDivisor]
@@ -206,8 +201,6 @@ generateMonsterMorphTargets:
   jne skipGenerateMorphMode
   push [abominifyMorphModeResultLower]
   push [abominifyMorphModeResultUpper]
-  mov rax,abominifyRandomState
-  push rax
   call generateRandomNumber
   jmp applyMorphMode
 skipGenerateMorphMode:
@@ -240,16 +233,12 @@ nonUniformMorphing:
   mov [rdx+10],8
   push [abominifyWidthResultLower]
   push [abominifyWidthResultUpper]
-  mov rax,abominifyRandomState
-  push rax
   call generateRandomNumber
   cvtsi2ss xmm0,eax
   divss xmm0,[abominifyDivisor]
   movss [rdx+24],xmm0
   push [abominifyDepthResultLower]
   push [abominifyDepthResultUpper]
-  mov rax,abominifyRandomState
-  push rax
   call generateRandomNumber
   cvtsi2ss xmm0,eax
   divss xmm0,[abominifyDivisor]
@@ -319,9 +308,7 @@ generateMorphsForStep:
 executeAbomnificationCleanup:  
   pop rdx
   ret 8  
-  
-abominifyRandomState:
-  dd 0
+
 
 abominifyMorphStepsResultUpper:
   dd #400
@@ -467,7 +454,6 @@ dealloc(stopMorphs)
 dealloc(speedMorph)
 dealloc(speedMorphDivisor)
 dealloc(defaultScaleX)
-dealloc(abominifyRandomState)
 dealloc(abominifyMorphStepsResultUpper)
 dealloc(abominifyMorphStepsResultLower)
 dealloc(abominifyHeightResultUpper)

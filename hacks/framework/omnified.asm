@@ -119,37 +119,55 @@ checkBadPointerExit:
   ret
   
 
+// Mapping between thread ID's and their random number engine initialization
+alloc(threadRandomInitMap,$FFFF)
+
+
 // Random number generation function.
 // After r12-r14 pushes:
-// [rsp+20]: initialization state address, 0 if first time
-// [rsp+28]: Upper bounds
-// [rsp+30]: Lower bounds
+// [rsp+20]: Upper bounds
+// [rsp+28]: Lower bounds
 // Return value is in EAX
 alloc(generateRandomNumber,$1000)
 
 registersymbol(generateRandomNumber)
 
 generateRandomNumber:
-  push r12
   push r13
   push r14
-  mov r12,[rsp+20]
-  mov r13,[rsp+28]
-  mov r14,[rsp+30]
+  mov r13,[rsp+18]
+  mov r14,[rsp+20]
   push rbx
   push rcx
   push rdx
   push r8
   push r10
   push r11
-  cmp [r12],0
+  // Load the current thread ID from the Thread Information Block.
+  mov rbx,gs:[0x48]
+  // Typically the thread ID will always be 2 bytes in length, but we'll specifically only grab a word's worth of it
+  // just in case.
+  movzx rax,bx  
+  // Each entry in the thread random initialization map is only a single byte. A value of zero means it has not been 
+  // initialized.  
+  mov rcx,threadRandomInitMap
+  add rcx,rax  
+  cmp byte ptr [rcx],0
   jne getRandomNumber
 initializeSeed:
+  mov byte ptr [rcx],1
   call kernel32.GetTickCount
+  // We don't want the same seed being generated for two different thread ID's, otherwise we'll see the unpleasant
+  // unraveling of duplicate sequences, albeit in a staggered fashion most likely. We zero out the lower 16 bits of 
+  // the returned tick count, which consists mainly of millisecond data and can very easily end up not being different 
+  // between two calls on two separate threads, and replace this data with the thread ID.
+  shr rax,0x10
+  shl rax,0x10
+  or rax,rbx
+  // This pretty much guarantees uniqueness on a per-thread level for a given game session.
   push eax
   call msvcrt.srand
   pop eax
-  mov [r12],1
 getRandomNumber:
   call msvcrt.rand
   xor edx,edx
@@ -170,8 +188,7 @@ getRandomNumber:
   pop rbx
   pop r14
   pop r13
-  pop r12
-  ret 18
+  ret 10
 
 
 // Mark and recall symbols.
@@ -184,14 +201,6 @@ registersymbol(teleport)
 registersymbol(teleportX)
 registersymbol(teleportY)
 registersymbol(teleportZ)
-
-// Global Apocalypse memory.
-alloc(playerDamageX,8)
-
-registersymbol(playerDamageX)
-
-playerDamageX:
-  dd (float)1.0
 
 
 [DISABLE]
@@ -210,15 +219,22 @@ dealloc(damageThreshold)
 dealloc(yIsVertical)
 dealloc(negativeOne)
 
+
 // Cleanup of checkBadPointer
 unregistersymbol(checkBadPointer)
 
 dealloc(checkBadPointer)
 
+
+// Cleanup of thread ID mappings
+dealloc(threadRandomInitMap)
+
+
 // Cleanup of generateRandomNumber
 unregistersymbol(generateRandomNumber)
 
 dealloc(generateRandomNumber)
+
 
 // Cleanup of Mark and Recall symbols
 unregistersymbol(teleport)

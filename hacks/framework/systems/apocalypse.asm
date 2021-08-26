@@ -27,7 +27,6 @@ playerDamageX:
 // Updated damage is in EAX. 
 // Updated health before damage is in EBX.
 alloc(executePlayerApocalypse,$1000)
-alloc(playerApocalypseRandomState,8)
 alloc(logApocalypse,8)
 alloc(apocalypseResult,8)
 alloc(apocalypseResultUpper,8)
@@ -139,8 +138,6 @@ applyApocalypseRoll:
   // Load the parameters for generating the dice roll random number.
   push [apocalypseResultLower]
   push [apocalypseResultUpper]
-  mov rax,playerApocalypseRandomState
-  push rax
   call generateRandomNumber
   // Our random roll value is in eax -- we back it up to the "apocalypseResult"
   // symbol so that the value can be displayed by the event logging display code.
@@ -202,8 +199,6 @@ commitTeleportitis:
   // applied to the x-coordinate.
   push [teleportitisResultLower]
   push [teleportitisResultUpper]
-  mov rax,playerApocalypseRandomState
-  push rax
   call generateRandomNumber
   // The random number is an integer and will need to be converted to a float.
   mov [teleportitisResult],eax
@@ -243,8 +238,6 @@ teleportitisY:
   // applied to the y-coordinate. 
   push [teleportitisResultLower]
   push [teleportitisResultUpper]
-  mov rax,playerApocalypseRandomState
-  push rax
   call generateRandomNumber
   mov [teleportitisResult],eax
   cvtsi2ss xmm1,[teleportitisResult]
@@ -294,8 +287,6 @@ teleportitisZ:
   // applied to the z-coordinate. 
   push [teleportitisResultLower]
   push [teleportitisResultUpper]
-  mov rax,playerApocalypseRandomState
-  push rax
   call generateRandomNumber
   mov [teleportitisResult],eax
   cvtsi2ss xmm1,[teleportitisResult]
@@ -341,8 +332,6 @@ riskOfMurder:
   // number.
   push [riskOfMurderResultLower]
   push [riskOfMurderResultUpper]
-  mov rax,playerApocalypseRandomState
-  push rax
   call generateRandomNumber
   // Our Risk of Murder roll is in eax -- we back it up to the "riskOfMurderResult" 
   // symbol so that the value can be displayed by the event logging display code.
@@ -356,8 +345,6 @@ riskOfMurder:
   je updatePlayerDamageStats
   push [fatalisResultLower]
   push [fatalisResultUpper]
-  mov rax,playerApocalypseRandomState
-  push rax
   call generateRandomNumber
   // The Fatalis roll is in eax -- we throw it into the "fatalisResult" symbol
   // so we can report on it.
@@ -424,9 +411,7 @@ exitPlayerApocalypse:
   // This function has 4 parameters, each require 8 bytes. 4x8 == 20 (hex).
   ret 20
   
-playerApocalypseRandomState:
-  dd 0
-  
+
 logApocalypse:
   dd 0
   
@@ -569,7 +554,6 @@ alloc(playerCritDamageResultLower,8)
 alloc(playerCritDamageResult,8)
 alloc(playerCritDamageDivisor,8)
 alloc(logPlayerCrit,8)
-alloc(enemyApocalypseRandomState,8)
 
 registersymbol(executeEnemyApocalypse)
 registersymbol(lastEnemyDamageEvent)
@@ -641,8 +625,6 @@ applyDamageByPlayer:
   // Load the parameters for generating the critical hit check.
   push [playerCritChanceResultLower]
   push [playerCritChanceResultUpper]
-  mov rax,enemyApocalypseRandomState
-  push rax
   call generateRandomNumber
   // Our random roll value is in eax -- we back it up to the 
   // "playerCritChanceResult" symbol so that the value can be displayed by the 
@@ -656,8 +638,6 @@ applyDamageByPlayer:
   // Load the parameters for generating the critical hit damage.
   push [playerCritDamageResultLower]
   push [playerCritDamageResultUpper]
-  mov rax,enemyApocalypseRandomState
-  push rax
   call generateRandomNumber
   // Our random roll value is in eax -- we back it up to the 
   // "playerCritDamageResult" symbol so that the value can be displayed by 
@@ -678,8 +658,6 @@ checkKamehameha:
   // Load the parameters for generating the Kamehameha check.
   push [gokuResultLower]
   push [gokuResultUpper]
-  mov rax,enemyApocalypseRandomState
-  push rax
   call generateRandomNumber
   // Our random roll value is in eax -- we back it up to the "gokuResult"
   // symbol so that the value can be displayed by the event logging display code.
@@ -865,9 +843,6 @@ playerCritDamageDivisor:
   
 logPlayerCrit:
   dd 0
-  
-enemyApocalypseRandomState:
-  dd 0
 
   
   [DISABLE]
@@ -906,7 +881,6 @@ unregistersymbol(disableTeleportitis)
 unregistersymbol(disableSixtyNine)
 unregistersymbol(sixtyNineEveryTime)
 
-dealloc(playerApocalypseRandomState)
 dealloc(logApocalypse)
 dealloc(teleported)
 dealloc(teleportedX)
@@ -1002,5 +976,4 @@ dealloc(playerCritDamageResultLower)
 dealloc(playerCritDamageResult)
 dealloc(playerCritDamageDivisor)
 dealloc(logPlayerCrit)
-dealloc(enemyApocalypseRandomState)
 dealloc(executeEnemyApocalypse)
