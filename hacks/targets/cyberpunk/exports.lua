@@ -39,7 +39,7 @@ function registerExports()
         end
 
         local randomCarHack = {
-            {false, 34},
+            {false, 29},
             {true, 1}
         }
 
