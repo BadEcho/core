@@ -11,7 +11,7 @@
 //----------------------------------------------------------------------
 
 // Gets the player's root and statistical structures.
-// Magic numbers: 0x36A is Stamina's house address on Happy Stats Street.
+// Magic numbers: 0x36E is Stamina's house address on Happy Stats Street.
 // UNIQUE AOB: 48 C7 C5 FF FF FF FF 8B 46 0C 4D 8D 14 81 49 8B C1 49 8B D2 49 2B D1 48 C1 FA 02 48 85 D2
 // AOB results in 3 matches, 6 instructions up should be 48 8D 71 50
 define(omniPlayerHook,"Cyberpunk2077.exe"+1A965E8)
