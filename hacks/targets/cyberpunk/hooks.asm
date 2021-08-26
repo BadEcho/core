@@ -719,8 +719,8 @@ getPlayerAttack:
     mov [rax],rcx
     pop rax
 getPlayerAttackOriginalCode:
-  mov rax,[rcx]
-  call qword ptr [rax+00000120]
+    mov rax,[rcx]
+    call qword ptr [rax+00000120]
     jmp getPlayerAttackReturn
 
 omniPlayerAttackHook:
