@@ -305,8 +305,40 @@ omniPlayerExperienceHook:
 getPlayerExperienceReturn:
 
 
+// Gets the player's money.
+// The money is at [rcx+78]. This will execute one time, at least such that it satisfies
+// our filter, one time at save game load.
+// UNIQUE AOB: 48 8B 01 48 89 5C 24 40 FF 90 48
+define(omniPlayerMoneyHook,"Cyberpunk2077.exe"+189BA4A)
+
+assert(omniPlayerMoneyHook,48 8B 01 48 89 5C 24 40)
+alloc(getPlayerMoney,$1000,omniPlayerMoneyHook)
+alloc(playerMoney,8)
+
+registersymbol(omniPlayerMoneyHook)
+registersymbol(playerMoney)
+
+getPlayerMoney:
+    pushf
+    cmp rax,0x3
+    jne getPlayerMoneyOriginalCode
+    cmp r13,0
+    jne getPlayerMoneyOriginalCode
+    mov [playerMoney],rcx
+getPlayerMoneyOriginalCode:
+    popf
+    mov rax,[rcx]
+    mov [rsp+40],rbx
+    jmp getPlayerMoneyReturn
+
+omniPlayerMoneyHook:
+    jmp getPlayerMoney
+    nop 3
+getPlayerMoneyReturn:
+
+
 // Get the player's location structure.
-// Unique AOB: 0F 10 81 10 02 00 00 F2 0F 10 89 20 02 00 00 0F 11 02 F3
+// UNIQUE AOB: 0F 10 81 10 02 00 00 F2 0F 10 89 20 02 00 00 0F 11 02 F3
 define(omniPlayerLocationHook,"PhysX3CharacterKinematic_x64.dll"+1EE0)
 
 assert(omniPlayerLocationHook,0F 10 81 10 02 00 00)
@@ -1153,6 +1185,17 @@ unregistersymbol(playerExperience)
 
 dealloc(playerExperience)
 dealloc(getPlayerExperience)
+
+
+// Cleanup of omniPlayerMoneyHook
+omniPlayerMoneyHook:
+    db 48 8B 01 48 89 5C 24 40
+
+unregistersymbol(omniPlayerMoneyHook)
+unregistersymbol(playerMoney)
+
+dealloc(playerMoney)
+dealloc(getPlayerMoney)
 
 
 // Cleanup of omniPlayerExperienceDataHook
