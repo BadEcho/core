@@ -89,3 +89,9 @@ using BadEcho.Odin.Properties;
                            Scope = "member", 
                            Target = "~M:BadEcho.Fenestra.Markup.BindingExtensionSkeleton`2.DoBindingAction(System.Func{System.Boolean})~System.Boolean",
                            Justification = "It is important for us to adopt the same approach that Microsoft uses in their own data binding logic when dealing with user input; specifically: all exceptions must be caught. There is no application code on the stack when this code is ran, so any exceptions thrown are not actionable by the application.")]
+
+[assembly: SuppressMessage("Design", 
+                           "CA1031:Do not catch general exception types", 
+                           Scope = "member", 
+                           Target = "~M:BadEcho.Fenestra.Markup.BindingExtensionSkeleton`2.DoBindingAction(System.Action)",
+                           Justification = "It is important for us to adopt the same approach that Microsoft uses in their own data binding logic when dealing with user input; specifically: all exceptions must be caught. There is no application code on the stack when this code is ran, so any exceptions thrown are not actionable by the application.")]

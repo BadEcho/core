@@ -237,9 +237,9 @@ namespace BadEcho.Fenestra
         }
 
         private void HandleSourceStepTimerTick(object? sender, EventArgs e) 
-            => _dispatcher.BeginInvoke(StepSource, DispatcherPriority.DataBind);
+            => _dispatcher.BeginInvoke(() => Binding?.DoBindingAction(StepSource), DispatcherPriority.DataBind);
 
         private void HandleTargetStepTimerTick(object? sender, EventArgs e) 
-            => _dispatcher.BeginInvoke(StepTarget, DispatcherPriority.DataBind);
+            => _dispatcher.BeginInvoke(() => Binding?.DoBindingAction(StepTarget), DispatcherPriority.DataBind);
     }
 }

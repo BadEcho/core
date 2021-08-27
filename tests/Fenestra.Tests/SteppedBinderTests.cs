@@ -345,6 +345,9 @@ namespace BadEcho.Fenestra.Tests
             public bool DoBindingAction(Func<bool> bindingAction) 
                 => bindingAction();
 
+            public void DoBindingAction(Action bindingAction)
+                => bindingAction();
+
             public BindingExpressionBase SetBinding(DependencyObject targetObject, DependencyProperty targetProperty) 
                 => BindingOperations.SetBinding(targetObject, targetProperty, _binding);
         }

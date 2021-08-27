@@ -219,10 +219,23 @@ namespace BadEcho.Fenestra.Markup
                 Logger.Error(Strings.BindingActionError, ex);
                 return false;
             }
-            // Although the WPF framework source code has an additional general catch clause to catch all "non-CLS compliant exceptions", 
-            // this actually is no longer needed in order to catch non-CLS compliant exceptions since .NET 2.0. All non-CLS compliant exceptions
-            // will be wrapped up in a RunTimeWrappedException instance, unless the RuntimeCompatibility assembly attribute is set to false,
-            // which is not the case with Fenestra.
+        }
+
+        /// <inheritdoc/>
+        public void DoBindingAction(Action bindingAction)
+        {
+            Require.NotNull(bindingAction, nameof(bindingAction));
+
+            try
+            {
+                bindingAction();
+            }
+            catch (Exception ex)
+            {
+                ProcessExceptionValidation(ex);
+
+                Logger.Error(Strings.BindingActionError, ex);
+            }
         }
 
         /// <inheritdoc/>

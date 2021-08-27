@@ -141,6 +141,27 @@ namespace BadEcho.Fenestra
         bool DoBindingAction(Func<bool> bindingAction);
 
         /// <summary>
+        /// Performs a binding-related action, which is an action that concerns the propagation of an input value to
+        /// a target property, in a safe manner.
+        /// </summary>
+        /// <param name="bindingAction">An action that concerns the propagation of an input value to a target property.</param>
+        /// <remarks>
+        /// <para>
+        /// If any code must interface with the data being inputted for binding, they must do so through this method. It is important
+        /// for us to adopt the same approach that Microsoft uses in their own data binding logic when dealing with user input;
+        /// specifically: <c>all</c> exceptions must be caught. There is no application code on the stack when actual binding code is ran, so
+        /// any exceptions thrown are not actionable by the application.
+        /// </para>
+        /// <para>
+        /// This means that unless we catch the exceptions here, the only possible outcome is for the application to crash; therefore,
+        /// this becomes one of those rare times when the absolute best course of action is to "swallow" exceptions. We don't simply ignore
+        /// them, however. Instead, we make use of the data binding exception handling system that WPF makes available, and log all
+        /// occurrences.
+        /// </para>
+        /// </remarks>
+        void DoBindingAction(Action bindingAction);
+
+        /// <summary>
         /// Creates and associates a new instance of <see cref="BindingExpressionBase"/> with the specified binding target property.
         /// </summary>
         /// <param name="targetObject">The target dependency object containing the property to bind.</param>
