@@ -794,7 +794,10 @@ initiateApocalypse:
     mov eax,[rcx+18C]
     cmp eax,0
     jne initiateEnemyApocalypse
+    // If this is zero, then it is most likely "boss armor", which we're not going to track as their health.
     mov rax,[rcx+170]
+    cmp eax,0
+    je initiateApocalypseUpdateDamage
     cmp eax,0x01000001
     jne initiateEnemyApocalypse
     // We're damaging a vehicle. Let the Carpocalypse commence.
@@ -1021,6 +1024,11 @@ registersymbol(playerVehicleVerticalSpeedX)
 
 setPlayerVehicleSpeed:
     pushf
+    push rax
+    mov rax,playerLocationVehicle
+    cmp [rax],rdx
+    pop rax
+    jne setPlayerVehicleSpeedOriginalCode
     // This is essentially a hook into the location update code for the player's vehicle.
     // It is not used to update the location of vehicles driven by NPCs, sadly. It is also
     // more than likely responsible for updating the location of as-of-yet unknown entities,
