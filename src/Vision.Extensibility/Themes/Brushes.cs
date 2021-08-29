@@ -41,5 +41,11 @@ namespace BadEcho.Omnified.Vision.Extensibility.Themes
         /// </summary>
         public static readonly ResourceKey OutlinedTextStrokeKey =
             _Provider.CreateKey(nameof(OutlinedTextStrokeKey));
+
+        /// <summary>
+        /// The brush used to give a faded edge to outlined standard text appearing in Vision.
+        /// </summary>
+        public static readonly ResourceKey FadedOutlinedTextStrokeKey =
+            _Provider.CreateKey(nameof(FadedOutlinedTextStrokeKey));
     }
 }

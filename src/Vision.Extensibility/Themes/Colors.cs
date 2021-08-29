@@ -41,5 +41,11 @@ namespace BadEcho.Omnified.Vision.Extensibility.Themes
         /// </summary>
         public static readonly ResourceKey OutlineColorKey =
             _Provider.CreateKey(nameof(OutlineColorKey));
+
+        /// <summary>
+        /// The color used for fading out the outlines of standard text appearing in Vision.
+        /// </summary>
+        public static readonly ResourceKey FadingOutlineColorKey =
+            _Provider.CreateKey(nameof(FadingOutlineColorKey));
     }
 }

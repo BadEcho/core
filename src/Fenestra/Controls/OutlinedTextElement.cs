@@ -44,25 +44,45 @@ namespace BadEcho.Fenestra.Controls
                                           new FrameworkPropertyMetadata(Brushes.Black,
                                                                         FrameworkPropertyMetadataOptions.AffectsRender));
         /// <summary>
-        /// Identifies the <see cref="Stroke"/> dependency property.
+        /// Identifies the <see cref="InnerStroke"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty StrokeProperty
-            = DependencyProperty.Register(nameof(Stroke),
+        public static readonly DependencyProperty InnerStrokeProperty
+            = DependencyProperty.Register(nameof(InnerStroke),
                                           typeof(Brush),
                                           typeof(OutlinedTextElement),
                                           new FrameworkPropertyMetadata(Brushes.Black,
                                                                         FrameworkPropertyMetadataOptions.AffectsRender,
-                                                                        OnStrokePropertyChanged));
+                                                                        OnInnerStrokePropertyChanged));
         /// <summary>
-        /// Identifies the <see cref="StrokeThickness"/> dependency property.
+        /// Identifies the <see cref="InnerStrokeThickness"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty StrokeThicknessProperty
-            = DependencyProperty.Register(nameof(StrokeThickness),
+        public static readonly DependencyProperty InnerStrokeThicknessProperty
+            = DependencyProperty.Register(nameof(InnerStrokeThickness),
                                           typeof(double),
                                           typeof(OutlinedTextElement),
                                           new FrameworkPropertyMetadata(1.0,
                                                                         FrameworkPropertyMetadataOptions.AffectsRender,
-                                                                        OnStrokePropertyChanged));
+                                                                        OnInnerStrokePropertyChanged));
+        /// <summary>
+        /// Identifies the <see cref="OuterStroke"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty OuterStrokeProperty
+            = DependencyProperty.Register(nameof(OuterStroke),
+                                          typeof(Brush),
+                                          typeof(OutlinedTextElement),
+                                          new FrameworkPropertyMetadata(Brushes.Black,
+                                                                        FrameworkPropertyMetadataOptions.AffectsRender,
+                                                                        OnOuterStrokePropertyChanged));
+        /// <summary>
+        /// Identifies the <see cref="OuterStrokeThickness"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty OuterStrokeThicknessProperty
+            = DependencyProperty.Register(nameof(OuterStrokeThickness),
+                                          typeof(double),
+                                          typeof(OutlinedTextElement),
+                                          new FrameworkPropertyMetadata(0.0,
+                                                                        FrameworkPropertyMetadataOptions.AffectsRender,
+                                                                        OnOuterStrokePropertyChanged));
         /// <summary>
         /// Identifies the <see cref="FontFamily"/> dependency property.
         /// </summary>
@@ -149,15 +169,19 @@ namespace BadEcho.Fenestra.Controls
                                           new FrameworkPropertyMetadata(OnTextFormatUpdated));
 
         private FormattedText? _formattedText;
-        private Geometry? _textGeometry;
-        private Pen _textPen;
+        private Geometry? _innerTextGeometry;
+        private Geometry? _outerTextGeometry;
+        private Pen _innerOutlinePen;
+        private Pen _outerOutlinePen;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OutlinedTextElement"/> class.
         /// </summary>
         public OutlinedTextElement()
         {
-            UpdateTextPen();
+            UpdateInnerOutlinePen();
+            UpdateOuterOutlinePen();
+
             TextDecorations = new TextDecorationCollection();
         }
 
@@ -171,21 +195,39 @@ namespace BadEcho.Fenestra.Controls
         }
 
         /// <summary>
-        /// Gets or sets the <see cref="Brush"/> that specifies how the outline is painted.
+        /// Gets or sets the <see cref="Brush"/> that specifies how the inner outline is painted.
         /// </summary>
-        public Brush Stroke
+        public Brush InnerStroke
         {
-            get => (Brush) GetValue(StrokeProperty);
-            set => SetValue(StrokeProperty, value);
+            get => (Brush) GetValue(InnerStrokeProperty);
+            set => SetValue(InnerStrokeProperty, value);
         }
 
         /// <summary>
-        /// Gets or sets the width of the outline.
+        /// Gets or sets the width of the inner outline.
         /// </summary>
-        public double StrokeThickness
+        public double InnerStrokeThickness
         {
-            get => (double) GetValue(StrokeThicknessProperty);
-            set => SetValue(StrokeThicknessProperty, value);
+            get => (double) GetValue(InnerStrokeThicknessProperty);
+            set => SetValue(InnerStrokeThicknessProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the <see cref="Brush"/> that specifies how the outer outline is painted.
+        /// </summary>
+        public Brush OuterStroke
+        {
+            get => (Brush) GetValue(OuterStrokeProperty);
+            set => SetValue(OuterStrokeProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the width of the outer outline.
+        /// </summary>
+        public double OuterStrokeThickness
+        {
+            get => (double) GetValue(OuterStrokeThicknessProperty);
+            set => SetValue(OuterStrokeThicknessProperty, value);
         }
 
         /// <summary>
@@ -330,30 +372,39 @@ namespace BadEcho.Fenestra.Controls
         }
 
         /// <summary>
-        /// Gets the geometric control for the outlined text.
+        /// Gets the geometric control for the inner portion of the outlined text.
         /// </summary>
-        private Geometry TextGeometry
+        private Geometry InnerTextGeometry
         {
             get
             {
-                if (_textGeometry != null)
-                    return _textGeometry;
+                if (_innerTextGeometry != null)
+                    return _innerTextGeometry;
                 
-                _textGeometry = FormattedText.BuildGeometry(new Point(0, 0));
+                _innerTextGeometry = FormattedText.BuildGeometry(new Point(0, 0));
 
-                return _textGeometry;
+                return _innerTextGeometry;
             }
         }
 
-        /// <inheritdoc/>
-        protected override Size ArrangeOverride(Size finalSize)
+        /// <summary>
+        /// Gets the geometric control for the outer portion of the outlined text.
+        /// </summary>
+        private Geometry OuterTextGeometry
         {
-            FormattedText.MaxTextWidth = finalSize.Width;
-            FormattedText.MaxTextHeight = Math.Max(double.Epsilon, finalSize.Height);
+            get
+            {
+                if (_outerTextGeometry != null)
+                    return _outerTextGeometry;
 
-            _textGeometry = null;
+                Geometry widenedPathGeometry
+                    = InnerTextGeometry.GetWidenedPathGeometry(_innerOutlinePen);
 
-            return base.ArrangeOverride(finalSize);
+                _outerTextGeometry
+                    = Geometry.Combine(InnerTextGeometry, widenedPathGeometry, GeometryCombineMode.Union, null);
+
+                return _outerTextGeometry;
+            }
         }
 
         /// <inheritdoc/>
@@ -367,6 +418,18 @@ namespace BadEcho.Fenestra.Controls
             FormattedText.MaxTextHeight = Math.Max(double.Epsilon, availableSize.Height);
 
             return new Size(Math.Ceiling(FormattedText.Width), Math.Ceiling(FormattedText.Height));
+        }
+
+        /// <inheritdoc/>
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            FormattedText.MaxTextWidth = finalSize.Width;
+            FormattedText.MaxTextHeight = Math.Max(double.Epsilon, finalSize.Height);
+
+            _innerTextGeometry = null;
+            _outerTextGeometry = null;
+
+            return base.ArrangeOverride(finalSize);
         }
 
         /// <inheritdoc/>
@@ -384,8 +447,9 @@ namespace BadEcho.Fenestra.Controls
         {
             Require.NotNull(drawingContext, nameof(drawingContext));
 
-            drawingContext.DrawGeometry(null, _textPen, TextGeometry);
-            drawingContext.DrawGeometry(Fill, null, TextGeometry);
+            drawingContext.DrawGeometry(null, _innerOutlinePen, InnerTextGeometry);
+            drawingContext.DrawGeometry(null, _outerOutlinePen, OuterTextGeometry);
+            drawingContext.DrawGeometry(Fill, null, InnerTextGeometry);
             
             base.OnRender(drawingContext);
         }
@@ -430,11 +494,18 @@ namespace BadEcho.Fenestra.Controls
             textElement.ResetText(false);
         }
 
-        private static void OnStrokePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnInnerStrokePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             var textElement = (OutlinedTextElement) sender;
 
-            textElement.UpdateTextPen();
+            textElement.UpdateInnerOutlinePen();
+        }
+        
+        private static void OnOuterStrokePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            var textElement = (OutlinedTextElement) sender;
+
+            textElement.UpdateOuterOutlinePen();
         }
 
         private static object OnCoerceTextFormatString(DependencyObject d, object baseValue)
@@ -449,7 +520,8 @@ namespace BadEcho.Fenestra.Controls
             else
                 _formattedText = null;
 
-            _textGeometry = null;
+            _innerTextGeometry = null;
+            _outerTextGeometry = null;
 
             InvalidateMeasure();
             InvalidateVisual();
@@ -469,16 +541,30 @@ namespace BadEcho.Fenestra.Controls
             FormattedText.SetTextDecorations(TextDecorations);
         }
 
-        [MemberNotNull(nameof(_textPen))]
-        private void UpdateTextPen()
+        [MemberNotNull(nameof(_innerOutlinePen))]
+        private void UpdateInnerOutlinePen()
         {
-            _textPen = new Pen(Stroke, StrokeThickness)
-            {
-                DashCap = PenLineCap.Round,
-                EndLineCap = PenLineCap.Round,
-                LineJoin = PenLineJoin.Round,
-                StartLineCap = PenLineCap.Round
-            };
+            _innerOutlinePen = new Pen(InnerStroke, InnerStrokeThickness)
+                               {
+                                   DashCap = PenLineCap.Round,
+                                   EndLineCap = PenLineCap.Round,
+                                   LineJoin = PenLineJoin.Round,
+                                   StartLineCap = PenLineCap.Round
+                               };
+
+            InvalidateVisual();
+        }
+
+        [MemberNotNull(nameof(_outerOutlinePen))]
+        private void UpdateOuterOutlinePen()
+        {
+            _outerOutlinePen = new Pen(OuterStroke, OuterStrokeThickness)
+                               {
+                                   DashCap = PenLineCap.Round,
+                                   EndLineCap = PenLineCap.Round,
+                                   LineJoin = PenLineJoin.Round,
+                                   StartLineCap = PenLineCap.Round
+                               };
 
             InvalidateVisual();
         }

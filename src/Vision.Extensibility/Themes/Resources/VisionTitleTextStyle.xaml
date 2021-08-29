@@ -17,8 +17,8 @@
 
     <Style x:Key="VisionTitleTextStyle" TargetType="{x:Type fenestra:OutlinedTextElement}">
         <Setter Property="Fill" Value="{DynamicResource {x:Static t:Brushes.TextForegroundKey}}"/>
-        <Setter Property="Stroke" Value="{DynamicResource {x:Static t:Brushes.OutlinedTextStrokeKey}}"/>
-        <Setter Property="StrokeThickness" Value="4"/>
+        <Setter Property="InnerStroke" Value="{DynamicResource {x:Static t:Brushes.OutlinedTextStrokeKey}}"/>
+        <Setter Property="InnerStrokeThickness" Value="4"/>
         <Setter Property="FontFamily" Value="{DynamicResource {x:Static t:Fonts.VisionTitleFontFamilyKey}}"/>
         <Setter Property="FontSize" Value="36"/>
     </Style>

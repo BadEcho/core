@@ -23,7 +23,7 @@
     <d:DesignProperties.DataContext>
         <vm:WholeStatisticViewModel Name="Total Damage Done"
                                     IsCritical="False"
-                                    Value="293338"
+                                    Value="23393338"
                                     Format="{}{0} butt loads"
                                     />
     </d:DesignProperties.DataContext>

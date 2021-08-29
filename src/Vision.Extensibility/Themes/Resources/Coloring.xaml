@@ -17,12 +17,13 @@
 
     <Color x:Key="{x:Static t:Colors.TextColorKey}">GhostWhite</Color>
     <Color x:Key="{x:Static t:Colors.CriticalTextColorKey}">#FFFF0046</Color>
-    <Color x:Key="{x:Static t:Colors.OutlineColorKey}">#CC000000</Color>
+    <Color x:Key="{x:Static t:Colors.OutlineColorKey}">Black</Color>
+    <Color x:Key="{x:Static t:Colors.FadingOutlineColorKey}">#44000000</Color>
 
     <SolidColorBrush f:Freeze="True" 
                      x:Key="{x:Static t:Brushes.TextForegroundKey}" 
                      Color="{StaticResource {x:Static t:Colors.TextColorKey}}"
-                     />
+    />
     <SolidColorBrush f:Freeze="True" 
                      x:Key="{x:Static t:Brushes.CriticalTextForegroundKey}" 
                      Color="{StaticResource {x:Static t:Colors.CriticalTextColorKey}}"
@@ -31,6 +32,11 @@
     <SolidColorBrush f:Freeze="True"
                      x:Key="{x:Static t:Brushes.OutlinedTextStrokeKey}"
                      Color="{StaticResource {x:Static t:Colors.OutlineColorKey}}"
+                     />
+
+    <SolidColorBrush f:Freeze="True"
+                     x:Key="{x:Static t:Brushes.FadedOutlinedTextStrokeKey}"
+                     Color="{StaticResource {x:Static t:Colors.FadingOutlineColorKey}}"
                      />
 
 </ResourceDictionary>

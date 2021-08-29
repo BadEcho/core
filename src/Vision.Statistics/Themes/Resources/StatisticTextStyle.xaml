@@ -62,8 +62,10 @@
     <Style x:Key="StatisticTextStyle" TargetType="{x:Type fenestra:OutlinedTextElement}">
         <Setter Property="TextFormatString" Value="{Binding Format}"/>
         <Setter Property="Fill" Value="{DynamicResource {x:Static t:Brushes.TextForegroundKey}}"/>
-        <Setter Property="Stroke" Value="{DynamicResource {x:Static t:Brushes.OutlinedTextStrokeKey}}"/>
-        <Setter Property="StrokeThickness" Value="4"/>
+        <Setter Property="InnerStroke" Value="{DynamicResource {x:Static t:Brushes.OutlinedTextStrokeKey}}"/>
+        <Setter Property="InnerStrokeThickness" Value="3"/>
+        <Setter Property="OuterStroke" Value="{DynamicResource {x:Static t:Brushes.FadedOutlinedTextStrokeKey}}"/>
+        <Setter Property="OuterStrokeThickness" Value="2"/>
         <Setter Property="FontFamily" Value="{DynamicResource {x:Static t:Fonts.FontFamilyKey}}"/>
         <Setter Property="Margin" Value="15,0,0,0"/>
         <Setter Property="FontSize" Value="21.3"/>
