@@ -12,8 +12,8 @@
 
 // Gets the player's health structure.
 // Polls player health exclusively. No filtering required.
-// [rcx+20]: Current HP.
-// [rcx+18]: Maximum HP.
+// [rcx+20]: Current health.
+// [rcx+18]: Maximum health.
 // UNIQUE AOB: 3B 48 6B 41 20 64
 define(omniPlayerHealthHook,"nioh2.exe"+C700E0)
 
@@ -35,6 +35,32 @@ omniPlayerHealthHook:
 getPlayerHealthReturn:
 
 
+// Gets the player's stamina (Ki) structure.
+// Polls player stamina exclusively. No filtering required.
+// Unlike health, stamina is stored as a float.
+// [rcx+8]: Current stamina.
+// [rcx+C]: Maximum stamina.
+// UNIQUE AOB: F3 0F 58 41 08 C3 CC CC CC CC CC 48
+define(omniPlayerStaminaHook,"nioh2.exe"+9F0125)
+
+assert(omniPlayerStaminaHook,F3 0F 58 41 08)
+alloc(getPlayerStamina,$1000,omniPlayerStaminaHook)
+alloc(playerStamina,8)
+
+registersymbol(playerStamina)
+registersymbol(omniPlayerStaminaHook)
+
+getPlayerStamina:
+    mov [playerStamina],rcx
+getPlayerStaminaOriginalCode:
+    addss xmm0,[rcx+08]
+    jmp getPlayerStaminaReturn
+
+omniPlayerStaminaHook:
+    jmp getPlayerStamina
+getPlayerStaminaReturn:
+
+
 [DISABLE]
 
 // Cleanup of omniPlayerHealthHook
@@ -46,3 +72,14 @@ unregistersymbol(playerHealth)
 
 dealloc(playerHealth)
 dealloc(getPlayerHealth)
+
+
+// Cleanup of omniPlayerStaminaHook
+omniPlayerStaminaHook:
+    db F3 0F 58 41 08
+
+unregistersymbol(omniPlayerStaminaHook)
+unregistersymbol(playerStamina)
+
+dealloc(playerStamina)
+dealloc(getPlayerStamina)
