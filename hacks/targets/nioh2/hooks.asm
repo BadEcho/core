@@ -61,6 +61,33 @@ omniPlayerStaminaHook:
 getPlayerStaminaReturn:
 
 
+// Initiates the Apocalypse system.
+// This is Nioh 2's damage application code.
+// [rbx+10]: Working health.
+// edi: Damage amount.
+// rbx: Target health structure.
+// UNIQUE AOB: 8B 43 10 2B C7
+define(omnifyApocalypseHook,"nioh2.exe"+9C4E10)
+
+assert(omnifyApocalypseHook,8B 43 10 2B C7)
+alloc(initiateApocalypse,$1000,omnifyApocalypseHook)
+
+registersymbol(omnifyApocalypseHook)
+
+initiateApocalypse:
+    pushf
+
+initiateApocalypseOriginalCode:
+    popf
+    mov eax,[rbx+10]
+    sub eax,edi
+    jmp initiateApocalypseReturn
+
+omnifyApocalypseHook:
+    jmp initiateApocalypse
+initiateApocalypseReturn:
+
+
 [DISABLE]
 
 // Cleanup of omniPlayerHealthHook
@@ -83,3 +110,12 @@ unregistersymbol(playerStamina)
 
 dealloc(playerStamina)
 dealloc(getPlayerStamina)
+
+
+// Cleanup of omnifyApocalypseHook
+omnifyApocalypseHook:
+    db 8B 43 10 2B C7
+
+unregistersymbol(omnifyApocalypseHook)
+
+dealloc(initiateApocalypse)
