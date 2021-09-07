@@ -61,6 +61,31 @@ omniPlayerStaminaHook:
 getPlayerStaminaReturn:
 
 
+// Gets the player's location structure.
+// Polls player coordinates exclusively. No filtering required.
+// [r15+F0-F8]: Player's coordinates. Y-coordinate is vertical.
+// UNIQUE AOB: D8 00 00 00 F3 41 0F 10 97 F0 00 00 00
+define(omniPlayerLocationHook,"nioh2.exe"+C3B128)
+
+assert(omniPlayerLocationHook,F3 41 0F 10 97 F0 00 00 00)
+alloc(getPlayerLocation,$1000,omniPlayerLocationHook)
+alloc(playerLocation,8)
+
+registersymbol(playerLocation)
+registersymbol(omniPlayerLocationHook)
+
+getPlayerLocation:
+    mov [playerLocation],r15
+getPlayerLocationOriginalCode:
+    movss xmm2,[r15+000000F0]
+    jmp getPlayerLocationReturn
+
+omniPlayerLocationHook:
+    jmp getPlayerLocation
+    nop 4
+getPlayerLocationReturn:
+
+
 // Initiates the Apocalypse system.
 // This is Nioh 2's damage application code.
 // [rbx+10]: Working health.
@@ -110,6 +135,17 @@ unregistersymbol(playerStamina)
 
 dealloc(playerStamina)
 dealloc(getPlayerStamina)
+
+
+// Cleanup of omniPlayerLocationHook
+omniPlayerLocationHook:
+    db F3 41 0F 10 97 F0 00 00 00
+
+unregistersymbol(omniPlayerLocationHook)
+unregistersymbol(playerLocation)
+
+dealloc(playerLocation)
+dealloc(getPlayerLocation)
 
 
 // Cleanup of omnifyApocalypseHook
