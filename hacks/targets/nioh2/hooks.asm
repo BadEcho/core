@@ -86,7 +86,8 @@ omniPlayerLocationHook:
 getPlayerLocationReturn:
 
 
-// Gets the player's last location structure.
+// Gets the player's last location structure and ensures Omnified changes to the player's vertical position
+// is properly reflected.
 // [rsp+118] | {rsp+12A}: Points to root structure of NPC the coordinates belong to.
 // [rdi+C8]: Player's last known y-coordinate on solid ground.
 // UNIQUE AOB: 89 87 C8 00 00 00 8B 47
@@ -106,18 +107,24 @@ getPlayerLastLocation:
     cmp [rax],0
     pop rax
     je getPlayerLastLocationOriginalCode
-    push rax
     push rbx
-    mov rax,playerHealth
-    mov rbx,[rax]
-    mov rax,[rsp+12A]
+    push rcx
+    mov rbx,playerHealth
+    mov rcx,[rbx]
+    mov rbx,[rsp+12A]
     // The base of the health structure points to the character's root structure.
-    cmp [rbx],rax
+    cmp [rcx],rbx
     jne getPlayerLastLocationCleanup
     mov [playerLastLocation],rdi    
+    mov rbx,teleported
+    cmp [rbx],1
+    jne getPlayerLastLocationCleanup
+    mov [rbx],0
+    mov rbx,teleportedY
+    mov rax,[rbx]
 getPlayerLastLocationCleanup:
+    pop rcx
     pop rbx
-    pop rax
 getPlayerLastLocationOriginalCode:
     popf
     mov [rdi+000000C8],eax
