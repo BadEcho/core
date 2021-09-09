@@ -101,7 +101,81 @@ registersymbol(omnifyApocalypseHook)
 
 initiateApocalypse:
     pushf
-
+    // Ensure the required player data structures are initialized.
+    push rax
+    mov rax,playerHealth
+    cmp [rax],0
+    pop rax
+    je initiateApocalypseOriginalCode
+    push rax
+    mov rax,playerLocation
+    cmp [rax],0
+    pop rax
+    je initiateApocalypseOriginalCode
+    // Backing up a SSE register to hold converted floating point values for the health
+    // and damage amount.
+    sub rsp,10
+    movdqu [rsp],xmm0
+    // Backing up the outputs of the Apocalypse system.
+    push rax
+    push rbx
+    // Backing up a register to hold the address pointed to by rbx, as we need to write one of our outputs to it
+    // when all is said and done.
+    push rcx    
+    mov rcx,rbx    
+    // Both Player and Enemy Apocalypse functions share the same first two parameters. 
+    // Let's load them first before figuring out which subsystem to execute.
+    // We'll need to convert the working health and damage amount values from being integer types to floating point types,
+    // as this is the data type expected by the Apocalypse system.    
+    cvtsi2ss xmm0,edi    
+    // Load the damage amount parameter.
+    sub rsp,8
+    movd [rsp],xmm0
+    mov rax,[rcx+10]
+    cvtsi2ss xmm0,rax
+    // Load the working health amount parameter.
+    sub rsp,8
+    movd [rsp],xmm0    
+    // Now, we need to determine whether the player or an NPC is being damaged, and then from there execute the appropriate
+    // Apocalypse subsystem.
+    mov rbx,playerHealth
+    // The target health structure being employed by this code is "misaligned" by 10 bytes.
+    mov rax,[rbx]
+    add rax,0x10
+    cmp rax,rcx
+    je initiatePlayerApocalypse
+    jmp initiateEnemyApocalypse    
+initiatePlayerApocalypse:        
+    // Convert the maximum health for the player to the expected floating point form.
+    // The maximum health will be found at [rcx+8] instead of [rcx+18] due to the previously mentioned "misalignment".
+    mov rax,[rcx+8]
+    cvtsi2ss xmm0,rax
+    // Load the maximum health parameter.
+    sub rsp,8
+    movd [rsp],xmm0
+    // Align the player's location coordinate structure so it begins at our x-coordinate and pass that as the final parameter.
+    mov rax,playerLocation
+    mov rbx,[rax]
+    lea rax,[rbx+F0]
+    push rax
+    call executePlayerApocalypse
+    jmp initiateApocalypseUpdateDamage
+initiateEnemyApocalypse:
+    call executeEnemyApocalypse
+initiateApocalypseUpdateDamage:
+    // To make use of the updated damage and working health amounts returned by the Apocalypse system,
+    // we'll need to convert them both back to integer form.
+    movd xmm0,eax
+    cvtss2si edi,xmm0
+    movd xmm0,ebx
+    cvtss2si ebx,xmm0
+    mov [rcx+10],ebx
+initiateApocalypseCleanup:
+    pop rcx
+    pop rbx
+    pop rax
+    movdqu xmm0,[rsp]
+    add rsp,10
 initiateApocalypseOriginalCode:
     popf
     mov eax,[rbx+10]
