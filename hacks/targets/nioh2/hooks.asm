@@ -14,8 +14,8 @@
 // Polls player health exclusively. No filtering required.
 // [rcx+20]: Current health.
 // [rcx+18]: Maximum health.
-// UNIQUE AOB: 3B 48 6B 41 20 64
-define(omniPlayerHealthHook,"nioh2.exe"+C700E0)
+// UNIQUE AOB: 36 48 6B 41 20 64
+define(omniPlayerHealthHook,"nioh2.exe"+9B7A60)
 
 assert(omniPlayerHealthHook,48 6B 41 20 64)
 alloc(getPlayerHealth,$1000,omniPlayerHealthHook)
@@ -41,7 +41,7 @@ getPlayerHealthReturn:
 // [rcx+8]: Current stamina.
 // [rcx+C]: Maximum stamina.
 // UNIQUE AOB: F3 0F 58 41 08 C3 CC CC CC CC CC 48
-define(omniPlayerStaminaHook,"nioh2.exe"+9F0125)
+define(omniPlayerStaminaHook,"nioh2.exe"+7C2E95)
 
 assert(omniPlayerStaminaHook,F3 0F 58 41 08)
 alloc(getPlayerStamina,$1000,omniPlayerStaminaHook)
@@ -64,10 +64,11 @@ getPlayerStaminaReturn:
 // Gets the player's location structure.
 // Polls player coordinates exclusively. No filtering required.
 // [r15+F0-F8]: Player's coordinates. Y-coordinate is vertical.
-// UNIQUE AOB: D8 00 00 00 F3 41 0F 10 97 F0 00 00 00
-define(omniPlayerLocationHook,"nioh2.exe"+C3B128)
+// UNIQUE AOB: 00 00 00 F3 41 0F 10 97 F0 00 00 00  
+// Correct instruction will be the one of the two returned that is polling single addressly constantly.
+define(omniPlayerLocationHook,"nioh2.exe"+981F67)
 
-assert(omniPlayerLocationHook,F3 41 0F 10 97 F0 00 00 00)
+assert(omniPlayerLocationHook,41 0F 10 97 F0 00 00 00)
 alloc(getPlayerLocation,$1000,omniPlayerLocationHook)
 alloc(playerLocation,8)
 
@@ -82,16 +83,17 @@ getPlayerLocationOriginalCode:
 
 omniPlayerLocationHook:
     jmp getPlayerLocation
-    nop 4
+    nop 3
 getPlayerLocationReturn:
 
 
 // Gets the player's last location structure and ensures Omnified changes to the player's vertical position
 // is properly reflected.
-// [rsp+118] | {rsp+12A}: Points to root structure of NPC the coordinates belong to.
+// [rsp+120] | {rsp+132}: Points to root structure of NPC the coordinates belong to.
 // [rdi+C8]: Player's last known y-coordinate on solid ground.
 // UNIQUE AOB: 89 87 C8 00 00 00 8B 47
-define(omniPlayerLastLocationHook,"nioh2.exe"+A8530E)
+// Correct instruction will be single result found in nioh2.exe (not nvd3dumx.dll).
+define(omniPlayerLastLocationHook,"nioh2.exe"+8549BB)
 
 assert(omniPlayerLastLocationHook,89 87 C8 00 00 00)
 alloc(getPlayerLastLocation,$1000,omniPlayerLastLocationHook)
@@ -111,7 +113,7 @@ getPlayerLastLocation:
     push rcx
     mov rbx,playerHealth
     mov rcx,[rbx]
-    mov rbx,[rsp+12A]
+    mov rbx,[rsp+132]
     // The base of the health structure points to the character's root structure.
     cmp [rcx],rbx
     jne getPlayerLastLocationCleanup
@@ -142,7 +144,8 @@ getPlayerLastLocationReturn:
 // edi: Damage amount.
 // rbx: Target health structure.
 // UNIQUE AOB: 8B 43 10 2B C7
-define(omnifyApocalypseHook,"nioh2.exe"+9C4E10)
+// Correct instruction will be single result found in nioh2.exe (not the other two DLL's).
+define(omnifyApocalypseHook,"nioh2.exe"+79C590)
 
 assert(omnifyApocalypseHook,8B 43 10 2B C7)
 alloc(initiateApocalypse,$1000,omnifyApocalypseHook)
@@ -269,7 +272,7 @@ dealloc(getPlayerStamina)
 
 // Cleanup of omniPlayerLocationHook
 omniPlayerLocationHook:
-    db F3 41 0F 10 97 F0 00 00 00
+    db 41 0F 10 97 F0 00 00 00
 
 unregistersymbol(omniPlayerLocationHook)
 unregistersymbol(playerLocation)
