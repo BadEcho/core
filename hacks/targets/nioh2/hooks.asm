@@ -248,7 +248,7 @@ negativeVerticalDisplacementEnabled:
     dd 0
 
 teleportitisDisplacementX:
-    dd 140.0
+    dd (float)140.0
 
 [DISABLE]
 
