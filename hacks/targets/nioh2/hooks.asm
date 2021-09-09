@@ -237,6 +237,12 @@ omnifyApocalypseHook:
 initiateApocalypseReturn:
 
 
+negativeVerticalDisplacementEnabled:
+    dd 0
+
+teleportitisDisplacementX:
+    dd 140.0
+
 [DISABLE]
 
 // Cleanup of omniPlayerHealthHook
