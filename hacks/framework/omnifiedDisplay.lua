@@ -30,10 +30,14 @@ function activateLoggers()
 	loggersTimer.OnTimer = function()
 
 
-		local playerHealth = readFloat(playerHealthAddress)
-		playerHealth = FloorIt(playerHealth)
-		local playerMaxHealth = readFloat(playerMaxHealthAddress)        
-		playerMaxHealth = FloorIt(playerMaxHealth)
+		local playerHealth = not healthIsInteger
+								and toInt(readFloat(playerHealthAddress))
+								or readInteger(playerHealthAddress)
+
+		local playerMaxHealth = not healthIsInteger
+								and toInt(readFloat(playerMaxHealthAddress))
+								or readInteger(playerMaxHealthAddress)      
+		
 		local enemyHealth = readFloat("lastEnemyHealthValue")
 
 		enemyHealth = FloorIt(enemyHealth)
