@@ -154,6 +154,10 @@ registersymbol(omnifyApocalypseHook)
 
 initiateApocalypse:
     pushf
+    // An empty r12 register indicates the damage originates from falling.
+    // We don't want this to trigger Apocalypse, as it may have been Apocalypse that caused the falling...
+    cmp r12,0
+    je initiateApocalypseOriginalCode
     // Ensure the required player data structures are initialized.
     push rax
     mov rax,playerHealth
