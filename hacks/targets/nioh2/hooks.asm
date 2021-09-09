@@ -86,6 +86,49 @@ omniPlayerLocationHook:
 getPlayerLocationReturn:
 
 
+// Gets the player's last location structure.
+// [rsp+118] | {rsp+12A}: Points to root structure of NPC the coordinates belong to.
+// [rdi+C8]: Player's last known y-coordinate on solid ground.
+// UNIQUE AOB: 89 87 C8 00 00 00 8B 47
+define(omniPlayerLastLocationHook,"nioh2.exe"+A8530E)
+
+assert(omniPlayerLastLocationHook,89 87 C8 00 00 00)
+alloc(getPlayerLastLocation,$1000,omniPlayerLastLocationHook)
+alloc(playerLastLocation,8)
+
+registersymbol(playerLastLocation)
+registersymbol(omniPlayerLastLocationHook)
+
+getPlayerLastLocation:
+    pushf
+    push rax
+    mov rax,playerHealth
+    cmp [rax],0
+    pop rax
+    je getPlayerLastLocationOriginalCode
+    push rax
+    push rbx
+    mov rax,playerHealth
+    mov rbx,[rax]
+    mov rax,[rsp+12A]
+    // The base of the health structure points to the character's root structure.
+    cmp [rbx],rax
+    jne getPlayerLastLocationCleanup
+    mov [playerLastLocation],rdi    
+getPlayerLastLocationCleanup:
+    pop rbx
+    pop rax
+getPlayerLastLocationOriginalCode:
+    popf
+    mov [rdi+000000C8],eax
+    jmp getPlayerLastLocationReturn
+
+omniPlayerLastLocationHook:
+    jmp getPlayerLastLocation
+    nop 
+getPlayerLastLocationReturn:
+
+
 // Initiates the Apocalypse system.
 // This is Nioh 2's damage application code.
 // [rbx+10]: Working health.
@@ -220,6 +263,17 @@ unregistersymbol(playerLocation)
 
 dealloc(playerLocation)
 dealloc(getPlayerLocation)
+
+
+// Cleanup of omniPlayerLastLocationHook
+omniPlayerLastLocationHook:
+    db 89 87 C8 00 00 00
+
+unregistersymbol(omniPlayerLastLocationHook)
+unregistersymbol(playerLastLocation)
+
+dealloc(playerLastLocation)
+dealloc(getPlayerLastLocation)
 
 
 // Cleanup of omnifyApocalypseHook
