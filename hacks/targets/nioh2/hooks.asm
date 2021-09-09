@@ -104,6 +104,8 @@ registersymbol(omniPlayerLastLocationHook)
 
 getPlayerLastLocation:
     pushf
+    // The player health structure must be initialized in order for us to identify the player's last location 
+    // structure.
     push rax
     mov rax,playerHealth
     cmp [rax],0
@@ -118,12 +120,6 @@ getPlayerLastLocation:
     cmp [rcx],rbx
     jne getPlayerLastLocationCleanup
     mov [playerLastLocation],rdi    
-    mov rbx,teleported
-    cmp [rbx],1
-    jne getPlayerLastLocationCleanup
-    mov [rbx],0
-    mov rbx,teleportedY
-    mov rax,[rbx]
 getPlayerLastLocationCleanup:
     pop rcx
     pop rbx
@@ -136,6 +132,89 @@ omniPlayerLastLocationHook:
     jmp getPlayerLastLocation
     nop 
 getPlayerLastLocationReturn:
+
+
+// Processes Omnified events during execution of the location update code for the player.
+define(omnifyLocationUpdateHook,"nioh2.exe"+801863)
+
+assert(omnifyLocationUpdateHook,66 0F 7F 81 F0 00 00 00)
+alloc(updateLocation,$1000,omnifyLocationUpdateHook)
+alloc(teleportLocation,16)
+alloc(framesToSkip,8)
+
+registersymbol(omnifyLocationUpdateHook)
+
+updateLocation:
+    pushf
+    // Since we need to update it upon a teleport occurring, the last location structure player is required for further
+    // processing.
+    push rax
+    mov rax,playerLastLocation
+    cmp [rax],0
+    pop rax
+    je updateLocationOriginalCode
+    // Only events pertaining to the player are processed here.
+    push rax
+    mov rax,playerLocation
+    cmp [rax],rcx
+    pop rax
+    jne updateLocationOriginalCode
+    // Upon a teleport, we engage in a movement frame skip sequence, this is so the desired teleport coordinates actually get
+    // committed to the player's location (and stay there); otherwise, an army of validation-related code will revert the coordinates
+    // depending on the situation.
+    cmp [framesToSkip],0
+    jg skipMovementFrame
+    push rax
+    mov rax,teleported
+    cmp [rax],1
+    pop rax
+    jne updateLocationOriginalCode
+    push rax
+    push rbx
+    push rcx
+    mov rax,teleported
+    mov [rax],0    
+    mov [framesToSkip],#20
+    mov rbx,playerLastLocation
+    mov rax,[rbx]
+    // Need to set our last location (vertically) so that proper fall damage will occur if we just got Tom Petty'd.
+    mov rcx,teleportedY
+    mov rbx,[rcx]
+    mov [rax+C8],rbx
+    pop rcx
+    pop rbx
+    pop rax    
+skipMovementFrame:    
+    dec [framesToSkip]        
+    push rax
+    push rbx        
+    push rcx
+    // Simply ignoring the updated coordinates in xmm0 is not enough, as other validation code might've already reverted our
+    // source-of-truth coordinates. So, we load up the teleport coordinates set during the Apocalypse pass.
+    mov rcx,teleportLocation
+    movdqu [rcx],xmm0
+    mov rax,teleportedX
+    mov rbx,[rax]
+    mov [rcx],rbx
+    mov rax,teleportedY
+    mov rbx,[rax]
+    mov [rcx+4],rbx
+    mov rax,teleportedZ
+    mov rbx,[rax]
+    mov [rcx+8],rbx    
+    movdqu xmm0,[rcx]
+    pop rcx
+    pop rbx
+    pop rax    
+updateLocationOriginalCode:
+    popf
+    movdqa [rcx+000000F0],xmm0
+    jmp updateLocationReturn
+
+omnifyLocationUpdateHook:
+    jmp updateLocation
+    nop 3
+updateLocationReturn:
 
 
 // Initiates the Apocalypse system.
@@ -248,7 +327,7 @@ negativeVerticalDisplacementEnabled:
     dd 0
 
 teleportitisDisplacementX:
-    dd (float)140.0
+    dd (float)180.0
 
 [DISABLE]
 
@@ -294,6 +373,16 @@ unregistersymbol(playerLastLocation)
 
 dealloc(playerLastLocation)
 dealloc(getPlayerLastLocation)
+
+
+// Cleanup of omnifyLocationUpdateHook
+omnifyLocationUpdateHook:
+    db 66 0F 7F 81 F0 00 00 00
+
+unregistersymbol(omnifyLocationUpdateHook)
+dealloc(framesToSkip)
+dealloc(teleportLocation)
+dealloc(updateLocation)
 
 
 // Cleanup of omnifyApocalypseHook
