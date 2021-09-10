@@ -329,6 +329,98 @@ negativeVerticalDisplacementEnabled:
 teleportitisDisplacementX:
     dd (float)180.0
 
+
+// Initiates the Predator system.
+// [rdx+0-8]: Movement offsets for x, y, and z-coordinates respectively.
+// [rbx]: Target location structure
+// UNIQUE AOB: F3 0F 58 02 F3 0F 11 81 80 01 00 00
+define(omnifyPredatorHook,"nioh2.exe"+852588)
+
+assert(omnifyPredatorHook,F3 0F 58 02 F3 0F 11 81 80 01 00 00)
+alloc(initiatePredator,$1000,omnifyPredatorHook)
+alloc(identityValue,8)
+
+registersymbol(identityValue)
+registersymbol(omnifyPredatorHook)
+
+initiatePredator:
+    pushf
+    push rax
+    mov rax,playerLocation
+    cmp [rax],0
+    pop rax
+    je initiatePredatorOriginalCode
+    // Make sure the player isn't being treated as an enemy NPC!
+    push rax
+    mov rax,playerLocation
+    cmp [rax],rbx
+    pop rax
+    je applyPlayerSpeed
+    // Backing up the registers used to hold Predator system output, as well as an SSE to hold some of the parameters 
+    // we'll be passing.
+    sub rsp,10
+    movdqu [rsp],xmm0
+    push rax
+    push rbx
+    push rcx
+    // The first parameter is our player's coordinates.
+    mov rax,playerLocation
+    mov rcx,[rax]
+    push [rcx+F0]
+    push [rcx+F8]
+    // The next parameter is the target NPC's coordinates.
+    push [rbx+F0]
+    push [rbx+F8]
+    // The third parameter is the NPC's dimensional scales. Jury is still out whether this game has True Scaling, so we'll
+    // just be passing a good ol' identity matrix for now.
+    movss xmm0,[identityValue]
+    shufps xmm0,xmm0,0
+    sub rsp,10
+    movdqu [rsp],xmm0
+    // The fourth parameter is the NPC's movement offsets. Wow this has been easy!
+    push [rdx]
+    push [rdx+8]
+    call executePredator
+    // Now we just take the updated movement offsets and dump them back into [rdx].
+    mov [rdx],eax
+    mov [rdx+4],ebx
+    mov [rdx+8],ecx
+    pop rcx
+    pop rbx
+    pop rax
+    movdqu xmm0,[rsp]
+    add rsp,10
+    jmp initiatePredatorOriginalCode
+applyPlayerSpeed:
+
+initiatePredatorOriginalCode:
+    popf
+    addss xmm0,[rdx]
+    movss [rcx+00000180],xmm0
+    jmp initiatePredatorReturn
+
+omnifyPredatorHook:
+    jmp initiatePredator
+    nop 7
+initiatePredatorReturn:
+
+
+identityValue:
+    dd (float)1.0
+
+aggroDistance:
+    dd (float)1000.0
+
+threatDistance:
+    dd (float)200.0
+
+positiveLimit:
+    dd (float)1000.0
+
+negativeLimit:
+    dd (float)-1000.0
+
+
 [DISABLE]
 
 // Cleanup of omniPlayerHealthHook
@@ -392,3 +484,14 @@ omnifyApocalypseHook:
 unregistersymbol(omnifyApocalypseHook)
 
 dealloc(initiateApocalypse)
+
+
+// Cleanup of omnifyPredatorHook
+omnifyPredatorHook:
+    db F3 0F 58 02 F3 0F 11 81 80 01 00 00
+
+unregistersymbol(omnifyPredatorHook)
+unregistersymbol(identityValue)
+
+dealloc(identityValue)
+dealloc(initiatePredator)
