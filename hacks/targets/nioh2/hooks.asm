@@ -63,12 +63,12 @@ getPlayerStaminaReturn:
 
 // Gets the player's location structure.
 // Polls player coordinates exclusively. No filtering required.
-// [r15+F0-F8]: Player's coordinates. Y-coordinate is vertical.
-// UNIQUE AOB: 00 00 00 F3 41 0F 10 97 F0 00 00 00  
-// Correct instruction will be the one of the two returned that is polling single addressly constantly.
-define(omniPlayerLocationHook,"nioh2.exe"+981F67)
+// [rax+F0-F8]: Player's coordinates. Y-coordinate is vertical.
+// UNIQUE AOB: 0F 10 80 00 01 00 00 0F 11 81  
+// Correct instruction will be four instructions above the returned result.
+define(omniPlayerLocationHook,"nioh2.exe"+81C595)
 
-assert(omniPlayerLocationHook,41 0F 10 97 F0 00 00 00)
+assert(omniPlayerLocationHook,0F 10 80 F0 00 00 00)
 alloc(getPlayerLocation,$1000,omniPlayerLocationHook)
 alloc(playerLocation,8)
 
@@ -76,14 +76,14 @@ registersymbol(playerLocation)
 registersymbol(omniPlayerLocationHook)
 
 getPlayerLocation:
-    mov [playerLocation],r15
+    mov [playerLocation],rax
 getPlayerLocationOriginalCode:
-    movss xmm2,[r15+000000F0]
+    movups xmm0,[rax+000000F0]
     jmp getPlayerLocationReturn
 
 omniPlayerLocationHook:
     jmp getPlayerLocation
-    nop 3
+    nop 2
 getPlayerLocationReturn:
 
 
@@ -447,7 +447,7 @@ dealloc(getPlayerStamina)
 
 // Cleanup of omniPlayerLocationHook
 omniPlayerLocationHook:
-    db 41 0F 10 97 F0 00 00 00
+    db 0F 10 80 F0 00 00 00
 
 unregistersymbol(omniPlayerLocationHook)
 unregistersymbol(playerLocation)
