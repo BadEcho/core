@@ -421,6 +421,29 @@ negativeLimit:
     dd (float)-1000.0
 
 
+// Initiates the Abomnification system.
+// This only polls NPC coordinates.
+// UNIQUE AOB: F3 0F 10 B6 F0 00 00 00 F3
+define(omnifyAbomnificationHook,"nioh2.exe"+8A7618)
+
+assert(omnifyAbomnificationHook,F3 0F 10 B6 F0 00 00 00)
+alloc(initiateAbomnification,$1000,omnifyAbomnificationHook)
+
+registersymbol(omnifyAbomnificationHook)
+
+initiateAbomnification:
+    pushf
+initiateAbomnificationOriginalCode:
+    popf
+    movss xmm6,[rsi+000000F0]
+    jmp initiateAbomnificationReturn
+
+omnifyAbomnificationHook:
+    jmp initiateAbomnification
+    nop 3
+initiateAbomnificationReturn:
+
+
 [DISABLE]
 
 // Cleanup of omniPlayerHealthHook
@@ -495,3 +518,12 @@ unregistersymbol(identityValue)
 
 dealloc(identityValue)
 dealloc(initiatePredator)
+
+
+// Cleanup of omnifyAbomnificationHook
+omnifyAbomnificationHook:
+    db F3 0F 10 B6 F0 00 00 00
+
+unregistersymbol(omnifyAbomnificationHook)
+
+dealloc(initiateAbomnification)
