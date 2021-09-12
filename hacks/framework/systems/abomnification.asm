@@ -51,6 +51,7 @@ alloc(forceScrub,8)
 alloc(overrideMorphSteps,8)
 alloc(overrideMorphStepsValue,8)
 alloc(disableAbomnification,8)
+alloc(defaultScaleX,8)
 
 registersymbol(executeAbomnification)
 registersymbol(abominifyMorphStepsResultUpper)
@@ -71,12 +72,15 @@ registersymbol(forceScrub)
 registersymbol(overrideMorphSteps)
 registersymbol(overrideMorphStepsValue)
 registersymbol(disableAbomnification)
+registersymbol(defaultScaleX)
 
 executeAbomnification:
   push rdx  
   cmp [disableAbomnification],1
   jne continueAbomnification
-  mov eax,0x80000000
+  mov eax,[defaultScaleX]
+  mov ebx,[defaultScaleX]
+  mov ecx,[defaultScaleX]
   jmp executeAbomnificationCleanup
 continueAbomnification:
   mov rbx,[rsp+10]
@@ -379,15 +383,16 @@ overrideMorphStepsValue:
 disableAbomnification:
   dd 0
   
+defaultScaleX:
+  dd (float)1.0
+  
   
 // Retrieves the Abomnified scale multipliers for the specified
 // morph scale ID.
 // [rsp+10]: The identifying address.
 alloc(getAbomnifiedScales,$1000)
-alloc(defaultScaleX,8)
 
 registersymbol(getAbomnifiedScales)
-registersymbol(defaultScaleX)
 
 getAbomnifiedScales:
   push rdx
@@ -408,17 +413,14 @@ getAbomnifiedScales:
   je getAbomnifiedScalesDefault
   jmp getAbomnifiedScalesCleanup  
 getAbomnifiedScalesDefault:
-  mov eax,[defaultScaleX]
-  mov ebx,[defaultScaleX]
-  mov ecx,[defaultScaleX]
+  mov rdx,defaultScaleX
+  mov eax,[rdx]
+  mov ebx,[rdx]
+  mov ecx,[rdx]
 getAbomnifiedScalesCleanup:
   pop rdx
   ret 8
   
-  
-defaultScaleX:
-  dd (float)1.0
-
 
 [DISABLE]
 
@@ -449,7 +451,9 @@ unregistersymbol(forceScrub)
 unregistersymbol(overrideMorphSteps)
 unregistersymbol(overrideMorphStepsValue)
 unregistersymbol(disableAbomnification)
+unregistersymbol(defaultScaleX)
 
+dealloc(defaultScaleX)
 dealloc(stopMorphs)
 dealloc(speedMorph)
 dealloc(speedMorphDivisor)
@@ -477,7 +481,5 @@ dealloc(executeAbomnification)
 
 // Cleanup of getAbomnifiedScales
 unregistersymbol(getAbomnifiedScales)
-unregistersymbol(defaultScaleX)
 
-dealloc(defaultScaleX)
 dealloc(getAbomnifiedScales)
