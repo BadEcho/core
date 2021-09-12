@@ -423,6 +423,9 @@ negativeLimit:
 
 // Initiates the Abomnification system.
 // This only polls NPC coordinates.
+// [rsi+140]: Height
+// [rsi+144]: Depth
+// [rsi+148]: Width
 // UNIQUE AOB: F3 0F 10 B6 F0 00 00 00 F3
 define(omnifyAbomnificationHook,"nioh2.exe"+8A7618)
 
@@ -433,6 +436,21 @@ registersymbol(omnifyAbomnificationHook)
 
 initiateAbomnification:
     pushf
+    // Back up the registers used as outputs of the Abomnification system.
+    push rax
+    push rbx
+    push rcx
+    // Push the address to the creature's location structure as its identifying
+    // address to the stack.
+    push rsi
+    call executeAbomnification
+    // Load the Abomnified scales into the creature's location structure.
+    mov [rsi+148],eax
+    mov [rsi+140],ebx
+    mov [rsi+144],ecx
+    pop rcx
+    pop rbx
+    pop rax
 initiateAbomnificationOriginalCode:
     popf
     movss xmm6,[rsi+000000F0]
