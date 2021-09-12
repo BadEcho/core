@@ -147,7 +147,7 @@ changeToPausePhase:
   jmp initializeMorphSteps
 continuePhase:
   cmp [stopMorphs],1
-  je executeAbomnificationCleanup
+  je loadAbomnifiedScales
   dec [rdx]
   jmp executeMorphPhase
 initializeMorphSteps:
@@ -249,25 +249,19 @@ nonUniformMorphing:
   movss [rdx+2C],xmm0
 initializeMorphStepsExit:
   pop rax
-  movss xmm0,[rdx+4]
-  movd eax,xmm0
-  movss xmm0,[rdx+8]
-  movd ebx,xmm0
-  movss xmm0,[rdx+C]
-  movd ecx,xmm0
   movdqu xmm0,[rsp]
   add rsp,10
-  jmp executeAbomnificationCleanup
+  jmp loadAbomnifiedScales
 executeMorphPhase:
   // Current phase is located in [rdx+30].
   // 0 == Pause phase. Do nothing!
   // 1 == Step morph phase. Continue morphing!
   cmp [rdx+30],1
   je stepMorph
-  jmp executeAbomnificationCleanup
+  jmp loadAbomnifiedScales
 stepMorph:
   cmp [rdx+10],1  
-  je executeAbomnificationCleanup
+  je loadAbomnifiedScales
   sub rsp,10
   movdqu [rsp],xmm0
   sub rsp,10
@@ -289,26 +283,27 @@ generateMorphsForStep:
   mulss xmm0,xmm1
   addss xmm0,[rdx+14]
   movss [rdx+4],xmm0
-  movd eax,xmm0
   // Height Step
   movss xmm0,[rdx+28]
   subss xmm0,[rdx+18]
   mulss xmm0,xmm1
   addss xmm0,[rdx+18]
   movss [rdx+8],xmm0
-  movd ebx,xmm0
   // Depth Step
   movss xmm0,[rdx+2C]
   subss xmm0,[rdx+1C]
   mulss xmm0,xmm1
   addss xmm0,[rdx+1C]
   movss [rdx+C],xmm0
-  movd ecx,xmm0
   pop rsi
   movdqu xmm1,[rsp]
   add rsp,10
   movdqu xmm0,[rsp]
   add rsp,10
+loadAbomnifiedScales:
+  mov eax,[rdx+4]
+  mov ebx,[rdx+8]
+  mov ecx,[rdx+C]
 executeAbomnificationCleanup:  
   pop rdx
   ret 8  
