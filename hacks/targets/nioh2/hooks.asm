@@ -134,6 +134,44 @@ omniPlayerLastLocationHook:
 getPlayerLastLocationReturn:
 
 
+// Gets the structure containing the game's options.
+// [rax+3C]: Pause when window is inactive.
+// UNIQUE AOB: 8B 83 80 00 00 00 83 E8 03
+// Correct instruction is 13 instructions down from the returned result.
+define(omniGameOptionsHook,"nioh2.exe"+103B628)
+
+assert(omniGameOptionsHook,80 78 3C 00 74 6D)
+alloc(getGameOptions,$1000,omniGameOptionsHook)
+alloc(gameOptions,8)
+alloc(pauseWhenInactive,8)
+
+registersymbol(pauseWhenInactive)
+registersymbol(gameOptions)
+registersymbol(omniGameOptionsHook)
+
+getGameOptions:
+    pushf
+    mov [gameOptions],rax
+    push rbx
+    mov rbx,[pauseWhenInactive]
+    mov [rax+3C],rbx
+    pop rbx
+getGameOptionsOriginalCode:
+    popf
+    cmp byte ptr [rax+3C],00
+    je nioh2.exe+103B69B
+    jmp getGameOptionsReturn
+
+omniGameOptionsHook:
+    jmp getGameOptions
+    nop 
+getGameOptionsReturn:
+
+
+pauseWhenInactive:
+    dd 0
+
+
 // Processes Omnified events during execution of the location update code for the player.
 define(omnifyLocationUpdateHook,"nioh2.exe"+801863)
 
@@ -506,6 +544,19 @@ unregistersymbol(playerLastLocation)
 
 dealloc(playerLastLocation)
 dealloc(getPlayerLastLocation)
+
+
+// Cleanup of omniGameOptionsHook
+omniGameOptionsHook:
+    db 80 78 3C 00 74 6D
+
+unregistersymbol(omniGameOptionsHook)
+unregistersymbol(gameOptions)
+unregistersymbol(pauseWhenInactive)
+
+dealloc(pauseWhenInactive)
+dealloc(gameOptions)
+dealloc(getGameOptions)
 
 
 // Cleanup of omnifyLocationUpdateHook
