@@ -13,6 +13,27 @@
 require("omnified")
 require("statisticMessages")
 
+-- Reads the current death counter from a local death counter file.
+local function readDeathCounter()
+    local deathCounterFile = assert(io.open("deathCounter.txt", "r"))
+
+    local deathCounterFromFile = deathCounterFile:read("*n")
+
+    if deathCounterFromFile == nil then
+        deathCounterFromFile = 0
+    end
+
+    deathCounterFile:close()
+
+    return deathCounterFromFile
+end
+
+local function writeDeathCounter(deathCounter)
+    local deathCounterFile = assert(io.open("deathCounter.txt", "w"))
+    deathCounterFile:write(deathCounter)
+    deathCounterFile:close()
+end
+
 -- Creates a JSON-encoded dump of hacked game statistics.
 local function dumpStatistics()
     local playerHealth = not healthIsInteger
@@ -59,6 +80,16 @@ local function dumpStatistics()
     local playerDamageX = toInt(readFloat("playerDamageX") * 100)
     local playerSpeedX = toInt(readFloat("playerSpeedX") * 100)
 
+    local deathCounterFromFile = readDeathCounter()
+    local deathCounter = toInt(readInteger("deathCounter"))
+
+    if deathCounterFromFile ~= 0 and deathCounter == 0 then
+        deathCounter = deathCounterFromFile
+        writeInteger("deathCounter", deathCounter)
+    end
+
+    writeDeathCounter(deathCounter)
+
     local statistics = {
         FractionalStatistic("Health", playerHealth, playerMaxHealth),
         FractionalStatistic("Stamina", playerStamina, playerMaxStamina),
@@ -74,7 +105,8 @@ local function dumpStatistics()
         }),
         CoordinateStatistic("Coordinates", playerCoordinates.X, playerCoordinates.Y, playerCoordinates.Z),
         WholeStatistic("Player Damage", playerDamageX, false, "{0}%"),
-        WholeStatistic("Player Speed", playerSpeedX, false, "{0}%")
+        WholeStatistic("Player Speed", playerSpeedX, false, "{0}%"),
+        WholeStatistic("Deaths", deathCounter)
     }
 
     local additionalIndex = 2
