@@ -245,7 +245,8 @@ teleportitisY:
   divss xmm1,[teleportitisDivisor]
   // If the Y-axis is not the vertical axis, then we we don't need to check 
   // whether vertical displacement is enabled.
-  cmp [yIsVertical],1
+  mov rax,yIsVertical
+  cmp [rax],1
   jne skipYSkipCheck
   // If negative vertical displacement is not enabled we do not want to shift it,
   // this causes the random value to remain in the range of 0 to 10.
@@ -258,7 +259,8 @@ skipNegativeVerticalYDisplacement:
   // The vertical displacement value is logged and displayed to viewers as 
   // changes to are often the most consequential. We make sure the Y-axis is 
   // the vertical one before logging it.
-  cmp [yIsVertical],1
+  mov rax,yIsVertical
+  cmp [rax],1
   jne skipLastYVerticalDisplacement
   mulss xmm1,[verticalTeleportitisDisplacementX]
   movss [lastVerticalDisplacement],xmm1
@@ -294,7 +296,8 @@ teleportitisZ:
   divss xmm1,[teleportitisDivisor]
   // Like the y-axis, the z-axis can sometimes be the vertical axis. So checks 
   // similar to the ones made in the y-coordinate displacement code are made.
-  cmp [yIsVertical],0
+  mov rax,yIsVertical
+  cmp [rax],0
   jne skipZSkipCheck
   cmp [negativeVerticalDisplacementEnabled],1
   jne skipNegativeVerticalZDisplacement
@@ -302,7 +305,8 @@ skipZSkipCheck:
   subss xmm1,[teleportitisShifter]
 skipNegativeVerticalZDisplacement:
   mulss xmm1,[teleportitisDisplacementX]
-  cmp [yIsVertical],0
+  mov rax,yIsVertical
+  cmp [rax],0
   jne skipLastZVerticalDisplacement
   mulss xmm1,[verticalTeleportitisDisplacementX]
   movss [lastVerticalDisplacement],xmm1
