@@ -199,6 +199,49 @@ pauseWhenInactive:
     dd 0
 
 
+// Increments the player's death counter (upon player death...DUH).
+define(omniDeathCounterHook,"nioh2.exe"+79D38F)
+
+assert(omniDeathCounterHook,48 C7 41 10 00 00 00 00)
+alloc(incrementDeathCounter,$1000,omniDeathCounterHook)
+alloc(deathCounter,8)
+
+registersymbol(deathCounter)
+registersymbol(omniDeathCounterHook)
+
+incrementDeathCounter:
+    pushf
+    // Make sure our health structure is initialized. It really should be, but lets leave nothing to chance.    
+    push rax
+    mov rax,playerHealth
+    cmp [rax],0
+    pop rax
+    je incrementDeathCounterOriginalCode
+    push rax
+    push rbx
+    mov rax,playerHealth
+    mov rbx,[rax]
+    add rbx,0x10
+    cmp rbx,rcx
+    pop rbx
+    pop rax
+    jne incrementDeathCounterOriginalCode
+    inc [deathCounter]
+incrementDeathCounterOriginalCode:
+    popf
+    mov qword ptr [rcx+10],00000000
+    jmp incrementDeathCounterReturn
+
+omniDeathCounterHook:
+    jmp incrementDeathCounter
+    nop 3
+incrementDeathCounterReturn:
+
+
+deathCounter:
+    dd 0
+
+
 // Processes Omnified events during execution of the location update code for the player.
 define(omnifyLocationUpdateHook,"nioh2.exe"+801863)
 
@@ -657,6 +700,17 @@ unregistersymbol(pauseWhenInactive)
 dealloc(pauseWhenInactive)
 dealloc(gameOptions)
 dealloc(getGameOptions)
+
+
+// Cleanup of omniDeathCounterHook
+omniDeathCounterHook:
+    db 48 C7 41 10 00 00 00 00
+
+unregistersymbol(omniDeathCounterHook)
+unregistersymbol(deathCounter)
+
+dealloc(deathCounter)
+dealloc(incrementDeathCounter)
 
 
 // Cleanup of omnifyLocationUpdateHook
