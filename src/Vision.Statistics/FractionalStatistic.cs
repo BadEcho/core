@@ -18,25 +18,22 @@ namespace BadEcho.Omnified.Vision.Statistics
     /// numeric value.
     /// </summary>
     /// <remarks>
-    /// The term "fractional" has no bearing on the actual value types of the statistic, which may consist
-    /// of either whole numbers or ones with fractional parts. Rather, a statistic is "fractional" if it is
-    /// expressed using values that have some sort of relationship to each other, such as a character's health,
-    /// which consists of a current and maximum value.
+    /// The term "fractional" has no bearing on the actual value types of the statistic. Rather, a statistic is
+    /// "fractional" if it is expressed using values that have some sort of relationship to each other, such as
+    /// a character's health, which consists of a current and maximum value.
     /// </remarks>
     public sealed class FractionalStatistic : Statistic
     {
         /// <summary>
         /// Gets or sets the current numeric value for the statistic.
         /// </summary>
-        /// <seealso cref="WholeStatistic.Value">On the nature of statistic numeric property values.</seealso>
-        public double CurrentValue
+        public int CurrentValue
         { get; set; }
 
         /// <summary>
         /// Gets or sets the maximum numeric value the statistic can be.
         /// </summary>
-        /// <seealso cref="WholeStatistic.Value">On the nature of statistic numeric property values.</seealso>
-        public double MaximumValue
+        public int MaximumValue
         { get; set; }
     }
 }

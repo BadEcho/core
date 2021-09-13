@@ -43,7 +43,7 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
         { }
 
         /// <summary>
-        /// Gets or sets the displayed x-coordinate value for the bound coordinate statistic.
+        /// Gets or sets the displayed x-coordinate value for the bound statistic.
         /// </summary>
         public double X
         {
@@ -52,7 +52,7 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
         }
 
         /// <summary>
-        /// Gets or sets the displayed y-coordinate value for the bound coordinate statistic.
+        /// Gets or sets the displayed y-coordinate value for the bound statistic.
         /// </summary>
         public double Y
         {
@@ -61,7 +61,7 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
         }
 
         /// <summary>
-        /// Gets or sets the displayed z-coordinate value for the bound coordinate statistic.
+        /// Gets or sets the displayed z-coordinate value for the bound statistic.
         /// </summary>
         public double Z
         {

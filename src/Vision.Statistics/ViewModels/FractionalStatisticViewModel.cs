@@ -20,8 +20,8 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
     /// </summary>
     internal sealed class FractionalStatisticViewModel : StatisticViewModel<FractionalStatistic>
     {
-        private double _currentValue;
-        private double _maximumValue;
+        private int _currentValue;
+        private int _maximumValue;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FractionalStatisticViewModel"/> class.
@@ -41,18 +41,18 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
         { }
 
         /// <summary>
-        /// Gets or sets the displayed current numeric value for the bound fractional statistic.
+        /// Gets or sets the displayed current numeric value for the bound statistic.
         /// </summary>
-        public double CurrentValue
+        public int CurrentValue
         {
             get => _currentValue;
             set => NotifyIfChanged(ref _currentValue, value);
         }
 
         /// <summary>
-        /// Gets or sets the displayed maximum numeric value for the bound fractional statistic.
+        /// Gets or sets the displayed maximum numeric value for the bound statistic.
         /// </summary>
-        public double MaximumValue
+        public int MaximumValue
         {
             get => _maximumValue;
             set => NotifyIfChanged(ref _maximumValue, value);
