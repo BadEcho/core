@@ -555,10 +555,10 @@ initiateAbomnificationReturn:
 
 // Initiates the Abomnification system for the player, if enabled.
 // This only polls the player's coordinates, and at about the same rate as the enemy Abomnification hook.
-// UNIQUE AOB: 0F 28 B0 F0 00 00 00 0F 28 FE
-define(omnifyPlayerAbomnificationHook,"nioh2.exe"+692B74)
+// UNIQUE AOB: 0F 28 88 F0 00 00 00 F3 44 0F 5C
+define(omnifyPlayerAbomnificationHook,"nioh2.exe"+CCBD78)
 
-assert(omnifyPlayerAbomnificationHook,0F 28 B0 F0 00 00 00)
+assert(omnifyPlayerAbomnificationHook,0F 28 88 F0 00 00 00)
 alloc(initiatePlayerAbomnification,$1000,omnifyPlayerAbomnificationHook)
 alloc(abomnifyPlayer,8)
 
@@ -587,7 +587,7 @@ initiatePlayerAbomnification:
     pop rax
 initiatePlayerAbomnificationOriginalCode:
     popf
-    movaps xmm6,[rax+000000F0]
+    movaps xmm1,[rax+000000F0]
     jmp initiatePlayerAbomnificationReturn
 
 omnifyPlayerAbomnificationHook:
@@ -702,7 +702,7 @@ dealloc(initiateAbomnification)
 
 // Cleanup of omnifyPlayerAbomnificationHook
 omnifyPlayerAbomnificationHook:
-    db 0F 28 B0 F0 00 00 00
+    db 0F 28 88 F0 00 00 00
 
 unregistersymbol(omnifyPlayerAbomnificationHook)
 unregistersymbol(abomnifyPlayer)
