@@ -135,7 +135,34 @@ getPlayerLastLocationReturn:
 
 
 // Gets the structure containing the game's options.
+
+// [rax+25]: Change target when lock-on target is defeated.
+//           0: Manually
+//           1: Automatically           
+// [rax+2F]: Reset Camera Upon Guarding
+// [rax+30]: Reset Camera When Pressing Lock-On Without a Target
+// [rax+39]: Action Camera: When Under Attack
+// [rax+3A]: Action Camera: Yokai Abilities
+// [rax+3B]: Action Camera: Other
 // [rax+3C]: Pause when window is inactive.
+// [rax+3D]: Mute sound when window is inactive.
+// [rax+50]: Display "TAKE" over dropped equipment.
+//           0: All
+//           1: Uncommon or Above
+//           2: Rare or Above
+//           3: Exotic or Above
+//           6: None
+// [rax+57]: Display Melee Weapon
+//           0: All
+//           1: Hide Secondary Weapon
+//           2: Hide Sheathed Weapon
+// [rax+58]: Display Ranged Weapon
+//           0: All
+//           1: Hide Secondary Weapon
+//           2: Hide Sheathed Weapon
+// [rax+59]: Display Blood Splatter on Player
+//           0: Yes?
+//           1: No!
 // UNIQUE AOB: 8B 83 80 00 00 00 83 E8 03
 // Correct instruction is 13 instructions down from the returned result.
 define(omniGameOptionsHook,"nioh2.exe"+103B628)
