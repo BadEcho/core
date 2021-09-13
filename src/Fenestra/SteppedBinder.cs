@@ -42,6 +42,7 @@ namespace BadEcho.Fenestra
     /// time frame. In order to achieve this, the binder maintains its own measurement of the time elapsed in a sequence's execution, allowing
     /// for it to propagate values between source and target that fall inline with where the binder ought to be in the sequence.
     /// </para>
+    /// <para>Values bound through a stepped binder must be, or be able to be converted to, 32-bit signed integers.</para>
     /// </remarks>
     internal sealed class SteppedBinder : TransientBinder
     {
