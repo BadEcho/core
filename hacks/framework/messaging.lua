@@ -57,6 +57,7 @@ local function dumpStatistics()
     local playerCoordinates = readPlayerCoordinates()
         
     local playerDamageX = readFloat("playerDamageX")
+    local playerSpeedX = readFloat("playerSpeedX")
 
     local statistics = {
         FractionalStatistic("Health", playerHealth, playerMaxHealth),
@@ -71,7 +72,9 @@ local function dumpStatistics()
             WholeStatistic("Max", maxEnemyDamageEvent, true),
             WholeStatistic("Total", totalEnemyDamage)
         }),
-        CoordinateStatistic("Coordinates", playerCoordinates.X, playerCoordinates.Y, playerCoordinates.Z)
+        CoordinateStatistic("Coordinates", playerCoordinates.X, playerCoordinates.Y, playerCoordinates.Z),
+        WholeStatistic("Player Damage", playerDamageX, false, "{0:0.0}x"),
+        WholeStatistic("Player Speed", playerSpeedX, false, "{0:0.0}x")
     }
 
     local additionalIndex = 2
