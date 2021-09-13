@@ -404,7 +404,9 @@ define(omnifyPredatorHook,"nioh2.exe"+852588)
 assert(omnifyPredatorHook,F3 0F 58 02 F3 0F 11 81 80 01 00 00)
 alloc(initiatePredator,$1000,omnifyPredatorHook)
 alloc(identityValue,8)
+alloc(playerSpeedX,8)
 
+registersymbol(playerSpeedX)
 registersymbol(identityValue)
 registersymbol(omnifyPredatorHook)
 
@@ -457,7 +459,28 @@ initiatePredator:
     add rsp,10
     jmp initiatePredatorOriginalCode
 applyPlayerSpeed:
-
+    sub rsp,10
+    movdqu [rsp],xmm0    
+    sub rsp,10
+    movdqu [rsp],xmm1
+    push rax
+    sub rsp,10
+    movss xmm0,[playerSpeedX]
+    shufps xmm0,xmm0,0
+    movups [rsp],xmm0
+    mov rax,[identityValue]
+    mov [rsp+4],eax
+    mov [rsp+C],eax
+    movups xmm1,[rsp]
+    movups xmm0,[rdx]
+    mulps xmm0,xmm1
+    movups [rdx],xmm0
+    add rsp,10    
+    pop rax
+    movdqu xmm1,[rsp]
+    add rsp,10
+    movdqu xmm0,[rsp]
+    add rsp,10
 initiatePredatorOriginalCode:
     popf
     addss xmm0,[rdx]
@@ -484,6 +507,9 @@ positiveLimit:
 
 negativeLimit:
     dd (float)-1000.0
+
+playerSpeedX:
+    dd (float)1.0
 
 
 // Initiates the Abomnification system.
@@ -525,6 +551,53 @@ omnifyAbomnificationHook:
     jmp initiateAbomnification
     nop 3
 initiateAbomnificationReturn:
+
+
+// Initiates the Abomnification system for the player, if enabled.
+// This only polls the player's coordinates, and at about the same rate as the enemy Abomnification hook.
+// UNIQUE AOB: 0F 28 B0 F0 00 00 00 0F 28 FE
+define(omnifyPlayerAbomnificationHook,"nioh2.exe"+692B74)
+
+assert(omnifyPlayerAbomnificationHook,0F 28 B0 F0 00 00 00)
+alloc(initiatePlayerAbomnification,$1000,omnifyPlayerAbomnificationHook)
+alloc(abomnifyPlayer,8)
+
+registersymbol(abomnifyPlayer)
+registersymbol(omnifyPlayerAbomnificationHook)
+
+initiatePlayerAbomnification:
+    pushf
+    cmp [abomnifyPlayer],1
+    jne initiatePlayerAbomnificationOriginalCode
+    push rax
+    push rbx
+    push rcx
+    push rdx
+    // Push the player's location structure as the identifying address.
+    mov rdx,rax
+    push rdx
+    call executeAbomnification
+    // Load the Abomnified scales into the creature's location structure.
+    mov [rdx+148],eax
+    mov [rdx+140],ebx
+    mov [rdx+144],ecx
+    pop rdx
+    pop rcx
+    pop rbx
+    pop rax
+initiatePlayerAbomnificationOriginalCode:
+    popf
+    movaps xmm6,[rax+000000F0]
+    jmp initiatePlayerAbomnificationReturn
+
+omnifyPlayerAbomnificationHook:
+    jmp initiatePlayerAbomnification
+    nop 2
+initiatePlayerAbomnificationReturn:
+
+
+abomnifyPlayer:
+    dd 0
 
 
 [DISABLE]
@@ -611,7 +684,9 @@ omnifyPredatorHook:
 
 unregistersymbol(omnifyPredatorHook)
 unregistersymbol(identityValue)
+unregistersymbol(playerSpeedX)
 
+dealloc(playerSpeedX)
 dealloc(identityValue)
 dealloc(initiatePredator)
 
@@ -623,3 +698,14 @@ omnifyAbomnificationHook:
 unregistersymbol(omnifyAbomnificationHook)
 
 dealloc(initiateAbomnification)
+
+
+// Cleanup of omnifyPlayerAbomnificationHook
+omnifyPlayerAbomnificationHook:
+    db 0F 28 B0 F0 00 00 00
+
+unregistersymbol(omnifyPlayerAbomnificationHook)
+unregistersymbol(abomnifyPlayer)
+
+dealloc(abomnifyPlayer)
+dealloc(initiatePlayerAbomnification)
