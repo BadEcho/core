@@ -543,10 +543,10 @@ identityValue:
     dd (float)1.0
 
 aggroDistance:
-    dd (float)1000.0
+    dd (float)1250.0
 
 threatDistance:
-    dd (float)200.0
+    dd (float)300.0
 
 positiveLimit:
     dd (float)1000.0
