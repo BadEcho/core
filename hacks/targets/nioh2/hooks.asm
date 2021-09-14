@@ -556,87 +556,54 @@ playerSpeedX:
 
 
 // Initiates the Abomnification system.
-// This only polls NPC coordinates.
-// [rsi+140]: Height
-// [rsi+144]: Depth
-// [rsi+148]: Width
-// UNIQUE AOB: F3 0F 10 B6 F0 00 00 00 F3
-define(omnifyAbomnificationHook,"nioh2.exe"+8A7618)
+// This polls both the player's and NPC coordinates.
+// [rdi+140]: Height
+// [rdi+144]: Depth
+// [rdi+148]: Width
+// UNIQUE AOB: 4C 8D BF F0 00 00 00 41
+define(omnifyAbomnificationHook,"nioh2.exe"+84AA21)
 
-assert(omnifyAbomnificationHook,F3 0F 10 B6 F0 00 00 00)
+assert(omnifyAbomnificationHook,4C 8D BF F0 00 00 00)
 alloc(initiateAbomnification,$1000,omnifyAbomnificationHook)
+alloc(abomnifyPlayer,8)
 
+registersymbol(abomnifyPlayer)
 registersymbol(omnifyAbomnificationHook)
 
 initiateAbomnification:
     pushf
+    push rax
+    mov rax,playerLocation
+    cmp [rax],rdi
+    pop rax
+    jne skipAbomnifyPlayerCheck
+    cmp [abomnifyPlayer],1
+    jne initiateAbomnificationOriginalCode
+skipAbomnifyPlayerCheck:
     // Back up the registers used as outputs of the Abomnification system.
     push rax
     push rbx
     push rcx
     // Push the address to the creature's location structure as its identifying
     // address to the stack.
-    push rsi
+    push rdi
     call executeAbomnification
     // Load the Abomnified scales into the creature's location structure.
-    mov [rsi+148],eax
-    mov [rsi+140],ebx
-    mov [rsi+144],ecx
+    mov [rdi+148],eax
+    mov [rdi+140],ebx
+    mov [rdi+144],ecx
     pop rcx
     pop rbx
     pop rax
 initiateAbomnificationOriginalCode:
     popf
-    movss xmm6,[rsi+000000F0]
+    lea r15,[rdi+000000F0]
     jmp initiateAbomnificationReturn
 
 omnifyAbomnificationHook:
     jmp initiateAbomnification
-    nop 3
+    nop 2
 initiateAbomnificationReturn:
-
-
-// Initiates the Abomnification system for the player, if enabled.
-// This only polls the player's coordinates, and at about the same rate as the enemy Abomnification hook.
-// UNIQUE AOB: F3 0F 10 80 F0 00 00 00 F3 0F 5C 03
-define(omnifyPlayerAbomnificationHook,"nioh2.exe"+114D12E)
-
-assert(omnifyPlayerAbomnificationHook,F3 0F 10 80 F0 00 00 00)
-alloc(initiatePlayerAbomnification,$1000,omnifyPlayerAbomnificationHook)
-alloc(abomnifyPlayer,8)
-
-registersymbol(abomnifyPlayer)
-registersymbol(omnifyPlayerAbomnificationHook)
-
-initiatePlayerAbomnification:
-    pushf
-    cmp [abomnifyPlayer],1
-    jne initiatePlayerAbomnificationOriginalCode
-    push rax
-    push rbx
-    push rcx
-    push rdx
-    mov rdx,rax
-    // Push the player's location structure as the identifying address.
-    push rdx
-    call executeAbomnification
-    // Load the Abomnified scales into the creature's location structure.
-    mov [rdx+148],eax
-    mov [rdx+140],ebx
-    mov [rdx+144],ecx
-    pop rdx
-    pop rcx
-    pop rbx
-    pop rax
-initiatePlayerAbomnificationOriginalCode:
-    popf
-    movss xmm0,[rax+000000F0]
-    jmp initiatePlayerAbomnificationReturn
-
-omnifyPlayerAbomnificationHook:
-    jmp initiatePlayerAbomnification
-    nop 3
-initiatePlayerAbomnificationReturn:
 
 
 abomnifyPlayer:
@@ -747,19 +714,10 @@ dealloc(initiatePredator)
 
 // Cleanup of omnifyAbomnificationHook
 omnifyAbomnificationHook:
-    db F3 0F 10 B6 F0 00 00 00
+    db 4C 8D BF F0 00 00 00
 
 unregistersymbol(omnifyAbomnificationHook)
-
-dealloc(initiateAbomnification)
-
-
-// Cleanup of omnifyPlayerAbomnificationHook
-omnifyPlayerAbomnificationHook:
-    db F3 0F 10 80 F0 00 00 00
-
-unregistersymbol(omnifyPlayerAbomnificationHook)
 unregistersymbol(abomnifyPlayer)
 
 dealloc(abomnifyPlayer)
-dealloc(initiatePlayerAbomnification)
+dealloc(initiateAbomnification)
