@@ -609,6 +609,9 @@ omnifyAbomnificationHook:
 initiateAbomnificationReturn:
 
 
+abominifyDepthResultUpper:
+  dd #215
+
 abomnifyPlayer:
     dd 0
 
