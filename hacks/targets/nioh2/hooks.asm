@@ -609,8 +609,17 @@ omnifyAbomnificationHook:
 initiateAbomnificationReturn:
 
 
+abominifyMorphStepsResultUpper:
+    dd #650
+
+abominifyHeightResultUpper:
+    dd #200
+
 abominifyDepthResultUpper:
-  dd #215
+    dd #180
+
+abominifyWidthResultUpper:
+    dd #240
 
 abomnifyPlayer:
     dd 0
