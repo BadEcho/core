@@ -610,7 +610,7 @@ initiateAbomnificationReturn:
 
 
 abominifyMorphStepsResultUpper:
-    dd #650
+    dd #550
 
 abominifyHeightResultUpper:
     dd #200
