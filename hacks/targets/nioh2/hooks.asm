@@ -345,6 +345,9 @@ initiateApocalypse:
     // We don't want this to trigger Apocalypse, as it may have been Apocalypse that caused the falling...
     cmp r12,0
     je initiateApocalypseOriginalCode
+    // A r15 register set to 1 means we're drowning like a big dumb baby.
+    cmp r15,1
+    je initiateApocalypseOriginalCode
     // Ensure the required player data structures are initialized.
     push rax
     mov rax,playerHealth
