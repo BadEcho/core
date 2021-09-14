@@ -460,6 +460,9 @@ initiatePredator:
     cmp [rax],0
     pop rax
     je initiatePredatorOriginalCode
+    // In some instances, rbx does not point to a valid location structure, such as when a shrine is being used.
+    cmp rbx,1
+    je initiatePredatorOriginalCode
     // Make sure the player isn't being treated as an enemy NPC!
     push rax
     mov rax,playerLocation
