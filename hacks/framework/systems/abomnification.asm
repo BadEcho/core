@@ -18,7 +18,7 @@ registersymbol(morphScaleData)
 registersymbol(morphScaleIndex)
 
 morphScaleIndex:
-  dd 0    
+    dd 0    
 
 
 // Abomnification System Function
@@ -75,311 +75,311 @@ registersymbol(disableAbomnification)
 registersymbol(defaultScaleX)
 
 executeAbomnification:
-  push rdx  
-  cmp [disableAbomnification],1
-  jne continueAbomnification
-  mov eax,[defaultScaleX]
-  mov ebx,[defaultScaleX]
-  mov ecx,[defaultScaleX]
-  jmp executeAbomnificationCleanup
+    push rdx  
+    cmp [disableAbomnification],1
+    jne continueAbomnification
+    mov eax,[defaultScaleX]
+    mov ebx,[defaultScaleX]
+    mov ecx,[defaultScaleX]
+    jmp executeAbomnificationCleanup
 continueAbomnification:
-  mov rbx,[rsp+10]
-  cmp [forceScrub],1
-  je scrubMorphData  
-  cmp rbx,0
-  jne applyMorphScaleFromData  
+    mov rbx,[rsp+10]
+    cmp [forceScrub],1
+    je scrubMorphData  
+    cmp rbx,0
+    jne applyMorphScaleFromData  
 checkMorphDataIndexLimit:
-  cmp [morphScaleIndex],#999
-  jne incrementMorphDataIndex
+    cmp [morphScaleIndex],#999
+    jne incrementMorphDataIndex
 scrubMorphData:
-  mov [forceScrub],0
-  mov [morphScaleIndex],0
-  push rax
-  mov rax,0
+    mov [forceScrub],0
+    mov [morphScaleIndex],0
+    push rax
+    mov rax,0
 nextMorphDataScrub:
-  add rax,#52
-  cmp rax,0x33FFCC
-  je exitMorphDataScrub
-  mov rdx,morphScaleData
-  add rdx,rax
-  mov [rdx],0
-  mov [rdx+4],0
-  mov [rdx+8],0
-  mov [rdx+C],0
-  mov [rdx+10],0
-  mov [rdx+14],0
-  mov [rdx+18],0
-  mov [rdx+1C],0
-  mov [rdx+20],0
-  mov [rdx+24],0
-  mov [rdx+28],0
-  mov [rdx+2C],0
-  mov [rdx+30],0
-  jmp nextMorphDataScrub
+    add rax,#52
+    cmp rax,0x33FFCC
+    je exitMorphDataScrub
+    mov rdx,morphScaleData
+    add rdx,rax
+    mov [rdx],0    
+    mov [rdx+4],0
+    mov [rdx+8],0
+    mov [rdx+C],0
+    mov [rdx+10],0
+    mov [rdx+14],0
+    mov [rdx+18],0
+    mov [rdx+1C],0
+    mov [rdx+20],0
+    mov [rdx+24],0
+    mov [rdx+28],0
+    mov [rdx+2C],0
+    mov [rdx+30],0
+    jmp nextMorphDataScrub
 exitMorphDataScrub:
-  pop rax
+    pop rax
 incrementMorphDataIndex:
-  inc [morphScaleIndex]
-  mov rcx,[morphScaleIndex]
-  mov [rbx],ecx
+    inc [morphScaleIndex]
+    mov rcx,[morphScaleIndex]
+    mov [rbx],ecx
 applyMorphScaleFromData:  
-  mov rdx,morphScaleData
-  push rax
-  push rbx
-  mov rax,#52
-  movzx ecx,bx
-  imul eax,ecx
-  mov rcx,rax
-  pop rbx
-  pop rax  
-  add rdx,rcx  
-  cmp [rdx],0
-  ja continuePhase
-  // Current phase is located in [rdx+30].
-  // 0 == Pause phase. Switch to step morph phase.
-  // 1 == Step morph phase. Switch to pause phase.
-  cmp [rdx+30],1
-  je changeToPausePhase
-  mov [rdx+30],1
-  jmp initializeMorphSteps
+    mov rdx,morphScaleData
+    push rax
+    push rbx
+    mov rax,#52
+    movzx ecx,bx
+    imul eax,ecx
+    mov rcx,rax
+    pop rbx
+    pop rax  
+    add rdx,rcx  
+    cmp [rdx],0
+    ja continuePhase
+    // Current phase is located in [rdx+30].
+    // 0 == Pause phase. Switch to step morph phase.
+    // 1 == Step morph phase. Switch to pause phase.
+    cmp [rdx+30],1
+    je changeToPausePhase
+    mov [rdx+30],1
+    jmp initializeMorphSteps
 changeToPausePhase:
-  mov [rdx+30],0
-  jmp initializeMorphSteps
+    mov [rdx+30],0
+    jmp initializeMorphSteps
 continuePhase:
-  cmp [stopMorphs],1
-  je loadAbomnifiedScales
-  dec [rdx]
-  jmp executeMorphPhase
+    cmp [stopMorphs],1
+    je loadAbomnifiedScales
+    dec [rdx]
+    jmp executeMorphPhase
 initializeMorphSteps:
-  sub rsp,10
-  movdqu [rsp],xmm0
-  movss xmm0,[rdx+4]
-  push rax
-  mov rax,zeroValue
-  ucomiss xmm0,[rax]
-  pop rax
-  ja skipInitializeDefaultScales
-  movss xmm0,[defaultScaleX]
-  movss [rdx+4],xmm0
-  movss [rdx+8],xmm0
-  movss [rdx+C],xmm0
+    sub rsp,10
+    movdqu [rsp],xmm0
+    movss xmm0,[rdx+4]
+    push rax
+    mov rax,zeroValue
+    ucomiss xmm0,[rax]
+    pop rax
+    ja skipInitializeDefaultScales
+    movss xmm0,[defaultScaleX]
+    movss [rdx+4],xmm0
+    movss [rdx+8],xmm0
+    movss [rdx+C],xmm0
 skipInitializeDefaultScales:
-  movss [rdx+14],xmm0
-  movss xmm0,[rdx+8]
-  movss [rdx+18],xmm0
-  movss xmm0,[rdx+C]
-  movss [rdx+1C],xmm0
-  push rax
-  cmp [rdx+10],1
-  je initializeMorphStepsExit
-  movss xmm0,[rdx+20]
-  mov rax,zeroValue
-  ucomiss xmm0,[rax]
-  ja skipGenerateMorphSteps
-  push [abominifyMorphStepsResultLower]
-  push [abominifyMorphStepsResultUpper]
-  call generateRandomNumber
-  cvtsi2ss xmm0,eax
-  movss [rdx+20],xmm0
+    movss [rdx+14],xmm0
+    movss xmm0,[rdx+8]
+    movss [rdx+18],xmm0
+    movss xmm0,[rdx+C]
+    movss [rdx+1C],xmm0
+    push rax
+    cmp [rdx+10],1
+    je initializeMorphStepsExit
+    movss xmm0,[rdx+20]
+    mov rax,zeroValue
+    ucomiss xmm0,[rax]
+    ja skipGenerateMorphSteps
+    push [abominifyMorphStepsResultLower]
+    push [abominifyMorphStepsResultUpper]
+    call generateRandomNumber
+    cvtsi2ss xmm0,eax
+    movss [rdx+20],xmm0
 skipGenerateMorphSteps:
-  cmp [overrideMorphSteps],1
-  jne loadGeneratedMorphSteps
-  movss xmm0,[overrideMorphStepsValue]
-  jmp processMorphSteps
+    cmp [overrideMorphSteps],1
+    jne loadGeneratedMorphSteps
+    movss xmm0,[overrideMorphStepsValue]
+    jmp processMorphSteps
 loadGeneratedMorphSteps:
-  movss xmm0,[rdx+20]
+    movss xmm0,[rdx+20]
 processMorphSteps:
-  cmp [speedMorph],1
-  jne generateMonsterMorphTargets
-  divss xmm0,[speedMorphDivisor]  
+    cmp [speedMorph],1
+    jne generateMonsterMorphTargets
+    divss xmm0,[speedMorphDivisor]  
 generateMonsterMorphTargets:  
-  cvtss2si eax,xmm0
-  mov [rdx],eax
-  push [abominifyHeightResultLower]
-  push [abominifyHeightResultUpper]
-  call generateRandomNumber
-  cvtsi2ss xmm0,eax
-  divss xmm0,[abominifyDivisor]
-  movss [rdx+28],xmm0
-  cmp [rdx+10],0 
-  jne skipGenerateMorphMode
-  push [abominifyMorphModeResultLower]
-  push [abominifyMorphModeResultUpper]
-  call generateRandomNumber
-  jmp applyMorphMode
+    cvtss2si eax,xmm0
+    mov [rdx],eax
+    push [abominifyHeightResultLower]
+    push [abominifyHeightResultUpper]
+    call generateRandomNumber
+    cvtsi2ss xmm0,eax
+    divss xmm0,[abominifyDivisor]
+    movss [rdx+28],xmm0
+    cmp [rdx+10],0 
+    jne skipGenerateMorphMode
+    push [abominifyMorphModeResultLower]
+    push [abominifyMorphModeResultUpper]
+    call generateRandomNumber
+    jmp applyMorphMode
 skipGenerateMorphMode:
-  mov eax,[rdx+10]
+    mov eax,[rdx+10]
 applyMorphMode:
-  cmp eax,1
-  je staticUnnaturalMorphing
-  cmp eax,5
-  jle uniformMorphing
-  jmp nonUniformMorphing
+    cmp eax,1
+    je staticUnnaturalMorphing
+    cmp eax,5
+    jle uniformMorphing
+    jmp nonUniformMorphing
 staticUnnaturalMorphing:
-  mov [rdx+10],1
-  ucomiss xmm0,[unnaturalBigThreshold]
-  ja unnaturalBiggify
-  mulss xmm0,[unnaturalSmallX]
-  jmp unnaturalizeIt
+    mov [rdx+10],1
+    ucomiss xmm0,[unnaturalBigThreshold]
+    ja unnaturalBiggify
+    mulss xmm0,[unnaturalSmallX]
+    jmp unnaturalizeIt
 unnaturalBiggify:
-  mulss xmm0,[unnaturalBigX] 
+    mulss xmm0,[unnaturalBigX] 
 unnaturalizeIt:
-  movss [rdx+4],xmm0
-  movss [rdx+8],xmm0
-  movss [rdx+C],xmm0
-  jmp initializeMorphStepsExit
+    movss [rdx+4],xmm0
+    movss [rdx+8],xmm0
+    movss [rdx+C],xmm0
+    jmp initializeMorphStepsExit
 uniformMorphing:
-  mov [rdx+10],5
-  movss [rdx+24],xmm0
-  movss [rdx+2C],xmm0
-  jmp initializeMorphStepsExit
+    mov [rdx+10],5
+    movss [rdx+24],xmm0
+    movss [rdx+2C],xmm0
+    jmp initializeMorphStepsExit
 nonUniformMorphing:
-  mov [rdx+10],8
-  push [abominifyWidthResultLower]
-  push [abominifyWidthResultUpper]
-  call generateRandomNumber
-  cvtsi2ss xmm0,eax
-  divss xmm0,[abominifyDivisor]
-  movss [rdx+24],xmm0
-  push [abominifyDepthResultLower]
-  push [abominifyDepthResultUpper]
-  call generateRandomNumber
-  cvtsi2ss xmm0,eax
-  divss xmm0,[abominifyDivisor]
-  movss [rdx+2C],xmm0
+    mov [rdx+10],8
+    push [abominifyWidthResultLower]
+    push [abominifyWidthResultUpper]
+    call generateRandomNumber
+    cvtsi2ss xmm0,eax
+    divss xmm0,[abominifyDivisor]
+    movss [rdx+24],xmm0
+    push [abominifyDepthResultLower]
+    push [abominifyDepthResultUpper]
+    call generateRandomNumber
+    cvtsi2ss xmm0,eax
+    divss xmm0,[abominifyDivisor]
+    movss [rdx+2C],xmm0
 initializeMorphStepsExit:
-  pop rax
-  movdqu xmm0,[rsp]
-  add rsp,10
-  jmp loadAbomnifiedScales
+    pop rax
+    movdqu xmm0,[rsp]
+    add rsp,10
+    jmp loadAbomnifiedScales
 executeMorphPhase:
-  // Current phase is located in [rdx+30].
-  // 0 == Pause phase. Do nothing!
-  // 1 == Step morph phase. Continue morphing!
-  cmp [rdx+30],1
-  je stepMorph
-  jmp loadAbomnifiedScales
+    // Current phase is located in [rdx+30].
+    // 0 == Pause phase. Do nothing!
+    // 1 == Step morph phase. Continue morphing!
+    cmp [rdx+30],1
+    je stepMorph
+    jmp loadAbomnifiedScales
 stepMorph:
-  cmp [rdx+10],1  
-  je loadAbomnifiedScales
-  sub rsp,10
-  movdqu [rsp],xmm0
-  sub rsp,10
-  movdqu [rsp],xmm1
-  push rsi
-  movss xmm0,[rdx+20]
-  cmp [speedMorph],1
-  jne generateMorphsForStep
-  divss xmm0,[speedMorphDivisor]  
+    cmp [rdx+10],1  
+    je loadAbomnifiedScales
+    sub rsp,10
+    movdqu [rsp],xmm0
+    sub rsp,10
+    movdqu [rsp],xmm1
+    push rsi
+    movss xmm0,[rdx+20]
+    cmp [speedMorph],1
+    jne generateMorphsForStep
+    divss xmm0,[speedMorphDivisor]  
 generateMorphsForStep:
-  cvtss2si eax,xmm0
-  mov esi,[rdx]
-  sub eax,esi
-  cvtsi2ss xmm1,eax
-  divss xmm1,xmm0 //[rdx+20]
-  // Width Step
-  movss xmm0,[rdx+24]
-  subss xmm0,[rdx+14]
-  mulss xmm0,xmm1
-  addss xmm0,[rdx+14]
-  movss [rdx+4],xmm0
-  // Height Step
-  movss xmm0,[rdx+28]
-  subss xmm0,[rdx+18]
-  mulss xmm0,xmm1
-  addss xmm0,[rdx+18]
-  movss [rdx+8],xmm0
-  // Depth Step
-  movss xmm0,[rdx+2C]
-  subss xmm0,[rdx+1C]
-  mulss xmm0,xmm1
-  addss xmm0,[rdx+1C]
-  movss [rdx+C],xmm0
-  pop rsi
-  movdqu xmm1,[rsp]
-  add rsp,10
-  movdqu xmm0,[rsp]
-  add rsp,10
+    cvtss2si eax,xmm0
+    mov esi,[rdx]
+    sub eax,esi
+    cvtsi2ss xmm1,eax
+    divss xmm1,xmm0 //[rdx+20]
+    // Width Step
+    movss xmm0,[rdx+24]
+    subss xmm0,[rdx+14]
+    mulss xmm0,xmm1
+    addss xmm0,[rdx+14]
+    movss [rdx+4],xmm0
+    // Height Step
+    movss xmm0,[rdx+28]
+    subss xmm0,[rdx+18]
+    mulss xmm0,xmm1
+    addss xmm0,[rdx+18]
+    movss [rdx+8],xmm0
+    // Depth Step
+    movss xmm0,[rdx+2C]
+    subss xmm0,[rdx+1C]
+    mulss xmm0,xmm1
+    addss xmm0,[rdx+1C]
+    movss [rdx+C],xmm0
+    pop rsi
+    movdqu xmm1,[rsp]
+    add rsp,10
+    movdqu xmm0,[rsp]
+    add rsp,10
 loadAbomnifiedScales:
-  mov eax,[rdx+4]
-  mov ebx,[rdx+8]
-  mov ecx,[rdx+C]
+    mov eax,[rdx+4]
+    mov ebx,[rdx+8]
+    mov ecx,[rdx+C]
 executeAbomnificationCleanup:  
-  pop rdx
-  ret 8  
+    pop rdx
+    ret 8  
 
 
 abominifyMorphStepsResultUpper:
-  dd #400
+    dd #400
 
 abominifyMorphStepsResultLower:
-  dd #25
+    dd #25
 
 abominifyHeightResultUpper:
-  dd #215
+    dd #215
 
 abominifyHeightResultLower:
-  dd #25
+    dd #25
 
 abominifyWidthResultUpper:
-  dd #275
+    dd #275
 
 abominifyWidthResultLower:
-  dd #25
+    dd #25
 
 abominifyDepthResultUpper:
-  dd #300
+    dd #300
 
 abominifyDepthResultLower:
-  dd #25
+    dd #25
 
 abominifyMorphModeResultUpper:
-  dd #13
+    dd #13
 
 abominifyMorphModeResultLower:
-  dd 1
+    dd 1
 
 abominifyDivisor:
-  dd (float)100.0
+    dd (float)100.0
 
 unnaturalBigThreshold:
-  dd (float)1.0
+    dd (float)1.0
 
 unnaturalSmallX:
-  dd (float)0.3
+    dd (float)0.3
 
 unnaturalBigX:
-  dd (float)1.9
+    dd (float)1.9
 
 stopMorphs:
-  dd 0
+    dd 0
   
 speedMorph:
-  dd 0
+    dd 0
   
 speedMorphDivisor:
-  dd (float)4.0
+    dd (float)4.0
 
 defaultScaleX:
-  dd (float)1.0
+    dd (float)1.0
 
 zeroValue:
-  dd 0	
+    dd 0	
   
 forceScrub:
-  dd 0
+    dd 0
   
 overrideMorphSteps:
-  dd 0
+    dd 0
   
 overrideMorphStepsValue:
-  dd (float)400.0
+    dd (float)400.0
   
 disableAbomnification:
-  dd 0
+    dd 0
   
 defaultScaleX:
-  dd (float)1.0
+    dd (float)1.0
   
   
 // Retrieves the Abomnified scale multipliers for the specified
@@ -390,31 +390,31 @@ alloc(getAbomnifiedScales,$1000)
 registersymbol(getAbomnifiedScales)
 
 getAbomnifiedScales:
-  push rdx
-  cmp [disableAbomnification],1
-  je getAbomnifiedScalesDefault
-  mov rcx,[rsp+10]
-  mov rax,#52
-  movzx rdx,cx
-  imul eax,edx
-  mov rdx,morphScaleData
-  add rdx,rax
-  mov eax,[rdx+4]
-  mov ebx,[rdx+8]
-  mov ecx,[rdx+C]
-  // Check if we are getting empty data for return values. 
-  // If so, we'll return default values instead.
-  cmp eax,0
-  je getAbomnifiedScalesDefault
-  jmp getAbomnifiedScalesCleanup  
+    push rdx
+    cmp [disableAbomnification],1
+    je getAbomnifiedScalesDefault
+    mov rcx,[rsp+10]
+    mov rax,#52
+    movzx rdx,cx
+    imul eax,edx
+    mov rdx,morphScaleData
+    add rdx,rax
+    mov eax,[rdx+4]
+    mov ebx,[rdx+8]
+    mov ecx,[rdx+C]
+    // Check if we are getting empty data for return values. 
+    // If so, we'll return default values instead.
+    cmp eax,0
+    je getAbomnifiedScalesDefault
+    jmp getAbomnifiedScalesCleanup  
 getAbomnifiedScalesDefault:
-  mov rdx,defaultScaleX
-  mov eax,[rdx]
-  mov ebx,[rdx]
-  mov ecx,[rdx]
+    mov rdx,defaultScaleX
+    mov eax,[rdx]
+    mov ebx,[rdx]
+    mov ecx,[rdx]
 getAbomnifiedScalesCleanup:
-  pop rdx
-  ret 8
+    pop rdx
+    ret 8
   
 
 [DISABLE]
