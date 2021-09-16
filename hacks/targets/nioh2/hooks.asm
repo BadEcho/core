@@ -10,81 +10,42 @@
 // http://creativecommons.org/licenses/by-nc/4.0/
 //----------------------------------------------------------------------
 
-// Gets the player's health structure.
-// Polls player health exclusively. No filtering required.
-// [rcx+20]: Current health.
-// [rcx+18]: Maximum health.
+// Creates pointers to multiple structures containing important player data.
+// This polls the player's health exclusively. No filtering required.
+// We adjust the health structure's address by +0x10 bytes here as the game, while accessing
+// current health values using an 0x20 offset, will write to it using a 0x10 offset.
+// [rcx+20] | {[player]+10}: Current health.
+// [rcx+18] | {[player]+8}: Maximum health.
+// [rcx+48] | {[player]+38}: Current stamina.
+// [rcx+4C] | {[player]+3C}: Maximum stamina.
+// [rcx+B8] | {[player]+A8}: Location structure.
 // UNIQUE AOB: 36 48 6B 41 20 64
-define(omniPlayerHealthHook,"nioh2.exe"+9B7A60)
+define(omniPlayerHook,"nioh2.exe"+9B7A60)
 
-assert(omniPlayerHealthHook,48 6B 41 20 64)
-alloc(getPlayerHealth,$1000,omniPlayerHealthHook)
-alloc(playerHealth,8)
-
-registersymbol(playerHealth)
-registersymbol(omniPlayerHealthHook)
-
-getPlayerHealth:
-    mov [playerHealth],rcx
-getPlayerHealthOriginalCode:
-    imul rax,[rcx+20],64
-    jmp getPlayerHealthReturn
-
-omniPlayerHealthHook:
-    jmp getPlayerHealth
-getPlayerHealthReturn:
-
-
-// Gets the player's stamina (Ki) structure.
-// Polls player stamina exclusively. No filtering required.
-// Unlike health, stamina is stored as a float.
-// [rcx+8]: Current stamina.
-// [rcx+C]: Maximum stamina.
-// UNIQUE AOB: F3 0F 58 41 08 C3 CC CC CC CC CC 48
-define(omniPlayerStaminaHook,"nioh2.exe"+7C2E95)
-
-assert(omniPlayerStaminaHook,F3 0F 58 41 08)
-alloc(getPlayerStamina,$1000,omniPlayerStaminaHook)
-alloc(playerStamina,8)
-
-registersymbol(playerStamina)
-registersymbol(omniPlayerStaminaHook)
-
-getPlayerStamina:
-    mov [playerStamina],rcx
-getPlayerStaminaOriginalCode:
-    addss xmm0,[rcx+08]
-    jmp getPlayerStaminaReturn
-
-omniPlayerStaminaHook:
-    jmp getPlayerStamina
-getPlayerStaminaReturn:
-
-
-// Gets the player's location structure.
-// Polls player coordinates exclusively. No filtering required.
-// [rax+F0-F8]: Player's coordinates. Y-coordinate is vertical.
-// UNIQUE AOB: 0F 10 80 00 01 00 00 0F 11 81  
-// Correct instruction will be four instructions above the returned result.
-define(omniPlayerLocationHook,"nioh2.exe"+81C595)
-
-assert(omniPlayerLocationHook,0F 10 80 F0 00 00 00)
-alloc(getPlayerLocation,$1000,omniPlayerLocationHook)
+assert(omniPlayerHook,48 6B 41 20 64)
+alloc(getPlayer,$1000,omniPlayerHook)
+alloc(player,8)
 alloc(playerLocation,8)
 
 registersymbol(playerLocation)
-registersymbol(omniPlayerLocationHook)
+registersymbol(player)
+registersymbol(omniPlayerHook)
 
-getPlayerLocation:
+getPlayer:
+    push rax
+    mov rax,rcx
+    add rax,0x10
+    mov [player],rax
+    mov rax,[rcx+B8]
     mov [playerLocation],rax
-getPlayerLocationOriginalCode:
-    movups xmm0,[rax+000000F0]
-    jmp getPlayerLocationReturn
+    pop rax
+getPlayerOriginalCode:
+    imul rax,[rcx+20],64
+    jmp getPlayerReturn
 
-omniPlayerLocationHook:
-    jmp getPlayerLocation
-    nop 2
-getPlayerLocationReturn:
+omniPlayerHook:
+    jmp getPlayer
+getPlayerReturn:
 
 
 // Gets the player's last location structure and ensures Omnified changes to the player's vertical position
@@ -104,20 +65,19 @@ registersymbol(omniPlayerLastLocationHook)
 
 getPlayerLastLocation:
     pushf
-    // The player health structure must be initialized in order for us to identify the player's last location 
+    // The player location structure must be initialized in order for us to identify the player's last location 
     // structure.
     push rax
-    mov rax,playerHealth
+    mov rax,playerLocation
     cmp [rax],0
     pop rax
     je getPlayerLastLocationOriginalCode
     push rbx
     push rcx
-    mov rbx,playerHealth
-    mov rcx,[rbx]
-    mov rbx,[rsp+132]
-    // The base of the health structure points to the character's root structure.
-    cmp [rcx],rbx
+    mov rbx,playerLocation
+    mov rcx,[rbx]    
+    // The player's location structure can be found here on the stack.
+    cmp rcx,[rsp+132]
     jne getPlayerLastLocationCleanup
     mov [playerLastLocation],rdi    
 getPlayerLastLocationCleanup:
@@ -211,19 +171,16 @@ registersymbol(omniDeathCounterHook)
 
 incrementDeathCounter:
     pushf
-    // Make sure our health structure is initialized. It really should be, but lets leave nothing to chance.    
+    // Make sure our player structure is initialized. It really should be, but lets leave nothing to chance.    
     push rax
-    mov rax,playerHealth
+    mov rax,player
     cmp [rax],0
     pop rax
     je incrementDeathCounterOriginalCode
     push rax
-    push rbx
-    mov rax,playerHealth
-    mov rbx,[rax]
-    add rbx,0x10
+    mov rax,player
+    mov [rax],rcx
     cmp rbx,rcx
-    pop rbx
     pop rax
     jne incrementDeathCounterOriginalCode
     inc [deathCounter]
@@ -329,7 +286,7 @@ updateLocationReturn:
 // This is Nioh 2's damage application code.
 // [rbx+10]: Working health.
 // edi: Damage amount.
-// rbx: Target health structure.
+// rbx: Target entity (i.e. [player] or an NPC) structure.
 // UNIQUE AOB: 8B 43 10 2B C7
 // Correct instruction will be single result found in nioh2.exe (not the other two DLL's).
 define(omnifyApocalypseHook,"nioh2.exe"+79C590)
@@ -350,7 +307,7 @@ initiateApocalypse:
     je initiateApocalypseOriginalCode
     // Ensure the required player data structures are initialized.
     push rax
-    mov rax,playerHealth
+    mov rax,player
     cmp [rax],0
     pop rax
     je initiateApocalypseOriginalCode
@@ -385,16 +342,12 @@ initiateApocalypse:
     movd [rsp],xmm0    
     // Now, we need to determine whether the player or an NPC is being damaged, and then from there execute the appropriate
     // Apocalypse subsystem.
-    mov rbx,playerHealth
-    // The target health structure being employed by this code is "misaligned" by 10 bytes.
-    mov rax,[rbx]
-    add rax,0x10
-    cmp rax,rcx
+    mov rax,player        
+    cmp [rax],rcx
     je initiatePlayerApocalypse
     jmp initiateEnemyApocalypse    
 initiatePlayerApocalypse:        
-    // Convert the maximum health for the player to the expected floating point form.
-    // The maximum health will be found at [rcx+8] instead of [rcx+18] due to the previously mentioned "misalignment".
+    // Convert the maximum health for the player to the expected floating point form.    
     mov rax,[rcx+8]
     cvtsi2ss xmm0,rax
     // Load the maximum health parameter.
@@ -630,37 +583,17 @@ abomnifyPlayer:
 
 [DISABLE]
 
-// Cleanup of omniPlayerHealthHook
-omniPlayerHealthHook:
+// Cleanup of omniPlayerHook
+omniPlayerHook:
     db 48 6B 41 20 64
 
-unregistersymbol(omniPlayerHealthHook)
-unregistersymbol(playerHealth)
-
-dealloc(playerHealth)
-dealloc(getPlayerHealth)
-
-
-// Cleanup of omniPlayerStaminaHook
-omniPlayerStaminaHook:
-    db F3 0F 58 41 08
-
-unregistersymbol(omniPlayerStaminaHook)
-unregistersymbol(playerStamina)
-
-dealloc(playerStamina)
-dealloc(getPlayerStamina)
-
-
-// Cleanup of omniPlayerLocationHook
-omniPlayerLocationHook:
-    db 0F 10 80 F0 00 00 00
-
-unregistersymbol(omniPlayerLocationHook)
+unregistersymbol(omniPlayerHook)
+unregistersymbol(player)
 unregistersymbol(playerLocation)
 
 dealloc(playerLocation)
-dealloc(getPlayerLocation)
+dealloc(player)
+dealloc(getPlayer)
 
 
 // Cleanup of omniPlayerLastLocationHook
