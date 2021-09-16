@@ -239,7 +239,7 @@ updateLocation:
     push rcx
     mov rax,teleported
     mov [rax],0    
-    mov [framesToSkip],#20
+    mov [framesToSkip],#25
     mov rbx,playerLastLocation
     mov rax,[rbx]
     // Need to set our last location (vertically) so that proper fall damage will occur if we just got Tom Petty'd.
@@ -305,6 +305,16 @@ initiateApocalypse:
     // A r15 register set to 1 means we're drowning like a big dumb baby.
     cmp r15,1
     je initiateApocalypseOriginalCode
+    // An r8 register set to 0x400 indicates environmental fire damage.
+    cmp r8,0x400
+    je initiateApocalypseOriginalCode
+    // An r13 register set to 0 indicates a DoT effect (among other things, but nothing we want to trigger Apocalypse
+    // with).
+    cmp r13,0
+    jne executeApocalypse
+    // TODO: For testing, see if unwanted damage is filtered out.
+    nop
+executeApocalypse:
     // Ensure the required player data structures are initialized.
     push rax
     mov rax,player
@@ -347,6 +357,15 @@ initiateApocalypse:
     je initiatePlayerApocalypse
     jmp initiateEnemyApocalypse    
 initiatePlayerApocalypse:        
+    // Check if the normal damage is enough (alone) to kill the player -- if it is, we forbid teleports, as we cannot
+    // move the character after he or she is dead.
+    mov rax,[rcx+10]
+    sub eax,edi
+    cmp eax,0
+    jg skipTeleportitisDisable
+    mov rax,disableTeleportitis
+    mov [rax],1
+skipTeleportitisDisable:
     // Convert the maximum health for the player to the expected floating point form.    
     mov rax,[rcx+8]
     cvtsi2ss xmm0,rax
@@ -370,6 +389,8 @@ initiateApocalypseUpdateDamage:
     movd xmm0,ebx
     cvtss2si ebx,xmm0
     mov [rcx+10],ebx
+    mov rax,disableTeleportitis
+    mov [rax],0
 initiateApocalypseCleanup:
     pop rcx
     pop rbx
