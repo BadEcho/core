@@ -414,6 +414,9 @@ negativeVerticalDisplacementEnabled:
 teleportitisDisplacementX:
     dd (float)180.0
 
+gokuResultUpper:
+    dd #1500
+
 
 // Initiates the Predator system.
 // [rdx+0-8]: Movement offsets for x, y, and z-coordinates respectively.
