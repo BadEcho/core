@@ -11,7 +11,8 @@
 //----------------------------------------------------------------------
 
 // Creates pointers to multiple structures containing important player data.
-// Filtering is achieved by looking at 0x14c. If this is 0, then it is the player.
+// Filtering is achieved by looking at root structure container pointed at by rax.
+// If it is the player, the base of this structure will be set to 0x64.
 // We adjust the health structure's address by +0x10 bytes here as the game, while 
 // accessing current health values using an 0x20 offset, will write to it using a 
 // 0x10 offset.
@@ -35,15 +36,14 @@ registersymbol(omniPlayerHook)
 
 getPlayer:
     pushf
+    cmp [rax],64
+    jne getPlayerOriginalCode
     push rax
-    mov rax,rcx
-    cmp [rax+0x14C],0
-    jl getPlayerCleanup
+    mov rax,rcx    
     add rax,0x10        
     mov [player],rax
     mov rax,[rcx+B8]
     mov [playerLocation],rax
-getPlayerCleanup:
     pop rax
 getPlayerOriginalCode:
     popf
@@ -188,8 +188,7 @@ incrementDeathCounter:
     je incrementDeathCounterOriginalCode
     push rax
     mov rax,player
-    mov [rax],rcx
-    cmp rbx,rcx
+    cmp [rax],rcx
     pop rax
     jne incrementDeathCounterOriginalCode
     inc [deathCounter]
