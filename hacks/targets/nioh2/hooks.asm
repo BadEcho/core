@@ -11,11 +11,12 @@
 //----------------------------------------------------------------------
 
 // Creates pointers to multiple structures containing important player data.
-// Filtering is achieved by looking at root structure container pointed at by rax.
+// Filtering is achieved by looking at the root containing structure pointed 
+// at by rax.
 // If it is the player, the base of this structure will be set to 0x64.
-// We adjust the health structure's address by +0x10 bytes here as the game, while 
-// accessing current health values using an 0x20 offset, will write to it using a 
-// 0x10 offset.
+// We adjust the health structure's address by +0x10 bytes here as the game, 
+// while accessing current health values using an 0x20 offset, will write to 
+// it using a 0x10 offset.
 // [rcx+20] | {[player]+10}: Current health.
 // [rcx+18] | {[player]+8}: Maximum health.
 // [rcx+48] | {[player]+38}: Current stamina.
