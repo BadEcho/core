@@ -11,18 +11,20 @@
 //----------------------------------------------------------------------
 
 // Creates pointers to multiple structures containing important player data.
-// This polls the player's health exclusively. No filtering required.
-// We adjust the health structure's address by +0x10 bytes here as the game, while accessing
-// current health values using an 0x20 offset, will write to it using a 0x10 offset.
+// Filtering is achieved by looking at 0x14c. If this is 0, then it is the player.
+// We adjust the health structure's address by +0x10 bytes here as the game, while 
+// accessing current health values using an 0x20 offset, will write to it using a 
+// 0x10 offset.
 // [rcx+20] | {[player]+10}: Current health.
 // [rcx+18] | {[player]+8}: Maximum health.
 // [rcx+48] | {[player]+38}: Current stamina.
 // [rcx+4C] | {[player]+3C}: Maximum stamina.
 // [rcx+B8] | {[player]+A8}: Location structure.
-// UNIQUE AOB: 36 48 6B 41 20 64
-define(omniPlayerHook,"nioh2.exe"+9B7A60)
+// [rcx+14C] | {[player]+13C}: Identifier for entity type.
+// UNIQUE AOB: 41 8B C6 48 3B 41 20
+define(omniPlayerHook,"nioh2.exe"+807269)
 
-assert(omniPlayerHook,48 6B 41 20 64)
+assert(omniPlayerHook,41 8B C6 48 3B 41 20)
 alloc(getPlayer,$1000,omniPlayerHook)
 alloc(player,8)
 alloc(playerLocation,8)
@@ -32,19 +34,26 @@ registersymbol(player)
 registersymbol(omniPlayerHook)
 
 getPlayer:
+    pushf
     push rax
     mov rax,rcx
-    add rax,0x10
+    cmp [rax+0x14C],0
+    jl getPlayerCleanup
+    add rax,0x10        
     mov [player],rax
     mov rax,[rcx+B8]
     mov [playerLocation],rax
+getPlayerCleanup:
     pop rax
 getPlayerOriginalCode:
-    imul rax,[rcx+20],64
+    popf
+    mov eax,r14d
+    cmp rax,[rcx+20]
     jmp getPlayerReturn
 
 omniPlayerHook:
     jmp getPlayer
+    nop 2
 getPlayerReturn:
 
 
@@ -609,7 +618,7 @@ abomnifyPlayer:
 
 // Cleanup of omniPlayerHook
 omniPlayerHook:
-    db 48 6B 41 20 64
+    db 41 8B C6 48 3B 41 20
 
 unregistersymbol(omniPlayerHook)
 unregistersymbol(player)
