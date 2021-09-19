@@ -167,15 +167,15 @@ function registerOmnification(targetAssemblyFilePath, pathToFramework)
 				fatalisTimer = createTimer(getMainForm())
 
 				local randomFatalisDuration = {
-					{1, 8}
-					{2, 12}
-					{3, 18}
-					{4, 25}
-					{5, 50}
-					{6, 12}
-					{7, 8}
-					{8, 4}
-					{9, 2}
+					{1, 8},
+					{2, 12},
+					{3, 18},
+					{4, 25},
+					{5, 50},
+					{6, 12},
+					{7, 8},
+					{8, 4},
+					{9, 2},
 					{10, 1}
 				}
 
