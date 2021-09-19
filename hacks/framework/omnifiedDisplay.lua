@@ -175,7 +175,7 @@ function activateLoggers()
 								  "WHEW! Just normal damage causing ",
 								  apocalypseDamagedHealth)
 						if fatalisResult == fatalisResultUpper then
-							log:write(timestamp, "Unfortunately the player has been stricken with Fatalis for the next ten minutes...\n")						
+							log:write(timestamp, "Unfortunately the player has been stricken with Fatalis for an unknown period of time...\n")						
 							playSound(findTableFile('fatalisAfflication.wav'))
 							writeInteger("fatalisResult",0)
 						end								  

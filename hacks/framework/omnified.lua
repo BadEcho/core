@@ -165,7 +165,23 @@ function registerOmnification(targetAssemblyFilePath, pathToFramework)
 				
 			if fatalisState == 1 and fatalisTimer == nil then
 				fatalisTimer = createTimer(getMainForm())
-				fatalisTimer.Interval = 600000
+
+				local randomFatalisDuration = {
+					{1, 8}
+					{2, 12}
+					{3, 18}
+					{4, 25}
+					{5, 50}
+					{6, 12}
+					{7, 8}
+					{8, 4}
+					{9, 2}
+					{10, 1}
+				}
+
+				local fatalisDuration = randomize(randomFatalisDuration) * 60000
+
+				fatalisTimer.Interval = fatalisDuration
 				fatalisTimer.OnTimer = function()
 					writeInteger("fatalisState",2)		
 					local previousPlayerDamageX =  readFloat("basePlayerDamageX")
