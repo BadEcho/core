@@ -326,6 +326,8 @@ skipMovementFrame:
     pop rcx
     pop rbx
     pop rax    
+    // Update the validated coordinates as well.
+    movdqu [rcx+220],xmm0
 updateLocationOriginalCode:
     popf
     movdqa [rcx+000000F0],xmm0
