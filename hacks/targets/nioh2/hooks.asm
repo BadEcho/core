@@ -40,11 +40,32 @@ getPlayer:
     cmp [rax],64
     jne getPlayerOriginalCode
     push rax
+    push rbx
+    push rdx
     mov rax,rcx    
     add rax,0x10        
     mov [player],rax
     mov rax,[rcx+B8]
     mov [playerLocation],rax
+    mov rbx,teleport
+    cmp [rbx],1
+    jne getPlayerCleanup    
+    mov [rbx],0
+    mov rbx,teleportX
+    mov rdx,[rbx]
+    mov [rax+F0],rdx
+    mov [rax+220],rdx
+    mov rbx,teleportY
+    mov rdx,[rbx]
+    mov [rax+F4],rdx
+    mov [rax+224],rdx
+    mov rbx,teleportZ
+    mov rdx,[rbx]
+    mov [rax+F8],rdx
+    mov [rax+228],rdx
+getPlayerCleanup:
+    pop rdx
+    pop rbx
     pop rax
 getPlayerOriginalCode:
     popf
