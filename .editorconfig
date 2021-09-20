@@ -1,4 +1,6 @@
-﻿[*.cs]
+﻿root = true
+
+[*.cs]
 
 # CA5398: Avoid hardcoded SslProtocols values
 dotnet_diagnostic.CA5398.severity = warning

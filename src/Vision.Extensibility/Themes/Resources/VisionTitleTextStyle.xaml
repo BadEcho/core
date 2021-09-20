@@ -20,7 +20,7 @@
         <Setter Property="InnerStroke" Value="{DynamicResource {x:Static t:Brushes.OutlinedTextStrokeKey}}"/>
         <Setter Property="InnerStrokeThickness" Value="4"/>
         <Setter Property="FontFamily" Value="{DynamicResource {x:Static t:Fonts.VisionTitleFontFamilyKey}}"/>
-        <Setter Property="FontSize" Value="36"/>
+        <Setter Property="FontSize" Value="28"/>
     </Style>
 
 </ResourceDictionary>

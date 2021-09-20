@@ -18,7 +18,7 @@
         pack://application:,,,/BadEcho.Omnified.Vision.Extensibility;component/Themes/Resources/#Visionista, Consolas
     </FontFamily>
     <FontFamily x:Key="{x:Static t:Fonts.VisionTitleFontFamilyKey}">
-        pack://application:,,,/BadEcho.Omnified.Vision.Extensibility;component/Themes/Resources/#Hacked
+        pack://application:,,,/BadEcho.Omnified.Vision.Extensibility;component/Themes/Resources/#Dot Matrix
     </FontFamily>
 
 </ResourceDictionary>

@@ -6,12 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Themes\Resources\Hacked.ttf" />
-    <None Remove="Themes\Resources\Visionista.otf" Condition="Exists('Themes\Resources\Visionista.otf')"/>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="..\..\.editorconfig" Link=".editorconfig" />
+    <None Remove="Themes\Resources\DotMatrix.ttf" />
+    <None Remove="Themes\Resources\Visionista.otf" Condition="Exists('Themes\Resources\Visionista.otf')" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Themes\Resources\Hacked.ttf">
+    <Resource Include="Themes\Resources\DotMatrix.ttf">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Themes\Resources\Visionista.otf" Condition="Exists('Themes\Resources\Visionista.otf')">
