@@ -24,6 +24,12 @@ namespace BadEcho.Odin.Interop
         private const string LIBRARY_NAME = "user32";
 
         /// <summary>
+        /// Gets the name for the exported <c>DefWindowProcW</c> function.
+        /// </summary>
+        public static string ExportDefWindowProcW 
+            => "DefWindowProcW";
+
+        /// <summary>
         /// Destroys the specified window.
         /// </summary>
         /// <param name="hWnd">A handle to the window to be destroyed.</param>
@@ -104,6 +110,13 @@ namespace BadEcho.Odin.Interop
         [DllImport(LIBRARY_NAME, ExactSpelling = true)]
         [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
         public static extern int ReleaseDC(IntPtr hWnd, IntPtr hdc);
+
+        /// <summary>
+        /// Retrieves a module handle to the module that this class provides interoperability with.
+        /// </summary>
+        /// <returns>A handle to the user32.dll module.</returns>
+        public static IntPtr GetModuleHandle()
+            => Kernel32.GetModuleHandle($"{LIBRARY_NAME}.dll");
 
         /// <summary>
         /// Retrieves information about a specified window.
