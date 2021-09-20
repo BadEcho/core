@@ -636,9 +636,9 @@ applyDamageByPlayer:
     // event logging display code.
     mov [playerCritChanceResult],eax
     // We can't generate random floats, only random integers. So, to have 
-    // a 6.25% crit chance, we generate a number in the range of 0 to 400, and 
-    // then check if the value is less than or equal to 25 (25/400 = 0.0625).
-    cmp eax,25
+    // a 1.5% crit chance, we generate a number in the range of 0 to 200, and 
+    // then check if the value is less than or equal to 3 (3/200 = 0.015).
+    cmp eax,#3
     jg checkKamehameha  
     // Load the parameters for generating the critical hit damage.
     push [playerCritDamageResultLower]
@@ -829,7 +829,7 @@ playerCritChanceResult:
     dd 0
   
 playerCritChanceResultUpper:
-    dd #800
+    dd #200
   
 playerCritChanceResultLower:
     dd 0
