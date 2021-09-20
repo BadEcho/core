@@ -661,6 +661,9 @@ abominifyDepthResultUpper:
 abominifyWidthResultUpper:
     dd #240
 
+unnaturalBigX:
+    dd (float)1.5
+
 abomnifyPlayer:
     dd 0
 
