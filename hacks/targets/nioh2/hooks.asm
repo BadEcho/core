@@ -364,13 +364,7 @@ initiateApocalypse:
     je initiateApocalypseOriginalCode
     // An r8 register set to 0x400 indicates environmental fire damage.
     cmp r8,0x400
-    je initiateApocalypseOriginalCode
-    // An r13 register set to 0 indicates a DoT effect (among other things, but nothing we want to trigger Apocalypse
-    // with).
-    cmp r13,0
-    jne executeApocalypse
-    // TODO: For testing, see if unwanted damage is filtered out.
-    nop
+    je initiateApocalypseOriginalCode    
 executeApocalypse:
     // Ensure the required player data structures are initialized.
     push rax
