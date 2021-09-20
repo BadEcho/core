@@ -208,6 +208,31 @@ deathCounter:
     dd 0
 
 
+// Gets the player's Amrita.
+// rbx: Amrita value.
+// UNIQUE AOB: 45 33 E4 4D 89 7B D8
+define(omniAmritaHook,"nioh2.exe"+CB33F5)
+
+assert(omniAmritaHook,45 33 E4 4D 89 7B D8)
+alloc(getAmrita,$1000,omniAmritaHook)
+alloc(playerAmrita,8)
+
+registersymbol(playerAmrita)
+registersymbol(omniAmritaHook)
+
+getAmrita:
+    mov [playerAmrita],rbx
+getAmritaOriginalCode:
+    xor r12d,r12d
+    mov [r11-28],r15
+    jmp getAmritaReturn
+
+omniAmritaHook:
+    jmp getAmrita
+    nop 2
+getAmritaReturn:
+
+
 // Processes Omnified events during execution of the location update code for the player.
 define(omnifyLocationUpdateHook,"nioh2.exe"+801863)
 
@@ -662,6 +687,17 @@ unregistersymbol(deathCounter)
 
 dealloc(deathCounter)
 dealloc(incrementDeathCounter)
+
+
+// Cleanup of omniAmritaHook
+omniAmritaHook:
+    db 45 33 E4 4D 89 7B D8
+
+unregistersymbol(omniAmritaHook)
+unregistersymbol(playerAmrita)
+
+dealloc(playerAmrita)
+dealloc(getAmrita)
 
 
 // Cleanup of omnifyLocationUpdateHook
