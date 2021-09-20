@@ -487,7 +487,7 @@ fatalisResult:
     dd 0
   
 fatalisResultUpper:
-    dd #7
+    dd #12
   
 fatalisResultLower:
     dd 1
