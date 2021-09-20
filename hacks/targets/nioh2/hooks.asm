@@ -359,7 +359,8 @@ registersymbol(omnifyApocalypseHook)
 initiateApocalypse:
     pushf
     // An empty r12 register indicates the damage originates from falling.
-    // We don't want this to trigger Apocalypse, as it may have been Apocalypse that caused the falling...
+    // We don't want this to trigger Apocalypse, as it may have been Apocalypse that caused the 
+    // falling...
     cmp r12,0
     je initiateApocalypseOriginalCode
     // A r15 register set to 1 means we're drowning like a big dumb baby.
@@ -387,14 +388,14 @@ executeApocalypse:
     // Backing up the outputs of the Apocalypse system.
     push rax
     push rbx
-    // Backing up a register to hold the address pointed to by rbx, as we need to write one of our outputs to it
-    // when all is said and done.
+    // Backing up a register to hold the address pointed to by rbx, as we need to write one 
+    // of our outputs to it when all is said and done.
     push rcx    
     mov rcx,rbx    
     // Both Player and Enemy Apocalypse functions share the same first two parameters. 
     // Let's load them first before figuring out which subsystem to execute.
-    // We'll need to convert the working health and damage amount values from being integer types to floating point 
-    // types, as this is the data type expected by the Apocalypse system.    
+    // We'll need to convert the working health and damage amount values from being integer types 
+    // to floating point types, as this is the data type expected by the Apocalypse system.    
     cvtsi2ss xmm0,edi    
     // Load the damage amount parameter.
     sub rsp,8
@@ -404,15 +405,15 @@ executeApocalypse:
     // Load the working health amount parameter.
     sub rsp,8
     movd [rsp],xmm0    
-    // Now, we need to determine whether the player or an NPC is being damaged, and then from there execute the 
-    // appropriate Apocalypse subsystem.
+    // Now, we need to determine whether the player or an NPC is being damaged, and then from 
+    // there execute the appropriate Apocalypse subsystem.
     mov rax,player        
     cmp [rax],rcx
     je initiatePlayerApocalypse
     jmp initiateEnemyApocalypse    
 initiatePlayerApocalypse:        
-    // Check if the normal damage is enough (alone) to kill the player -- if it is, we forbid teleports, as we 
-    // cannot move the character after he or she is dead.
+    // Check if the normal damage is enough (alone) to kill the player -- if it is, we forbid 
+    // teleports, as we cannot move the character after he or she is dead.
     mov rax,[rcx+10]
     sub eax,edi
     cmp eax,0
@@ -426,8 +427,8 @@ skipTeleportitisDisable:
     // Load the maximum health parameter.
     sub rsp,8
     movd [rsp],xmm0
-    // Align the player's location coordinate structure so it begins at our x-coordinate and pass that as the 
-    // final parameter.
+    // Align the player's location coordinate structure so it begins at our x-coordinate and pass 
+    // that as the final parameter.
     mov rax,playerLocation
     mov rbx,[rax]
     lea rax,[rbx+F0]
@@ -437,8 +438,8 @@ skipTeleportitisDisable:
 initiateEnemyApocalypse:
     call executeEnemyApocalypse
 initiateApocalypseUpdateDamage:
-    // To make use of the updated damage and working health amounts returned by the Apocalypse system,
-    // we'll need to convert them both back to integer form.
+    // To make use of the updated damage and working health amounts returned by the Apocalypse 
+    // system, we'll need to convert them both back to integer form.
     movd xmm0,eax
     cvtss2si edi,xmm0
     movd xmm0,ebx
