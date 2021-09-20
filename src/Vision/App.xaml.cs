@@ -66,9 +66,14 @@ namespace BadEcho.Omnified.Vision
         {
             if (sender is not IConfigurationProvider configurationProvider)
                 return;
-
-            if (MainWindow != null)
-                this.Invoke(() => ApplyConfiguration(MainWindow, configurationProvider), DispatcherPriority.Background);
+            
+            this.Invoke(ReapplyConfiguration, DispatcherPriority.Background);
+            
+            void ReapplyConfiguration()
+            {
+                if (MainWindow != null)
+                    ApplyConfiguration(MainWindow, configurationProvider);
+            }
         }
     }
 }
