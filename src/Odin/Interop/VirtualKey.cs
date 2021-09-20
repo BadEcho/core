@@ -25,6 +25,10 @@ namespace BadEcho.Odin.Interop
         /// <summary>
         /// The L key.
         /// </summary>
-        L = 0x4C
+        L = 0x4C,
+        /// <summary>
+        /// The Z key.
+        /// </summary>
+        Z = 0x5A
     }
 }
