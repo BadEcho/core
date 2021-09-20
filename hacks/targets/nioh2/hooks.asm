@@ -255,6 +255,8 @@ getAmritaReturn:
 
 
 // Processes Omnified events during execution of the location update code for the player.
+// rcx: The target location structure being updated.
+// UNIQUE AOB: 66 0F 7F 81 F0 00 00 00 C3
 define(omnifyLocationUpdateHook,"nioh2.exe"+801863)
 
 assert(omnifyLocationUpdateHook,66 0F 7F 81 F0 00 00 00)
@@ -266,8 +268,8 @@ registersymbol(omnifyLocationUpdateHook)
 
 updateLocation:
     pushf
-    // Since we need to update it upon a teleport occurring, the last location structure player is required for further
-    // processing.
+    // Since we need to update it upon a teleport occurring, the last location structure player is required for 
+    // further processing.
     push rax
     mov rax,playerLastLocation
     cmp [rax],0
@@ -279,9 +281,9 @@ updateLocation:
     cmp [rax],rcx
     pop rax
     jne updateLocationOriginalCode
-    // Upon a teleport, we engage in a movement frame skip sequence, this is so the desired teleport coordinates actually get
-    // committed to the player's location (and stay there); otherwise, an army of validation-related code will revert the coordinates
-    // depending on the situation.
+    // Upon a teleport, we engage in a movement frame skip sequence, this is so the desired teleport coordinates 
+    // actually get committed to the player's location (and stay there); otherwise, an army of validation-related 
+    // code will revert the coordinates depending on the situation.
     cmp [framesToSkip],0
     jg skipMovementFrame
     push rax
@@ -309,8 +311,9 @@ skipMovementFrame:
     push rax
     push rbx        
     push rcx
-    // Simply ignoring the updated coordinates in xmm0 is not enough, as other validation code might've already reverted our
-    // source-of-truth coordinates. So, we load up the teleport coordinates set during the Apocalypse pass.
+    // Simply ignoring the updated coordinates in xmm0 is not enough, as other validation code might've already 
+    // reverted our source-of-truth coordinates. So, we load up the teleport coordinates set during the Apocalypse
+    // pass.
     mov rcx,teleportLocation
     movdqu [rcx],xmm0
     mov rax,teleportedX
@@ -326,7 +329,7 @@ skipMovementFrame:
     pop rcx
     pop rbx
     pop rax    
-    // Update the validated coordinates as well.
+    // Update the validation, destination coordinates as well.
     movdqu [rcx+220],xmm0
 updateLocationOriginalCode:
     popf
@@ -390,8 +393,8 @@ executeApocalypse:
     mov rcx,rbx    
     // Both Player and Enemy Apocalypse functions share the same first two parameters. 
     // Let's load them first before figuring out which subsystem to execute.
-    // We'll need to convert the working health and damage amount values from being integer types to floating point types,
-    // as this is the data type expected by the Apocalypse system.    
+    // We'll need to convert the working health and damage amount values from being integer types to floating point 
+    // types, as this is the data type expected by the Apocalypse system.    
     cvtsi2ss xmm0,edi    
     // Load the damage amount parameter.
     sub rsp,8
@@ -401,15 +404,15 @@ executeApocalypse:
     // Load the working health amount parameter.
     sub rsp,8
     movd [rsp],xmm0    
-    // Now, we need to determine whether the player or an NPC is being damaged, and then from there execute the appropriate
-    // Apocalypse subsystem.
+    // Now, we need to determine whether the player or an NPC is being damaged, and then from there execute the 
+    // appropriate Apocalypse subsystem.
     mov rax,player        
     cmp [rax],rcx
     je initiatePlayerApocalypse
     jmp initiateEnemyApocalypse    
 initiatePlayerApocalypse:        
-    // Check if the normal damage is enough (alone) to kill the player -- if it is, we forbid teleports, as we cannot
-    // move the character after he or she is dead.
+    // Check if the normal damage is enough (alone) to kill the player -- if it is, we forbid teleports, as we 
+    // cannot move the character after he or she is dead.
     mov rax,[rcx+10]
     sub eax,edi
     cmp eax,0
@@ -423,7 +426,8 @@ skipTeleportitisDisable:
     // Load the maximum health parameter.
     sub rsp,8
     movd [rsp],xmm0
-    // Align the player's location coordinate structure so it begins at our x-coordinate and pass that as the final parameter.
+    // Align the player's location coordinate structure so it begins at our x-coordinate and pass that as the 
+    // final parameter.
     mov rax,playerLocation
     mov rbx,[rax]
     lea rax,[rbx+F0]
