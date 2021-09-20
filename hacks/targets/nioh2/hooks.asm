@@ -472,6 +472,9 @@ teleportitisDisplacementX:
 gokuResultUpper:
     dd #1500
 
+fatalisBloodlustDamageX:
+    dd (float)1.5
+
 
 // Initiates the Predator system.
 // [rdx+0-8]: Movement offsets for x, y, and z-coordinates respectively.
