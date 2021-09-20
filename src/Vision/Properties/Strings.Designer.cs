@@ -61,7 +61,7 @@ namespace BadEcho.Omnified.Vision.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Omnified Vision.
+        ///   Looks up a localized string similar to vision by omni.
         /// </summary>
         public static string VisionTitle {
             get {
