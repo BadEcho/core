@@ -50,8 +50,10 @@ namespace BadEcho.Omnified.Vision
 
             string messageFilePath = Path.Combine(messageFilesDirectory, module.MessageFile);
 
-            if (File.Exists(messageFilePath))
-                CurrentMessages = File.ReadAllText(messageFilePath);
+            var messageFile = new FileInfo(messageFilePath);
+
+            if (messageFile.Exists)
+                CurrentMessages = messageFile.ReadAllText(FileShare.ReadWrite);
 
             _watcher = new FileSystemWatcher
                        {
