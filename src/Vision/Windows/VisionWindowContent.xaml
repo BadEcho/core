@@ -35,12 +35,39 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <fenestra:OutlinedTextElement Style="{StaticResource VisionTitleTextStyle}"
-                                      Text="{x:Static r:Strings.VisionTitle}"
+                                      Text="{x:Static r:Strings.VisionTitleName}"
                                       HorizontalAlignment="{Binding TitleLocation, Converter={StaticResource LocationHorizontalConverter}}"
                                       VerticalAlignment="{Binding TitleLocation, Converter={StaticResource LocationVerticalConverter}}"
-                                      Margin="15,0,15,0"
-                                      Grid.Row="0"
-                                      />
+                                      Margin="15,0,15,10"
+                                      Grid.Row="0">
+            <fenestra:OutlinedTextElement.Triggers>
+                <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard RepeatBehavior="Forever">
+                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)"
+                                             To="0.0"
+                                             BeginTime="00:00:16"
+                                             Duration="00:00:2"
+                                             />
+                            <!--New text can be brought in at 18 seconds. Further new text can eb brought in 20 seconds thereafter.-->
+                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)"
+                                             To="1.0"
+                                             BeginTime="00:00:18"
+                                             Duration="00:00:2"
+                                             />
+                        </Storyboard>
+                    </BeginStoryboard>
+                    <BeginStoryboard>
+                        <Storyboard RepeatBehavior="Forever">
+                            <StringAnimationUsingKeyFrames Storyboard.TargetProperty="(fenestra:OutlinedTextElement.Text)" Duration="0:0:40">
+                                <DiscreteStringKeyFrame Value="{x:Static r:Strings.VisionTitleAddress}" KeyTime="0:0:18"/>
+                                <DiscreteStringKeyFrame Value="{x:Static r:Strings.VisionTitleName}" KeyTime="0:0:38"/>
+                            </StringAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </fenestra:OutlinedTextElement.Triggers>
+        </fenestra:OutlinedTextElement>
         <ItemsControl ItemsSource="{Binding Children}"
                       Grid.Row="1"
                       Margin="15,0,15,0">

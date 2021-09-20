@@ -61,11 +61,20 @@ namespace BadEcho.Omnified.Vision.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to https://BadEcho.com.
+        /// </summary>
+        public static string VisionTitleAddress {
+            get {
+                return ResourceManager.GetString("VisionTitleAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to vision by omni.
         /// </summary>
-        public static string VisionTitle {
+        public static string VisionTitleName {
             get {
-                return ResourceManager.GetString("VisionTitle", resourceCulture);
+                return ResourceManager.GetString("VisionTitleName", resourceCulture);
             }
         }
     }

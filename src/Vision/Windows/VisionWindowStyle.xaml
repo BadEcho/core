@@ -36,7 +36,7 @@
                 <Storyboard>
                     <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)"
                                      To="1.0"
-                                     Duration="00:00:01"
+                                     Duration="00:00:02.5"
                                      />
                 </Storyboard>
             </BeginStoryboard>
