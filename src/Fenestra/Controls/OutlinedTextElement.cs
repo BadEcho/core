@@ -15,6 +15,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Markup;
@@ -400,8 +401,20 @@ namespace BadEcho.Fenestra.Controls
                 Geometry widenedPathGeometry
                     = InnerTextGeometry.GetWidenedPathGeometry(_innerOutlinePen);
 
-                _outerTextGeometry
-                    = Geometry.Combine(InnerTextGeometry, widenedPathGeometry, GeometryCombineMode.Union, null);
+                try
+                {
+                    _outerTextGeometry
+                        = Geometry.Combine(InnerTextGeometry, widenedPathGeometry, GeometryCombineMode.Union, null);
+                }
+                catch (COMException comEx)
+                {
+                    if (comEx.HResult != unchecked((int)0x88980004))
+                        throw;
+
+                    // For reasons known only to those versed in internal Direct3D mechanics, sometimes the geometry scanner fails to process the data.
+                    // Creating a combined geometry isn't going to work until another pass, so we just draw over the inner text geometry for now.
+                    _outerTextGeometry = InnerTextGeometry;
+                }
 
                 return _outerTextGeometry;
             }
