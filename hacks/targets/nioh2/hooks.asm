@@ -254,6 +254,33 @@ omniAmritaHook:
 getAmritaReturn:
 
 
+// Gets the player's Amrita gauge (use to trigger Yokai Shift).
+define(omniAmritaGaugeHook,"nioh2.exe"+82B85B)
+
+assert(omniAmritaGaugeHook,F3 0F 10 80 C4 00 00 00)
+alloc(getAmritaGauge,$1000,omniAmritaGaugeHook)
+alloc(amritaGauge,8)
+
+registersymbol(amritaGauge)
+registersymbol(omniAmritaGaugeHook)
+
+getAmritaGauge:
+    pushf
+    push rbx
+    lea rbx,[rax+C4]
+    mov [amritaGauge],rbx
+    pop rbx
+getAmritaGaugeOriginalCode:
+    popf
+    movss xmm0,[rax+000000C4]
+    jmp getAmritaGaugeReturn
+
+omniAmritaGaugeHook:
+    jmp getAmritaGauge
+    nop 3
+getAmritaGaugeReturn:
+
+
 // Processes Omnified events during execution of the location update code for the player.
 // rcx: The target location structure being updated.
 // UNIQUE AOB: 66 0F 7F 81 F0 00 00 00 C3
@@ -768,6 +795,17 @@ unregistersymbol(playerAmrita)
 
 dealloc(playerAmrita)
 dealloc(getAmrita)
+
+
+// Cleanup of omniAmritaGaugeHook
+omniAmritaGaugeHook:
+    db F3 0F 10 80 C4 00 00 00
+
+unregistersymbol(omniAmritaGaugeHook)
+unregistersymbol(amritaGauge)
+
+dealloc(amritaGauge)
+dealloc(getAmritaGauge)
 
 
 // Cleanup of omnifyLocationUpdateHook
