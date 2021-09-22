@@ -1,8 +1,8 @@
 {
   "launchDisplay": 1,
-  "anchorBoxVerticalOffset": 80, 
+  "anchorBoxVerticalOffset": 140,
   "titleLocation": "TopLeft",
-  "messageFilesDirectory": "..\\..\\hacks\\targets\\cyberpunk",
+  "messageFilesDirectory": "..\\..\\hacks\\targets\\nioh2",
   "modules": {
     "BadEcho.Omnified.Vision.Statistics": {
       "location": "TopLeft"
