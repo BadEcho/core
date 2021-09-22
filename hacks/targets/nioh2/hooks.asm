@@ -342,6 +342,37 @@ omnifyLocationUpdateHook:
 updateLocationReturn:
 
 
+// Detects if the player is responsible for a damaging attack.
+// UNIQUE AOB: 4C 8B E8 48 85 C0 0F 84 B4
+define(omnifyPlayerHitDetectionHook,"nioh2.exe"+8B065D)
+
+assert(omnifyPlayerHitDetectionHook,4C 8B E8 48 85 C0)
+alloc(detectPlayerHit,$1000,omnifyPlayerHitDetectionHook)
+alloc(playerAttacking,8)
+
+registersymbol(playerAttacking)
+registersymbol(omnifyPlayerHitDetectionHook)
+
+detectPlayerHit:
+    pushf
+    push rbx
+    mov rbx,playerLocation
+    cmp [rbx],rax
+    pop rbx
+    jne detectPlayerHitOriginalCode
+    mov [playerAttacking],1
+detectPlayerHitOriginalCode:
+    popf
+    mov r13,rax
+    test rax,rax
+    jmp detectPlayerHitReturn
+
+omnifyPlayerHitDetectionHook:
+    jmp detectPlayerHit
+    nop 
+detectPlayerHitReturn:
+
+
 // Initiates the Apocalypse system.
 // This is Nioh 2's damage application code.
 // [rbx+10]: Working health.
@@ -436,7 +467,16 @@ skipTeleportitisDisable:
     call executePlayerApocalypse
     jmp initiateApocalypseUpdateDamage
 initiateEnemyApocalypse:
+    // Check if the player is responsible for the attack, if not, then the damage may be from a friendly 
+    // NPC, or otherwise berserk and rampaging Yokai.
+    mov rax,playerAttacking
+    cmp [rax],1
+    jne abortEnemyApocalypse
     call executeEnemyApocalypse
+    jmp initiateApocalypseUpdateDamage
+abortEnemyApocalypse:
+    add rsp,10
+    jmp initiateApocalypseCleanup
 initiateApocalypseUpdateDamage:
     // To make use of the updated damage and working health amounts returned by the Apocalypse 
     // system, we'll need to convert them both back to integer form.
@@ -448,6 +488,8 @@ initiateApocalypseUpdateDamage:
     mov rax,disableTeleportitis
     mov [rax],0
 initiateApocalypseCleanup:
+    mov rax,playerAttacking
+    mov [rax],0
     pop rcx
     pop rbx
     pop rax
@@ -736,6 +778,17 @@ unregistersymbol(omnifyLocationUpdateHook)
 dealloc(framesToSkip)
 dealloc(teleportLocation)
 dealloc(updateLocation)
+
+
+// Cleanup of omnifyPlayerHitDetectionHook
+omnifyPlayerHitDetectionHook:
+    db 4C 8B E8 48 85 C0
+
+unregistersymbol(omnifyPlayerHitDetectionHook)
+unregistersymbol(playerAttacking)
+
+dealloc(playerAttacking)
+dealloc(detectPlayerHit)
 
 
 // Cleanup of omnifyApocalypseHook
