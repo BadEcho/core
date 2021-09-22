@@ -98,7 +98,7 @@ namespace BadEcho.Omnified.Vision.Windows
 
             _native.HotKeyPressed += HandleHotKeyPressed;
 
-            _native.RegisterHotKey(0, ModifierKeys.Control, VirtualKey.Z);
+            _native.RegisterHotKey(0, ModifierKeys.None, VirtualKey.F11);
             _native.MakeOverlay();
         }
 
