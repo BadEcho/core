@@ -29,6 +29,14 @@ namespace BadEcho.Odin.Interop
         /// <summary>
         /// The Z key.
         /// </summary>
-        Z = 0x5A
+        Z = 0x5A,
+        /// <summary>
+        /// The F11 key.
+        /// </summary>
+        F11 = 0x7A,
+        /// <summary>
+        /// The F12 key.
+        /// </summary>
+        F12 = 0x7B
     }
 }
