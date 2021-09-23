@@ -568,7 +568,8 @@ initiatePredator:
     cmp [rax],0
     pop rax
     je initiatePredatorOriginalCode
-    // In some instances, rbx does not point to a valid location structure, such as when a shrine is being used.
+    // In some instances, rbx does not point to a valid location structure, such as when 
+    // a shrine is being used.
     cmp rbx,1
     je initiatePredatorOriginalCode
     // Make sure the player isn't being treated as an enemy NPC!
@@ -577,8 +578,8 @@ initiatePredator:
     cmp [rax],rbx
     pop rax
     je applyPlayerSpeed
-    // Backing up the registers used to hold Predator system output, as well as an SSE to hold some of the parameters 
-    // we'll be passing.
+    // Backing up the registers used to hold Predator system output, as well as an SSE to 
+    // hold some of the parameters we'll be passing.
     sub rsp,10
     movdqu [rsp],xmm0
     push rax
@@ -592,8 +593,8 @@ initiatePredator:
     // The next parameter is the target NPC's coordinates.
     push [rbx+F0]
     push [rbx+F8]
-    // The third parameter is the NPC's dimensional scales. Jury is still out whether this game has True Scaling, so we'll
-    // just be passing a good ol' identity matrix for now.
+    // The third parameter is the NPC's dimensional scales. Jury is still out whether this 
+    // game has True Scaling, so we'll just be passing a good ol' identity matrix for now.
     movss xmm0,[identityValue]
     shufps xmm0,xmm0,0
     sub rsp,10
@@ -619,6 +620,9 @@ applyPlayerSpeed:
     movdqu [rsp],xmm1
     push rax
     sub rsp,10
+    // We don't use the Predator system to influence player speed; rather, we just introduce
+    // the use of a simple multiplier that is applied to the character's movement offsets.
+    // This multiplier will be, except under special circumstances, typically 1x.
     movss xmm0,[playerSpeedX]
     shufps xmm0,xmm0,0
     movups [rsp],xmm0
