@@ -16,7 +16,7 @@ using System.Linq;
 using System.Text.Json;
 using Xunit;
 
-namespace BadEcho.Odin.Tests.Json
+namespace BadEcho.Odin.Tests.Serialization
 {
     public class JsonPolymorphicConverterTests
     {
@@ -65,8 +65,6 @@ namespace BadEcho.Odin.Tests.Json
             options.Converters.Add(new FakeJsonObjectConverter());
 
             var fakeObject = JsonSerializer.Deserialize<IEnumerable<FakeJsonObject>>(json, options);
-
-            Assert.NotNull(fakeObject);
 
             return fakeObject!;
         }

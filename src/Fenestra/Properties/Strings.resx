@@ -173,4 +173,7 @@
   <data name="BindingActionError" xml:space="preserve">
     <value>An error occurred during a data binding action.</value>
   </data>
+  <data name="JsonThicknessInvalidThickness" xml:space="preserve">
+    <value>A Thickness value with an illegal number of lengths was provided. A Thickness value can only have 1, 2, or 4 lengths.</value>
+  </data>
 </root>

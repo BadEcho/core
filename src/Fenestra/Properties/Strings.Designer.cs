@@ -214,6 +214,15 @@ namespace BadEcho.Fenestra.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A Thickness value with an illegal number of lengths was provided. A Thickness value can only have 1, 2, or 4 lengths..
+        /// </summary>
+        internal static string JsonThicknessInvalidThickness {
+            get {
+                return ResourceManager.GetString("JsonThicknessInvalidThickness", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A stepped binding requires the value for the property &apos;{0}&apos; to be able to be converted to a 32-bit signed integer..
         /// </summary>
         internal static string NotSteppablePropertyValue {
