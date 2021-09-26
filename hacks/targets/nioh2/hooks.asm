@@ -30,7 +30,9 @@ assert(omniPlayerHook,41 8B C6 48 3B 41 20)
 alloc(getPlayer,$1000,omniPlayerHook)
 alloc(player,8)
 alloc(playerLocation,8)
+alloc(recallYCorrection,8)
 
+registersymbol(recallYCorrection)
 registersymbol(playerLocation)
 registersymbol(player)
 registersymbol(omniPlayerHook)
@@ -39,12 +41,16 @@ getPlayer:
     pushf
     cmp [rax],64
     jne getPlayerOriginalCode
+    sub rsp,10
+    movdqu [rsp],xmm0
     push rax
     push rbx
-    push rdx
+    // Adjust the base address of our root structure so it is aligned with how it is when
+    // being processed by various functions of significance (damage application code, etc).
     mov rax,rcx    
     add rax,0x10        
     mov [player],rax
+    // Grab the player's location structure, and apply any pending Recall action to it.
     mov rax,[rcx+B8]
     mov [playerLocation],rax
     mov rbx,teleport
@@ -52,21 +58,25 @@ getPlayer:
     jne getPlayerCleanup    
     mov [rbx],0
     mov rbx,teleportX
-    mov rdx,[rbx]
-    mov [rax+F0],rdx
-    mov [rax+220],rdx
+    movss xmm0,[rbx]
+    movss [rax+F0],xmm0
+    movss [rax+220],xmm0
     mov rbx,teleportY
-    mov rdx,[rbx]
-    mov [rax+F4],rdx
-    mov [rax+224],rdx
+    movss xmm0,[rbx]
+    // The game sometimes needs a bit of a vertical boost to avoid us from sinking in
+    // the ground when we're teleporting somewhere arbitrary.
+    addss xmm0,[recallYCorrection]
+    movss [rax+F4],xmm0
+    movss [rax+224],xmm0
     mov rbx,teleportZ
-    mov rdx,[rbx]
-    mov [rax+F8],rdx
-    mov [rax+228],rdx
+    movss xmm0,[rbx]
+    movss [rax+F8],xmm0
+    movss [rax+228],xmm0
 getPlayerCleanup:
-    pop rdx
     pop rbx
     pop rax
+    movdqu xmm0,[rsp]
+    add rsp,10
 getPlayerOriginalCode:
     popf
     mov eax,r14d
@@ -77,6 +87,10 @@ omniPlayerHook:
     jmp getPlayer
     nop 2
 getPlayerReturn:
+
+
+recallYCorrection:
+    dd (float)150.0
 
 
 // Gets the player's last location structure and ensures Omnified changes to the player's vertical position
@@ -749,7 +763,9 @@ omniPlayerHook:
 unregistersymbol(omniPlayerHook)
 unregistersymbol(player)
 unregistersymbol(playerLocation)
+unregistersymbol(recallYCorrection)
 
+dealloc(recallYCorrection)
 dealloc(playerLocation)
 dealloc(player)
 dealloc(getPlayer)
