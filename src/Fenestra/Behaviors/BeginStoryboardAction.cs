@@ -23,6 +23,7 @@ namespace BadEcho.Fenestra.Behaviors
     public sealed class BeginStoryboardAction : BehaviorAction<DependencyObject>
     {
         private bool _isActive;
+        private Storyboard? _writableStoryboard;
 
         /// <summary>
         /// Identifies the <see cref="Storyboard"/> dependency property.
@@ -30,7 +31,8 @@ namespace BadEcho.Fenestra.Behaviors
         public static readonly DependencyProperty StoryboardProperty
             = DependencyProperty.Register(nameof(Storyboard),
                                           typeof(Storyboard),
-                                          typeof(BeginStoryboardAction));
+                                          typeof(BeginStoryboardAction),
+                                          new FrameworkPropertyMetadata(OnStoryboardChanged));
         /// <summary>
         /// Gets or sets the <see cref="Storyboard"/> that will have its animations applied when this action is executed.
         /// </summary>
@@ -53,16 +55,11 @@ namespace BadEcho.Fenestra.Behaviors
         /// </remarks>
         public override bool Execute()
         {
-            if (Storyboard == null)
+            if (_writableStoryboard == null)
                 return false;
 
             if (_isActive)
                 return true;
-
-            // Remember, Storyboard is a Freezable, so subscribing to one of its events results in a PropertyChangeCallback.
-            // This makes the idea of subscribing and unsubscribing to events inside such a callback quite untenable.
-            // Therefore, we subscribe and unsubscribe to events in response to requests for animation.
-            Storyboard.Completed += HandleStoryboardCompleted;
 
             // The object we're attached to, if possible, will become the inheritance context for the Storyboard, allowing us
             // to make use of Storyboards defined in separate ResourceDictionaries. 
@@ -70,9 +67,9 @@ namespace BadEcho.Fenestra.Behaviors
             // we're attached to. If we wish to animate something outside the scope of said containing object, then simply attach another
             // action-triggering behavior to the outside object with a storyboard only targeting those properties.
             if (TargetObject is FrameworkElement containingObject)
-                Storyboard.Begin(containingObject);
+                _writableStoryboard.Begin(containingObject);
             else
-                Storyboard.Begin();
+                _writableStoryboard.Begin();
 
             _isActive = true;
 
@@ -83,12 +80,33 @@ namespace BadEcho.Fenestra.Behaviors
         protected override Freezable CreateInstanceCore()
             => new BeginStoryboardAction();
 
-        private void HandleStoryboardCompleted(object? sender, System.EventArgs e)
+        private static void OnStoryboardChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            _isActive = false;
-            
-            if (Storyboard != null)
-                Storyboard.Completed -= HandleStoryboardCompleted;
+            BeginStoryboardAction action = (BeginStoryboardAction) sender;
+
+            action.LoadStoryboard((Storyboard) e.OldValue, (Storyboard) e.NewValue);
         }
+
+        private void LoadStoryboard(Storyboard? oldStoryboard, Storyboard? newStoryboard)
+        {
+            if (oldStoryboard != null && _writableStoryboard != null)
+            {
+                _writableStoryboard.Completed -= HandleStoryboardCompleted;
+                _writableStoryboard = null;
+            }
+
+            if (newStoryboard == null)
+                return;
+
+            // There is a good chance the Storyboard being bound to this action will be frozen. If that's the case,
+            // we will be unable to subscribe to any of its events. We can work around this by cloning the Storyboard,
+            // which gives us something whose events we can subscribe to, and will otherwise function completely
+            // the same as the storyboard that's been bound to us.
+            _writableStoryboard = newStoryboard.Clone();
+            _writableStoryboard.Completed += HandleStoryboardCompleted;
+        }
+
+        private void HandleStoryboardCompleted(object? sender, System.EventArgs e) 
+            => _isActive = false;
     }
 }
