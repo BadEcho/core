@@ -19,35 +19,95 @@
     <system:String x:Key="StatisticNumberFormat">{0:N0}</system:String>
 
     <Storyboard x:Key="ExplodeTextAnimation">
-        <DoubleAnimation Storyboard.TargetName="Value" 
-                         Storyboard.TargetProperty="(fenestra:OutlinedTextElement.FontSize)"
-                         By="49.4"
-                         Duration="00:00:01.7">
+        <!--Immediately reducing stroke thickness at start as it becomes too pronounced as text element's scale is increased.-->
+        <DoubleAnimation Storyboard.TargetName="Value"
+                         Storyboard.TargetProperty="(fenestra:OutlinedTextElement.InnerStrokeThickness)"
+                         To="0.5"
+        />
+        <DoubleAnimation Storyboard.TargetName="Value"
+                         Storyboard.TargetProperty="(fenestra:OutlinedTextElement.InnerStrokeThickness)"
+                         To="3"
+                         BeginTime="00:00:01.7"
+                         Duration="00:00:00.3"
+                         />
+        <!--
+            Statistic text is moved away from rest of statistics, which helps to draw attention to it, prevents it from covering 
+            up other stats, and increases readability of the animated statistic. This is slightly problematic if we're anchored
+            to a rightward anchor point, support for inverting this value will need to be added eventually.
+        
+            More than likely, we'll create an inverted form of this animation and store it, along with the original animation, in 
+            their own Storyboards separate from this. Then, we can perhaps bind to the appropriate one at runtime based on the module's 
+            location.
+        -->
+        <DoubleAnimation Storyboard.TargetName="Value"
+                         Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)"
+                         To="300"
+                         Duration="00:00:00.1">
             <DoubleAnimation.EasingFunction>
                 <ElasticEase EasingMode="EaseOut"/>
             </DoubleAnimation.EasingFunction>
         </DoubleAnimation>
-        <DoubleAnimation Storyboard.TargetName="Value" 
-                         Storyboard.TargetProperty="(fenestra:OutlinedTextElement.FontSize)"
-                         By="-49.4"
+        <DoubleAnimation Storyboard.TargetName="Value"
+                         Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)"
+                         To="0"
                          BeginTime="00:00:01.7"
                          Duration="00:00:00.3">
             <DoubleAnimation.EasingFunction>
                 <ElasticEase EasingMode="EaseOut"/>
             </DoubleAnimation.EasingFunction>
         </DoubleAnimation>
+        <!--
+            Text gets blown up so you can't miss it. Adjusting scale is incredibly more performant than animating the font size, of course.
+            Let's not dwell on why I was originally doing that...
+        -->
+        <DoubleAnimation Storyboard.TargetName="Value"
+                         Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
+                         To="4"
+                         Duration="00:00:01.7">
+            <DoubleAnimation.EasingFunction>
+                <ElasticEase EasingMode="EaseOut"/>
+            </DoubleAnimation.EasingFunction>
+        </DoubleAnimation>
+        <DoubleAnimation Storyboard.TargetName="Value"
+                         Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
+                         To="1.0"
+                         BeginTime="00:00:01.7"
+                         Duration="00:00:00.3">
+            <DoubleAnimation.EasingFunction>
+                <ElasticEase EasingMode="EaseOut"/>
+            </DoubleAnimation.EasingFunction>
+        </DoubleAnimation>
+        <DoubleAnimation Storyboard.TargetName="Value"
+                         Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
+                         To="4"
+                         Duration="00:00:01.7">
+            <DoubleAnimation.EasingFunction>
+                <ElasticEase EasingMode="EaseOut"/>
+            </DoubleAnimation.EasingFunction>
+        </DoubleAnimation>
+        <DoubleAnimation Storyboard.TargetName="Value"
+                         Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
+                         To="1.0"
+                         BeginTime="00:00:01.7"
+                         Duration="00:00:00.3">
+            <DoubleAnimation.EasingFunction>
+                <ElasticEase EasingMode="EaseOut"/>
+            </DoubleAnimation.EasingFunction>
+        </DoubleAnimation>
+        <!--We give the text a little "shake", to give off that impression of a big ol' earthquake happening.-->
         <DoubleAnimation Storyboard.TargetName="Value" 
                          Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)"
                          From="10"
                          To="-10"
                          AutoReverse="True"
-                         RepeatBehavior="20x"
-                         Duration="00:00:00.05"                             
+                         RepeatBehavior="16x"
+                         Duration="00:00:00.0625"                             
                          FillBehavior="Stop">
             <DoubleAnimation.EasingFunction>
                 <BounceEase EasingMode="EaseInOut" Bounciness="2" Bounces="3"/>
             </DoubleAnimation.EasingFunction>
         </DoubleAnimation>
+        <!--Finally, we gotta switch on over to that red (or whatever the critical color resource is set to) alert tone baby!-->
         <ColorAnimation Storyboard.TargetName="Value" 
                         Storyboard.TargetProperty="(fenestra:OutlinedTextElement.Fill).(SolidColorBrush.Color)"
                         From="{StaticResource {x:Static t:Colors.TextColorKey}}"
@@ -56,7 +116,7 @@
                         Duration="00:00:00.2"
                         FillBehavior="Stop"
                         RepeatBehavior="5x"
-        />
+                        />
     </Storyboard>
 
     <Style x:Key="StatisticTextStyle" TargetType="{x:Type fenestra:OutlinedTextElement}">
