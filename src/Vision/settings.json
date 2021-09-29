@@ -1,6 +1,6 @@
 {
   "launchDisplay": 1,
-  "anchorBoxVerticalOffset": 140,
+  "leftAnchorMargin":  "0,140,0,0",
   "titleLocation": "TopLeft",
   "messageFilesDirectory": "..\\..\\hacks\\targets\\nioh2",
   "modules": {
