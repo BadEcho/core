@@ -29,11 +29,9 @@ namespace BadEcho.Odin.Interop
 
         private WeakReference? _hook;
 
-        public void Dispose()
-        {
-            _hook = null;
-        }
-        
+        public void Dispose() 
+            => _hook = null;
+
         private static IntPtr GetDefaultWindowProc()
         {
             IntPtr hModule = User32.GetModuleHandle();
