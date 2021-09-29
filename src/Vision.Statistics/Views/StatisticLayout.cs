@@ -32,9 +32,9 @@ namespace BadEcho.Omnified.Vision.Statistics.Views
                                                   new FrameworkPropertyMetadata(false,
                                                                                 FrameworkPropertyMetadataOptions.Inherits));
         /// <summary>
-        /// Gets a value indicating whether statistics should be displayed in compact form.
+        /// Gets the value of the <see cref="IsCompactProperty"/> attached property for a given <see cref="UIElement"/>.
         /// </summary>
-        /// <param name="source">The <see cref="UIElement"/> to get the value from.</param>
+        /// <param name="source">The element from which the property value is read.</param>
         /// <returns>Value indicating if statistics should be displayed in compact form.</returns>
         public static bool GetIsCompact(UIElement source)
         {
@@ -44,9 +44,9 @@ namespace BadEcho.Omnified.Vision.Statistics.Views
         }
 
         /// <summary>
-        /// Sets a value indicating whether statistics should be displayed in compact form.
+        /// Sets the value of the <see cref="IsCompactProperty"/> attached property on a given <see cref="UIElement"/>.
         /// </summary>
-        /// <param name="source">The <see cref="UIElement"/> to set the value on.</param>
+        /// <param name="source">The element to which the attached property is written.</param>
         /// <param name="value">The value indicating whether statistics should be displayed in compact form.</param>
         public static void SetIsCompact(UIElement source, bool value)
         {

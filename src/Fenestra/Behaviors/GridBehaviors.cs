@@ -44,9 +44,9 @@ namespace BadEcho.Fenestra.Behaviors
                 NameOf.ReadDependencyPropertyName(() => RowDefinitionsProperty));
 
         /// <summary>
-        /// Gets the column size definitions for the provided <see cref="Grid"/> instance.
+        /// Gets the value of the <see cref="ColumnDefinitionsProperty"/> attached property for a given <see cref="Grid"/>.
         /// </summary>
-        /// <param name="source">The <see cref="Grid"/> to get the column definitions for.</param>
+        /// <param name="source">The grid from which the property value is read.</param>
         /// <returns>The column size definitions for <c>source</c>.</returns>
         public static SizeDefinitionCollection GetColumnDefinitions(Grid source)
         {
@@ -56,9 +56,9 @@ namespace BadEcho.Fenestra.Behaviors
         }
 
         /// <summary>
-        /// Sets the column size definitions for the provided <see cref="Grid"/> instance.
+        /// Sets the value of the <see cref="ColumnDefinitionsProperty"/> attached property on a given <see cref="Grid"/>.
         /// </summary>
-        /// <param name="source">The <see cref="Grid"/> to set the column size definitions on.</param>
+        /// <param name="source">The grid to which the attached property is written.</param>
         /// <param name="collection">The collection of column size definitions to set.</param>
         public static void SetColumnDefinitions(Grid source, SizeDefinitionCollection collection)
         {
@@ -68,9 +68,9 @@ namespace BadEcho.Fenestra.Behaviors
         }
 
         /// <summary>
-        /// Gets the row size definitions for the provided <see cref="Grid"/> instance.
+        /// Gets the value of the <see cref="RowDefinitionsProperty"/> attached property for a given <see cref="Grid"/>.
         /// </summary>
-        /// <param name="source">The <see cref="Grid"/> to get the row definitions for.</param>
+        /// <param name="source">The grid from which the property value is read.</param>
         /// <returns>The row size definitions for <c>source</c>.</returns>
         public static SizeDefinitionCollection GetRowDefinitions(Grid source)
         {
@@ -80,9 +80,9 @@ namespace BadEcho.Fenestra.Behaviors
         }
 
         /// <summary>
-        /// Sets the row size definitions for the provided <see cref="Grid"/> instance.
+        /// Sets the value of the <see cref="RowDefinitionsProperty"/> attached property on a given <see cref="Grid"/>.
         /// </summary>
-        /// <param name="source">The <see cref="Grid"/> to set the row definitions for.</param>
+        /// <param name="source">The grid to which the attached property is written.</param>
         /// <param name="collection">The collection of row size definitions to set.</param>
         public static void SetRowDefinitions(Grid source, SizeDefinitionCollection collection)
         {

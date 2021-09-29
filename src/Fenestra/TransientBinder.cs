@@ -125,9 +125,9 @@ namespace BadEcho.Fenestra
         }
 
         /// <summary>
-        /// Gets the value of the <see cref="BindersProperty"/> attached property from a given <see cref="DependencyObject"/>.
+        /// Gets the value of the <see cref="BindersProperty"/> attached property for a given <see cref="DependencyObject"/>.
         /// </summary>
-        /// <param name="source">The dependency object from which to read the property value.</param>
+        /// <param name="source">The dependency object from which the property value is read.</param>
         /// <returns>The collection of custom binders attached to <c>source</c>.</returns>
         public static FreezableCollection<TransientBinder> GetBinders(DependencyObject source)
         {
@@ -144,9 +144,9 @@ namespace BadEcho.Fenestra
         }
 
         /// <summary>
-        /// Sets the value of the <see cref="BindersProperty"/> attached property to a given <see cref="DependencyObject"/>.
+        /// Sets the value of the <see cref="BindersProperty"/> attached property on a given <see cref="DependencyObject"/>.
         /// </summary>
-        /// <param name="source">The dependency object on which to set the attached property.</param>
+        /// <param name="source">The dependency object to which the attached property is written.</param>
         /// <param name="value">The collection of custom binders to set.</param>
         public static void SetBinders(DependencyObject source, FreezableCollection<TransientBinder> value)
         {

@@ -24,7 +24,7 @@ namespace BadEcho.Fenestra.Behaviors
     {
         /// <summary>
         /// Identifies the attached property that gets or sets a <see cref="DependencyObject"/> instance's collection
-        /// of actions executed by this type of behavior.
+        /// of actions executed by an attached instance of this behavior.
         /// </summary>
         public static readonly DependencyProperty ActionsProperty 
             = RegisterAttachment();
@@ -41,10 +41,10 @@ namespace BadEcho.Fenestra.Behaviors
             => ActionsProperty;
 
         /// <summary>
-        /// Gets the value of the <see cref="ActionsProperty"/> attached property from a given <see cref="DependencyObject"/>.
+        /// Gets the value of the <see cref="ActionsProperty"/> attached property for a given <see cref="DependencyObject"/>.
         /// </summary>
-        /// <param name="source">The dependency object from which to read the property value.</param>
-        /// <returns>The collection of actions executed by this type of behavior attached to <c>source</c>.</returns>
+        /// <param name="source">The dependency object from which the property value is read.</param>
+        /// <returns>The collection of actions executed by the instance of this behavior attached to <c>source</c>.</returns>
         public static BehaviorActionCollection<DependencyObject> GetActions(DependencyObject source)
             => GetAttachment(source, ActionsProperty);
 
