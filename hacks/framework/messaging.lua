@@ -38,19 +38,19 @@ end
 local function dumpStatistics()
     local playerHealth = not healthIsInteger
                             and toInt(readFloat(playerHealthAddress))
-                            or readInteger(playerHealthAddress)
+                            or toInt(readInteger(playerHealthAddress))
 
     local playerMaxHealth = not healthIsInteger
                                 and toInt(readFloat(playerMaxHealthAddress))
-                                or readInteger(playerMaxHealthAddress)
+                                or toInt(readInteger(playerMaxHealthAddress))
 
     local playerStamina = not staminaIsInteger
                             and toInt(readFloat(playerStaminaAddress))
-                            or readInteger(playerStaminaAddress)
+                            or toInt(readInteger(playerStaminaAddress))
 
     local playerMaxStamina = not staminaIsInteger
                                 and toInt(readFloat(playerMaxStaminaAddress))
-                                or readInteger(playerMaxStaminaAddress)    
+                                or toInt(readInteger(playerMaxStaminaAddress))
 
     -- Last damaged enemy health always floating point, as it is maintained by the Apocalypse system.
     local enemyHealth = toInt(readFloat("lastEnemyHealthValue"))
