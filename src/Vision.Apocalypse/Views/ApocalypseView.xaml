@@ -1,0 +1,24 @@
+﻿<!--
+    <copyright>
+        Created by Matt Weber <matt@badecho.com>
+        Copyright @ 2021 Bad Echo LLC. All rights reserved.
+
+		Bad Echo Technologies are licensed under a
+		Creative Commons Attribution-NonCommercial 4.0 International License.
+
+		See accompanying file LICENSE.md or a copy at:
+		http://creativecommons.org/licenses/by-nc/4.0/
+    </copyright>
+-->
+<fenestra:View x:Class="BadEcho.Omnified.Vision.Apocalypse.Views.ApocalypseView"
+               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+               xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+               xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"                   
+               mc:Ignorable="d" 
+               >
+    <Grid>
+        <TextBlock FontSize="36" Foreground="White">This<LineBreak/>Is<LineBreak/>Apocalypse</TextBlock>
+    </Grid>
+</fenestra:View>

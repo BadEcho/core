@@ -33,6 +33,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "omnified", "omnified", "{D8
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Omnified.Vision.Tests", "tests\Vision.Tests\BadEcho.Omnified.Vision.Tests.csproj", "{E9635411-FF91-4E8F-9144-F00D909C968D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BadEcho.Omnified.Vision.Apocalypse", "src\Vision.Apocalypse\BadEcho.Omnified.Vision.Apocalypse.csproj", "{0A387E81-5764-4967-ADE1-2B06400D7663}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,10 @@ Global
 		{E9635411-FF91-4E8F-9144-F00D909C968D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9635411-FF91-4E8F-9144-F00D909C968D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9635411-FF91-4E8F-9144-F00D909C968D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A387E81-5764-4967-ADE1-2B06400D7663}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A387E81-5764-4967-ADE1-2B06400D7663}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A387E81-5764-4967-ADE1-2B06400D7663}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A387E81-5764-4967-ADE1-2B06400D7663}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -101,6 +107,7 @@ Global
 		{8D19C413-8751-445E-BBB4-F20EA40E0691} = {773B3EB9-0C39-4AED-892F-F1E2F7B7106B}
 		{D85B8374-DA6C-4A05-9814-D057B4CCE499} = {FE49F12E-C479-4F72-A165-FE20F0A43C8D}
 		{E9635411-FF91-4E8F-9144-F00D909C968D} = {D85B8374-DA6C-4A05-9814-D057B4CCE499}
+		{0A387E81-5764-4967-ADE1-2B06400D7663} = {773B3EB9-0C39-4AED-892F-F1E2F7B7106B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AB57ED24-4142-4E4A-8847-3C6A0D38B54E}
