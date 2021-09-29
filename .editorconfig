@@ -737,6 +737,9 @@ dotnet_code_quality.null_check_validation_methods = NotNull|NotNullOrEmpty
 # IDE0011: Add braces
 dotnet_diagnostic.IDE0011.severity = none
 
+# IDE0048: Parentheses preferences
+dotnet_diagnostic.IDE0048.severity = none
+
 # IDE0058: Expression value is never used
 dotnet_diagnostic.IDE0058.severity = none
 
@@ -748,3 +751,6 @@ dotnet_diagnostic.IDE0055.severity = none
 
 # IDE0008: Use explicit type
 dotnet_diagnostic.IDE0008.severity = none
+
+# C# Coding Conventions
+csharp_style_expression_bodied_local_functions = false:suggestion
