@@ -170,7 +170,7 @@ getPlayerLastLocationReturn:
 //           1: No!
 // UNIQUE AOB: 8B 83 80 00 00 00 83 E8 03
 // Correct instruction is 13 instructions down from the returned result.
-define(omniGameOptionsHook,"nioh2.exe"+103B628)
+define(omniGameOptionsHook,"nioh2.exe"+103B668)
 
 assert(omniGameOptionsHook,80 78 3C 00 74 6D)
 alloc(getGameOptions,$1000,omniGameOptionsHook)
@@ -191,7 +191,7 @@ getGameOptions:
 getGameOptionsOriginalCode:
     popf
     cmp byte ptr [rax+3C],00
-    je nioh2.exe+103B69B
+    je nioh2.exe+103B6DB
     jmp getGameOptionsReturn
 
 omniGameOptionsHook:
