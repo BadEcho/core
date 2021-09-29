@@ -12,6 +12,7 @@
 //-----------------------------------------------------------------------
 
 using System.Collections.Generic;
+using System.Windows;
 
 namespace BadEcho.Omnified.Vision.Extensibility
 {
@@ -31,14 +32,24 @@ namespace BadEcho.Omnified.Vision.Extensibility
         string MessageFilesDirectory { get; }
 
         /// <summary>
-        /// Gets the distance between the anchor box that Vision components are hosted in and the top of the screen.
-        /// </summary>
-        double AnchorBoxVerticalOffset { get; }
-
-        /// <summary>
         /// Gets the location for the Vision application title's anchor point.
         /// </summary>
         AnchorPointLocation TitleLocation { get; }
+
+        /// <summary>
+        /// Gets the outer margin of modules anchored to the left side of the screen.
+        /// </summary>
+        Thickness LeftAnchorMargin { get; }
+
+        /// <summary>
+        /// Gets the outer margin of modules anchored to the center of the screen.
+        /// </summary>
+        Thickness CenterAnchorMargin { get; }
+
+        /// <summary>
+        /// Gets the outer margin of modules anchored to the right of the screen.
+        /// </summary>
+        Thickness RightAnchorMargin { get; }
 
         /// <summary>
         /// Gets a dictionary containing the names of plugin assemblies paired with their individual configurations.

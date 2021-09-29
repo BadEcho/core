@@ -13,6 +13,8 @@
 
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using System.Windows;
+using BadEcho.Fenestra.Serialization;
 using BadEcho.Omnified.Vision.Extensibility;
 
 namespace BadEcho.Omnified.Vision
@@ -26,8 +28,16 @@ namespace BadEcho.Omnified.Vision
         public string MessageFilesDirectory 
         { get; set; } = string.Empty;
 
-        /// <inheritdoc/>
-        public double AnchorBoxVerticalOffset 
+        [JsonConverter(typeof(JsonThicknessConverter))]
+        public Thickness LeftAnchorMargin
+        { get; set; }
+
+        [JsonConverter(typeof(JsonThicknessConverter))]
+        public Thickness CenterAnchorMargin
+        { get; set; }
+
+        [JsonConverter(typeof(JsonThicknessConverter))]
+        public Thickness RightAnchorMargin
         { get; set; }
 
         /// <inheritdoc/>

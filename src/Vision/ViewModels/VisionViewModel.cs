@@ -22,25 +22,14 @@ namespace BadEcho.Omnified.Vision.ViewModels
     /// </summary>
     internal sealed class VisionViewModel : CollectionViewModel<ModuleHost, ModuleHostViewModel>
     {
-        private double _anchorBoxVerticalOffset;
         private AnchorPointLocation _titleLocation;
-
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="VisionViewModel"/> class.
         /// </summary>
         public VisionViewModel()
             : base(new CollectionViewModelOptions())
         { }
-
-        /// <summary>
-        /// Gets or sets the distance between the anchor box that the bound Vision components are hosted in and the top of the
-        /// screen.
-        /// </summary>
-        public double AnchorBoxVerticalOffset
-        {
-            get => _anchorBoxVerticalOffset;
-            set => NotifyIfChanged(ref _anchorBoxVerticalOffset, value);
-        }
 
         /// <summary>
         /// Gets or sets the location for the Vision application title's anchor point.
@@ -81,7 +70,6 @@ namespace BadEcho.Omnified.Vision.ViewModels
         {
             Require.NotNull(configuration, nameof(configuration));
 
-            AnchorBoxVerticalOffset = configuration.AnchorBoxVerticalOffset;
             TitleLocation = configuration.TitleLocation;
         }
     }

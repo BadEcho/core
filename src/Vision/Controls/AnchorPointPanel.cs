@@ -19,6 +19,8 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using BadEcho.Fenestra;
 using BadEcho.Odin;
+using BadEcho.Odin.Configuration;
+using BadEcho.Odin.Extensibility.Hosting;
 using BadEcho.Omnified.Vision.Extensibility;
 
 namespace BadEcho.Omnified.Vision.Controls
@@ -28,6 +30,8 @@ namespace BadEcho.Omnified.Vision.Controls
     /// </summary>
     public sealed class AnchorPointPanel : Panel
     {
+        private VisionConfiguration _configuration;
+
         /// <summary>
         /// Identifies the attached property indicating the anchor point of a child element within a parent
         /// <see cref="AnchorPointPanel"/>.
@@ -39,6 +43,19 @@ namespace BadEcho.Omnified.Vision.Controls
                                                   new FrameworkPropertyMetadata(AnchorPointLocation.TopLeft,
                                                                                 OnAnchorPointChanged),
                                                   OnValidateAnchorPoint);
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AnchorPointPanel"/> class.
+        /// </summary>
+        public AnchorPointPanel()
+        {
+            IConfigurationProvider configurationProvider
+                = PluginHost.LoadRequirement<IConfigurationProvider>(true);
+
+            configurationProvider.ConfigurationChanged += HandleConfigurationChanged;
+
+            _configuration = configurationProvider.GetConfiguration<VisionConfiguration>();
+        }
+
         /// <summary>
         /// Gets the value of the <see cref="LocationProperty"/> attached property for a given <see cref="UIElement"/>.
         /// </summary>
@@ -137,18 +154,24 @@ namespace BadEcho.Omnified.Vision.Controls
             var bottomRightElements 
                 = GetElementsAtLocation(AnchorPointLocation.BottomRight);
 
-            ArrangeColumnedAnchorPoints(topLeftElements, bottomLeftElements, 0, finalSize.Height);
+            ArrangeColumnedAnchorPoints(topLeftElements,
+                                        bottomLeftElements,
+                                        0,
+                                        finalSize.Height,
+                                        _configuration.LeftAnchorMargin);
 
             ArrangeColumnedAnchorPoints(topCenterElements,
                                        bottomCenterElements,
                                        finalSize.Width / 2,
                                        finalSize.Height,
+                                       _configuration.CenterAnchorMargin,
                                        GetXOffsetForCenter);
 
             ArrangeColumnedAnchorPoints(topRightElements,
                                        bottomRightElements,
                                        finalSize.Width,
                                        finalSize.Height,
+                                       _configuration.RightAnchorMargin,
                                        GetXOffsetForRight);
             return finalSize;
 
@@ -188,14 +211,18 @@ namespace BadEcho.Omnified.Vision.Controls
                                                         IReadOnlyCollection<UIElement> bottomElements,
                                                         double startingX,
                                                         double panelHeight,
+                                                        Thickness columnMargin,
                                                         Func<UIElement, double>? xOffsetForElement = null)
         {
-            ArrangeAnchorPoint(topElements, startingX, 0, xOffsetForElement);
+            double yMargin = columnMargin.Top;
+            startingX += columnMargin.Left - columnMargin.Right;
+
+            ArrangeAnchorPoint(topElements, startingX, yMargin, xOffsetForElement);
 
             double topHeight = topElements.Sum(e => e.DesiredSize.Height);
             double bottomHeight = bottomElements.Sum(e => e.DesiredSize.Height);
 
-            double startingY = Math.Max(topHeight, panelHeight - bottomHeight);
+            double startingY = Math.Max(topHeight, panelHeight - bottomHeight - columnMargin.Bottom);
 
             ArrangeAnchorPoint(bottomElements, startingX, startingY, xOffsetForElement);
         }
@@ -240,6 +267,16 @@ namespace BadEcho.Omnified.Vision.Controls
                 or AnchorPointLocation.BottomCenter
                 or AnchorPointLocation.TopRight
                 or AnchorPointLocation.BottomRight;
+        }
+
+        private void HandleConfigurationChanged(object? sender, EventArgs e)
+        {
+            if (sender is not IConfigurationProvider configurationProvider)
+                return;
+
+            _configuration = configurationProvider.GetConfiguration<VisionConfiguration>();
+
+            InvalidateMeasure();
         }
     }
 }
