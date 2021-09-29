@@ -56,13 +56,17 @@ namespace BadEcho.Omnified.Vision.Windows
             _viewModel.Disconnect();
             _viewModel.ApplyConfiguration(configuration);
 
+            var titleModuleHost = ModuleHost.ForTitle(configuration);
+
+            _viewModel.Bind(titleModuleHost);
+
             var modules
                 = PluginHost.ArmedLoad<IVisionModule, IVisionConfiguration>(configuration);
 
             foreach (var module in modules)
             {
                 var moduleHost = new ModuleHost(module, configuration);
-
+                
                 _viewModel.Bind(moduleHost);
             }
         }

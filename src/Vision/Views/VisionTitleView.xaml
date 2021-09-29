@@ -1,0 +1,78 @@
+﻿<!--
+    <copyright>
+        Created by Matt Weber <matt@badecho.com>
+        Copyright @ 2021 Bad Echo LLC. All rights reserved.
+
+		Bad Echo Technologies are licensed under a
+		Creative Commons Attribution-NonCommercial 4.0 International License.
+
+		See accompanying file LICENSE.md or a copy at:
+		http://creativecommons.org/licenses/by-nc/4.0/
+    </copyright>
+-->
+<fenestra:View x:Class="BadEcho.Omnified.Vision.Views.VisionTitleView"
+               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+               xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+               xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"     
+               xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.ViewModels;assembly=BadEcho.Omnified.Vision"
+               mc:Ignorable="d" 
+               >
+    <d:DesignProperties.DataContext>
+        <vm:VisionTitleViewModel />
+    </d:DesignProperties.DataContext>
+    <Grid>
+        <fenestra:OutlinedTextElement Style="{StaticResource VisionTitleTextStyle}"
+                                      Text="{Binding PrimaryLogo}">
+            <fenestra:OutlinedTextElement.Triggers>
+                <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard RepeatBehavior="Forever">
+                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)"
+                                             To="0.0"
+                                             BeginTime="00:00:16"
+                                             Duration="00:00:02"
+                                             />
+                            <!--New text can be brought in at 18 seconds. This text can be shown again 20 seconds thereafter.-->
+                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)"
+                                             To="1.0"
+                                             BeginTime="00:00:38"
+                                             Duration="00:00:02"
+                                             />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </fenestra:OutlinedTextElement.Triggers>
+        </fenestra:OutlinedTextElement>
+        <!--
+            We use a separate OutlinedTextElement, laid out on top of the element that displays the primary logo, revealing it
+            a few seconds after the primary logo element disappears in other to display an additional message. 
+            We swap the message this way, as opposed to changing the bound text on a single text element via
+            a DiscreteStringKeyFrame, as the latter approach seriously impacts the performance of any other animations that
+            may be running at that time.
+        -->
+        <fenestra:OutlinedTextElement Style="{StaticResource VisionTitleTextStyle}"
+                                      Text="{Binding SecondaryLogo}"
+                                      Opacity="0">
+            <fenestra:OutlinedTextElement.Triggers>
+                <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard RepeatBehavior="Forever">
+                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)"
+                                             To="1.0"
+                                             BeginTime="00:00:18"
+                                             Duration="00:00:02"
+                                             />                            
+                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)"
+                                             To="0.0"
+                                             BeginTime="00:00:36"
+                                             Duration="00:00:02"
+                                             />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </fenestra:OutlinedTextElement.Triggers>
+        </fenestra:OutlinedTextElement>
+    </Grid>
+</fenestra:View>
