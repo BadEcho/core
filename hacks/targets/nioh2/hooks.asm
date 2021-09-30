@@ -554,7 +554,7 @@ teleportitisDisplacementX:
     dd (float)180.0
 
 gokuResultUpper:
-    dd #1500
+    dd #2500
 
 fatalisBloodlustDamageX:
     dd (float)1.5
