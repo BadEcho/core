@@ -58,7 +58,8 @@
             <fenestra:OutlinedTextElement.Triggers>
                 <EventTrigger RoutedEvent="FrameworkElement.Loaded">
                     <BeginStoryboard>
-                        <Storyboard RepeatBehavior="Forever">
+                        <Storyboard RepeatBehavior="Forever"
+                                    Duration="00:00:40">
                             <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)"
                                              To="1.0"
                                              BeginTime="00:00:18"
