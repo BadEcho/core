@@ -701,22 +701,30 @@ registersymbol(omnifyAbomnificationHook)
 
 initiateAbomnification:
     pushf
-    push rax
-    mov rax,playerLocation
-    cmp [rax],rdi
-    pop rax
-    jne skipAbomnifyPlayerCheck
-    cmp [abomnifyPlayer],1
-    jne initiateAbomnificationOriginalCode
-skipAbomnifyPlayerCheck:
     // Back up the registers used as outputs of the Abomnification system.
     push rax
     push rbx
     push rcx
+    mov rax,playerLocation
+    cmp [rax],rdi    
+    jne skipAbomnifyPlayerCheck
+    cmp [abomnifyPlayer],1
+    je skipAbomnifyPlayerCheck
+    // If we're here, then the creature being polled is the player, and the abomnifyPlayer
+    // player is set to false. So, we prime the scale registers to hold the default scaling multiplier.
+    push rdx
+    mov rdx,defaultScaleX
+    mov rax,[rdx]
+    mov rbx,[rdx]
+    mov rcx,[rdx]
+    pop rdx
+    jmp loadScales
+skipAbomnifyPlayerCheck:    
     // Push the address to the creature's location structure as its identifying
     // address to the stack.
     push rdi
     call executeAbomnification
+loadScales:    
     // Load the Abomnified scales into the creature's location structure.
     mov [rdi+148],eax
     mov [rdi+140],ebx
