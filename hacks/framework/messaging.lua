@@ -71,6 +71,7 @@ local function dumpStatistics()
 
     local lastDamageToPlayer = toInt(readFloat("lastDamageToPlayer"))
     local maxDamageToPlayer = toInt(readFloat("maxDamageToPlayer"))
+    local totalDamageToPlayer = toInt(readFloat("totalDamageToPlayer"))
     local lastEnemyDamageEvent = toInt(readFloat("lastEnemyDamageEvent"))
     local maxEnemyDamageEvent = toInt(readFloat("maxEnemyDamageEvent"))
     local totalEnemyDamage = toInt(readFloat("totalEnemyDamage"))
@@ -97,6 +98,7 @@ local function dumpStatistics()
         StatisticGroup("Damage Taken", { 
             WholeStatistic("Last", lastDamageToPlayer), 
             WholeStatistic("Max", maxDamageToPlayer, true),
+            WholeStatistic("Total", totalDamageToPlayer)
         }),
         StatisticGroup("Damage Inflicted", {
             WholeStatistic("Last", lastEnemyDamageEvent),
