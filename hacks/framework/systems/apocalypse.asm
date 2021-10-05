@@ -535,6 +535,7 @@ alloc(lastEnemyDamageEventBonusX,8)
 alloc(lastEnemyDamageEventBonusAmount,8)
 alloc(newEnemyDamagePulse,8)
 alloc(newEnemyDamagePulseBonusAmount,8)
+alloc(enemyDamagePulses,8)
 alloc(newEnemyDamageEvent,8)
 alloc(newEnemyDamageEventHasBonus,8)
 alloc(newEnemyDamageEventBonusX,8)
@@ -566,6 +567,7 @@ registersymbol(lastEnemyDamageEventBonusX)
 registersymbol(lastEnemyDamageEventBonusAmount)
 registersymbol(newEnemyDamagePulse)
 registersymbol(newEnemyDamagePulseBonusAmount)
+registersymbol(enemyDamagePulses)
 registersymbol(newEnemyDamageEvent)
 registersymbol(newEnemyDamageEventHasBonus)
 registersymbol(newEnemyDamageEventBonusX)
@@ -747,6 +749,8 @@ exitEnemyApocalypse:
     // "lastEnemyHealthValue" stat, and also for purposes of polymorphism, in a 
     // manner of speaking.
     movss xmm1,[rsp+58]
+    // Increment the number of enemy damage pulses that have occurred.
+    inc [enemyDamagePulses]
     movd ebx,xmm1
     movdqu xmm4,[rsp]
     add rsp,10
@@ -776,6 +780,9 @@ newEnemyDamagePulse:
 
 newEnemyDamagePulseBonusAmount:
     dd (float)0.0
+
+enemyDamagePulses:
+    dd 0
 
 newEnemyDamageEvent:
     dd (float)0.0
@@ -932,6 +939,7 @@ unregistersymbol(lastEnemyDamageEventBonusX)
 unregistersymbol(lastEnemyDamageEventBonusAmount)
 unregistersymbol(newEnemyDamagePulse)
 unregistersymbol(newEnemyDamagePulseBonusAmount)
+unregistersymbol(enemyDamagePulses)
 unregistersymbol(newEnemyDamageEvent)
 unregistersymbol(newEnemyDamageEventHasBonus)
 unregistersymbol(newEnemyDamageEventBonusX)
@@ -963,6 +971,7 @@ dealloc(newEnemyDamageEventBonusX)
 dealloc(newEnemyDamageEventBonusAmount)
 dealloc(newEnemyDamageEventNotProcessed)
 dealloc(newEnemyDamageEventBonusNotProcessed)
+dealloc(enemyDamagePulses)
 dealloc(maxEnemyDamageEvent)
 dealloc(maxEnemyDamageEventBonusAmount)
 dealloc(totalEnemyDamage)

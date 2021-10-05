@@ -75,6 +75,7 @@ local function dumpStatistics()
     local lastEnemyDamageEvent = toInt(readFloat("lastEnemyDamageEvent"))
     local maxEnemyDamageEvent = toInt(readFloat("maxEnemyDamageEvent"))
     local totalEnemyDamage = toInt(readFloat("totalEnemyDamage"))
+    local enemyDamagePulses = readInteger("enemyDamagePulses")
 
     local playerCoordinates = readPlayerCoordinates()
         
@@ -101,6 +102,7 @@ local function dumpStatistics()
             WholeStatistic("Total", totalDamageToPlayer)
         }),
         StatisticGroup("Damage Inflicted", {
+            WholeStatistic("Hits", enemyDamagePulses),
             WholeStatistic("Last", lastEnemyDamageEvent),
             WholeStatistic("Max", maxEnemyDamageEvent, true),
             WholeStatistic("Total", totalEnemyDamage)
