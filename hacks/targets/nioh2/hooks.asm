@@ -170,7 +170,7 @@ getPlayerLastLocationReturn:
 //           1: No!
 // UNIQUE AOB: 8B 83 80 00 00 00 83 E8 03
 // Correct instruction is 13 instructions down from the returned result.
-define(omniGameOptionsHook,"nioh2.exe"+103B668)
+define(omniGameOptionsHook,"nioh2.exe"+103B6C8)
 
 assert(omniGameOptionsHook,80 78 3C 00 74 6D)
 alloc(getGameOptions,$1000,omniGameOptionsHook)
@@ -191,7 +191,7 @@ getGameOptions:
 getGameOptionsOriginalCode:
     popf
     cmp byte ptr [rax+3C],00
-    je nioh2.exe+103B6DB
+    je nioh2.exe+103B73B
     jmp getGameOptionsReturn
 
 omniGameOptionsHook:
@@ -246,7 +246,7 @@ deathCounter:
 // Gets the player's Amrita.
 // rbx: Amrita value.
 // UNIQUE AOB: 45 33 E4 4D 89 7B D8
-define(omniAmritaHook,"nioh2.exe"+CB33F5)
+define(omniAmritaHook,"nioh2.exe"+CB3305)
 
 assert(omniAmritaHook,45 33 E4 4D 89 7B D8)
 alloc(getAmrita,$1000,omniAmritaHook)
