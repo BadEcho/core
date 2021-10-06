@@ -14,7 +14,7 @@
 namespace BadEcho.Omnified.Vision.Views
 {
     /// <summary>
-    /// Provides a view for displaying the Vision's application title.
+    /// Provides a view for displaying Vision's application title.
     /// </summary>
     public partial class VisionTitleView
     {
