@@ -39,43 +39,59 @@
                                       Grid.Column="0"
                                       Grid.Row="0"
                                       />
-        
-        <StackPanel Orientation="Vertical"
-                    Grid.Column="1"
-                    Grid.Row="1">
-            <StackPanel Orientation="Horizontal">
-                <fenestra:OutlinedTextElement Style="{Binding (v:StatisticLayout.IsCompact),
+        <Grid Grid.Column="1"
+              Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <fenestra:OutlinedTextElement Style="{Binding (v:StatisticLayout.IsCompact),
                                                               RelativeSource={RelativeSource AncestorType=UserControl},
                                                               Converter={StaticResource StatisticNameCompactStyleConverter}}"
-                                              Text="X"                                           
-                                              Margin="15,0,15,0"
-                                              />
-                <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
-                                              Text="{Binding X}"
-                                              />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <fenestra:OutlinedTextElement Style="{Binding (v:StatisticLayout.IsCompact),
+                                          Text="X"     
+                                          TextAlignment="Right"
+                                          Grid.Column="0"
+                                          Grid.Row="0" 
+                                          />
+            <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
+                                          Text="{Binding X}"
+                                          Grid.Column="1"
+                                          Grid.Row="0"
+                                          />
+
+            <fenestra:OutlinedTextElement Style="{Binding (v:StatisticLayout.IsCompact),
                                                               RelativeSource={RelativeSource AncestorType=UserControl},
                                                               Converter={StaticResource StatisticNameCompactStyleConverter}}"
-                                              Text="Y"
-                                              Margin="15,0,15,0"
-                                              />
-                <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
-                                              Text="{Binding Y}"
-                                              />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <fenestra:OutlinedTextElement Style="{Binding (v:StatisticLayout.IsCompact),
+                                          Text="Y" 
+                                          TextAlignment="Right"
+                                          Grid.Column="0"
+                                          Grid.Row="1" 
+                                          />
+            <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
+                                          Text="{Binding Y}"
+                                          Grid.Column="1"
+                                          Grid.Row="1"
+                                          />
+
+            <fenestra:OutlinedTextElement Style="{Binding (v:StatisticLayout.IsCompact),
                                                               RelativeSource={RelativeSource AncestorType=UserControl},
                                                               Converter={StaticResource StatisticNameCompactStyleConverter}}"
-                                              Text="Z"
-                                              Margin="15,0,15,0"
-                                              />
-                <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
-                                              Text="{Binding Z}"
-                                              />
-            </StackPanel>
-        </StackPanel>
+                                           Text="Z" 
+                                           TextAlignment="Right"
+                                           Grid.Column="0"
+                                           Grid.Row="2" 
+                                           />
+            <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
+                                          Text="{Binding Z}" 
+                                          Grid.Column="1"
+                                          Grid.Row="2"
+                                          />
+        </Grid>
     </Grid>
 </fenestra:View>
