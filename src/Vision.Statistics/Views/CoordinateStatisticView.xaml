@@ -17,9 +17,7 @@
                xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"                   
                xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Statistics.ViewModels"
-               xmlns:v="clr-namespace:BadEcho.Omnified.Vision.Statistics.Views"
-               mc:Ignorable="d" 
->
+               mc:Ignorable="d">
     <d:DesignProperties.DataContext>
         <vm:CoordinateStatisticViewModel Name="Coordinates"
                                          X="-1566.7635498047"
@@ -28,13 +26,8 @@
                                          Format="{}{0:0.000}"
                                          />
     </d:DesignProperties.DataContext>
-    <Grid Style="{Binding (v:StatisticLayout.IsCompact), 
-                          RelativeSource={RelativeSource AncestorType=UserControl}, 
-                          Converter={StaticResource GridCompactStyleConverter}}">
-
-        <fenestra:OutlinedTextElement Style="{Binding (v:StatisticLayout.IsCompact),
-                                                      RelativeSource={RelativeSource AncestorType=UserControl},
-                                                      Converter={StaticResource StatisticNameCompactStyleConverter}}"
+    <Grid Style="{StaticResource StatisticCompactableGridStyle}">
+        <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
                                       Text="{Binding Name}"
                                       Grid.Column="0"
                                       Grid.Row="0"
@@ -47,15 +40,20 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
+                <!--We want the axis label column to line up with the other statistic value columns, as opposed to this entire grid.-->
+                <ColumnDefinition SharedSizeGroup="ValueColumn"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <fenestra:OutlinedTextElement Style="{Binding (v:StatisticLayout.IsCompact),
-                                                              RelativeSource={RelativeSource AncestorType=UserControl},
-                                                              Converter={StaticResource StatisticNameCompactStyleConverter}}"
+            <!--
+                Unlike other statistic names, which are aligned on the left so they all start from the same position, 
+                we want these ones to be aligned on the right side, so the colons are lined up.
+            -->
+            <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
                                           Text="X"     
                                           TextAlignment="Right"
+                                          FontWeight="Normal"
+                                          Margin="15,0,15,0" 
                                           Grid.Column="0"
                                           Grid.Row="0" 
                                           />
@@ -65,11 +63,11 @@
                                           Grid.Row="0"
                                           />
 
-            <fenestra:OutlinedTextElement Style="{Binding (v:StatisticLayout.IsCompact),
-                                                              RelativeSource={RelativeSource AncestorType=UserControl},
-                                                              Converter={StaticResource StatisticNameCompactStyleConverter}}"
+            <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
                                           Text="Y" 
                                           TextAlignment="Right"
+                                          FontWeight="Normal"
+                                          Margin="15,0,15,0" 
                                           Grid.Column="0"
                                           Grid.Row="1" 
                                           />
@@ -79,11 +77,11 @@
                                           Grid.Row="1"
                                           />
 
-            <fenestra:OutlinedTextElement Style="{Binding (v:StatisticLayout.IsCompact),
-                                                              RelativeSource={RelativeSource AncestorType=UserControl},
-                                                              Converter={StaticResource StatisticNameCompactStyleConverter}}"
+            <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
                                            Text="Z" 
                                            TextAlignment="Right"
+                                           FontWeight="Normal"
+                                           Margin="15,0,15,0" 
                                            Grid.Column="0"
                                            Grid.Row="2" 
                                            />

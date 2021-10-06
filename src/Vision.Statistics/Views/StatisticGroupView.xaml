@@ -18,6 +18,7 @@
                  xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"      
                  xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Statistics.ViewModels"
                  xmlns:v="clr-namespace:BadEcho.Omnified.Vision.Statistics.Views"
+                 xmlns:s="clr-namespace:BadEcho.Omnified.Vision.Statistics"
                  mc:Ignorable="d" 
                  >
     <d:DesignProperties.DataContext>
@@ -41,7 +42,7 @@
                                       Text="{Binding Name}"
                                       Grid.Row="0"
                                       />
-        <v:StatisticsView v:StatisticLayout.IsCompact="True"
+        <v:StatisticsView s:StatisticLayout.IsCompact="True"
                           DataContext="{Binding Statistics}"
                           Margin="10,0,0,0"
                           Grid.Row="1"

@@ -17,28 +17,19 @@
                xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"                   
                xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Statistics.ViewModels"
-               xmlns:v="clr-namespace:BadEcho.Omnified.Vision.Statistics.Views"
-               mc:Ignorable="d" 
-               d:DesignHeight="250" 
-               d:DesignWidth="400"
-               >
+               mc:Ignorable="d">
     <d:DesignProperties.DataContext>
         <vm:FractionalStatisticViewModel Name="Player Health"
                                          CurrentValue="86"
                                          MaximumValue="1000"
                                          />
     </d:DesignProperties.DataContext>
-    <Grid Style="{Binding (v:StatisticLayout.IsCompact), 
-                          RelativeSource={RelativeSource AncestorType=UserControl}, 
-                          Converter={StaticResource GridCompactStyleConverter}}">
-
-        <fenestra:OutlinedTextElement Style="{Binding (v:StatisticLayout.IsCompact),
-                                                      RelativeSource={RelativeSource AncestorType=UserControl},
-                                                      Converter={StaticResource StatisticNameCompactStyleConverter}}"
+    <Grid Style="{StaticResource StatisticCompactableGridStyle}">
+        <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
                                       Text="{Binding Name}"
                                       Grid.Column="0"    
                                       Grid.Row="0"
-                                      />
+        />
 
         <StackPanel Orientation="Horizontal"
                     Grid.Column="1"

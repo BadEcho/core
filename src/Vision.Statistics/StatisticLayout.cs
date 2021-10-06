@@ -15,10 +15,10 @@ using System.Windows;
 using BadEcho.Fenestra;
 using BadEcho.Odin;
 
-namespace BadEcho.Omnified.Vision.Statistics.Views
+namespace BadEcho.Omnified.Vision.Statistics
 {
     /// <summary>
-    /// Provides inheritable layout properties for statistic views.
+    /// Provides inheritable layout properties for statistic displays.
     /// </summary>
     public static class StatisticLayout
     {

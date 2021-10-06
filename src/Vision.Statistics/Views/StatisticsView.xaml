@@ -17,9 +17,8 @@
                xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"                   
                xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Statistics.ViewModels"                              
-               xmlns:v="clr-namespace:BadEcho.Omnified.Vision.Statistics.Views"
-               mc:Ignorable="d" 
-               >
+               xmlns:s="clr-namespace:BadEcho.Omnified.Vision.Statistics"
+               mc:Ignorable="d">
     <d:DesignProperties.DataContext>
         <vm:StatisticsViewModel>
             <vm:StatisticsViewModel.Children>
@@ -35,47 +34,39 @@
                     <vm:StatisticGroupViewModel.Statistics>
                         <vm:StatisticsViewModel>
                             <vm:StatisticsViewModel.Children>
-                                <vm:WholeStatisticViewModel Name="Last"
-                                                            Value="100"
-                                                            />
-                                <vm:WholeStatisticViewModel Name="Max"
-                                                            Value="200"
-                                                            />
-                                <vm:WholeStatisticViewModel Name="Total"
-                                                            Value="300"
-                                                            />
+                                <vm:WholeStatisticViewModel Name="Last" Value="100" />
+                                <vm:WholeStatisticViewModel Name="Max" Value="200" />
+                                <vm:WholeStatisticViewModel Name="Total" Value="300" />
                             </vm:StatisticsViewModel.Children>
                         </vm:StatisticsViewModel>
                     </vm:StatisticGroupViewModel.Statistics>
                 </vm:StatisticGroupViewModel>
                 <vm:CoordinateStatisticViewModel Name="Coordinates"
-                                                 X="-1566.7635498047"
-                                                 Y="0.10857523977757"
+                                                 X="-1566.7635447"
+                                                 Y="0.108575277757"
                                                  Z="1997.649169219"
-                />
+                                                 />
             </vm:StatisticsViewModel.Children>
         </vm:StatisticsViewModel>        
     </d:DesignProperties.DataContext>
     <fenestra:View.Resources>
-        <Style x:Key="StatisticsVerticalPanelStyle" TargetType="{x:Type StackPanel}">
-            <Setter Property="Orientation" Value="Vertical"/>
+        <Style x:Key="StatisticsPanelStyle" TargetType="{x:Type StackPanel}">
+            <Style.Triggers>
+                <Trigger Property="s:StatisticLayout.IsCompact" Value="True">
+                    <Setter Property="Orientation" Value="Horizontal"/>
+                </Trigger>
+                <Trigger Property="s:StatisticLayout.IsCompact" Value="False">
+                    <Setter Property="Orientation" Value="Vertical"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
-        <Style x:Key="StatisticsHorizontalPanelStyle" TargetType="{x:Type StackPanel}">
-            <Setter Property="Orientation" Value="Horizontal"/>
-        </Style>
-        <fenestra:BooleanToStyleConverter x:Key="IsCompactPanelStyleConverter"
-                                          StyleWhenFalse="{StaticResource StatisticsVerticalPanelStyle}"
-                                          StyleWhenTrue="{StaticResource StatisticsHorizontalPanelStyle}"
-                                          />
     </fenestra:View.Resources>
     <Grid>        
         <ItemsControl ItemsSource="{Binding Children}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel Grid.IsSharedSizeScope="True"
-                                Style="{Binding (v:StatisticLayout.IsCompact), 
-                                                RelativeSource={RelativeSource AncestorType={x:Type UserControl}},
-                                                Converter={StaticResource IsCompactPanelStyleConverter}}"
+                    <StackPanel Style="{StaticResource StatisticsPanelStyle}"
+                                Grid.IsSharedSizeScope="True"
                                 />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>

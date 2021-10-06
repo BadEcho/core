@@ -15,7 +15,7 @@
 
         <ResourceDictionary Source="Resources/StatisticTextStyle.xaml"/>
         <ResourceDictionary Source="Resources/StatisticNameTextStyles.xaml"/>
-        <ResourceDictionary Source="Resources/StatisticSharedGridStyles.xaml"/>
+        <ResourceDictionary Source="Resources/StatisticCompactableGridStyle.xaml"/>
 
         <ResourceDictionary Source="Resources/ViewContexts.xaml"/>
 
