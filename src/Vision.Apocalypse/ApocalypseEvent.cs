@@ -33,13 +33,13 @@ namespace BadEcho.Omnified.Vision.Apocalypse
     public abstract class ApocalypseEvent
     {
         /// <summary>
-        /// Gets the date and time at which the Apocalypse event occurred.
+        /// Gets the date and time at which this Apocalypse event occurred.
         /// </summary>
         public DateTime Timestamp  
         { get; init; }
 
         /// <summary>
-        /// Gets the primary dice roll of the Apocalypse event, which acts as the main determinant in what punishing effect gets applied
+        /// Gets the primary dice roll for this Apocalypse event, which acts as the main determinant in what punishing effect gets applied
         /// to the target.
         /// </summary>
         public int DiceRoll

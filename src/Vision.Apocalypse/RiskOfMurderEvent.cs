@@ -14,19 +14,20 @@
 namespace BadEcho.Omnified.Vision.Apocalypse
 {
     /// <summary>
-    /// Provides a description for a Player Apocalypse "extra damage" event that occurred in an Omnified game.
+    /// Provides a base description for a Player Apocalypse "risk of murder" event that occurred in an Omnified game.
     /// </summary>
     /// <remarks>
-    /// This is, by default, the most common outcome from a Player Apocalypse event roll. For most games, the amount of
-    /// extra damage applied is 2.0, however this is increased if the game features particularly low amounts of damage.
+    /// A risk of murder event is special kind of random effect that results in an additional, 5-sided die to be rolled.
+    /// This type of event is so named because, depending on how the die lands, death upon the player may become all but
+    /// guaranteed.
     /// </remarks>
-    public sealed class ExtraDamageEvent : PlayerApocalypseEvent
+    public abstract class RiskOfMurderEvent : PlayerApocalypseEvent
     {
         /// <summary>
-        /// Gets the multiplier applied to the incoming damage amount by the "extra damage" random effect.
+        /// Gets the risk of murder dice roll for this Player Apocalypse event, which acts as the main determinant in whether
+        /// or not the player is murdered absolutely.
         /// </summary>
-        public double ExtraDamageMultiplier
+        public int MurderRoll
         { get; init; }
     }
 }
- 
