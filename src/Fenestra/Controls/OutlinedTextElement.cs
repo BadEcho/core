@@ -478,8 +478,12 @@ namespace BadEcho.Fenestra.Controls
 
                 // If the text cannot be converted to an integer, then it is either a number containing a fractional part, or not a number at all
                 // (at least, not completely a number, i.e., a mix of both letters and numbers).
-                return double.TryParse(text, NumberStyles.Float, CultureInfo.CurrentCulture, out double floatingPointText)
-                    ? formatString.CulturedFormat(floatingPointText)
+                if (double.TryParse(text, NumberStyles.Float, CultureInfo.CurrentCulture, out double floatingPointText))
+                    return formatString.CulturedFormat(floatingPointText);
+
+                // For standard date and time format strings, we'll need the text to be parsed as a DateTime prior to formatting.
+                return DateTime.TryParse(text, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out DateTime dateTimeText)
+                    ? formatString.CulturedFormat(dateTimeText)
                     : formatString.CulturedFormat(text);
             }
             catch (FormatException formatEx)
