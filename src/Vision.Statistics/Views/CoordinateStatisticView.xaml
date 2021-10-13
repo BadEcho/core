@@ -40,11 +40,9 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <!--We want the axis label column to line up with the other statistic value columns, as opposed to this entire grid.-->
-                <ColumnDefinition SharedSizeGroup="ValueColumn"/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*" SharedSizeGroup="CoordinateValueColumn"/>
             </Grid.ColumnDefinitions>
-
             <!--
                 Unlike other statistic names, which are aligned on the left so they all start from the same position, 
                 we want these ones to be aligned on the right side, so the colons are lined up.
