@@ -48,14 +48,14 @@ namespace BadEcho.Fenestra.Markup
         }
 
         /// <inheritdoc/>
-        public override IMultiValueConverter Converter
+        public override IMultiValueConverter? Converter
         {
             get => ActualBinding.Converter;
             set => ActualBinding.Converter = value;
         }
 
         /// <inheritdoc/>
-        public override CultureInfo ConverterCulture
+        public override CultureInfo? ConverterCulture
         {
             get => ActualBinding.ConverterCulture;
             set => ActualBinding.ConverterCulture = value;

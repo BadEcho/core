@@ -43,14 +43,14 @@ namespace BadEcho.Fenestra.Markup
         { }
 
         /// <inheritdoc/>
-        public override IValueConverter Converter
+        public override IValueConverter? Converter
         {
             get => ActualBinding.Converter;
             set => ActualBinding.Converter = value;
         }
 
         /// <inheritdoc/>
-        public override CultureInfo ConverterCulture
+        public override CultureInfo? ConverterCulture
         {
             get => ActualBinding.ConverterCulture;
             set => ActualBinding.ConverterCulture = value;
@@ -134,7 +134,7 @@ namespace BadEcho.Fenestra.Markup
         /// Gets or sets the opaque data passed to the asynchronous data dispatcher.
         /// </summary>
         [DefaultValue(null)]
-        public object AsyncState
+        public object? AsyncState
         {
             get => ActualBinding.AsyncState;
             set => ActualBinding.AsyncState = value;
@@ -155,7 +155,7 @@ namespace BadEcho.Fenestra.Markup
         /// Gets or sets the name of the element to use as the binding source object.
         /// </summary>
         [DefaultValue(null)]
-        public string ElementName
+        public string? ElementName
         {
             get => ActualBinding.ElementName;
             set => ActualBinding.ElementName = value;
@@ -183,7 +183,7 @@ namespace BadEcho.Fenestra.Markup
         /// Gets or sets the binding source by specifying its location relative to the position of the binding target.
         /// </summary>
         [DefaultValue(null)]
-        public RelativeSource RelativeSource
+        public RelativeSource? RelativeSource
         {
             get => ActualBinding.RelativeSource;
             set => ActualBinding.RelativeSource = value;
@@ -192,7 +192,7 @@ namespace BadEcho.Fenestra.Markup
         /// <summary>
         /// Gets or sets the object to use as the binding source.
         /// </summary>
-        public object Source
+        public object? Source
         {
             get => ActualBinding.Source;
             set => ActualBinding.Source = value;
@@ -202,7 +202,7 @@ namespace BadEcho.Fenestra.Markup
         /// Gets or sets an <c>XPath</c> query that returns the value on the XML binding source to use.
         /// </summary>
         [DefaultValue(null)]
-        public string XPath
+        public string? XPath
         {
             get => ActualBinding.XPath;
             set => ActualBinding.XPath = value;

@@ -57,7 +57,7 @@ namespace BadEcho.Fenestra
         /// <summary>
         /// Gets or sets the culture in which to evaluate the converter.
         /// </summary>
-        CultureInfo ConverterCulture { get; set; }
+        CultureInfo? ConverterCulture { get; set; }
 
         /// <summary>
         /// Gets or sets the parameter to pass to any value converter in use.
@@ -117,6 +117,16 @@ namespace BadEcho.Fenestra
         /// Gets a collection of rules that check the validity of the user input.
         /// </summary>
         Collection<ValidationRule> ValidationRules { get; }
+
+        /// <summary>
+        /// Clears any value converter associated with this binding.
+        /// </summary>
+        /// <remarks>
+        /// A method is required for resetting associated converters as there is no converter-related property exposed
+        /// at the interface level. This is because value converters either implement <see cref="IValueConverter"/> or
+        /// <see cref="IMultiValueConverter"/>, two interfaces which are unrelated to each other.
+        /// </remarks>
+        void ClearConverter();
 
         /// <summary>
         /// Performs a binding-related action, which is an action that concerns the propagation of an input value to

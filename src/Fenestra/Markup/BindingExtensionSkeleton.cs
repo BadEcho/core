@@ -82,13 +82,13 @@ namespace BadEcho.Fenestra.Markup
         /// Gets or sets the converter to use.
         /// </summary>
         [DefaultValue(null)]
-        public abstract TValueConverter Converter
+        public abstract TValueConverter? Converter
         { get; set; }
 
         /// <inheritdoc/>
         [DefaultValue(null)]
         [TypeConverter(typeof(CultureInfoIetfLanguageTagConverter))]
-        public abstract CultureInfo ConverterCulture
+        public abstract CultureInfo? ConverterCulture
         { get; set; }
 
         /// <inheritdoc/>
@@ -202,6 +202,10 @@ namespace BadEcho.Fenestra.Markup
                 ? ExtendBinding(serviceProvider, targetObject, targetProperty)
                 : ActualBinding.ProvideValue(serviceProvider);
         }
+
+        /// <inheritdoc/>
+        public void ClearConverter() 
+            => Converter = default;
 
         /// <inheritdoc/>
         public bool DoBindingAction(Func<bool> bindingAction)
