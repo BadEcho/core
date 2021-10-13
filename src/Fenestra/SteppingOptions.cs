@@ -12,48 +12,44 @@
 //-----------------------------------------------------------------------
 
 using System;
-using BadEcho.Odin;
 
 namespace BadEcho.Fenestra
 {
     /// <summary>
     /// Provides stepping sequence options related to the timing of a binding.
     /// </summary>
-    internal sealed class SteppingOptions
+    internal sealed class SteppingOptions : TransientOptions
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SteppingOptions"/> class. 
         /// </summary>
-        /// <param name="steppingDuration">The total duration of a binding update stepping sequence.</param>
-        /// <param name="minimumSteps">
-        /// The minimum number of steps required in order for a stepping sequence to be executed.
-        /// </param>
         /// <param name="binding">The binding that will have its changes propagated in a stepped fashion.</param>
-        public SteppingOptions(TimeSpan steppingDuration, int minimumSteps, IBinding binding)
-        {
-            Require.NotNull(binding, nameof(binding));
-
-            SteppingDuration = steppingDuration;
-            MinimumSteps = minimumSteps;
-            Binding = binding;
-        }
+        public SteppingOptions(IBinding binding)
+            : base(binding)
+        { }
 
         /// <summary>
-        /// Gets the total duration of a binding update stepping sequence.
+        /// Gets or sets the total duration of a binding update stepping sequence.
         /// </summary>
         public TimeSpan SteppingDuration
-        { get; }
+        { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the amount of change incurred by a single step.
+        /// </summary>
+        public double StepAmount
+        { get; set; }
 
         /// <summary>
-        /// Gets the minimum number of steps required in order for a stepping sequence to be executed.
+        /// Gets or sets the minimum number of steps required in order for a stepping sequence to be executed.
         /// </summary>
         public int MinimumSteps
-        { get; }
+        { get; set; }
 
         /// <summary>
-        /// Gets the binding that will have its changes propagated in a stepped fashion.
+        /// Gets or sets a value indicating if the target property is an integer, as opposed to a floating-point number.
         /// </summary>
-        public IBinding Binding
-        { get; }
+        public bool IsInteger
+        { get; set; }
     }
 }
