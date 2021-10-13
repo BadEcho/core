@@ -48,6 +48,12 @@ namespace BadEcho.Fenestra.Markup
         { get; set; }
 
         /// <summary>
+        /// Gets or sets the amount of change incurred by a single step.
+        /// </summary>
+        public double StepAmount
+        { get; set; } = 1.0;
+
+        /// <summary>
         /// Gets or sets the minimum number of steps required in order for a stepping sequence to be executed.
         /// </summary>
         /// <remarks>
@@ -58,6 +64,16 @@ namespace BadEcho.Fenestra.Markup
         public int MinimumSteps 
         { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating if the target property is an integer, as opposed to a floating-point number.
+        /// </summary>
+        /// <remarks>
+        /// Unless this is set to true, the target property will be bound with values that are a floating-point type, which,
+        /// in comparison to integers, is a type that's more prevalent in WPF.
+        /// </remarks>
+        public bool IsInteger
+        { get; set; }
+
         /// <inheritdoc/>
         protected override object ExtendBinding(IServiceProvider serviceProvider, DependencyObject? targetObject, DependencyProperty targetProperty)
         {
@@ -65,10 +81,17 @@ namespace BadEcho.Fenestra.Markup
                 return this;
 
             UpdateBindingMode(targetObject, targetProperty);
-
+            
             var binder = new SteppedBinder(targetObject,
                                            targetProperty,
-                                           new SteppingOptions(SteppingDuration, MinimumSteps, this));
+                                           new SteppingOptions(this)
+                                           {
+                                               SteppingDuration = SteppingDuration,
+                                               MinimumSteps = MinimumSteps,
+                                               IsInteger = IsInteger,
+                                               StepAmount = StepAmount,
+                                               Converter = Converter
+                                           });
             
             FreezableCollection<TransientBinder> binders = TransientBinder.GetBinders(targetObject);
 
