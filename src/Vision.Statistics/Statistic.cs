@@ -26,7 +26,7 @@ namespace BadEcho.Omnified.Vision.Statistics
 
         /// <inheritdoc/>
         public string Format
-        { get; init; } = string.Empty;
+        { get; init; } = "{0:N0}";
 
         /// <inheritdoc/>
         /// <remarks>
