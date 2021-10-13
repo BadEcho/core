@@ -18,8 +18,8 @@ using System.Windows.Data;
 namespace BadEcho.Fenestra.Converters
 {
     /// <summary>
-    /// Provides a base <see cref="IValueConverter"/> implementation which offers the ability to reverse the direction of the conversion
-    /// performed by the converter.
+    /// Provides a base <see cref="IValueConverter"/> implementation which offers the ability to reverse the direction of
+    /// source-to-target conversions performed by the converter.
     /// </summary>
     /// <remarks>
     /// Reversing a value converter which converts from type A to type B will yield a converter which converts from type B to type A.
