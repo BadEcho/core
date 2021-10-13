@@ -42,7 +42,10 @@ namespace BadEcho.Fenestra
     /// time frame. In order to achieve this, the binder maintains its own measurement of the time elapsed in a sequence's execution, allowing
     /// for it to propagate values between source and target that fall inline with where the binder ought to be in the sequence.
     /// </para>
-    /// <para>Values bound through a stepped binder must be, or be able to be converted to, 32-bit signed integers.</para>
+    /// <para>
+    /// By default, a stepped binder outputs <see cref="Double"/> floating-point values. To enable <see cref="Int32"/> support,
+    /// the provided <see cref="SteppingOptions"/> instance must have <see cref="SteppingOptions.IsInteger"/> set to true.
+    /// </para>
     /// </remarks>
     internal sealed class SteppedBinder : TransientBinder
     {
@@ -59,23 +62,25 @@ namespace BadEcho.Fenestra
             = Dispatcher.CurrentDispatcher;
 
         private readonly TimeSpan _steppingDuration;
+        private readonly bool _isInteger;
         private readonly int _minimumSteps;
+        private readonly double _stepAmount;
         private readonly object? _unsetTargetValue;
 
         private bool _steppingEnabled;
-        private int _endingStepValue;
-        private int _startingStepValue;
+        private double _endingStepValue;
+        private double _startingStepValue;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SteppedBinder"/> class.
         /// </summary>
         /// <param name="targetObject">The target dependency object containing the property to bind.</param>
         /// <param name="targetProperty">The target dependency property to bind.</param>
-        /// <param name="options">Stepping sequence options related to timing for the stepped binder.</param>
+        /// <param name="options">Stepping sequence options related to the timing of the stepped binder.</param>
         public SteppedBinder(DependencyObject targetObject,
                              DependencyProperty targetProperty,
                              SteppingOptions options)
-            : base(targetObject, targetProperty, options.Binding)
+            : base(targetObject, targetProperty, options)
         {
             Require.NotNull(options, nameof(options));
             
@@ -84,9 +89,12 @@ namespace BadEcho.Fenestra
             
             _steppingDuration = options.SteppingDuration;
             _minimumSteps = options.MinimumSteps;
+            _isInteger = options.IsInteger;
+            _stepAmount = options.StepAmount;
+            _unsetTargetValue = targetProperty.DefaultMetadata.DefaultValue;
+
             _sourceStepTimer.Elapsed += HandleSourceStepTimerTick;
             _targetStepTimer.Elapsed += HandleTargetStepTimerTick;
-            _unsetTargetValue = targetProperty.DefaultMetadata.DefaultValue;
         }
 
         /// <summary>
@@ -136,17 +144,31 @@ namespace BadEcho.Fenestra
         /// <inheritdoc/>
         protected override void WriteSourceValue(object value)
         {
-            object newValue = GetNextStepValue(value);
-
-            base.WriteSourceValue(newValue);
+            object nextValue = GetNextWritableValue(value, SourceProperty.Name);
+            
+            base.WriteSourceValue(nextValue);
         }
 
         /// <inheritdoc/>
         protected override void WriteTargetValue(object value)
         {
-            object newValue = GetNextStepValue(value);
+            object nextValue = GetNextWritableValue(value, TargetProperty.Name);
+            
+            base.WriteTargetValue(nextValue);
+        }
 
-            base.WriteTargetValue(newValue);
+        private static double ConvertPropertyValue(object? value, string propertyName)
+        {
+            if (value == null)
+                return default;
+
+            if (value is not IConvertible convertible)
+            {
+                throw new InvalidOperationException(
+                    Strings.NotSteppablePropertyValue.InvariantFormat(propertyName));
+            }
+
+            return convertible.ToDouble(CultureInfo.CurrentCulture);
         }
 
         private bool StepChanges(DependencyProperty changedProperty,
@@ -158,66 +180,72 @@ namespace BadEcho.Fenestra
             if (receivingValue == unsetReceivingValue)
                 return false;
 
-            int changedStepValue = GetStepValue(changedProperty);
-            int receivingStepValue = GetStepValue(receivingProperty);
+            double changedStepValue = GetStepValue(changedProperty);
+            double receivingStepValue = GetStepValue(receivingProperty);
 
-            if (changedStepValue == receivingStepValue)
+            if (changedStepValue.ApproximatelyEquals(receivingStepValue))
                 return false;
 
-            int numberOfSteps = Math.Abs(changedStepValue - receivingStepValue);
+            int numberOfSteps = (int) (Math.Abs(changedStepValue - receivingStepValue) / _stepAmount);
 
             if (numberOfSteps < _minimumSteps)
                 return false;
 
             _startingStepValue = receivingStepValue;
             _endingStepValue = changedStepValue;
-            _targetStepTimer.Interval = Math.Max(_steppingDuration.Divide(numberOfSteps).TotalMilliseconds, 1);
+            _targetStepTimer.Interval = Math.Max(_steppingDuration.Divide(Math.Max(numberOfSteps,1)).TotalMilliseconds, 1);
 
             _sequenceStopwatch.Start();
 
             return true;
         }
 
-        private int GetStepValue(DependencyProperty property)
+        private double GetStepValue(DependencyProperty property)
         {
-            object value = GetValue(property);
+            object? value = GetValue(property);
 
-            if (value is not IConvertible convertible)
-            {
-                throw new InvalidOperationException(
-                    Strings.NotSteppablePropertyValue.InvariantFormat(property.Name));
-            }
-
-            return convertible.ToInt32(CultureInfo.CurrentCulture, NumberStyles.AllowThousands | NumberStyles.AllowLeadingSign);
+            return ConvertPropertyValue(value, property.Name);
         }
 
-        private object GetNextStepValue(object baseValue)
+        private object GetNextWritableValue(object baseValue, string propertyName)
         {
+            double nextStepValue;
+
             if (!_steppingEnabled)
-                return baseValue;
+                nextStepValue = ConvertPropertyValue(baseValue, propertyName);
+            else
+            {
+                _sequenceStopwatch.Stop();
 
-            _sequenceStopwatch.Stop();
+                // Calculate where in the step sequence we should be given the time it's taken to get here.
+                double expectedStepDelta =
+                    (_endingStepValue - _startingStepValue) * _sequenceStopwatch.Elapsed.Divide(_steppingDuration);
 
-            // Calculate where in the step sequence we should be given the time it's taken to get here.
-            double expectedStepDelta =
-                (_endingStepValue - _startingStepValue) * _sequenceStopwatch.Elapsed.Divide(_steppingDuration);
+                // The expected delta evaluates to infinity if the configured sequence duration is zero.
+                double nextValue = double.IsInfinity(expectedStepDelta)
+                    ? _endingStepValue
+                    : _startingStepValue + expectedStepDelta;
+
+                _sequenceStopwatch.Start();
+
+                // Ensure the time-corrected step value does not exceed the value marking the end of the sequence.
+                nextStepValue = _endingStepValue > _startingStepValue
+                    ? Math.Min(_endingStepValue, nextValue)
+                    : Math.Max(_endingStepValue, nextValue);
+            }
+
+            // Although it looks like we could replace the following lines with a single ternary conditional operator,
+            // don't forget attempting to do so will cause the boxed value type to always be double, as ternary conditional
+            // operators must return the same type of object from both of its branches.
+            if (_isInteger)
+                return (int) nextStepValue;
             
-            // The expected delta evaluates to infinity if the configured sequence duration is zero.
-            int nextValue = double.IsInfinity(expectedStepDelta)
-                ? _endingStepValue
-                : _startingStepValue + (int) expectedStepDelta;
-
-            _sequenceStopwatch.Start();
-
-            // Ensure the time-corrected step value does not exceed the value marking the end of the sequence.
-            return _endingStepValue > _startingStepValue
-                ? Math.Min(_endingStepValue, nextValue)
-                : Math.Max(_endingStepValue, nextValue);
+            return nextStepValue;
         }
 
         private void StepSource()
         {
-            if (GetStepValue(SourceProperty) == _endingStepValue)
+            if (GetStepValue(SourceProperty).ApproximatelyEquals(_endingStepValue))
             {
                 _sequenceStopwatch.Reset();
                 _sourceStepTimer.Stop();
@@ -228,7 +256,7 @@ namespace BadEcho.Fenestra
 
         private void StepTarget()
         {
-            if (GetStepValue(TargetProperty) == _endingStepValue)
+            if (GetStepValue(TargetProperty).ApproximatelyEquals(_endingStepValue))
             {
                 _sequenceStopwatch.Reset();
                 _targetStepTimer.Stop();
