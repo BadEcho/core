@@ -35,5 +35,17 @@ namespace BadEcho.Omnified.Vision.Statistics
         /// </summary>
         public int MaximumValue
         { get; set; }
+
+        /// <summary>
+        /// Gets or sets the primary (first half of a gradient) color that represents the statistic visually.
+        /// </summary>
+        public string PrimaryBarColor
+        { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the secondary (second half of a gradient) color that represents the statistic visually.
+        /// </summary>
+        public string SecondaryBarColor
+        { get; set; } = string.Empty;
     }
 }

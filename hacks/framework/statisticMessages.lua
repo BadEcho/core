@@ -33,13 +33,15 @@ function WholeStatistic(name, value, isCritical, format)
     return wholeStatistic
 end
 
-function FractionalStatistic(name, currentValue, maximumValue)
+function FractionalStatistic(name, currentValue, maximumValue, primaryBarColor, secondaryBarColor)
     local fractionalStatistic = {
         Type = StatisticType.Fractional,
         Statistic = {
             Name = name,
             CurrentValue = currentValue,
-            MaximumValue = maximumValue
+            MaximumValue = maximumValue,
+            PrimaryBarColor = primaryBarColor,
+            SecondaryBarColor = secondaryBarColor
         }
     }
 

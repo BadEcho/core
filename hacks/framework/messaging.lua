@@ -93,8 +93,8 @@ local function dumpStatistics()
     writeDeathCounter(deathCounter)
 
     local statistics = {
-        FractionalStatistic("Health", playerHealth, playerMaxHealth),
-        FractionalStatistic("Stamina", playerStamina, playerMaxStamina),
+        FractionalStatistic("Health", playerHealth, playerMaxHealth, "#AA43BC50", "#AA27D88D"),
+        FractionalStatistic("Stamina", playerStamina, playerMaxStamina, "#AA7515D9", "#AAB22DE5"),
         WholeStatistic("Enemy Health", enemyHealth),
         StatisticGroup("Damage Taken", { 
             WholeStatistic("Last", lastDamageToPlayer), 
@@ -129,7 +129,7 @@ function startStatisticsPublisher()
         statisticsTimer = createTimer(getMainForm())        
     end
 
-    statisticsTimer.Interval = 400
+    statisticsTimer.Interval = 50
     statisticsTimer.OnTimer = function()
         local statistics = dumpStatistics()
         local statisticsFile = assert(io.open("statistics.json","w"))

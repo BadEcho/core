@@ -20,35 +20,75 @@
                mc:Ignorable="d">
     <d:DesignProperties.DataContext>
         <vm:FractionalStatisticViewModel Name="Player Health"
-                                         CurrentValue="86"
+                                         CurrentValue="800"
                                          MaximumValue="1000"
+                                         PercentageValue="0.8"
+                                         PrimaryBarColor="#FF43BC50"
+                                         SecondaryBarColor="#FF27D88D"
+                                         Format="{}{0:N0}"
                                          />
     </d:DesignProperties.DataContext>
-    <Grid Style="{StaticResource StatisticCompactableGridStyle}">
-        <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
-                                      Text="{Binding Name}"
-                                      Grid.Column="0"    
-                                      Grid.Row="0"
-        />
-
-        <StackPanel Orientation="Horizontal"
-                    Grid.Column="1"
-                    Grid.Row="1">
-            <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
-                                          Text="{fenestra:SteppedBinding CurrentValue, 
-                                                                         SteppingDuration=00:00:02, 
-                                                                         MinimumSteps=10, 
-                                                                         StringFormat={StaticResource StatisticNumberFormat}}"
+    <fenestra:View.Resources>
+        <fenestra:HexadecimalToColorConverter x:Key="HexadecimalColorConverter" />
+        <!--
+            Since we're shifting the gradient horizontally, we zero out the y-axis so we have
+            straight vertical lines.
+        -->
+        <fenestra:PercentageToPointConverter x:Key="PercentagePointConverter"
+                                             FractionalCascadeAmount="0.5"
+                                             PercentageToXRatio="1.0"
+                                             PercentageToYRatio="0"
+                                             />
+        <LinearGradientBrush x:Key="GaugeBackground" 
+                             EndPoint="{fenestra:SteppedBinding PercentageValue,
+                                               SteppingDuration=00:00:01,
+                                               StepAmount=0.001,                                               
+                                               Converter={StaticResource PercentagePointConverter}}">
+            <GradientStop Color="{Binding PrimaryBarColor, 
+                                          Converter={StaticResource HexadecimalColorConverter}}" 
+                          Offset="0"
+                          />
+            <GradientStop Color="{Binding SecondaryBarColor, 
+                                          Converter={StaticResource HexadecimalColorConverter}}" 
+                          Offset="0.97"
+                          />
+            <GradientStop Offset="1" 
+                          Color="#00000000"
+                          />
+        </LinearGradientBrush>
+    </fenestra:View.Resources>
+    <Border Background="{StaticResource GaugeBackground}"
+            Padding="0,0,5,0" 
+            Margin="0,0,0,1">
+        <!--
+            The tiny bit of margin is in case there are multiple fractional statistics stacked on top 
+            of each other. We want a tiny bit of separating space in that case.
+        -->
+        <Grid Style="{StaticResource StatisticCompactableGridStyle}">
+            <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
+                                          Text="{Binding Name}"
+                                          Grid.Column="0"    
+                                          Grid.Row="0"
                                           />
-            <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
-                                          Text="/"
-                                          />
-            <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
-                                          Text="{fenestra:SteppedBinding MaximumValue, 
-                                                                         SteppingDuration=00:00:02, 
-                                                                         MinimumSteps=10, 
-                                                                         StringFormat={StaticResource StatisticNumberFormat}}"
-                                          />
-        </StackPanel>
-    </Grid>
+            <StackPanel Orientation="Horizontal"
+                        Grid.Column="1"
+                        Grid.Row="1">
+                <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
+                                              Text="{fenestra:SteppedBinding CurrentValue, 
+                                                              SteppingDuration=00:00:01, 
+                                                              MinimumSteps=10,
+                                                              IsInteger=True}"
+                                              />
+                <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
+                                              Text="/"
+                                              />
+                <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
+                                              Text="{fenestra:SteppedBinding MaximumValue, 
+                                                              SteppingDuration=00:00:01, 
+                                                              MinimumSteps=10,
+                                                              IsInteger=True}"
+                                              />
+            </StackPanel>
+        </Grid>
+    </Border>
 </fenestra:View>

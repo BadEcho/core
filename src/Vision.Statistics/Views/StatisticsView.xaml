@@ -18,13 +18,22 @@
                xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"                   
                xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Statistics.ViewModels"                              
                xmlns:s="clr-namespace:BadEcho.Omnified.Vision.Statistics"
-               mc:Ignorable="d">
+               mc:Ignorable="d"
+               >
     <d:DesignProperties.DataContext>
         <vm:StatisticsViewModel>
             <vm:StatisticsViewModel.Children>
                 <vm:FractionalStatisticViewModel Name="Player Health"
-                                                 CurrentValue="86"
+                                                 CurrentValue="800"
                                                  MaximumValue="1000"
+                                                 PrimaryBarColor="#FF43BC50"
+                                                 SecondaryBarColor="#FF27D88D"
+                                                 />
+                <vm:FractionalStatisticViewModel Name="Player Stamina"
+                                                 CurrentValue="400"
+                                                 MaximumValue="800"
+                                                 PrimaryBarColor="#FFE4C11B"
+                                                 SecondaryBarColor="#FFF8E33A"
                                                  />
                 <vm:WholeStatisticViewModel Name="Money"
                                             IsCritical="False"

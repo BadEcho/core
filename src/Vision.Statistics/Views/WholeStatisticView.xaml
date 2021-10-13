@@ -38,7 +38,8 @@
                                                                         NotifyOnTargetUpdated=True, 
                                                                         StringFormat={StaticResource StatisticNumberFormat}, 
                                                                         SteppingDuration=00:00:02,
-                                                                        MinimumSteps=10}"
+                                                                        MinimumSteps=10,
+                                                                        IsInteger=True}"
                                       Grid.Column="1"
                                       Grid.Row="1">
             <fenestra:TargetUpdatedEventBehavior.Actions>

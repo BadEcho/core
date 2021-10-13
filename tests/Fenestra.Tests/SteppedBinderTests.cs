@@ -181,7 +181,14 @@ namespace BadEcho.Fenestra.Tests
         private SteppedBinder InitializeBinder(TimeSpan steppingDuration)
         {
             var textBox = new TextBox {Text = null};
-            return new SteppedBinder(textBox, TextBox.TextProperty, new SteppingOptions(steppingDuration, 0, _binding));
+            return new SteppedBinder(textBox,
+                                     TextBox.TextProperty,
+                                     new SteppingOptions(_binding)
+                                     {
+                                         SteppingDuration = steppingDuration,
+                                         MinimumSteps = 0,
+                                         IsInteger = true
+                                     });
         }
 
         private TimeSpan UpdateSource(string initialTargetValue, int newSourceValue, TimeSpan steppingDuration)
@@ -189,8 +196,16 @@ namespace BadEcho.Fenestra.Tests
             bool updatedToFinalValue = false;
 
             var textBox = new TextBox { Text = initialTargetValue };
-            textBox.TextChanged += TextBox_TextChanged; 
-            var binder = new SteppedBinder(textBox, TextBox.TextProperty, new SteppingOptions(steppingDuration,0, _binding));
+            textBox.TextChanged += TextBox_TextChanged;
+            var binder = new SteppedBinder(textBox,
+                                           TextBox.TextProperty,
+                                           new SteppingOptions(_binding)
+                                           {
+                                               SteppingDuration = steppingDuration,
+                                               MinimumSteps = 0,
+                                               IsInteger = true
+                                           });
+
             var stopwatch = new Stopwatch();
 
             binder.Changed += (_, _) =>
@@ -225,10 +240,15 @@ namespace BadEcho.Fenestra.Tests
 
             _sourceObject.Value = initialSourceValue;
             var textBox = new TextBox { Text = initialTargetValue };
-            
+
             var binder = new SteppedBinder(textBox,
                                            TextBox.TextProperty,
-                                           new SteppingOptions(steppingDuration, 0, _binding));
+                                           new SteppingOptions(_binding)
+                                           {
+                                               SteppingDuration = steppingDuration,
+                                               MinimumSteps = 0,
+                                               IsInteger = true
+                                           });
 
             var stopwatch = new Stopwatch();
             
@@ -341,6 +361,9 @@ namespace BadEcho.Fenestra.Tests
 
             public Collection<ValidationRule> ValidationRules
                 => new();
+
+            public void ClearConverter()
+            { }
 
             public bool DoBindingAction(Func<bool> bindingAction) 
                 => bindingAction();
