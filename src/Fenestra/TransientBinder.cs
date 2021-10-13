@@ -14,12 +14,11 @@
 using System.Windows;
 using System.Windows.Data;
 using BadEcho.Odin;
-using BadEcho.Odin.Extensions;
 
 namespace BadEcho.Fenestra
 {
     /// <summary>
-    /// Provides a base freezable object that facilitates that realization of the impermanent state shared between source and
+    /// Provides a base freezable object that facilitates the realization of the impermanent state shared between source and
     /// target.
     /// </summary>
     /// <remarks>
@@ -39,7 +38,7 @@ namespace BadEcho.Fenestra
                                                   typeof(FreezableCollection<TransientBinder>),
                                                   typeof(TransientBinder));
 
-        /// <summary>
+        /// <summary>   
         /// Identifies the <see cref="Source"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty SourceProperty
@@ -62,24 +61,29 @@ namespace BadEcho.Fenestra
         /// </summary>
         /// <param name="targetObject">The target dependency object containing the property to bind.</param>
         /// <param name="targetProperty">The target dependency property to bind.</param>
-        /// <param name="binding">The underlying binding to augment.</param>
-        protected TransientBinder(DependencyObject targetObject, DependencyProperty targetProperty, IBinding binding)
+        /// <param name="options">Options related to the binding.</param>
+        protected TransientBinder(DependencyObject targetObject, DependencyProperty targetProperty, TransientOptions options)
         {
-            Require.NotNull(binding, nameof(binding));
+            Require.NotNull(options, nameof(options));
 
-            Binding = binding;
+            Binding = options.Binding;
 
             var targetBinding = new Binding
                                 {
-                                    Source = targetObject,
-                                    Path = new PropertyPath(targetProperty),
+                                    Source = this,
+                                    Path = new PropertyPath(TargetProperty),
+                                    Converter = options.Converter,
                                     Mode = BindingMode.TwoWay
                                 };
 
+            // Any converter found on the original binding has been moved over to the new target binding.
+            // We clear the converter on the source binding so we have access to the original values.
+            options.Binding.ClearConverter();
+
             this.BypassHandlers(() =>
                                 {
-                                    BindingOperations.SetBinding(this, TargetProperty, targetBinding);
-                                    binding.SetBinding(this, SourceProperty);
+                                    BindingOperations.SetBinding(targetObject, targetProperty, targetBinding);
+                                    options.Binding.SetBinding(this, SourceProperty);
                                 });
         }
 
@@ -106,23 +110,6 @@ namespace BadEcho.Fenestra
         /// </summary>
         protected IBinding? Binding
         { get; private set; }
-
-        /// <summary>
-        /// Gets the string that specifies how to format the binding if it displays the bound value as a string, or, if none was
-        /// provided to the binding, a default format string containing a single format item.
-        /// </summary>
-        private string StringFormat
-        {
-            get
-            {
-                var stringFormat = "{0}";
-
-                if (Binding != null && !string.IsNullOrEmpty(Binding.StringFormat))
-                    stringFormat = Binding.StringFormat;
-
-                return stringFormat;
-            }
-        }
 
         /// <summary>
         /// Gets the value of the <see cref="BindersProperty"/> attached property for a given <see cref="DependencyObject"/>.
@@ -207,17 +194,17 @@ namespace BadEcho.Fenestra
                 this.BypassHandlers(() => WriteSourceValue(targetValue));
             }
         }
-        
+
         /// <summary>
         /// Commits the provided value to the target property.
         /// </summary>
         /// <param name="value">The value to set the target property to.</param>
         /// <remarks>
-        /// This method is executed by <see cref="TransientBinder"/> within a context where event handlers are bypassed, meaning
-        /// that any changes to the target property's value will not result in a binding update if one were to go off.
+        /// This method should be executed by <see cref="TransientBinder"/> within a context where event handlers are bypassed,
+        /// so that any changes to the target property's value will not result in a binding update if one were to go off.
         /// </remarks>
         protected virtual void WriteTargetValue(object value)
-            => SetValue(TargetProperty, StringFormat.CulturedFormat(value));
+            => SetValue(TargetProperty, value);
 
         /// <summary>
         /// Commits the provided value to the source property.
