@@ -33,7 +33,7 @@
                     <Setter.Value>
                         <fenestra:SizeDefinitionCollection>
                             <fenestra:SizeDefinition SharedSizeGroup="NameColumn"/>
-                            <fenestra:SizeDefinition SharedSizeGroup="NameColumn"/>
+                            <fenestra:SizeDefinition SharedSizeGroup="ValueColumn"/>
                         </fenestra:SizeDefinitionCollection>
                     </Setter.Value>
                 </Setter>
