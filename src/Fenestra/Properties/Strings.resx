@@ -176,4 +176,13 @@
   <data name="JsonThicknessInvalidThickness" xml:space="preserve">
     <value>A Thickness value with an illegal number of lengths was provided. A Thickness value can only have 1, 2, or 4 lengths.</value>
   </data>
+  <data name="ModelImplementationAlreadyRegistered" xml:space="preserve">
+    <value>The {0} type is already registered as a derived model type with this collection view model.</value>
+  </data>
+  <data name="CannotUpdateUnboundData" xml:space="preserve">
+    <value>Cannot update the provided model data as it currently isn't bound to a child view model.</value>
+  </data>
+  <data name="ModelImplentationNotRegistered" xml:space="preserve">
+    <value>The {0} type is not registered as a derived model type with this collection view model.</value>
+  </data>
 </root>

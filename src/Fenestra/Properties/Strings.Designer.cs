@@ -106,6 +106,15 @@ namespace BadEcho.Fenestra.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot update the provided model data as it currently isn&apos;t bound to a child view model..
+        /// </summary>
+        internal static string CannotUpdateUnboundData {
+            get {
+                return ResourceManager.GetString("CannotUpdateUnboundData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Can only convert Fenestra specific resource key types..
         /// </summary>
         internal static string CanOnlyConvertFenestraKeys {
@@ -219,6 +228,24 @@ namespace BadEcho.Fenestra.Properties {
         internal static string JsonThicknessInvalidThickness {
             get {
                 return ResourceManager.GetString("JsonThicknessInvalidThickness", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The {0} type is already registered as a derived model type with this collection view model..
+        /// </summary>
+        internal static string ModelImplementationAlreadyRegistered {
+            get {
+                return ResourceManager.GetString("ModelImplementationAlreadyRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The {0} type is not registered as a derived model type with this collection view model..
+        /// </summary>
+        internal static string ModelImplentationNotRegistered {
+            get {
+                return ResourceManager.GetString("ModelImplentationNotRegistered", resourceCulture);
             }
         }
         
