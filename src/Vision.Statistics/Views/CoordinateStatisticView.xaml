@@ -57,8 +57,9 @@
                                           />
             <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
                                           Text="{Binding X}"
+                                          Margin="7,0,0,0"
                                           Grid.Column="1"
-                                          Grid.Row="0"
+                                          Grid.Row="0" 
                                           />
 
             <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
@@ -71,6 +72,7 @@
                                           />
             <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
                                           Text="{Binding Y}"
+                                          Margin="7,0,0,0"
                                           Grid.Column="1"
                                           Grid.Row="1"
                                           />
@@ -85,6 +87,7 @@
                                            />
             <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
                                           Text="{Binding Z}" 
+                                          Margin="7,0,0,0"
                                           Grid.Column="1"
                                           Grid.Row="2"
                                           />
