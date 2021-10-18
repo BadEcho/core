@@ -1,0 +1,29 @@
+﻿<!--
+    <copyright>
+        Created by Matt Weber <matt@badecho.com>
+        Copyright @ 2021 Bad Echo LLC. All rights reserved.
+
+		Bad Echo Technologies are licensed under a
+		Creative Commons Attribution-NonCommercial 4.0 International License.
+
+		See accompanying file LICENSE.md or a copy at:
+		http://creativecommons.org/licenses/by-nc/4.0/
+    </copyright>
+-->
+    
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"
+                        xmlns:t="clr-namespace:BadEcho.Omnified.Vision.Extensibility.Themes;assembly=BadEcho.Omnified.Vision.Extensibility"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="EventTextStyle" TargetType="{x:Type fenestra:OutlinedTextElement}">
+        <Setter Property="Fill" Value="{DynamicResource {x:Static t:Brushes.TextForegroundKey}}"/>
+        <Setter Property="InnerStroke" Value="{DynamicResource {x:Static t:Brushes.OutlinedTextStrokeKey}}"/>
+        <Setter Property="InnerStrokeThickness" Value="3"/>
+        <Setter Property="OuterStroke" Value="{DynamicResource {x:Static t:Brushes.FadedOutlinedTextStrokeKey}}"/>
+        <Setter Property="OuterStrokeThickness" Value="2"/>
+        <Setter Property="FontFamily" Value="{DynamicResource {x:Static t:Fonts.FontFamilyKey}}"/>
+        <Setter Property="FontSize" Value="21.3"/>
+    </Style>
+
+</ResourceDictionary>
