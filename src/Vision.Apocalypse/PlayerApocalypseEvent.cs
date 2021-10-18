@@ -24,6 +24,9 @@ namespace BadEcho.Omnified.Vision.Apocalypse
     /// </para>
     /// <para>
     /// Upon receiving damage, the player is subjected to a randomly determined effect, some effects being much worse than others.
+    /// This random effect is determined through the most critical bit of data associated with the event: the primary die roll.
+    /// </para>
+    /// <para>
     /// For every possible random effect, a corresponding <see cref="PlayerApocalypseEvent"/>-derived type exists, each of which
     /// does the job of providing all the details in regards to what just happened to our poor player.
     /// </para>
@@ -31,9 +34,16 @@ namespace BadEcho.Omnified.Vision.Apocalypse
     public abstract class PlayerApocalypseEvent : ApocalypseEvent
     {
         /// <summary>
+        /// Gets the primary die roll for this Player Apocalypse event, which acts as the main determinant in what punishing effect
+        /// gets applied to the player.
+        /// </summary>
+        public int DieRoll
+        { get; init; }
+
+        /// <summary>
         /// Gets the player's health after being subjected to the Player Apocalypse event's random effect.
         /// </summary>
-        public int PlayerHealthAfter
+        public int HealthAfter
         { get; init; }
     }
 }

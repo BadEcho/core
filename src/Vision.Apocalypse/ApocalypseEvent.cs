@@ -25,8 +25,8 @@ namespace BadEcho.Omnified.Vision.Apocalypse
     /// system can apply to entities receiving damage.
     /// </para>
     /// <para>
-    /// All of the core Apocalypse events have a timestamp and its most critical bit of data: the dice roll. The exact message
-    /// to be displayed to the player that describes what the hell is happening in their game, as well as all other auxiliary pieces of
+    /// All of the core Apocalypse events have a timestamp and are convertible into a recognizable effect message. These messages,
+    /// displayed to the player to describe what the hell is happening in their game, as well show all the other auxiliary pieces of
     /// data specific to the event, are fleshed out in the particular event type that corresponds to the applied random effect.
     /// </para>
     /// </remarks>
@@ -36,13 +36,6 @@ namespace BadEcho.Omnified.Vision.Apocalypse
         /// Gets the date and time at which this Apocalypse event occurred.
         /// </summary>
         public DateTime Timestamp  
-        { get; init; }
-
-        /// <summary>
-        /// Gets the primary dice roll for this Apocalypse event, which acts as the main determinant in what punishing effect gets applied
-        /// to the target.
-        /// </summary>
-        public int DiceRoll
         { get; init; }
     }
 }
