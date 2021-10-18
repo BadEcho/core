@@ -10,11 +10,10 @@
 		http://creativecommons.org/licenses/by-nc/4.0/
     </copyright>
 -->
-    
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                        xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"
-                        xmlns:t="clr-namespace:BadEcho.Omnified.Vision.Extensibility.Themes;assembly=BadEcho.Omnified.Vision.Extensibility"
-                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"
+                    xmlns:t="clr-namespace:BadEcho.Omnified.Vision.Extensibility.Themes;assembly=BadEcho.Omnified.Vision.Extensibility"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Style x:Key="EventTextStyle" TargetType="{x:Type fenestra:OutlinedTextElement}">
         <Setter Property="Fill" Value="{DynamicResource {x:Static t:Brushes.TextForegroundKey}}"/>
