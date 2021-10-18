@@ -6,9 +6,32 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Themes\Resources\Nobilty.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Fenestra\BadEcho.Fenestra.csproj" />
     <ProjectReference Include="..\Odin\BadEcho.Odin.csproj" />
     <ProjectReference Include="..\Vision.Extensibility\BadEcho.Omnified.Vision.Extensibility.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Themes\Resources\Nobilty.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\EffectMessages.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>EffectMessages.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\EffectMessages.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>EffectMessages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
