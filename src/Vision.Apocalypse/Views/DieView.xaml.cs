@@ -1,0 +1,27 @@
+﻿//-----------------------------------------------------------------------
+// <copyright>
+//      Created by Matt Weber <matt@badecho.com>
+//      Copyright @ 2021 Bad Echo LLC. All rights reserved.
+//
+//		Bad Echo Technologies are licensed under a
+//		Creative Commons Attribution-NonCommercial 4.0 International License.
+//
+//		See accompanying file LICENSE.md or a copy at:
+//		http://creativecommons.org/licenses/by-nc/4.0/
+// </copyright>
+//-----------------------------------------------------------------------
+
+namespace BadEcho.Omnified.Vision.Apocalypse.Views
+{
+    /// <summary>
+    /// Provides a view for displaying dice rolls made by the Apocalypse system.
+    /// </summary>
+    public partial class DieView
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DieView"/> class.
+        /// </summary>
+        public DieView() 
+            => InitializeComponent();
+    }
+}

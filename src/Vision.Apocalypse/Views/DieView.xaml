@@ -1,0 +1,64 @@
+﻿<!--
+    <copyright>
+        Created by Matt Weber <matt@badecho.com>
+        Copyright @ 2021 Bad Echo LLC. All rights reserved.
+
+		Bad Echo Technologies are licensed under a
+		Creative Commons Attribution-NonCommercial 4.0 International License.
+
+		See accompanying file LICENSE.md or a copy at:
+		http://creativecommons.org/licenses/by-nc/4.0/
+    </copyright>
+-->
+<fenestra:View x:Class="BadEcho.Omnified.Vision.Apocalypse.Views.DieView"
+               xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"                   
+               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+               xmlns:t="clr-namespace:BadEcho.Omnified.Vision.Extensibility.Themes;assembly=BadEcho.Omnified.Vision.Extensibility"
+               xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Apocalypse.ViewModels"
+               xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+               mc:Ignorable="d">
+    <d:DesignProperties.DataContext>
+        <vm:ApocalypseEventViewModel DieRoll="10"/>
+    </d:DesignProperties.DataContext>
+    <Viewbox Stretch="Uniform">
+        <Grid Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}">
+            <Grid.Background>
+                <ImageBrush Stretch="Uniform">
+                    <ImageBrush.ImageSource>
+                        <DrawingImage>                            
+                            <DrawingImage.Drawing>
+                                <DrawingGroup ClipGeometry="M0,0 V488.6 H367 V0 H0 Z">
+                                    <DrawingGroup Transform="0.1,0,0,-0.1,0,512">
+                                        <GeometryDrawing Brush="#FF767676" 
+                                                         Geometry="F1 M367,488.6z M0,0z M948,3213L61,1685 950,1682C1440,1681,2240,1681,2730,1682L3619,1685 2732,3213C2244,4053 1843,4740 1840,4740 1837,4740 1436,4053 948,3213z" 
+                                                         />
+                                        <GeometryDrawing Brush="#FF767676" 
+                                                         Geometry="F1 M367,488.6z M0,0z M2100,4607C2100,4601 3656,1920 3664,1912 3667,1909 3670,2260 3670,2692L3670,3478 3623,3512C3596,3531 3249,3783 2850,4071 2099,4615 2100,4614 2100,4607z" 
+                                                         />
+                                        <GeometryDrawing Brush="#FF767676" 
+                                                         Geometry="F1 M367,488.6z M0,0z M782,4044L0,3478 0,2692C0,2260 3,1909 6,1912 17,1924 1570,4603 1567,4606 1565,4608 1212,4355 782,4044z" 
+                                                         />
+                                        <GeometryDrawing Brush="#FF767676" 
+                                                         Geometry="F1 M367,488.6z M0,0z M190.394,1506C198.394,1499,573.394,1227,1023.394,902L1840.394,311 2658.394,901C3107.394,1226 3482.394,1498 3490.394,1506 3502.394,1518 3261.394,1520 1840.394,1520 434.394,1520 178.394,1518 190.394,1506z" 
+                                                         />
+                                    </DrawingGroup>
+                                </DrawingGroup>
+                            </DrawingImage.Drawing>
+                        </DrawingImage>
+                    </ImageBrush.ImageSource>
+                </ImageBrush>
+            </Grid.Background>
+            <fenestra:OutlinedTextElement Text="{Binding DieRoll}" 
+                                          Fill="{DynamicResource {x:Static t:Brushes.TextForegroundKey}}"
+                                          FontFamily="{StaticResource DieFontFamily}"
+                                          FontSize="18"
+                                          InnerStrokeThickness="2"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Top"
+                                          Margin="0,16,0,16"
+                                          />
+        </Grid>
+    </Viewbox>
+</fenestra:View>
