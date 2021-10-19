@@ -11,8 +11,12 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using BadEcho.Odin.Extensions;
 
 namespace BadEcho.Fenestra
 {
@@ -23,14 +27,39 @@ namespace BadEcho.Fenestra
     public class ViewContextTemplateSelector : DataTemplateSelector
     {
         /// <inheritdoc/>
+        /// <remarks>
+        /// <para>
+        /// We first try to locate a data template linked to the specific objects type, but if one does not exist, we
+        /// fallback to the first template found associated with the most derived of interfaces for the object type.
+        /// This is to avoid including templates targeting interfaces that act as a base to other interfaces, which themselves
+        /// may have distinct concrete implementations.
+        /// </para>
+        /// <para>
+        /// Interfaces are supported because there are times we may want to support view model types existing in some sort of
+        /// object hierarchy utilizing generic type parameters, something which is not supported by the majority of XAML parsers.
+        /// </para>
+        /// </remarks>
         public override DataTemplate? SelectTemplate(object? item, DependencyObject container)
         {
             if (null == item || container is not FrameworkElement containerElement)
                 return base.SelectTemplate(item, container);
 
-            var contextKey = new DataTemplateKey(item.GetType());
+            Type itemType = item.GetType();
+            IEnumerable<Type> interfaces = itemType.GetInterfaces().ToList();
 
-            return containerElement.TryFindResource(contextKey) as DataTemplate ?? base.SelectTemplate(item, container);
+            var template = TryFindResource(itemType) ?? interfaces.Except(interfaces.SelectMany(i => i.GetInterfaces()))
+                                                                  .Select(TryFindResource)
+                                                                  .WhereNotNull()
+                                                                  .FirstOrDefault();
+
+            return template ?? base.SelectTemplate(item, container);
+
+            DataTemplate? TryFindResource(Type type)
+            {
+                var contextKey = new DataTemplateKey(type);
+
+                return containerElement.TryFindResource(contextKey) as DataTemplate;
+            }
         }
     }
 }
