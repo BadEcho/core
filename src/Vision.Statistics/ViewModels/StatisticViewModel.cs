@@ -19,6 +19,7 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
     /// <summary>
     /// Provides a base view model that facilitates the display of an individual statistic exported from an Omnified game.
     /// </summary>
+    /// <typeparam name="TStatistic">The type of statistic bound to the view model for display on a view.</typeparam>
     internal abstract class StatisticViewModel<TStatistic> : ViewModel<IStatistic,TStatistic>, IStatisticViewModel
         where TStatistic : IStatistic
     {
