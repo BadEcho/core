@@ -10,7 +10,7 @@
 		http://creativecommons.org/licenses/by-nc/4.0/
     </copyright>
 -->
-<fenestra:View x:Class="BadEcho.Omnified.Vision.Apocalypse.Views.PlayerApocalypseEventView"
+<fenestra:View x:Class="BadEcho.Omnified.Vision.Apocalypse.Views.RiskOfMurderEventView"
                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -21,15 +21,15 @@
                mc:Ignorable="d" 
                d:DesignWidth="850">
     <d:DesignProperties.DataContext>
-        <vm:RiskOfMurderEventViewModel EffectMessage="Extra damage (2x) causing 806 damage!
-                                       
-                                       Player now has 82 health."
-                                       Timestamp="09/02/2021 14:31"
-                                       DieRoll="2"
+        <vm:RiskOfMurderEventViewModel EffectMessage="Risk of murder...holy shit! Player has been hit with a murderous attack (69x) causing 129,123 damage! Player now has 0 health."
+                                       Timestamp="09/02/2021 8:31"
+                                       DieRoll="6"
+                                       MurderRoll="4"
                                        />
     </d:DesignProperties.DataContext>
     <Grid>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
@@ -40,13 +40,18 @@
                                       Grid.Column="0"
                                       />
 
-        <v:DieView Style="{StaticResource DieRollStyle}" 
+        <v:DieView Style="{StaticResource DieRollStyle}"
                    Grid.Column="1"
                    />
 
+        <v:MurderDieView Style="{StaticResource DieRollStyle}"
+                         Grid.Column="2"
+                         />
+        
         <fenestra:OutlinedTextElement Style="{StaticResource EventTextStyle}"
                                       Text="{Binding EffectMessage}"
-                                      Grid.Column="2"
+                                      Grid.Column="3"
                                       />
+
     </Grid>
 </fenestra:View>

@@ -18,7 +18,7 @@
                xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Apocalypse.ViewModels"
                xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"                   
                mc:Ignorable="d" 
-               d:DesignWidth="650">
+               d:DesignWidth="850">
     <d:DesignProperties.DataContext>
         <vm:RiskOfMurderEventViewModel EffectMessage="The player, afflicted with Fatalis, dies immediately from the enemy attack, losing all 2309 points of health!"
                                        Timestamp="09/02/2021 18:11"
