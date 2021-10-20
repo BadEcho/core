@@ -12,12 +12,16 @@
 
 // Global Apocalypse memory.
 alloc(playerDamageX,8)
+alloc(playerGodMode,8)
 
 registersymbol(playerDamageX)
+registersymbol(playerGodMode)
 
 playerDamageX:
     dd (float)1.0
 
+playerGodMode:
+    dd 0  
 
 // Player Apocalypse System Function
 // [rsp+48]: Player's coordinates (aligned at x-coordinate)
@@ -62,7 +66,6 @@ alloc(sixtyNineDamageX,8)
 alloc(maxDamageToPlayer,8)
 alloc(lastDamageToPlayer,8)
 alloc(totalDamageToPlayer,8)
-alloc(playerGodMode,8)
 alloc(disableTeleportitis,8)
 alloc(disableSixtyNine,8)
 alloc(sixtyNineEveryTime,8)
@@ -90,7 +93,6 @@ registersymbol(lastDamageToPlayer)
 registersymbol(totalDamageToPlayer)
 registersymbol(lastVerticalDisplacement)
 registersymbol(coordinatesAreDoubles)
-registersymbol(playerGodMode)
 registersymbol(disableTeleportitis)
 registersymbol(disableSixtyNine)
 registersymbol(sixtyNineEveryTime)
@@ -511,9 +513,6 @@ lastDamageToPlayer:
     dd 0
   
 totalDamageToPlayer:
-    dd 0
-  
-playerGodMode:
     dd 0  
   
 disableTeleportitis:
@@ -608,6 +607,14 @@ executeEnemyApocalypse:
     mov rax,damageThreshold
     ucomiss xmm0,[rax]  
     jbe exitEnemyApocalypse  
+    cmp [playerGodMode],1
+    jne checkForNewEvent
+    // If God Mode is enabled, enemies die immediately. The damage, being fake, is not recorded to our
+    // normal statistics.
+    movss xmm0,[rsp+58]
+    movd eax,xmm0
+    movd ebx,xmm0
+    jmp enemyApocalypseCleanup
 checkForNewEvent:
     cmp [newEnemyDamageEventNotProcessed],0
     jne checkIfEventBonusProcessed
@@ -751,6 +758,7 @@ exitEnemyApocalypse:
     movss xmm1,[rsp+58]
     // Increment the number of enemy damage pulses that have occurred.
     inc [enemyDamagePulses]
+enemyApocalypseCleanup:
     movd ebx,xmm1
     movdqu xmm4,[rsp]
     add rsp,10
@@ -861,8 +869,10 @@ logPlayerCrit:
 
   // Cleanup of global Apocalypse memory
 dealloc(playerDamageX)
+dealloc(playerGodMode)
 
 unregistersymbol(playerDamageX)
+unregistersymbol(playerGodMode)
 
 // Cleanup of Player Apocalypse System Function
 unregistersymbol(logApocalypse)
@@ -885,7 +895,6 @@ unregistersymbol(teleportitisDisplacementX)
 unregistersymbol(verticalTeleportitisDisplacementX)
 unregistersymbol(extraDamageX)
 unregistersymbol(maxDamageToPlayer)
-unregistersymbol(playerGodMode)
 unregistersymbol(lastDamageToPlayer)
 unregistersymbol(totalDamageToPlayer)
 unregistersymbol(executePlayerApocalypse)
@@ -931,7 +940,6 @@ dealloc(disableTeleportitis)
 dealloc(disableSixtyNine)
 dealloc(sixtyNineEveryTime)
 dealloc(executePlayerApocalypse)
-dealloc(playerGodMode)
 
 // Cleanup of Enemy Apocalypse System Function
 unregistersymbol(lastEnemyDamageEvent)
