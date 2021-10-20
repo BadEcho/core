@@ -19,4 +19,16 @@
         <v:ApocalypseView/>
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type vm:IApocalypseEventViewModel}">
+        <v:ApocalypseEventView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:IPlayerApocalypseEventViewModel}">
+        <v:PlayerApocalypseEventView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:RiskOfMurderEventViewModel}">
+        <v:RiskOfMurderEventView/>
+    </DataTemplate>
+
 </ResourceDictionary>
