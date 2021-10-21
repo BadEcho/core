@@ -13,6 +13,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using BadEcho.Fenestra.Properties;
 using BadEcho.Odin;
 using BadEcho.Odin.Extensions;
@@ -52,8 +53,8 @@ namespace BadEcho.Fenestra.ViewModels
 
             Type modelType = model.GetType();
 
-            return _typeInitializerMap.ContainsKey(modelType)
-                ? _typeInitializerMap[modelType](model)
+            return TryInitialize(model, out TChildViewModel? viewModel)
+                ? viewModel
                 : throw new ArgumentException(Strings.ModelImplentationNotRegistered.InvariantFormat(modelType.Name),
                                               nameof(model));
         }
@@ -114,6 +115,25 @@ namespace BadEcho.Fenestra.ViewModels
 
                                     childViewModel.Bind(model);
                                 });
+        }
+
+        private bool TryInitialize(TModel model, [NotNullWhen(true)] out TChildViewModel? viewModel)
+        {
+            Type? modelType = model.GetType();
+            viewModel = null;
+
+            while (modelType != null)
+            {
+                if (_typeInitializerMap.ContainsKey(modelType))
+                {
+                    viewModel = _typeInitializerMap[modelType](model);
+                    break;
+                }
+
+                modelType = modelType.BaseType;
+            }
+
+            return viewModel != null;
         }
     }
 }
