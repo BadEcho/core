@@ -15,10 +15,28 @@
                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
                xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+               xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Apocalypse.ViewModels"
                xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"                   
-               mc:Ignorable="d" 
-               >
+               mc:Ignorable="d"
+               d:DesignWidth="850">
+    <d:DesignProperties.DataContext>
+        <vm:ApocalypseViewModel>
+            <vm:ApocalypseViewModel.Children>
+                <vm:RiskOfMurderEventViewModel EffectMessage="Risk of murder...whew! Just normal damage causing 59 damage! 
+                                               Player now has 23 health."
+                                               Timestamp="09/02/2021 8:32"
+                                               DieRoll="6"
+                                               MurderRoll="2"
+                                               />
+                <vm:RiskOfMurderEventViewModel EffectMessage="Risk of murder...holy shit! Player has been hit with a murderous attack (69x) causing 129,123 damage! Player now has 0 health."
+                                               Timestamp="09/02/2021 8:31"
+                                               DieRoll="6"
+                                               MurderRoll="4"
+                                               />
+            </vm:ApocalypseViewModel.Children>
+        </vm:ApocalypseViewModel>
+    </d:DesignProperties.DataContext>
     <Grid>
-        <TextBlock FontSize="36" Foreground="White">This<LineBreak/>Is<LineBreak/>Apocalypse</TextBlock>
+        <ItemsControl ItemsSource="{Binding Children}"/>
     </Grid>
 </fenestra:View>
