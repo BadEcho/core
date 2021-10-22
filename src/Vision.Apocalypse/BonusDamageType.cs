@@ -28,6 +28,6 @@ namespace BadEcho.Omnified.Vision.Apocalypse
         /// A bonus stemming from a successful, and quite rare, Kamehameha roll, typically applying a completely
         /// ridiculous multiplier to the damage (i.e., 10000x).
         /// </summary>
-        Kamehameha,
+        Kamehameha
     }
 }

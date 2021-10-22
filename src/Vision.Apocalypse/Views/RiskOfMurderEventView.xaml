@@ -21,7 +21,7 @@
                mc:Ignorable="d" 
                d:DesignWidth="850">
     <d:DesignProperties.DataContext>
-        <vm:RiskOfMurderEventViewModel EffectMessage="Risk of murder...holy shit! Player has been hit with a murderous attack (69x) causing 129,123 damage! Player now has 0 health."
+        <vm:RiskOfMurderEventViewModel EffectMessage="Risk of murder...holy shit! Player has been hit with a murderous attack (69x) causing 129,123 damage, leaving the player with 0 health."
                                        Timestamp="09/02/2021 8:31"
                                        DieRoll="6"
                                        MurderRoll="4"

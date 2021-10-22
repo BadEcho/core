@@ -61,16 +61,16 @@ namespace BadEcho.Omnified.Vision.Apocalypse.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Player now has {0} health..
+        ///   Looks up a localized string similar to Enemy has been critically hit ({0}) causing an additional {1} damage!.
         /// </summary>
-        public static string CurrentPlayerHealth {
+        public static string CriticalHit {
             get {
-                return ResourceManager.GetString("CurrentPlayerHealth", resourceCulture);
+                return ResourceManager.GetString("CriticalHit", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Extra damage ({0}x) causing {1} damage!.
+        ///   Looks up a localized string similar to Extra damage ({0}x).
         /// </summary>
         public static string ExtraDamage {
             get {
@@ -106,8 +106,16 @@ namespace BadEcho.Omnified.Vision.Apocalypse.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Risk of murder...holy shit!
-        ///Player has been hit with a murderous attack ({0}x) causing {1} damage!.
+        ///   Looks up a localized string similar to Player has unlocked his inner Goku and performs a devastating KAMEHAMEHAAAA attack causing {0}x extra damage and resulting in an additional {1} damage!.
+        /// </summary>
+        public static string Kamehameha {
+            get {
+                return ResourceManager.GetString("Kamehameha", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Risk of murder...holy shit! Player has been hit with a murderous attack ({0}x).
         /// </summary>
         public static string Murder {
             get {
@@ -116,8 +124,7 @@ namespace BadEcho.Omnified.Vision.Apocalypse.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Risk of murder...whew!
-        ///Just normal damage causing {0} damage!.
+        ///   Looks up a localized string similar to Risk of murder...whew! Just normal damage.
         /// </summary>
         public static string NormalDamage {
             get {
@@ -126,7 +133,7 @@ namespace BadEcho.Omnified.Vision.Apocalypse.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Wow! Player achieves orgasm, healing {0} points to full health!.
+        ///   Looks up a localized string similar to Wow! Player achieves orgasm, healing {0} points to full health ({1} points)!.
         /// </summary>
         public static string Orgasm {
             get {
@@ -135,7 +142,16 @@ namespace BadEcho.Omnified.Vision.Apocalypse.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sudden teleportitis (X: {0}, Y:{1}, Z:{2}) causing {3} damage!.
+        ///   Looks up a localized string similar to  causing {0} damage, leaving the player with {1} health..
+        /// </summary>
+        public static string PlayerApocalypseAddendum {
+            get {
+                return ResourceManager.GetString("PlayerApocalypseAddendum", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sudden teleportitis (X: {0:0.0}, Y:{1:0.0}, Z:{2:0.0}).
         /// </summary>
         public static string Teleportitis {
             get {

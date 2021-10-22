@@ -11,6 +11,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Odin.Extensions;
+using BadEcho.Omnified.Vision.Apocalypse.Properties;
+
 namespace BadEcho.Omnified.Vision.Apocalypse
 {
     /// <summary>
@@ -30,7 +33,11 @@ namespace BadEcho.Omnified.Vision.Apocalypse
         /// Since being hit while being afflicted with Fatalis causes the player to die immediately, this value will reflect
         /// their current health at the time immediately prior to the attack.
         /// </remarks>
-        public double HealthLost
+        public int HealthLost
         { get; init; }
+
+        /// <inheritdoc/>
+        public override string ToString()
+            => EffectMessages.FatalisDeath.CulturedFormat(HealthLost);
     }
 }

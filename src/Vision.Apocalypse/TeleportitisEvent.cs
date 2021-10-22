@@ -11,6 +11,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Odin.Extensions;
+using BadEcho.Omnified.Vision.Apocalypse.Properties;
+
 namespace BadEcho.Omnified.Vision.Apocalypse
 {
     /// <summary>
@@ -46,5 +49,9 @@ namespace BadEcho.Omnified.Vision.Apocalypse
         /// </summary>
         public double ZDisplacement
         { get; init; }
+
+        /// <inheritdoc/>
+        public override string ToString()
+            => $"{EffectMessages.Teleportitis.CulturedFormat(XDisplacement, YDisplacement, ZDisplacement)}{base.ToString()}";
     }
 }

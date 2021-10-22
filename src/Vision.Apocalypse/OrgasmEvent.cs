@@ -11,6 +11,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Odin.Extensions;
+using BadEcho.Omnified.Vision.Apocalypse.Properties;
+
 namespace BadEcho.Omnified.Vision.Apocalypse
 {
     /// <summary>
@@ -25,7 +28,11 @@ namespace BadEcho.Omnified.Vision.Apocalypse
         /// <summary>
         /// Gets the amount of health that was healed by the spontaneous orgasm.
         /// </summary>
-        public double HealthHealed
+        public int HealthHealed
         { get; init; }
+
+        /// <inheritdoc/>
+        public override string ToString()
+            => EffectMessages.Orgasm.CulturedFormat(HealthHealed, HealthAfter);
     }
 }

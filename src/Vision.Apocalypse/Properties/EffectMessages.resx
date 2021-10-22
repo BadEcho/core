@@ -98,22 +98,20 @@
 	<resheader name="writer">
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
-  <data name="CurrentPlayerHealth" xml:space="preserve">
-    <value>Player now has {0} health.</value>
+  <data name="PlayerApocalypseAddendum" xml:space="preserve">
+    <value> causing {0} damage, leaving the player with {1} health.</value>
   </data>
   <data name="ExtraDamage" xml:space="preserve">
-    <value>Extra damage ({0}x) causing {1} damage!</value>
+    <value>Extra damage ({0}x)</value>
   </data>
   <data name="Teleportitis" xml:space="preserve">
-    <value>Sudden teleportitis (X: {0}, Y:{1}, Z:{2}) causing {3} damage!</value>
+    <value>Sudden teleportitis (X: {0:0.0}, Y:{1:0.0}, Z:{2:0.0})</value>
   </data>
   <data name="Murder" xml:space="preserve">
-    <value>Risk of murder...holy shit!
-Player has been hit with a murderous attack ({0}x) causing {1} damage!</value>
+    <value>Risk of murder...holy shit! Player has been hit with a murderous attack ({0}x)</value>
   </data>
   <data name="NormalDamage" xml:space="preserve">
-    <value>Risk of murder...whew!
-Just normal damage causing {0} damage!</value>
+    <value>Risk of murder...whew! Just normal damage</value>
   </data>
   <data name="Fatalis" xml:space="preserve">
     <value>Unfortunately, the player has been stricken with Fatalis for an unknown period of time...</value>
@@ -125,6 +123,12 @@ Just normal damage causing {0} damage!</value>
     <value>Miraculously, after suffering with it for {0} minutes and dying {1} times, the player has been cured of Fatalis!</value>
   </data>
   <data name="Orgasm" xml:space="preserve">
-    <value>Wow! Player achieves orgasm, healing {0} points to full health!</value>
+    <value>Wow! Player achieves orgasm, healing {0} points to full health ({1} points)!</value>
+  </data>
+  <data name="CriticalHit" xml:space="preserve">
+    <value>Enemy has been critically hit ({0}) causing an additional {1} damage!</value>
+  </data>
+  <data name="Kamehameha" xml:space="preserve">
+    <value>Player has unlocked his inner Goku and performs a devastating KAMEHAMEHAAAA attack causing {0}x extra damage and resulting in an additional {1} damage!</value>
   </data>
 </root>

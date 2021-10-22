@@ -11,6 +11,10 @@
 // </copyright>
 //-----------------------------------------------------------------------s
 
+using System.ComponentModel;
+using BadEcho.Odin.Extensions;
+using BadEcho.Omnified.Vision.Apocalypse.Properties;
+
 namespace BadEcho.Omnified.Vision.Apocalypse
 {
     /// <summary>
@@ -48,5 +52,19 @@ namespace BadEcho.Omnified.Vision.Apocalypse
         /// </summary>
         public BonusDamageType BonusDamageType
         { get; init; }
+
+        /// <inheritdoc/>
+        public override string ToString()
+            => DescribeBonus(BonusDamageType).CulturedFormat(BonusMultiplier, AdditionalDamage);
+
+        private static string DescribeBonus(BonusDamageType bonusDamageType)
+            => bonusDamageType switch
+            {
+                BonusDamageType.CriticalHit => EffectMessages.CriticalHit,
+                BonusDamageType.Kamehameha => EffectMessages.Kamehameha,
+                _ => throw new InvalidEnumArgumentException(nameof(bonusDamageType),
+                                                            (int) bonusDamageType,
+                                                            typeof(BonusDamageType))
+            };
     }
 }

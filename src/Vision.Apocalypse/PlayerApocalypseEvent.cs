@@ -11,6 +11,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Odin.Extensions;
+using BadEcho.Omnified.Vision.Apocalypse.Properties;
+
 namespace BadEcho.Omnified.Vision.Apocalypse
 {
     /// <summary>
@@ -41,9 +44,19 @@ namespace BadEcho.Omnified.Vision.Apocalypse
         { get; init; }
 
         /// <summary>
+        /// Gets the total amount of damage done to the player due to the event.
+        /// </summary>
+        public int Damage
+        { get; init; }
+
+        /// <summary>
         /// Gets the player's health after being subjected to the Player Apocalypse event's random effect.
         /// </summary>
         public int HealthAfter
         { get; init; }
+
+        /// <inheritdoc/>
+        public override string ToString()
+            => EffectMessages.PlayerApocalypseAddendum.CulturedFormat(Damage, HealthAfter);
     }
 }

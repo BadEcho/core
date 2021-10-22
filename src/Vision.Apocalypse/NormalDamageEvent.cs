@@ -11,6 +11,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
+using BadEcho.Omnified.Vision.Apocalypse.Properties;
+
 namespace BadEcho.Omnified.Vision.Apocalypse
 {
     /// <summary>
@@ -49,5 +52,17 @@ namespace BadEcho.Omnified.Vision.Apocalypse
         /// </summary>
         public bool FatalisAfflicted
         { get; init; }
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            var effectMessage
+                = $"{EffectMessages.NormalDamage}{base.ToString()}";
+
+            var fatalisMessage
+                = FatalisAfflicted ? $"{Environment.NewLine}{EffectMessages.Fatalis}" : string.Empty;
+
+            return $"{effectMessage}{fatalisMessage}";
+        }
     }
 }

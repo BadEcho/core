@@ -11,6 +11,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Odin.Extensions;
+using BadEcho.Omnified.Vision.Apocalypse.Properties;
+
 namespace BadEcho.Omnified.Vision.Apocalypse
 {
     /// <summary>
@@ -34,5 +37,9 @@ namespace BadEcho.Omnified.Vision.Apocalypse
         /// </summary>
         public int MinutesAfflicted
         { get; init; }
+
+        /// <inheritdoc/>
+        public override string ToString()
+            => EffectMessages.FatalisCured.CulturedFormat(MinutesAfflicted, Deaths);
     }
 }
