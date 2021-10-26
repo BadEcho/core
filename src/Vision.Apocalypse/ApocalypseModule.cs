@@ -11,10 +11,17 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
 using System.Composition;
+using System.Linq;
+using System.Text.Json;
 using BadEcho.Fenestra.ViewModels;
 using BadEcho.Odin;
 using BadEcho.Odin.Extensibility.Hosting;
+using BadEcho.Odin.Extensions;
+using BadEcho.Odin.Logging;
+using BadEcho.Omnified.Vision.Apocalypse.Properties;
 using BadEcho.Omnified.Vision.Apocalypse.ViewModels;
 using BadEcho.Omnified.Vision.Extensibility;
 
@@ -56,7 +63,7 @@ namespace BadEcho.Omnified.Vision.Apocalypse
 
         /// <inheritdoc/>
         public string MessageFile
-            => "apocalypse.log";
+            => "apocalypse.jsonl";
 
         /// <inheritdoc/>
         public bool ProcessNewMessagesOnly
@@ -67,7 +74,47 @@ namespace BadEcho.Omnified.Vision.Apocalypse
         {
             Require.NotNull(messageProvider, nameof(messageProvider));
 
+            if (!string.IsNullOrEmpty(messageProvider.CurrentMessages))
+                _viewModel.Bind(ReadEvents(messageProvider.CurrentMessages));
+
+            messageProvider.NewMessages += HandleNewMessages;
+
             return _viewModel;
+        }
+
+        private static IEnumerable<ApocalypseEvent> ReadEvents(string messages)
+        {
+            var options = new JsonSerializerOptions
+                          {
+                              Converters = {new EventConverter()}
+                          };
+            try
+            {
+                return messages.Split(Environment.NewLine).Select(ReadEvent);
+            }
+            catch (JsonException jsonEx)
+            {
+                Logger.Error(Strings.ApocalypseReadMessagesFailure
+                                    .InvariantFormat(Environment.NewLine, messages), jsonEx);
+
+                return Enumerable.Empty<ApocalypseEvent>();
+            }
+
+            ApocalypseEvent ReadEvent(string message)
+            {
+                var apocalypseEvent = JsonSerializer.Deserialize<ApocalypseEvent>(message, options);
+
+                return apocalypseEvent
+                    ?? throw new ArgumentException(Strings.JsonNotApocalypseSchema.InvariantFormat(message),
+                                                   nameof(message));
+            }
+        }
+        
+        private void HandleNewMessages(object? sender, EventArgs<string> e)
+        {
+            var apocalypseEvents = ReadEvents(e.Data);
+
+            _viewModel.Bind(apocalypseEvents);
         }
 
         /// <summary>

@@ -68,5 +68,32 @@ namespace BadEcho.Omnified.Vision.Apocalypse.Properties {
                 return ResourceManager.GetString("ApocalypseEventMissingMessage", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Apocalypse module had problems parsing the following message file contents:{0}{1}.
+        /// </summary>
+        internal static string ApocalypseReadMessagesFailure {
+            get {
+                return ResourceManager.GetString("ApocalypseReadMessagesFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The provided ApocalypseEvent object type lacks support for describing in JSON..
+        /// </summary>
+        internal static string EventTypeUnsupportedJson {
+            get {
+                return ResourceManager.GetString("EventTypeUnsupportedJson", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The following JSON does not adhere to the Omnified Apocalypse messaging schema: {0}.
+        /// </summary>
+        internal static string JsonNotApocalypseSchema {
+            get {
+                return ResourceManager.GetString("JsonNotApocalypseSchema", resourceCulture);
+            }
+        }
     }
 }

@@ -101,4 +101,13 @@
   <data name="ApocalypseEventMissingMessage" xml:space="preserve">
     <value>Apocalypse events are required to return non-null/non-empty string representations of themselves.</value>
   </data>
+  <data name="EventTypeUnsupportedJson" xml:space="preserve">
+    <value>The provided ApocalypseEvent object type lacks support for describing in JSON.</value>
+  </data>
+  <data name="JsonNotApocalypseSchema" xml:space="preserve">
+    <value>The following JSON does not adhere to the Omnified Apocalypse messaging schema: {0}</value>
+  </data>
+  <data name="ApocalypseReadMessagesFailure" xml:space="preserve">
+    <value>Apocalypse module had problems parsing the following message file contents:{0}{1}</value>
+  </data>
 </root>
