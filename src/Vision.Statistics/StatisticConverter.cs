@@ -24,11 +24,9 @@ namespace BadEcho.Omnified.Vision.Statistics
     /// </summary>
     public sealed class StatisticConverter : JsonPolymorphicConverter<StatisticType,IStatistic>
     {
-        private const string STATISTIC_DATA_PROPERTY_NAME = "Statistic";
-
         /// <inheritdoc/>
         protected override string DataPropertyName
-            => STATISTIC_DATA_PROPERTY_NAME;
+            => "Statistic";
 
         /// <inheritdoc/>
         protected override IStatistic? ReadFromDescriptor(ref Utf8JsonReader reader, StatisticType typeDescriptor)
