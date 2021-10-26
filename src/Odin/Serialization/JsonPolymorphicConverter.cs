@@ -68,6 +68,7 @@ namespace BadEcho.Odin.Serialization
                 throw new JsonException(Strings.JsonInvalidTypeName.CulturedFormat(typePropertyName, TypePropertyName));
 
             reader.Read();
+
             if (reader.TokenType != JsonTokenType.Number)
                 throw new JsonException(Strings.JsonTypeValueNotNumber);
 
@@ -80,6 +81,7 @@ namespace BadEcho.Odin.Serialization
             }
 
             string dataPropertyName = ReadPropertyName(ref reader);
+
             if (dataPropertyName != DataPropertyName)
                 throw new JsonException(Strings.JsonInvalidTypeName.CulturedFormat(dataPropertyName, DataPropertyName));
 
@@ -145,6 +147,7 @@ namespace BadEcho.Odin.Serialization
         private static string ReadPropertyName(ref Utf8JsonReader reader)
         {
             reader.Read();
+
             if (reader.TokenType != JsonTokenType.PropertyName)
                 throw new JsonException(Strings.JsonMalformedText);
 
@@ -154,6 +157,7 @@ namespace BadEcho.Odin.Serialization
         private TBase? ReadDataProperty(ref Utf8JsonReader reader, TTypeDescriptor typeDescriptor)
         {
             reader.Read();
+
             if (reader.TokenType != JsonTokenType.StartObject)
                 throw new JsonException(Strings.JsonDataValueNotObject);
 
