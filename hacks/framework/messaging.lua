@@ -12,6 +12,7 @@
 
 require("omnified")
 require("statisticMessages")
+require("apocalypseMessages")
 
 -- Reads the current death counter from a local death counter file.
 local function readDeathCounter()
@@ -52,23 +53,8 @@ local function dumpStatistics()
                                 and toInt(readFloat(playerMaxStaminaAddress))
                                 or toInt(readInteger(playerMaxStaminaAddress))
 
-    -- Last damaged enemy health always floating point, as it is maintained by the Apocalypse system.
-    local enemyHealth = toInt(readFloat("lastEnemyHealthValue"))
-    
-    local newEnemyDamageEventNotProcessed = readInteger("newEnemyDamageEventNotProcessed")
-
-    if newEnemyDamageEventNotProcessed ~= nil and newEnemyDamageEventNotProcessed == 1 then
-        local newEnemyDamageEvent = readFloat("newEnemyDamageEvent")
-
-        if newEnemyDamageEvent ~= nil and newEnemyDamageEvent > 0 then
-            writeFloat("lastEnemyDamageEvent", newEnemyDamageEvent)
-        end
-
-        writeInteger("newEnemyDamageEventNotProcessed",0)
-        -- Other new enemy damage event related symbols, such as those pertaining to bonus damage, are cleared by
-        -- the entities responsible for reporting on them.
-    end
-
+    -- Last damaged enemy health is always floating point, as it is maintained by the Apocalypse system.
+    local lastEnemyHealthValue = toInt(readFloat("lastEnemyHealthValue"))  
     local lastDamageToPlayer = toInt(readFloat("lastDamageToPlayer"))
     local maxDamageToPlayer = toInt(readFloat("maxDamageToPlayer"))
     local totalDamageToPlayer = toInt(readFloat("totalDamageToPlayer"))
@@ -95,7 +81,7 @@ local function dumpStatistics()
     local statistics = {
         FractionalStatistic("Health", playerHealth, playerMaxHealth, "#AA43BC50", "#AA27D88D"),
         FractionalStatistic("Stamina", playerStamina, playerMaxStamina, "#AA7515D9", "#AAB22DE5"),
-        WholeStatistic("Enemy Health", enemyHealth),
+        WholeStatistic("Enemy Health", lastEnemyHealthValue),
         StatisticGroup("Damage Taken", { 
             WholeStatistic("Last", lastDamageToPlayer), 
             WholeStatistic("Max", maxDamageToPlayer, true),
@@ -118,10 +104,201 @@ local function dumpStatistics()
     for _, v in pairs(AdditionalStatistics ~= nil and AdditionalStatistics() or {}) do
         additionalIndex = additionalIndex + 1
         table.insert(statistics, additionalIndex, v)
-    end
+    end 
 
     return jsonEncode(statistics)
 end
+
+-- Creates a JSON-Lines-encoded dump of recent Player Apocalypse events.
+local function dumpPlayerApocalypseEvent()
+    local apocalypseEvent = ApocalypseEvent()    
+
+    -- Fatalis checks.
+    local fatalisState = readInteger("fatalisState")
+
+    -- A 'fatalisState' of 3 means we've been cured of Fatalis!
+    if fatalisState == 3 then
+        local fatalisDeaths = readInteger("fatalisDeaths")
+        local fatalisMinutesAfflicted = readInteger("fatalisMinutesAfflicted")
+
+        writeInteger("fatalisState", 0)
+        writeInteger("fatalisDeaths", 0)
+        writeInteger("fatalisMinutesAfflicted", 0)
+
+        return jsonEncode(FatalisCuredEvent(apocalypseEvent, fatalisDeaths, fatalisMinutesAfflicted))
+    end
+
+    -- A 'fatalisState' of 1 means we have been exposed to Fatalis, and that the next hit (and all other hits,
+    -- until it is cured) will immediately kill the player.
+    if fatalisState == 1 then
+        local fatalisHealthLost = readInteger("fatalisHealthLost")
+
+        -- The Fatalis affliction is now active.
+        writeInteger("fatalisState", 2)
+
+        return jsonEncode(FatalisDeathEvent(apocalypseEvent, fatalisHealthLost))
+    end
+
+    -- Main Player Apocalypse die roll checks.  
+    local apocalypseDieRoll = readInteger("apocalypseDieRoll")    
+    local lastDamageToPlayer = toInt(readFloat("lastDamageToPlayer"))
+    local healthAfter = not healthIsInteger
+                            and toInt(readFloat(playerHealthAddress))
+                            or readInteger(playerHealthAddress)    
+    apocalypseEvent 
+        = PlayerApocalypseEvent(apocalypseEvent, apocalypseDieRoll, lastDamageToPlayer, healthAfter)
+    
+    if apocalypseDieRoll <= 4 then
+        -- Extra damage.
+        local extraDamageX = readFloat("extraDamageX")
+
+        apocalypseEvent = ExtraDamageEvent(apocalypseEvent, extraDamageX)    
+    elseif apocalypseDieRoll <= 6 then
+        -- Teleportitis.
+        local lastXDisplacement = readFloat("lastXDisplacement")
+        local lastYDisplacement = readFloat("lastYDisplacement")
+        local lastZDisplacement = readFloat("lastZDisplacement")
+
+        apocalypseEvent = TeleportitisEvent(apocalypseEvent,
+                                            lastXDisplacement,
+                                            lastYDisplacement,
+                                            lastZDisplacement)         
+    elseif apocalypseDieRoll <= 9 then
+        -- Risk of Murder.
+        local murderRoll = readInteger("murderRoll")
+        apocalypseEvent = RiskOfMurderEvent(apocalypseEvent, murderRoll)
+        
+        if murderRoll <= 3 then
+            -- Normal damage. If 'fatalisState' has been set to 1, then we've been exposed to the dreaded Fatalis.            
+            apocalypseEvent = NormalDamageEvent(apocalypseEvent, fatalisState == 1)                            
+        else
+            -- Murder!
+            local murderDamageX = readFloat("murderDamageX")
+
+            apocalypseEvent = MurderEvent(apocalypseEvent, murderDamageX)
+        end
+    -- Orgasm!    
+    else 
+        local orgasmHealthHealed = readFloat("orgasmHealthHealed")
+
+        apocalypseEvent = OrgasmEvent(apocalypseEvent, orgasmHealthHealed)
+    end
+
+    return jsonEncode(apocalypseEvent)
+end
+
+-- Creates a JSON-Lines-encoded dump of recent Enemy Apocalypse events.
+local function dumpEnemyApocalypseEvent()
+    local apocalypseEvent = ApocalypseEvent()
+
+    local logEnemyApocalypseCrit = readInteger("logEnemyApocalypseCrit")    
+    local lastEnemyDamageEventBonusX = readFloat("lastEnemyDamageEventBonusX")
+    local lastEnemyDamageEventBonusAmount = readFloat("lastEnemyDamageEventBonusAmount")
+
+    if logEnemyApocalypseCrit == 1 then
+       local playerCritDamageResult = readInteger("playerCritDamageResult")
+       local playerCritDamageResultUpper = readInteger("playerCritDamageResultUpper")
+       local playerCritDamageResultLower = readInteger("playerCritDamageResultLower")
+       local isExtreme = false
+
+       local playerCritDamageRange 
+            = playerCritDamageResultUpper - playerCritDamageResultLower
+       local playerCritExtremeMinimum 
+            = playerCritDamageResultUpper - (playerCritDamageRange * (1/3))
+
+        local isExtreme = playerCritDamageResult >= critHighDamageMinimum
+
+        apocalypseEvent = EnemyApocalypseEvent(apocalypseEvent,
+                                               lastEnemyDamageEventBonusAmount,
+                                               lastEnemyDamageEventBonusX,
+                                               BonusDamageType.CriticalHit,
+                                               isExtreme)
+    else 
+        apocalypseEvent = EnemyApocalypseEvent(apocalypseEvent,
+                                               lastEnemyDamageEventBonusAmount,
+                                               lastEnemyDamageEventBonusX,
+                                               BonusDamageTpe.Kamehameha,
+                                               false)
+    end
+    
+    return jsonEncode(apocalypseEvent)
+end
+
+-- Saves any newly accumulated damage pulses as the most recent damage event.
+local function commitNewDamageEvents()
+    local newEnemyDamageEvent = readFloat("newEnemyDamageEvent")
+    local newEnemyDamageEventBonusAmount = readFloat("newEnemyDamageEventBonusAmount")
+    local newEnemyDamageEventBonusX = readFloat("newEnemyDamageEventBonusX")
+
+    if newEnemyDamageEvent > 0 then
+        writeFloat("lastEnemyDamageEvent", newEnemyDamageEvent)
+    end    
+
+    if newEnemyDamageEventBonusAmount > 0 then
+        writeFloat("lastEnemyDamageEventBonusAmount", newEnemyDamageEventBonusAmount)
+    end
+
+    if newEnemyDamageEventBonusX > 0 then
+        writeFloat("lastEnemyDamageEventBonusX", newEnemyDamageEventBonusX)
+    end
+end
+
+-- Processes recent Apocalypse events.
+local function processApocalypseEvents()
+    local newEnemyDamageEventNotProcessed = readInteger("newEnemyDamageEventNotProcessed")
+    local logPlayerApocalypse = readInteger("logPlayerApocalypse")
+    local logEnemyApocalypseGoku = readInteger("logEnemyApocalypseGoku")
+    local logEnemyApocalypseCrit = readInteger("logEnemyApocalypseCrit")
+
+    if newEnemyDamageEventNotProcessed == 1 then
+        commitNewDamageEvents()      
+        writeInteger("newEnemyDamageEventNotProcessed", 0)
+    end
+
+    if logPlayerApocalypse == 1 then 
+        local playerApocalypseEvent = dumpPlayerApocalypseEvent()
+        writeInteger("logPlayerApocalypse", 0) 
+
+        return playerApocalypseEvent
+    end    
+
+    if any(1, logEnemyApocalypseGoku, logEnemyApocalypseCrit) then
+        local enemyApocalypseEvent = dumpEnemyApocalypseEvent()
+        writeInteger("logEnemyApocalypseCrit", 0)
+        writeInteger("logEnemyApocalypseGoku", 0)        
+
+        return enemyApocalypseEvent
+    end
+end
+
+-- Enables the publishing of Apocalypse event messages.
+function startApocalypseEventsPublisher()
+    if apocalypseTimer == nil then
+        apocalypseTimer = createTimer(getMainForm())
+    end
+
+    apocalypseTimer.Interval = 50
+    apocalypseTimer.OnTimer = function()
+        local apocalypseEvent = processApocalypseEvents()
+
+        if apocalypseEvent ~= nil then
+            local apocalypseEventsFile = assert(io.open("apocalypse.jsonl", "a"))
+
+            apocalypseEventsFile:write("\n", apocalypseEvent)
+            apocalypseEventsFile:close()
+        end
+    end
+end
+
+-- Disables the publishing of Apocalypse event messages.
+function stopApocalypseEventsPublisher()
+    if apocalypseTimer == nil then return end
+
+    apocalypseTimer.Enabled = false
+    apocalypseTimer.Destroy()
+    apocalypseTimer = nil
+end
+
 
 -- Enables the publishing of Omnified game statistic messages.
 function startStatisticsPublisher()

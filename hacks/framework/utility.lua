@@ -77,16 +77,28 @@ function defineEnum(members)
     return members
 end
 
+function switch(value, cases)
+    local case = cases[value]
+    
+    if case and type(case) == 'function' then 
+        return case() 
+    end
+
+    local defaultCase = cases['default']
+
+    return defaultCase and typeof(defaultCase) == 'function' and defaultCase() or nil
+end
+
 -- Outputs a randomly selected item from the provided random settings structure.
--- The structure of random_settings is composed of object, weighted probability values like so:
--- random_settings = {
+-- The structure of randomSettings is composed of object, weighted probability values like so:
+-- randomSettings = {
 --		{firstObject, 1},
 --		{secondObject, 3},
 -- }
 -- In this example, the second object is 3x more likely to be returned than the first object.
 -- Based on the items provided, a random number between 1 and 4 (inclusive) will be generated.
 -- If the random number is 1 then firstObject is returned. If it is 2, 3, or 4, secondObject is returned.
-function randomize(random_settings)
+function randomize(randomSettings)
 	local indexedResults = {}
 	local totalWeight = 0
 	local lastIndex = 0
@@ -96,7 +108,7 @@ function randomize(random_settings)
 		randomInitialized = true
 	end
 	
-	for k,v in pairs(random_settings) do
+	for k,v in pairs(randomSettings) do
 		local resultObject = v[1]
 		local weight = v[2]
 

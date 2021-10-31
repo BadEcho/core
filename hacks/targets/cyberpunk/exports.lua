@@ -28,14 +28,14 @@ function registerExports()
 
         -- The player is driving if they're piloting a car and not at rest.
         if playerDriving ~= 1 then 
-            do return end
+            return
         end
 
         local gamePaused = readInteger("gamePaused")
 
         -- Don't want the hack happening while we're paused (escape menu)!
         if gamePaused == 1 then
-            do return end
+            return
         end
 
         local randomCarHack = {
@@ -46,7 +46,7 @@ function registerExports()
         local carHacked = randomize(randomCarHack)
 
         if not carHacked then 
-            do return end
+            return
         end
         
         -- Our car has been hacked! The evil enemy hacker will now add a random amount of speed to our car.

@@ -31,10 +31,10 @@ playerGodMode:
 // Updated damage is in EAX. 
 // Updated health before damage is in EBX.
 alloc(executePlayerApocalypse,$1000)
-alloc(logApocalypse,8)
-alloc(apocalypseResult,8)
-alloc(apocalypseResultUpper,8)
-alloc(apocalypseResultLower,8)
+alloc(logPlayerApocalypse,8)
+alloc(apocalypseDieRoll,8)
+alloc(apocalypseDieRollUpper,8)
+alloc(apocalypseDieRollLower,8)
 alloc(extraDamageSafetyThreshold,8)
 alloc(extraDamageResidualHealth,8)
 alloc(teleported,8)
@@ -46,56 +46,70 @@ alloc(teleportitisResultUpper,8)
 alloc(teleportitisResultLower,8)
 alloc(teleportitisDivisor,8)
 alloc(teleportitisShifter,8)
+alloc(lastXDisplacement,8)
+alloc(lastYDisplacement,8)
+alloc(lastZDisplacement,8)
 alloc(lastVerticalDisplacement,8)
 alloc(negativeVerticalDisplacementEnabled,8)
 alloc(teleportitisDisplacementX,8)
 alloc(verticalTeleportitisDisplacementX,8)
 alloc(coordinatesAreDoubles,8)
-alloc(riskOfMurderResult,8)
-alloc(riskOfMurderResultUpper,8)
-alloc(riskOfMurderResultLower,8)
+alloc(murderRoll,8)
+alloc(murderRollUpper,8)
+alloc(murderRollLower,8)
 alloc(fatalisResult,8)
 alloc(fatalisResultUpper,8)
 alloc(fatalisResultLower,8)
-// fatalisState: 0 = not active; 1 = active; 2 = cured (used for announcement, then set to 0)
 alloc(fatalisState,8)
 alloc(fatalisBloodlustDamageX,8)
+alloc(fatalisHealthLost,8)
+alloc(fatalisDeaths,8)
+alloc(fatalisMinutesAfflicted,8)
 alloc(basePlayerDamageX,8)
 alloc(extraDamageX,8)
-alloc(sixtyNineDamageX,8)
+alloc(murderDamageX,8)
+alloc(orgasmHealthHealed,8)
 alloc(maxDamageToPlayer,8)
 alloc(lastDamageToPlayer,8)
 alloc(totalDamageToPlayer,8)
 alloc(disableTeleportitis,8)
-alloc(disableSixtyNine,8)
-alloc(sixtyNineEveryTime,8)
+alloc(disableMurder,8)
+alloc(murderIsAfoot,8)
 
 registersymbol(executePlayerApocalypse)
-registersymbol(logApocalypse)
+registersymbol(logPlayerApocalypse)
 registersymbol(extraDamageSafetyThreshold)
 registersymbol(teleported)
 registersymbol(teleportedX)
 registersymbol(teleportedY)
 registersymbol(teleportedZ)
-registersymbol(apocalypseResult)
+registersymbol(apocalypseDieRoll)
 registersymbol(negativeVerticalDisplacementEnabled)
 registersymbol(teleportitisDisplacementX)
 registersymbol(verticalTeleportitisDisplacementX)
-registersymbol(riskOfMurderResult)
+registersymbol(murderRoll)
 registersymbol(fatalisResult)
 registersymbol(fatalisResultUpper)
 registersymbol(fatalisState)
 registersymbol(fatalisBloodlustDamageX)
+registersymbol(fatalisHealthLost)
+registersymbol(fatalisDeaths)
+registersymbol(fatalisMinutesAfflicted)
 registersymbol(basePlayerDamageX)
 registersymbol(extraDamageX)
+registersymbol(orgasmHealthHealed)
+registersymbol(murderDamageX)
 registersymbol(maxDamageToPlayer)
 registersymbol(lastDamageToPlayer)
 registersymbol(totalDamageToPlayer)
+registersymbol(lastZDisplacement)
+registersymbol(lastYDisplacement)
+registersymbol(lastXDisplacement)
 registersymbol(lastVerticalDisplacement)
 registersymbol(coordinatesAreDoubles)
 registersymbol(disableTeleportitis)
-registersymbol(disableSixtyNine)
-registersymbol(sixtyNineEveryTime)
+registersymbol(disableMurder)
+registersymbol(murderIsAfoot)
 
 executePlayerApocalypse:
     // Backing up a few SSE registers we'll be using to
@@ -123,27 +137,49 @@ executePlayerApocalypse:
     xorps xmm0,xmm0
     jmp exitPlayerApocalypse  
 applyApocalypse:
-    // If "Sixty Nine Every Time!" mode is enabled, force a sixty nine effect.
-    cmp [sixtyNineEveryTime],1
+    // If "Murder Is Afoot!!" mode is enabled, force a murder effect.
+    cmp [murderIsAfoot],1
     jne checkFatalis
-    mov [apocalypseResult],8
-    mov [riskOfMurderResult],4
-    jmp sixtyNine
+    mov [apocalypseDieRoll],8
+    mov [murderRoll],4
+    jmp murder
 checkFatalis:
-    // If the player has the Fatalis debuff, all damage is fatal.
+    // Fatalis
+    //
+    // If the player has the Fatalis debuff, all damage is fatal. Exposure to Fatalis is indicated by the 'fatalisState' 
+    // being 1, while full-on affliction is indicated by a state of 2. Having a state of exposure allows the messaging
+    // system the ability to detect newly acquired Fatalis statuses, and to be able to report on these events appropriately. 
+    //
+    // The messaging system is then responsible for setting 'fatalisState' to 2, indicating that it is now active. 
+    // Now, that being said: if the player is being hit at a very, very high frequency, it is possible that another 
+    // hit can occur after Fatalis exposure, but before the messaging system can set it as active.
+    //
+    // This is very much an edge case, and it is handled by simply allowing the damage to be processed normally
+    // (as in, vanilla game mechanics) and without reporting it via the Apocalypse system. This will allow us to avoid
+    // any strange "experience gaps" that would occur, such as messages to the player that they have Fatalis followed
+    // by non-Fatalis Player Apocalypse effect messsages. It also prevents any chance that the "exposure event" isn't
+    // reported, or that only an exposure event is reported, without the expected follow-up Fatalis death event message 
+    // (which would be expected since...we'd be dead).
+    // 
+    // The normal damage from this rare edge case will not be reported -- we'll need to implement a queue in assembly in order
+    // for that and other normally missed events to be caught.
     cmp [fatalisState],1
+    je exitPlayerApocalypse
+    cmp [fatalisState],2
     jne applyApocalypseRoll
     // To make good on the Fatalis debuff, we set the damage equal to the health.
     movss xmm0,xmm3
+    movss [fatalisHealthLost],xmm3
+    inc [fatalisDeaths]
     jmp updatePlayerDamageStats
 applyApocalypseRoll:
     // Load the parameters for generating the dice roll random number.
-    push [apocalypseResultLower]
-    push [apocalypseResultUpper]
+    push [apocalypseDieRollLower]
+    push [apocalypseDieRollUpper]
     call generateRandomNumber
-    // Our random roll value is in eax -- we back it up to the "apocalypseResult"
+    // Our random roll value is in eax -- we back it up to the "apocalypseDieRoll"
     // symbol so that the value can be displayed by the event logging display code.
-    mov [apocalypseResult],eax
+    mov [apocalypseDieRoll],eax
     cmp eax,4
     jle extraDamage
     cmp eax,6
@@ -185,7 +221,7 @@ teleportitis:
     // Check if teleportitis is disabled. If so, we instead apply extra damage.
     cmp [disableTeleportitis],1
     jne commitTeleportitis
-    mov [apocalypseResult],1
+    mov [apocalypseDieRoll],1
     jmp extraDamage
 commitTeleportitis:
     // Some games will disable modifications being made to the player's coordinates
@@ -225,6 +261,7 @@ commitTeleportitis:
 loadXAsDouble:
     cvtsd2ss xmm2,[rbx]
 addChangeToX:
+    movss [lastXDisplacement],xmm1
     addss xmm2,xmm1
     // The updated x-coordinate is committed back into the memory, which will 
     // move the player.
@@ -258,9 +295,8 @@ skipYSkipCheck:
     subss xmm1,[teleportitisShifter]
 skipNegativeVerticalYDisplacement:
     mulss xmm1,[teleportitisDisplacementX]
-    // The vertical displacement value is logged and displayed to viewers as 
-    // changes to are often the most consequential. We make sure the Y-axis is 
-    // the vertical one before logging it.
+    // The vertical displacement value is logged separately and has its own multiplier as changes to it are 
+    // often the most consequential. We make sure the Y-axis is the vertical one before logging and multiplying it.
     mov rax,yIsVertical
     cmp [rax],1
     jne skipLastYVerticalDisplacement
@@ -276,6 +312,7 @@ skipLastYVerticalDisplacement:
 loadYAsDouble:
     cvtsd2ss xmm2,[rbx+8]
 addChangeToY:
+    movss [lastYDisplacement],xmm1
     addss xmm2,xmm1
     // The updated y-coordinate is commited back into the memory, which will 
     // move the player.
@@ -322,6 +359,7 @@ skipLastZVerticalDisplacement:
 loadZAsDouble:
     cvtsd2ss xmm2,[rbx+10]
 addChangeToZ:
+    movss [lastZDisplacement],xmm1
     addss xmm2,xmm1
     // The updated z-coordinate is commited back into the memory, which will 
     // move the player.
@@ -337,19 +375,17 @@ commitZAsDouble:
 riskOfMurder:
     // Load the parameters for generating the Risk of Murder dice roll random 
     // number.
-    push [riskOfMurderResultLower]
-    push [riskOfMurderResultUpper]
+    push [murderRollLower]
+    push [murderRollUpper]
     call generateRandomNumber
-    // Our Risk of Murder roll is in eax -- we back it up to the "riskOfMurderResult" 
+    // Our Risk of Murder roll is in eax -- we back it up to the "murderRoll" 
     // symbol so that the value can be displayed by the event logging display code.
-    mov [riskOfMurderResult],eax
+    mov [murderRoll],eax
     cmp eax,3
-    // If the resulting roll is 4 or 5, then the player is getting sixty nined.
-    jg sixtyNine
+    // If the resulting roll is 4 or 5, then the player is getting murdered.
+    jg murder
     // Otherwise, normal damage applies, however there is also now a very slight chance
-    // of Fatalis being applied, but only if it is not already active.  
-    cmp [fatalisState],1
-    je updatePlayerDamageStats
+    // of Fatalis being applied...
     push [fatalisResultLower]
     push [fatalisResultUpper]
     call generateRandomNumber
@@ -359,6 +395,7 @@ riskOfMurder:
     // Fatalis will only be applied if the roll landed on the maximum possible value.
     cmp eax,[fatalisResultUpper]
     jne updatePlayerDamageStats
+    // The player has been exposed to Fatalis.
     mov [fatalisState],1
     // The player, although made fragile by the scourge of Fatalis, enters a rage that increases their damage.
     // Store current player damage for later restoration, and then increase it by 1.25x.
@@ -367,18 +404,24 @@ riskOfMurder:
     mulss xmm1,[fatalisBloodlustDamageX]
     movss [playerDamageX],xmm1
     jmp updatePlayerDamageStats  
-sixtyNine:
-    // Check if sixty nine is disabled, if so, just apply normal damage.
-    cmp [disableSixtyNine],1
-    jne commitSixtyNine
-    mov [riskOfMurderResult],1
+murder:
+    // Check if murder is disabled, if so, just apply normal damage.
+    cmp [disableMurder],1
+    jne commitMurder
+    mov [murderRoll],1
     jmp updatePlayerDamageStats
-commitSixtyNine:
-    mulss xmm0,[sixtyNineDamageX]
+commitMurder:
+    mulss xmm0,[murderDamageX]
     jmp updatePlayerDamageStats
 suddenGasm:  
-    // Load the player's maximum health parameter. This is stored in the final 
-    // player health (prior to damage applied) register.
+    // The player will be fully healed and damage negated. First, we record how much we're healing by 
+    // finding the difference between the value of the player maximum health parameter and the current
+    // working health value.
+    movss xmm0,[rsp+50]
+    subss xmm0,xmm3    
+    movss [orgasmHealthHealed],xmm0
+    // We then load the player maximum health parameter again and store its value in the final player health 
+    // (prior to damage applied) register.
     movss xmm3,[rsp+50]
     // We zero out our final damage amount register.
     xorps xmm0,xmm0
@@ -398,8 +441,8 @@ skipMaxPlayerDamageUpdate:
     movss [totalDamageToPlayer],xmm1
 applyPlayerApocalypseExit:
     // Because Apocalypse execution is complete, we trigger an event log entry for 
-    // it by setting "logApocalypse" to 1.
-    mov [logApocalypse],1
+    // it by setting "logPlayerApocalypse" to 1.
+    mov [logPlayerApocalypse],1
     jmp exitPlayerApocalypse
 exitPlayerApocalypse:
     // We commit our final damage amount to eax.
@@ -419,16 +462,16 @@ exitPlayerApocalypse:
     ret 20
   
 
-logApocalypse:
+logPlayerApocalypse:
     dd 0
   
-apocalypseResult:
+apocalypseDieRoll:
     dd 0
   
-apocalypseResultUpper:
+apocalypseDieRollUpper:
     dd #10
   
-apocalypseResultLower:
+apocalypseDieRollLower:
     dd 1
 
 extraDamageResidualHealth:
@@ -464,6 +507,15 @@ teleportedY:
 teleportedZ:
     dd (float)0.0
 
+lastXDisplacement:
+    dd (float)0.0
+
+lastYDisplacement:
+    dd (float)0.0
+
+lastZDisplacement:
+    dd (float)0.0
+
 negativeVerticalDisplacementEnabled:
     dd 1  
 
@@ -476,13 +528,13 @@ teleportitisDisplacementX:
 verticalTeleportitisDisplacementX:
     dd (float)1.0
 
-riskOfMurderResult:
+murderRoll:
     dd 0
   
-riskOfMurderResultUpper:
+murderRollUpper:
     dd #5
   
-riskOfMurderResultLower:
+murderRollLower:
     dd 1
   
 fatalisResult:
@@ -499,12 +551,24 @@ fatalisState:
 
 fatalisBloodlustDamageX:
     dd (float)1.25
+
+fatalisHealthLost:
+    dd (float)0.0
+
+fatalisDeaths:
+    dd 0
+
+fatalisMinutesAfflicted:
+    dd 0
   
 extraDamageX:
     dd (float)2.0
   
-sixtyNineDamageX:
+murderDamageX:
     dd (float)69.0
+
+orgasmHealthHealed:
+    dd (float)0.0
   
 maxDamageToPlayer:
     dd 0
@@ -518,10 +582,10 @@ totalDamageToPlayer:
 disableTeleportitis:
     dd 0
   
-disableSixtyNine:
+disableMurder:
     dd 0
 
-sixtyNineEveryTime:
+murderIsAfoot:
     dd 0
 
   
@@ -540,17 +604,17 @@ alloc(newEnemyDamageEventHasBonus,8)
 alloc(newEnemyDamageEventBonusX,8)
 alloc(newEnemyDamageEventBonusAmount,8)
 alloc(newEnemyDamageEventNotProcessed,8)
-alloc(newEnemyDamageEventBonusNotProcessed,8)
 alloc(maxEnemyDamageEvent,8)
 alloc(maxEnemyDamageEventBonusAmount,8)
 alloc(totalEnemyDamage,8)
 alloc(totalEnemyDamageBonusAmount,8)
-alloc(logKamehameha,8)
+alloc(logEnemyApocalypseGoku,8)
 alloc(gokuResult,8)
 alloc(gokuResultUpper,8)
 alloc(gokuResultLower,8)
 alloc(gokuDamageX,8)
 alloc(lastEnemyHealthValue,8)
+alloc(logEnemyApocalypseCrit,8)
 alloc(playerCritChanceResultUpper,8)
 alloc(playerCritChanceResultLower,8)
 alloc(playerCritChanceResult,8)
@@ -558,7 +622,6 @@ alloc(playerCritDamageResultUpper,8)
 alloc(playerCritDamageResultLower,8)
 alloc(playerCritDamageResult,8)
 alloc(playerCritDamageDivisor,8)
-alloc(logPlayerCrit,8)
 
 registersymbol(executeEnemyApocalypse)
 registersymbol(lastEnemyDamageEvent)
@@ -572,19 +635,18 @@ registersymbol(newEnemyDamageEventHasBonus)
 registersymbol(newEnemyDamageEventBonusX)
 registersymbol(newEnemyDamageEventBonusAmount)
 registersymbol(newEnemyDamageEventNotProcessed)
-registersymbol(newEnemyDamageEventBonusNotProcessed)
 registersymbol(maxEnemyDamageEvent)
 registersymbol(maxEnemyDamageEventBonusAmount)
 registersymbol(totalEnemyDamage)
 registersymbol(totalEnemyDamageBonusAmount)
-registersymbol(logKamehameha)
+registersymbol(logEnemyApocalypseGoku)
 registersymbol(gokuDamageX)
 registersymbol(gokuResultUpper)
 registersymbol(lastEnemyHealthValue)
+registersymbol(logEnemyApocalypseCrit)
 registersymbol(playerCritDamageResultUpper)
 registersymbol(playerCritDamageResultLower)
 registersymbol(playerCritDamageResult)
-registersymbol(logPlayerCrit)
 
 executeEnemyApocalypse:
     // Backing up a few SSE registers we'll be using to
@@ -617,16 +679,12 @@ executeEnemyApocalypse:
     jmp enemyApocalypseCleanup
 checkForNewEvent:
     cmp [newEnemyDamageEventNotProcessed],0
-    jne checkIfEventBonusProcessed
-    mov [newEnemyDamageEvent],0
-    mov [newEnemyDamageEventNotProcessed],1
-checkIfEventBonusProcessed:
-    cmp [newEnemyDamageEventBonusNotProcessed],0
     jne applyDamageByPlayer
+    mov [newEnemyDamageEvent],0    
     mov [newEnemyDamageEventBonusAmount],0
     mov [newEnemyDamageEventBonusX],0
     mov [newEnemyDamageEventHasBonus],0
-    mov [newEnemyDamageEventBonusNotProcessed],1
+    mov [newEnemyDamageEventNotProcessed],1
 applyDamageByPlayer:
     // Clear out the register that will eventually hold any bonus damage amount.
     xorps xmm3,xmm3
@@ -665,8 +723,8 @@ applyDamageByPlayer:
     movss [newEnemyDamageEventBonusX],xmm2
     mov [newEnemyDamageEventHasBonus],1
     // We signal to the event logging system that a crit occurred by setting
-    // the "logPlayerCrit" symbol to 1.
-    mov [logPlayerCrit],1  
+    // the "logEnemyApocalypseCrit" symbol to 1.
+    mov [logEnemyApocalypseCrit],1  
     jmp applyNewBonus
 checkKamehameha:
     // Load the parameters for generating the Kamehameha check.
@@ -683,8 +741,8 @@ checkKamehameha:
     movss [newEnemyDamageEventBonusX],xmm2
     mov [newEnemyDamageEventHasBonus],1
     // We signal to the event logging system that a Kamehameha occurred by setting
-    // the "logKamehameha" symbol to 1.
-    mov [logKamehameha],1
+    // the "logEnemyApocalypseGoku" symbol to 1.
+    mov [logEnemyApocalypseGoku],1
 applyNewBonus:
     // If there were any previous damage pulses, we'll want to apply the bonus to these amounts retroactively too.
     // So, we take all damage previously done and subtract that from all previous damage multiplied by the bonus.
@@ -806,9 +864,6 @@ newEnemyDamageEventBonusAmount:
 
 newEnemyDamageEventNotProcessed:
     dd 0
-
-newEnemyDamageEventBonusNotProcessed:
-    dd 0
  
 maxEnemyDamageEvent:
     dd (float)0.0
@@ -822,7 +877,7 @@ totalEnemyDamage:
 totalEnemyDamageBonusAmount:
     dd (float)0.0
 
-logKamehameha:
+logEnemyApocalypseGoku:
     dd 0
 
 gokuResult:
@@ -861,7 +916,7 @@ playerCritDamageResultLower:
 playerCritDamageDivisor:
     dd (float)10.0
   
-logPlayerCrit:
+logEnemyApocalypseCrit:
     dd 0
 
   
@@ -875,41 +930,49 @@ unregistersymbol(playerDamageX)
 unregistersymbol(playerGodMode)
 
 // Cleanup of Player Apocalypse System Function
-unregistersymbol(logApocalypse)
+unregistersymbol(logPlayerApocalypse)
 unregistersymbol(extraDamageSafetyThreshold)
 unregistersymbol(teleported)
 unregistersymbol(teleportedX)
 unregistersymbol(teleportedY)
 unregistersymbol(teleportedZ)
-unregistersymbol(apocalypseResult)
-unregistersymbol(riskOfMurderResult)
+unregistersymbol(apocalypseDieRoll)
+unregistersymbol(murderRoll)
 unregistersymbol(fatalisResult)
 unregistersymbol(fatalisResultUpper)
 unregistersymbol(fatalisState)
 unregistersymbol(fatalisBloodlustDamageX)
+unregistersymbol(fatalisHealthLost)
+unregistersymbol(fatalisDeaths)
+unregistersymbol(fatalisMinutesAfflicted)
 unregistersymbol(basePlayerDamageX)
+unregistersymbol(lastXDisplacement)
+unregistersymbol(lastYDisplacement)
+unregistersymbol(lastZDisplacement)
 unregistersymbol(lastVerticalDisplacement)
 unregistersymbol(coordinatesAreDoubles)
 unregistersymbol(negativeVerticalDisplacementEnabled)
 unregistersymbol(teleportitisDisplacementX)
 unregistersymbol(verticalTeleportitisDisplacementX)
+unregistersymbol(orgasmHealthHealed)
 unregistersymbol(extraDamageX)
+unregistersymbol(murderDamageX)
 unregistersymbol(maxDamageToPlayer)
 unregistersymbol(lastDamageToPlayer)
 unregistersymbol(totalDamageToPlayer)
 unregistersymbol(executePlayerApocalypse)
 unregistersymbol(disableTeleportitis)
-unregistersymbol(disableSixtyNine)
-unregistersymbol(sixtyNineEveryTime)
+unregistersymbol(disableMurder)
+unregistersymbol(murderIsAfoot)
 
-dealloc(logApocalypse)
+dealloc(logPlayerApocalypse)
 dealloc(teleported)
 dealloc(teleportedX)
 dealloc(teleportedY)
-dealloc(telerpotedZ)
-dealloc(apocalypseResult)
-dealloc(apocalypseResultUpper)
-dealloc(apocalypseResultLower)
+dealloc(teleportedZ)
+dealloc(apocalypseDieRoll)
+dealloc(apocalypseDieRollUpper)
+dealloc(apocalypseDieRollLower)
 dealloc(extraDamageResidualHealth)
 dealloc(extraDamageSafetyThreshold)
 dealloc(teleportitisResult)
@@ -917,28 +980,35 @@ dealloc(teleportitisResultUpper)
 dealloc(teleportitisResultLower)
 dealloc(teleportitisDivisor)
 dealloc(teleportitisShifter)
+dealloc(lastZDisplacement)
+dealloc(lastYDisplacement)
+dealloc(lastXDisplacement)
 dealloc(lastVerticalDisplacement)
 dealloc(coordinatesAreDoubles)
 dealloc(negativeVerticalDisplacementEnabled)
 dealloc(teleportitisDisplacementX)
 dealloc(verticalTeleportitisDisplacementX)
-dealloc(riskOfMurderResult)
-dealloc(riskOfMurderResultUpper)
-dealloc(riskOfMurderResultLower)
+dealloc(murderRoll)
+dealloc(murderRollUpper)
+dealloc(murderRollLower)
 dealloc(basePlayerDamageX)
+dealloc(fatalisMinutesAfflicted)
+dealloc(fatalisDeaths)
+dealloc(fatalisHealthLost)
 dealloc(fatalisBloodlustDamageX)
 dealloc(fatalisResult)
 dealloc(fatalisResultUpper)
 dealloc(fatalisResultLower)
 dealloc(fatalisState)
 dealloc(extraDamageX)
-dealloc(sixtyNineDamageX)
+dealloc(murderDamageX)
+dealloc(orgasmHealthHealed)
 dealloc(maxDamageToPlayer)
 dealloc(lastDamageToPlayer)
 dealloc(totalDamageToPlayer)
 dealloc(disableTeleportitis)
-dealloc(disableSixtyNine)
-dealloc(sixtyNineEveryTime)
+dealloc(disableMurder)
+dealloc(murderIsAfoot)
 dealloc(executePlayerApocalypse)
 
 // Cleanup of Enemy Apocalypse System Function
@@ -953,19 +1023,18 @@ unregistersymbol(newEnemyDamageEventHasBonus)
 unregistersymbol(newEnemyDamageEventBonusX)
 unregistersymbol(newEnemyDamageEventBonusAmount)
 unregistersymbol(newEnemyDamageEventNotProcessed)
-unregistersymbol(newEnemyDamageEventBonusNotProcessed)
 unregistersymbol(maxEnemyDamageEvent)
 unregistersymbol(maxEnemyDamageEventBonusAmount)
 unregistersymbol(totalEnemyDamage)
 unregistersymbol(totalEnemyDamageBonusAmount)
-unregistersymbol(logKamehameha)
+unregistersymbol(logEnemyApocalypseGoku)
 unregistersymbol(gokuDamageX)
 unregistersymbol(gokuResultUpper)
 unregistersymbol(lastEnemyHealthValue)
 unregistersymbol(playerCritDamageResult)
 unregistersymbol(playerCritDamageResultLower)
 unregistersymbol(playerCritDamageResultUpper)
-unregistersymbol(logPlayerCrit)
+unregistersymbol(logEnemyApocalypseCrit)
 unregistersymbol(executeEnemyApocalypse)
 
 dealloc(lastEnemyDamageEvent)
@@ -978,13 +1047,12 @@ dealloc(newEnemyDamageEventHasBonus)
 dealloc(newEnemyDamageEventBonusX)
 dealloc(newEnemyDamageEventBonusAmount)
 dealloc(newEnemyDamageEventNotProcessed)
-dealloc(newEnemyDamageEventBonusNotProcessed)
 dealloc(enemyDamagePulses)
 dealloc(maxEnemyDamageEvent)
 dealloc(maxEnemyDamageEventBonusAmount)
 dealloc(totalEnemyDamage)
 dealloc(totalEnemyDamageBonusAmount)
-dealloc(logKamehameha)
+dealloc(logEnemyApocalypseGoku)
 dealloc(gokuResult)
 dealloc(gokuResultUpper)
 dealloc(gokuResultLower)
@@ -997,5 +1065,5 @@ dealloc(playerCritDamageResultUpper)
 dealloc(playerCritDamageResultLower)
 dealloc(playerCritDamageResult)
 dealloc(playerCritDamageDivisor)
-dealloc(logPlayerCrit)
+dealloc(logEnemyApocalypseCrit)
 dealloc(executeEnemyApocalypse)

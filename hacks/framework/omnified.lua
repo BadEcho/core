@@ -92,7 +92,7 @@ end
 
 local function registerTargetExports()
 	if not isPackageAvailable("exports") then
-		do return end
+		return
 	end
 
 	require("exports")
@@ -107,13 +107,13 @@ end
 
 local function unregisterTargetExports()
 	if not package.loaded["exports"] then
-		do return end
+		return
 	end
 
 	if unregisterExports == nil then 
 		print(	"Exports file does not conform to Omnified target binary configuration interface. " ..
 				"Unregistration method should be named 'unregisterExports'.")
-		do return end
+		return
 	end
 
 	unregisterExports()
@@ -151,7 +151,7 @@ function registerOmnification(targetAssemblyFilePath, pathToFramework)
 			= registerModule(pathToFramework .. "systems\\abomnification.asm", ABOMNIFICATION_MODULE_NAME)			
 
 		if not areTrue(omnifiedRegistered, apocalypseRegistered, predatorRegistered, abomnificationRegistered) then
-			do return end
+			return
 		end
 
 		if statusTimer == nil then
@@ -163,7 +163,7 @@ function registerOmnification(targetAssemblyFilePath, pathToFramework)
 			local fatalisState 
 				= readInteger("fatalisState")
 				
-			if fatalisState == 1 and fatalisTimer == nil then
+			if fatalisState == 2 and fatalisTimer == nil then
 				fatalisTimer = createTimer(getMainForm())
 
 				local randomFatalisDuration = {
@@ -178,12 +178,17 @@ function registerOmnification(targetAssemblyFilePath, pathToFramework)
 					{9, 2},
 					{10, 1}
 				}
+				
+				local fatalisMinutesAfflicted = randomize(randomFatalisDuration)
 
-				local fatalisDuration = randomize(randomFatalisDuration) * 60000
+				writeInteger("fatalisMinutesAfflicted", fatalisMinutesAfflicted)
+
+				local fatalisDuration = fatalisMinutesAfflicted * 60000
 
 				fatalisTimer.Interval = fatalisDuration
 				fatalisTimer.OnTimer = function()
-					writeInteger("fatalisState",2)		
+					writeInteger("fatalisState",3)		
+					writeInteger("logPlayerApocalypse", 1)
 					local previousPlayerDamageX =  readFloat("basePlayerDamageX")
 
 					if previousPlayerDamageX ~= nil then
