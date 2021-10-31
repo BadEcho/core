@@ -53,14 +53,21 @@ namespace BadEcho.Omnified.Vision.Apocalypse
         public BonusDamageType BonusDamageType
         { get; init; }
 
+        /// <summary>
+        /// Gets a value indicating if this Enemy Apocalypse event should be considered as extreme due to how high the
+        /// <see cref="BonusMultiplier"/> is in regards to the range of possible multiplier values.
+        /// </summary>
+        public bool IsExtreme
+        { get; init; }
+
         /// <inheritdoc/>
         public override string ToString()
-            => DescribeBonus(BonusDamageType).CulturedFormat(BonusMultiplier, AdditionalDamage);
+            => DescribeBonus(BonusDamageType, IsExtreme).CulturedFormat(BonusMultiplier, AdditionalDamage);
 
-        private static string DescribeBonus(BonusDamageType bonusDamageType)
+        private static string DescribeBonus(BonusDamageType bonusDamageType, bool bonusMultiplier)
             => bonusDamageType switch
             {
-                BonusDamageType.CriticalHit => EffectMessages.CriticalHit,
+                BonusDamageType.CriticalHit => bonusMultiplier ? EffectMessages.ExtremeCriticalHit : EffectMessages.CriticalHit,
                 BonusDamageType.Kamehameha => EffectMessages.Kamehameha,
                 _ => throw new InvalidEnumArgumentException(nameof(bonusDamageType),
                                                             (int) bonusDamageType,

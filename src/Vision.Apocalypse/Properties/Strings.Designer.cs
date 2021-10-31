@@ -88,7 +88,7 @@ namespace BadEcho.Omnified.Vision.Apocalypse.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following JSON does not adhere to the Omnified Apocalypse messaging schema: {0}.
+        ///   Looks up a localized string similar to The following JSON does not adhere to the Omnified Apocalypse event messaging schema: {0}.
         /// </summary>
         internal static string JsonNotApocalypseSchema {
             get {

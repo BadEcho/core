@@ -128,6 +128,9 @@
   <data name="CriticalHit" xml:space="preserve">
     <value>Enemy has been critically hit ({0}) causing an additional {1} damage!</value>
   </data>
+  <data name="ExtremeCriticalHit" xml:space="preserve">
+    <value>Enemy has been CRITICALLY hit ({0}) causing an additional {1} damage!</value>
+  </data>
   <data name="Kamehameha" xml:space="preserve">
     <value>Player has unlocked his inner Goku and performs a devastating KAMEHAMEHAAAA attack causing {0}x extra damage and resulting in an additional {1} damage!</value>
   </data>

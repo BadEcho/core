@@ -79,6 +79,15 @@ namespace BadEcho.Omnified.Vision.Apocalypse.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enemy has been CRITICALLY hit ({0}) causing an additional {1} damage!.
+        /// </summary>
+        public static string ExtremeCriticalHit {
+            get {
+                return ResourceManager.GetString("ExtremeCriticalHit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unfortunately, the player has been stricken with Fatalis for an unknown period of time....
         /// </summary>
         public static string Fatalis {

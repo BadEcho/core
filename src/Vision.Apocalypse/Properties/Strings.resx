@@ -105,7 +105,7 @@
     <value>The provided ApocalypseEvent object type lacks support for describing in JSON.</value>
   </data>
   <data name="JsonNotApocalypseSchema" xml:space="preserve">
-    <value>The following JSON does not adhere to the Omnified Apocalypse messaging schema: {0}</value>
+    <value>The following JSON does not adhere to the Omnified Apocalypse event messaging schema: {0}</value>
   </data>
   <data name="ApocalypseReadMessagesFailure" xml:space="preserve">
     <value>Apocalypse module had problems parsing the following message file contents:{0}{1}</value>
