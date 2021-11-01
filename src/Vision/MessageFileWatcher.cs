@@ -26,6 +26,8 @@ namespace BadEcho.Omnified.Vision
     {
         private readonly FileSystemWatcher _watcher;
 
+        private long _lastReadPosition;
+
         /// <inheritdoc/>
         public event EventHandler<EventArgs<string>>? NewMessages;
 
@@ -53,7 +55,10 @@ namespace BadEcho.Omnified.Vision
             var messageFile = new FileInfo(messageFilePath);
 
             if (messageFile.Exists)
+            {
                 CurrentMessages = messageFile.ReadAllText(FileShare.ReadWrite);
+                _lastReadPosition = messageFile.Length;
+            }
 
             _watcher = new FileSystemWatcher
                        {
@@ -76,9 +81,10 @@ namespace BadEcho.Omnified.Vision
 
             // Injected Omnified code will be writing to the message file at high frequency, so we should assume the file is
             // almost always open by that process.
-            CurrentMessages = messageFile.ReadAllText(FileShare.ReadWrite);
+            CurrentMessages = messageFile.ReadAllText(FileShare.ReadWrite, _lastReadPosition);
 
-            // TODO: Add mechanism to return only new messages if ProcessNewMessagesOnly is true.
+            _lastReadPosition = messageFile.Length;
+            
             if (!string.IsNullOrEmpty(CurrentMessages))
                 NewMessages?.Invoke(this, new EventArgs<string>(CurrentMessages));
         }
