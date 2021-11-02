@@ -174,7 +174,7 @@ namespace BadEcho.Fenestra.Markup
         { get; }
 
         /// <inheritdoc/>
-        public override object ProvideValue([AllowNull]IServiceProvider serviceProvider)
+        public override object ProvideValue(IServiceProvider? serviceProvider)
         {
             if (serviceProvider == null)
             {  

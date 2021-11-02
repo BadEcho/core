@@ -68,7 +68,7 @@ namespace BadEcho.Fenestra
         /// Initializes a new instance of the <see cref="AtomicObservableCollection{T}"/> class.
         /// </summary>
         /// <param name="dispatcher">The dispatcher that communications from this collection should be sent through.</param>
-        public AtomicObservableCollection([AllowNull]Dispatcher dispatcher)
+        public AtomicObservableCollection(Dispatcher? dispatcher)
             : this(Enumerable.Empty<T>(), dispatcher)
         { }
 
@@ -77,7 +77,7 @@ namespace BadEcho.Fenestra
         /// </summary>
         /// <param name="items">A sequence of items to copy to the new <see cref="AtomicObservableCollection{T}"/>.</param>
         /// <param name="dispatcher">The dispatcher that communications from this collection should be sent through.</param>
-        public AtomicObservableCollection(IEnumerable<T> items, [AllowNull]Dispatcher dispatcher)
+        public AtomicObservableCollection(IEnumerable<T> items, Dispatcher? dispatcher)
             : this (items)
         { 
             if (null != dispatcher)
