@@ -754,3 +754,6 @@ dotnet_diagnostic.IDE0008.severity = none
 
 # C# Coding Conventions
 csharp_style_expression_bodied_local_functions = false:suggestion
+
+# IDE0130: Namespace does not match folder structure
+dotnet_diagnostic.IDE0130.severity = none
