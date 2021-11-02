@@ -70,24 +70,6 @@ namespace BadEcho.Omnified.Vision.Statistics.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following JSON does not adhere to the Omnified game statistics messaging schema: {0}.
-        /// </summary>
-        internal static string JsonNotStatisticsSchema {
-            get {
-                return ResourceManager.GetString("JsonNotStatisticsSchema", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Statistics module had problems parsing the following message file contents:{0}{1}.
-        /// </summary>
-        internal static string StatisticsReadMessagesFailure {
-            get {
-                return ResourceManager.GetString("StatisticsReadMessagesFailure", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The provided Statistic object type lacks support for describing in JSON..
         /// </summary>
         internal static string StatisticTypeUnsupportedJson {

@@ -21,9 +21,9 @@ namespace BadEcho.Omnified.Vision.Extensibility
     public interface IVisionModule
     {
         /// <summary>
-        /// Gets the default location of the module's anchor point.
+        /// Gets the location of the module's anchor point.
         /// </summary>
-        AnchorPointLocation DefaultLocation { get; }
+        AnchorPointLocation Location { get; }
 
         /// <summary>
         /// Gets the direction the module will grow from its anchor point.

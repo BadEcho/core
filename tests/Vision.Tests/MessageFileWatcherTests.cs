@@ -53,7 +53,7 @@ namespace BadEcho.Omnified.Vision.Tests
 
         private sealed class FakeVisionModule : IVisionModule
         {
-            public AnchorPointLocation DefaultLocation
+            public AnchorPointLocation Location
                 => AnchorPointLocation.TopLeft;
 
             public GrowthDirection GrowthDirection

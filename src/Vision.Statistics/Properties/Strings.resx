@@ -104,13 +104,7 @@
   <data name="StatisticTypeUnsupportedViewModel" xml:space="preserve">
     <value>The provided Statistic object type lacks a supported view model.</value>
   </data>
-  <data name="JsonNotStatisticsSchema" xml:space="preserve">
-    <value>The following JSON does not adhere to the Omnified game statistics messaging schema: {0}</value>
-  </data>
   <data name="CannotUpdateUnboundStatistic" xml:space="preserve">
     <value>Cannot update the '{0}' statistic as it currently isn't bound to a child view model.</value>
-  </data>
-  <data name="StatisticsReadMessagesFailure" xml:space="preserve">
-    <value>Statistics module had problems parsing the following message file contents:{0}{1}</value>
   </data>
 </root>

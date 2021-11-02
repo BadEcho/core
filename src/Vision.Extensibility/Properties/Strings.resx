@@ -98,10 +98,11 @@
 	<resheader name="writer">
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
-  <data name="ApocalypseEventMissingMessage" xml:space="preserve">
-    <value>Apocalypse events are required to return non-null/non-empty string representations of themselves.</value>
+  <data name="NullMessageValue" xml:space="preserve">
+    <value>A null value was provided as a message to a Vision module. If there is no data to send in a message, then simply avoid writing to the module's message file altogether.</value>
   </data>
-  <data name="EventTypeUnsupportedJson" xml:space="preserve">
-    <value>The provided ApocalypseEvent object type lacks support for describing in JSON.</value>
+  <data name="ReadMessagesFailure" xml:space="preserve">
+    <value>The Vision module had problems parsing the following message file contents:
+{0}</value>
   </data>
 </root>

@@ -38,7 +38,7 @@ namespace BadEcho.Omnified.Vision
 
             _messageFileWatcher = new MessageFileWatcher(module, configuration.MessageFilesDirectory);
 
-            Location = module.DefaultLocation;
+            Location = module.Location;
             ModuleViewModel = module.EnableModule(_messageFileWatcher);
         }
 

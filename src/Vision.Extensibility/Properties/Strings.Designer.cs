@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace BadEcho.Omnified.Vision.Apocalypse.Properties {
+namespace BadEcho.Omnified.Vision.Extensibility.Properties {
     using System;
     
     
@@ -22,7 +22,7 @@ namespace BadEcho.Omnified.Vision.Apocalypse.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Strings {
+    public class Strings {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,10 +36,10 @@ namespace BadEcho.Omnified.Vision.Apocalypse.Properties {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("BadEcho.Omnified.Vision.Apocalypse.Properties.Strings", typeof(Strings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("BadEcho.Omnified.Vision.Extensibility.Properties.Strings", typeof(Strings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace BadEcho.Omnified.Vision.Apocalypse.Properties {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -61,20 +61,21 @@ namespace BadEcho.Omnified.Vision.Apocalypse.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Apocalypse events are required to return non-null/non-empty string representations of themselves..
+        ///   Looks up a localized string similar to A null value was provided as a message to a Vision module. If there is no data to send in a message, then simply avoid writing to the module&apos;s message file altogether..
         /// </summary>
-        internal static string ApocalypseEventMissingMessage {
+        public static string NullMessageValue {
             get {
-                return ResourceManager.GetString("ApocalypseEventMissingMessage", resourceCulture);
+                return ResourceManager.GetString("NullMessageValue", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The provided ApocalypseEvent object type lacks support for describing in JSON..
+        ///   Looks up a localized string similar to The Vision module had problems parsing the following message file contents:
+        ///{0}.
         /// </summary>
-        internal static string EventTypeUnsupportedJson {
+        public static string ReadMessagesFailure {
             get {
-                return ResourceManager.GetString("EventTypeUnsupportedJson", resourceCulture);
+                return ResourceManager.GetString("ReadMessagesFailure", resourceCulture);
             }
         }
     }

@@ -21,16 +21,25 @@ namespace BadEcho.Omnified.Vision.Extensibility
     public sealed class VisionModuleConfiguration
     {
         /// <summary>
-        /// Gets or sets the simple name of the module assembly.
+        /// Gets the simple name of the module assembly.
         /// </summary>
         public string Name
         { get; init; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets the location for the module's anchor point, overriding the default location defined by the module itself.
+        /// Gets the location for the module's anchor point, overriding the default location defined by the module itself.
         /// </summary>
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public AnchorPointLocation? Location
+        { get; init; }
+
+        /// <summary>
+        /// Gets the maximum number of messages the module will process at any given time.
+        /// </summary>
+        /// <remarks>
+        /// A default value of 0 will result in no limit of messages being processed.
+        /// </remarks>
+        public int MaxMessages
         { get; init; }
     }
 }

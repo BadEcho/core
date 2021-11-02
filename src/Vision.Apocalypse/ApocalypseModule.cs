@@ -16,14 +16,11 @@ using System.Collections.Generic;
 using System.Composition;
 using System.Linq;
 using System.Text.Json;
-using BadEcho.Fenestra.ViewModels;
-using BadEcho.Odin;
 using BadEcho.Odin.Extensibility.Hosting;
 using BadEcho.Odin.Extensions;
-using BadEcho.Odin.Logging;
-using BadEcho.Omnified.Vision.Apocalypse.Properties;
 using BadEcho.Omnified.Vision.Apocalypse.ViewModels;
 using BadEcho.Omnified.Vision.Extensibility;
+using BadEcho.Omnified.Vision.Extensibility.Properties;
 
 namespace BadEcho.Omnified.Vision.Apocalypse
 {
@@ -31,90 +28,50 @@ namespace BadEcho.Omnified.Vision.Apocalypse
     /// Provides a snap-in module granting vision to the Omnified Apocalypse system.
     /// </summary>
     [Export(typeof(IVisionModule))]
-    public sealed class ApocalypseModule : IVisionModule
+    internal sealed class ApocalypseModule : VisionModule<ApocalypseEvent, ApocalypseViewModel>
     {
         private const string DEPENDENCY_NAME
             = nameof(ApocalypseModule) + nameof(LocalDependency);
 
-        private static readonly string _AssemblyName
-            = typeof(ApocalypseModule).Assembly.GetName().Name ?? string.Empty;
-
-        private readonly ApocalypseViewModel _viewModel = new();
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ApocalypseModule"/> class.
         /// </summary>
+        /// <param name="configuration">Configuration settings for the Vision application.</param>
         [ImportingConstructor]
         public ApocalypseModule([Import(DEPENDENCY_NAME)]IVisionConfiguration configuration)
-        {
-            Require.NotNull(configuration, nameof(configuration));
-
-            if (configuration.Modules.ContainsKey(_AssemblyName))
-                DefaultLocation = configuration.Modules[_AssemblyName].Location ?? DefaultLocation;
-        }
+            : base(configuration)
+        { }
 
         /// <inheritdoc/>
-        public AnchorPointLocation DefaultLocation 
-        { get; } = AnchorPointLocation.TopCenter;
-
-        /// <inheritdoc/>
-        public GrowthDirection GrowthDirection
-            => GrowthDirection.Vertical;
-
-        /// <inheritdoc/>
-        public string MessageFile
+        public override string MessageFile
             => "apocalypse.jsonl";
 
         /// <inheritdoc/>
-        public bool ProcessNewMessagesOnly
+        public override bool ProcessNewMessagesOnly
             => true;
 
         /// <inheritdoc/>
-        public IViewModel EnableModule(IMessageFileProvider messageProvider)
-        {
-            Require.NotNull(messageProvider, nameof(messageProvider));
+        protected override AnchorPointLocation DefaultLocation
+            => AnchorPointLocation.TopCenter;
 
-            if (!string.IsNullOrEmpty(messageProvider.CurrentMessages))
-                _viewModel.Bind(ReadEvents(messageProvider.CurrentMessages));
-
-            messageProvider.NewMessages += HandleNewMessages;
-
-            return _viewModel;
-        }
-
-        private static IEnumerable<ApocalypseEvent> ReadEvents(string messages)
+        /// <inheritdoc/>
+        protected override IEnumerable<ApocalypseEvent> ParseMessages(string messages)
         {
             var options = new JsonSerializerOptions
                           {
-                              Converters = {new EventConverter()}
+                              Converters = { new EventConverter() }
                           };
-            try
-            {
-                return messages.Split(Environment.NewLine).Select(ReadEvent);
-            }
-            catch (JsonException jsonEx)
-            {
-                Logger.Error(Strings.ApocalypseReadMessagesFailure
-                                    .InvariantFormat(Environment.NewLine, messages), jsonEx);
 
-                return Enumerable.Empty<ApocalypseEvent>();
-            }
+            return messages.Split(Environment.NewLine).Select(ReadEvent);
 
             ApocalypseEvent ReadEvent(string message)
             {
                 var apocalypseEvent = JsonSerializer.Deserialize<ApocalypseEvent>(message, options);
 
                 return apocalypseEvent
-                    ?? throw new ArgumentException(Strings.JsonNotApocalypseSchema.InvariantFormat(message),
+                    ?? throw new ArgumentException(Strings.NullMessageValue.InvariantFormat(message),
                                                    nameof(message));
             }
-        }
-        
-        private void HandleNewMessages(object? sender, EventArgs<string> e)
-        {
-            var apocalypseEvents = ReadEvents(e.Data);
-
-            _viewModel.Bind(apocalypseEvents);
         }
 
         /// <summary>
