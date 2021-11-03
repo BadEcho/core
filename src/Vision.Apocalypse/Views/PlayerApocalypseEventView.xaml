@@ -21,17 +21,15 @@
                mc:Ignorable="d" 
                d:DesignWidth="850">
     <d:DesignProperties.DataContext>
-        <vm:RiskOfMurderEventViewModel EffectMessage="Extra damage (2x) causing 806 damage!
-                                       
-                                       Player now has 82 health."
+        <vm:RiskOfMurderEventViewModel EffectMessage="Extra damage (2x) causing 806 damage, leaving the player with 82 health."
                                        Timestamp="09/02/2021 14:31"
                                        DieRoll="2"
                                        />
     </d:DesignProperties.DataContext>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto" SharedSizeGroup="TimestampColumn"/>
+            <ColumnDefinition Width="Auto" SharedSizeGroup="DieColumn"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 

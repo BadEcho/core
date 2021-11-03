@@ -43,6 +43,11 @@
     </fenestra:View.Resources>
     <Grid>
         <ItemsControl ItemsSource="{Binding Children}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Grid.IsSharedSizeScope="True"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <DataTemplate.Resources>

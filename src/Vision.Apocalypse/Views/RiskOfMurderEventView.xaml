@@ -29,9 +29,9 @@
     </d:DesignProperties.DataContext>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto" SharedSizeGroup="TimestampColumn"/>
+            <ColumnDefinition Width="Auto" SharedSizeGroup="DieColumn"/>
+            <ColumnDefinition Width="Auto" SharedSizeGroup="MurderDieColumn"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
@@ -52,6 +52,5 @@
                                       Text="{Binding EffectMessage}"
                                       Grid.Column="3"
                                       />
-
     </Grid>
 </fenestra:View>
