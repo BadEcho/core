@@ -16,27 +16,44 @@
                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
                xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Apocalypse.ViewModels"
+               xmlns:v="clr-namespace:BadEcho.Omnified.Vision.Apocalypse.Views"
                xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"                   
                mc:Ignorable="d"
                d:DesignWidth="850">
     <d:DesignProperties.DataContext>
         <vm:ApocalypseViewModel>
             <vm:ApocalypseViewModel.Children>
-                <vm:RiskOfMurderEventViewModel EffectMessage="Risk of murder...whew! Just normal damage causing 59 damage! 
-                                               Player now has 23 health."
-                                               Timestamp="09/02/2021 8:32"
+                <vm:RiskOfMurderEventViewModel EffectMessage="Something has happened that caused 53 billion damage, leaving the player with 300 health."
+                                               Timestamp="09/02/2021 11:59"
                                                DieRoll="6"
                                                MurderRoll="2"
                                                />
-                <vm:RiskOfMurderEventViewModel EffectMessage="Risk of murder...holy shit! Player has been hit with a murderous attack (69x) causing 129,123 damage! Player now has 0 health."
-                                               Timestamp="09/02/2021 8:31"
+                <vm:RiskOfMurderEventViewModel EffectMessage="Something else might have happened or something."
+                                               Timestamp="09/02/2021 3:00"
                                                DieRoll="6"
                                                MurderRoll="4"
                                                />
             </vm:ApocalypseViewModel.Children>
         </vm:ApocalypseViewModel>
     </d:DesignProperties.DataContext>
+    <fenestra:View.Resources>
+        <DataTemplate x:Key="DesignTimeChildrenTemplate">
+            <v:PlayerApocalypseEventView/>
+        </DataTemplate>
+    </fenestra:View.Resources>
     <Grid>
-        <ItemsControl ItemsSource="{Binding Children}"/>
+        <ItemsControl ItemsSource="{Binding Children}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <DataTemplate.Resources>
+                        <fenestra:ViewContextTemplateSelector x:Key="ContextSelector"/>
+                    </DataTemplate.Resources>
+                    <UserControl Content="{Binding}"
+                                 ContentTemplateSelector="{StaticResource ContextSelector}"
+                                 d:ContentTemplate="{StaticResource DesignTimeChildrenTemplate}"
+                                 />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </Grid>
 </fenestra:View>
