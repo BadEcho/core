@@ -18,7 +18,7 @@ using System.Windows;
 using System.Windows.Controls;
 using BadEcho.Odin.Extensions;
 
-namespace BadEcho.Fenestra
+namespace BadEcho.Fenestra.Selectors
 {
     /// <summary>
     /// Provides a data template selector that honors data templates for data contexts targeting particular views and defined an assembly's
