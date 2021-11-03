@@ -22,7 +22,7 @@ namespace BadEcho.Fenestra.Behaviors
     /// object which the behavior is attached to, as well as an optional cleanup method upon local value disassociation.
     /// </summary>
     /// <typeparam name="TTarget">The type of <see cref="DependencyObject"/> this behavior attaches to.</typeparam>
-    /// <typeparam name="TParameter">The type of parameter accepted by method executed by this behavior.</typeparam>
+    /// <typeparam name="TParameter">The type of parameter accepted by the method executed by this behavior.</typeparam>
     public sealed class DelegateBehavior<TTarget,TParameter> : Behavior<TTarget, TParameter>
         where TTarget : DependencyObject
     {

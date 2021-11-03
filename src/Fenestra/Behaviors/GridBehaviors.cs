@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -29,19 +28,21 @@ namespace BadEcho.Fenestra.Behaviors
         /// Identifies the attached property that gets or sets the column definitions of a grid.
         /// </summary>
         public static readonly DependencyProperty ColumnDefinitionsProperty
-            = CreateBehavior<Grid, SizeDefinitionCollection>(
+            = DelegateBehaviorFactory.Create<Grid, SizeDefinitionCollection>(
                 AssociateColumnDefinitions,
                 DisassociateColumnDefinitions,
-                NameOf.ReadDependencyPropertyName(() => ColumnDefinitionsProperty));
+                NameOf.ReadDependencyPropertyName(() => ColumnDefinitionsProperty),
+                typeof(GridBehaviors));
 
         /// <summary>
         /// Identifies the attached property that gets or sets the row definitions of a grid.
         /// </summary>
         public static readonly DependencyProperty RowDefinitionsProperty
-            = CreateBehavior<Grid, SizeDefinitionCollection>(
+            = DelegateBehaviorFactory.Create<Grid, SizeDefinitionCollection>(
                 AssociateRowDefinitions,
                 DisassociateRowDefinitions,
-                NameOf.ReadDependencyPropertyName(() => RowDefinitionsProperty));
+                NameOf.ReadDependencyPropertyName(() => RowDefinitionsProperty),
+                typeof(GridBehaviors));
 
         /// <summary>
         /// Gets the value of the <see cref="ColumnDefinitionsProperty"/> attached property for a given <see cref="Grid"/>.
@@ -89,19 +90,6 @@ namespace BadEcho.Fenestra.Behaviors
             Require.NotNull(source, nameof(source));
 
             source.SetValue(RowDefinitionsProperty, collection);
-        }
-
-        private static DependencyProperty CreateBehavior<TTarget, TParameter>(Action<TTarget, TParameter> associationAction,
-                                                                              Action<TTarget, TParameter> disassociationAction,
-                                                                              string propertyName) where TTarget : DependencyObject
-        {
-            var behavior = new DelegateBehavior<TTarget, TParameter>(associationAction, disassociationAction);
-
-            return
-                DependencyProperty.RegisterAttached(propertyName,
-                                                    typeof(TParameter),
-                                                    typeof(GridBehaviors),
-                                                    behavior.DefaultMetadata);
         }
 
         private static void AssociateColumnDefinitions(Grid target, SizeDefinitionCollection collection)
