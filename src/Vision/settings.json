@@ -6,6 +6,9 @@
   "modules": {
     "BadEcho.Omnified.Vision.Statistics": {
       "location": "TopLeft"
-    }
+    },
+    "BadEcho.Omnified.Vision.Apocalypse": {
+      "maxMessages": 3 
+    } 
   }
 }
