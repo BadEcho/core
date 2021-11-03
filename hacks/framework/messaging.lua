@@ -282,9 +282,11 @@ function startApocalypseEventsPublisher()
         local apocalypseEvent = processApocalypseEvents()
 
         if apocalypseEvent ~= nil then
+            -- New files don't get a newline, otherwise we'll have a blank first line. Duh!
+            if fileExists("apocalypse.jsonl") then apocalypseEvent = "\n" .. apocalypseEvent end            
             local apocalypseEventsFile = assert(io.open("apocalypse.jsonl", "a"))
 
-            apocalypseEventsFile:write("\n", apocalypseEvent)
+            apocalypseEventsFile:write(apocalypseEvent)
             apocalypseEventsFile:close()
         end
     end

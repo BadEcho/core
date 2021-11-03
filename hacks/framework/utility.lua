@@ -89,6 +89,13 @@ function switch(value, cases)
     return defaultCase and typeof(defaultCase) == 'function' and defaultCase() or nil
 end
 
+-- Checks if a file exists on disk.
+function fileExists(fileName)
+    local file = io.open(fileName, "r")
+
+    if file ~= nil then file:close() return true else return false end
+end
+
 -- Outputs a randomly selected item from the provided random settings structure.
 -- The structure of randomSettings is composed of object, weighted probability values like so:
 -- randomSettings = {
