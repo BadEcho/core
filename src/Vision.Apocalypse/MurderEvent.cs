@@ -36,7 +36,7 @@ namespace BadEcho.Omnified.Vision.Apocalypse
         /// This is technically configurable in Omnified hacking framework code, but it has traditionally always been
         /// 69x, and it should always remain so, unless there's a damn good reason!
         /// </remarks>
-        public int MurderMultiplier
+        public double MurderMultiplier
         { get; init; }
 
         /// <inheritdoc/>
