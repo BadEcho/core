@@ -29,6 +29,12 @@ namespace BadEcho.Odin.Configuration
             => _configurationReader = configurationReader;
 
         /// <summary>
+        /// Gets the raw text of the configuration source to parse.
+        /// </summary>
+        internal string ConfigurationText
+            => _configurationReader.ConfigurationText;
+
+        /// <summary>
         /// Gets a specified section from the configuration as an instance of type <typeparamref name="TImpl"/>.
         /// </summary>
         /// <typeparam name="TImpl">The specific type of object to parse the configuration's extension data as.</typeparam>

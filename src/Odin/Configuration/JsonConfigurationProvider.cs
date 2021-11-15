@@ -59,7 +59,7 @@ namespace BadEcho.Odin.Configuration
             /// <summary>
             /// Initializes a new instance of the <see cref="JsonConfigurationReader"/> class.
             /// </summary>
-            /// <param name="configurationText">The text of the configuration source to read from.</param>
+            /// <param name="configurationText">The text of the configuration source to parse.</param>
             /// <param name="configurationProvider">
             /// The configuration provider which will parse the provided configuration text as the root configuration.
             /// </param>
@@ -68,6 +68,9 @@ namespace BadEcho.Odin.Configuration
                 _configurationText = configurationText;
                 _configurationProvider = configurationProvider;
             }
+
+            string IConfigurationReader.ConfigurationText 
+                => _configurationText;
 
             /// <inheritdoc/>
             public T GetConfiguration<T>() where T : new() 

@@ -48,6 +48,13 @@ namespace BadEcho.Odin.Configuration
         protected abstract string SettingsFile
         { get; }
 
+        string IConfigurationReader.ConfigurationText 
+            => ReadConfigurationText();
+
+        /// <inheritdoc cref="IConfigurationReader.ConfigurationText"/>
+        protected string ConfigurationText 
+            => ReadConfigurationText();
+
         /// <inheritdoc/>
         public T GetConfiguration<T>() where T : new()
             => GetConfiguration<T>(null);
@@ -96,6 +103,15 @@ namespace BadEcho.Odin.Configuration
         /// <returns>A <typeparamref name="T"/> instance reflecting configuration described by <c>configurationText</c>.</returns>
         [return: NotNull]
         protected abstract T ReadConfiguration<T>(string configurationText, string? sectionName = null) where T : new();
+
+        private string ReadConfigurationText()
+        {
+            var settingsFile = new FileInfo(SettingsFile);
+
+            return settingsFile.Exists && settingsFile.Length > 0
+                ? settingsFile.ReadAllText(FileShare.ReadWrite)
+                : string.Empty;
+        }
 
         private void HandleConfigurationChanged(object sender, FileSystemEventArgs e)
         {
