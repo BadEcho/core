@@ -20,12 +20,12 @@ using BadEcho.Odin.Extensions;
 namespace BadEcho.Odin.Configuration
 {
     /// <summary>
-    /// Provides a format-neutral source for hot-pluggable, but otherwise cached, configuration data.
+    /// Provides a format-neutral source of hot-pluggable configuration data for an application.
     /// </summary>
     /// <remarks>
     /// In order to keep in line with common sense as well as best practices, exportation of any pluggable parts derived from
-    /// this type should be done so that said parts are <c>shared</c> singletons, so that any unmanaged, disposable, resources
-    /// are tied directly with the application's lifecycle.
+    /// this type should be done so that said parts are <c>shared</c> singletons. This way, all unmanaged and disposable resources
+    /// end up becoming tied directly with the application's lifecycle.
     /// </remarks>
     public abstract class ConfigurationProvider : IConfigurationProvider
     {
@@ -50,6 +50,10 @@ namespace BadEcho.Odin.Configuration
 
         /// <inheritdoc/>
         public T GetConfiguration<T>() where T : new()
+            => GetConfiguration<T>(null);
+
+        /// <inheritdoc/>
+        public T GetConfiguration<T>(string? sectionName) where T : new()
         {
             lock (_isMonitoringLock)
             {
@@ -73,22 +77,25 @@ namespace BadEcho.Odin.Configuration
 
             if (settingsFile.Exists && settingsFile.Length > 0)
             {
-                section = GetConfiguration<T>(settingsFile.ReadAllText(FileShare.ReadWrite));
+                section = ReadConfiguration<T>(settingsFile.ReadAllText(FileShare.ReadWrite), sectionName);
 
                 _cachedSections.Add(sectionType, section);
             }
 
             return section ?? new T();
         }
-
+        
         /// <summary>
-        /// Gets a sectional form instance of the configuration described by the provided text.
+        /// Gets an instance of an optionally named configuration section described by the provided text.
         /// </summary>
         /// <typeparam name="T">The type of object to parse the configuration as.</typeparam>
         /// <param name="configurationText">The text of the configuration source to parse.</param>
+        /// <param name="sectionName">
+        /// Optional. The name of the section to parse, or null to parse the entire configuration text.
+        /// </param>
         /// <returns>A <typeparamref name="T"/> instance reflecting configuration described by <c>configurationText</c>.</returns>
         [return: NotNull]
-        protected abstract T GetConfiguration<T>(string configurationText) where T : new();
+        protected abstract T ReadConfiguration<T>(string configurationText, string? sectionName = null) where T : new();
 
         private void HandleConfigurationChanged(object sender, FileSystemEventArgs e)
         {

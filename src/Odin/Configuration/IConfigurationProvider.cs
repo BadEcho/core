@@ -16,20 +16,13 @@ using System;
 namespace BadEcho.Odin.Configuration
 {
     /// <summary>
-    /// Defines a format-neutral source for hot-pluggable configuration data.
+    /// Defines a provider for a format-neutral source of hot-pluggable configuration data for an application.
     /// </summary>
-    public interface IConfigurationProvider
+    public interface IConfigurationProvider : IConfigurationReader
     {
         /// <summary>
-        /// Occurs when the configuration has been externally updated.
+        /// Occurs when the configuration data has been externally updated.
         /// </summary>
         event EventHandler<EventArgs>? ConfigurationChanged;
-
-        /// <summary>
-        /// Gets the application's configuration in a particular sectional form.
-        /// </summary>
-        /// <typeparam name="T">The type of object to parse the configuration as.</typeparam>
-        /// <returns>A <typeparamref name="T"/> instance reflecting the application's configuration.</returns>
-        T GetConfiguration<T>() where T: new();
     }
 }

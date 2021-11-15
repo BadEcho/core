@@ -1,0 +1,18 @@
+{
+  "someData": "hi",
+  "single": {
+    "one": "two",
+    "three": "eighty"
+  },
+  "group": {
+    "first": {
+      "one": "two",
+      "three": "eighty"
+    },
+    "second": {
+      "one": "two",
+      "three": "one",
+      "eight": "three"
+    }
+  }
+}
