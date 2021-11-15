@@ -17,6 +17,7 @@
                xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Apocalypse.ViewModels"
                xmlns:v="clr-namespace:BadEcho.Omnified.Vision.Apocalypse.Views"
+               xmlns:t="clr-namespace:BadEcho.Omnified.Vision.Extensibility.Themes;assembly=BadEcho.Omnified.Vision.Extensibility"
                xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"                   
                mc:Ignorable="d"
                d:DesignWidth="850">
@@ -40,25 +41,57 @@
         <DataTemplate x:Key="DesignTimeChildrenTemplate">
             <v:PlayerApocalypseEventView/>
         </DataTemplate>
+        <fenestra:ViewContextTemplateSelector x:Key="ContextSelector"/>
+        <fenestra:PositionalItemTemplateSelector x:Key="ChildrenTemplateSelector">
+            <fenestra:PositionalItemTemplateSelector.Template>
+                <DataTemplate>
+                    <Border BorderThickness="0,0,0,1" 
+                            Margin="0,0,0,5">
+                        <Border.BorderBrush>
+                            <LinearGradientBrush StartPoint="0,0.5" 
+                                                 EndPoint="1,0.5">
+                                <GradientStop Color="Transparent" 
+                                              Offset="0"
+                                              />
+                                <GradientStop Color="{DynamicResource {x:Static t:Colors.FadingOutlineColorKey}}" 
+                                              Offset="0.25"
+                                              />
+                                <GradientStop Color="{DynamicResource {x:Static t:Colors.OutlineColorKey}}" 
+                                              Offset="0.5"
+                                              />
+                                <GradientStop Color="{DynamicResource {x:Static t:Colors.FadingOutlineColorKey}}" 
+                                              Offset="0.75"
+                                              />
+                                <GradientStop Color="Transparent" 
+                                              Offset="1"
+                                              />
+                            </LinearGradientBrush>
+                        </Border.BorderBrush>
+                        <ContentControl Content="{Binding}"
+                                        ContentTemplateSelector="{StaticResource ContextSelector}"
+                                        d:ContentTemplate="{StaticResource DesignTimeChildrenTemplate}"
+                                        />
+                    </Border>
+                </DataTemplate>
+            </fenestra:PositionalItemTemplateSelector.Template>
+            <fenestra:PositionalItemTemplateSelector.EndingTemplate>
+                <DataTemplate>
+                    <ContentControl Content="{Binding}"
+                                    ContentTemplateSelector="{StaticResource ContextSelector}"
+                                    d:ContentTemplate="{StaticResource DesignTimeChildrenTemplate}"
+                                    />
+                </DataTemplate>
+            </fenestra:PositionalItemTemplateSelector.EndingTemplate>
+        </fenestra:PositionalItemTemplateSelector>
     </fenestra:View.Resources>
     <Grid>
-        <ItemsControl ItemsSource="{Binding Children}">
+        <ItemsControl ItemsSource="{Binding Children}"
+                      ItemTemplateSelector="{StaticResource ChildrenTemplateSelector}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Grid.IsSharedSizeScope="True"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <DataTemplate.Resources>
-                        <fenestra:ViewContextTemplateSelector x:Key="ContextSelector"/>
-                    </DataTemplate.Resources>
-                    <UserControl Content="{Binding}"
-                                 ContentTemplateSelector="{StaticResource ContextSelector}"
-                                 d:ContentTemplate="{StaticResource DesignTimeChildrenTemplate}"
-                                 />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
         </ItemsControl>
     </Grid>
 </fenestra:View>
