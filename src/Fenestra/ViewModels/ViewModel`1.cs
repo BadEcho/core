@@ -71,7 +71,16 @@ namespace BadEcho.Fenestra.ViewModels
             Require.NotNull(models, nameof(models));
 
             if (OnBatchBinding(models))
+            {   // If a derived class has provided specialized batch binding logic, then we'll want to record the models as being bound,
+                // as this cannot be done by the derived class.
+                foreach (T model in models)
+                {
+                    if (!_boundData.Contains(model))
+                        _boundData.Add(model);
+                }
+
                 return;
+            }
 
             foreach (T model in models)
             {
@@ -103,7 +112,15 @@ namespace BadEcho.Fenestra.ViewModels
             Require.NotNull(models, nameof(models));
 
             if (OnBatchUnbound(models))
+            {
+                foreach (T model in models)
+                {   // If a derived class has provided specialized batch unbinding logic, then we'll want to record the models as being unbound,
+                    // as this cannot be done by the derived class.
+                    _boundData.Remove(model);
+                }
+
                 return;
+            }
 
             foreach (T model in models)
             {
