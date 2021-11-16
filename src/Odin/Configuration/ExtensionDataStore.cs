@@ -20,7 +20,7 @@ namespace BadEcho.Odin.Configuration
     public sealed class ExtensionDataStore<T>
         where T : new()
     {
-        private readonly IConfigurationReader _configurationReader;
+        private readonly IConfigurationReader? _configurationReader;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExtensionDataStore{T}"/> class.
@@ -29,10 +29,17 @@ namespace BadEcho.Odin.Configuration
             => _configurationReader = configurationReader;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="ExtensionDataStore{T}"/> class.
+        /// </summary>
+        /// <remarks>An extension data store initialized via its default constructor will not contain any data.</remarks>
+        public ExtensionDataStore()
+        { }
+
+        /// <summary>
         /// Gets the raw text of the configuration source to parse.
         /// </summary>
         internal string ConfigurationText
-            => _configurationReader.ConfigurationText;
+            => _configurationReader?.ConfigurationText ?? string.Empty;
 
         /// <summary>
         /// Gets a specified section from the configuration as an instance of type <typeparamref name="TImpl"/>.
@@ -43,7 +50,7 @@ namespace BadEcho.Odin.Configuration
         /// A <typeparamref name="TImpl"/> instance reflecting the section named <c>sectionName</c> found in the configuration's
         /// extension data.
         /// </returns>
-        public TImpl GetConfiguration<TImpl>(string sectionName) where TImpl : T, new()
-            => _configurationReader.GetConfiguration<TImpl>(sectionName);
+        public TImpl GetConfiguration<TImpl>(string sectionName) where TImpl : class, T, new()
+            => _configurationReader?.GetConfiguration<TImpl>(sectionName) ?? new TImpl();
     }
 }
