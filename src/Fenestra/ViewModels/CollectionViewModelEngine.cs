@@ -340,7 +340,7 @@ namespace BadEcho.Fenestra.ViewModels
             BindExistingChildren(existingChildrenModels);
 
             if (!DelayBindings)
-                Children.AddRange(createdChildren, false);
+                Children.AddRange(createdChildren);
 
             foreach (TChildViewModel createdChild in createdChildren)
             {
