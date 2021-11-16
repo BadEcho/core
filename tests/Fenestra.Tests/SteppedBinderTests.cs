@@ -326,7 +326,7 @@ namespace BadEcho.Fenestra.Tests
                 set;
             } = string.Empty;
 
-            public CultureInfo ConverterCulture
+            public CultureInfo? ConverterCulture
             { get; set; } = CultureInfo.InvariantCulture;
 
             public object? ConverterParameter

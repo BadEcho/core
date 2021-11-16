@@ -41,9 +41,7 @@ namespace BadEcho.Omnified.Vision.Apocalypse.ViewModels
         }
 
         /// <inheritdoc/>
-        public override void OnChangeCompleted()
-        {
-            Children.OrderByDescending(vm => vm.Timestamp);
-        }
+        public override void OnChangeCompleted() 
+            => Children.OrderByDescending(vm => vm.Timestamp);
     }
 }
