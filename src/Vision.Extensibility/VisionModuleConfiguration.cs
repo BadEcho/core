@@ -18,7 +18,7 @@ namespace BadEcho.Omnified.Vision.Extensibility
     /// <summary>
     /// Provides configuration settings for an individual Vision module.
     /// </summary>
-    public sealed class VisionModuleConfiguration
+    public class VisionModuleConfiguration
     {
         /// <summary>
         /// Gets the simple name of the module assembly.

@@ -15,6 +15,7 @@ using System.Composition;
 using System.Composition.Convention;
 using BadEcho.Odin.Configuration;
 using BadEcho.Odin.Extensibility.Hosting;
+using BadEcho.Omnified.Vision.Extensibility;
 
 namespace BadEcho.Omnified.Vision
 {
@@ -25,7 +26,7 @@ namespace BadEcho.Omnified.Vision
     /// ReSharper disable UnusedType.Local
     /// </suppressions>
     [Export(typeof(IConfigurationProvider))]
-    internal sealed class VisionConfigurationProvider : JsonConfigurationProvider
+    internal sealed class VisionConfigurationProvider : JsonConfigurationProvider<VisionModuleConfiguration>
     {
         /// <inheritdoc/>
         protected override string SettingsFile 

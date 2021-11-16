@@ -41,14 +41,9 @@ namespace BadEcho.Omnified.Vision.Extensibility
         protected VisionModule(IVisionConfiguration configuration)
         {
             Require.NotNull(configuration, nameof(configuration));
-
-            string assemblyName 
-                = GetType().Assembly.GetName().Name ?? string.Empty;
-
-            if (!configuration.Modules.ContainsKey(assemblyName)) 
-                return;
-
-            VisionModuleConfiguration moduleConfiguration = configuration.Modules[assemblyName];
+            
+            var moduleConfiguration 
+                = configuration.Modules.GetConfiguration<VisionModuleConfiguration>(ModuleName);
 
             _configuredLocation = moduleConfiguration.Location;
             _maximumMessages = moduleConfiguration.MaxMessages;
@@ -69,6 +64,12 @@ namespace BadEcho.Omnified.Vision.Extensibility
         /// <inheritdoc/>
         public abstract string MessageFile
         { get; }
+
+        /// <summary>
+        /// Gets the name that identifies the module in a configuration context.
+        /// </summary>
+        protected string ModuleName
+            => GetType().Assembly.GetName().Name ?? string.Empty;
 
         /// <summary>
         /// Gets the default location of the module's anchor point.

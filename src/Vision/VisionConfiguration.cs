@@ -10,11 +10,10 @@
 //		http://creativecommons.org/licenses/by-nc/4.0/
 // </copyright>
 //-----------------------------------------------------------------------
-
-using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using System.Windows;
 using BadEcho.Fenestra.Serialization;
+using BadEcho.Odin.Configuration;
 using BadEcho.Omnified.Vision.Extensibility;
 
 namespace BadEcho.Omnified.Vision
@@ -46,7 +45,7 @@ namespace BadEcho.Omnified.Vision
         { get; set; }
 
         /// <inheritdoc/>
-        public IDictionary<string, VisionModuleConfiguration> Modules 
-        { get; init; }  = new Dictionary<string, VisionModuleConfiguration>();
+        public ExtensionDataStore<VisionModuleConfiguration> Modules 
+        { get; set; }  = new();
     }
 }

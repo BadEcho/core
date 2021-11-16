@@ -11,8 +11,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.Collections.Generic;
 using System.Windows;
+using BadEcho.Odin.Configuration;
 
 namespace BadEcho.Omnified.Vision.Extensibility
 {
@@ -52,9 +52,8 @@ namespace BadEcho.Omnified.Vision.Extensibility
         Thickness RightAnchorMargin { get; }
 
         /// <summary>
-        /// Gets a dictionary containing the names of plugin assemblies paired with their individual configurations.
+        /// Gets a store of extension data for specific Vision modules.
         /// </summary>
-        IDictionary<string, VisionModuleConfiguration> Modules
-        { get; } 
+        ExtensionDataStore<VisionModuleConfiguration> Modules { get; }
     }
 }

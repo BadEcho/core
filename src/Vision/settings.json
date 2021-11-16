@@ -8,7 +8,9 @@
       "location": "TopLeft"
     },
     "BadEcho.Omnified.Vision.Apocalypse": {
-      "maxMessages": 3 
+      "maxMessages": 3,
+      "location": "BottomCenter",
+      "effectMessageMaxWidth": 500 
     } 
   }
 }

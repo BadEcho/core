@@ -38,9 +38,12 @@ namespace BadEcho.Omnified.Vision.Apocalypse
         /// </summary>
         /// <param name="configuration">Configuration settings for the Vision application.</param>
         [ImportingConstructor]
-        public ApocalypseModule([Import(DEPENDENCY_NAME)]IVisionConfiguration configuration)
+        public ApocalypseModule([Import(DEPENDENCY_NAME)] IVisionConfiguration configuration)
             : base(configuration)
-        { }
+        {
+            var moduleConfiguration
+                = configuration.Modules.GetConfiguration<ApocalypseModuleConfiguration>(ModuleName);
+        }
 
         /// <inheritdoc/>
         public override string MessageFile
