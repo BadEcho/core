@@ -139,6 +139,12 @@ namespace BadEcho.Fenestra.ViewModels
 
             lock (_processedModelsLock)
             {
+                // Delayed bound batch bindings as well as changes made directly to the view model's collection may arrive
+                // here already processed, yet not bound to the view model. We'll want to skip out on any additional processing
+                // and let the view model consuming this engine go ahead and complete its binding process.
+                if (!_viewModel.IsBound(model) && _processedModels.Contains(model))
+                    return;
+
                 if (_processedModels.Contains(model))
                     update = true;
                 else
