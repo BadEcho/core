@@ -25,7 +25,7 @@ namespace BadEcho.Omnified.Vision
     internal sealed class MessageFileWatcher : IMessageFileProvider, IDisposable
     {
         private readonly FileSystemWatcher _watcher;
-
+        private readonly bool _processNewMessagesOnly;
         private long _lastReadPosition;
 
         /// <inheritdoc/>
@@ -50,6 +50,7 @@ namespace BadEcho.Omnified.Vision
             if (string.IsNullOrEmpty(messageFilesDirectory)) 
                 messageFilesDirectory = AppContext.BaseDirectory;
 
+            _processNewMessagesOnly = module.ProcessNewMessagesOnly;
             string messageFilePath = Path.Combine(messageFilesDirectory, module.MessageFile);
 
             var messageFile = new FileInfo(messageFilePath);
@@ -81,7 +82,9 @@ namespace BadEcho.Omnified.Vision
 
             // Injected Omnified code will be writing to the message file at high frequency, so we should assume the file is
             // almost always open by that process.
-            CurrentMessages = messageFile.ReadAllText(FileShare.ReadWrite, _lastReadPosition);
+            CurrentMessages = _processNewMessagesOnly
+                ? messageFile.ReadAllText(FileShare.ReadWrite, _lastReadPosition)
+                : messageFile.ReadAllText(FileShare.ReadWrite);
 
             _lastReadPosition = messageFile.Length;
             
