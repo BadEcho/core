@@ -26,6 +26,7 @@ namespace BadEcho.Omnified.Vision.Apocalypse.ViewModels
         where TApocalypseEvent : ApocalypseEvent
     {
         private string _effectMessage = string.Empty;
+        private double _effectMessageMaxWidth = double.NaN;
         private DateTime _timestamp;
 
         /// <inheritdoc/>
@@ -33,6 +34,13 @@ namespace BadEcho.Omnified.Vision.Apocalypse.ViewModels
         {
             get => _effectMessage;
             set => NotifyIfChanged(ref _effectMessage, value);
+        }
+
+        /// <inheritdoc/>
+        public double EffectMessageMaxWidth
+        {
+            get => _effectMessageMaxWidth;
+            set => NotifyIfChanged(ref _effectMessageMaxWidth, value);
         }
 
         /// <inheritdoc/>

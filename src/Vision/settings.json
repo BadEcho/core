@@ -10,7 +10,7 @@
     "BadEcho.Omnified.Vision.Apocalypse": {
       "maxMessages": 3,
       "location": "BottomCenter",
-      "effectMessageMaxWidth": 500 
+      "effectMessageMaxWidth": 650 
     } 
   }
-}
+} 

@@ -29,8 +29,6 @@ namespace BadEcho.Omnified.Vision.Extensibility
     public abstract class VisionModule<TModel, TViewModel> : IVisionModule
         where TViewModel : class, IViewModel<TModel>, new()
     {
-        private readonly TViewModel _viewModel = new();
-
         private readonly AnchorPointLocation? _configuredLocation;
         private readonly int _maximumMessages;
 
@@ -72,6 +70,12 @@ namespace BadEcho.Omnified.Vision.Extensibility
             => GetType().Assembly.GetName().Name ?? string.Empty;
 
         /// <summary>
+        /// Gets the module's root view model instance.
+        /// </summary>
+        protected TViewModel ViewModel
+        { get; } = new();
+
+        /// <summary>
         /// Gets the default location of the module's anchor point.
         /// </summary>
         protected abstract AnchorPointLocation DefaultLocation
@@ -83,11 +87,11 @@ namespace BadEcho.Omnified.Vision.Extensibility
             Require.NotNull(messageProvider, nameof(messageProvider));
 
             if (!string.IsNullOrEmpty(messageProvider.CurrentMessages))
-                _viewModel.Bind(ReadMessages(messageProvider.CurrentMessages));
+                ViewModel.Bind(ReadMessages(messageProvider.CurrentMessages));
 
             messageProvider.NewMessages += HandleNewMessages;
 
-            return _viewModel;
+            return ViewModel;
         }
 
         /// <summary>
@@ -118,7 +122,7 @@ namespace BadEcho.Omnified.Vision.Extensibility
         {
             var models = ReadMessages(e.Data);
 
-            _viewModel.Bind(models);
+            ViewModel.Bind(models);
         }
     }
 }

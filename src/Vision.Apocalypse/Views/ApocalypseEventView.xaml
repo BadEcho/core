@@ -17,11 +17,11 @@
                xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Apocalypse.ViewModels"
                xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"                   
-               mc:Ignorable="d" 
-               d:DesignWidth="850">
+               mc:Ignorable="d">
     <d:DesignProperties.DataContext>
         <vm:RiskOfMurderEventViewModel EffectMessage="The player, afflicted with Fatalis, dies immediately from the enemy attack, losing all 2309 points of health!"
                                        Timestamp="09/02/2021 18:11"
+                                       EffectMessageMaxWidth="500"
                                        />
     </d:DesignProperties.DataContext>
     <Grid>
@@ -37,6 +37,7 @@
 
         <fenestra:OutlinedTextElement Style="{StaticResource EventTextStyle}"
                                       Text="{Binding EffectMessage}"
+                                      MaxWidth="{Binding EffectMessageMaxWidth}"
                                       Grid.Column="1"
                                       />
     </Grid>

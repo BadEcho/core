@@ -12,6 +12,7 @@
 //-----------------------------------------------------------------------
 
 using BadEcho.Fenestra.ViewModels;
+using BadEcho.Odin;
 
 namespace BadEcho.Omnified.Vision.Apocalypse.ViewModels
 {
@@ -20,6 +21,8 @@ namespace BadEcho.Omnified.Vision.Apocalypse.ViewModels
     /// </summary>
     internal sealed class ApocalypseViewModel : PolymorphicCollectionViewModel<ApocalypseEvent, IApocalypseEventViewModel>
     {
+        private double _effectMessageMaxWidth;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ApocalypseViewModel"/> class.
         /// </summary>
@@ -43,5 +46,26 @@ namespace BadEcho.Omnified.Vision.Apocalypse.ViewModels
         /// <inheritdoc/>
         public override void OnChangeCompleted() 
             => Children.OrderByDescending(vm => vm.Timestamp);
+
+        /// <inheritdoc/>
+        public override IApocalypseEventViewModel CreateChild(ApocalypseEvent model)
+        {
+            var viewModel = base.CreateChild(model);
+
+            viewModel.EffectMessageMaxWidth = _effectMessageMaxWidth;
+
+            return viewModel;
+        }
+
+        /// <summary>
+        /// Provides the provided Apocalypse module configuration to this Apocalypse root view model instance.
+        /// </summary>
+        /// <param name="configuration">The Apocalypse module configuration to apply to this view model.</param>
+        public void ApplyConfiguration(ApocalypseModuleConfiguration configuration)
+        {
+            Require.NotNull(configuration, nameof(configuration));
+
+            _effectMessageMaxWidth = configuration.EffectMessageMaxWidth;
+        }
     }
 }

@@ -28,6 +28,12 @@ namespace BadEcho.Omnified.Vision.Apocalypse.ViewModels
         string EffectMessage { get; set; }
 
         /// <summary>
+        /// Gets or sets the maximum width constraint of the element responsible for displaying the bound
+        /// Apocalypse event's effect message.
+        /// </summary>
+        double EffectMessageMaxWidth { get; set; }
+
+        /// <summary>
         /// Gets or sets the date and time at which the bound Apocalypse event occurred.
         /// </summary>
         DateTime Timestamp { get; set; }

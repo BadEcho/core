@@ -43,6 +43,8 @@ namespace BadEcho.Omnified.Vision.Apocalypse
         {
             var moduleConfiguration
                 = configuration.Modules.GetConfiguration<ApocalypseModuleConfiguration>(ModuleName);
+
+            ViewModel.ApplyConfiguration(moduleConfiguration);
         }
 
         /// <inheritdoc/>

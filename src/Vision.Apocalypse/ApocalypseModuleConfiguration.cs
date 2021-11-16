@@ -24,6 +24,6 @@ namespace BadEcho.Omnified.Vision.Apocalypse
         /// Gets the maximum width constraint of elements responsible for displaying Apocalypse event messages.
         /// </summary>
         public double EffectMessageMaxWidth
-        { get; init; }
+        { get; init; } = double.NaN;
     }
 }

@@ -18,12 +18,12 @@
                xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Apocalypse.ViewModels"
                xmlns:v="clr-namespace:BadEcho.Omnified.Vision.Apocalypse.Views"
                xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"                   
-               mc:Ignorable="d" 
-               d:DesignWidth="850">
+               mc:Ignorable="d">
     <d:DesignProperties.DataContext>
         <vm:RiskOfMurderEventViewModel EffectMessage="Extra damage (2x) causing 806 damage, leaving the player with 82 health."
                                        Timestamp="09/02/2021 14:31"
                                        DieRoll="2"
+                                       EffectMessageMaxWidth="500"
                                        />
     </d:DesignProperties.DataContext>
     <Grid>
@@ -44,6 +44,7 @@
 
         <fenestra:OutlinedTextElement Style="{StaticResource EventTextStyle}"
                                       Text="{Binding EffectMessage}"
+                                      MaxWidth="{Binding EffectMessageMaxWidth}"
                                       Grid.Column="2"
                                       />
     </Grid>
