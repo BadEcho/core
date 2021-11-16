@@ -121,12 +121,13 @@ namespace BadEcho.Fenestra
 
             void AddOperation()
             {
-                AddSilently(items);
+                int newItems = AddSilently(items);
 
                 if (!notifyAfter) 
                     return;
 
-                NotifyReset();
+                if (newItems > 0)
+                    NotifyReset();
             }
         }
 
@@ -156,12 +157,13 @@ namespace BadEcho.Fenestra
                 // Only you can prevent modified collection enumerations!
                 List<T> itemsList = items.ToList();
 
-                RemoveSilently(itemsList);
+                int removedItems = RemoveSilently(itemsList);
 
                 if (!notifyAfter)
                     return;
 
-                NotifyReset();
+                if (removedItems > 0)
+                    NotifyReset();
             }
         }
 
@@ -291,29 +293,29 @@ namespace BadEcho.Fenestra
             SynchronizeOperation(operation);
         }
 
-        private void AddSilently(IEnumerable<T> items)
+        private int AddSilently(IEnumerable<T> items)
         {
+            int newItems = 0;
+
             this.BypassHandlers(() =>
                                 {
-                                    int currentCount = Count;
-
                                     foreach (T item in items)
                                     {
-                                        BoundedInsertItem(currentCount, item);
-                                        currentCount++;
+                                        BoundedInsertItem(Count + newItems, item);
+                                        newItems++;
                                     }
                                 });
+
+            return newItems;
         }
 
-        private void RemoveSilently(IEnumerable<T> items)
+        private int RemoveSilently(IEnumerable<T> items)
         {
-            this.BypassHandlers(() =>
-                                {
-                                    foreach (T item in items)
-                                    {
-                                        Items.Remove(item);
-                                    }
-                                });
+            int removedItems = 0;
+
+            this.BypassHandlers(() => removedItems = items.Count(item => Items.Remove(item)));
+
+            return removedItems;
         }
 
         private void CommitSort(IEnumerable<T> sortedItems)
