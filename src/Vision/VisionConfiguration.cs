@@ -12,6 +12,7 @@
 //-----------------------------------------------------------------------
 using System.Text.Json.Serialization;
 using System.Windows;
+using System.Windows.Threading;
 using BadEcho.Fenestra.Serialization;
 using BadEcho.Odin.Configuration;
 using BadEcho.Omnified.Vision.Extensibility;
@@ -47,5 +48,8 @@ namespace BadEcho.Omnified.Vision
         /// <inheritdoc/>
         public ExtensionDataStore<VisionModuleConfiguration> Modules 
         { get; set; }  = new();
+
+        /// <inheritdoc/>
+        public Dispatcher? Dispatcher { get; set; }
     }
 }

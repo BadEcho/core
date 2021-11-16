@@ -41,17 +41,19 @@ namespace BadEcho.Omnified.Vision.Windows
 
             configurationProvider.ConfigurationChanged += HandleConfigurationChanged;
 
-            ApplyConfiguration(configurationProvider);
+            ApplyConfiguration(configurationProvider, dispatcher);
 
             _isAssembled = true;
 
             return _viewModel;
         }
 
-        private void ApplyConfiguration(IConfigurationProvider configurationProvider)
+        private void ApplyConfiguration(IConfigurationProvider configurationProvider, Dispatcher? dispatcher = null)
         {
             VisionConfiguration configuration
                 = configurationProvider.GetConfiguration<VisionConfiguration>();
+
+            configuration.Dispatcher = dispatcher;
 
             _viewModel.Disconnect();
             _viewModel.ApplyConfiguration(configuration);

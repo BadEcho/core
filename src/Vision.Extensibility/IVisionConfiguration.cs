@@ -12,6 +12,7 @@
 //-----------------------------------------------------------------------
 
 using System.Windows;
+using System.Windows.Threading;
 using BadEcho.Odin.Configuration;
 
 namespace BadEcho.Omnified.Vision.Extensibility
@@ -55,5 +56,10 @@ namespace BadEcho.Omnified.Vision.Extensibility
         /// Gets a store of extension data for specific Vision modules.
         /// </summary>
         ExtensionDataStore<VisionModuleConfiguration> Modules { get; }
+
+        /// <summary>
+        /// Gets or sets the dispatcher Vision modules should execute dispatcher-sensitive operations on.
+        /// </summary>
+        Dispatcher? Dispatcher { get; set; }
     }
 }

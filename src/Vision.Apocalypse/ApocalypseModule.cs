@@ -45,6 +45,9 @@ namespace BadEcho.Omnified.Vision.Apocalypse
                 = configuration.Modules.GetConfiguration<ApocalypseModuleConfiguration>(ModuleName);
 
             ViewModel.ApplyConfiguration(moduleConfiguration);
+
+            if (configuration.Dispatcher != null)
+                ViewModel.ChangeDispatcher(configuration.Dispatcher);
         }
 
         /// <inheritdoc/>
@@ -67,7 +70,9 @@ namespace BadEcho.Omnified.Vision.Apocalypse
                               Converters = { new EventConverter() }
                           };
 
-            return messages.Split(Environment.NewLine).Select(ReadEvent);
+            return messages.TrimStart(Environment.NewLine.ToCharArray())
+                           .Split(Environment.NewLine)
+                           .Select(ReadEvent);
 
             ApocalypseEvent ReadEvent(string message)
             {

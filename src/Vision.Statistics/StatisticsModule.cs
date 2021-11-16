@@ -34,9 +34,12 @@ namespace BadEcho.Omnified.Vision.Statistics
         /// </summary>
         /// <param name="configuration">Configuration settings for the Vision application.</param>
         [ImportingConstructor]
-        public StatisticsModule([Import(DEPENDENCY_NAME)]IVisionConfiguration configuration)
+        public StatisticsModule([Import(DEPENDENCY_NAME)] IVisionConfiguration configuration)
             : base(configuration)
-        { }
+        {
+            if (configuration.Dispatcher != null)
+                ViewModel.ChangeDispatcher(configuration.Dispatcher);
+        }
 
         /// <inheritdoc/>
         public override string MessageFile
