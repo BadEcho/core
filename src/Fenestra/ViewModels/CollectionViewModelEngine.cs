@@ -450,7 +450,6 @@ namespace BadEcho.Fenestra.ViewModels
             if (!_bindingQueue.TryDequeue(out TChildViewModel? child))
             {
                 _bindingTimer.Stop();
-                _viewModel.OnChangeCompleted();
                 return;
             }
 

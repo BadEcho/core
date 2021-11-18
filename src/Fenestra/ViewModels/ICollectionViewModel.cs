@@ -69,12 +69,6 @@ namespace BadEcho.Fenestra.ViewModels
         void ChangeDispatcher(Dispatcher dispatcher);
 
         /// <summary>
-        /// Called when the results of a change operation have been committed to this collection view model's children so that it
-        /// may prepare its contents for viewing.
-        /// </summary>
-        void OnChangeCompleted();
-
-        /// <summary>
         /// Searches for and returns the child view model responsible for representing the provided data within the collection
         /// view model.
         /// </summary>

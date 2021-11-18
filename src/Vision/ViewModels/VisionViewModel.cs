@@ -58,10 +58,6 @@ namespace BadEcho.Omnified.Vision.ViewModels
             existingChild?.Bind(model);
         }
 
-        /// <inheritdoc/>
-        public override void OnChangeCompleted()
-        { }
-
         /// <summary>
         /// Applies the provided Vision application configuration to this root view model instance.
         /// </summary>

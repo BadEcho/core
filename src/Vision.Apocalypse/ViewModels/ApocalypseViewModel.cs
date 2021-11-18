@@ -11,6 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using BadEcho.Fenestra.ViewModels;
 using BadEcho.Odin;
 
@@ -27,7 +28,7 @@ namespace BadEcho.Omnified.Vision.Apocalypse.ViewModels
         /// Initializes a new instance of the <see cref="ApocalypseViewModel"/> class.
         /// </summary>
         public ApocalypseViewModel()
-            : base(new CollectionViewModelOptions {AsyncBatchBindings = false})
+            : base(new CollectionViewModelOptions {AsyncBatchBindings = false}) 
         {
             // Events from Player Apocalypse die rolls.
             RegisterDerivation<ExtraDamageEvent, PlayerApocalypseEventViewModel<ExtraDamageEvent>>();
@@ -44,14 +45,10 @@ namespace BadEcho.Omnified.Vision.Apocalypse.ViewModels
         }
 
         /// <inheritdoc/>
-        public override void OnChangeCompleted() 
-            => Children.OrderByDescending(vm => vm.Timestamp);
-
-        /// <inheritdoc/>
         public override IApocalypseEventViewModel CreateChild(ApocalypseEvent model)
         {
             var viewModel = base.CreateChild(model);
-
+            
             viewModel.EffectMessageMaxWidth = _effectMessageMaxWidth;
 
             return viewModel;

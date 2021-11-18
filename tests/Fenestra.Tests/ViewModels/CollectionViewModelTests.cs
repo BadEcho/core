@@ -217,9 +217,6 @@ namespace BadEcho.Fenestra.Tests.ViewModels
 
                 existingChild?.Bind(model);
             }
-
-            public override void OnChangeCompleted()
-            { }
         }
 
     }

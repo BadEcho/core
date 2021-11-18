@@ -90,9 +90,6 @@ namespace BadEcho.Fenestra.ViewModels
         public abstract void UpdateChild(TModel model);
 
         /// <inheritdoc/>
-        public abstract void OnChangeCompleted();
-
-        /// <inheritdoc/>
         protected override void OnBinding(TModel model) 
             => _engine.Bind(model);
 

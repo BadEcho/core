@@ -31,9 +31,5 @@ namespace BadEcho.Omnified.Vision.Statistics.ViewModels
             RegisterDerivation<CoordinateStatistic, CoordinateStatisticViewModel>();
             RegisterDerivation<StatisticGroup, StatisticGroupViewModel>();
         }
-
-        /// <inheritdoc/>
-        public override void OnChangeCompleted()
-        { }
     }
 }
