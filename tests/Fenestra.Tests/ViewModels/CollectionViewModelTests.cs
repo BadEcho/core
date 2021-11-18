@@ -14,7 +14,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using BadEcho.Fenestra.ViewModels;
-using BadEcho.Odin.Extensions;
 using Xunit;
 
 namespace BadEcho.Fenestra.Tests.ViewModels
@@ -197,11 +196,10 @@ namespace BadEcho.Fenestra.Tests.ViewModels
 
             Assert.Null(child);
         }
-
         
         private sealed class FakeCollectionViewModel : CollectionViewModel<ModelStub, ViewModelStub>
         {
-            public FakeCollectionViewModel() : base(new CollectionViewModelOptions{AsyncBatchBindings = false})
+            public FakeCollectionViewModel() : base(new CollectionViewModelOptions { AsyncBatchBindings = false })
             { }
 
             public override ViewModelStub CreateChild(ModelStub model)
@@ -224,41 +222,5 @@ namespace BadEcho.Fenestra.Tests.ViewModels
             { }
         }
 
-        private sealed class ViewModelStub : ViewModel<ModelStub>
-        {
-            public int Value
-            { get; private set; }
-
-            protected override void OnBinding(ModelStub model) 
-                => Value = model.Value;
-
-            protected override void OnUnbound(ModelStub model) 
-                => Value = 0;
-        }
-
-        private sealed class ModelStub
-        {
-            private readonly string _name;
-
-            public ModelStub(string name, int value)
-            {
-                _name = name;
-                Value = value;
-            }
-
-            public int Value
-            { get; set; }
-
-            public override bool Equals(object? obj)
-            {
-                if (obj is not ModelStub otherModel)
-                    return false;
-
-                return _name == otherModel._name;
-            }
-
-            public override int GetHashCode() 
-                => this.GetHashCode(_name);
-        }
     }
 }
