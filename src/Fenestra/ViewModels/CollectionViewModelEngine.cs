@@ -47,6 +47,7 @@ namespace BadEcho.Fenestra.ViewModels
         private readonly object _processedModelsLock = new();
 
         private readonly ICollectionViewModel<TModel, TChildViewModel> _viewModel;
+        private readonly ICollectionChangeStrategy<TChildViewModel> _changeStrategy;
         private readonly CollectionViewModelOptions _options;
 
         private DispatcherTimer _bindingTimer = new(DispatcherPriority.Background);
@@ -57,20 +58,26 @@ namespace BadEcho.Fenestra.ViewModels
         /// <param name="viewModel">
         /// The <see cref="ICollectionViewModel{TModel, TChildViewModel}"/> typed view model being powered by this engine.
         /// </param>
+        /// <param name="changeStrategy">
+        /// The strategy behind how view models will be added to and removed from this engine's internal collection.
+        /// </param>
         /// <param name="options">
         /// A <see cref="CollectionViewModelOptions"/> instance that configures the behavior of this engine.
         /// </param>
         public CollectionViewModelEngine(
             ICollectionViewModel<TModel, TChildViewModel> viewModel,
+            ICollectionChangeStrategy<TChildViewModel> changeStrategy,
             CollectionViewModelOptions options)
         {
             Require.NotNull(viewModel, nameof(viewModel));
+            Require.NotNull(changeStrategy, nameof(changeStrategy));
             Require.NotNull(options, nameof(options));
 
             if (options.ChildrenChangedHandler == null)
                 throw new ArgumentException(Strings.CollectionViewModelEngineRequiresHandler, nameof(options));
             
             _viewModel = viewModel;
+            _changeStrategy = changeStrategy;
             _options = options;
             
             _bindingTimer.Interval = options.BindingDelay;
@@ -241,8 +248,7 @@ namespace BadEcho.Fenestra.ViewModels
             if (childrenToUnbind.Count == 0)
                 return;
 
-            Children.RemoveRange(childrenToUnbind, false);
-            _viewModel.OnChangeCompleted();
+            _changeStrategy.RemoveRange(_viewModel, childrenToUnbind);
 
             foreach (TChildViewModel childToUnbind in childrenToUnbind)
             {
@@ -307,8 +313,7 @@ namespace BadEcho.Fenestra.ViewModels
 
             if (!DelayBindings)
             {
-                Children.Add(viewModel);
-                _viewModel.OnChangeCompleted();
+                _changeStrategy.Add(_viewModel, viewModel);
 
                 return;
             }
@@ -320,10 +325,7 @@ namespace BadEcho.Fenestra.ViewModels
         /// <inheritdoc/>
         protected override void OnUnbound(TChildViewModel viewModel)
         {
-            if (!Children.Remove(viewModel))
-                return;
-
-            _viewModel.OnChangeCompleted();
+            _changeStrategy.Remove(_viewModel, viewModel);
         }
 
         private void BindRunner(IReadOnlyCollection<TModel> models)
@@ -345,8 +347,8 @@ namespace BadEcho.Fenestra.ViewModels
             IReadOnlyCollection<TChildViewModel> createdChildren = BindNewChildren(newChildrenModels);
             BindExistingChildren(existingChildrenModels);
 
-            if (!DelayBindings)
-                Children.AddRange(createdChildren);
+            if (!DelayBindings) 
+                _changeStrategy.AddRange(_viewModel, createdChildren);
 
             foreach (TChildViewModel createdChild in createdChildren)
             {
@@ -391,11 +393,8 @@ namespace BadEcho.Fenestra.ViewModels
         {
             List<TChildViewModel> zombieChildren = Children.Where(c => c.ActiveModel == null)
                                                            .ToList();
-            if (0 != zombieChildren.Count)
-            {
-                Children.RemoveRange(zombieChildren, false);
-                _viewModel.OnChangeCompleted();
-            }
+            if (0 != zombieChildren.Count) 
+                _changeStrategy.RemoveRange(_viewModel, zombieChildren);
 
             foreach (TModel zombieModel in zombieModels)
             {
@@ -455,7 +454,7 @@ namespace BadEcho.Fenestra.ViewModels
                 return;
             }
 
-            Children.Add(child);
+            _changeStrategy.Add(_viewModel, child);
         }
     }
 }

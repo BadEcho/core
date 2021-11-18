@@ -144,7 +144,7 @@ namespace BadEcho.Fenestra
         /// </summary>
         /// <param name="items">A sequence of items to remove.</param>
         /// <param name="notifyAfter">
-        /// Value indicating if a collection change notification should be snet out once the batch of removals has been completed.
+        /// Value indicating if a collection change notification should be sent out once the batch of removals has been completed.
         /// </param>
         public void RemoveRange(IEnumerable<T> items, bool notifyAfter)
         {

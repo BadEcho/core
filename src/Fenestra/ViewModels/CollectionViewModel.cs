@@ -39,12 +39,25 @@ namespace BadEcho.Fenestra.ViewModels
         /// A <see cref="CollectionViewModelOptions"/> instance that configures the behavior of this engine.
         /// </param>
         protected CollectionViewModel(CollectionViewModelOptions options)
+            : this(options, new UnsortedAddStrategy<TChildViewModel>())
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CollectionViewModel{TModel,TChildViewModel}"/> class.
+        /// </summary>
+        /// <param name="options">
+        /// A <see cref="CollectionViewModelOptions"/> instance that configures the behavior of this view model's internal engine.
+        /// </param>
+        /// <param name="changeStrategy">
+        /// The strategy behind how view models will be added to and removed from the view model's collection.
+        /// </param>
+        protected CollectionViewModel(CollectionViewModelOptions options, ICollectionChangeStrategy<TChildViewModel> changeStrategy)
         {
             Require.NotNull(options, nameof(options));
 
             options.ChildrenChangedHandler = HandleChildrenChanged;
 
-            _engine = new CollectionViewModelEngine<TModel, TChildViewModel>(this, options);
+            _engine = new CollectionViewModelEngine<TModel, TChildViewModel>(this, changeStrategy, options);
         }
 
         /// <inheritdoc/>

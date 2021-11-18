@@ -46,6 +46,20 @@ namespace BadEcho.Fenestra.ViewModels
             : base(options)
         { }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PolymorphicCollectionViewModel{TModel, TChildViewModel}"/> class.
+        /// </summary>
+        /// <param name="options">
+        /// A <see cref="CollectionViewModelOptions"/> instance that configures the behavior of this view model's internal engine.
+        /// </param>
+        /// <param name="changeStrategy">
+        /// The strategy behind how view models will be added to and removed from this view model's collection.
+        /// </param>
+        protected PolymorphicCollectionViewModel(CollectionViewModelOptions options,
+                                                 ICollectionChangeStrategy<TChildViewModel> changeStrategy)
+            : base(options, changeStrategy)
+        { }
+
         /// <inheritdoc/>
         public override TChildViewModel CreateChild(TModel model)
         {
