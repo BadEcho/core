@@ -81,7 +81,7 @@ namespace BadEcho.Fenestra.ViewModels
             viewModels = Sort(viewModels).ToList();
 
             List<TChildViewModel> originalChildren = collectionViewModel.Children.ToList();
-
+            
             IEnumerable<TChildViewModel> allChildren
                 = originalChildren.Concat(viewModels);
 
@@ -110,6 +110,20 @@ namespace BadEcho.Fenestra.ViewModels
             Require.NotNull(collectionViewModel, nameof(collectionViewModel));
 
             collectionViewModel.Children.RemoveRange(viewModels);
+        }
+
+        /// <inheritdoc/>
+        public void TrimExcess(IAncestorViewModel<TChildViewModel> collectionViewModel, int countExceeded)
+        {
+            Require.NotNull(collectionViewModel, nameof(collectionViewModel));
+
+            for (int i = 0; i < countExceeded; i++)
+            {
+                if (_descending)
+                    collectionViewModel.Children.RemoveAt(collectionViewModel.Children.Count - 1);
+                else
+                    collectionViewModel.Children.RemoveAt(0);
+            }
         }
 
         private IEnumerable<TChildViewModel> Sort(IEnumerable<TChildViewModel> collection)

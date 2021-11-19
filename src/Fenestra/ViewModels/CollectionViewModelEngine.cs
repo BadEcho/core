@@ -314,6 +314,7 @@ namespace BadEcho.Fenestra.ViewModels
             if (!DelayBindings)
             {
                 _changeStrategy.Add(_viewModel, viewModel);
+                CheckCapacity();
 
                 return;
             }
@@ -347,8 +348,11 @@ namespace BadEcho.Fenestra.ViewModels
             IReadOnlyCollection<TChildViewModel> createdChildren = BindNewChildren(newChildrenModels);
             BindExistingChildren(existingChildrenModels);
 
-            if (!DelayBindings) 
+            if (!DelayBindings)
+            {
                 _changeStrategy.AddRange(_viewModel, createdChildren);
+                CheckCapacity();
+            }
 
             foreach (TChildViewModel createdChild in createdChildren)
             {
@@ -405,6 +409,16 @@ namespace BadEcho.Fenestra.ViewModels
             }
         }
 
+        private void CheckCapacity()
+        {
+            if (_options.Capacity <= 0)
+                return;
+
+            int exceededCount = Children.Count - _options.Capacity;
+
+            _changeStrategy.TrimExcess(_viewModel, exceededCount);
+        }
+
         private void ProcessFailedBinding(Task failedBinding)
         {
             Exception? rootException = null;
@@ -454,6 +468,7 @@ namespace BadEcho.Fenestra.ViewModels
             }
 
             _changeStrategy.Add(_viewModel, child);
+            CheckCapacity();
         }
     }
 }

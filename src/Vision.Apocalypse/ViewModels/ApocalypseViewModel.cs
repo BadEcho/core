@@ -28,8 +28,9 @@ namespace BadEcho.Omnified.Vision.Apocalypse.ViewModels
         /// Initializes a new instance of the <see cref="ApocalypseViewModel"/> class.
         /// </summary>
         public ApocalypseViewModel()
-            : base(new CollectionViewModelOptions {AsyncBatchBindings = false}) 
-        {
+            : base(new CollectionViewModelOptions { AsyncBatchBindings = true, Capacity = 3 },
+                   new PresortedInsertionStrategy<IApocalypseEventViewModel, DateTime>(vm => vm.Timestamp, true))
+        {   // TODO: change capacity to configured max messages.
             // Events from Player Apocalypse die rolls.
             RegisterDerivation<ExtraDamageEvent, PlayerApocalypseEventViewModel<ExtraDamageEvent>>();
             RegisterDerivation<TeleportitisEvent, PlayerApocalypseEventViewModel<TeleportitisEvent>>();

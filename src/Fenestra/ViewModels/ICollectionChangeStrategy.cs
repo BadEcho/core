@@ -57,5 +57,14 @@ namespace BadEcho.Fenestra.ViewModels
         /// </param>
         /// <param name="viewModels">The view models to remove.</param>
         void RemoveRange(IAncestorViewModel<TChildViewModel> collectionViewModel, IEnumerable<TChildViewModel> viewModels);
+
+        /// <summary>
+        /// Removes all items exceeding the allowed capacity of the view model's collection.
+        /// </summary>
+        /// <param name="collectionViewModel">
+        /// A view model which has the capability of having one or more children view models.
+        /// </param>
+        /// <param name="countExceeded">The number if child view models causing the overcapacity.</param>
+        void TrimExcess(IAncestorViewModel<TChildViewModel> collectionViewModel, int countExceeded);
     }
 }

@@ -79,6 +79,12 @@ namespace BadEcho.Fenestra.ViewModels
         { get; set; } = 1000;
 
         /// <summary>
+        /// Gets or sets the maximum number of items the view model collection can hold at any given time.
+        /// </summary>
+        public int Capacity 
+        { get; set; }    
+
+        /// <summary>
         /// Gets or sets the method meant to handle changes in either the children collection's composition or property values of items
         /// belonging to said collection.
         /// </summary>

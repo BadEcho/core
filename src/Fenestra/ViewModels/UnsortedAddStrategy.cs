@@ -55,5 +55,16 @@ namespace BadEcho.Fenestra.ViewModels
 
             collectionViewModel.Children.RemoveRange(viewModels);
         }
+
+        /// <inheritdoc/>
+        public void TrimExcess(IAncestorViewModel<TChildViewModel> collectionViewModel, int countExceeded)
+        {
+            Require.NotNull(collectionViewModel, nameof(collectionViewModel));
+
+            for (int i = 0; i < countExceeded; i++)
+            {
+                collectionViewModel.Children.RemoveAt(0);
+            }
+        }
     }
 }
