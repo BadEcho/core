@@ -20,7 +20,7 @@
                xmlns:t="clr-namespace:BadEcho.Omnified.Vision.Extensibility.Themes;assembly=BadEcho.Omnified.Vision.Extensibility"
                xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"                   
                mc:Ignorable="d"
-               d:DesignWidth="850">
+               d:DesignWidth="650">
     <d:DesignProperties.DataContext>
         <vm:ApocalypseViewModel>
             <vm:ApocalypseViewModel.Children>
@@ -34,19 +34,39 @@
                                                DieRoll="6"
                                                MurderRoll="4"
                                                />
+                <vm:RiskOfMurderEventViewModel EffectMessage="Something maybe worse happened."
+                                               Timestamp="09/02/2021 3:02"
+                                               DieRoll="7"
+                                               MurderRoll="5"
+                                               />
             </vm:ApocalypseViewModel.Children>
         </vm:ApocalypseViewModel>
     </d:DesignProperties.DataContext>
     <fenestra:View.Resources>
-        <DataTemplate x:Key="DesignTimeChildrenTemplate">
+        <DataTemplate x:Key="DesignTimeContentTemplate">
             <v:PlayerApocalypseEventView/>
         </DataTemplate>
+        <Style x:Key="ContentStyle" TargetType="ContentControl">
+            <Setter Property="Margin" Value="0,5,0,5"/>
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="Opacity" 
+                                             From="0"
+                                             To="1"
+                                             Duration="0:0:4"
+                            />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
         <fenestra:ViewContextTemplateSelector x:Key="ContextSelector"/>
         <fenestra:PositionalItemTemplateSelector x:Key="ChildrenTemplateSelector">
             <fenestra:PositionalItemTemplateSelector.Template>
                 <DataTemplate>
-                    <Border BorderThickness="0,0,0,1" 
-                            Margin="0,0,0,5">
+                    <Border BorderThickness="0,0,0,1">
                         <Border.BorderBrush>
                             <LinearGradientBrush StartPoint="0,0.5" 
                                                  EndPoint="1,0.5">
@@ -54,31 +74,33 @@
                                               Offset="0"
                                               />
                                 <GradientStop Color="{DynamicResource {x:Static t:Colors.FadingOutlineColorKey}}" 
-                                              Offset="0.25"
+                                              Offset="0.1"
                                               />
                                 <GradientStop Color="{DynamicResource {x:Static t:Colors.OutlineColorKey}}" 
                                               Offset="0.5"
                                               />
                                 <GradientStop Color="{DynamicResource {x:Static t:Colors.FadingOutlineColorKey}}" 
-                                              Offset="0.75"
+                                              Offset="0.9"
                                               />
                                 <GradientStop Color="Transparent" 
                                               Offset="1"
                                               />
                             </LinearGradientBrush>
                         </Border.BorderBrush>
-                        <ContentControl Content="{Binding}"
+                        <ContentControl Style="{StaticResource ContentStyle}"
+                                        Content="{Binding}"
                                         ContentTemplateSelector="{StaticResource ContextSelector}"
-                                        d:ContentTemplate="{StaticResource DesignTimeChildrenTemplate}"
+                                        d:ContentTemplate="{StaticResource DesignTimeContentTemplate}"
                                         />
                     </Border>
                 </DataTemplate>
             </fenestra:PositionalItemTemplateSelector.Template>
             <fenestra:PositionalItemTemplateSelector.EndingTemplate>
                 <DataTemplate>
-                    <ContentControl Content="{Binding}"
+                    <ContentControl Style="{StaticResource ContentStyle}"
+                                    Content="{Binding}"
                                     ContentTemplateSelector="{StaticResource ContextSelector}"
-                                    d:ContentTemplate="{StaticResource DesignTimeChildrenTemplate}"
+                                    d:ContentTemplate="{StaticResource DesignTimeContentTemplate}"
                                     />
                 </DataTemplate>
             </fenestra:PositionalItemTemplateSelector.EndingTemplate>
