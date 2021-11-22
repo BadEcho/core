@@ -46,23 +46,68 @@
         <DataTemplate x:Key="DesignTimeContentTemplate">
             <v:PlayerApocalypseEventView/>
         </DataTemplate>
-        <Style x:Key="ContentStyle" TargetType="ContentControl">
-            <Setter Property="Margin" Value="0,5,0,5"/>
-            <Style.Triggers>
-                <EventTrigger RoutedEvent="Loaded">
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <DoubleAnimation Storyboard.TargetProperty="Opacity" 
-                                             From="0"
-                                             To="1"
-                                             Duration="0:0:4"
-                                             />
-                        </Storyboard>
-                    </BeginStoryboard>
-                </EventTrigger>
-            </Style.Triggers>
-        </Style>
         <fenestra:ViewContextTemplateSelector x:Key="ContextSelector"/>
+        <Style TargetType="ContentControl">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ContentControl}">
+                        <Border Margin="0,5,0,5">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5" >
+                                    <GradientStop Color="#FF5BC3FF"/>
+                                    <GradientStop Color="#FF0081CB" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <Border.Triggers>
+                                <EventTrigger RoutedEvent="Loaded">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="(Border.Background).(GradientBrush.Opacity)" 
+                                                              BeginTime="00:00:02"
+                                                              From="1"
+                                                              To="0"
+                                                              />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Border.Triggers>
+                            <Border>
+                                <Border.Background>
+                                    <LinearGradientBrush EndPoint="1.7,1" StartPoint="-0.5,0">
+                                        <GradientStop Color="#00FFFFFF"/>
+                                        <GradientStop Color="#66FFFFFF" Offset="0.1"/>
+                                        <GradientStop Color="#00FFFFFF" Offset="0.2"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <Border.Triggers>
+                                    <EventTrigger RoutedEvent="Loaded">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[0].(GradientStop.Offset)">
+                                                    <EasingDoubleKeyFrame KeyTime="00:00:02.000000" Value="0.8"/>
+                                                </DoubleAnimationUsingKeyFrames>
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[1].(GradientStop.Offset)">
+                                                    <EasingDoubleKeyFrame KeyTime="00:00:02.0" Value="0.9"/>
+                                                </DoubleAnimationUsingKeyFrames>
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[2].(GradientStop.Offset)">
+                                                    <EasingDoubleKeyFrame KeyTime="00:00:02.0" Value="1"/>
+                                                </DoubleAnimationUsingKeyFrames>
+                                                <DoubleAnimation Storyboard.TargetProperty="(Border.Background).(GradientBrush.Opacity)"
+                                                                 BeginTime="00:00:03"
+                                                                 From="1"
+                                                                 To="0"
+                                                                 />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                </Border.Triggers>
+                                <ContentPresenter/>
+                            </Border>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <fenestra:PositionalItemTemplateSelector x:Key="ChildrenTemplateSelector">
             <fenestra:PositionalItemTemplateSelector.Template>
                 <DataTemplate>
@@ -87,8 +132,7 @@
                                               />
                             </LinearGradientBrush>
                         </Border.BorderBrush>
-                        <ContentControl Style="{StaticResource ContentStyle}"
-                                        Content="{Binding}"
+                        <ContentControl Content="{Binding}"
                                         ContentTemplateSelector="{StaticResource ContextSelector}"
                                         d:ContentTemplate="{StaticResource DesignTimeContentTemplate}"
                                         />
@@ -97,8 +141,7 @@
             </fenestra:PositionalItemTemplateSelector.Template>
             <fenestra:PositionalItemTemplateSelector.EndingTemplate>
                 <DataTemplate>
-                    <ContentControl Style="{StaticResource ContentStyle}"
-                                    Content="{Binding}"
+                    <ContentControl Content="{Binding}"
                                     ContentTemplateSelector="{StaticResource ContextSelector}"
                                     d:ContentTemplate="{StaticResource DesignTimeContentTemplate}"
                                     />
