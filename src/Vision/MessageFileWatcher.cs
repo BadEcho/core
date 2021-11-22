@@ -80,6 +80,9 @@ namespace BadEcho.Omnified.Vision
         {
             var messageFile = new FileInfo(e.FullPath);
 
+            if (messageFile.Length == 0)
+                return;
+
             // Injected Omnified code will be writing to the message file at high frequency, so we should assume the file is
             // almost always open by that process.
             CurrentMessages = _processNewMessagesOnly
