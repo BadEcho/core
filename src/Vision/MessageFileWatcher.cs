@@ -86,10 +86,11 @@ namespace BadEcho.Omnified.Vision
                 ? messageFile.ReadAllText(FileShare.ReadWrite, _lastReadPosition)
                 : messageFile.ReadAllText(FileShare.ReadWrite);
 
-            _lastReadPosition = messageFile.Length;
-            
             if (!string.IsNullOrEmpty(CurrentMessages))
+            {
+                _lastReadPosition = messageFile.Length;
                 NewMessages?.Invoke(this, new EventArgs<string>(CurrentMessages));
+            }
         }
     }
 }
