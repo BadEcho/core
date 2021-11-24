@@ -57,8 +57,8 @@
                             </Border.RenderTransform>
                             <Border.Background>
                                 <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5" >
-                                    <GradientStop Color="#FF5BC3FF"/>
-                                    <GradientStop Color="#FF0081CB" Offset="1"/>
+                                    <GradientStop Color="#FFA4A2A3"/>
+                                    <GradientStop Color="#FFD2D2D2" Offset="1"/>
                                 </LinearGradientBrush>
                             </Border.Background>
                             <Border.Triggers>
@@ -66,7 +66,7 @@
                                     <BeginStoryboard>
                                         <Storyboard>
                                             <DoubleAnimation Storyboard.TargetProperty="(Border.Background).(GradientBrush.Opacity)" 
-                                                              BeginTime="00:00:02"
+                                                              BeginTime="00:00:05"
                                                               From="1"
                                                               To="0"
                                                               />
@@ -90,7 +90,7 @@
                                 <Border.Background>
                                     <LinearGradientBrush EndPoint="1.7,1" StartPoint="-0.5,0">
                                         <GradientStop Color="#00FFFFFF"/>
-                                        <GradientStop Color="#66FFFFFF" Offset="0.1"/>
+                                        <GradientStop Color="#FFFFFFFF" Offset="0.1"/>
                                         <GradientStop Color="#00FFFFFF" Offset="0.2"/>
                                     </LinearGradientBrush>
                                 </Border.Background>
@@ -98,17 +98,20 @@
                                     <EventTrigger RoutedEvent="Loaded">
                                         <BeginStoryboard>
                                             <Storyboard>
-                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[0].(GradientStop.Offset)">
-                                                    <EasingDoubleKeyFrame KeyTime="00:00:02.000000" Value="0.8"/>
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[0].(GradientStop.Offset)"
+                                                                               BeginTime="00:00:02">
+                                                    <EasingDoubleKeyFrame KeyTime="00:00:03" Value="0.8"/>
                                                 </DoubleAnimationUsingKeyFrames>
-                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[1].(GradientStop.Offset)">
-                                                    <EasingDoubleKeyFrame KeyTime="00:00:02.0" Value="0.9"/>
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[1].(GradientStop.Offset)"
+                                                                               BeginTime="00:00:02">
+                                                    <EasingDoubleKeyFrame KeyTime="00:00:03" Value="0.9"/>
                                                 </DoubleAnimationUsingKeyFrames>
-                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[2].(GradientStop.Offset)">
-                                                    <EasingDoubleKeyFrame KeyTime="00:00:02.0" Value="1"/>
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[2].(GradientStop.Offset)"
+                                                                               BeginTime="00:00:02">
+                                                    <EasingDoubleKeyFrame KeyTime="00:00:03" Value="1"/>
                                                 </DoubleAnimationUsingKeyFrames>
                                                 <DoubleAnimation Storyboard.TargetProperty="(Border.Background).(GradientBrush.Opacity)"
-                                                                 BeginTime="00:00:03"
+                                                                 BeginTime="00:00:05"
                                                                  From="1"
                                                                  To="0"
                                                                  />
@@ -136,7 +139,7 @@
                                 <GradientStop Color="{DynamicResource {x:Static t:Colors.FadingOutlineColorKey}}" 
                                               Offset="0.1"
                                               />
-                                <GradientStop Color="{DynamicResource {x:Static t:Colors.OutlineColorKey}}" 
+                                <GradientStop Color="{DynamicResource {x:Static t:Colors.OutlineMidpointColorKey}}" 
                                               Offset="0.5"
                                               />
                                 <GradientStop Color="{DynamicResource {x:Static t:Colors.FadingOutlineColorKey}}" 
