@@ -18,6 +18,7 @@
     <Color x:Key="{x:Static t:Colors.TextColorKey}">GhostWhite</Color>
     <Color x:Key="{x:Static t:Colors.CriticalTextColorKey}">#FFFF0046</Color>
     <Color x:Key="{x:Static t:Colors.OutlineColorKey}">Black</Color>
+    <Color x:Key="{x:Static t:Colors.OutlineMidpointColorKey}">#FF808080</Color>
     <Color x:Key="{x:Static t:Colors.FadingOutlineColorKey}">#44000000</Color>
 
     <SolidColorBrush f:Freeze="True" 

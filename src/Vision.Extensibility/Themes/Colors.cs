@@ -43,6 +43,13 @@ namespace BadEcho.Omnified.Vision.Extensibility.Themes
             _Provider.CreateKey(nameof(OutlineColorKey));
 
         /// <summary>
+        /// The color representing the halfway point between the color used for outlining and its opposite
+        /// on the color spectrum.
+        /// </summary>
+        public static readonly ResourceKey OutlineMidpointColorKey =
+            _Provider.CreateKey(nameof(OutlineMidpointColorKey));
+
+        /// <summary>
         /// The color used for fading out the outlines of standard text appearing in Vision.
         /// </summary>
         public static readonly ResourceKey FadingOutlineColorKey =
