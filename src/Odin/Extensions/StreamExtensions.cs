@@ -64,5 +64,21 @@ namespace BadEcho.Odin.Extensions
                 }
             }
         }
+
+        /// <summary>
+        /// Writes the stream's contents to a byte array.
+        /// </summary>
+        /// <param name="source">The stream to convert to a byte array.</param>
+        /// <returns>The contents of <c>source</c> as an array of bytes.</returns>
+        public static byte[] ToArray(this Stream source)
+        {
+            Require.NotNull(source, nameof(source));
+
+            using (var memoryStream = new MemoryStream())
+            {
+                source.CopyTo(memoryStream);
+                return memoryStream.ToArray();
+            }
+        }
     }
 }
