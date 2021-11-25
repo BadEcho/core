@@ -25,6 +25,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>EffectMessages.resx</DependentUpon>
     </Compile>
+    <Compile Update="Properties\EffectSounds.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>EffectSounds.resx</DependentUpon>
+    </Compile>
     <Compile Update="Properties\Strings.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -36,6 +41,10 @@
     <EmbeddedResource Update="Properties\EffectMessages.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>EffectMessages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Properties\EffectSounds.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>EffectSounds.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Properties\Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
