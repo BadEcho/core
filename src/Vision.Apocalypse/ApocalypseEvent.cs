@@ -12,6 +12,11 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using BadEcho.Odin;
+using BadEcho.Odin.Extensions;
 
 namespace BadEcho.Omnified.Vision.Apocalypse
 {
@@ -32,10 +37,51 @@ namespace BadEcho.Omnified.Vision.Apocalypse
     /// </remarks>
     public abstract class ApocalypseEvent
     {
+        private readonly Lazy<WeightedRandom<Func<Stream>>> _soundMap;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ApocalypseEvent"/> class.
+        /// </summary>
+        protected ApocalypseEvent() =>
+            _soundMap = new Lazy<WeightedRandom<Func<Stream>>>(InitializeSoundMap, LazyThreadSafetyMode.ExecutionAndPublication);
+
         /// <summary>
         /// Gets the date and time at which this Apocalypse event occurred.
         /// </summary>
         public DateTime Timestamp  
         { get; init; }
+
+        /// <summary>
+        /// Gets the raw data for the sound effect to play, if one is to be played, announcing the event's occurrence.
+        /// </summary>
+        public IEnumerable<byte>? SoundEffect
+        {
+            get
+            {
+                Func<Stream>? soundStreamAccessor = SoundMap.Next();
+
+                if (soundStreamAccessor == null)
+                    return null;
+
+                using (var soundStream = soundStreamAccessor())
+                {
+                    return soundStream.ToArray();
+                }
+            }
+        }
+
+        private WeightedRandom<Func<Stream>> SoundMap
+            => _soundMap.Value;
+
+        /// <summary>
+        /// Creates weighted random value mappings for sound effects that might play upon the event occurring.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="WeightedRandom{T}"/> instance mapping each sound effect for the event to the weighted probability that said
+        /// sound effect might occur.
+        /// </returns>
+        /// <remarks>By default, an Apocalypse event has no sound effect played announcing its occurrence.</remarks>
+        protected virtual WeightedRandom<Func<Stream>> InitializeSoundMap()
+            => new();
     }
 }
