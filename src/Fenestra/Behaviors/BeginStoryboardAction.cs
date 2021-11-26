@@ -17,7 +17,7 @@ using System.Windows.Media.Animation;
 namespace BadEcho.Fenestra.Behaviors
 {
     /// <summary>
-    /// Provides an action that, when executed, will apply animations found in a bound <see cref="Storyboard"/> instance to
+    /// Provides an action that, when executed, will apply animations found in a <see cref="Storyboard"/> instance bound to
     /// the dependency object this action is attached to.
     /// </summary>
     public sealed class BeginStoryboardAction : BehaviorAction<DependencyObject>
