@@ -14,6 +14,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using BadEcho.Odin;
 using BadEcho.Odin.Extensions;
@@ -54,14 +55,14 @@ namespace BadEcho.Omnified.Vision.Apocalypse
         /// <summary>
         /// Gets the raw data for the sound effect to play, if one is to be played, announcing the event's occurrence.
         /// </summary>
-        public IEnumerable<byte>? SoundEffect
+        public IEnumerable<byte> EffectSound
         {
             get
             {
                 Func<Stream>? soundStreamAccessor = SoundMap.Next();
 
                 if (soundStreamAccessor == null)
-                    return null;
+                    return Enumerable.Empty<byte>();
 
                 using (var soundStream = soundStreamAccessor())
                 {

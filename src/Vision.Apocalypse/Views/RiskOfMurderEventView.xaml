@@ -28,6 +28,9 @@
                                        />
     </d:DesignProperties.DataContext>
     <Grid>
+        <fenestra:LoadedEventBehavior.Actions>
+            <fenestra:PlaySoundAction Sound="{Binding EffectSound}"/>
+        </fenestra:LoadedEventBehavior.Actions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" SharedSizeGroup="TimestampColumn"/>
             <ColumnDefinition Width="Auto" SharedSizeGroup="DieColumn"/>

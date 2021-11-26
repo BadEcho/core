@@ -12,6 +12,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using BadEcho.Fenestra;
 using BadEcho.Fenestra.ViewModels;
 
@@ -37,5 +38,10 @@ namespace BadEcho.Omnified.Vision.Apocalypse.ViewModels
         /// Gets or sets the date and time at which the bound Apocalypse event occurred.
         /// </summary>
         DateTime Timestamp { get; set; }
+
+        /// <summary>
+        /// Gets or sets the data composing the sound to play upon the occurrence of the bound Apocalypse event.
+        /// </summary>
+        IEnumerable<byte> EffectSound { get; set; }
     }
 }

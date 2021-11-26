@@ -12,6 +12,8 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using BadEcho.Fenestra.ViewModels;
 using BadEcho.Odin;
 using BadEcho.Omnified.Vision.Apocalypse.Properties;
@@ -27,6 +29,7 @@ namespace BadEcho.Omnified.Vision.Apocalypse.ViewModels
     {
         private string _effectMessage = string.Empty;
         private double _effectMessageMaxWidth = double.NaN;
+        private IEnumerable<byte> _effectSound = Enumerable.Empty<byte>();
         private DateTime _timestamp;
 
         /// <inheritdoc/>
@@ -51,6 +54,13 @@ namespace BadEcho.Omnified.Vision.Apocalypse.ViewModels
         }
 
         /// <inheritdoc/>
+        public IEnumerable<byte> EffectSound
+        {
+            get => _effectSound;
+            set => NotifyIfChanged(ref _effectSound, value);
+        }
+
+        /// <inheritdoc/>
         protected override void OnBinding(TApocalypseEvent model)
         {
             Require.NotNull(model, nameof(model));
@@ -58,17 +68,20 @@ namespace BadEcho.Omnified.Vision.Apocalypse.ViewModels
             string? effectMessage = model.ToString();
 
             if (string.IsNullOrEmpty(effectMessage))
-                throw new ArgumentException(Strings.ApocalypseEventMissingMessage, nameof(model));
+                throw new ArgumentException(Strings.EventMissingMessage, nameof(model));
 
             EffectMessage = effectMessage;
             Timestamp = model.Timestamp;
+            EffectSound = model.EffectSound;
         }
 
         /// <inheritdoc/>
         protected override void OnUnbound(TApocalypseEvent model)
         {
             EffectMessage = string.Empty;
+            EffectMessageMaxWidth = double.NaN;
             Timestamp = default;
+            EffectSound = Enumerable.Empty<byte>();
         }
     }
 }
