@@ -63,9 +63,9 @@ namespace BadEcho.Omnified.Vision.Apocalypse.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Apocalypse events are required to return non-null/non-empty string representations of themselves..
         /// </summary>
-        internal static string ApocalypseEventMissingMessage {
+        internal static string EventMissingMessage {
             get {
-                return ResourceManager.GetString("ApocalypseEventMissingMessage", resourceCulture);
+                return ResourceManager.GetString("EventMissingMessage", resourceCulture);
             }
         }
         
@@ -75,6 +75,15 @@ namespace BadEcho.Omnified.Vision.Apocalypse.Properties {
         internal static string EventTypeUnsupportedJson {
             get {
                 return ResourceManager.GetString("EventTypeUnsupportedJson", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vision is missing expected audio effect resource &apos;{0}&apos;..
+        /// </summary>
+        internal static string SoundMissingResource {
+            get {
+                return ResourceManager.GetString("SoundMissingResource", resourceCulture);
             }
         }
     }
