@@ -82,8 +82,8 @@ namespace BadEcho.Omnified.Vision.Apocalypse.Properties
         /// <summary>
         /// Gets a stream for the awesome sound effect played when we're ported too high up.
         /// </summary>
-        public static Stream Freefallin
-            => GetStream(nameof(Freefallin));
+        public static Stream FreeFallin
+            => GetStream(nameof(FreeFallin));
 
         /// <summary>
         /// Gets a stream for the very animoo-ish sound effect played upon achieving a Kamehameha.
