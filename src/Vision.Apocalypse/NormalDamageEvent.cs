@@ -12,6 +12,8 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.IO;
+using BadEcho.Odin;
 using BadEcho.Omnified.Vision.Apocalypse.Properties;
 
 namespace BadEcho.Omnified.Vision.Apocalypse
@@ -63,6 +65,20 @@ namespace BadEcho.Omnified.Vision.Apocalypse
                 = FatalisAfflicted ? $"{Environment.NewLine}{EffectMessages.Fatalis}" : string.Empty;
 
             return $"{effectMessage}{fatalisMessage}";
+        }
+
+        /// <inheritdoc/>
+        /// <remarks>
+        /// Normal damage events only play sounds if we've been afflicted by Fatalis.
+        /// </remarks>
+        protected override WeightedRandom<Func<Stream>> InitializeSoundMap()
+        {
+            var soundMap = base.InitializeSoundMap();
+
+            if (FatalisAfflicted)
+                soundMap.AddWeight(() => EffectSounds.FatalisAffliction, 1);
+
+            return soundMap;
         }
     }
 }
