@@ -11,7 +11,11 @@
 // </copyright>
 //-----------------------------------------------------------------------s
 
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using BadEcho.Odin;
 using BadEcho.Odin.Extensions;
 using BadEcho.Omnified.Vision.Apocalypse.Properties;
 
@@ -64,14 +68,52 @@ namespace BadEcho.Omnified.Vision.Apocalypse
         public override string ToString()
             => DescribeBonus(BonusDamageType, IsExtreme).CulturedFormat(BonusMultiplier, AdditionalDamage);
 
-        private static string DescribeBonus(BonusDamageType bonusDamageType, bool bonusMultiplier)
+        /// <inheritdoc/>
+        protected override WeightedRandom<Func<Stream>> InitializeSoundMap()
+        {
+            var soundMap = base.InitializeSoundMap();
+
+            foreach (var (soundAccessor, weight) in GetWeightedSounds(BonusDamageType, IsExtreme))
+            {
+                soundMap.AddWeight(soundAccessor, weight);
+            }
+
+            return soundMap;
+        }
+
+        private static string DescribeBonus(BonusDamageType bonusDamageType, bool isExtreme)
             => bonusDamageType switch
             {
-                BonusDamageType.CriticalHit => bonusMultiplier ? EffectMessages.ExtremeCriticalHit : EffectMessages.CriticalHit,
+                BonusDamageType.CriticalHit => isExtreme ? EffectMessages.ExtremeCriticalHit : EffectMessages.CriticalHit,
                 BonusDamageType.Kamehameha => EffectMessages.Kamehameha,
                 _ => throw new InvalidEnumArgumentException(nameof(bonusDamageType),
                                                             (int) bonusDamageType,
                                                             typeof(BonusDamageType))
             };
+
+        private static IEnumerable<(Func<Stream>, int)> GetWeightedSounds(BonusDamageType bonusDamageType, bool isExtreme)
+            => bonusDamageType switch
+            {
+                BonusDamageType.CriticalHit
+                    => isExtreme
+                        ? CreateWeightedSounds((() => EffectSounds.CriticalHitMudbone, 1))
+                        : CreateWeightedSounds((() => EffectSounds.CriticalHitChocobo, 2),
+                                         (() => EffectSounds.CriticalHitComboBreaker, 1)),
+                BonusDamageType.Kamehameha
+                    => CreateWeightedSounds((() => EffectSounds.Kamehameha, 1)),
+                _
+                    => throw new InvalidEnumArgumentException(nameof(bonusDamageType),
+                                                              (int) bonusDamageType,
+                                                              typeof(BonusDamageType))
+            };
+
+        private static List<(Func<Stream>, int)> CreateWeightedSounds(params (Func<Stream>, int)[] sounds)
+        {
+            var soundMap = new List<(Func<Stream>, int)>();
+
+            soundMap.AddRange(sounds);
+
+            return soundMap;
+        }
     }
 }

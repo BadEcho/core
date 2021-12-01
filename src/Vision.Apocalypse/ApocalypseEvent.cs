@@ -59,14 +59,14 @@ namespace BadEcho.Omnified.Vision.Apocalypse
         {
             get
             {
-                Func<Stream>? soundStreamAccessor = SoundMap.Next();
+                Func<Stream>? soundAccessor = SoundMap.Next();
 
-                if (soundStreamAccessor == null)
+                if (soundAccessor == null)
                     return Enumerable.Empty<byte>();
 
-                using (var soundStream = soundStreamAccessor())
+                using (var sound = soundAccessor())
                 {
-                    return soundStream.ToArray();
+                    return sound.ToArray();
                 }
             }
         }
