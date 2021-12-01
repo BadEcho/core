@@ -158,7 +158,7 @@ local function dumpPlayerApocalypseEvent()
         local lastXDisplacement = readFloat("lastXDisplacement")
         local lastYDisplacement = readFloat("lastYDisplacement")
         local lastZDisplacement = readFloat("lastZDisplacement")
-
+        
         apocalypseEvent = TeleportitisEvent(apocalypseEvent,
                                             lastXDisplacement,
                                             lastYDisplacement,
@@ -196,14 +196,13 @@ local function dumpEnemyApocalypseEvent()
     local lastEnemyDamageEventBonusAmount = readFloat("lastEnemyDamageEventBonusAmount")
 
     if logEnemyApocalypseCrit == 1 then
-       local playerCritDamageResult = readInteger("playerCritDamageResult")
-       local playerCritDamageResultUpper = readInteger("playerCritDamageResultUpper")
-       local playerCritDamageResultLower = readInteger("playerCritDamageResultLower")
-       local isExtreme = false
+        local playerCritDamageResult = readInteger("playerCritDamageResult")
+        local playerCritDamageResultUpper = readInteger("playerCritDamageResultUpper")
+        local playerCritDamageResultLower = readInteger("playerCritDamageResultLower")        
 
-       local playerCritDamageRange 
+        local playerCritDamageRange
             = playerCritDamageResultUpper - playerCritDamageResultLower
-       local playerCritExtremeMinimum 
+        local playerCritExtremeMinimum
             = playerCritDamageResultUpper - (playerCritDamageRange * (1/3))
 
         local isExtreme = playerCritDamageResult >= critHighDamageMinimum
