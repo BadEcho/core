@@ -50,6 +50,13 @@ namespace BadEcho.Omnified.Vision.Apocalypse
         public double ZDisplacement
         { get; init; }
 
+        /// <summary>
+        /// Gets a value indicating if the vertical displacement was enough for the player to be left "free fallin'" to
+        /// their deaths.
+        /// </summary>
+        public bool IsFreeFalling
+        { get; init; }
+
         /// <inheritdoc/>
         public override string ToString()
             => $"{EffectMessages.Teleportitis.CulturedFormat(XDisplacement, YDisplacement, ZDisplacement)}{base.ToString()}";
