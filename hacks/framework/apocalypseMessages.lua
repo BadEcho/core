@@ -70,10 +70,11 @@ function ExtraDamageEvent(playerApocalypseEvent, extraDamageMultiplier)
     return extraDamageEvent
 end
 
-function TeleportitisEvent(playerApocalypseEvent, xDisp, yDisp, zDisp)
+function TeleportitisEvent(playerApocalypseEvent, xDisp, yDisp, zDisp, isFreeFalling)
     playerApocalypseEvent.XDisplacement = xDisp
     playerApocalypseEvent.YDisplacement = yDisp
     playerApocalypseEvent.ZDisplacement = zDisp
+    playerApocalypseEvent.IsFreeFalling = isFreeFalling
 
     local teleportitisEvent = {
         Type = EventType.Teleportitis,

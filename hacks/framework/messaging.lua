@@ -158,11 +158,14 @@ local function dumpPlayerApocalypseEvent()
         local lastXDisplacement = readFloat("lastXDisplacement")
         local lastYDisplacement = readFloat("lastYDisplacement")
         local lastZDisplacement = readFloat("lastZDisplacement")
+        local lastVerticalDisplacement = readFloat("lastVerticalDisplacement")
+        local isFreeFalling = lastVerticalDisplacement > freeFallThreshold
         
         apocalypseEvent = TeleportitisEvent(apocalypseEvent,
                                             lastXDisplacement,
                                             lastYDisplacement,
-                                            lastZDisplacement)         
+                                            lastZDisplacement,
+                                            isFreeFalling)         
     elseif apocalypseDieRoll <= 9 then
         -- Risk of Murder.
         local murderRoll = readInteger("murderRoll")
