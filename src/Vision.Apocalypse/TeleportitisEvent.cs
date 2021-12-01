@@ -11,8 +11,11 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Odin;
 using BadEcho.Odin.Extensions;
 using BadEcho.Omnified.Vision.Apocalypse.Properties;
+using System;
+using System.IO;
 
 namespace BadEcho.Omnified.Vision.Apocalypse
 {
@@ -60,5 +63,16 @@ namespace BadEcho.Omnified.Vision.Apocalypse
         /// <inheritdoc/>
         public override string ToString()
             => $"{EffectMessages.Teleportitis.CulturedFormat(XDisplacement, YDisplacement, ZDisplacement)}{base.ToString()}";
+
+        /// <inheritdoc/>
+        protected override WeightedRandom<Func<Stream>> InitializeSoundMap()
+        {
+            var soundMap = base.InitializeSoundMap();
+
+            if (IsFreeFalling)
+                soundMap.AddWeight(() => EffectSounds.FreeFallin, 1);
+
+            return soundMap;
+        }
     }
 }
