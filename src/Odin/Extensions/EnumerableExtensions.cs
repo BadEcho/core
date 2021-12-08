@@ -69,5 +69,16 @@ namespace BadEcho.Odin.Extensions
             return source.Where(x => x != null)
                          .Select(x => x!);
         }
+
+        /// <summary>
+        /// Filters a sequence for all strings neither null nor empty.
+        /// </summary>
+        /// <param name="source">The sequence of strings to filter null and empty values out of.</param>
+        /// <returns><c>source</c> with null and empty values removed.</returns>
+        public static IEnumerable<string> WhereNotNullOrEmpty(this IEnumerable<string?> source)
+        {
+            return source.WhereNotNull()
+                         .Where(x => x.Length != 0);
+        }
     }
 }

@@ -70,9 +70,8 @@ namespace BadEcho.Omnified.Vision.Apocalypse
                               Converters = { new EventConverter() }
                           };
 
-            return messages.TrimStart(Environment.NewLine.ToCharArray())
-                           .TrimEnd(Environment.NewLine.ToCharArray())
-                           .Split(Environment.NewLine)
+            return messages.Split(Environment.NewLine)
+                           .WhereNotNullOrEmpty()
                            .Select(ReadEvent);
             
             ApocalypseEvent ReadEvent(string message)
