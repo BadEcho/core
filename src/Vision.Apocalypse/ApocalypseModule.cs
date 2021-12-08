@@ -71,9 +71,10 @@ namespace BadEcho.Omnified.Vision.Apocalypse
                           };
 
             return messages.TrimStart(Environment.NewLine.ToCharArray())
+                           .TrimEnd(Environment.NewLine.ToCharArray())
                            .Split(Environment.NewLine)
                            .Select(ReadEvent);
-
+            
             ApocalypseEvent ReadEvent(string message)
             {
                 var apocalypseEvent = JsonSerializer.Deserialize<ApocalypseEvent>(message, options);
