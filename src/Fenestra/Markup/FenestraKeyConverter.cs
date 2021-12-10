@@ -44,7 +44,7 @@ internal sealed class FenestraKeyConverter : TypeConverter
     private const char KEY_DELIMITER = '!';
 
     /// <inheritdoc/>
-    public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+    public override object ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType)
     {
         if (CanConvertTo(context, destinationType))
         {
@@ -60,7 +60,7 @@ internal sealed class FenestraKeyConverter : TypeConverter
     }
 
     /// <inheritdoc/>
-    public override object? ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+    public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value)
     {
         var stringValue = (string) value;
 
