@@ -37,9 +37,9 @@ internal static class Kernel32
     /// If <c>lpModuleName</c> is null, then this will return a handle to the file used to create the calling process.
     /// </para>
     /// </remarks>
-    [DllImport(LIBRARY_NAME, CharSet = CharSet.Auto, BestFitMapping = false, ThrowOnUnmappableChar = true, SetLastError = true)]
+    [DllImport(LIBRARY_NAME, EntryPoint = "GetModuleHandleW", CharSet = CharSet.Unicode, SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    public static extern IntPtr GetModuleHandle(string lpModuleName);
+    internal static extern IntPtr GetModuleHandle(string lpModuleName);
 
     /// <summary>
     /// Retrieves the address of an exported function or variable from the specified dynamic-link library.
@@ -53,5 +53,5 @@ internal static class Kernel32
     /// </remarks>
     [DllImport(LIBRARY_NAME, CharSet = CharSet.Ansi, ExactSpelling = true, BestFitMapping = false, ThrowOnUnmappableChar = true, SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    public static extern IntPtr GetProcAddress(IntPtr hModule, [MarshalAs(UnmanagedType.LPStr)]string lpProcName);
+    public static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
 }
