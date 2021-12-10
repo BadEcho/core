@@ -1,6 +1,6 @@
-<Project>
+<Project>    
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <PackageId>$(MSBuildProjectName)</PackageId>
     <Authors>Matt Weber</Authors>
     <Company>BadEcho LLC</Company>
@@ -15,6 +15,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <WarningsAsErrors>CS8600;CS8601;CS8602;CS8603;CS8604;CS8605;CS8613;CS8625;CS8629;CS8614;CS8618;CS8619;CS8633</WarningsAsErrors>
     <UseCommonOutputDirectory>true</UseCommonOutputDirectory>
+	<IncludePackageReferencesDuringMarkupCompilation>false</IncludePackageReferencesDuringMarkupCompilation>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

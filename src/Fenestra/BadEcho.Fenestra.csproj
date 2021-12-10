@@ -4,7 +4,7 @@
     <Product>Fenestra UI Framework</Product>
     <Version>0.1.0</Version>
     <Description>Bad Echo user interface framework for WPF.</Description>
-	  <TargetFramework>net5.0-windows</TargetFramework>
+	  <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
