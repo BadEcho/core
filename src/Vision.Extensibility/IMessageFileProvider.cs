@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using BadEcho.Odin;
 
 namespace BadEcho.Omnified.Vision.Extensibility

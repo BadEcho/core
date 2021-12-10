@@ -11,9 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.IO;
 using BadEcho.Odin.Extensions;
 using BadEcho.Odin.Properties;
 

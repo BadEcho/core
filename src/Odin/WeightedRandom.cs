@@ -11,8 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 
 namespace BadEcho.Odin

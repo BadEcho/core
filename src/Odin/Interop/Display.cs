@@ -11,13 +11,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
 using BadEcho.Odin.Extensions;
 using BadEcho.Odin.Logging;
 using BadEcho.Odin.Properties;

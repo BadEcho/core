@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Reflection;
 using BadEcho.Odin.Logging;
 using BadEcho.Odin.Properties;

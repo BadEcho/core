@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Runtime.Serialization;
 using BadEcho.Odin;
 

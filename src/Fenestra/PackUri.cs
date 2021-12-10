@@ -11,8 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -177,7 +175,7 @@ namespace BadEcho.Fenestra
         public static PackUri FromRelativePath<T>(string relativePath)
             => FromRelativePath<T>(relativePath, UriKind.Relative);
         
-        private static string MakePackUri([NotNull]Assembly resourceAssembly, string path, bool isRelative)
+        private static string MakePackUri(Assembly resourceAssembly, string path, bool isRelative)
         {
             Require.NotNull(resourceAssembly, nameof(resourceAssembly));
             Require.NotNull(path, nameof(path));

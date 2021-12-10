@@ -12,8 +12,6 @@
 //-----------------------------------------------------------------------
 
 using BadEcho.Odin.Extensions;
-using System.Collections.Generic;
-using System.Linq;
 using BadEcho.Odin;
 
 namespace BadEcho.Fenestra.ViewModels

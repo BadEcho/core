@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Windows.Input;
 using BadEcho.Fenestra.Properties;
 

@@ -11,10 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using BadEcho.Odin.Extensions;
 
 namespace BadEcho.Odin.Extensibility

@@ -11,9 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading;
 
 namespace BadEcho.Odin
 {

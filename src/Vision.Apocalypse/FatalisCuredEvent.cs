@@ -14,7 +14,6 @@
 using BadEcho.Odin;
 using BadEcho.Odin.Extensions;
 using BadEcho.Omnified.Vision.Apocalypse.Properties;
-using System;
 using System.IO;
 
 namespace BadEcho.Omnified.Vision.Apocalypse

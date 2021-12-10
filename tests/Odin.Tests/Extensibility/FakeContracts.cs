@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using BadEcho.Odin.Extensibility;
 
 namespace BadEcho.Odin.Tests.Extensibility

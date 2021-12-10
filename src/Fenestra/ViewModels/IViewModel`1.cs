@@ -11,8 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.Collections.Generic;
-
 namespace BadEcho.Fenestra.ViewModels
 {
     /// <summary>

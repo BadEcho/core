@@ -11,9 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Configuration;
-using System.Threading;
 
 namespace BadEcho.Odin.XmlConfiguration.Extensibility
 {

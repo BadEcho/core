@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Composition;
 using BadEcho.Odin.Extensibility;
 using BadEcho.Odin.Extensibility.Hosting;

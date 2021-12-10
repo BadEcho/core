@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.Collections.Generic;
 using System.Composition;
 using System.Text.Json;
 using BadEcho.Odin.Extensibility.Hosting;

@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using BadEcho.Odin.Extensions;
 using BadEcho.Omnified.Vision.Apocalypse.Properties;
 

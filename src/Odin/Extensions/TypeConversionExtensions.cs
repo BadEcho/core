@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
+
 using System.Globalization;
 
 namespace BadEcho.Odin.Extensions

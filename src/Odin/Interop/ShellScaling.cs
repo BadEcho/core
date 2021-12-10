@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Runtime.InteropServices;
 
 namespace BadEcho.Odin.Interop

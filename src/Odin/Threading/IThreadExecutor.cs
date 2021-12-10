@@ -11,9 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
-using System.Threading;
-
 namespace BadEcho.Odin.Threading
 {
     /// <summary>

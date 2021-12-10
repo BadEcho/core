@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.Collections.Generic;
 using System.Windows.Threading;
 using BadEcho.Odin;
 using BadEcho.Odin.Collections;

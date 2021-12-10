@@ -106,7 +106,7 @@ namespace BadEcho.Fenestra.Behaviors
             _writableStoryboard.Completed += HandleStoryboardCompleted;
         }
 
-        private void HandleStoryboardCompleted(object? sender, System.EventArgs e) 
+        private void HandleStoryboardCompleted(object? sender, EventArgs e) 
             => _isActive = false;
     }
 }

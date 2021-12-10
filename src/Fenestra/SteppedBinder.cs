@@ -11,10 +11,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Diagnostics;
 using System.Globalization;
-using System.Timers;
 using System.Windows;
 using System.Windows.Threading;
 using BadEcho.Fenestra.Properties;
@@ -49,10 +47,10 @@ namespace BadEcho.Fenestra
     /// </remarks>
     internal sealed class SteppedBinder : TransientBinder
     {
-        private readonly Timer _targetStepTimer
+        private readonly System.Timers.Timer _targetStepTimer
             = new();
 
-        private readonly Timer _sourceStepTimer
+        private readonly System.Timers.Timer _sourceStepTimer
             = new();
 
         private readonly Stopwatch _sequenceStopwatch 

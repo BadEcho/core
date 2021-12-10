@@ -11,9 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-
 namespace BadEcho.Odin.Extensibility.Configuration
 {
     /// <summary>

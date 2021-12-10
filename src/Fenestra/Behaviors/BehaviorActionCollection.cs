@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.Linq;
 using System.Windows;
 
 namespace BadEcho.Fenestra.Behaviors

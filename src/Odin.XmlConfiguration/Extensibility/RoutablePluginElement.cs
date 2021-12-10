@@ -11,11 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Threading;
 using BadEcho.Odin.Extensibility.Configuration;
 
 namespace BadEcho.Odin.XmlConfiguration.Extensibility

@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Composition;
 
 namespace BadEcho.Fenestra.Themes

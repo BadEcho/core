@@ -11,9 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Reflection;
-using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Controls;

@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.Collections.Generic;
 using BadEcho.Odin;
 
 namespace BadEcho.Fenestra.ViewModels

@@ -11,9 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using BadEcho.Fenestra.ViewModels;
 using BadEcho.Odin;
 using BadEcho.Omnified.Vision.Apocalypse.Properties;

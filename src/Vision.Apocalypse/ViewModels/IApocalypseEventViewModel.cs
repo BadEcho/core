@@ -11,8 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
 using BadEcho.Fenestra;
 using BadEcho.Fenestra.ViewModels;
 

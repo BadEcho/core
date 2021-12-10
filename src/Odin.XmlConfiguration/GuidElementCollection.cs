@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Configuration;
 
 namespace BadEcho.Odin.XmlConfiguration

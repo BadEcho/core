@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.IO;
 using System.Windows.Markup;
 using System.Windows.Threading;

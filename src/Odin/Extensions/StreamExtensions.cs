@@ -11,8 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.IO;
-
 namespace BadEcho.Odin.Extensions
 {
     /// <summary>

@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Collections;
 
 namespace BadEcho.Odin.Collections

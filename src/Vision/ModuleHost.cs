@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using BadEcho.Fenestra.ViewModels;
 using BadEcho.Odin;
 using BadEcho.Omnified.Vision.Extensibility;

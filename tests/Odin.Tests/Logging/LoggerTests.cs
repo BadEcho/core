@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Diagnostics.Tracing;
 using BadEcho.Odin.Logging;
 using Xunit;

@@ -11,9 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
-using System.IO;
-using System.Linq;
 using BadEcho.Odin.Extensibility.Hosting;
 using BadEcho.Odin.Tests.ExtensibilityPoint;
 using Xunit;

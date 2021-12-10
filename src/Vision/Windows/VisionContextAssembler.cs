@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Windows.Threading;
 using BadEcho.Fenestra.Windows;
 using BadEcho.Odin.Configuration;

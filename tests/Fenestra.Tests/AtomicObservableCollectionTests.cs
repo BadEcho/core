@@ -11,9 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Threading.Tasks;
 using System.Windows.Threading;
 using BadEcho.Fenestra.Extensions;
 using Xunit;
