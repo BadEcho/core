@@ -14,25 +14,24 @@
 using System.Windows;
 using BadEcho.Fenestra.Markup;
 
-namespace BadEcho.Omnified.Vision.Extensibility.Themes
+namespace BadEcho.Omnified.Vision.Extensibility.Themes;
+
+/// <summary>
+/// Provides resource keys for font-related resources used by Vision and its modules.
+/// </summary>
+public static class Fonts
 {
+    private static readonly FenestraKeyProvider _Provider = new(typeof(Fonts));
+
     /// <summary>
-    /// Provides resource keys for font-related resources used by Vision and its modules.
+    /// The standard font family for text appearing in Vision.
     /// </summary>
-    public static class Fonts
-    {
-        private static readonly FenestraKeyProvider _Provider = new(typeof(Fonts));
+    public static readonly ResourceKey FontFamilyKey =
+        _Provider.CreateKey(nameof(FontFamilyKey));
 
-        /// <summary>
-        /// The standard font family for text appearing in Vision.
-        /// </summary>
-        public static readonly ResourceKey FontFamilyKey =
-            _Provider.CreateKey(nameof(FontFamilyKey));
-
-        /// <summary>
-        /// The font family for the Vision application's title text.
-        /// </summary>
-        public static readonly ResourceKey VisionTitleFontFamilyKey =
-            _Provider.CreateKey(nameof(VisionTitleFontFamilyKey));
-    }
+    /// <summary>
+    /// The font family for the Vision application's title text.
+    /// </summary>
+    public static readonly ResourceKey VisionTitleFontFamilyKey =
+        _Provider.CreateKey(nameof(VisionTitleFontFamilyKey));
 }

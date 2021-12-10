@@ -11,51 +11,50 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin
+namespace BadEcho.Odin;
+
+/// <summary>
+/// Provides a trampoline operation, which allows for a tail-recursive styled operation to be executed as if it was
+/// implemented in a language supporting tail call optimizations.
+/// </summary>
+public sealed class Trampoline
 {
     /// <summary>
-    /// Provides a trampoline operation, which allows for a tail-recursive styled operation to be executed as if it was
-    /// implemented in a language supporting tail call optimizations.
+    /// Executes a method that takes no arguments in a tail-recursive fashion until the end of the trampolined call chain has been
+    /// reached.
     /// </summary>
-    public sealed class Trampoline
+    /// <param name="method">The method to execute.</param>
+    public static void Execute(Func<Bounce> method)
     {
-        /// <summary>
-        /// Executes a method that takes no arguments in a tail-recursive fashion until the end of the trampolined call chain has been
-        /// reached.
-        /// </summary>
-        /// <param name="method">The method to execute.</param>
-        public static void Execute(Func<Bounce> method)
+        Require.NotNull(method, nameof(method));
+
+        Bounce bouncingMethod = Bounce.Continue();
+
+        while (!bouncingMethod.IsFinished)
         {
-            Require.NotNull(method, nameof(method));
+            bouncingMethod = method();
+        }
+    }
 
-            Bounce bouncingMethod = Bounce.Continue();
+    /// <summary>
+    /// Executes a method that takes a single argument in a tail-recursive fashion until the end of the trampolined call chain has
+    /// been reached and a final result returned.
+    /// </summary>
+    /// <typeparam name="T">The type of result for the operation.</typeparam>
+    /// <param name="method">The method to execute.</param>
+    /// <param name="argument">The initial argument to be provided to the call chain.</param>
+    /// <returns>The result of the tail-recursive operation.</returns>
+    public static T Execute<T>(Func<T, Bounce<T>> method, T argument)
+    {
+        Require.NotNull(method, nameof(method));
 
-            while (!bouncingMethod.IsFinished)
-            {
-                bouncingMethod = method();
-            }
+        Bounce<T> bouncingMethod = Bounce.Continue(argument);
+
+        while (!bouncingMethod.IsFinished)
+        {
+            bouncingMethod = method(bouncingMethod.Result);
         }
 
-        /// <summary>
-        /// Executes a method that takes a single argument in a tail-recursive fashion until the end of the trampolined call chain has
-        /// been reached and a final result returned.
-        /// </summary>
-        /// <typeparam name="T">The type of result for the operation.</typeparam>
-        /// <param name="method">The method to execute.</param>
-        /// <param name="argument">The initial argument to be provided to the call chain.</param>
-        /// <returns>The result of the tail-recursive operation.</returns>
-        public static T Execute<T>(Func<T, Bounce<T>> method, T argument)
-        {
-            Require.NotNull(method, nameof(method));
-
-            Bounce<T> bouncingMethod = Bounce.Continue(argument);
-
-            while (!bouncingMethod.IsFinished)
-            {
-                bouncingMethod = method(bouncingMethod.Result);
-            }
-
-            return bouncingMethod.Result;
-        }
+        return bouncingMethod.Result;
     }
 }

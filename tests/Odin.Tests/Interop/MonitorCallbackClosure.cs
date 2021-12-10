@@ -14,21 +14,20 @@
 
 using BadEcho.Odin.Interop;
 
-namespace BadEcho.Odin.Tests.Interop
+namespace BadEcho.Odin.Tests.Interop;
+
+/// <summary>
+/// A test referencing environment for <see cref="MonitorEnumProc"/> callbacks.
+/// </summary>
+public sealed class MonitorCallbackClosure
 {
-    /// <summary>
-    /// A test referencing environment for <see cref="MonitorEnumProc"/> callbacks.
-    /// </summary>
-    public sealed class MonitorCallbackClosure
+    public ICollection<IntPtr> Monitors
+    { get; } = new List<IntPtr>();
+
+    public bool Callback(IntPtr hMonitor, IntPtr hdcMonitor, IntPtr lprcMonitor, IntPtr lParam)
     {
-        public ICollection<IntPtr> Monitors
-        { get; } = new List<IntPtr>();
+        Monitors.Add(hMonitor);
 
-        public bool Callback(IntPtr hMonitor, IntPtr hdcMonitor, IntPtr lprcMonitor, IntPtr lParam)
-        {
-            Monitors.Add(hMonitor);
-
-            return true;
-        }
+        return true;
     }
 }

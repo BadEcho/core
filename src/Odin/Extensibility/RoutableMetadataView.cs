@@ -11,15 +11,14 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Extensibility
+namespace BadEcho.Odin.Extensibility;
+
+/// <summary>
+/// Provides a metadata view for a call-routable plugin's metadata.
+/// </summary>
+public sealed class RoutableMetadataView : IRoutableMetadata
 {
-    /// <summary>
-    /// Provides a metadata view for a call-routable plugin's metadata.
-    /// </summary>
-    public sealed class RoutableMetadataView : IRoutableMetadata
-    {
-        /// <inheritdoc/>
-        public Guid PluginId 
-        { get; set; }
-    }
+    /// <inheritdoc/>
+    public Guid PluginId 
+    { get; set; }
 }

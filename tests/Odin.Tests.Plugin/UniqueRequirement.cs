@@ -14,9 +14,8 @@
 using System.Composition;
 using BadEcho.Odin.Tests.Extensibility;
 
-namespace BadEcho.Odin.Tests.Plugin
-{
-    [Export(typeof(IUniqueRequirement))]
-    public sealed class UniqueRequirement : IUniqueRequirement
-    { }
-}
+namespace BadEcho.Odin.Tests.Plugin;
+
+[Export(typeof(IUniqueRequirement))]
+public sealed class UniqueRequirement : IUniqueRequirement
+{ }

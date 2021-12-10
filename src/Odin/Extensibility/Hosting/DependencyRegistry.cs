@@ -13,81 +13,80 @@
 
 using System.Composition.Convention;
 
-namespace BadEcho.Odin.Extensibility.Hosting
+namespace BadEcho.Odin.Extensibility.Hosting;
+
+/// <summary>
+/// Provides a means to register dependencies ahead of time for injection into pluggable parts during
+/// their initialization and exportation.
+/// </summary>
+/// <typeparam name="T">The type of object depended upon by a pluggable part.</typeparam>
+public abstract class DependencyRegistry<T> : IConventionProvider
 {
+    private static readonly object _ArmedLock = new();
+    private static T? _ArmedDependency;
+
+    private readonly string _contractName;
+
     /// <summary>
-    /// Provides a means to register dependencies ahead of time for injection into pluggable parts during
-    /// their initialization and exportation.
+    /// Initializes a new instance of the <see cref="DependencyRegistry{T}"/> class.
     /// </summary>
-    /// <typeparam name="T">The type of object depended upon by a pluggable part.</typeparam>
-    public abstract class DependencyRegistry<T> : IConventionProvider
+    /// <param name="contractName">The contract name to export the dependency as.</param>
+    protected DependencyRegistry(string contractName)
     {
-        private static readonly object _ArmedLock = new();
-        private static T? _ArmedDependency;
+        _contractName = contractName;
 
-        private readonly string _contractName;
+        Dependency = _ArmedDependency;
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DependencyRegistry{T}"/> class.
-        /// </summary>
-        /// <param name="contractName">The contract name to export the dependency as.</param>
-        protected DependencyRegistry(string contractName)
+    /// <summary>
+    /// Gets the loaded dependency object for injection into a pluggable part.
+    /// </summary>
+    public T? Dependency
+    { get; }
+
+    /// <summary>
+    /// Executes a method that is dependent on the provided dependency value within a context that guarantees
+    /// that the provided dependency value is armed throughout the method's execution.
+    /// </summary>
+    /// <param name="dependency">
+    /// The dependency value to arm for the duration of the method's execution.
+    /// </param>
+    /// <param name="method">The method to execute within the armed context.</param>
+    internal static void ExecuteWhileArmed(T dependency, Action method)
+    {
+        lock (_ArmedLock)
         {
-            _contractName = contractName;
+            _ArmedDependency = dependency;
 
-            Dependency = _ArmedDependency;
+            method();
         }
+    }
 
-        /// <summary>
-        /// Gets the loaded dependency object for injection into a pluggable part.
-        /// </summary>
-        public T? Dependency
-         { get; }
-
-        /// <summary>
-        /// Executes a method that is dependent on the provided dependency value within a context that guarantees
-        /// that the provided dependency value is armed throughout the method's execution.
-        /// </summary>
-        /// <param name="dependency">
-        /// The dependency value to arm for the duration of the method's execution.
-        /// </param>
-        /// <param name="method">The method to execute within the armed context.</param>
-        internal static void ExecuteWhileArmed(T dependency, Action method)
+    /// <summary>
+    /// Executes a method that is dependent on the provided dependency value within a context that guarantees
+    /// that the provided dependency value is armed throughout the method's execution.
+    /// </summary>
+    /// <typeparam name="TResult">The type of the value returned by the provided method.</typeparam>
+    /// <param name="dependency">The dependency value to arm for the duration of the method's execution.</param>
+    /// <param name="method">The method to execute within the armed context.</param>
+    /// <returns>The results of executing <c>method</c> within the armed context.</returns>
+    internal static TResult ExecuteWhileArmed<TResult>(T dependency, Func<TResult> method)
+    {
+        lock (_ArmedLock)
         {
-            lock (_ArmedLock)
-            {
-                _ArmedDependency = dependency;
+            _ArmedDependency = dependency;
 
-                method();
-            }
+            return method();
         }
+    }
 
-        /// <summary>
-        /// Executes a method that is dependent on the provided dependency value within a context that guarantees
-        /// that the provided dependency value is armed throughout the method's execution.
-        /// </summary>
-        /// <typeparam name="TResult">The type of the value returned by the provided method.</typeparam>
-        /// <param name="dependency">The dependency value to arm for the duration of the method's execution.</param>
-        /// <param name="method">The method to execute within the armed context.</param>
-        /// <returns>The results of executing <c>method</c> within the armed context.</returns>
-        internal static TResult ExecuteWhileArmed<TResult>(T dependency, Func<TResult> method)
-        {
-            lock (_ArmedLock)
-            {
-                _ArmedDependency = dependency;
+    /// <inheritdoc/>
+    public void ConfigureRules(ConventionBuilder conventions)
+    {
+        Require.NotNull(conventions, nameof(conventions));
 
-                return method();
-            }
-        }
-
-        /// <inheritdoc/>
-        public void ConfigureRules(ConventionBuilder conventions)
-        {
-            Require.NotNull(conventions, nameof(conventions));
-
-            conventions.ForType(GetType())
-                       .ExportProperties(p => p.Name == nameof(Dependency),
-                                         (_, ex) => ex.AsContractName(_contractName));
-        }
+        conventions.ForType(GetType())
+                   .ExportProperties(p => p.Name == nameof(Dependency),
+                                     (_, ex) => ex.AsContractName(_contractName));
     }
 }

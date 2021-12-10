@@ -14,17 +14,16 @@
 using BadEcho.Odin.Interop;
 using Xunit;
 
-namespace BadEcho.Odin.Tests.Interop
-{
-    public class ShellScalingTests
-    {
-        [Fact]
-        public void GetDpiForMonitor_DefaultDpiType_IsValid()
-        {
-            var monitors = UnmanagedHelper.EnumerateMonitors();
+namespace BadEcho.Odin.Tests.Interop;
 
-            Assert.Equal(ResultHandle.Success,
-                         ShellScaling.GetDpiForMonitor(monitors.First(), MonitorDpiType.Effective, out _, out _));
-        }
+public class ShellScalingTests
+{
+    [Fact]
+    public void GetDpiForMonitor_DefaultDpiType_IsValid()
+    {
+        var monitors = UnmanagedHelper.EnumerateMonitors();
+
+        Assert.Equal(ResultHandle.Success,
+                     ShellScaling.GetDpiForMonitor(monitors.First(), MonitorDpiType.Effective, out _, out _));
     }
 }

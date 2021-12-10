@@ -11,19 +11,18 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Fenestra.ViewModels
+namespace BadEcho.Fenestra.ViewModels;
+
+/// <summary>
+/// Provides a base view abstraction that automates communication between a view and bound
+/// <typeparamref name="TModelImpl"/>-typed data and preserves assignment compatibility with other providers of
+/// <typeparamref name="TModel"/>-typed data.
+/// </summary>
+/// <typeparam name="TModel"></typeparam>
+/// <typeparam name="TModelImpl"></typeparam>
+public abstract class ViewModel<TModel,TModelImpl> : ViewModel<TModelImpl>, IModelProvider<TModel>
+    where TModelImpl : TModel
 {
-    /// <summary>
-    /// Provides a base view abstraction that automates communication between a view and bound
-    /// <typeparamref name="TModelImpl"/>-typed data and preserves assignment compatibility with other providers of
-    /// <typeparamref name="TModel"/>-typed data.
-    /// </summary>
-    /// <typeparam name="TModel"></typeparam>
-    /// <typeparam name="TModelImpl"></typeparam>
-    public abstract class ViewModel<TModel,TModelImpl> : ViewModel<TModelImpl>, IModelProvider<TModel>
-        where TModelImpl : TModel
-    {
-        TModel? IModelProvider<TModel>.ActiveModel
-            => ActiveModel;
-    }
+    TModel? IModelProvider<TModel>.ActiveModel
+        => ActiveModel;
 }

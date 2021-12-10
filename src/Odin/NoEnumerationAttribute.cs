@@ -11,13 +11,12 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin
-{
-    /// <summary>
-    /// Indicates that an <see cref="System.Collections.IEnumerable"/>, passed in as a parameter, will not be
-    /// enumerated by the method.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Parameter)]
-    public sealed class NoEnumerationAttribute : Attribute
-    { }
-}
+namespace BadEcho.Odin;
+
+/// <summary>
+/// Indicates that an <see cref="System.Collections.IEnumerable"/>, passed in as a parameter, will not be
+/// enumerated by the method.
+/// </summary>
+[AttributeUsage(AttributeTargets.Parameter)]
+public sealed class NoEnumerationAttribute : Attribute
+{ }

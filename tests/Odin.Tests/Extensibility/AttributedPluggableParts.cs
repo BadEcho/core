@@ -13,39 +13,38 @@
 
 using System.Composition;
 
-namespace BadEcho.Odin.Tests.Extensibility
+namespace BadEcho.Odin.Tests.Extensibility;
+
+public sealed class PluggablePart
 {
-    public sealed class PluggablePart
-    {
-        [ImportMany]
-        public IEnumerable<IFakePart>? FakeParts
-        { get; set; }
-    }
+    [ImportMany]
+    public IEnumerable<IFakePart>? FakeParts
+    { get; set; }
+}
 
-    public sealed class PluggablePartWithFilterableImports
-    {
-        [Import]
-        public IFilterableFakePart? FakePart
-        { get; set; }
-    }
+public sealed class PluggablePartWithFilterableImports
+{
+    [Import]
+    public IFilterableFakePart? FakePart
+    { get; set; }
+}
 
-    public sealed class PluggablePartAndDependency : IFakeDependency
-    {
-        [ImportMany]
-        public IEnumerable<IFakePartWithComposedDependencies>? FakeParts
-        { get; set; }
-    }
+public sealed class PluggablePartAndDependency : IFakeDependency
+{
+    [ImportMany]
+    public IEnumerable<IFakePartWithComposedDependencies>? FakeParts
+    { get; set; }
+}
 
-    public sealed class PluggablePartAndFilterableDependency : IFilterableFakeDependency
-    {
-        public PluggablePartAndFilterableDependency(Guid familyId) 
-            => FamilyId = familyId;
+public sealed class PluggablePartAndFilterableDependency : IFilterableFakeDependency
+{
+    public PluggablePartAndFilterableDependency(Guid familyId) 
+        => FamilyId = familyId;
 
-        [Import]
-        public IFilterableFakePartWithComposedDependencies? FakePart
-        { get; set; }
+    [Import]
+    public IFilterableFakePartWithComposedDependencies? FakePart
+    { get; set; }
 
-        public Guid FamilyId 
-        { get; }
-    }
+    public Guid FamilyId 
+    { get; }
 }

@@ -11,13 +11,12 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Threading
+namespace BadEcho.Odin.Threading;
+
+/// <summary>
+/// Provides a representation of a delegate that has been posted to an executor's queue.
+/// </summary>
+/// <typeparam name="TResult">The return type of the delegate encapsulated by the operation.</typeparam>
+public class ThreadExecutorOperation<TResult> : ThreadExecutorOperation
 {
-    /// <summary>
-    /// Provides a representation of a delegate that has been posted to an executor's queue.
-    /// </summary>
-    /// <typeparam name="TResult">The return type of the delegate encapsulated by the operation.</typeparam>
-    public class ThreadExecutorOperation<TResult> : ThreadExecutorOperation
-    {
-    }
 }

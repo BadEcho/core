@@ -14,14 +14,13 @@
 using System.Composition.Hosting;
 using BadEcho.Odin.Extensibility.Hosting;
 
-namespace BadEcho.Odin.Tests.Extensibility
+namespace BadEcho.Odin.Tests.Extensibility;
+
+internal class EmptyPluginContextStrategy : IPluginContextStrategy
 {
-    internal class EmptyPluginContextStrategy : IPluginContextStrategy
+    public CompositionHost CreateContainer()
     {
-        public CompositionHost CreateContainer()
-        {
-            return new ContainerConfiguration()
-                .CreateContainer();
-        }
+        return new ContainerConfiguration()
+            .CreateContainer();
     }
 }

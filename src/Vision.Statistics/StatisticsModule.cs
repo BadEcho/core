@@ -17,60 +17,59 @@ using BadEcho.Odin.Extensibility.Hosting;
 using BadEcho.Omnified.Vision.Extensibility;
 using BadEcho.Omnified.Vision.Statistics.ViewModels;
 
-namespace BadEcho.Omnified.Vision.Statistics
+namespace BadEcho.Omnified.Vision.Statistics;
+
+/// <summary>
+/// Provides a snap-in module granting vision to Omnified game statistics data.
+/// </summary>
+[Export(typeof(IVisionModule))]
+internal sealed class StatisticsModule : VisionModule<IStatistic, StatisticsViewModel>
 {
+    private const string DEPENDENCY_NAME 
+        = nameof(StatisticsModule) + nameof(LocalDependency);
+
     /// <summary>
-    /// Provides a snap-in module granting vision to Omnified game statistics data.
+    /// Initializes a new instance of the <see cref="StatisticsModule"/> class.
     /// </summary>
-    [Export(typeof(IVisionModule))]
-    internal sealed class StatisticsModule : VisionModule<IStatistic, StatisticsViewModel>
+    /// <param name="configuration">Configuration settings for the Vision application.</param>
+    [ImportingConstructor]
+    public StatisticsModule([Import(DEPENDENCY_NAME)] IVisionConfiguration configuration)
+        : base(configuration)
     {
-        private const string DEPENDENCY_NAME 
-            = nameof(StatisticsModule) + nameof(LocalDependency);
+        if (configuration.Dispatcher != null)
+            ViewModel.ChangeDispatcher(configuration.Dispatcher);
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StatisticsModule"/> class.
-        /// </summary>
-        /// <param name="configuration">Configuration settings for the Vision application.</param>
-        [ImportingConstructor]
-        public StatisticsModule([Import(DEPENDENCY_NAME)] IVisionConfiguration configuration)
-            : base(configuration)
-        {
-            if (configuration.Dispatcher != null)
-                ViewModel.ChangeDispatcher(configuration.Dispatcher);
-        }
+    /// <inheritdoc/>
+    public override string MessageFile
+        => "statistics.json";
 
-        /// <inheritdoc/>
-        public override string MessageFile
-            => "statistics.json";
+    /// <inheritdoc/>
+    protected override AnchorPointLocation DefaultLocation
+        => AnchorPointLocation.TopLeft;
 
-        /// <inheritdoc/>
-        protected override AnchorPointLocation DefaultLocation
-            => AnchorPointLocation.TopLeft;
+    protected override IEnumerable<IStatistic>? ParseMessages(string messages)
+    {
+        var options = new JsonSerializerOptions
+                      {
+                          Converters = { new StatisticConverter() }
+                      };
 
-        protected override IEnumerable<IStatistic>? ParseMessages(string messages)
-        {
-            var options = new JsonSerializerOptions
-                          {
-                              Converters = { new StatisticConverter() }
-                          };
+        return JsonSerializer.Deserialize<IEnumerable<IStatistic>>(messages, options);
+    }
 
-            return JsonSerializer.Deserialize<IEnumerable<IStatistic>>(messages, options);
-        }
-
-        /// <summary>
-        /// Provides a convention provider that allows for an armed context in which this module can have its required configuration
-        /// provided to it during its initialization and exportation.
-        /// </summary>
-        /// <suppressions>
-        /// ReSharper disable ClassNeverInstantiated.Local
-        /// </suppressions>
-        [Export(typeof(IConventionProvider))]
-        private sealed class LocalDependency : DependencyRegistry<IVisionConfiguration>
-        {
-            public LocalDependency() 
-                : base(DEPENDENCY_NAME)
-            { }
-        }
+    /// <summary>
+    /// Provides a convention provider that allows for an armed context in which this module can have its required configuration
+    /// provided to it during its initialization and exportation.
+    /// </summary>
+    /// <suppressions>
+    /// ReSharper disable ClassNeverInstantiated.Local
+    /// </suppressions>
+    [Export(typeof(IConventionProvider))]
+    private sealed class LocalDependency : DependencyRegistry<IVisionConfiguration>
+    {
+        public LocalDependency() 
+            : base(DEPENDENCY_NAME)
+        { }
     }
 }

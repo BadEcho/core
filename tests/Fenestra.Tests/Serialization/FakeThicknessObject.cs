@@ -15,12 +15,11 @@ using System.Text.Json.Serialization;
 using System.Windows;
 using BadEcho.Fenestra.Serialization;
 
-namespace BadEcho.Fenestra.Tests.Serialization
+namespace BadEcho.Fenestra.Tests.Serialization;
+
+public sealed class FakeThicknessObject
 {
-    public sealed class FakeThicknessObject
-    {
-        [JsonConverter(typeof(JsonThicknessConverter))]
-        public Thickness SomeThickness
-        { get; set; }
-    }
+    [JsonConverter(typeof(JsonThicknessConverter))]
+    public Thickness SomeThickness
+    { get; set; }
 }

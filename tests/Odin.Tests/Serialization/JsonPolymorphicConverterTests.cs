@@ -14,57 +14,56 @@
 using System.Text.Json;
 using Xunit;
 
-namespace BadEcho.Odin.Tests.Serialization
+namespace BadEcho.Odin.Tests.Serialization;
+
+public class JsonPolymorphicConverterTests
 {
-    public class JsonPolymorphicConverterTests
+    private const string JSON_FAKE_OBJECT =
+        @"[ { ""Type"": 0, ""Object"": { ""SomeIdentifier"": ""hello there"" } } ]";
+
+    private const string JSON_OUT_OF_ORDER_OBJECT =
+        @"[ { ""Object"": { ""SomeIdentifier"": ""hello there"" }, ""Type"": 0 } ]";
+
+    [Fact]
+    public void Read_First_ValidConversion()
     {
-        private const string JSON_FAKE_OBJECT =
-            @"[ { ""Type"": 0, ""Object"": { ""SomeIdentifier"": ""hello there"" } } ]";
+        var fakeObjects = Deserialize(JSON_FAKE_OBJECT);
 
-        private const string JSON_OUT_OF_ORDER_OBJECT =
-            @"[ { ""Object"": { ""SomeIdentifier"": ""hello there"" }, ""Type"": 0 } ]";
+        Assert.NotNull(fakeObjects);
 
-        [Fact]
-        public void Read_First_ValidConversion()
-        {
-            var fakeObjects = Deserialize(JSON_FAKE_OBJECT);
+        var fakeFirstObjects = fakeObjects.OfType<FirstFakeJsonObject>().ToList();
 
-            Assert.NotNull(fakeObjects);
+        Assert.NotEmpty(fakeFirstObjects);
 
-            var fakeFirstObjects = fakeObjects.OfType<FirstFakeJsonObject>().ToList();
+        var fakeObject = fakeFirstObjects.First();
 
-            Assert.NotEmpty(fakeFirstObjects);
+        Assert.Equal("hello there", fakeObject.SomeIdentifier);
+    }
 
-            var fakeObject = fakeFirstObjects.First();
+    [Fact]
+    public void Read_OutOfOrderFirst_ValidConversion()
+    {
+        var fakeObjects = Deserialize(JSON_OUT_OF_ORDER_OBJECT);
 
-            Assert.Equal("hello there", fakeObject.SomeIdentifier);
-        }
+        Assert.NotNull(fakeObjects);
 
-        [Fact]
-        public void Read_OutOfOrderFirst_ValidConversion()
-        {
-            var fakeObjects = Deserialize(JSON_OUT_OF_ORDER_OBJECT);
+        var fakeFirstObjects = fakeObjects.OfType<FirstFakeJsonObject>().ToList();
 
-            Assert.NotNull(fakeObjects);
+        Assert.NotEmpty(fakeFirstObjects);
 
-            var fakeFirstObjects = fakeObjects.OfType<FirstFakeJsonObject>().ToList();
+        var fakeObject = fakeFirstObjects.First();
 
-            Assert.NotEmpty(fakeFirstObjects);
+        Assert.Equal("hello there", fakeObject.SomeIdentifier);
+    }
 
-            var fakeObject = fakeFirstObjects.First();
+    private static IEnumerable<FakeJsonObject> Deserialize(string json)
+    {
+        var options = new JsonSerializerOptions();
 
-            Assert.Equal("hello there", fakeObject.SomeIdentifier);
-        }
+        options.Converters.Add(new FakeJsonObjectConverter());
 
-        private static IEnumerable<FakeJsonObject> Deserialize(string json)
-        {
-            var options = new JsonSerializerOptions();
+        var fakeObject = JsonSerializer.Deserialize<IEnumerable<FakeJsonObject>>(json, options);
 
-            options.Converters.Add(new FakeJsonObjectConverter());
-
-            var fakeObject = JsonSerializer.Deserialize<IEnumerable<FakeJsonObject>>(json, options);
-
-            return fakeObject!;
-        }
+        return fakeObject!;
     }
 }

@@ -11,16 +11,15 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Configuration
+namespace BadEcho.Odin.Configuration;
+
+/// <summary>
+/// Defines a provider for a format-neutral source of hot-pluggable configuration data for an application.
+/// </summary>
+public interface IConfigurationProvider : IConfigurationReader
 {
     /// <summary>
-    /// Defines a provider for a format-neutral source of hot-pluggable configuration data for an application.
+    /// Occurs when the configuration data has been externally updated.
     /// </summary>
-    public interface IConfigurationProvider : IConfigurationReader
-    {
-        /// <summary>
-        /// Occurs when the configuration data has been externally updated.
-        /// </summary>
-        event EventHandler<EventArgs>? ConfigurationChanged;
-    }
+    event EventHandler<EventArgs>? ConfigurationChanged;
 }

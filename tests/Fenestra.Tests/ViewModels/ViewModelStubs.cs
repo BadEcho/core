@@ -14,51 +14,50 @@
 using BadEcho.Odin.Extensions;
 using BadEcho.Fenestra.ViewModels;
 
-namespace BadEcho.Fenestra.Tests.ViewModels
+namespace BadEcho.Fenestra.Tests.ViewModels;
+
+public sealed class ViewModelStub : ViewModel<ModelStub>
 {
-    public sealed class ViewModelStub : ViewModel<ModelStub>
+    public int Value
+    { get; private set; }
+
+    protected override void OnBinding(ModelStub model)
+        => Value = model.Value;
+
+    protected override void OnUnbound(ModelStub model)
+        => Value = 0;
+}
+
+public sealed class ModelStub
+{
+    private readonly string _name;
+
+    public ModelStub(string name, int value)
     {
-        public int Value
-        { get; private set; }
-
-        protected override void OnBinding(ModelStub model)
-            => Value = model.Value;
-
-        protected override void OnUnbound(ModelStub model)
-            => Value = 0;
+        _name = name;
+        Value = value;
     }
 
-    public sealed class ModelStub
+    public int Value
+    { get; set; }
+
+    public override bool Equals(object? obj)
     {
-        private readonly string _name;
+        if (obj is not ModelStub otherModel)
+            return false;
 
-        public ModelStub(string name, int value)
-        {
-            _name = name;
-            Value = value;
-        }
-
-        public int Value
-        { get; set; }
-
-        public override bool Equals(object? obj)
-        {
-            if (obj is not ModelStub otherModel)
-                return false;
-
-            return _name == otherModel._name;
-        }
-
-        public override int GetHashCode()
-            => this.GetHashCode(_name);
+        return _name == otherModel._name;
     }
+
+    public override int GetHashCode()
+        => this.GetHashCode(_name);
+}
     
-    public sealed class FakeAncestorViewModel : ViewModel, IAncestorViewModel<ViewModelStub>
-    {
-        public AtomicObservableCollection<ViewModelStub> Children { get; }
-            = new();
+public sealed class FakeAncestorViewModel : ViewModel, IAncestorViewModel<ViewModelStub>
+{
+    public AtomicObservableCollection<ViewModelStub> Children { get; }
+        = new();
 
-        public override void Disconnect()
-        { }
-    }
+    public override void Disconnect()
+    { }
 }

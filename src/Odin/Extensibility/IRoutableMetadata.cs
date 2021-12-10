@@ -11,16 +11,15 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Extensibility
+namespace BadEcho.Odin.Extensibility;
+
+/// <summary>
+/// Defines metadata that describes a call-routable plugin to Odin's Extensibility framework.
+/// </summary>
+public interface IRoutableMetadata
 {
     /// <summary>
-    /// Defines metadata that describes a call-routable plugin to Odin's Extensibility framework.
+    /// Gets the identity of the call-routable plugin being exported.
     /// </summary>
-    public interface IRoutableMetadata
-    {
-        /// <summary>
-        /// Gets the identity of the call-routable plugin being exported.
-        /// </summary>
-        Guid PluginId { get; }
-    }
+    Guid PluginId { get; }
 }

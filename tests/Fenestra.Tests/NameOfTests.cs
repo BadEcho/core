@@ -13,15 +13,14 @@
 
 using Xunit;
 
-namespace BadEcho.Fenestra.Tests
-{
-    public class NameOfTests
-    {
-        public string TextSizeProperty
-        { get; set; } = string.Empty;
+namespace BadEcho.Fenestra.Tests;
 
-        [Fact]
-        public void ReadDependencyPropertyName_ValidName_NameWithoutProperty() 
-            => Assert.Equal("TextSize", NameOf.ReadDependencyPropertyName(() => TextSizeProperty));
-    }
+public class NameOfTests
+{
+    public string TextSizeProperty
+    { get; set; } = string.Empty;
+
+    [Fact]
+    public void ReadDependencyPropertyName_ValidName_NameWithoutProperty() 
+        => Assert.Equal("TextSize", NameOf.ReadDependencyPropertyName(() => TextSizeProperty));
 }

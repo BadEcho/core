@@ -15,45 +15,44 @@ using System.Composition;
 using BadEcho.Odin.Extensions;
 using BadEcho.Odin.Properties;
 
-namespace BadEcho.Odin.Extensibility
+namespace BadEcho.Odin.Extensibility;
+
+/// <summary>
+/// Provides an attribute that specifies that a type, property, field, or method provides a particular filterable
+/// export to Odin's Extensibility framework.
+/// </summary>
+[MetadataAttribute]
+[AttributeUsage(
+    AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method | AttributeTargets.Class, Inherited = false)]
+public sealed class FilterableAttribute : ExportAttribute, IFilterableMetadata
 {
     /// <summary>
-    /// Provides an attribute that specifies that a type, property, field, or method provides a particular filterable
-    /// export to Odin's Extensibility framework.
+    /// Initializes a new instance of the <see cref="FilterableAttribute"/> class.
     /// </summary>
-    [MetadataAttribute]
-    [AttributeUsage(
-        AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method | AttributeTargets.Class, Inherited = false)]
-    public sealed class FilterableAttribute : ExportAttribute, IFilterableMetadata
+    /// <param name="familyId">The identity of the filterable family that the part being exported belongs to.</param>
+    /// <param name="partType">The concrete type of the part being exported.</param>
+    public FilterableAttribute(string familyId, Type partType)
+        : base(typeof(IFilterable))
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FilterableAttribute"/> class.
-        /// </summary>
-        /// <param name="familyId">The identity of the filterable family that the part being exported belongs to.</param>
-        /// <param name="partType">The concrete type of the part being exported.</param>
-        public FilterableAttribute(string familyId, Type partType)
-            : base(typeof(IFilterable))
-        {
-            Require.NotNull(familyId, nameof(familyId));
-            Require.NotNull(partType, nameof(partType));
+        Require.NotNull(familyId, nameof(familyId));
+        Require.NotNull(partType, nameof(partType));
             
-            PartType = partType;
+        PartType = partType;
 
-            if (!Guid.TryParse(familyId, out Guid parsedId))
-            {
-                throw new ArgumentException(Strings.FamilyIdNotValid.InvariantFormat(familyId),
-                                            nameof(familyId));
-            }
-
-            FamilyId = parsedId;
+        if (!Guid.TryParse(familyId, out Guid parsedId))
+        {
+            throw new ArgumentException(Strings.FamilyIdNotValid.InvariantFormat(familyId),
+                                        nameof(familyId));
         }
-        
-        /// <inheritdoc/>
-        public Guid FamilyId
-        { get; }
 
-        /// <inheritdoc/>
-        public Type PartType 
-        { get; }
+        FamilyId = parsedId;
     }
+        
+    /// <inheritdoc/>
+    public Guid FamilyId
+    { get; }
+
+    /// <inheritdoc/>
+    public Type PartType 
+    { get; }
 }

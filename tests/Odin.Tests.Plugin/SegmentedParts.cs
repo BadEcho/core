@@ -14,49 +14,48 @@
 using BadEcho.Odin.Extensibility;
 using BadEcho.Odin.Tests.Extensibility;
 
-namespace BadEcho.Odin.Tests.Plugin
+namespace BadEcho.Odin.Tests.Plugin;
+
+[Routable(FakeAdapterIds.AlphaFakeIdValue, typeof(ISegmentedContract))]
+public class AlphaFakeAdapter : IPluginAdapter<ISegmentedContract>
 {
-    [Routable(FakeAdapterIds.AlphaFakeIdValue, typeof(ISegmentedContract))]
-    public class AlphaFakeAdapter : IPluginAdapter<ISegmentedContract>
+    private readonly SegmentedStub _stub = new();
+
+    public ISegmentedContract Contract
+        => _stub;
+
+    private class SegmentedStub : ISegmentedContract
     {
-        private readonly SegmentedStub _stub = new();
-
-        public ISegmentedContract Contract
-            => _stub;
-
-        private class SegmentedStub : ISegmentedContract
+        public string SomeMethod()
         {
-            public string SomeMethod()
-            {
-                return ISegmentedContract.FirstSomeMethod;
-            }
+            return ISegmentedContract.FirstSomeMethod;
+        }
 
-            public string SomeOtherMethod()
-            {
-                return ISegmentedContract.FirstSomeOtherMethod;
-            }
+        public string SomeOtherMethod()
+        {
+            return ISegmentedContract.FirstSomeOtherMethod;
         }
     }
+}
 
-    [Routable(FakeAdapterIds.BetaFakeIdValue, typeof(ISegmentedContract))]
-    public class BetaFakeAdapter : IPluginAdapter<ISegmentedContract>
+[Routable(FakeAdapterIds.BetaFakeIdValue, typeof(ISegmentedContract))]
+public class BetaFakeAdapter : IPluginAdapter<ISegmentedContract>
+{
+    private readonly SegmentedStub _stub = new();
+
+    public ISegmentedContract Contract
+        => _stub;
+
+    private class SegmentedStub : ISegmentedContract
     {
-        private readonly SegmentedStub _stub = new();
-
-        public ISegmentedContract Contract
-            => _stub;
-
-        private class SegmentedStub : ISegmentedContract
+        public string SomeMethod()
         {
-            public string SomeMethod()
-            {
-                return ISegmentedContract.SecondSomeMethod;
-            }
+            return ISegmentedContract.SecondSomeMethod;
+        }
 
-            public string SomeOtherMethod()
-            {
-                return ISegmentedContract.SecondSomeOtherMethod;
-            }
+        public string SomeOtherMethod()
+        {
+            return ISegmentedContract.SecondSomeOtherMethod;
         }
     }
 }

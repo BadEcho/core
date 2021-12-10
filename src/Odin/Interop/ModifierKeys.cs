@@ -11,33 +11,32 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Interop
+namespace BadEcho.Odin.Interop;
+
+/// <summary>
+/// Specifies keys that modify the action of another key when pressed together.
+/// </summary>
+[Flags]
+public enum ModifierKeys
 {
     /// <summary>
-    /// Specifies keys that modify the action of another key when pressed together.
+    /// No modifier keys.
     /// </summary>
-    [Flags]
-    public enum ModifierKeys
-    {
-        /// <summary>
-        /// No modifier keys.
-        /// </summary>
-        None = 0,
-        /// <summary>
-        /// The ALT key.
-        /// </summary>
-        Alt = 1,
-        /// <summary>
-        /// The CTRL key.
-        /// </summary>
-        Control = 2,
-        /// <summary>
-        /// The SHIFT key.
-        /// </summary>
-        Shift = 4,
-        /// <summary>
-        /// The Windows logo key.
-        /// </summary>
-        Windows = 8
-    }
+    None = 0,
+    /// <summary>
+    /// The ALT key.
+    /// </summary>
+    Alt = 1,
+    /// <summary>
+    /// The CTRL key.
+    /// </summary>
+    Control = 2,
+    /// <summary>
+    /// The SHIFT key.
+    /// </summary>
+    Shift = 4,
+    /// <summary>
+    /// The Windows logo key.
+    /// </summary>
+    Windows = 8
 }

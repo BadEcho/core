@@ -14,35 +14,34 @@
 using System.Composition.Convention;
 using System.Composition.Hosting;
 
-namespace BadEcho.Odin.Extensibility.Hosting
+namespace BadEcho.Odin.Extensibility.Hosting;
+
+/// <summary>
+/// Provides a set of static methods intended to aid in matters related to plugin context strategy initialization.
+/// </summary>
+internal static class PluginContextStrategyExtensions
 {
     /// <summary>
-    /// Provides a set of static methods intended to aid in matters related to plugin context strategy initialization.
+    /// Loads conventions based on Extensibility framework's stock rules as well as discovered <see cref="IConventionProvider"/>
+    /// parts using the provided container configuration.
     /// </summary>
-    internal static class PluginContextStrategyExtensions
+    /// <param name="strategy">The current plugin context strategy loading the conventions.</param>
+    /// <param name="configuration">The container configuration to load the rule providers from.</param>
+    /// <returns>The resulting <see cref="ConventionBuilder"/> loaded with all provided rules.</returns>
+    public static ConventionBuilder LoadConventions(this IPluginContextStrategy strategy, ContainerConfiguration configuration)
     {
-        /// <summary>
-        /// Loads conventions based on Extensibility framework's stock rules as well as discovered <see cref="IConventionProvider"/>
-        /// parts using the provided container configuration.
-        /// </summary>
-        /// <param name="strategy">The current plugin context strategy loading the conventions.</param>
-        /// <param name="configuration">The container configuration to load the rule providers from.</param>
-        /// <returns>The resulting <see cref="ConventionBuilder"/> loaded with all provided rules.</returns>
-        public static ConventionBuilder LoadConventions(this IPluginContextStrategy strategy, ContainerConfiguration configuration)
-        {
-            var conventions = new ConventionBuilder();
+        var conventions = new ConventionBuilder();
             
-            using (var container = configuration.CreateContainer())
-            {
-                var conventionProviders = container.GetExports<IConventionProvider>();
+        using (var container = configuration.CreateContainer())
+        {
+            var conventionProviders = container.GetExports<IConventionProvider>();
                 
-                foreach (var conventionProvider in conventionProviders)
-                {
-                    conventionProvider.ConfigureRules(conventions);
-                }
+            foreach (var conventionProvider in conventionProviders)
+            {
+                conventionProvider.ConfigureRules(conventions);
             }
-
-            return conventions;
         }
+
+        return conventions;
     }
 }

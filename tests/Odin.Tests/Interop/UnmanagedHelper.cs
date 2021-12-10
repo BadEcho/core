@@ -13,20 +13,19 @@
 
 using BadEcho.Odin.Interop;
 
-namespace BadEcho.Odin.Tests.Interop
+namespace BadEcho.Odin.Tests.Interop;
+
+/// <summary>
+/// Provides some helper functions for testing-related purposes.
+/// </summary>
+public class UnmanagedHelper
 {
-    /// <summary>
-    /// Provides some helper functions for testing-related purposes.
-    /// </summary>
-    public class UnmanagedHelper
+    public static IEnumerable<IntPtr> EnumerateMonitors()
     {
-        public static IEnumerable<IntPtr> EnumerateMonitors()
-        {
-            var closure = new MonitorCallbackClosure();
+        var closure = new MonitorCallbackClosure();
 
-            User32.EnumDisplayMonitors(DeviceContextHandle.Null, IntPtr.Zero, closure.Callback, IntPtr.Zero);
+        User32.EnumDisplayMonitors(DeviceContextHandle.Null, IntPtr.Zero, closure.Callback, IntPtr.Zero);
 
-            return closure.Monitors;
-        }
+        return closure.Monitors;
     }
 }

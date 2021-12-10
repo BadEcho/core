@@ -16,49 +16,48 @@ using System.Text.Json;
 using BadEcho.Odin.Serialization;
 using BadEcho.Omnified.Vision.Statistics.Properties;
 
-namespace BadEcho.Omnified.Vision.Statistics
+namespace BadEcho.Omnified.Vision.Statistics;
+
+/// <summary>
+/// Provides a converter of <see cref="Statistic"/> objects to or from JSON.
+/// </summary>
+public sealed class StatisticConverter : JsonPolymorphicConverter<StatisticType,IStatistic>
 {
-    /// <summary>
-    /// Provides a converter of <see cref="Statistic"/> objects to or from JSON.
-    /// </summary>
-    public sealed class StatisticConverter : JsonPolymorphicConverter<StatisticType,IStatistic>
+    /// <inheritdoc/>
+    protected override string DataPropertyName
+        => "Statistic";
+
+    /// <inheritdoc/>
+    protected override IStatistic? ReadFromDescriptor(ref Utf8JsonReader reader, StatisticType typeDescriptor)
     {
-        /// <inheritdoc/>
-        protected override string DataPropertyName
-            => "Statistic";
+        var options = new JsonSerializerOptions
+                      {
+                          Converters = { new StatisticConverter() }
+                      };
 
-        /// <inheritdoc/>
-        protected override IStatistic? ReadFromDescriptor(ref Utf8JsonReader reader, StatisticType typeDescriptor)
+        return typeDescriptor switch
         {
-            var options = new JsonSerializerOptions
-                          {
-                              Converters = { new StatisticConverter() }
-                          };
+            StatisticType.Whole => JsonSerializer.Deserialize<WholeStatistic>(ref reader),
+            StatisticType.Fractional => JsonSerializer.Deserialize<FractionalStatistic>(ref reader),
+            StatisticType.Coordinate => JsonSerializer.Deserialize<CoordinateStatistic>(ref reader),
+            StatisticType.Group => JsonSerializer.Deserialize<StatisticGroup>(ref reader, options),
+            _ => throw new InvalidEnumArgumentException(nameof(typeDescriptor), 
+                                                        (int) typeDescriptor, 
+                                                        typeof(StatisticType))
+        };
+    }
 
-            return typeDescriptor switch
-            {
-                StatisticType.Whole => JsonSerializer.Deserialize<WholeStatistic>(ref reader),
-                StatisticType.Fractional => JsonSerializer.Deserialize<FractionalStatistic>(ref reader),
-                StatisticType.Coordinate => JsonSerializer.Deserialize<CoordinateStatistic>(ref reader),
-                StatisticType.Group => JsonSerializer.Deserialize<StatisticGroup>(ref reader, options),
-                _ => throw new InvalidEnumArgumentException(nameof(typeDescriptor), 
-                                                            (int) typeDescriptor, 
-                                                            typeof(StatisticType))
-            };
-        }
-
-        /// <inheritdoc/>
-        protected override StatisticType DescriptorFromValue(IStatistic value)
+    /// <inheritdoc/>
+    protected override StatisticType DescriptorFromValue(IStatistic value)
+    {
+        return value switch
         {
-            return value switch
-            {
-                WholeStatistic => StatisticType.Whole,
-                FractionalStatistic => StatisticType.Fractional,
-                CoordinateStatistic => StatisticType.Coordinate,
-                StatisticGroup => StatisticType.Group,
-                _ => throw new ArgumentException(Strings.StatisticTypeUnsupportedJson,
-                                                 nameof(value))
-            };
-        }
+            WholeStatistic => StatisticType.Whole,
+            FractionalStatistic => StatisticType.Fractional,
+            CoordinateStatistic => StatisticType.Coordinate,
+            StatisticGroup => StatisticType.Group,
+            _ => throw new ArgumentException(Strings.StatisticTypeUnsupportedJson,
+                                             nameof(value))
+        };
     }
 }

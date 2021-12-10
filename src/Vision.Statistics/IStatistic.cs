@@ -11,21 +11,20 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Omnified.Vision.Statistics
+namespace BadEcho.Omnified.Vision.Statistics;
+
+/// <summary>
+/// Defines an individual statistic exported from an Omnified game.
+/// </summary>
+public interface IStatistic
 {
     /// <summary>
-    /// Defines an individual statistic exported from an Omnified game.
+    /// Gets the display name of the statistic.
     /// </summary>
-    public interface IStatistic
-    {
-        /// <summary>
-        /// Gets the display name of the statistic.
-        /// </summary>
-        string Name { get; }
+    string Name { get; }
 
-        /// <summary>
-        /// Gets any formatting that should be applied to the value of the statistic.
-        /// </summary>
-        string Format { get; }
-    }
+    /// <summary>
+    /// Gets any formatting that should be applied to the value of the statistic.
+    /// </summary>
+    string Format { get; }
 }

@@ -13,45 +13,44 @@
 
 using System.Runtime.InteropServices;
 
-namespace BadEcho.Odin.Interop
+namespace BadEcho.Odin.Interop;
+
+/// <summary>
+/// Provides a level-0 type for window handles.
+/// </summary>
+public sealed class WindowHandle : SafeHandle
 {
     /// <summary>
-    /// Provides a level-0 type for window handles.
+    /// Initializes a new instance of the <see cref="WindowHandle"/> class.
     /// </summary>
-    public sealed class WindowHandle : SafeHandle
+    /// <param name="handle">The handle to the window.</param>
+    /// <param name="ownsHandle">Value indicating if this safe handle is responsible for releasing the provided handle.</param>
+    internal WindowHandle(IntPtr handle, bool ownsHandle)
+        : this(ownsHandle)
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="WindowHandle"/> class.
-        /// </summary>
-        /// <param name="handle">The handle to the window.</param>
-        /// <param name="ownsHandle">Value indicating if this safe handle is responsible for releasing the provided handle.</param>
-        internal WindowHandle(IntPtr handle, bool ownsHandle)
-            : this(ownsHandle)
-        {
-            SetHandle(handle);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="WindowHandle"/> class.
-        /// </summary>
-        /// <param name="ownsHandle">Value indicating if this safe handle is responsible for releasing the provided handle.</param>
-        private WindowHandle(bool ownsHandle)
-            : base(IntPtr.Zero, ownsHandle)
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="WindowHandle"/> class.
-        /// </summary>
-        private WindowHandle()
-            : base (IntPtr.Zero, true)
-        { }
-
-        /// <inheritdoc/>
-        public override bool IsInvalid
-            => handle == IntPtr.Zero;
-
-        /// <inheritdoc/>
-        protected override bool ReleaseHandle()
-            => User32.DestroyWindow(handle);
+        SetHandle(handle);
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WindowHandle"/> class.
+    /// </summary>
+    /// <param name="ownsHandle">Value indicating if this safe handle is responsible for releasing the provided handle.</param>
+    private WindowHandle(bool ownsHandle)
+        : base(IntPtr.Zero, ownsHandle)
+    { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WindowHandle"/> class.
+    /// </summary>
+    private WindowHandle()
+        : base (IntPtr.Zero, true)
+    { }
+
+    /// <inheritdoc/>
+    public override bool IsInvalid
+        => handle == IntPtr.Zero;
+
+    /// <inheritdoc/>
+    protected override bool ReleaseHandle()
+        => User32.DestroyWindow(handle);
 }

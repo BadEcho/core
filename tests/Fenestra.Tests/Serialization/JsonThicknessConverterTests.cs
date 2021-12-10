@@ -15,91 +15,90 @@ using System.Text.Json;
 using System.Windows;
 using Xunit;
 
-namespace BadEcho.Fenestra.Tests.Serialization
+namespace BadEcho.Fenestra.Tests.Serialization;
+
+public class JsonThicknessConverterTests
 {
-    public class JsonThicknessConverterTests
+    private const string FOUR_LENGTHS_OBJECT =
+        @"{""someThickness"":""2,1,0,3""}";
+
+    private const string TWO_LENGTHS_OBJECT =
+        @"{""someThickness"":""1,5""}";
+
+    private const string ONE_LENGTH_OBJECT =
+        @"{""someThickness"":""8""}";
+
+
+    [Fact]
+    public void Read_FourLengths_ValidConversion()
     {
-        private const string FOUR_LENGTHS_OBJECT =
-            @"{""someThickness"":""2,1,0,3""}";
+        var fakeObject = Deserialize(FOUR_LENGTHS_OBJECT);
 
-        private const string TWO_LENGTHS_OBJECT =
-            @"{""someThickness"":""1,5""}";
+        Assert.NotNull(fakeObject);
 
-        private const string ONE_LENGTH_OBJECT =
-            @"{""someThickness"":""8""}";
+        Assert.Equal(2, fakeObject.SomeThickness.Left);
+        Assert.Equal(1, fakeObject.SomeThickness.Top);
+        Assert.Equal(0, fakeObject.SomeThickness.Right);
+        Assert.Equal(3, fakeObject.SomeThickness.Bottom);
+    }
 
+    [Fact]
+    public void Write_FourLengths_ValidConversion()
+    {
+        var fakeObject = new FakeThicknessObject {SomeThickness = new Thickness(2, 1, 0, 3)};
 
-        [Fact]
-        public void Read_FourLengths_ValidConversion()
-        {
-            var fakeObject = Deserialize(FOUR_LENGTHS_OBJECT);
+        var jsonValue = Serialize(fakeObject);
 
-            Assert.NotNull(fakeObject);
+        Assert.Equal(FOUR_LENGTHS_OBJECT, jsonValue);
+    }
 
-            Assert.Equal(2, fakeObject.SomeThickness.Left);
-            Assert.Equal(1, fakeObject.SomeThickness.Top);
-            Assert.Equal(0, fakeObject.SomeThickness.Right);
-            Assert.Equal(3, fakeObject.SomeThickness.Bottom);
-        }
+    [Fact]
+    public void Read_TwoLengths_ValidConversion()
+    {
+        var fakeObject = Deserialize(TWO_LENGTHS_OBJECT);
 
-        [Fact]
-        public void Write_FourLengths_ValidConversion()
-        {
-            var fakeObject = new FakeThicknessObject {SomeThickness = new Thickness(2, 1, 0, 3)};
+        Assert.NotNull(fakeObject);
 
-            var jsonValue = Serialize(fakeObject);
+        Assert.Equal(1, fakeObject.SomeThickness.Left);
+        Assert.Equal(5, fakeObject.SomeThickness.Top);
+        Assert.Equal(1, fakeObject.SomeThickness.Right);
+        Assert.Equal(5, fakeObject.SomeThickness.Bottom);
+    }
 
-            Assert.Equal(FOUR_LENGTHS_OBJECT, jsonValue);
-        }
+    [Fact]
+    public void Read_OneLength_ValidConversion()
+    {
+        var fakeObject = Deserialize(ONE_LENGTH_OBJECT);
 
-        [Fact]
-        public void Read_TwoLengths_ValidConversion()
-        {
-            var fakeObject = Deserialize(TWO_LENGTHS_OBJECT);
+        Assert.NotNull(fakeObject);
 
-            Assert.NotNull(fakeObject);
+        Assert.Equal(8, fakeObject.SomeThickness.Left);
+        Assert.Equal(8, fakeObject.SomeThickness.Top);
+        Assert.Equal(8, fakeObject.SomeThickness.Right);
+        Assert.Equal(8, fakeObject.SomeThickness.Bottom);
+    }
 
-            Assert.Equal(1, fakeObject.SomeThickness.Left);
-            Assert.Equal(5, fakeObject.SomeThickness.Top);
-            Assert.Equal(1, fakeObject.SomeThickness.Right);
-            Assert.Equal(5, fakeObject.SomeThickness.Bottom);
-        }
+    private static FakeThicknessObject Deserialize(string json)
+    {
+        var options = new JsonSerializerOptions
+                      {
+                          PropertyNameCaseInsensitive = true, 
+                          PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                      };
 
-        [Fact]
-        public void Read_OneLength_ValidConversion()
-        {
-            var fakeObject = Deserialize(ONE_LENGTH_OBJECT);
+        var fakeObject = JsonSerializer.Deserialize<FakeThicknessObject>(json, options);
 
-            Assert.NotNull(fakeObject);
+        return fakeObject!;
+    }
 
-            Assert.Equal(8, fakeObject.SomeThickness.Left);
-            Assert.Equal(8, fakeObject.SomeThickness.Top);
-            Assert.Equal(8, fakeObject.SomeThickness.Right);
-            Assert.Equal(8, fakeObject.SomeThickness.Bottom);
-        }
+    private static string Serialize(FakeThicknessObject fakeObject)
+    {
+        var options = new JsonSerializerOptions
+                      {
+                          PropertyNameCaseInsensitive = true,
+                          PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                      };
 
-        private static FakeThicknessObject Deserialize(string json)
-        {
-            var options = new JsonSerializerOptions
-                          {
-                              PropertyNameCaseInsensitive = true, 
-                              PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                          };
-
-            var fakeObject = JsonSerializer.Deserialize<FakeThicknessObject>(json, options);
-
-            return fakeObject!;
-        }
-
-        private static string Serialize(FakeThicknessObject fakeObject)
-        {
-            var options = new JsonSerializerOptions
-                          {
-                              PropertyNameCaseInsensitive = true,
-                              PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                          };
-
-            return JsonSerializer.Serialize(fakeObject, options);
-        }
+        return JsonSerializer.Serialize(fakeObject, options);
     }
 }

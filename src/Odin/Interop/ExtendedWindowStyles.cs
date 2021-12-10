@@ -11,18 +11,17 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Interop
+namespace BadEcho.Odin.Interop;
+
+/// <summary>
+/// Specifies extended styling configurations for windows that can be set using
+/// <see cref="User32.SetWindowLongPtr(WindowHandle, WindowAttribute, IntPtr)"/>.
+/// </summary>
+[Flags]
+public enum ExtendedWindowStyles
 {
     /// <summary>
-    /// Specifies extended styling configurations for windows that can be set using
-    /// <see cref="User32.SetWindowLongPtr(WindowHandle, WindowAttribute, IntPtr)"/>.
+    /// The window should not be painted until siblings beneath the window created by the same thread have been painted.
     /// </summary>
-    [Flags]
-    public enum ExtendedWindowStyles
-    {
-        /// <summary>
-        /// The window should not be painted until siblings beneath the window created by the same thread have been painted.
-        /// </summary>
-        Transparent = 0x00000020
-    }
+    Transparent = 0x00000020
 }

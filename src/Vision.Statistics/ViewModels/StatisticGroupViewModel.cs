@@ -13,51 +13,50 @@
 
 using BadEcho.Odin;
 
-namespace BadEcho.Omnified.Vision.Statistics.ViewModels
+namespace BadEcho.Omnified.Vision.Statistics.ViewModels;
+
+/// <summary>
+/// Provides a view model that facilitates the display of a grouping of similar statistics exported from an Omnified
+/// game.
+/// </summary>
+internal sealed class StatisticGroupViewModel : StatisticViewModel<StatisticGroup>
 {
     /// <summary>
-    /// Provides a view model that facilitates the display of a grouping of similar statistics exported from an Omnified
-    /// game.
+    /// Initializes a new instance of the <see cref="StatisticGroupViewModel"/> class.
     /// </summary>
-    internal sealed class StatisticGroupViewModel : StatisticViewModel<StatisticGroup>
+    /// <param name="group">The statistic group to bind to the view model.</param>
+    public StatisticGroupViewModel(StatisticGroup group)
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StatisticGroupViewModel"/> class.
-        /// </summary>
-        /// <param name="group">The statistic group to bind to the view model.</param>
-        public StatisticGroupViewModel(StatisticGroup group)
-        {
-            Require.NotNull(group, nameof(group));
+        Require.NotNull(group, nameof(group));
 
-            Bind(group);
-        }
+        Bind(group);
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StatisticGroupViewModel"/> class.
-        /// </summary>
-        public StatisticGroupViewModel()
-        { }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StatisticGroupViewModel"/> class.
+    /// </summary>
+    public StatisticGroupViewModel()
+    { }
         
-        /// <summary>
-        /// Gets a collection view model which the individual statistics comprising this group are bound to.
-        /// </summary>
-        public StatisticsViewModel Statistics
-        { get; init; } = new();
+    /// <summary>
+    /// Gets a collection view model which the individual statistics comprising this group are bound to.
+    /// </summary>
+    public StatisticsViewModel Statistics
+    { get; init; } = new();
 
-        /// <inheritdoc/>
-        protected override void OnBinding(StatisticGroup model)
-        {
-            base.OnBinding(model);
+    /// <inheritdoc/>
+    protected override void OnBinding(StatisticGroup model)
+    {
+        base.OnBinding(model);
 
-            Statistics.Bind(model.Statistics);
-        }
+        Statistics.Bind(model.Statistics);
+    }
 
-        /// <inheritdoc/>
-        protected override void OnUnbound(StatisticGroup model)
-        {
-            base.OnUnbound(model);
+    /// <inheritdoc/>
+    protected override void OnUnbound(StatisticGroup model)
+    {
+        base.OnUnbound(model);
 
-            Statistics.Unbind();
-        }
+        Statistics.Unbind();
     }
 }

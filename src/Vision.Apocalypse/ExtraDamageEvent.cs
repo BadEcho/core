@@ -14,26 +14,24 @@
 using BadEcho.Odin.Extensions;
 using BadEcho.Omnified.Vision.Apocalypse.Properties;
 
-namespace BadEcho.Omnified.Vision.Apocalypse
+namespace BadEcho.Omnified.Vision.Apocalypse;
+
+/// <summary>
+/// Provides a description for a Player Apocalypse "extra damage" event that occurred in an Omnified game.
+/// </summary>
+/// <remarks>
+/// This is, by default, the most common outcome from a Player Apocalypse event roll. For most games, the amount of
+/// extra damage applied is 2.0, however this is increased if the game features particularly low amounts of damage.
+/// </remarks>
+public sealed class ExtraDamageEvent : PlayerApocalypseEvent
 {
     /// <summary>
-    /// Provides a description for a Player Apocalypse "extra damage" event that occurred in an Omnified game.
+    /// Gets the multiplier applied to the incoming damage amount by the "extra damage" random effect.
     /// </summary>
-    /// <remarks>
-    /// This is, by default, the most common outcome from a Player Apocalypse event roll. For most games, the amount of
-    /// extra damage applied is 2.0, however this is increased if the game features particularly low amounts of damage.
-    /// </remarks>
-    public sealed class ExtraDamageEvent : PlayerApocalypseEvent
-    {
-        /// <summary>
-        /// Gets the multiplier applied to the incoming damage amount by the "extra damage" random effect.
-        /// </summary>
-        public double ExtraDamageMultiplier
-        { get; init; }
+    public double ExtraDamageMultiplier
+    { get; init; }
 
-        /// <inheritdoc/>
-        public override string ToString() 
-            => $"{EffectMessages.ExtraDamage.CulturedFormat(ExtraDamageMultiplier)}{base.ToString()}";
-    }
+    /// <inheritdoc/>
+    public override string ToString() 
+        => $"{EffectMessages.ExtraDamage.CulturedFormat(ExtraDamageMultiplier)}{base.ToString()}";
 }
- 

@@ -13,40 +13,39 @@
 
 using System.Windows;
 
-namespace BadEcho.Fenestra
+namespace BadEcho.Fenestra;
+
+/// <summary>
+/// Provides a simple container of an element's size value and the identity of any shared-size group it belongs to.
+/// </summary>
+public sealed class SizeDefinition 
 {
     /// <summary>
-    /// Provides a simple container of an element's size value and the identity of any shared-size group it belongs to.
+    /// Initializes a new instance of the <see cref="SizeDefinition"/> class.
     /// </summary>
-    public sealed class SizeDefinition 
+    /// <param name="size">The size value for the element.</param>
+    /// <param name="sharedSizeGroup">The identity of the shared-size group the element belongs to.</param>
+    public SizeDefinition(GridLength size, string sharedSizeGroup)
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SizeDefinition"/> class.
-        /// </summary>
-        /// <param name="size">The size value for the element.</param>
-        /// <param name="sharedSizeGroup">The identity of the shared-size group the element belongs to.</param>
-        public SizeDefinition(GridLength size, string sharedSizeGroup)
-        {
-            Size = size;
-            SharedSizeGroup = sharedSizeGroup;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SizeDefinition"/> class.
-        /// </summary>
-        public SizeDefinition()
-        { }
-
-        /// <summary>
-        /// Gets or sets the size value for the element.
-        /// </summary>
-        public GridLength Size
-        { get; set; } = new(1.0, GridUnitType.Star);
-
-        /// <summary>
-        /// Gets or sets the identity of the shared-size group the element belongs to.
-        /// </summary>
-        public string? SharedSizeGroup
-        { get; set; }
+        Size = size;
+        SharedSizeGroup = sharedSizeGroup;
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SizeDefinition"/> class.
+    /// </summary>
+    public SizeDefinition()
+    { }
+
+    /// <summary>
+    /// Gets or sets the size value for the element.
+    /// </summary>
+    public GridLength Size
+    { get; set; } = new(1.0, GridUnitType.Star);
+
+    /// <summary>
+    /// Gets or sets the identity of the shared-size group the element belongs to.
+    /// </summary>
+    public string? SharedSizeGroup
+    { get; set; }
 }

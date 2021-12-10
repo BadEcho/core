@@ -14,66 +14,65 @@
 using BadEcho.Odin.Extensibility.Hosting;
 using Xunit;
 
-namespace BadEcho.Odin.Tests.Extensibility
+namespace BadEcho.Odin.Tests.Extensibility;
+
+public class RoutableProxyTests
 {
-    public class RoutableProxyTests
+    private readonly ISegmentedContract _proxy;
+
+    public RoutableProxyTests() 
+        => _proxy = RoutableProxy.Create<ISegmentedContract>(new HostAdapterStub());
+
+    [Fact]
+    public void SomeMethod_FirstContract()
     {
-        private readonly ISegmentedContract _proxy;
+        var result = _proxy.SomeMethod();
 
-        public RoutableProxyTests() 
-            => _proxy = RoutableProxy.Create<ISegmentedContract>(new HostAdapterStub());
+        Assert.Equal(ISegmentedContract.FirstSomeMethod, result);
+    }
 
-        [Fact]
-        public void SomeMethod_FirstContract()
+    [Fact]
+    public void SomeOtherMethod_SecondContract()
+    {
+        var result = _proxy.SomeOtherMethod();
+
+        Assert.Equal(ISegmentedContract.SecondSomeOtherMethod, result);
+    }
+
+    private sealed class HostAdapterStub : IHostAdapter
+    {
+        private readonly FirstContractStub _first = new();
+        private readonly SecondContractStub _second = new();
+
+        public object Route(string methodName)
         {
-            var result = _proxy.SomeMethod();
-
-            Assert.Equal(ISegmentedContract.FirstSomeMethod, result);
-        }
-
-        [Fact]
-        public void SomeOtherMethod_SecondContract()
-        {
-            var result = _proxy.SomeOtherMethod();
-
-            Assert.Equal(ISegmentedContract.SecondSomeOtherMethod, result);
-        }
-
-        private sealed class HostAdapterStub : IHostAdapter
-        {
-            private readonly FirstContractStub _first = new();
-            private readonly SecondContractStub _second = new();
-
-            public object Route(string methodName)
+            return methodName switch
             {
-                return methodName switch
-                {
-                    nameof(ISegmentedContract.SomeMethod) 
-                        => _first,
-                    nameof(ISegmentedContract.SomeOtherMethod) 
-                        => _second,
-                    _ 
-                        => throw new InvalidOperationException()
-                };
-            }
+                nameof(ISegmentedContract.SomeMethod) 
+                    => _first,
+                nameof(ISegmentedContract.SomeOtherMethod) 
+                    => _second,
+                _ 
+                    => throw new InvalidOperationException()
+            };
         }
+    }
 
-        private sealed class FirstContractStub : ISegmentedContract
-        {
-            public string SomeMethod()
-                => ISegmentedContract.FirstSomeMethod;
+    private sealed class FirstContractStub : ISegmentedContract
+    {
+        public string SomeMethod()
+            => ISegmentedContract.FirstSomeMethod;
 
-            public string SomeOtherMethod()
-                => ISegmentedContract.FirstSomeOtherMethod;
-        }
+        public string SomeOtherMethod()
+            => ISegmentedContract.FirstSomeOtherMethod;
+    }
 
-        private sealed class SecondContractStub : ISegmentedContract
-        {
-            public string SomeMethod()
-                => ISegmentedContract.SecondSomeMethod;
+    private sealed class SecondContractStub : ISegmentedContract
+    {
+        public string SomeMethod()
+            => ISegmentedContract.SecondSomeMethod;
 
-            public string SomeOtherMethod()
-                => ISegmentedContract.SecondSomeOtherMethod;
-        }
+        public string SomeOtherMethod()
+            => ISegmentedContract.SecondSomeOtherMethod;
     }
 }

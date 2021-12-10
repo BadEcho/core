@@ -14,29 +14,28 @@
 using BadEcho.Fenestra.ViewModels;
 using BadEcho.Omnified.Vision.Properties;
 
-namespace BadEcho.Omnified.Vision.ViewModels
+namespace BadEcho.Omnified.Vision.ViewModels;
+
+/// <summary>
+/// Provides a view model that facilitates the display of Vision's application title.
+/// </summary>
+internal sealed class VisionTitleViewModel : ViewModel
 {
     /// <summary>
-    /// Provides a view model that facilitates the display of Vision's application title.
+    /// Gets or sets the initial, primary text on rotation with the <see cref="SecondaryLogo"/> for display as Vision's
+    /// application logo.
     /// </summary>
-    internal sealed class VisionTitleViewModel : ViewModel
-    {
-        /// <summary>
-        /// Gets or sets the initial, primary text on rotation with the <see cref="SecondaryLogo"/> for display as Vision's
-        /// application logo.
-        /// </summary>
-        public static string PrimaryLogo 
-            => Strings.VisionTitleName;
+    public static string PrimaryLogo 
+        => Strings.VisionTitleName;
 
-        /// <summary>
-        /// Gets or sets the secondary text on rotation with the <see cref="PrimaryLogo"/> for display as Vision's application
-        /// logo.
-        /// </summary>
-        public static string SecondaryLogo
-            => Strings.VisionTitleAddress;
+    /// <summary>
+    /// Gets or sets the secondary text on rotation with the <see cref="PrimaryLogo"/> for display as Vision's application
+    /// logo.
+    /// </summary>
+    public static string SecondaryLogo
+        => Strings.VisionTitleAddress;
 
-        /// <inheritdoc/>
-        public override void Disconnect()
-        { }
-    }
+    /// <inheritdoc/>
+    public override void Disconnect()
+    { }
 }

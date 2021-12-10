@@ -16,54 +16,53 @@ using BadEcho.Odin;
 using BadEcho.Omnified.Vision.Extensibility;
 using Xunit;
 
-namespace BadEcho.Omnified.Vision.Tests
+namespace BadEcho.Omnified.Vision.Tests;
+
+public class MessageFileWatcherTests : IDisposable
 {
-    public class MessageFileWatcherTests : IDisposable
+    private readonly FakeVisionModule _module;
+    private readonly MessageFileWatcher _watcher;
+
+    public MessageFileWatcherTests()
     {
-        private readonly FakeVisionModule _module;
-        private readonly MessageFileWatcher _watcher;
+        _module = new FakeVisionModule();
 
-        public MessageFileWatcherTests()
-        {
-            _module = new FakeVisionModule();
-
-            _watcher = new MessageFileWatcher(_module, string.Empty);
-        }
+        _watcher = new MessageFileWatcher(_module, string.Empty);
+    }
         
-        public void Dispose() 
-            => _watcher.Dispose();
+    public void Dispose() 
+        => _watcher.Dispose();
 
-        [Fact]
-        public void Write_ChangeProcessed()
+    [Fact]
+    public void Write_ChangeProcessed()
+    {
+        Assert.RaisesAsync<EventArgs<string>>(e => _watcher.NewMessages += e,
+                                              e => _watcher.NewMessages -= e,
+                                              () => Task.Run(Change));
+        void Change()
         {
-            Assert.RaisesAsync<EventArgs<string>>(e => _watcher.NewMessages += e,
-                                                  e => _watcher.NewMessages -= e,
-                                                  () => Task.Run(Change));
-            void Change()
+            using (var writer = File.AppendText(_module.MessageFile))
             {
-                using (var writer = File.AppendText(_module.MessageFile))
-                {
-                    writer.WriteLine("A change");
-                }
+                writer.WriteLine("A change");
             }
         }
+    }
 
-        private sealed class FakeVisionModule : IVisionModule
-        {
-            public AnchorPointLocation Location
-                => AnchorPointLocation.TopLeft;
+    private sealed class FakeVisionModule : IVisionModule
+    {
+        public AnchorPointLocation Location
+            => AnchorPointLocation.TopLeft;
 
-            public GrowthDirection GrowthDirection
-                => GrowthDirection.Vertical;
+        public GrowthDirection GrowthDirection
+            => GrowthDirection.Vertical;
 
-            public string MessageFile
-                => "testMessage.json";
+        public string MessageFile
+            => "testMessage.json";
 
-            public bool ProcessNewMessagesOnly
-                => false;
+        public bool ProcessNewMessagesOnly
+            => false;
             
-            public IViewModel EnableModule(IMessageFileProvider messageProvider) 
-                => throw new NotImplementedException();
-        }
+        public IViewModel EnableModule(IMessageFileProvider messageProvider) 
+            => throw new NotImplementedException();
     }
 }

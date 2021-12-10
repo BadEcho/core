@@ -11,21 +11,20 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Threading
+namespace BadEcho.Odin.Threading;
+
+/// <summary>
+/// Defines a representation of a thread executor frame.
+/// </summary>
+public interface IThreadExecutorFrame
 {
     /// <summary>
-    /// Defines a representation of a thread executor frame.
+    /// Gets or sets a value indicating if this frame will exit when all frames are requested to exit.
     /// </summary>
-    public interface IThreadExecutorFrame
-    {
-        /// <summary>
-        /// Gets or sets a value indicating if this frame will exit when all frames are requested to exit.
-        /// </summary>
-        bool ExitUponRequest { get; set; }
+    bool ExitUponRequest { get; set; }
 
-        /// <summary>
-        /// Gets or sets a value indicating if this frame should continue processing.
-        /// </summary>
-        bool ShouldContinue { get; set; }
-    }
+    /// <summary>
+    /// Gets or sets a value indicating if this frame should continue processing.
+    /// </summary>
+    bool ShouldContinue { get; set; }
 }

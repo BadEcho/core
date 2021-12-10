@@ -14,21 +14,20 @@
 using BadEcho.Fenestra;
 using BadEcho.Fenestra.ViewModels;
 
-namespace BadEcho.Omnified.Vision.Statistics.ViewModels
+namespace BadEcho.Omnified.Vision.Statistics.ViewModels;
+
+/// <summary>
+/// Defines a view model that facilitates the display of an individual statistic exported from an Omnified game.
+/// </summary>
+internal interface IStatisticViewModel : IViewModel, IModelProvider<IStatistic>
 {
     /// <summary>
-    /// Defines a view model that facilitates the display of an individual statistic exported from an Omnified game.
+    /// Gets or sets the displayed name for the bound statistic.
     /// </summary>
-    internal interface IStatisticViewModel : IViewModel, IModelProvider<IStatistic>
-    {
-        /// <summary>
-        /// Gets or sets the displayed name for the bound statistic.
-        /// </summary>
-        string Name { get; set; }
+    string Name { get; set; }
 
-        /// <summary>
-        /// Gets or sets any formatting that should be applied to the value of the bound statistic.
-        /// </summary>
-        string Format { get; set; }
-    }
+    /// <summary>
+    /// Gets or sets any formatting that should be applied to the value of the bound statistic.
+    /// </summary>
+    string Format { get; set; }
 }

@@ -11,17 +11,16 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Omnified.Vision.Views
+namespace BadEcho.Omnified.Vision.Views;
+
+/// <summary>
+/// Provides a view for displaying Vision's application title.
+/// </summary>
+public partial class VisionTitleView
 {
     /// <summary>
-    /// Provides a view for displaying Vision's application title.
+    /// Initializes a new instance of the <see cref="VisionTitleView"/> class.
     /// </summary>
-    public partial class VisionTitleView
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="VisionTitleView"/> class.
-        /// </summary>
-        public VisionTitleView() 
-            => InitializeComponent();
-    }
+    public VisionTitleView() 
+        => InitializeComponent();
 }

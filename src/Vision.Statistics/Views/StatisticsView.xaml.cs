@@ -11,17 +11,16 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Omnified.Vision.Statistics.Views
+namespace BadEcho.Omnified.Vision.Statistics.Views;
+
+/// <summary>
+/// Provides a view for a collection of statistics exported from an Omnified game.
+/// </summary>
+public partial class StatisticsView
 {
     /// <summary>
-    /// Provides a view for a collection of statistics exported from an Omnified game.
+    /// Initializes a new instance of the <see cref="StatisticsView"/> class.
     /// </summary>
-    public partial class StatisticsView
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StatisticsView"/> class.
-        /// </summary>
-        public StatisticsView() 
-            => InitializeComponent();
-    }
+    public StatisticsView() 
+        => InitializeComponent();
 }

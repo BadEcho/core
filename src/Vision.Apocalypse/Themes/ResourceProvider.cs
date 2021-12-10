@@ -14,22 +14,21 @@
 using System.Composition;
 using BadEcho.Fenestra;
 
-namespace BadEcho.Omnified.Vision.Apocalypse.Themes
+namespace BadEcho.Omnified.Vision.Apocalypse.Themes;
+
+/// <summary>
+/// Provides access to resources belonging to the Apocalypse plugin for Vision.
+/// </summary>
+[Export(typeof(IResourceProvider))]
+internal sealed class ResourceProvider : IResourceProvider
 {
     /// <summary>
-    /// Provides access to resources belonging to the Apocalypse plugin for Vision.
+    /// Initializes a new instance of the <see cref="ResourceProvider"/> class.
     /// </summary>
-    [Export(typeof(IResourceProvider))]
-    internal sealed class ResourceProvider : IResourceProvider
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ResourceProvider"/> class.
-        /// </summary>
-        public ResourceProvider()
-            => ResourceUri = PackUri.FromRelativePath<ResourceProvider>("Root.xaml");
+    public ResourceProvider()
+        => ResourceUri = PackUri.FromRelativePath<ResourceProvider>("Root.xaml");
 
-        /// <inheritdoc/>
-        public Uri ResourceUri
-        { get; }
-    }
+    /// <inheritdoc/>
+    public Uri ResourceUri
+    { get; }
 }

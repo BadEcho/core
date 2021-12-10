@@ -13,25 +13,24 @@
 
 using System.Runtime.InteropServices;
 
-namespace BadEcho.Odin.Interop
-{
-    /// <summary>
-    /// Provides interoperability with the shell scaling functionality of Windows.
-    /// </summary>
-    internal static class ShellScaling
-    {
-        private const string LIBRARY_NAME = "shcore";
+namespace BadEcho.Odin.Interop;
 
-        /// <summary>
-        /// Queries the dots per inch (DPI) of a display.
-        /// </summary>
-        /// <param name="hMonitor">A handle of the monitor being queried.</param>
-        /// <param name="dpiType">An enumeration value that specifies the type of DPI being queried.</param>
-        /// <param name="dpiX">The value of the DPI along the x-axis.</param>
-        /// <param name="dpiY">The value of the DPI along the y-axis.</param>
-        /// <returns>The result of the operation.</returns>
-        [DllImport(LIBRARY_NAME, SetLastError = true)]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-        public static extern ResultHandle GetDpiForMonitor(IntPtr hMonitor, MonitorDpiType dpiType, out uint dpiX, out uint dpiY);
-    }
+/// <summary>
+/// Provides interoperability with the shell scaling functionality of Windows.
+/// </summary>
+internal static class ShellScaling
+{
+    private const string LIBRARY_NAME = "shcore";
+
+    /// <summary>
+    /// Queries the dots per inch (DPI) of a display.
+    /// </summary>
+    /// <param name="hMonitor">A handle of the monitor being queried.</param>
+    /// <param name="dpiType">An enumeration value that specifies the type of DPI being queried.</param>
+    /// <param name="dpiX">The value of the DPI along the x-axis.</param>
+    /// <param name="dpiY">The value of the DPI along the y-axis.</param>
+    /// <returns>The result of the operation.</returns>
+    [DllImport(LIBRARY_NAME, SetLastError = true)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static extern ResultHandle GetDpiForMonitor(IntPtr hMonitor, MonitorDpiType dpiType, out uint dpiX, out uint dpiY);
 }

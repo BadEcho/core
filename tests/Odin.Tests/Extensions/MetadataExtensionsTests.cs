@@ -14,36 +14,35 @@
 using BadEcho.Odin.Extensibility;
 using Xunit;
 
-namespace BadEcho.Odin.Tests.Extensions
+namespace BadEcho.Odin.Tests.Extensions;
+
+public class MetadataExtensionsTests
 {
-    public class MetadataExtensionsTests
+    [Fact]
+    public void BuildMetadata_Interface()
     {
-        [Fact]
-        public void BuildMetadata_Interface()
-        {
-            var expectedMetadata = new Dictionary<string, Type>
-                                   {
-                                       {nameof(IMetadata.FirstProperty), typeof(int)},
-                                       {nameof(IMetadata.SecondProperty), typeof(string)}
-                                   };
+        var expectedMetadata = new Dictionary<string, Type>
+                               {
+                                   {nameof(IMetadata.FirstProperty), typeof(int)},
+                                   {nameof(IMetadata.SecondProperty), typeof(string)}
+                               };
 
-            var metadata = MetadataExtensions.BuildMetadata(typeof(IMetadata));
+        var metadata = MetadataExtensions.BuildMetadata(typeof(IMetadata));
 
-            Assert.True(expectedMetadata.SequenceEqual(metadata));
-        }
+        Assert.True(expectedMetadata.SequenceEqual(metadata));
+    }
 
-        [Fact]
-        public void BuildMetadata_Null()
-        {
-            var metadata = MetadataExtensions.BuildMetadata(null);
+    [Fact]
+    public void BuildMetadata_Null()
+    {
+        var metadata = MetadataExtensions.BuildMetadata(null);
 
-            Assert.True(!metadata.Any());
-        }
+        Assert.True(!metadata.Any());
+    }
 
-        private interface IMetadata
-        {
-            int FirstProperty { get; }
-            string SecondProperty { get; }
-        }
+    private interface IMetadata
+    {
+        int FirstProperty { get; }
+        string SecondProperty { get; }
     }
 }

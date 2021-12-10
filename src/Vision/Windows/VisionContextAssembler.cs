@@ -18,66 +18,65 @@ using BadEcho.Odin.Extensibility.Hosting;
 using BadEcho.Omnified.Vision.Extensibility;
 using BadEcho.Omnified.Vision.ViewModels;
 
-namespace BadEcho.Omnified.Vision.Windows
+namespace BadEcho.Omnified.Vision.Windows;
+
+/// <summary>
+/// Provides an assembler of a Vision main window's data context.
+/// </summary>
+internal sealed class VisionContextAssembler : IContextAssembler<VisionViewModel>
 {
-    /// <summary>
-    /// Provides an assembler of a Vision main window's data context.
-    /// </summary>
-    internal sealed class VisionContextAssembler : IContextAssembler<VisionViewModel>
-    {
-        private readonly VisionViewModel _viewModel = new();
+    private readonly VisionViewModel _viewModel = new();
 
-        private bool _isAssembled;
+    private bool _isAssembled;
         
-        /// <inheritdoc/>
-        public VisionViewModel Assemble(Dispatcher dispatcher)
-        {
-            if (_isAssembled)
-                return _viewModel;
-
-            IConfigurationProvider configurationProvider
-                = PluginHost.LoadRequirement<IConfigurationProvider>(true);
-
-            configurationProvider.ConfigurationChanged += HandleConfigurationChanged;
-
-            ApplyConfiguration(configurationProvider, dispatcher);
-
-            _isAssembled = true;
-
+    /// <inheritdoc/>
+    public VisionViewModel Assemble(Dispatcher dispatcher)
+    {
+        if (_isAssembled)
             return _viewModel;
-        }
 
-        private void ApplyConfiguration(IConfigurationProvider configurationProvider, Dispatcher? dispatcher = null)
+        IConfigurationProvider configurationProvider
+            = PluginHost.LoadRequirement<IConfigurationProvider>(true);
+
+        configurationProvider.ConfigurationChanged += HandleConfigurationChanged;
+
+        ApplyConfiguration(configurationProvider, dispatcher);
+
+        _isAssembled = true;
+
+        return _viewModel;
+    }
+
+    private void ApplyConfiguration(IConfigurationProvider configurationProvider, Dispatcher? dispatcher = null)
+    {
+        VisionConfiguration configuration
+            = configurationProvider.GetConfiguration<VisionConfiguration>();
+
+        configuration.Dispatcher = dispatcher;
+
+        _viewModel.Disconnect();
+        _viewModel.ApplyConfiguration(configuration);
+
+        var titleModuleHost = ModuleHost.ForTitle(configuration);
+
+        _viewModel.Bind(titleModuleHost);
+
+        var modules
+            = PluginHost.ArmedLoad<IVisionModule, IVisionConfiguration>(configuration);
+
+        foreach (var module in modules)
         {
-            VisionConfiguration configuration
-                = configurationProvider.GetConfiguration<VisionConfiguration>();
-
-            configuration.Dispatcher = dispatcher;
-
-            _viewModel.Disconnect();
-            _viewModel.ApplyConfiguration(configuration);
-
-            var titleModuleHost = ModuleHost.ForTitle(configuration);
-
-            _viewModel.Bind(titleModuleHost);
-
-            var modules
-                = PluginHost.ArmedLoad<IVisionModule, IVisionConfiguration>(configuration);
-
-            foreach (var module in modules)
-            {
-                var moduleHost = new ModuleHost(module, configuration);
+            var moduleHost = new ModuleHost(module, configuration);
                 
-                _viewModel.Bind(moduleHost);
-            }
+            _viewModel.Bind(moduleHost);
         }
+    }
 
-        private void HandleConfigurationChanged(object? sender, EventArgs e)
-        {
-            if (sender is not IConfigurationProvider configurationProvider)
-                return;
+    private void HandleConfigurationChanged(object? sender, EventArgs e)
+    {
+        if (sender is not IConfigurationProvider configurationProvider)
+            return;
 
-            ApplyConfiguration(configurationProvider);
-        }
+        ApplyConfiguration(configurationProvider);
     }
 }

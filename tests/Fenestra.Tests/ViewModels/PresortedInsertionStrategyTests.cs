@@ -14,81 +14,80 @@
 using BadEcho.Fenestra.ViewModels;
 using Xunit;
 
-namespace BadEcho.Fenestra.Tests.ViewModels
+namespace BadEcho.Fenestra.Tests.ViewModels;
+
+public class PresortedInsertionStrategyTests
 {
-    public class PresortedInsertionStrategyTests
+    private readonly PresortedInsertionStrategy<ViewModelStub, int> _strategy
+        = new(x => x.Value);
+
+    private readonly FakeAncestorViewModel _collectionViewModel = new();
+
+    public PresortedInsertionStrategyTests()
     {
-        private readonly PresortedInsertionStrategy<ViewModelStub, int> _strategy
-            = new(x => x.Value);
+        var a = new ModelStub("A", 1);
+        var b = new ModelStub("B", 8);
+        var c = new ModelStub("C", 13);
+        var d = new ModelStub("D", 2);
 
-        private readonly FakeAncestorViewModel _collectionViewModel = new();
+        var aVm = new ViewModelStub();
+        var bVm = new ViewModelStub();
+        var cVm = new ViewModelStub();
+        var dVm = new ViewModelStub();
 
-        public PresortedInsertionStrategyTests()
-        {
-            var a = new ModelStub("A", 1);
-            var b = new ModelStub("B", 8);
-            var c = new ModelStub("C", 13);
-            var d = new ModelStub("D", 2);
+        aVm.Bind(a);
+        bVm.Bind(b);
+        cVm.Bind(c);
+        dVm.Bind(d);
 
-            var aVm = new ViewModelStub();
-            var bVm = new ViewModelStub();
-            var cVm = new ViewModelStub();
-            var dVm = new ViewModelStub();
+        _collectionViewModel.Children.Add(aVm);
+        _collectionViewModel.Children.Add(dVm);
+        _collectionViewModel.Children.Add(bVm);
+        _collectionViewModel.Children.Add(cVm);
+    }
 
-            aVm.Bind(a);
-            bVm.Bind(b);
-            cVm.Bind(c);
-            dVm.Bind(d);
+    [Fact]
+    public void Add_ExistingItems()
+    {
+        var newItem = new ModelStub("New", 3);
+        var newChild = new ViewModelStub();
 
-            _collectionViewModel.Children.Add(aVm);
-            _collectionViewModel.Children.Add(dVm);
-            _collectionViewModel.Children.Add(bVm);
-            _collectionViewModel.Children.Add(cVm);
-        }
+        newChild.Bind(newItem);
 
-        [Fact]
-        public void Add_ExistingItems()
-        {
-            var newItem = new ModelStub("New", 3);
-            var newChild = new ViewModelStub();
+        _strategy.Add(_collectionViewModel, newChild);
 
-            newChild.Bind(newItem);
+        Assert.Equal(newChild, _collectionViewModel.Children[2]);
+    }
 
-            _strategy.Add(_collectionViewModel, newChild);
+    [Fact]
+    public void AddRange_ExistingItems()
+    {
+        var newItem1 = new ModelStub("New1", 3);
+        var newItem2 = new ModelStub("New2", 0);
+        var newItem3 = new ModelStub("New3", -1);
+        var newItem4 = new ModelStub("New4", 15);
+        var newItem5 = new ModelStub("New5", 7);
 
-            Assert.Equal(newChild, _collectionViewModel.Children[2]);
-        }
+        var newChild1 = new ViewModelStub();
+        var newChild2 = new ViewModelStub();
+        var newChild3 = new ViewModelStub();
+        var newChild4 = new ViewModelStub();
+        var newChild5 = new ViewModelStub();
 
-        [Fact]
-        public void AddRange_ExistingItems()
-        {
-            var newItem1 = new ModelStub("New1", 3);
-            var newItem2 = new ModelStub("New2", 0);
-            var newItem3 = new ModelStub("New3", -1);
-            var newItem4 = new ModelStub("New4", 15);
-            var newItem5 = new ModelStub("New5", 7);
+        newChild1.Bind(newItem1);
+        newChild2.Bind(newItem2);
+        newChild3.Bind(newItem3);
+        newChild4.Bind(newItem4);
+        newChild5.Bind(newItem5);
 
-            var newChild1 = new ViewModelStub();
-            var newChild2 = new ViewModelStub();
-            var newChild3 = new ViewModelStub();
-            var newChild4 = new ViewModelStub();
-            var newChild5 = new ViewModelStub();
+        var newItems = new List<ViewModelStub> { newChild1, newChild2, newChild3, newChild4, newChild5 };
 
-            newChild1.Bind(newItem1);
-            newChild2.Bind(newItem2);
-            newChild3.Bind(newItem3);
-            newChild4.Bind(newItem4);
-            newChild5.Bind(newItem5);
+        _strategy.AddRange(_collectionViewModel, newItems);
 
-            var newItems = new List<ViewModelStub> { newChild1, newChild2, newChild3, newChild4, newChild5 };
-
-            _strategy.AddRange(_collectionViewModel, newItems);
-
-            Assert.Equal(newChild1, _collectionViewModel.Children[4]);
-            Assert.Equal(newChild2, _collectionViewModel.Children[1]);
-            Assert.Equal(newChild3, _collectionViewModel.Children[0]);
-            Assert.Equal(newChild4, _collectionViewModel.Children[8]);
-            Assert.Equal(newChild5, _collectionViewModel.Children[5]);
-        }
+        Assert.Equal(newChild1, _collectionViewModel.Children[4]);
+        Assert.Equal(newChild2, _collectionViewModel.Children[1]);
+        Assert.Equal(newChild3, _collectionViewModel.Children[0]);
+        Assert.Equal(newChild4, _collectionViewModel.Children[8]);
+        Assert.Equal(newChild5, _collectionViewModel.Children[5]);
     }
 }

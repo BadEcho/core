@@ -18,64 +18,63 @@ using System.Windows;
 using BadEcho.Fenestra.Properties;
 using BadEcho.Odin;
 
-namespace BadEcho.Fenestra.Serialization
+namespace BadEcho.Fenestra.Serialization;
+
+/// <summary>
+/// Provides a converter of <see cref="Thickness"/> objects to and from JSON.
+/// </summary>
+public sealed class JsonThicknessConverter : JsonConverter<Thickness>
 {
-    /// <summary>
-    /// Provides a converter of <see cref="Thickness"/> objects to and from JSON.
-    /// </summary>
-    public sealed class JsonThicknessConverter : JsonConverter<Thickness>
+    /// <inheritdoc/>
+    public override Thickness Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        /// <inheritdoc/>
-        public override Thickness Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            string thickness = reader.GetString() ?? string.Empty;
+        string thickness = reader.GetString() ?? string.Empty;
 
-            double[] lengths = ParseLengths(thickness);
+        double[] lengths = ParseLengths(thickness);
             
-            return lengths.Length switch
-            {
-                1 => new Thickness(lengths[0]),
-                2 => new Thickness(lengths[0], lengths[1], lengths[0], lengths[1]),
-                _ => new Thickness(lengths[0], lengths[1], lengths[2], lengths[3])
-            };
-        }
-
-        /// <inheritdoc/>
-        public override void Write(Utf8JsonWriter writer, Thickness value, JsonSerializerOptions options)
+        return lengths.Length switch
         {
-            Require.NotNull(writer, nameof(writer));
+            1 => new Thickness(lengths[0]),
+            2 => new Thickness(lengths[0], lengths[1], lengths[0], lengths[1]),
+            _ => new Thickness(lengths[0], lengths[1], lengths[2], lengths[3])
+        };
+    }
 
-            string separator = CultureInfo.InvariantCulture.TextInfo.ListSeparator;
-            string thickness = $"{value.Left}{separator}{value.Top}{separator}{value.Right}{separator}{value.Bottom}";
+    /// <inheritdoc/>
+    public override void Write(Utf8JsonWriter writer, Thickness value, JsonSerializerOptions options)
+    {
+        Require.NotNull(writer, nameof(writer));
 
-            writer.WriteStringValue(thickness);
-        }
+        string separator = CultureInfo.InvariantCulture.TextInfo.ListSeparator;
+        string thickness = $"{value.Left}{separator}{value.Top}{separator}{value.Right}{separator}{value.Bottom}";
 
-        private static double[] ParseLengths(string value)
+        writer.WriteStringValue(thickness);
+    }
+
+    private static double[] ParseLengths(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return new[] {0.0};
+
+        string separator = CultureInfo.InvariantCulture.TextInfo.ListSeparator;
+        string[] values = value.Split(separator);
+
+        return values.Length switch
         {
-            if (string.IsNullOrEmpty(value))
-                return new[] {0.0};
-
-            string separator = CultureInfo.InvariantCulture.TextInfo.ListSeparator;
-            string[] values = value.Split(separator);
-
-            return values.Length switch
-            {
-                1 => new[] {double.Parse(values[0], CultureInfo.InvariantCulture)},
-                2 => new[]
-                     {
-                         double.Parse(values[0], CultureInfo.InvariantCulture),
-                         double.Parse(values[1], CultureInfo.InvariantCulture)
-                     },
-                4 => new[]
-                     {
-                         double.Parse(values[0], CultureInfo.InvariantCulture),
-                         double.Parse(values[1], CultureInfo.InvariantCulture),
-                         double.Parse(values[2], CultureInfo.InvariantCulture),
-                         double.Parse(values[3], CultureInfo.InvariantCulture)
-                     },
-                _ => throw new JsonException(Strings.JsonThicknessInvalidThickness)
-            };
-        }
+            1 => new[] {double.Parse(values[0], CultureInfo.InvariantCulture)},
+            2 => new[]
+                 {
+                     double.Parse(values[0], CultureInfo.InvariantCulture),
+                     double.Parse(values[1], CultureInfo.InvariantCulture)
+                 },
+            4 => new[]
+                 {
+                     double.Parse(values[0], CultureInfo.InvariantCulture),
+                     double.Parse(values[1], CultureInfo.InvariantCulture),
+                     double.Parse(values[2], CultureInfo.InvariantCulture),
+                     double.Parse(values[3], CultureInfo.InvariantCulture)
+                 },
+            _ => throw new JsonException(Strings.JsonThicknessInvalidThickness)
+        };
     }
 }

@@ -13,27 +13,26 @@
 
 using BadEcho.Odin.Extensibility.Configuration;
 
-namespace BadEcho.Odin.XmlConfiguration.Extensibility
+namespace BadEcho.Odin.XmlConfiguration.Extensibility;
+
+/// <summary>
+/// Provides a means to retrieve Extensibility framework configuration sections from classic .NET XML configuration files.
+/// </summary>
+public static class ExtensibilityConfigurationProvider
 {
     /// <summary>
-    /// Provides a means to retrieve Extensibility framework configuration sections from classic .NET XML configuration files.
+    /// Loads configuration settings for Odin's Extensibility framework.
     /// </summary>
-    public static class ExtensibilityConfigurationProvider
+    /// <returns>
+    /// An <see cref="IExtensibilityConfiguration"/> object containing settings for the Extensibility framework.
+    /// </returns>
+    public static IExtensibilityConfiguration LoadConfiguration()
     {
-        /// <summary>
-        /// Loads configuration settings for Odin's Extensibility framework.
-        /// </summary>
-        /// <returns>
-        /// An <see cref="IExtensibilityConfiguration"/> object containing settings for the Extensibility framework.
-        /// </returns>
-        public static IExtensibilityConfiguration LoadConfiguration()
-        {
-            ExtensibilitySection section = ExtensibilitySection.GetSection();
+        ExtensibilitySection section = ExtensibilitySection.GetSection();
 
-            if (section == null)
-                throw new ConfigurationMissingException(MissingConfigurationType.Section, ExtensibilitySection.Schema);
+        if (section == null)
+            throw new ConfigurationMissingException(MissingConfigurationType.Section, ExtensibilitySection.Schema);
 
-            return section;
-        }
+        return section;
     }
 }

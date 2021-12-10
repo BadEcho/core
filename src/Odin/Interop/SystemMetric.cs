@@ -11,20 +11,19 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Interop
+namespace BadEcho.Odin.Interop;
+
+/// <summary>
+/// Specifies a system metric or configuration setting that can be requested through <see cref="User32.GetSystemMetrics"/>.
+/// </summary>
+internal enum SystemMetric
 {
     /// <summary>
-    /// Specifies a system metric or configuration setting that can be requested through <see cref="User32.GetSystemMetrics"/>.
+    /// The width of the screen of the primary display monitor.
     /// </summary>
-    internal enum SystemMetric
-    {
-        /// <summary>
-        /// The width of the screen of the primary display monitor.
-        /// </summary>
-        PrimaryScreenWidth = 0,
-        /// <summary>
-        /// The number of display monitors on the desktop.
-        /// </summary>
-        NumberOfMonitors = 80
-    }
+    PrimaryScreenWidth = 0,
+    /// <summary>
+    /// The number of display monitors on the desktop.
+    /// </summary>
+    NumberOfMonitors = 80
 }

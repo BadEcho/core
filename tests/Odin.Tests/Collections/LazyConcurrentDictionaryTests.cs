@@ -14,174 +14,173 @@
 using BadEcho.Odin.Collections;
 using Xunit;
 
-namespace BadEcho.Odin.Tests.Collections
+namespace BadEcho.Odin.Tests.Collections;
+
+public class LazyConcurrentDictionaryTests
 {
-    public class LazyConcurrentDictionaryTests
+    private readonly LazyConcurrentDictionary<int,string> _lazyDictionary;
+
+    public LazyConcurrentDictionaryTests()
     {
-        private readonly LazyConcurrentDictionary<int,string> _lazyDictionary;
-
-        public LazyConcurrentDictionaryTests()
-        {
-            _lazyDictionary = new LazyConcurrentDictionary<int, string>(
-                new List<KeyValuePair<int, Lazy<string>>>
-                {
-                    new (0, new Lazy<string>(() => "First")),
-                    new (1, new Lazy<string>(() => "Second"))
-                },
+        _lazyDictionary = new LazyConcurrentDictionary<int, string>(
+            new List<KeyValuePair<int, Lazy<string>>>
+            {
+                new (0, new Lazy<string>(() => "First")),
+                new (1, new Lazy<string>(() => "Second"))
+            },
             LazyThreadSafetyMode.ExecutionAndPublication);
-        }
+    }
 
-        [Fact]
-        public void GetOrAdd_Existing_ReturnsFirst()
-        {
-            var value = _lazyDictionary.GetOrAdd(0, () => "Not First");
+    [Fact]
+    public void GetOrAdd_Existing_ReturnsFirst()
+    {
+        var value = _lazyDictionary.GetOrAdd(0, () => "Not First");
 
-            Assert.Equal("First", value.Value);
-        }
+        Assert.Equal("First", value.Value);
+    }
 
-        [Fact]
-        public void GetOrAdd_New_NoFactoryUntilAccess()
-        {
-            var factoryRun = false;
-            var value = _lazyDictionary.GetOrAdd(2, () =>
-                                                    {
-                                                        factoryRun = true;
-                                                        return "Third";
-                                                    });
-
-            Assert.False(factoryRun);
-            Assert.Equal("Third", value.Value);
-        }
-
-        [Fact]
-        public void GetOrAdd_ExistingLazy_ReturnsFirst()
-        {
-            var value = _lazyDictionary.GetOrAdd(0, _ => new Lazy<string>("Not First"));
-
-            Assert.NotNull(value);
-
-            Assert.Equal("First", value.Value);
-        }
-
-        [Fact]
-        public void GetOrAdd_ExistingLazy_NotFactoryUntilAccess()
-        {
-            var factoryRan = false;
-            var value = _lazyDictionary
-                .GetOrAdd(2,
-                          _ => new Lazy<string>(() =>
+    [Fact]
+    public void GetOrAdd_New_NoFactoryUntilAccess()
+    {
+        var factoryRun = false;
+        var value = _lazyDictionary.GetOrAdd(2, () =>
                                                 {
-                                                    factoryRan = true;
+                                                    factoryRun = true;
                                                     return "Third";
-                                                }));
+                                                });
+
+        Assert.False(factoryRun);
+        Assert.Equal("Third", value.Value);
+    }
+
+    [Fact]
+    public void GetOrAdd_ExistingLazy_ReturnsFirst()
+    {
+        var value = _lazyDictionary.GetOrAdd(0, _ => new Lazy<string>("Not First"));
+
+        Assert.NotNull(value);
+
+        Assert.Equal("First", value.Value);
+    }
+
+    [Fact]
+    public void GetOrAdd_ExistingLazy_NotFactoryUntilAccess()
+    {
+        var factoryRan = false;
+        var value = _lazyDictionary
+            .GetOrAdd(2,
+                      _ => new Lazy<string>(() =>
+                                            {
+                                                factoryRan = true;
+                                                return "Third";
+                                            }));
+
+        Assert.False(factoryRan);
+        Assert.Equal("Third", value.Value);
+    }
+
+    [Fact]
+    public void IReadOnlyDictionaryIndexer_Existing_ReturnsItems()
+    {
+        IReadOnlyDictionary<int, string> readOnly = _lazyDictionary;
+
+        Assert.Equal("First", readOnly[0]);
+        Assert.Equal("Second", readOnly[1]);
+    }
+
+    [Fact]
+    public void IReadOnlyDictionaryIndexer_New_NoFactoryUntilAccess()
+    {
+        bool factoryRan = false;
+
+        _lazyDictionary.GetOrAdd(2,
+                                 () =>
+                                 {
+                                     factoryRan = true;
+                                     return "Third";
+                                 });
+
+        IReadOnlyDictionary<int, string> readOnly = _lazyDictionary;
+
+        Assert.Equal("First",readOnly[0]);
+
+        Assert.False(factoryRan);
+
+        Assert.Equal("Third", readOnly[2]);
+    }
+
+    [Fact]
+    public void IReadOnlyDictionaryEnumerator_Existing_ReturnsItems()
+    {
+        IReadOnlyDictionary<int, string> readOnly = _lazyDictionary;
+
+        using (var enumerator = readOnly.GetEnumerator())
+        {
+            enumerator.MoveNext();
+
+            Assert.Equal(0, enumerator.Current.Key);
+            Assert.Equal("First", enumerator.Current.Value);
+
+            enumerator.MoveNext();
+
+            Assert.Equal(1, enumerator.Current.Key);
+            Assert.Equal("Second", enumerator.Current.Value);
+        }
+    }
+
+    [Fact]
+    public void IReadOnlyDictionaryEnumerator_New_NoFactoryUntilAccess()
+    {
+        bool factoryRan = false;
+
+        _lazyDictionary.GetOrAdd(2,
+                                 () =>
+                                 {
+                                     factoryRan = true;
+                                     return "Third";
+                                 });
+
+        IReadOnlyDictionary<int, string> readOnly = _lazyDictionary;
+
+        using (var enumerator = readOnly.GetEnumerator())
+        {
+            enumerator.MoveNext();
 
             Assert.False(factoryRan);
-            Assert.Equal("Third", value.Value);
-        }
 
-        [Fact]
-        public void IReadOnlyDictionaryIndexer_Existing_ReturnsItems()
-        {
-            IReadOnlyDictionary<int, string> readOnly = _lazyDictionary;
+            Assert.Equal(0, enumerator.Current.Key);
+            Assert.Equal("First", enumerator.Current.Value);
 
-            Assert.Equal("First", readOnly[0]);
-            Assert.Equal("Second", readOnly[1]);
-        }
-
-        [Fact]
-        public void IReadOnlyDictionaryIndexer_New_NoFactoryUntilAccess()
-        {
-            bool factoryRan = false;
-
-            _lazyDictionary.GetOrAdd(2,
-                                     () =>
-                                     {
-                                         factoryRan = true;
-                                         return "Third";
-                                     });
-
-            IReadOnlyDictionary<int, string> readOnly = _lazyDictionary;
-
-            Assert.Equal("First",readOnly[0]);
+            enumerator.MoveNext();
 
             Assert.False(factoryRan);
 
-            Assert.Equal("Third", readOnly[2]);
+            Assert.Equal(1, enumerator.Current.Key);
+            Assert.Equal("Second", enumerator.Current.Value);
+
+            enumerator.MoveNext();
+
+            Assert.False(factoryRan);
+
+            Assert.Equal(2, enumerator.Current.Key);
+            Assert.Equal("Third", enumerator.Current.Value);
+
+            Assert.True(factoryRan);
         }
+    }
 
-        [Fact]
-        public void IReadOnlyDictionaryEnumerator_Existing_ReturnsItems()
-        {
-            IReadOnlyDictionary<int, string> readOnly = _lazyDictionary;
+    [Fact]
+    public void TryGetValue_Existing_ReturnsFirst()
+    {
+        Assert.True(_lazyDictionary.TryGetValue(0, out string? firstValue));
 
-            using (var enumerator = readOnly.GetEnumerator())
-            {
-                enumerator.MoveNext();
+        Assert.Equal("First", firstValue);
+    }
 
-                Assert.Equal(0, enumerator.Current.Key);
-                Assert.Equal("First", enumerator.Current.Value);
-
-                enumerator.MoveNext();
-
-                Assert.Equal(1, enumerator.Current.Key);
-                Assert.Equal("Second", enumerator.Current.Value);
-            }
-        }
-
-        [Fact]
-        public void IReadOnlyDictionaryEnumerator_New_NoFactoryUntilAccess()
-        {
-            bool factoryRan = false;
-
-            _lazyDictionary.GetOrAdd(2,
-                                     () =>
-                                     {
-                                         factoryRan = true;
-                                         return "Third";
-                                     });
-
-            IReadOnlyDictionary<int, string> readOnly = _lazyDictionary;
-
-            using (var enumerator = readOnly.GetEnumerator())
-            {
-                enumerator.MoveNext();
-
-                Assert.False(factoryRan);
-
-                Assert.Equal(0, enumerator.Current.Key);
-                Assert.Equal("First", enumerator.Current.Value);
-
-                enumerator.MoveNext();
-
-                Assert.False(factoryRan);
-
-                Assert.Equal(1, enumerator.Current.Key);
-                Assert.Equal("Second", enumerator.Current.Value);
-
-                enumerator.MoveNext();
-
-                Assert.False(factoryRan);
-
-                Assert.Equal(2, enumerator.Current.Key);
-                Assert.Equal("Third", enumerator.Current.Value);
-
-                Assert.True(factoryRan);
-            }
-        }
-
-        [Fact]
-        public void TryGetValue_Existing_ReturnsFirst()
-        {
-            Assert.True(_lazyDictionary.TryGetValue(0, out string? firstValue));
-
-            Assert.Equal("First", firstValue);
-        }
-
-        [Fact]
-        public void TryGetValue_NonExisting_ReturnsNull()
-        {
-            Assert.False(_lazyDictionary.TryGetValue(2, out string? noValue));
-            Assert.Null(noValue);
-        }
+    [Fact]
+    public void TryGetValue_NonExisting_ReturnsNull()
+    {
+        Assert.False(_lazyDictionary.TryGetValue(2, out string? noValue));
+        Assert.Null(noValue);
     }
 }

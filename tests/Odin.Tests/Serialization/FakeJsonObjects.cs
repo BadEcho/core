@@ -15,58 +15,57 @@ using System.ComponentModel;
 using System.Text.Json;
 using BadEcho.Odin.Serialization;
 
-namespace BadEcho.Odin.Tests.Serialization
+namespace BadEcho.Odin.Tests.Serialization;
+
+/// <suppresions>
+/// ReSharper disable LocalizableElement
+/// </suppresions>
+public abstract class FakeJsonObject
+{ }
+
+public sealed class FirstFakeJsonObject : FakeJsonObject
 {
-    /// <suppresions>
-    /// ReSharper disable LocalizableElement
-    /// </suppresions>
-    public abstract class FakeJsonObject
-    { }
+    public string? SomeIdentifier
+    { get; set; }
+}
 
-    public sealed class FirstFakeJsonObject : FakeJsonObject
+public sealed class SecondFakeJsonObject : FakeJsonObject
+{
+    public string? SomeOtherIdentifier
+    { get; set; }
+}
+
+public enum FakeJsonObjectType
+{
+    First,
+    Second
+}
+
+public sealed class FakeJsonObjectConverter : JsonPolymorphicConverter<FakeJsonObjectType, FakeJsonObject>
+{
+    protected override string DataPropertyName
+        => "Object";
+
+    protected override FakeJsonObject? ReadFromDescriptor(ref Utf8JsonReader reader, FakeJsonObjectType typeDescriptor)
     {
-        public string? SomeIdentifier
-        { get; set; }
-    }
-
-    public sealed class SecondFakeJsonObject : FakeJsonObject
-    {
-        public string? SomeOtherIdentifier
-        { get; set; }
-    }
-
-    public enum FakeJsonObjectType
-    {
-        First,
-        Second
-    }
-
-    public sealed class FakeJsonObjectConverter : JsonPolymorphicConverter<FakeJsonObjectType, FakeJsonObject>
-    {
-        protected override string DataPropertyName
-            => "Object";
-
-        protected override FakeJsonObject? ReadFromDescriptor(ref Utf8JsonReader reader, FakeJsonObjectType typeDescriptor)
+        return typeDescriptor switch
         {
-            return typeDescriptor switch
-            {
-                FakeJsonObjectType.First => JsonSerializer.Deserialize<FirstFakeJsonObject>(ref reader),
-                FakeJsonObjectType.Second => JsonSerializer.Deserialize<SecondFakeJsonObject>(ref reader),
-                _ => throw new InvalidEnumArgumentException(nameof(typeDescriptor),
-                                                            (int) typeDescriptor,
-                                                            typeof(FakeJsonObjectType))
-            };
-        }
+            FakeJsonObjectType.First => JsonSerializer.Deserialize<FirstFakeJsonObject>(ref reader),
+            FakeJsonObjectType.Second => JsonSerializer.Deserialize<SecondFakeJsonObject>(ref reader),
+            _ => throw new InvalidEnumArgumentException(nameof(typeDescriptor),
+                                                        (int) typeDescriptor,
+                                                        typeof(FakeJsonObjectType))
+        };
+    }
 
-        protected override FakeJsonObjectType DescriptorFromValue(FakeJsonObject value)
+    protected override FakeJsonObjectType DescriptorFromValue(FakeJsonObject value)
+    {
+        return value switch
         {
-            return value switch
-            {
-                FirstFakeJsonObject => FakeJsonObjectType.First,
-                SecondFakeJsonObject => FakeJsonObjectType.Second,
-                _ => throw new ArgumentException("Type described in JSON not supported.",
-                                                 nameof(value))
-            };
-        }
+            FirstFakeJsonObject => FakeJsonObjectType.First,
+            SecondFakeJsonObject => FakeJsonObjectType.Second,
+            _ => throw new ArgumentException("Type described in JSON not supported.",
+                                             nameof(value))
+        };
     }
 }

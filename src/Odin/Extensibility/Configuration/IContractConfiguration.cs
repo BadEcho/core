@@ -11,21 +11,20 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Extensibility.Configuration
+namespace BadEcho.Odin.Extensibility.Configuration;
+
+/// <summary>
+/// Defines configuration settings for a contract being segmented by one or more call-routable plugins.
+/// </summary>
+public interface IContractConfiguration
 {
     /// <summary>
-    /// Defines configuration settings for a contract being segmented by one or more call-routable plugins.
+    /// Gets the type name of the contract being segmented.
     /// </summary>
-    public interface IContractConfiguration
-    {
-        /// <summary>
-        /// Gets the type name of the contract being segmented.
-        /// </summary>
-        string Name { get; }
+    string Name { get; }
 
-        /// <summary>
-        /// Gets the collection of call-routable plugins that segment the represented contract.
-        /// </summary>
-        IEnumerable<IRoutablePluginConfiguration> RoutablePlugins { get; }
-    }
+    /// <summary>
+    /// Gets the collection of call-routable plugins that segment the represented contract.
+    /// </summary>
+    IEnumerable<IRoutablePluginConfiguration> RoutablePlugins { get; }
 }

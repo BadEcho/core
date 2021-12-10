@@ -18,44 +18,43 @@ using System.Xml;
 using BadEcho.Fenestra.Properties;
 using BadEcho.Odin;
 
-namespace BadEcho.Fenestra.Extensions
+namespace BadEcho.Fenestra.Extensions;
+
+/// <summary>
+/// Provides a set of static methods that aids in matters related to the parsing of XAML.
+/// </summary>
+public static class XamlExtensions
 {
     /// <summary>
-    /// Provides a set of static methods that aids in matters related to the parsing of XAML.
+    /// Reads this string as loose XAML, loading an object that is the root of its corresponding object tree.
     /// </summary>
-    public static class XamlExtensions
+    /// <typeparam name="T">The type of object at the root of the loose XAML's corresponding object tree.</typeparam>
+    /// <param name="xaml">The loose XAML to parse.</param>
+    /// <returns>The object that is the root of the object tree corresponding to <c>xaml</c>.</returns>
+    public static T ParseLooseXaml<T>(this string xaml)
+        where T : DispatcherObject
     {
-        /// <summary>
-        /// Reads this string as loose XAML, loading an object that is the root of its corresponding object tree.
-        /// </summary>
-        /// <typeparam name="T">The type of object at the root of the loose XAML's corresponding object tree.</typeparam>
-        /// <param name="xaml">The loose XAML to parse.</param>
-        /// <returns>The object that is the root of the object tree corresponding to <c>xaml</c>.</returns>
-        public static T ParseLooseXaml<T>(this string xaml)
-            where T : DispatcherObject
+        Require.NotNull(xaml, nameof(xaml));
+
+        return xaml.ParseLooseXaml() is T typedRoot
+            ? typedRoot
+            : throw new ArgumentException(Strings.WrongXamlRootType, nameof(xaml));
+    }
+
+    /// <summary>
+    /// Reads this string as loose XAML, loading an object that is the root of its corresponding object tree.
+    /// </summary>
+    /// <param name="xaml">The loose XAML to parse.</param>
+    /// <returns>The object that is the root of the object tree corresponding to <c>xaml</c>.</returns>
+    public static object ParseLooseXaml(this string xaml)
+    {
+        Require.NotNull(xaml, nameof(xaml));
+
+        using (var stringReader = new StringReader(xaml))
         {
-            Require.NotNull(xaml, nameof(xaml));
-
-            return xaml.ParseLooseXaml() is T typedRoot
-                ? typedRoot
-                : throw new ArgumentException(Strings.WrongXamlRootType, nameof(xaml));
-        }
-
-        /// <summary>
-        /// Reads this string as loose XAML, loading an object that is the root of its corresponding object tree.
-        /// </summary>
-        /// <param name="xaml">The loose XAML to parse.</param>
-        /// <returns>The object that is the root of the object tree corresponding to <c>xaml</c>.</returns>
-        public static object ParseLooseXaml(this string xaml)
-        {
-            Require.NotNull(xaml, nameof(xaml));
-
-            using (var stringReader = new StringReader(xaml))
+            using (var xmlReader = new XmlTextReader(stringReader))
             {
-                using (var xmlReader = new XmlTextReader(stringReader))
-                {
-                    return XamlReader.Load(xmlReader);
-                }
+                return XamlReader.Load(xmlReader);
             }
         }
     }

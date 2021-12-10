@@ -15,58 +15,57 @@ using BadEcho.Fenestra.ViewModels;
 using BadEcho.Odin;
 using BadEcho.Omnified.Vision.Extensibility;
 
-namespace BadEcho.Omnified.Vision.ViewModels
+namespace BadEcho.Omnified.Vision.ViewModels;
+
+/// <summary>
+/// Provides the root view model for the Vision application, which acts as a collection of hosted Vision modules.
+/// </summary>
+internal sealed class VisionViewModel : CollectionViewModel<ModuleHost, ModuleHostViewModel>
 {
+    private AnchorPointLocation _titleLocation;
+        
     /// <summary>
-    /// Provides the root view model for the Vision application, which acts as a collection of hosted Vision modules.
+    /// Initializes a new instance of the <see cref="VisionViewModel"/> class.
     /// </summary>
-    internal sealed class VisionViewModel : CollectionViewModel<ModuleHost, ModuleHostViewModel>
+    public VisionViewModel()
+        : base(new CollectionViewModelOptions())
+    { }
+
+    /// <summary>
+    /// Gets or sets the location for the Vision application title's anchor point.
+    /// </summary>
+    public AnchorPointLocation TitleLocation
     {
-        private AnchorPointLocation _titleLocation;
-        
-        /// <summary>
-        /// Initializes a new instance of the <see cref="VisionViewModel"/> class.
-        /// </summary>
-        public VisionViewModel()
-            : base(new CollectionViewModelOptions())
-        { }
+        get => _titleLocation;
+        set => NotifyIfChanged(ref _titleLocation, value);
+    }
 
-        /// <summary>
-        /// Gets or sets the location for the Vision application title's anchor point.
-        /// </summary>
-        public AnchorPointLocation TitleLocation
-        {
-            get => _titleLocation;
-            set => NotifyIfChanged(ref _titleLocation, value);
-        }
-
-        /// <inheritdoc/>
-        public override ModuleHostViewModel CreateChild(ModuleHost model)
-        {
-            var viewModel = new ModuleHostViewModel();
+    /// <inheritdoc/>
+    public override ModuleHostViewModel CreateChild(ModuleHost model)
+    {
+        var viewModel = new ModuleHostViewModel();
             
-            viewModel.Bind(model);
+        viewModel.Bind(model);
 
-            return viewModel;
-        }
+        return viewModel;
+    }
         
-        /// <inheritdoc/>
-        public override void UpdateChild(ModuleHost model)
-        {
-            var existingChild = FindChild<ModuleHostViewModel>(model);
+    /// <inheritdoc/>
+    public override void UpdateChild(ModuleHost model)
+    {
+        var existingChild = FindChild<ModuleHostViewModel>(model);
 
-            existingChild?.Bind(model);
-        }
+        existingChild?.Bind(model);
+    }
 
-        /// <summary>
-        /// Applies the provided Vision application configuration to this root view model instance.
-        /// </summary>
-        /// <param name="configuration">The Vision application configuration to apply to this view model.</param>
-        public void ApplyConfiguration(IVisionConfiguration configuration)
-        {
-            Require.NotNull(configuration, nameof(configuration));
+    /// <summary>
+    /// Applies the provided Vision application configuration to this root view model instance.
+    /// </summary>
+    /// <param name="configuration">The Vision application configuration to apply to this view model.</param>
+    public void ApplyConfiguration(IVisionConfiguration configuration)
+    {
+        Require.NotNull(configuration, nameof(configuration));
 
-            TitleLocation = configuration.TitleLocation;
-        }
+        TitleLocation = configuration.TitleLocation;
     }
 }

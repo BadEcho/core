@@ -11,17 +11,16 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Omnified.Vision.Apocalypse.Views
+namespace BadEcho.Omnified.Vision.Apocalypse.Views;
+
+/// <summary>
+/// Provides a view for displaying dice rolls made by the Apocalypse system.
+/// </summary>
+public partial class DieView
 {
     /// <summary>
-    /// Provides a view for displaying dice rolls made by the Apocalypse system.
+    /// Initializes a new instance of the <see cref="DieView"/> class.
     /// </summary>
-    public partial class DieView
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DieView"/> class.
-        /// </summary>
-        public DieView() 
-            => InitializeComponent();
-    }
+    public DieView() 
+        => InitializeComponent();
 }

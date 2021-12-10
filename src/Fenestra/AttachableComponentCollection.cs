@@ -18,126 +18,125 @@ using BadEcho.Fenestra.Properties;
 using BadEcho.Odin.Collections;
 using BadEcho.Odin.Extensions;
 
-namespace BadEcho.Fenestra
+namespace BadEcho.Fenestra;
+
+/// <summary>
+/// Provides a base collection able to participate in a logical tree's inheritance context by attaching to a target dependency
+/// object.
+/// </summary>
+/// <typeparam name="TTarget">The type of <see cref="DependencyObject"/> this collection can attach to.</typeparam>
+/// <typeparam name="TAttachableComponent">
+/// The type of <see cref="IAttachableComponent{TTarget}"/> objects in the collection.
+/// </typeparam>
+public abstract class AttachableComponentCollection<TTarget, TAttachableComponent> 
+    : FreezableCollection<TAttachableComponent>, IAttachableComponent<TTarget> where TTarget : DependencyObject
+                                                                               where TAttachableComponent : AttachableComponent<TTarget>
 {
+    private TTarget? _targetObject;
+
     /// <summary>
-    /// Provides a base collection able to participate in a logical tree's inheritance context by attaching to a target dependency
-    /// object.
+    /// Initializes a new instance of the <see cref="AttachableComponentCollection{TTarget,TAttachableComponent}"/> class.
     /// </summary>
-    /// <typeparam name="TTarget">The type of <see cref="DependencyObject"/> this collection can attach to.</typeparam>
-    /// <typeparam name="TAttachableComponent">
-    /// The type of <see cref="IAttachableComponent{TTarget}"/> objects in the collection.
-    /// </typeparam>
-    public abstract class AttachableComponentCollection<TTarget, TAttachableComponent> 
-        : FreezableCollection<TAttachableComponent>, IAttachableComponent<TTarget> where TTarget : DependencyObject
-                                                                                   where TAttachableComponent : AttachableComponent<TTarget>
+    protected AttachableComponentCollection()
     {
-        private TTarget? _targetObject;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AttachableComponentCollection{TTarget,TAttachableComponent}"/> class.
-        /// </summary>
-        protected AttachableComponentCollection()
-        {
-            INotifyCollectionChanged collectionChanged = this;
+        INotifyCollectionChanged collectionChanged = this;
             
-            collectionChanged.CollectionChanged +=
-                (_, e) => HandleCollectionChanged(new EmptiableNotifyCollectionChangedEventArgs(e));
-        }
+        collectionChanged.CollectionChanged +=
+            (_, e) => HandleCollectionChanged(new EmptiableNotifyCollectionChangedEventArgs(e));
+    }
 
-        /// <inheritdoc/>
-        public void Attach(TTarget targetObject)
+    /// <inheritdoc/>
+    public void Attach(TTarget targetObject)
+    {
+        if (TargetObject.Equals<TTarget>(targetObject))
+            return;
+
+        if (TargetObject != null)
+            throw new InvalidOperationException(Strings.AttachableCannotTargetMultipleObjects);
+
+        WritePreamble();
+        _targetObject = targetObject;
+        WritePostscript();
+
+        AttachItems();
+    }
+
+    /// <inheritdoc/>
+    public void Detach(TTarget targetObject)
+    {
+        if (TargetObject == null || !TargetObject.Equals<TTarget>(targetObject))
+            return;
+
+        DetachItems();
+
+        WritePreamble();
+        _targetObject = null;
+        WritePostscript();
+    }
+
+    /// <summary>
+    /// Gets the target dependency object this component is attached to while assuring this <see cref="Freezable"/>
+    /// is being accessed appropriately.
+    /// </summary>
+    private TTarget? TargetObject
+    {
+        get
         {
-            if (TargetObject.Equals<TTarget>(targetObject))
-                return;
+            ReadPreamble();
 
-            if (TargetObject != null)
-                throw new InvalidOperationException(Strings.AttachableCannotTargetMultipleObjects);
-
-            WritePreamble();
-            _targetObject = targetObject;
-            WritePostscript();
-
-            AttachItems();
+            return _targetObject;
         }
+    }
 
-        /// <inheritdoc/>
-        public void Detach(TTarget targetObject)
+    private void AttachItems(IList? items = null)
+    {
+        if (TargetObject == null)
+            return;
+
+        items ??= this;
+
+        foreach (TAttachableComponent item in items)
         {
-            if (TargetObject == null || !TargetObject.Equals<TTarget>(targetObject))
-                return;
-
-            DetachItems();
-
-            WritePreamble();
-            _targetObject = null;
-            WritePostscript();
+            item.Attach(TargetObject);
         }
+    }
 
-        /// <summary>
-        /// Gets the target dependency object this component is attached to while assuring this <see cref="Freezable"/>
-        /// is being accessed appropriately.
-        /// </summary>
-        private TTarget? TargetObject
+    private void DetachItems(IList? items = null)
+    {
+        if (TargetObject == null)
+            return;
+
+        items ??= this;
+
+        foreach (TAttachableComponent item in items)
         {
-            get
-            {
-                ReadPreamble();
-
-                return _targetObject;
-            }
+            item.Detach(TargetObject);
         }
+    }
 
-        private void AttachItems(IList? items = null)
+    private void HandleCollectionChanged(EmptiableNotifyCollectionChangedEventArgs e)
+    {
+        if (TargetObject == null)
+            return;
+
+        switch (e.Action)
         {
-            if (TargetObject == null)
-                return;
+            case NotifyCollectionChangedAction.Add:
+                AttachItems(e.NewItems);
+                break;
 
-            items ??= this;
+            case NotifyCollectionChangedAction.Remove:
+                DetachItems(e.OldItems);
+                break;
 
-            foreach (TAttachableComponent item in items)
-            {
-                item.Attach(TargetObject);
-            }
-        }
+            case NotifyCollectionChangedAction.Replace:
+                DetachItems(e.OldItems);
+                AttachItems(e.NewItems);
+                break;
 
-        private void DetachItems(IList? items = null)
-        {
-            if (TargetObject == null)
-                return;
-
-            items ??= this;
-
-            foreach (TAttachableComponent item in items)
-            {
-                item.Detach(TargetObject);
-            }
-        }
-
-        private void HandleCollectionChanged(EmptiableNotifyCollectionChangedEventArgs e)
-        {
-            if (TargetObject == null)
-                return;
-
-            switch (e.Action)
-            {
-                case NotifyCollectionChangedAction.Add:
-                    AttachItems(e.NewItems);
-                    break;
-
-                case NotifyCollectionChangedAction.Remove:
-                    DetachItems(e.OldItems);
-                    break;
-
-                case NotifyCollectionChangedAction.Replace:
-                    DetachItems(e.OldItems);
-                    AttachItems(e.NewItems);
-                    break;
-
-                case NotifyCollectionChangedAction.Reset:
-                    DetachItems();
-                    break;
-            }
+            case NotifyCollectionChangedAction.Reset:
+                DetachItems();
+                break;
         }
     }
 }

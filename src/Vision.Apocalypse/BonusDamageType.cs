@@ -11,23 +11,22 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Omnified.Vision.Apocalypse
+namespace BadEcho.Omnified.Vision.Apocalypse;
+
+/// <summary>
+/// Specifies the type of bonus damage being applied to an Enemy Apocalypse event.
+/// </summary>
+public enum BonusDamageType
 {
     /// <summary>
-    /// Specifies the type of bonus damage being applied to an Enemy Apocalypse event.
+    /// A bonus stemming from a successful critical hit roll which multiplies the damage being done
+    /// to an enemy by a randomly determined amount, typically falling within a range of non-ridiculous
+    /// multipliers (i.e., 2.0x-5.0x).
     /// </summary>
-    public enum BonusDamageType
-    {
-        /// <summary>
-        /// A bonus stemming from a successful critical hit roll which multiplies the damage being done
-        /// to an enemy by a randomly determined amount, typically falling within a range of non-ridiculous
-        /// multipliers (i.e., 2.0x-5.0x).
-        /// </summary>
-        CriticalHit,
-        /// <summary>
-        /// A bonus stemming from a successful, and quite rare, Kamehameha roll, typically applying a completely
-        /// ridiculous multiplier to the damage (i.e., 10000x).
-        /// </summary>
-        Kamehameha
-    }
+    CriticalHit,
+    /// <summary>
+    /// A bonus stemming from a successful, and quite rare, Kamehameha roll, typically applying a completely
+    /// ridiculous multiplier to the damage (i.e., 10000x).
+    /// </summary>
+    Kamehameha
 }

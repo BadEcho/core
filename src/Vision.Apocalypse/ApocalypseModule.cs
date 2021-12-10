@@ -19,81 +19,80 @@ using BadEcho.Omnified.Vision.Apocalypse.ViewModels;
 using BadEcho.Omnified.Vision.Extensibility;
 using BadEcho.Omnified.Vision.Extensibility.Properties;
 
-namespace BadEcho.Omnified.Vision.Apocalypse
+namespace BadEcho.Omnified.Vision.Apocalypse;
+
+/// <summary>
+/// Provides a snap-in module granting vision to the Omnified Apocalypse system.
+/// </summary>
+[Export(typeof(IVisionModule))]
+internal sealed class ApocalypseModule : VisionModule<ApocalypseEvent, ApocalypseViewModel>
 {
+    private const string DEPENDENCY_NAME
+        = nameof(ApocalypseModule) + nameof(LocalDependency);
+
     /// <summary>
-    /// Provides a snap-in module granting vision to the Omnified Apocalypse system.
+    /// Initializes a new instance of the <see cref="ApocalypseModule"/> class.
     /// </summary>
-    [Export(typeof(IVisionModule))]
-    internal sealed class ApocalypseModule : VisionModule<ApocalypseEvent, ApocalypseViewModel>
+    /// <param name="configuration">Configuration settings for the Vision application.</param>
+    [ImportingConstructor]
+    public ApocalypseModule([Import(DEPENDENCY_NAME)] IVisionConfiguration configuration)
+        : base(configuration)
     {
-        private const string DEPENDENCY_NAME
-            = nameof(ApocalypseModule) + nameof(LocalDependency);
+        var moduleConfiguration
+            = configuration.Modules.GetConfiguration<ApocalypseModuleConfiguration>(ModuleName);
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ApocalypseModule"/> class.
-        /// </summary>
-        /// <param name="configuration">Configuration settings for the Vision application.</param>
-        [ImportingConstructor]
-        public ApocalypseModule([Import(DEPENDENCY_NAME)] IVisionConfiguration configuration)
-            : base(configuration)
-        {
-            var moduleConfiguration
-                = configuration.Modules.GetConfiguration<ApocalypseModuleConfiguration>(ModuleName);
+        ViewModel.ApplyConfiguration(moduleConfiguration);
 
-            ViewModel.ApplyConfiguration(moduleConfiguration);
+        if (configuration.Dispatcher != null)
+            ViewModel.ChangeDispatcher(configuration.Dispatcher);
+    }
 
-            if (configuration.Dispatcher != null)
-                ViewModel.ChangeDispatcher(configuration.Dispatcher);
-        }
+    /// <inheritdoc/>
+    public override string MessageFile
+        => "apocalypse.jsonl";
 
-        /// <inheritdoc/>
-        public override string MessageFile
-            => "apocalypse.jsonl";
+    /// <inheritdoc/>
+    public override bool ProcessNewMessagesOnly
+        => true;
 
-        /// <inheritdoc/>
-        public override bool ProcessNewMessagesOnly
-            => true;
+    /// <inheritdoc/>
+    protected override AnchorPointLocation DefaultLocation
+        => AnchorPointLocation.TopCenter;
 
-        /// <inheritdoc/>
-        protected override AnchorPointLocation DefaultLocation
-            => AnchorPointLocation.TopCenter;
+    /// <inheritdoc/>
+    protected override IEnumerable<ApocalypseEvent> ParseMessages(string messages)
+    {
+        var options = new JsonSerializerOptions
+                      {
+                          Converters = { new EventConverter() }
+                      };
 
-        /// <inheritdoc/>
-        protected override IEnumerable<ApocalypseEvent> ParseMessages(string messages)
-        {
-            var options = new JsonSerializerOptions
-                          {
-                              Converters = { new EventConverter() }
-                          };
-
-            return messages.Split(Environment.NewLine)
-                           .WhereNotNullOrEmpty()
-                           .Select(ReadEvent);
+        return messages.Split(Environment.NewLine)
+                       .WhereNotNullOrEmpty()
+                       .Select(ReadEvent);
             
-            ApocalypseEvent ReadEvent(string message)
-            {
-                var apocalypseEvent = JsonSerializer.Deserialize<ApocalypseEvent>(message, options);
-
-                return apocalypseEvent
-                    ?? throw new ArgumentException(Strings.NullMessageValue.InvariantFormat(message),
-                                                   nameof(message));
-            }
-        }
-
-        /// <summary>
-        /// Provides a convention provider that allows for an armed context in which this module can have its required configuration
-        /// provided to it during its initialization and exportation.
-        /// </summary>
-        /// <suppressions>
-        /// ReSharper disable ClassNeverInstantiated.Local
-        /// </suppressions>
-        [Export(typeof(IConventionProvider))]
-        private sealed class LocalDependency : DependencyRegistry<IVisionConfiguration>
+        ApocalypseEvent ReadEvent(string message)
         {
-            public LocalDependency()
-                : base(DEPENDENCY_NAME)
-            { }
+            var apocalypseEvent = JsonSerializer.Deserialize<ApocalypseEvent>(message, options);
+
+            return apocalypseEvent
+                ?? throw new ArgumentException(Strings.NullMessageValue.InvariantFormat(message),
+                                               nameof(message));
         }
+    }
+
+    /// <summary>
+    /// Provides a convention provider that allows for an armed context in which this module can have its required configuration
+    /// provided to it during its initialization and exportation.
+    /// </summary>
+    /// <suppressions>
+    /// ReSharper disable ClassNeverInstantiated.Local
+    /// </suppressions>
+    [Export(typeof(IConventionProvider))]
+    private sealed class LocalDependency : DependencyRegistry<IVisionConfiguration>
+    {
+        public LocalDependency()
+            : base(DEPENDENCY_NAME)
+        { }
     }
 }

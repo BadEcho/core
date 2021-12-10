@@ -13,17 +13,16 @@
 
 using BadEcho.Omnified.Vision.Extensibility;
 
-namespace BadEcho.Omnified.Vision.Apocalypse
+namespace BadEcho.Omnified.Vision.Apocalypse;
+
+/// <summary>
+/// Provides configuration settings for the Apocalypse Vision module.
+/// </summary>
+public sealed class ApocalypseModuleConfiguration : VisionModuleConfiguration
 {
     /// <summary>
-    /// Provides configuration settings for the Apocalypse Vision module.
+    /// Gets the maximum width constraint of elements responsible for displaying Apocalypse event messages.
     /// </summary>
-    public sealed class ApocalypseModuleConfiguration : VisionModuleConfiguration
-    {
-        /// <summary>
-        /// Gets the maximum width constraint of elements responsible for displaying Apocalypse event messages.
-        /// </summary>
-        public double EffectMessageMaxWidth
-        { get; init; } = double.NaN;
-    }
+    public double EffectMessageMaxWidth
+    { get; init; } = double.NaN;
 }

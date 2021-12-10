@@ -13,23 +13,22 @@
 
 using BadEcho.Fenestra.ViewModels;
 
-namespace BadEcho.Omnified.Vision.Statistics.ViewModels
+namespace BadEcho.Omnified.Vision.Statistics.ViewModels;
+
+/// <summary>
+/// Provides a view model that displays statistics exported from an Omnified game.
+/// </summary>
+internal sealed class StatisticsViewModel : PolymorphicCollectionViewModel<IStatistic,IStatisticViewModel>
 {
     /// <summary>
-    /// Provides a view model that displays statistics exported from an Omnified game.
+    /// Initializes a new instance of the <see cref="StatisticsViewModel"/> class.
     /// </summary>
-    internal sealed class StatisticsViewModel : PolymorphicCollectionViewModel<IStatistic,IStatisticViewModel>
+    public StatisticsViewModel()
+        : base(new CollectionViewModelOptions {AsyncBatchBindings = false})
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StatisticsViewModel"/> class.
-        /// </summary>
-        public StatisticsViewModel()
-            : base(new CollectionViewModelOptions {AsyncBatchBindings = false})
-        {
-            RegisterDerivation<WholeStatistic, WholeStatisticViewModel>();
-            RegisterDerivation<FractionalStatistic, FractionalStatisticViewModel>();
-            RegisterDerivation<CoordinateStatistic, CoordinateStatisticViewModel>();
-            RegisterDerivation<StatisticGroup, StatisticGroupViewModel>();
-        }
+        RegisterDerivation<WholeStatistic, WholeStatisticViewModel>();
+        RegisterDerivation<FractionalStatistic, FractionalStatisticViewModel>();
+        RegisterDerivation<CoordinateStatistic, CoordinateStatisticViewModel>();
+        RegisterDerivation<StatisticGroup, StatisticGroupViewModel>();
     }
 }

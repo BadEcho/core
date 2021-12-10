@@ -11,24 +11,23 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Omnified.Vision.Extensibility
+namespace BadEcho.Omnified.Vision.Extensibility;
+
+/// <summary>
+/// Specifies the direction a Vision module grows from its anchor point.
+/// </summary>
+public enum GrowthDirection
 {
     /// <summary>
-    /// Specifies the direction a Vision module grows from its anchor point.
+    /// The module does not grow.
     /// </summary>
-    public enum GrowthDirection
-    {
-        /// <summary>
-        /// The module does not grow.
-        /// </summary>
-        None,
-        /// <summary>
-        /// The module will grow opposite of its anchor point on the horizontal plane.
-        /// </summary>
-        Horizontal,
-        /// <summary>
-        /// The module will grow opposite of its anchor point on the vertical plane.
-        /// </summary>
-        Vertical
-    }
+    None,
+    /// <summary>
+    /// The module will grow opposite of its anchor point on the horizontal plane.
+    /// </summary>
+    Horizontal,
+    /// <summary>
+    /// The module will grow opposite of its anchor point on the vertical plane.
+    /// </summary>
+    Vertical
 }

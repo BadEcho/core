@@ -14,50 +14,49 @@
 using BadEcho.Odin.Extensibility.Hosting;
 using Xunit;
 
-namespace BadEcho.Odin.Tests.Extensibility
+namespace BadEcho.Odin.Tests.Extensibility;
+
+/// <suppressions>
+/// ReSharper disable UnusedAutoPropertyAccessor.Local
+/// ReSharper disable AssignNullToNotNullAttribute
+/// </suppressions>
+public class PluginContextTests
 {
-    /// <suppressions>
-    /// ReSharper disable UnusedAutoPropertyAccessor.Local
-    /// ReSharper disable AssignNullToNotNullAttribute
-    /// </suppressions>
-    public class PluginContextTests
+    private readonly PluginContext _context;
+
+    public PluginContextTests()
     {
-        private readonly PluginContext _context;
+        var path = Path.Combine(Environment.CurrentDirectory, "testPlugins");
+        var strategy = new GlobalPluginContextStrategy(path);
 
-        public PluginContextTests()
-        {
-            var path = Path.Combine(Environment.CurrentDirectory, "testPlugins");
-            var strategy = new GlobalPluginContextStrategy(path);
+        _context = new PluginContext(strategy);
+    }
 
-            _context = new PluginContext(strategy);
-        }
+    [Fact]
+    public void Inject_PluggablePart_FakePartsImported()
+    {
+        var pluggablePart = new PluggablePart();
 
-        [Fact]
-        public void Inject_PluggablePart_FakePartsImported()
-        {
-            var pluggablePart = new PluggablePart();
+        _context.Inject(pluggablePart);
 
-            _context.Inject(pluggablePart);
+        Assert.NotNull(pluggablePart.FakeParts);
+        Assert.NotEmpty(pluggablePart.FakeParts);
+    }
 
-            Assert.NotNull(pluggablePart.FakeParts);
-            Assert.NotEmpty(pluggablePart.FakeParts);
-        }
+    [Fact]
+    public void Load_IFakePart_NotEmpty()
+    {
+        var parts = _context.Load<IFakePart>();
 
-        [Fact]
-        public void Load_IFakePart_NotEmpty()
-        {
-            var parts = _context.Load<IFakePart>();
+        Assert.NotEmpty(parts);
+    }
 
-            Assert.NotEmpty(parts);
-        }
+    [Fact]
+    public void Load_NonExistentLazy_NotNullButEmpty()
+    {
+        var parts = _context.Load<Lazy<ICloneable>>();
 
-        [Fact]
-        public void Load_NonExistentLazy_NotNullButEmpty()
-        {
-            var parts = _context.Load<Lazy<ICloneable>>();
-
-            Assert.NotNull(parts);
-            Assert.Empty(parts);
-        }
+        Assert.NotNull(parts);
+        Assert.Empty(parts);
     }
 }

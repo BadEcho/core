@@ -11,29 +11,28 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Fenestra
+namespace BadEcho.Fenestra;
+
+/// <summary>
+/// Specifies edges of a frame around a rectangle.
+/// </summary>
+[Flags]
+public enum Edges
 {
     /// <summary>
-    /// Specifies edges of a frame around a rectangle.
+    /// The left edge of the frame.
     /// </summary>
-    [Flags]
-    public enum Edges
-    {
-        /// <summary>
-        /// The left edge of the frame.
-        /// </summary>
-        Left = 0x1,
-        /// <summary>
-        /// The right edge of the frame.
-        /// </summary>
-        Right = 0x2,
-        /// <summary>
-        /// The top edge of the frame.
-        /// </summary>
-        Top = 0x4,
-        /// <summary>
-        /// The bottom edge of the frame.
-        /// </summary>
-        Bottom = 0x8
-    }
+    Left = 0x1,
+    /// <summary>
+    /// The right edge of the frame.
+    /// </summary>
+    Right = 0x2,
+    /// <summary>
+    /// The top edge of the frame.
+    /// </summary>
+    Top = 0x4,
+    /// <summary>
+    /// The bottom edge of the frame.
+    /// </summary>
+    Bottom = 0x8
 }

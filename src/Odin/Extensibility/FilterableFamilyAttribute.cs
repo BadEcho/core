@@ -15,43 +15,42 @@ using System.Composition;
 using BadEcho.Odin.Extensions;
 using BadEcho.Odin.Properties;
 
-namespace BadEcho.Odin.Extensibility
+namespace BadEcho.Odin.Extensibility;
+
+/// <summary>
+/// Provides an attribute that specifies that a class defines a family of filterable exports to Odin's Extensibility
+/// framework.
+/// </summary>
+[MetadataAttribute]
+[AttributeUsage(AttributeTargets.Class, Inherited = false)]
+public sealed class FilterableFamilyAttribute : ExportAttribute, IFilterableFamilyMetadata
 {
     /// <summary>
-    /// Provides an attribute that specifies that a class defines a family of filterable exports to Odin's Extensibility
-    /// framework.
+    /// Initializes a new instance of the <see cref="FilterableFamilyAttribute"/> class.
     /// </summary>
-    [MetadataAttribute]
-    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-    public sealed class FilterableFamilyAttribute : ExportAttribute, IFilterableFamilyMetadata
+    /// <param name="familyId">The identity of the filterable family being defined.</param>
+    /// <param name="name">The name of the filterable family being defined.</param>
+    public FilterableFamilyAttribute(string familyId, string name)
+        : base(typeof(IFilterableFamily))
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FilterableFamilyAttribute"/> class.
-        /// </summary>
-        /// <param name="familyId">The identity of the filterable family being defined.</param>
-        /// <param name="name">The name of the filterable family being defined.</param>
-        public FilterableFamilyAttribute(string familyId, string name)
-            : base(typeof(IFilterableFamily))
+        Require.NotNullOrEmpty(name, nameof(name));
+        Require.NotNull(familyId, nameof(familyId));
+
+        if (!Guid.TryParse(familyId, out Guid parsedId))
         {
-            Require.NotNullOrEmpty(name, nameof(name));
-            Require.NotNull(familyId, nameof(familyId));
-
-            if (!Guid.TryParse(familyId, out Guid parsedId))
-            {
-                throw new ArgumentException(Strings.FamilyIdNotValid.InvariantFormat(familyId),
-                                            nameof(familyId));
-            }
-
-            FamilyId = parsedId;
-            Name = name;
+            throw new ArgumentException(Strings.FamilyIdNotValid.InvariantFormat(familyId),
+                                        nameof(familyId));
         }
 
-        /// <inheritdoc/>
-        public Guid FamilyId
-        { get; }
-
-        /// <inheritdoc/>
-        public string Name 
-        { get; }
+        FamilyId = parsedId;
+        Name = name;
     }
+
+    /// <inheritdoc/>
+    public Guid FamilyId
+    { get; }
+
+    /// <inheritdoc/>
+    public string Name 
+    { get; }
 }

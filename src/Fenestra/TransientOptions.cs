@@ -14,34 +14,33 @@
 using System.Windows.Data;
 using BadEcho.Odin;
 
-namespace BadEcho.Fenestra
+namespace BadEcho.Fenestra;
+
+/// <summary>
+/// Provides source and target state impermanence options.
+/// </summary>
+public class TransientOptions
 {
     /// <summary>
-    /// Provides source and target state impermanence options.
+    /// Initializes a new instance of the <see cref="TransientOptions"/> class.
     /// </summary>
-    public class TransientOptions
+    /// <param name="binding">A binding that facilitates the realization of source and target impermanence.</param>
+    public TransientOptions(IBinding binding)
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TransientOptions"/> class.
-        /// </summary>
-        /// <param name="binding">A binding that facilitates the realization of source and target impermanence.</param>
-        public TransientOptions(IBinding binding)
-        {
-            Require.NotNull(binding, nameof(binding));
+        Require.NotNull(binding, nameof(binding));
 
-            Binding = binding;
-        }
-
-        /// <summary>
-        /// Gets the binding that will have its changes propagated.
-        /// </summary>
-        public IBinding Binding
-        { get; }
-
-        /// <summary>
-        /// Gets or sets the converter to use.
-        /// </summary>
-        public IValueConverter? Converter
-        { get; set; }
+        Binding = binding;
     }
+
+    /// <summary>
+    /// Gets the binding that will have its changes propagated.
+    /// </summary>
+    public IBinding Binding
+    { get; }
+
+    /// <summary>
+    /// Gets or sets the converter to use.
+    /// </summary>
+    public IValueConverter? Converter
+    { get; set; }
 }

@@ -11,20 +11,19 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Interop
+namespace BadEcho.Odin.Interop;
+
+/// <summary>
+/// Indicates a type of standard message value used when sending or posting messages to windows.
+/// </summary>
+public enum WindowMessage
 {
     /// <summary>
-    /// Indicates a type of standard message value used when sending or posting messages to windows.
+    /// Indicates a window message corresponding to WM_NULL.
     /// </summary>
-    public enum WindowMessage
-    {
-        /// <summary>
-        /// Indicates a window message corresponding to WM_NULL.
-        /// </summary>
-        Null = 0,
-        /// <summary>
-        /// Indicates a window message indicating a hot key has been pressed, corresponding to WM_HOTKEY.
-        /// </summary>
-        HotKey = 0x312
-    }
+    Null = 0,
+    /// <summary>
+    /// Indicates a window message indicating a hot key has been pressed, corresponding to WM_HOTKEY.
+    /// </summary>
+    HotKey = 0x312
 }

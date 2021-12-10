@@ -14,46 +14,45 @@
 using BadEcho.Fenestra.ViewModels;
 using BadEcho.Odin;
 
-namespace BadEcho.Omnified.Vision.Statistics.ViewModels
+namespace BadEcho.Omnified.Vision.Statistics.ViewModels;
+
+/// <summary>
+/// Provides a base view model that facilitates the display of an individual statistic exported from an Omnified game.
+/// </summary>
+/// <typeparam name="TStatistic">The type of statistic bound to the view model for display on a view.</typeparam>
+internal abstract class StatisticViewModel<TStatistic> : ViewModel<IStatistic,TStatistic>, IStatisticViewModel
+    where TStatistic : IStatistic
 {
-    /// <summary>
-    /// Provides a base view model that facilitates the display of an individual statistic exported from an Omnified game.
-    /// </summary>
-    /// <typeparam name="TStatistic">The type of statistic bound to the view model for display on a view.</typeparam>
-    internal abstract class StatisticViewModel<TStatistic> : ViewModel<IStatistic,TStatistic>, IStatisticViewModel
-        where TStatistic : IStatistic
+    private string _name = string.Empty;
+    private string _format = string.Empty;
+
+    /// <inheritdoc/>
+    public string Name
     {
-        private string _name = string.Empty;
-        private string _format = string.Empty;
+        get => _name;
+        set => NotifyIfChanged(ref _name, value);
+    }
 
-        /// <inheritdoc/>
-        public string Name
-        {
-            get => _name;
-            set => NotifyIfChanged(ref _name, value);
-        }
-
-        /// <inheritdoc/>
-        public string Format
-        {
-            get => _format;
-            set => NotifyIfChanged(ref _format, value);
-        }
+    /// <inheritdoc/>
+    public string Format
+    {
+        get => _format;
+        set => NotifyIfChanged(ref _format, value);
+    }
         
-        /// <inheritdoc/>
-        protected override void OnBinding(TStatistic model)
-        {
-            Require.NotNull(model, nameof(model));
+    /// <inheritdoc/>
+    protected override void OnBinding(TStatistic model)
+    {
+        Require.NotNull(model, nameof(model));
             
-            Name = model.Name;
-            Format = model.Format;
-        }
+        Name = model.Name;
+        Format = model.Format;
+    }
 
-        /// <inheritdoc/>
-        protected override void OnUnbound(TStatistic model)
-        {
-            Name = string.Empty;
-            Format = string.Empty;
-        }
+    /// <inheritdoc/>
+    protected override void OnUnbound(TStatistic model)
+    {
+        Name = string.Empty;
+        Format = string.Empty;
     }
 }

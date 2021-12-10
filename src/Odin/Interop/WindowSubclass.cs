@@ -11,30 +11,29 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Interop
+namespace BadEcho.Odin.Interop;
+
+/// <summary>
+/// Provides a way to subclass a window in a managed environment.
+/// </summary>
+/// <remarks>
+/// This class gives managed objects the ability to subclass an unmanaged window or control. If you are unfamiliar with
+/// subclassing, it is a Microsoft term for how one can go about changing or adding additional features to an existing
+/// control or window.
+/// </remarks>
+internal sealed class WindowSubclass : IDisposable
 {
-    /// <summary>
-    /// Provides a way to subclass a window in a managed environment.
-    /// </summary>
-    /// <remarks>
-    /// This class gives managed objects the ability to subclass an unmanaged window or control. If you are unfamiliar with
-    /// subclassing, it is a Microsoft term for how one can go about changing or adding additional features to an existing
-    /// control or window.
-    /// </remarks>
-    internal sealed class WindowSubclass : IDisposable
+    private static readonly IntPtr _DefWindowProc = GetDefaultWindowProc();
+
+    private WeakReference? _hook;
+
+    public void Dispose() 
+        => _hook = null;
+
+    private static IntPtr GetDefaultWindowProc()
     {
-        private static readonly IntPtr _DefWindowProc = GetDefaultWindowProc();
+        IntPtr hModule = User32.GetModuleHandle();
 
-        private WeakReference? _hook;
-
-        public void Dispose() 
-            => _hook = null;
-
-        private static IntPtr GetDefaultWindowProc()
-        {
-            IntPtr hModule = User32.GetModuleHandle();
-
-            return Kernel32.GetProcAddress(hModule, User32.ExportDefWindowProcW);
-        }
+        return Kernel32.GetProcAddress(hModule, User32.ExportDefWindowProcW);
     }
 }

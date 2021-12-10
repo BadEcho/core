@@ -14,46 +14,45 @@
 using BadEcho.Fenestra.ViewModels;
 using BadEcho.Omnified.Vision.Extensibility;
 
-namespace BadEcho.Omnified.Vision.ViewModels
+namespace BadEcho.Omnified.Vision.ViewModels;
+
+/// <summary>
+/// Provides a view model that facilitates the display of a hosted Vision module.
+/// </summary>
+internal sealed class ModuleHostViewModel : ViewModel<ModuleHost>
 {
+    private IViewModel? _moduleViewModel;
+    private AnchorPointLocation _location;
+
     /// <summary>
-    /// Provides a view model that facilitates the display of a hosted Vision module.
+    /// Gets or sets the view model exported by the bound hosted Vision module.
     /// </summary>
-    internal sealed class ModuleHostViewModel : ViewModel<ModuleHost>
+    public IViewModel? ModuleViewModel
     {
-        private IViewModel? _moduleViewModel;
-        private AnchorPointLocation _location;
+        get => _moduleViewModel;
+        set => NotifyIfChanged(ref _moduleViewModel, value);
+    }
 
-        /// <summary>
-        /// Gets or sets the view model exported by the bound hosted Vision module.
-        /// </summary>
-        public IViewModel? ModuleViewModel
-        {
-            get => _moduleViewModel;
-            set => NotifyIfChanged(ref _moduleViewModel, value);
-        }
+    /// <summary>
+    /// Gets the location of the anchor point for the bound hosted Vision module.
+    /// </summary>
+    public AnchorPointLocation Location
+    {
+        get => _location;
+        set => NotifyIfChanged(ref _location, value);
+    }
 
-        /// <summary>
-        /// Gets the location of the anchor point for the bound hosted Vision module.
-        /// </summary>
-        public AnchorPointLocation Location
-        {
-            get => _location;
-            set => NotifyIfChanged(ref _location, value);
-        }
+    /// <inheritdoc/>
+    protected override void OnBinding(ModuleHost model)
+    {
+        ModuleViewModel = model.ModuleViewModel;
+        Location = model.Location;
+    }
 
-        /// <inheritdoc/>
-        protected override void OnBinding(ModuleHost model)
-        {
-            ModuleViewModel = model.ModuleViewModel;
-            Location = model.Location;
-        }
-
-        /// <inheritdoc/>
-        protected override void OnUnbound(ModuleHost model)
-        {
-            ModuleViewModel = null;
-            Location = default;
-        }
+    /// <inheritdoc/>
+    protected override void OnUnbound(ModuleHost model)
+    {
+        ModuleViewModel = null;
+        Location = default;
     }
 }

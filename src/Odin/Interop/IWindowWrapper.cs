@@ -11,23 +11,22 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Interop
+namespace BadEcho.Odin.Interop;
+
+/// <summary>
+/// Defines a wrapper around an <c>HWND</c> of a window and the messages it receives.
+/// </summary>
+public interface IWindowWrapper
 {
     /// <summary>
-    /// Defines a wrapper around an <c>HWND</c> of a window and the messages it receives.
+    /// Adds a hook that will received messages sent to the wrapped window.
     /// </summary>
-    public interface IWindowWrapper
-    {
-        /// <summary>
-        /// Adds a hook that will received messages sent to the wrapped window.
-        /// </summary>
-        /// <param name="hook">The hook to invoke when messages are sent to the wrapped window.</param>
-        void AddHook(WindowProc hook);
+    /// <param name="hook">The hook to invoke when messages are sent to the wrapped window.</param>
+    void AddHook(WindowProc hook);
 
-        /// <summary>
-        /// Removes a hook previously receiving messages sent to the wrapped window.
-        /// </summary>
-        /// <param name="hook">The hook to remove.</param>
-        void RemoveHook(WindowProc hook);
-    }
+    /// <summary>
+    /// Removes a hook previously receiving messages sent to the wrapped window.
+    /// </summary>
+    /// <param name="hook">The hook to remove.</param>
+    void RemoveHook(WindowProc hook);
 }

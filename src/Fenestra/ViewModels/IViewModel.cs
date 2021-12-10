@@ -13,16 +13,15 @@
 
 using System.ComponentModel;
 
-namespace BadEcho.Fenestra.ViewModels
+namespace BadEcho.Fenestra.ViewModels;
+
+/// <summary>
+/// Defines a view abstraction that automates communication between a view and bound data.
+/// </summary>
+public interface IViewModel : INotifyPropertyChanged
 {
     /// <summary>
-    /// Defines a view abstraction that automates communication between a view and bound data.
+    /// Disconnects the view model from any data being modeled.
     /// </summary>
-    public interface IViewModel : INotifyPropertyChanged
-    {
-        /// <summary>
-        /// Disconnects the view model from any data being modeled.
-        /// </summary>
-        void Disconnect();
-    }
+    void Disconnect();
 }

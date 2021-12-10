@@ -11,12 +11,11 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Threading
+namespace BadEcho.Odin.Threading;
+
+/// <summary>
+/// Provides a representation of a delegate that has been posted to an executor's queue.
+/// </summary>
+public class ThreadExecutorOperation
 {
-    /// <summary>
-    /// Provides a representation of a delegate that has been posted to an executor's queue.
-    /// </summary>
-    public class ThreadExecutorOperation
-    {
-    }
 }

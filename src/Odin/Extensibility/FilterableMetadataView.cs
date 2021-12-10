@@ -11,19 +11,18 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Extensibility
-{
-    /// <summary>
-    /// Provides a metadata view for a filterable export's metadata.
-    /// </summary>
-    public sealed class FilterableMetadataView : IFilterableMetadata
-    {
-        /// <inheritdoc/>
-        public Guid FamilyId
-        { get; set; }
+namespace BadEcho.Odin.Extensibility;
 
-        /// <inheritdoc/>
-        public Type? PartType
-        { get; set; }
-    }
+/// <summary>
+/// Provides a metadata view for a filterable export's metadata.
+/// </summary>
+public sealed class FilterableMetadataView : IFilterableMetadata
+{
+    /// <inheritdoc/>
+    public Guid FamilyId
+    { get; set; }
+
+    /// <inheritdoc/>
+    public Type? PartType
+    { get; set; }
 }

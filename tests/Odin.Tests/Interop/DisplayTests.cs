@@ -14,16 +14,15 @@
 using BadEcho.Odin.Interop;
 using Xunit;
 
-namespace BadEcho.Odin.Tests.Interop
-{
-    public class DisplayTests
-    {
-        [Fact]
-        public void Displays_NotEmpty()
-        {
-            var displays = Display.Devices;
+namespace BadEcho.Odin.Tests.Interop;
 
-            Assert.NotEmpty(displays);
-        }
+public class DisplayTests
+{
+    [Fact]
+    public void Displays_NotEmpty()
+    {
+        var displays = Display.Devices;
+
+        Assert.NotEmpty(displays);
     }
 }

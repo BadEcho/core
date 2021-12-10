@@ -13,32 +13,31 @@
 
 using BadEcho.Odin.Extensions;
 
-namespace BadEcho.Omnified.Vision.Statistics
+namespace BadEcho.Omnified.Vision.Statistics;
+
+/// <summary>
+/// Provides an individual statistic exported from an Omnified game.
+/// </summary>
+public abstract class Statistic : IStatistic
 {
-    /// <summary>
-    /// Provides an individual statistic exported from an Omnified game.
-    /// </summary>
-    public abstract class Statistic : IStatistic
-    {
-        /// <inheritdoc/>
-        public string Name
-        { get; init; } = string.Empty;
+    /// <inheritdoc/>
+    public string Name
+    { get; init; } = string.Empty;
 
-        /// <inheritdoc/>
-        public string Format
-        { get; init; } = "{0:N0}";
+    /// <inheritdoc/>
+    public string Format
+    { get; init; } = "{0:N0}";
 
-        /// <inheritdoc/>
-        /// <remarks>
-        /// We override the equality methods to establish the name of the statistic to essentially be its identity,
-        /// and to allow for in-place rebindings of the view models responsible for displaying statistics with updated
-        /// statistical data.
-        /// </remarks>
-        public override bool Equals(object? obj) 
-            => obj is Statistic other && Name == other.Name;
+    /// <inheritdoc/>
+    /// <remarks>
+    /// We override the equality methods to establish the name of the statistic to essentially be its identity,
+    /// and to allow for in-place rebindings of the view models responsible for displaying statistics with updated
+    /// statistical data.
+    /// </remarks>
+    public override bool Equals(object? obj) 
+        => obj is Statistic other && Name == other.Name;
 
-        /// <inheritdoc/>
-        public override int GetHashCode()
-            => this.GetHashCode(Name);
-    }
+    /// <inheritdoc/>
+    public override int GetHashCode()
+        => this.GetHashCode(Name);
 }

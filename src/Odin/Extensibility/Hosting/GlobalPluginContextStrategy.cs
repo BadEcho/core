@@ -14,40 +14,39 @@
 using System.Composition.Convention;
 using System.Composition.Hosting;
 
-namespace BadEcho.Odin.Extensibility.Hosting
+namespace BadEcho.Odin.Extensibility.Hosting;
+
+/// <summary>
+/// Provides a strategy that directs a <see cref="PluginContext"/> to make available all plugins that are discoverable through Odin's
+/// Extensibility framework.
+/// </summary>
+/// <remarks>
+/// This is the standard strategy used to load any plugins exported for consumption with no amount of discretion
+/// at play. Any contracts loaded through contexts using this strategy will have all possible implementations of said
+/// contracts returned.
+/// </remarks>
+internal sealed class GlobalPluginContextStrategy : IPluginContextStrategy
 {
+    private readonly string _pluginDirectory;
+
     /// <summary>
-    /// Provides a strategy that directs a <see cref="PluginContext"/> to make available all plugins that are discoverable through Odin's
-    /// Extensibility framework.
+    /// Initializes a new instance of the <see cref="GlobalPluginContextStrategy"/> class.
     /// </summary>
-    /// <remarks>
-    /// This is the standard strategy used to load any plugins exported for consumption with no amount of discretion
-    /// at play. Any contracts loaded through contexts using this strategy will have all possible implementations of said
-    /// contracts returned.
-    /// </remarks>
-    internal sealed class GlobalPluginContextStrategy : IPluginContextStrategy
+    /// <param name="pluginDirectory">Full path to the directory where plugins will be loaded from.</param>
+    public GlobalPluginContextStrategy(string pluginDirectory) 
+        => _pluginDirectory = pluginDirectory;
+
+    /// <inheritdoc/>
+    public CompositionHost CreateContainer()
     {
-        private readonly string _pluginDirectory;
+        var configuration = new ContainerConfiguration()
+                            .WithDirectory(_pluginDirectory)
+                            .WithExtensibilityPoints();
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GlobalPluginContextStrategy"/> class.
-        /// </summary>
-        /// <param name="pluginDirectory">Full path to the directory where plugins will be loaded from.</param>
-        public GlobalPluginContextStrategy(string pluginDirectory) 
-            => _pluginDirectory = pluginDirectory;
+        ConventionBuilder conventions = this.LoadConventions(configuration);
 
-        /// <inheritdoc/>
-        public CompositionHost CreateContainer()
-        {
-            var configuration = new ContainerConfiguration()
-                .WithDirectory(_pluginDirectory)
-                .WithExtensibilityPoints();
+        configuration.WithDefaultConventions(conventions);
 
-            ConventionBuilder conventions = this.LoadConventions(configuration);
-
-            configuration.WithDefaultConventions(conventions);
-
-            return configuration.CreateContainer();
-        }
+        return configuration.CreateContainer();
     }
 }

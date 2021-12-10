@@ -13,22 +13,21 @@
 
 using System.Composition;
 
-namespace BadEcho.Fenestra.Themes
+namespace BadEcho.Fenestra.Themes;
+
+/// <summary>
+/// Provides Fenestra framework resource access to a WPF application.
+/// </summary>
+[Export(typeof(IResourceProvider))]
+internal sealed class DefaultResourceProvider : IResourceProvider
 {
     /// <summary>
-    /// Provides Fenestra framework resource access to a WPF application.
+    /// Initializes a new instance of the <see cref="DefaultResourceProvider"/> class.
     /// </summary>
-    [Export(typeof(IResourceProvider))]
-    internal sealed class DefaultResourceProvider : IResourceProvider
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DefaultResourceProvider"/> class.
-        /// </summary>
-        public DefaultResourceProvider() 
-            => ResourceUri = PackUri.FromRelativePath<DefaultResourceProvider>("Root.xaml");
+    public DefaultResourceProvider() 
+        => ResourceUri = PackUri.FromRelativePath<DefaultResourceProvider>("Root.xaml");
 
-        /// <inheritdoc/>
-        public Uri ResourceUri 
-        { get; }
-    }
+    /// <inheritdoc/>
+    public Uri ResourceUri 
+    { get; }
 }
