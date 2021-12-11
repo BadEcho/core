@@ -95,3 +95,9 @@ using BadEcho.Odin.Properties;
                            Scope = "member", 
                            Target = "~M:BadEcho.Odin.Interop.WindowHandle.#ctor(System.IntPtr,System.Boolean)",
                            Justification = "The constructor makes a call to a constructor overload, and expression bodies don't look appetizing at all next to such an invocation.")]
+
+[assembly: SuppressMessage("Globalization", 
+                           "CA2101:Specify marshaling for P/Invoke string arguments", 
+                           Scope = "member", 
+                           Target = "~M:BadEcho.Odin.Interop.Kernel32.GetProcAddress(System.IntPtr,System.String)~System.IntPtr",
+                           Justification = "This is really a false positive -- ThrowOnUnmappableChar is set to true, closing any potential security hole in regards to Unicode characters being converted into dangerous ANSI characters. Only explicitly specifying Unicode marshalling for the string parameter causes the warning to go away, which is problematic as no Unicode variant of GetProcAddress exists. Will regard as code analysis bug for now: https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca2101")]
