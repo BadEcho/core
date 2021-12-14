@@ -197,4 +197,10 @@
   <data name="WindowHotKeyDuplicateId" xml:space="preserve">
     <value>A hot key has already been registered with the identifier '{0}'.</value>
   </data>
+	<data name="ThreadExecutorSourceNotInitialized" xml:space="preserve">
+		<value>ThreadExecutorOperationTaskSource has not been initialized.</value>
+	</data>
+	<data name="ThreadExecutorSourceAlreadyInitialized" xml:space="preserve">
+		<value>Cannot load an operation into an already initialized ThreadExecutorOperationTaskSource.</value>
+	</data>
 </root>
