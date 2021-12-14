@@ -54,4 +54,31 @@ internal static class Kernel32
     [DllImport(LIBRARY_NAME, CharSet = CharSet.Ansi, ExactSpelling = true, BestFitMapping = false, ThrowOnUnmappableChar = true, SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
+
+    /// <summary>
+    /// Waits until one or all of the specified objects are in the signaled state, an I/O completion routine or asynchronous
+    /// procedure call is queued to the thread, or the time-out interval elapses.
+    /// </summary>
+    /// <param name="nCount">
+    /// The number of object handles to wait for in the array pointed to by the handles parameter (cannot be zero).
+    /// </param>
+    /// <param name="lpHandles">An array of object handles.</param>
+    /// <param name="bWaitAll">
+    /// Value indicating if the function should return when the state of all objects are set to signaled, as opposed to only one of the objects.
+    /// </param>
+    /// <param name="dwMilliseconds">
+    /// The time-out interval, in milliseconds. If a nonzero value is specified, the function waits until the specified objects are signaled 
+    /// or the interval elapses. 
+    /// </param>
+    /// <param name="bAlertable">
+    /// Value indicating if the function returns when an I/O completion routine or APC is queued, and then executes the routine or APC.
+    /// </param>
+    /// <returns>If the function succeeds, the return value indicates the event that caused the function to return.</returns>
+    [DllImport(LIBRARY_NAME, CharSet = CharSet.Auto, SetLastError = true)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static extern int WaitForMultipleObjectsEx(int nCount,
+                                                      IntPtr[] lpHandles,
+                                                      [MarshalAs(UnmanagedType.Bool)] bool bWaitAll,
+                                                      uint dwMilliseconds,
+                                                      [MarshalAs(UnmanagedType.Bool)] bool bAlertable);
 }
