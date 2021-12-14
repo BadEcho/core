@@ -44,13 +44,13 @@ public interface IThreadExecutor
     Thread Thread { get; }
 
     /// <summary>
-    /// Executes the specified <see cref="Action"/> synchronously on the thread the executor is associated with.
+    /// Executes the provided <see cref="Action"/> synchronously on the thread the executor is associated with.
     /// </summary>
     /// <param name="method">The method to invoke through the executor.</param>
     void Invoke(Action method);
 
     /// <summary>
-    /// Executes the specified <see cref="Func{TResult}"/> synchronously on the thread the executor is associated with.
+    /// Executes the provided <see cref="Func{TResult}"/> synchronously on the thread the executor is associated with.
     /// </summary>
     /// <typeparam name="TResult">The return type of the specified method.</typeparam>
     /// <param name="method">The method to invoke through the executor.</param>
@@ -58,7 +58,7 @@ public interface IThreadExecutor
     TResult Invoke<TResult>(Func<TResult> method);
 
     /// <summary>
-    /// Executes the specified <see cref="Action"/> asynchronously on the thread the executor is associated with.
+    /// Executes the provided <see cref="Action"/> asynchronously on the thread the executor is associated with.
     /// </summary>
     /// <param name="method">The method to invoke through the executor. </param>
     /// <returns>
@@ -68,7 +68,7 @@ public interface IThreadExecutor
     ThreadExecutorOperation InvokeAsync(Action method);
 
     /// <summary>
-    /// Executes the specified <see cref="Func{TResult}"/> asynchronously on the thread the executor is associated with.
+    /// Executes the provided <see cref="Func{TResult}"/> asynchronously on the thread the executor is associated with.
     /// </summary>
     /// <typeparam name="TResult">The return type of the specified method.</typeparam>
     /// <param name="method">The method to invoke through the executor.</param>
@@ -106,4 +106,14 @@ public interface IThreadExecutor
     /// </summary>
     /// <param name="frame">The frame to process.</param>
     void PushFrame(IThreadExecutorFrame frame);
+
+    /// <summary>
+    /// Directly executes the provided method using the executor's context on the calling thread.
+    /// </summary>
+    /// <param name="method">The method to directly execute using the executor's context.</param>
+    /// <remarks>
+    /// This is where the actual execution of any provided method occurs, meant to be called eventually by all invocation
+    /// routines exposed by the executor.
+    /// </remarks>
+    internal void DirectlyInvoke(Delegate method);
 }
