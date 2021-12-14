@@ -2,6 +2,8 @@
 
 [*.cs]
 
+csharp_style_namespace_declarations = file_scoped
+
 # CA5398: Avoid hardcoded SslProtocols values
 dotnet_diagnostic.CA5398.severity = warning
 
