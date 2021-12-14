@@ -108,12 +108,33 @@ public interface IThreadExecutor
     void PushFrame(IThreadExecutorFrame frame);
 
     /// <summary>
-    /// Directly executes the provided method using the executor's context on the calling thread.
+    /// Directly executes the provided method synchronously using the executor's context and thread.
     /// </summary>
     /// <param name="method">The method to directly execute using the executor's context.</param>
+    /// <param name="filterExceptions">
+    /// Value indicating if the method should be executed in a wrapped context, allowing the executor to catch and filter
+    /// any exceptions thrown, as opposed to simply executing the method and allowing for normal exception flow to occur.
+    /// </param>
+    /// <param name="args">An array of objects to pass as arguments to the given method.</param>
     /// <remarks>
     /// This is where the actual execution of any provided method occurs, meant to be called eventually by all invocation
-    /// routines exposed by the executor.
+    /// routines exposed by the executor. If this is called on a thread other than the one associated with the executor, the
+    /// method will be queued for execution on said thread.
     /// </remarks>
-    internal void DirectlyInvoke(Delegate method);
+    internal void Invoke(Delegate method, bool filterExceptions, params object?[] args);
+
+    /// <summary>
+    /// Directly executes the provided method asynchronously using the executor's context and thread.
+    /// </summary>
+    /// <param name="method">The method to directly execute using the executor's context.</param>
+    /// <param name="filterExceptions">
+    /// Value indicating if the method should be executed in a wrapped context, allowing the executor to catch and filter
+    /// any exceptions thrown, as opposed to simply executing the method and allowing for normal exception flow to occur.
+    /// </param>
+    /// /// <param name="args">An array of objects to pass as arguments to the given method.</param>
+    /// <remarks>
+    /// This is where provided methods are queued for posting to the executor's particular message pump in order for their
+    /// eventual execution on the thread associated with the executor.
+    /// </remarks>
+    internal void BeginInvoke(Delegate method, bool filterExceptions, params object?[] args);
 }
