@@ -30,7 +30,7 @@ public sealed class StatisticGroup : IStatistic
     { get; init; } = string.Empty;
 
     /// <summary>
-    /// Gets a sequence of individual statistics that comprise this group.
+    /// Gets a sequence of individual statistics that compose this group.
     /// </summary>
     public IEnumerable<IStatistic> Statistics 
     { get; init; } = new Collection<IStatistic>();

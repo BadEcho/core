@@ -22,7 +22,7 @@ namespace BadEcho.Omnified.Vision.Apocalypse;
 /// <remarks>
 /// <para>
 /// The Player Apocalypse subsystem is executed to handle incoming damage to the player. It is the more punishing of
-/// the two subsystems that comprise the Apocalypse system, which shouldn't come as a big surprise given that Omnified
+/// the two subsystems that compose the Apocalypse system, which shouldn't come as a big surprise given that Omnified
 /// games are games hacked to be harder, not easier.
 /// </para>
 /// <para>

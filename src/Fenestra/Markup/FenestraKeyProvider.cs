@@ -22,7 +22,7 @@ namespace BadEcho.Fenestra.Markup;
 /// </summary>
 /// <remarks>
 /// This type exists to simplify the process of generating <see cref="FenestraKey"/> instances, as some static collections may
-/// be comprised of a fair number of different resources.
+/// be composed of a fair number of different resources.
 /// </remarks>
 public sealed class FenestraKeyProvider
 {

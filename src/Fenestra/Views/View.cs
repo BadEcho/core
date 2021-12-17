@@ -69,7 +69,7 @@ public class View : UserControl
     /// </para>
     /// <para>
     /// As an example, assume we have a WidgetView, with its own design-time data defined in WidgetView.xaml. Next, assume we also have
-    /// a WidgetsView comprised of multiple WidgetViews defined, with its own design-time data that includes a few WidgetViews.
+    /// a WidgetsView composed of multiple WidgetViews defined, with its own design-time data that includes a few WidgetViews.
     /// In this case, we would only see the design-time data that was defined in WidgetView.xaml show up for each instance of
     /// WidgetView in WidgetViews.xaml.
     /// </para>

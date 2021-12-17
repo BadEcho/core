@@ -29,7 +29,7 @@ public static class MetadataExtensions
     /// </summary>
     /// <param name="metadataType">A strongly-typed metadata type.</param>
     /// <returns>
-    /// A collection of <see cref="KeyValuePair{String,Type}"/> objects comprised of the names and types of all the properties belonging to
+    /// A collection of <see cref="KeyValuePair{String,Type}"/> objects composed of the names and types of all the properties belonging to
     /// <c>metadataType</c>.
     /// </returns>
     public static IEnumerable<KeyValuePair<string, Type>> BuildMetadata(Type? metadataType)
