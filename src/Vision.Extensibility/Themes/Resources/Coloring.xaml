@@ -21,23 +21,23 @@
     <Color x:Key="{x:Static t:Colors.OutlineMidpointColorKey}">#FF808080</Color>
     <Color x:Key="{x:Static t:Colors.FadingOutlineColorKey}">#44000000</Color>
 
-    <SolidColorBrush f:Freeze="True" 
-                     x:Key="{x:Static t:Brushes.TextForegroundKey}" 
+    <SolidColorBrush x:Key="{x:Static t:Brushes.TextForegroundKey}" 
                      Color="{StaticResource {x:Static t:Colors.TextColorKey}}"
-    />
-    <SolidColorBrush f:Freeze="True" 
-                     x:Key="{x:Static t:Brushes.CriticalTextForegroundKey}" 
+                     f:Freeze="True" 
+                     />
+    <SolidColorBrush x:Key="{x:Static t:Brushes.CriticalTextForegroundKey}" 
                      Color="{StaticResource {x:Static t:Colors.CriticalTextColorKey}}"
+                     f:Freeze="True" 
                      />
 
-    <SolidColorBrush f:Freeze="True"
-                     x:Key="{x:Static t:Brushes.OutlinedTextStrokeKey}"
+    <SolidColorBrush x:Key="{x:Static t:Brushes.OutlinedTextStrokeKey}"
                      Color="{StaticResource {x:Static t:Colors.OutlineColorKey}}"
+                     f:Freeze="True"
                      />
 
-    <SolidColorBrush f:Freeze="True"
-                     x:Key="{x:Static t:Brushes.FadedOutlinedTextStrokeKey}"
+    <SolidColorBrush x:Key="{x:Static t:Brushes.FadedOutlinedTextStrokeKey}"
                      Color="{StaticResource {x:Static t:Colors.FadingOutlineColorKey}}"
+                     f:Freeze="True"
                      />
 
 </ResourceDictionary>
