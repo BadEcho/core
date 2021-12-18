@@ -101,3 +101,9 @@ using BadEcho.Odin.Properties;
                            Scope = "member", 
                            Target = "~M:BadEcho.Odin.Interop.Kernel32.GetProcAddress(System.IntPtr,System.String)~System.IntPtr",
                            Justification = "This is really a false positive -- ThrowOnUnmappableChar is set to true, closing any potential security hole in regards to Unicode characters being converted into dangerous ANSI characters. Only explicitly specifying Unicode marshalling for the string parameter causes the warning to go away, which is problematic as no Unicode variant of GetProcAddress exists. Will regard as code analysis bug for now: https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca2101")]
+
+[assembly: SuppressMessage("Design", 
+                           "CA1031:Do not catch general exception types",
+                           Scope = "member", 
+                           Target = "~M:BadEcho.Odin.Threading.ThreadExecutorOperation.Execute",
+                           Justification = "The exception grabbed here is essentially 'rethrown' when it is propagated to the operation's underlying Task via its TaskCompletionSource -- nothing is being suppressed here.")]

@@ -133,6 +133,24 @@ namespace BadEcho.Odin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Executor operation must either be complete or canceled prior to finalizing completion..
+        /// </summary>
+        internal static string ExecutorFinalizedBeforeDone {
+            get {
+                return ResourceManager.GetString("ExecutorFinalizedBeforeDone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Executor may not wait on an operation executing on the same thread..
+        /// </summary>
+        internal static string ExecutorWaitOperationSameThread {
+            get {
+                return ResourceManager.GetString("ExecutorWaitOperationSameThread", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A plugin directory was explicitly specified in this application&apos;s configuration, however &apos;{0}&apos; does not exist. Please ensure that a desired plugin directory exists when configuring its use, or simply forego specifying an explicit plugin directory name if its existence cannot be guaranteed..
         /// </summary>
         internal static string ExtensibilityConfigurationDirectoryNotFound {

@@ -203,4 +203,10 @@
 	<data name="ThreadExecutorSourceAlreadyInitialized" xml:space="preserve">
 		<value>Cannot load an operation into an already initialized ThreadExecutorOperationTaskSource.</value>
 	</data>
+	<data name="ExecutorWaitOperationSameThread" xml:space="preserve">
+		<value>Executor may not wait on an operation executing on the same thread.</value>
+	</data>
+	<data name="ExecutorFinalizedBeforeDone" xml:space="preserve">
+		<value>Executor operation must either be complete or canceled prior to finalizing completion.</value>
+	</data>
 </root>
