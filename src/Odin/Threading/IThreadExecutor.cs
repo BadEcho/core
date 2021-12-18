@@ -82,7 +82,7 @@ public interface IThreadExecutor
     /// Cancels the provided executor operation.
     /// </summary>
     /// <param name="operation">The operation to cancel.</param>
-    /// <returns>True if <c>operation</c> was cancelled; otherwise, false.</returns>
+    /// <returns>True if <c>operation</c> was canceled; otherwise, false.</returns>
     bool Cancel(ThreadExecutorOperation operation);
 
     /// <summary>
@@ -116,12 +116,13 @@ public interface IThreadExecutor
     /// any exceptions thrown, as opposed to simply executing the method and allowing for normal exception flow to occur.
     /// </param>
     /// <param name="args">Optional arguments to pass to the given method.</param>
+    /// <returns>The result of the execution.</returns>
     /// <remarks>
     /// This is where the actual execution of any provided method occurs, meant to be called eventually by all invocation
     /// routines exposed by the executor. If this is called on a thread other than the one associated with the executor, the
     /// method will be queued for execution on said thread.
     /// </remarks>
-    internal void Invoke(Delegate method, bool filterExceptions, object? args);
+    internal object Invoke(Delegate method, bool filterExceptions, object? args);
 
     /// <summary>
     /// Directly executes the provided method asynchronously using the executor's context and thread.

@@ -19,7 +19,7 @@ namespace BadEcho.Odin.Threading;
 internal interface IThreadExecutorOperationTaskSource
 {
     /// <summary>
-    /// Gets the task for the operation.f
+    /// Gets the task for the operation.
     /// </summary>
     Task Task { get; }
     
@@ -39,7 +39,7 @@ internal interface IThreadExecutorOperationTaskSource
     /// Transitions the underlying task into a completed state.
     /// </summary>
     /// <param name="result">The result of the operation.</param>
-    void SetResult(object result);
+    void SetResult(object? result);
 
     /// <summary>
     /// Transitions the underlying task into a faulted state.

@@ -90,7 +90,7 @@ public static class WindowExtensions
             // size it to the reference area.
             if (!window.AllowsTransparency)
             {   // We must wait for the state to completely change to normal before switching it back to Maximized, as switching it
-                // back to Maximized after changing the position and size will result in our changes being cancelled.
+                // back to Maximized after changing the position and size will result in our changes being canceled.
                 window.StateChanged += HandleStateChangedToNormal;
             }
 

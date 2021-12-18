@@ -22,7 +22,7 @@ namespace BadEcho.Odin.Threading;
 /// <typeparam name="TResult">The type of result returned by the operation.</typeparam>
 internal class ThreadExecutorOperationTaskSource<TResult> : IThreadExecutorOperationTaskSource
 {
-    private TaskCompletionSource<TResult>? _source;
+    private TaskCompletionSource<TResult?>? _source;
 
     /// <inheritdoc/>
     public Task Task
@@ -41,7 +41,7 @@ internal class ThreadExecutorOperationTaskSource<TResult> : IThreadExecutorOpera
         if (_source == null)
             throw new InvalidOperationException(Strings.ThreadExecutorSourceAlreadyInitialized);
 
-        _source = new TaskCompletionSource<TResult>(operation);
+        _source = new TaskCompletionSource<TResult?>(operation);
     }
 
     /// <inheritdoc/>
@@ -53,11 +53,11 @@ internal class ThreadExecutorOperationTaskSource<TResult> : IThreadExecutorOpera
     }
 
     /// <inheritdoc/>
-    public void SetResult(object result)
+    public void SetResult(object? result)
     {
         EnsureInitialized();
 
-        _source.SetResult((TResult) result);
+        _source.SetResult((TResult?) result);
     }
 
     /// <inheritdoc/>
