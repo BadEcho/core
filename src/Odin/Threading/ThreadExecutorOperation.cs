@@ -29,7 +29,7 @@ public class ThreadExecutorOperation
     private EventHandler? _completed;
 
     private readonly Delegate _method;
-    private readonly object? _arguments;
+    private readonly object? _argument;
 
     private ExecutionContext? _context;
     private Exception? _exception;
@@ -49,11 +49,11 @@ public class ThreadExecutorOperation
     /// </summary>
     /// <param name="executor">The executor powering the operation.</param>
     /// <param name="method">The method being executed.</param>
-    /// <param name="arguments">The argument to provide to the method.</param>
+    /// <param name="argument">The argument to provide to the method.</param>
     internal ThreadExecutorOperation(IThreadExecutor executor,
                                      Delegate method,
-                                     object? arguments)
-        : this(executor, method, arguments, new ThreadExecutorOperationTaskSource<object>())
+                                     object? argument)
+        : this(executor, method, argument, new ThreadExecutorOperationTaskSource<object>())
     { }
 
     /// <summary>
@@ -61,18 +61,18 @@ public class ThreadExecutorOperation
     /// </summary>
     /// <param name="executor">The executor powering the operation.</param>
     /// <param name="method">The method being executed.</param>
-    /// <param name="arguments">The argument to provide to the method.</param>
+    /// <param name="argument">The argument to provide to the method.</param>
     /// <param name="taskSource">The task completion source for the operation.</param>
     internal ThreadExecutorOperation(IThreadExecutor executor,
                                      Delegate method,
-                                     object? arguments,
+                                     object? argument,
                                      IThreadExecutorOperationTaskSource taskSource)
     {
         Executor = executor;
         TaskSource = taskSource;
 
         _method = method;
-        _arguments = arguments;
+        _argument = argument;
 
         _context = ExecutionContext.Capture();
     }
@@ -329,7 +329,7 @@ public class ThreadExecutorOperation
     {
         try
         {
-            _result = Executor.Invoke(_method, false, _arguments);
+            _result = Executor.Invoke(_method, false, _argument);
         }
         catch (Exception ex)
         {   // This will be reported through the task completion source.
