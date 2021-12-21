@@ -163,6 +163,15 @@ internal static class User32
     public static extern bool UnregisterHotKey(WindowHandle hWnd, int id);
 
     /// <summary>
+    /// Defines a new window message that is guaranteed to be unique throughout the system.
+    /// </summary>
+    /// <param name="msg">The message to be registered.</param>
+    /// <returns>The message identifier if successful; otherwise, zero.</returns>
+    [DllImport(LIBRARY_NAME, CharSet = CharSet.Unicode, EntryPoint = "RegisterWindowMessageW", ExactSpelling = true)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static extern WindowMessage RegisterWindowMessage(string msg);
+
+    /// <summary>
     /// Retrieves information about the specified window.
     /// </summary>
     /// <param name="hWnd">A handle to the window and, indirectly, the class to which the window belongs.</param>
