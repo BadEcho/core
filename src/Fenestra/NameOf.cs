@@ -66,7 +66,7 @@ public static class NameOf
     /// <para>
     /// This is not the case, however, as attached properties used in XAML do not actually get their accessors invoked; this is done
     /// purposely as an optimization by the XAML parser. The only time they're actually invoked, outside of any calls we make to them
-    /// in our own code, is at design-time by the XAML designer, when data binding is occurring on the property. This optimization by the
+    /// in our own code, is at design-time by the XAML designer when data binding is occurring on the property. This optimization by the
     /// XAML parser can result in problems if the attached property has been designed such that proper operation requires invocation of an
     /// accessor prior to the property being referenced and used.
     /// </para>
@@ -87,7 +87,6 @@ public static class NameOf
         Require.NotNull(expression, nameof(expression));
 
         var body = (MemberExpression) expression.Body;
-
         string nameWithoutSuffix = RemoveDependencyPropertySuffix(body);
 
         return $"Shadow{nameWithoutSuffix}";
