@@ -14,16 +14,24 @@
 namespace BadEcho.Odin.Interop;
 
 /// <summary>
-/// Indicates a type of standard message value used when sending or posting messages to windows.
+/// Specifies a type of standard message value used when sending or posting messages to windows.
 /// </summary>
 public enum WindowMessage
 {
     /// <summary>
-    /// Indicates a window message corresponding to WM_NULL.
+    /// A window message corresponding to WM_NULL.
     /// </summary>
     Null = 0,
     /// <summary>
-    /// Indicates a window message indicating a hot key has been pressed, corresponding to WM_HOTKEY.
+    /// A window message corresponding to WM_CLOSE.
+    /// </summary>
+    Close = 0x10,
+    /// <summary>
+    /// A window message corresponding to a nonclient area being destroyed.
+    /// </summary>
+    DestroyNonclientArea = 0x82,
+    /// <summary>
+    /// A window message indicating a hot key has been pressed, corresponding to WM_HOTKEY.
     /// </summary>
     HotKey = 0x312
 }

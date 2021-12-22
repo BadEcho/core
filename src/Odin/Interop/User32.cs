@@ -172,6 +172,38 @@ internal static class User32
     public static extern WindowMessage RegisterWindowMessage(string msg);
 
     /// <summary>
+    /// Places (posts) a message in the message queue associated with the thread that created the specified window and returns
+    /// without waiting for the thread to process the message.
+    /// </summary>
+    /// <param name="hWnd">
+    /// Handle to the window whose window procedure will receive the message. If this parameter is HWND_BROADCAST, 
+    /// the message is sent to all top-level windows in the system, including disabled or invisible unowned windows, 
+    /// overlapped windows, and pop-up windows; but, the message is not sent to child windows.
+    /// </param>
+    /// <param name="msg">Specifies the message to be sent.</param>
+    /// <param name="wParam">Specifies additional message-specific information.</param>
+    /// <param name="lParam">Specifies additional message-specific information.</param>
+    /// <returns>Value indicating the success of the operation.</returns>
+    /// <returns></returns>
+    [DllImport(LIBRARY_NAME, CharSet = CharSet.Auto, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)] 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static extern bool PostMessage(WindowHandle hWnd, WindowMessage msg, IntPtr wParam, IntPtr lParam);
+
+    /// <summary>
+    /// Passes message information to the specified window procedure.
+    /// </summary>
+    /// <param name="wndProc">The previous window procedure.</param>
+    /// <param name="hWnd">A handle to the window procedure to receive the message.</param>
+    /// <param name="msg">The message.</param>
+    /// <param name="wParam">Additional message-specific information.</param>
+    /// <param name="lParam">Additional message-specific information.</param>
+    /// <returns>The result of the message processing.</returns>
+    [DllImport(LIBRARY_NAME, CharSet = CharSet.Auto)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static extern IntPtr CallWindowProc(IntPtr wndProc, IntPtr hWnd, WindowMessage msg, IntPtr wParam, IntPtr lParam);
+
+    /// <summary>
     /// Retrieves information about the specified window.
     /// </summary>
     /// <param name="hWnd">A handle to the window and, indirectly, the class to which the window belongs.</param>

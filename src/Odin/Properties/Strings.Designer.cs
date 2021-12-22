@@ -358,6 +358,33 @@ namespace BadEcho.Odin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Subclass message processing procedure invoked while in a detached state..
+        /// </summary>
+        internal static string SubclassDetachedWndProc {
+            get {
+                return ResourceManager.GetString("SubclassDetachedWndProc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to detach a subclassed window&apos;s WndProc from the window&apos;s message chain..
+        /// </summary>
+        internal static string SubclassDetachmentFailed {
+            get {
+                return ResourceManager.GetString("SubclassDetachmentFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to forcibly detach a subclassed window&apos;s WndProc from the window&apos;s message chain..
+        /// </summary>
+        internal static string SubclassForcibleDetachmentFailed {
+            get {
+                return ResourceManager.GetString("SubclassForcibleDetachmentFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot load an operation into an already initialized ThreadExecutorOperationTaskSource..
         /// </summary>
         internal static string ThreadExecutorSourceAlreadyInitialized {

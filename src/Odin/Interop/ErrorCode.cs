@@ -14,11 +14,16 @@
 namespace BadEcho.Odin.Interop;
 
 /// <summary>
-/// Callback that processes messages sent to a window.
+/// Specifies a common error code value returned by the <c>GetLastError</c> Win32 function.
 /// </summary>
-/// <param name="hWnd">A handle to the window.</param>
-/// <param name="msg">The message.</param>
-/// <param name="wParam">Additional message-specific information.</param>
-/// <param name="lParam">Additional message-specific information.</param>
-/// <returns>The result of the message processing.</returns>
-public delegate IntPtr WindowProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+public enum ErrorCode
+{
+    /// <summary>
+    /// No error occurred.
+    /// </summary>
+    Success = 0,
+    /// <summary>
+    /// The window handle is invalid.
+    /// </summary>
+    InvalidWindowHandle = 1400
+}

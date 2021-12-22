@@ -122,7 +122,7 @@ public interface IThreadExecutor
     /// routines exposed by the executor. If this is called on a thread other than the one associated with the executor, the
     /// method will be queued for execution on said thread.
     /// </remarks>
-    internal object Invoke(Delegate method, bool filterExceptions, object? argument);
+    internal object? Invoke(Delegate method, bool filterExceptions, object? argument);
 
     /// <summary>
     /// Directly executes the provided method asynchronously using the executor's context and thread.
