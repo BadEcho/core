@@ -18,6 +18,9 @@ namespace BadEcho.Odin.Interop;
 /// <summary>
 /// Provides a level-0 type for window handles.
 /// </summary>
+/// <suppressions>
+/// ReSharper disable UnusedMember.Local
+/// </suppressions>
 public sealed class WindowHandle : SafeHandle
 {
     /// <summary>

@@ -108,7 +108,7 @@ public sealed class HostAdapter<T> : IHostAdapter
 
         IEnumerable<string> unclaimedMethodNames
             = typeof(T).GetMethods()
-                       .Where(m => !routingTable.Keys.Contains(m.Name))
+                       .Where(m => !routingTable.ContainsKey(m.Name))
                        .Select(m => m.Name)
                        .Distinct();
 
