@@ -19,7 +19,7 @@ namespace BadEcho.Odin.Interop;
 public interface IWindowWrapper
 {
     /// <summary>
-    /// Adds a hook that will received messages sent to the wrapped window.
+    /// Adds a hook that will receive messages sent to the wrapped window.
     /// </summary>
     /// <param name="hook">The hook to invoke when messages are sent to the wrapped window.</param>
     void AddHook(WindowProc hook);

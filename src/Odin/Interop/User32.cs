@@ -29,6 +29,41 @@ internal static class User32
         => "DefWindowProcW";
 
     /// <summary>
+    /// The value to pass as the handle to the parent window when creating a message-only window.
+    /// </summary>
+    public static IntPtr ParentWindowMessageOnly = new(-3);
+
+    /// <summary>
+    /// Creates an overlapped, pop-up, or child window with an extended window style.
+    /// </summary>
+    /// <param name="dwExStyle">The extended window style of the window being created.</param>
+    /// <param name="lpClassName">String or class atom created by a previous call to the <see cref="RegisterClassEx"/> function.</param>
+    /// <param name="lpWindowName">The window name.</param>
+    /// <param name="style">The style of the window being created.</param>
+    /// <param name="x">The initial horizontal position of the window.</param>
+    /// <param name="y">The initial vertical position of the window.</param>
+    /// <param name="width">The width, in device units, of the window.</param>
+    /// <param name="height">The height, in device units, of the window.</param>
+    /// <param name="hWndParent">A handle to the parent or owner window.</param>
+    /// <param name="hMenu">A handle to a menu.</param>
+    /// <param name="hInstance">A handle to the instance of the module to be associated with the window.</param>
+    /// <param name="lpParam">Pointer to a value to be passed to the window.</param>
+    /// <returns>A handle to the new window if successful; otherwise, null.</returns>
+    [DllImport(LIBRARY_NAME, CharSet = CharSet.Unicode, BestFitMapping = false, SetLastError = true)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static extern unsafe WindowHandle CreateWindowEx(int dwExStyle,
+                                                            string lpClassName,
+                                                            string lpWindowName,
+                                                            int style,
+                                                            int x,
+                                                            int y,
+                                                            int width,
+                                                            int height,
+                                                            IntPtr hWndParent,
+                                                            IntPtr hMenu,
+                                                            IntPtr hInstance,
+                                                            void* lpParam);
+    /// <summary>
     /// Destroys the specified window.
     /// </summary>
     /// <param name="hWnd">A handle to the window to be destroyed.</param>
@@ -37,6 +72,29 @@ internal static class User32
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static extern bool DestroyWindow(IntPtr hWnd);
+
+    /// <summary>
+    /// Registers a window class for subsequent use.
+    /// </summary>
+    /// <param name="wc_d">A pointer to a <see cref="WNDCLASSEX"/> structure.</param>
+    /// <returns>A class atom that uniquely identifies the class; otherwise, zero.</returns>
+    /// <suppressions>
+    /// ReSharper disable InconsistentNaming
+    /// </suppressions>
+    [DllImport(LIBRARY_NAME, CharSet = CharSet.Unicode)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static extern ushort RegisterClassEx(ref WNDCLASSEX wc_d);
+
+    /// <summary>
+    /// Unregisters a window class, freeing the memory required for the class.
+    /// </summary>
+    /// <param name="atomString">The class atom.</param>
+    /// <param name="hInstance">A handle to the instance of the module that created the class.</param>
+    /// <returns>If successful, a nonzero value; otherwise, zero.</returns>
+    /// <remarks>Before unregistering a window class, ensure all windows created with said class have been destroyed.</remarks>
+    [DllImport(LIBRARY_NAME, CharSet = CharSet.Auto, SetLastError = true, BestFitMapping = false)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static extern int UnregisterClass(IntPtr atomString, IntPtr hInstance);
 
     /// <summary>
     /// Enumerates display monitors (including invisible pseudo-monitors associated with the mirroring drivers) that intersect

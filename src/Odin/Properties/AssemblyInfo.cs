@@ -119,3 +119,9 @@ using BadEcho.Odin.Properties;
                            Scope = "member", 
                            Target = "~M:BadEcho.Odin.Interop.WindowHandle.#ctor",
                            Justification = "Providing a public parameterless constructor for a SafeHandle is something you do NOT do.")]
+
+[assembly: SuppressMessage("Maintainability", 
+                           "CA1508:Avoid dead conditional code", 
+                           Scope = "member", 
+                           Target = "~M:BadEcho.Odin.Interop.MessageOnlyWindowWrapper.#ctor(BadEcho.Odin.Threading.IThreadExecutor)",
+                           Justification = "This is a false positive, with several issues open that seem related to it on the dotnet GitHub. Even though the CreateWindowEx function returns a non-null reference type, the Handle property will of course still be null if an exception was thrown in the try block.")]
