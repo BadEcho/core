@@ -128,7 +128,7 @@ internal sealed class WindowSubclass : IDisposable
     /// <returns>Value indicating the success of the operation.</returns>
     internal IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
     {
-        IntPtr result = IntPtr.Zero;
+        var result = IntPtr.Zero;
         var message = (WindowMessage)msg;
 
         switch (_state)
@@ -154,13 +154,13 @@ internal sealed class WindowSubclass : IDisposable
             if (WindowMessage.DestroyNonclientArea == message)
             {
                 Detach(true);
-
-                result = IntPtr.Zero;
+                // WM_NCDESTROY should always be passed down the chain.
+                result = new IntPtr(-1);
             }
         }
 
         // If the message wasn't handled, pass it up the WndProc chain.
-        if (IntPtr.Zero == result)
+        if (IntPtr.Zero != result)
             result = User32.CallWindowProc(oldWndProc, hWnd, message, wParam, lParam);
 
         return result;
@@ -322,12 +322,12 @@ internal sealed class WindowSubclass : IDisposable
         int param = (int) lParam;
         bool forcibly = param > 0;
 
-        return Unhook(forcibly) ? new IntPtr(1) : IntPtr.Zero;
+        return Unhook(forcibly) ? IntPtr.Zero : new IntPtr(-1);
     }
 
     private IntPtr SendOperation(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
     {
-        IntPtr result = IntPtr.Zero;
+        var result = IntPtr.Zero;
 
         // The parameters are cached locally, followed by setting the class member for the parameters to null for purposes of reentrancy.
         _ExecutorOperationCallbackParameters ??= new SubclassOperationParameters();
