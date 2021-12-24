@@ -23,7 +23,7 @@ namespace BadEcho.Odin.Interop;
 /// </summary>
 internal sealed class MessageOnlyWindowWrapper : IWindowWrapper, IDisposable
 {
-    private readonly CachedWeakList _hooks = new CachedWeakList();
+    private readonly CachedWeakList _hooks = new();
     private readonly int _ownerThreadId = Environment.CurrentManagedThreadId;
 
     private readonly IThreadExecutor _executor;
@@ -43,13 +43,14 @@ internal sealed class MessageOnlyWindowWrapper : IWindowWrapper, IDisposable
         _executor = executor;
 
         var subclass = new WindowSubclass(WndProc, executor);
-        
+
         // We store a reference to the initial WndProc so that it isn't garbage collected before our subclass replaces the WndProc with its
         // own following the first message it receives after our call to CreateWindowEx.
         WindowProc initialCallback = subclass.WndProc;
         string className = CreateClassName();
 
         _classAtom = RegisterClass(initialCallback, className);
+        Handle = WindowHandle.InvalidHandle;
 
         try
         {
@@ -71,7 +72,7 @@ internal sealed class MessageOnlyWindowWrapper : IWindowWrapper, IDisposable
         }
         finally
         {
-            if (Handle == null || Handle.IsInvalid)
+            if (Handle.IsInvalid)
             {   // The subclass pins itself, so if window creation fails, we need to manually release it here and now.
                 subclass.Dispose();
             }
@@ -116,7 +117,7 @@ internal sealed class MessageOnlyWindowWrapper : IWindowWrapper, IDisposable
     /// <summary>
     /// Gets the handle to the wrapped window.
     /// </summary>
-    public WindowHandle? Handle
+    public WindowHandle Handle
     { get; }
 
     /// <summary>
@@ -154,7 +155,7 @@ internal sealed class MessageOnlyWindowWrapper : IWindowWrapper, IDisposable
             // post it to the executor for it to happen later, once the window is closed.
             _executor.BeginInvoke(() => UnregisterClass(_classAtom), true, null);
         }
-        else if (Handle is { IsInvalid: false })
+        else if (!Handle.IsInvalid)
         {   // Actions such as destroying the window and unregistering its class should only be done on the window's own thread.
             if (Environment.CurrentManagedThreadId == _ownerThreadId)
                 DestroyWindow(Handle, _classAtom);
