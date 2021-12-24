@@ -31,6 +31,9 @@ namespace BadEcho.Odin.Interop;
 /// </remarks>
 internal sealed class WindowSubclass : IDisposable
 {
+    private static readonly WindowMessage _DetachMessage
+        = User32.RegisterWindowMessage("WindowSubclass.DetachMessage");
+
     private static readonly Dictionary<WindowSubclass, WindowHandle> _SubclassHandleMap
         = new();
 
@@ -103,13 +106,6 @@ internal sealed class WindowSubclass : IDisposable
         _gcHandle = GCHandle.Alloc(this);
     }
 
-    /// <summary>
-    /// Gets a window message that interested parties can use in order to signal to the subclass that it needs to unhook from any currently
-    /// subclassed window.
-    /// </summary>
-    public static WindowMessage DetachMessage
-        => User32.RegisterWindowMessage("WindowSubclass.DetachMessage");
-
     /// <inheritdoc/>
     public void Dispose()
     {
@@ -144,7 +140,7 @@ internal sealed class WindowSubclass : IDisposable
 
         IntPtr oldWndProc = _oldWndProc;
 
-        if (DetachMessage == message)
+        if (_DetachMessage == message)
             result = ProcessDetachMessage(wParam, lParam);
         else
         {
