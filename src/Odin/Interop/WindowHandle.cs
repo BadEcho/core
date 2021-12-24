@@ -53,6 +53,12 @@ public sealed class WindowHandle : SafeHandle
     public override bool IsInvalid
         => handle == IntPtr.Zero;
 
+    /// <summary>
+    /// Gets a default invalid instance of the <see cref="WindowHandle"/> class.
+    /// </summary>
+    internal static WindowHandle InvalidHandle 
+        => new(IntPtr.Zero, false);
+
     /// <inheritdoc/>
     protected override bool ReleaseHandle()
         => User32.DestroyWindow(handle);
