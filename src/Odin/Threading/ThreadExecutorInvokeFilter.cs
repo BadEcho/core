@@ -17,7 +17,7 @@ namespace BadEcho.Odin.Threading;
 /// Provides method execution routines designed specifically for thread executor style invocations, optionally offering exception
 /// filtering.
 /// </summary>
-internal sealed class ThreadExecutorWrapper
+internal sealed class ThreadExecutorInvokeFilter
 {
     private readonly object _source;
 
@@ -27,10 +27,10 @@ internal sealed class ThreadExecutorWrapper
     public event EventHandler<ThreadExceptionEventArgs>? Filter;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ThreadExecutorWrapper"/> class.
+    /// Initializes a new instance of the <see cref="ThreadExecutorInvokeFilter"/> class.
     /// </summary>
     /// <param name="source">The object using this wrapper.</param>
-    public ThreadExecutorWrapper(object source)
+    public ThreadExecutorInvokeFilter(object source)
     {
         _source = source;
     }
