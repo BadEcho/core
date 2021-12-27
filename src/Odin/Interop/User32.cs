@@ -181,10 +181,31 @@ internal static class User32
     /// <param name="uMsgFilterMin">The integer value of the lowest message value to be retrieved.</param>
     /// <param name="uMsgFilterMax">The integer value of the highest message value to be retrieved.</param>
     /// <returns></returns>
-    [DllImport(LIBRARY_NAME, CharSet = CharSet.Unicode, EntryPoint = "GetMessageW", ExactSpelling = true)]
+    [DllImport(LIBRARY_NAME, CharSet = CharSet.Auto)]
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static extern bool GetMessage([In, Out] ref MSG lpMsg, IntPtr hWnd, uint uMsgFilterMin, uint uMsgFilterMax);
+
+    /// <summary>
+    /// Translates virtual-key messages into character messages.
+    /// </summary>
+    /// <param name="lpMsg">
+    /// A pointer to a <see cref="MSG"/> structure that contains message information retrieved from the calling thread's message queue.
+    /// </param>
+    /// <returns>True if the message is translated; otherwise, false.</returns>
+    [DllImport(LIBRARY_NAME, CharSet = CharSet.Auto, ExactSpelling = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static extern bool TranslateMessage([In, Out] ref MSG lpMsg);
+
+    /// <summary>
+    /// Dispatches a message to a window procedure.
+    /// </summary>
+    /// <param name="lpMsg">A pointer to a <see cref="MSG"/> structure that contains the message.</param>
+    /// <returns>Value returned by the window procedure.</returns>
+    [DllImport(LIBRARY_NAME, CharSet = CharSet.Auto)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static extern IntPtr DispatchMessage([In] ref MSG lpMsg);
 
     /// <summary>
     /// Retrieves a module handle to the module that this class provides interoperability with.
