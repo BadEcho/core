@@ -55,7 +55,7 @@ public interface IThreadExecutor
     /// <typeparam name="TResult">The return type of the specified method.</typeparam>
     /// <param name="method">The method to invoke through the executor.</param>
     /// <returns>The value returned by <c>method</c>.</returns>
-    TResult Invoke<TResult>(Func<TResult> method);
+    TResult? Invoke<TResult>(Func<TResult> method);
 
     /// <summary>
     /// Executes the provided <see cref="Action"/> asynchronously on the thread the executor is associated with.
@@ -76,7 +76,7 @@ public interface IThreadExecutor
     /// A <see cref="ThreadExecutorOperation{TResult}"/> representing the asynchronous operation that can be interacted with as it is
     /// pending execution.
     /// </returns>
-    ThreadExecutorOperation<TResult> InvokeAsync<TResult>(Func<TResult> method);
+    ThreadExecutorOperation<TResult?> InvokeAsync<TResult>(Func<TResult> method);
 
     /// <summary>
     /// Cancels the provided executor operation.

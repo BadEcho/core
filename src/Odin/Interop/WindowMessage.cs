@@ -23,6 +23,10 @@ public enum WindowMessage
     /// </summary>
     Null = 0,
     /// <summary>
+    /// A window message corresponding to a window being destroyed (WM_DESTROY).
+    /// </summary>
+    Destroy = 0x2,
+    /// <summary>
     /// A window message corresponding to WM_CLOSE.
     /// </summary>
     Close = 0x10,

@@ -218,4 +218,19 @@
 	<data name="SubclassDetachmentFailed" xml:space="preserve">
 		<value>Unable to detach a subclassed window's WndProc from the window's message chain.</value>
 	</data>
+	<data name="ExecutorDisabledByQueuePumping" xml:space="preserve">
+		<value>Message queue still pumping for executor that is in a disabled state.</value>
+	</data>
+	<data name="ExecutorCannotDisableOnOtherThread" xml:space="preserve">
+		<value>An executor can only be disabled on the thread which the executor was created on.</value>
+	</data>
+	<data name="ExecutorCannotEnableOnOtherThread" xml:space="preserve">
+		<value>An executor can only be re-enabled on the thread which the executor was created on.</value>
+	</data>
+	<data name="ExecutorShutdown" xml:space="preserve">
+		<value>The executor has been shutdown and cannot execute any further operations.</value>
+	</data>
+	<data name="ExecutorProcessingDisabled" xml:space="preserve">
+		<value>The executor's ability to process operations is currently disabled.</value>
+	</data>
 </root>

@@ -167,6 +167,24 @@ internal static class User32
     [DllImport(LIBRARY_NAME, ExactSpelling = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static extern int ReleaseDC(IntPtr hWnd, IntPtr hdc);
+    
+    /// <summary>
+    /// Retrieves a message from the calling thread's message queue.
+    /// </summary>
+    /// <param name="lpMsg">
+    /// A pointer to a <see cref="MSG"/> structure that receives message information from the thread's message queue.
+    /// </param>
+    /// <param name="hWnd">
+    /// A handle to the window whose messages are to be retrieved. If null, messages for any window belonging to the current thread
+    /// are retrieved.
+    /// </param>
+    /// <param name="uMsgFilterMin">The integer value of the lowest message value to be retrieved.</param>
+    /// <param name="uMsgFilterMax">The integer value of the highest message value to be retrieved.</param>
+    /// <returns></returns>
+    [DllImport(LIBRARY_NAME, CharSet = CharSet.Unicode, EntryPoint = "GetMessageW", ExactSpelling = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static extern bool GetMessage([In, Out] ref MSG lpMsg, IntPtr hWnd, uint uMsgFilterMin, uint uMsgFilterMax);
 
     /// <summary>
     /// Retrieves a module handle to the module that this class provides interoperability with.

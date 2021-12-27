@@ -133,11 +133,56 @@ namespace BadEcho.Odin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An executor can only be disabled on the thread which the executor was created on..
+        /// </summary>
+        internal static string ExecutorCannotDisableOnOtherThread {
+            get {
+                return ResourceManager.GetString("ExecutorCannotDisableOnOtherThread", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An executor can only be re-enabled on the thread which the executor was created on..
+        /// </summary>
+        internal static string ExecutorCannotEnableOnOtherThread {
+            get {
+                return ResourceManager.GetString("ExecutorCannotEnableOnOtherThread", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Message queue still pumping for executor that is in a disabled state..
+        /// </summary>
+        internal static string ExecutorDisabledByQueuePumping {
+            get {
+                return ResourceManager.GetString("ExecutorDisabledByQueuePumping", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Executor operation must either be complete or canceled prior to finalizing completion..
         /// </summary>
         internal static string ExecutorFinalizedBeforeDone {
             get {
                 return ResourceManager.GetString("ExecutorFinalizedBeforeDone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The executor&apos;s ability to process operations is currently disabled..
+        /// </summary>
+        internal static string ExecutorProcessingDisabled {
+            get {
+                return ResourceManager.GetString("ExecutorProcessingDisabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The executor has been shutdown and cannot execute any further operations..
+        /// </summary>
+        internal static string ExecutorShutdown {
+            get {
+                return ResourceManager.GetString("ExecutorShutdown", resourceCulture);
             }
         }
         
