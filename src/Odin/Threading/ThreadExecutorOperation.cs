@@ -30,6 +30,7 @@ public class ThreadExecutorOperation
 
     private readonly Delegate _method;
     private readonly object? _argument;
+    private readonly bool _filterExceptions;
 
     private ExecutionContext? _context;
     private Exception? _exception;
@@ -40,8 +41,12 @@ public class ThreadExecutorOperation
     /// </summary>
     /// <param name="executor">The executor powering the operation.</param>
     /// <param name="method">An action, that takes no arguments, being executed.</param>
-    internal ThreadExecutorOperation(IThreadExecutor executor, Action method)
-        : this(executor, method, null)
+    /// <param name="filterExceptions">
+    /// Value indicating if the method should be executed in a wrapped context, allowing the executor to catch and filter
+    /// any exceptions thrown, as opposed to simply executing the method and allowing for normal exception flow to occur.
+    /// </param>
+    internal ThreadExecutorOperation(IThreadExecutor executor, Action method, bool filterExceptions)
+        : this(executor, method, filterExceptions, null)
     { }
 
     /// <summary>
@@ -49,11 +54,16 @@ public class ThreadExecutorOperation
     /// </summary>
     /// <param name="executor">The executor powering the operation.</param>
     /// <param name="method">The method being executed.</param>
+    /// <param name="filterExceptions">
+    /// Value indicating if the method should be executed in a wrapped context, allowing the executor to catch and filter
+    /// any exceptions thrown, as opposed to simply executing the method and allowing for normal exception flow to occur.
+    /// </param>
     /// <param name="argument">The argument to provide to the method.</param>
     internal ThreadExecutorOperation(IThreadExecutor executor,
                                      Delegate method,
+                                     bool filterExceptions,
                                      object? argument)
-        : this(executor, method, argument, new ThreadExecutorOperationTaskSource<object>())
+        : this(executor, method, filterExceptions, argument, new ThreadExecutorOperationTaskSource<object>())
     { }
 
     /// <summary>
@@ -61,10 +71,15 @@ public class ThreadExecutorOperation
     /// </summary>
     /// <param name="executor">The executor powering the operation.</param>
     /// <param name="method">The method being executed.</param>
+    /// <param name="filterExceptions">
+    /// Value indicating if the method should be executed in a wrapped context, allowing the executor to catch and filter
+    /// any exceptions thrown, as opposed to simply executing the method and allowing for normal exception flow to occur.
+    /// </param>
     /// <param name="argument">The argument to provide to the method.</param>
     /// <param name="taskSource">The task completion source for the operation.</param>
     internal ThreadExecutorOperation(IThreadExecutor executor,
                                      Delegate method,
+                                     bool filterExceptions,
                                      object? argument,
                                      IThreadExecutorOperationTaskSource taskSource)
     {
@@ -73,6 +88,7 @@ public class ThreadExecutorOperation
 
         _method = method;
         _argument = argument;
+        _filterExceptions = filterExceptions;
 
         _context = ExecutionContext.Capture();
     }
@@ -138,11 +154,19 @@ public class ThreadExecutorOperation
     {
         get
         {
-            // we'll want to wait for the operation to complete, if necessary, before returning the result.
-            Wait();
+            // We'll want to wait for the operation to complete, if necessary, before returning the result, to allow for the task to
+            // throw any captured exceptions.
+            // This is something we'll want to do if running in an async context, something which only can occur if we're not 
+            // filtering exceptions. Filtered exception invocation is functionality that not publicly available to external callers,
+            // rather it is something used only by legacy/internal APIs (such as SynchronizationContext's Send/Post and the message
+            // pump), which never run in an async context.
+            if (!_filterExceptions)
+            {
+                Wait();
 
-            if (Status is ThreadExecutorOperationStatus.Completed or ThreadExecutorOperationStatus.Canceled)
-                Task.GetAwaiter().GetResult();
+                if (Status is ThreadExecutorOperationStatus.Completed or ThreadExecutorOperationStatus.Canceled)
+                    Task.GetAwaiter().GetResult();
+            }
 
             return _result;
         }
@@ -256,8 +280,9 @@ public class ThreadExecutorOperation
             }
         }
 
-        // This is to give the task a chance to throw any captured exceptions.
-        if (Status is ThreadExecutorOperationStatus.Completed or ThreadExecutorOperationStatus.Canceled)
+        // This is to give the task a chance to throw any captured exceptions, something we only want to do if not filtering the exceptions
+        // and potentially running in an async context.
+        if (!_filterExceptions && Status is ThreadExecutorOperationStatus.Completed or ThreadExecutorOperationStatus.Canceled)
             Task.GetAwaiter().GetResult();
 
         return Status;
@@ -327,13 +352,22 @@ public class ThreadExecutorOperation
 
     private void Execute()
     {
-        try
+        // If we're filtering exceptions, then we'll let the executor's invoke filter handle (or not handle) any thrown
+        // exception.
+        if (_filterExceptions)
         {
-            _result = Executor.Invoke(_method, false, _argument);
+            _result = Executor.Invoke(_method, true, _argument);
         }
-        catch (Exception ex)
-        {   // This will be reported through the task completion source.
-            _exception = ex;
+        else
+        {
+            try
+            {
+                _result = Executor.Invoke(_method, false, _argument);
+            }
+            catch (Exception ex)
+            {   // This will be reported through the task completion source.
+                _exception = ex;
+            }
         }
     }
 

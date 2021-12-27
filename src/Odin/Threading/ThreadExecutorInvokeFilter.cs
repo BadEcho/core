@@ -34,16 +34,16 @@ internal sealed class ThreadExecutorInvokeFilter
     {
         _source = source;
     }
-    
+
     /// <summary>
     /// Executes the provided delegate in the most efficient way possible, optionally filtering out any thrown
     /// exceptions if requested.
     /// </summary>
     /// <param name="method">The delegate to execute.</param>
-    /// <param name="argument">An optional argument to pass to the delegate.</param>
     /// <param name="filterExceptions">Value indicating if exceptions should be filtered out.</param>
+    /// <param name="argument">An optional argument to pass to the delegate.</param>
     /// <returns>The result of executing <c>method</c>.</returns>
-    public object? Execute(Delegate method, object? argument, bool filterExceptions)
+    public object? Execute(Delegate method, bool filterExceptions, object? argument)
     {
         Require.NotNull(method, nameof(method));
         object? result = null;
