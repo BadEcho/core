@@ -21,7 +21,7 @@ namespace BadEcho.Odin.Interop;
 /// <summary>
 /// Provides a disposable wrapper around an <c>HWND</c> of a message-only window and the messages it receives.
 /// </summary>
-internal sealed class MessageOnlyWindowWrapper : IWindowWrapper, IDisposable
+public sealed class MessageOnlyWindowWrapper : IWindowWrapper, IDisposable
 {
     private readonly CachedWeakList _hooks = new();
     private readonly int _ownerThreadId = Environment.CurrentManagedThreadId;
@@ -142,7 +142,8 @@ internal sealed class MessageOnlyWindowWrapper : IWindowWrapper, IDisposable
 
         _hooks.Remove(hook);
     }
-    
+
+    /// <inheritdoc/>
     public void Dispose()
     {   // Since WM_NCDESTROY messages are propagated, there is a chance this method will be invoked multiple times.
         if (_disposed)

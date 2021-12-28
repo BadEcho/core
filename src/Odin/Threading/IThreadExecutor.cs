@@ -19,6 +19,11 @@ namespace BadEcho.Odin.Threading;
 public interface IThreadExecutor
 {
     /// <summary>
+    /// Occurs when an executor operation throws an unhandled exception.
+    /// </summary>
+    event EventHandler<ThreadExceptionEventArgs>? UnhandledException;
+
+    /// <summary>
     /// Gets a value indicating if the process to shutdown the executor has started.
     /// </summary>
     bool IsShutdownStarted { get; }

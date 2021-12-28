@@ -175,8 +175,8 @@ internal static class User32
     /// A pointer to a <see cref="MSG"/> structure that receives message information from the thread's message queue.
     /// </param>
     /// <param name="hWnd">
-    /// A handle to the window whose messages are to be retrieved. If null, messages for any window belonging to the current thread
-    /// are retrieved.
+    /// A handle to the window whose messages are to be retrieved. If null (zero), messages for any window belonging to the current
+    /// thread are retrieved.
     /// </param>
     /// <param name="uMsgFilterMin">The integer value of the lowest message value to be retrieved.</param>
     /// <param name="uMsgFilterMax">The integer value of the highest message value to be retrieved.</param>
