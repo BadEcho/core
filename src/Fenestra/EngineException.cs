@@ -19,7 +19,6 @@ namespace BadEcho.Fenestra;
 /// <summary>
 /// Provides an exception used to report severe errors resulting in the termination of a Fenestra-based application.
 /// </summary>
-[Serializable]
 public sealed class EngineException : Exception
 {
     /// <summary>
@@ -57,16 +56,6 @@ public sealed class EngineException : Exception
     /// </summary>
     public EngineException()
     { }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="EngineException"/> with serialized data.
-    /// </summary>
-    /// <inheritdoc/>
-    private EngineException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-        IsProcessed = info.GetBoolean(nameof(IsProcessed));
-    }
 
     /// <summary>
     /// Gets a value indicating if the inner exception already received attention by one or more external handlers.

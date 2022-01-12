@@ -18,7 +18,6 @@ namespace BadEcho.Odin.Interop;
 /// <summary>
 /// Provides message information from a thread's message queue.
 /// </summary>
-[Serializable]
 [StructLayout(LayoutKind.Sequential)]
 internal struct MSG
 {

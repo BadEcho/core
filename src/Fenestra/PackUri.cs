@@ -13,7 +13,6 @@
 
 using System.IO;
 using System.Reflection;
-using System.Runtime.Serialization;
 using BadEcho.Fenestra.Properties;
 using BadEcho.Odin;
 using BadEcho.Odin.Extensions;
@@ -40,7 +39,6 @@ namespace BadEcho.Fenestra;
 /// include the scheme and authority in the URI.
 /// </para>
 /// </remarks>
-[Serializable]
 public sealed class PackUri : Uri
 {
     /// <summary>
@@ -69,19 +67,6 @@ public sealed class PackUri : Uri
     /// <exception cref="ArgumentException"><c>resourceAssembly</c> does not have a name.</exception>
     public PackUri(Assembly resourceAssembly, string path, UriKind uriKind)
         : base(MakePackUri(resourceAssembly, path, uriKind == UriKind.Relative), uriKind)
-    { }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="PackUri"/> class with serialized data.
-    /// </summary>
-    /// <inheritdoc/>
-    /// <remarks>
-    /// Although this class does not contain any additional serialization logic from what its base type provides, we must expose
-    /// a serialization constructor in order to allow for serialization to be possible (a capability this class is expected to
-    /// have, given that the base type is serializable).
-    /// </remarks>
-    private PackUri(SerializationInfo info, StreamingContext context)
-        : base(info, context)
     { }
 
     /// <summary>

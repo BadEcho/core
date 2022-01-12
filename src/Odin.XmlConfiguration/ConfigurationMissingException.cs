@@ -20,7 +20,6 @@ namespace BadEcho.Odin.XmlConfiguration;
 /// <summary>
 /// Provides an exception that is thrown when elements are missing from a component's configuration.
 /// </summary>
-[Serializable]
 public sealed class ConfigurationMissingException : Exception
 {
     /// <summary>
@@ -79,19 +78,6 @@ public sealed class ConfigurationMissingException : Exception
     /// </summary>
     public ConfigurationMissingException()
     { }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ConfigurationMissingException"/> class with serialized data.
-    /// </summary>
-    /// <inheritdoc/>
-    private ConfigurationMissingException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-        MissingType 
-            = (MissingConfigurationType?) info.GetValue(nameof(MissingType), typeof(MissingConfigurationType));
-            
-        MissingEntityExpression = info.GetString(nameof(MissingEntityExpression));
-    }
 
     /// <summary>
     /// Gets the type of entity that is missing from the configuration.
