@@ -44,7 +44,7 @@ public static class ObjectExtensions
     /// <para>
     /// This extension method will not preclude an <see cref="IEquatable{T}"/> implementation's execution,
     /// as the default equality comparer used by this method will itself defer to an <see cref="IEquatable{T}"/>
-    /// implementation if it is present.
+    /// implementation if it is present. 
     /// </para>
     /// </remarks>
     public static bool Equals<T>(this T? source, T? other) 
@@ -59,14 +59,14 @@ public static class ObjectExtensions
     /// <param name="firstProperty">The first property to use in calculating the hash code.</param>
     /// <returns>A hash code for <c>source</c> based on the provided property values.</returns>
     /// <remarks>
-    /// Generic type parameters are present for <c>source</c> and all other properties in order to avoid boxing as
-    /// <see cref="object"/>.
+    /// Generic type parameters are present for <c>source</c> and all other properties in order to avoid the potential
+    /// boxing of any values types.
     /// </remarks>
     public static int GetHashCode<T, T1>(this T source, T1 firstProperty)
         => HashCode.Combine(firstProperty);
 
     /// <summary>
-    /// Calculates the hash code for this instance using one of the object's properties.
+    /// Calculates the hash code for this instance using two of the object's properties.
     /// </summary>
     /// <typeparam name="T">The type of the object the hash code is being calculated for.</typeparam>
     /// <typeparam name="T1">The type of the first property the hash code is based on.</typeparam>
@@ -76,9 +76,28 @@ public static class ObjectExtensions
     /// <param name="secondProperty">The second property to use in calculating the hash code.</param>
     /// <returns>A hash code for <c>source</c> based on the provided property values.</returns>
     /// <remarks>
-    /// Generic type parameters are present for <c>source</c> and all other properties in order to avoid boxing as
-    /// <see cref="object"/>.
+    /// Generic type parameters are present for <c>source</c> and all other properties in order to avoid the potential
+    /// boxing of any values types.
     /// </remarks>
     public static int GetHashCode<T, T1, T2>(this T source, T1 firstProperty, T2 secondProperty)
         => HashCode.Combine(firstProperty, secondProperty);
+
+    /// <summary>
+    /// Calculates the hash code for this instance using three of the object's properties.
+    /// </summary>
+    /// <typeparam name="T">The type of the object the hash code is being calculated for.</typeparam>
+    /// <typeparam name="T1">The type of the first property the hash code is based on.</typeparam>
+    /// <typeparam name="T2">The type of the second property the hash code is based on.</typeparam>
+    /// <typeparam name="T3">The type of the third property the hash code is based on.</typeparam>
+    /// <param name="source">The object we're calculating the hash code for.</param>
+    /// <param name="firstProperty">The first property to use in calculating the hash code.</param>
+    /// <param name="secondProperty">The second property to use in calculating the hash code.</param>
+    /// <param name="thirdProperty">The third property to use in calculating the hash code.</param>
+    /// <returns>A has code for <c>source</c> based on the provided property values.</returns>
+    /// <remarks>
+    /// Generic type parameters are present for <c>source</c> and all other properties in order to avoid the potential
+    /// boxing of any values types.
+    /// </remarks>
+    public static int GetHashCode<T, T1, T2, T3>(this T source, T1 firstProperty, T2 secondProperty, T3 thirdProperty)
+        => HashCode.Combine(firstProperty, secondProperty, thirdProperty);
 }
