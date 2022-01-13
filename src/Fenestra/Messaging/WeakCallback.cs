@@ -73,8 +73,6 @@ internal sealed class WeakCallback
     }
 
     /// <inheritdoc/>
-    public override int GetHashCode()
-    {
-        return this.GetHashCode(_callbackType, _method, _weakMessage.Target);
-    }
+    public override int GetHashCode() 
+        => this.GetHashCode(_callbackType, _method, _weakMessage.Target);
 }
