@@ -19,7 +19,7 @@ namespace BadEcho.Fenestra.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Strings {
@@ -223,11 +223,29 @@ namespace BadEcho.Fenestra.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot register a callback of type &apos;{0}&apos; to the message &apos;{1}&apos;, which expects a callback of type &apos;{2}&apos;..
+        /// </summary>
+        internal static string InvalidMessageCallbackType {
+            get {
+                return ResourceManager.GetString("InvalidMessageCallbackType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A Thickness value with an illegal number of lengths was provided. A Thickness value can only have 1, 2, or 4 lengths..
         /// </summary>
         internal static string JsonThicknessInvalidThickness {
             get {
                 return ResourceManager.GetString("JsonThicknessInvalidThickness", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mediator can only be created on threads with an accessible Dispatcher..
+        /// </summary>
+        internal static string MediatorDispatcherNotAccessible {
+            get {
+                return ResourceManager.GetString("MediatorDispatcherNotAccessible", resourceCulture);
             }
         }
         

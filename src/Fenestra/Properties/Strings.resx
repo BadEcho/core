@@ -185,4 +185,10 @@
   <data name="ModelImplentationNotRegistered" xml:space="preserve">
     <value>The {0} type is not registered as a derived model type with this collection view model.</value>
   </data>
+	<data name="InvalidMessageCallbackType" xml:space="preserve">
+		<value>Cannot register a callback of type '{0}' to the message '{1}', which expects a callback of type '{2}'.</value>
+	</data>
+	<data name="MediatorDispatcherNotAccessible" xml:space="preserve">
+		<value>Mediator can only be created on threads with an accessible Dispatcher.</value>
+	</data>
 </root>
