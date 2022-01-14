@@ -30,6 +30,8 @@ internal sealed class ApocalypseModule : VisionModule<ApocalypseEvent, Apocalyps
     private const string DEPENDENCY_NAME
         = nameof(ApocalypseModule) + nameof(LocalDependency);
 
+    private int _eventIndex;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ApocalypseModule"/> class.
     /// </summary>
@@ -75,6 +77,9 @@ internal sealed class ApocalypseModule : VisionModule<ApocalypseEvent, Apocalyps
         {
             var apocalypseEvent = JsonSerializer.Deserialize<ApocalypseEvent>(message, options);
 
+            if (apocalypseEvent != null)
+                apocalypseEvent.Index = Interlocked.Increment(ref _eventIndex);
+            
             return apocalypseEvent
                 ?? throw new ArgumentException(Strings.NullMessageValue.InvariantFormat(message),
                                                nameof(message));

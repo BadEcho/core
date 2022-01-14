@@ -25,6 +25,11 @@
                                        />
     </d:DesignProperties.DataContext>
     <Grid>
+        <fenestra:LoadedEventBehavior.Actions>
+            <fenestra:PlaySoundAction Sound="{Binding EffectSound}"
+                                      IsUninterruptible="{Binding IsEffectSoundUninterruptible}"
+                                      />
+        </fenestra:LoadedEventBehavior.Actions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" SharedSizeGroup="TimestampColumn"/>
             <ColumnDefinition Width="*"/>

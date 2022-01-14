@@ -49,6 +49,14 @@ namespace BadEcho.Omnified.Vision.Apocalypse;
 public sealed class NormalDamageEvent : RiskOfMurderEvent
 {
     /// <summary>
+    /// The only possible sound effect that can arise from a <see cref="NormalDamageEvent"/> is when we're exposed to Fatalis,
+    /// and it is one very easily interrupted soon after by any subsequent attack to the player (which will kill them). It's also
+    /// one of the best sound effects we got, and it needs to be play out in full, 'cuz it is definitely GAME OVER MAN at that point.
+    /// </summary>
+    public override bool IsEffectSoundUninterruptible
+        => true;
+
+    /// <summary>
     /// Gets a value indicating if the player has been afflicted with Fatalis as a result of this event.
     /// </summary>
     public bool FatalisAfflicted

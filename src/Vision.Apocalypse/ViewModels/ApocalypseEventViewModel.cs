@@ -27,7 +27,23 @@ internal class ApocalypseEventViewModel<TApocalypseEvent> : ViewModel<Apocalypse
     private string _effectMessage = string.Empty;
     private double _effectMessageMaxWidth = double.NaN;
     private IEnumerable<byte> _effectSound = Enumerable.Empty<byte>();
+    private bool _isEffectSoundUninterruptible;
     private DateTime _timestamp;
+    private int _index;
+
+    /// <inheritdoc/>
+    public int Index
+    {
+        get => _index;
+        set => NotifyIfChanged(ref _index, value);
+    }
+
+    /// <inheritdoc/>
+    public DateTime Timestamp
+    {
+        get => _timestamp;
+        set => NotifyIfChanged(ref _timestamp, value);
+    }
 
     /// <inheritdoc/>
     public string EffectMessage
@@ -44,17 +60,17 @@ internal class ApocalypseEventViewModel<TApocalypseEvent> : ViewModel<Apocalypse
     }
 
     /// <inheritdoc/>
-    public DateTime Timestamp
-    {
-        get => _timestamp;
-        set => NotifyIfChanged(ref _timestamp, value);
-    }
-
-    /// <inheritdoc/>
     public IEnumerable<byte> EffectSound
     {
         get => _effectSound;
         set => NotifyIfChanged(ref _effectSound, value);
+    }
+
+    /// <inheritdoc/>
+    public bool IsEffectSoundUninterruptible
+    {
+        get => _isEffectSoundUninterruptible;
+        set => NotifyIfChanged(ref _isEffectSoundUninterruptible, value);
     }
 
     /// <inheritdoc/>
@@ -67,17 +83,20 @@ internal class ApocalypseEventViewModel<TApocalypseEvent> : ViewModel<Apocalypse
         if (string.IsNullOrEmpty(effectMessage))
             throw new ArgumentException(Strings.EventMissingMessage, nameof(model));
 
-        EffectMessage = effectMessage;
+        Index = model.Index;
         Timestamp = model.Timestamp;
+        EffectMessage = effectMessage;
         EffectSound = model.EffectSound;
+        IsEffectSoundUninterruptible = model.IsEffectSoundUninterruptible;
     }
 
     /// <inheritdoc/>
     protected override void OnUnbound(TApocalypseEvent model)
     {
+        Index = 0;
+        Timestamp = default;
         EffectMessage = string.Empty;
         EffectMessageMaxWidth = double.NaN;
-        Timestamp = default;
         EffectSound = Enumerable.Empty<byte>();
     }
 }

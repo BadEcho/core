@@ -43,6 +43,23 @@ public abstract class ApocalypseEvent
         _soundMap = new Lazy<WeightedRandom<Func<Stream>>>(InitializeSoundMap, LazyThreadSafetyMode.ExecutionAndPublication);
 
     /// <summary>
+    /// Gets or sets the index of this event, which serves as a reference to its location among other Apocalypse events.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The reason why we sort Apocalypse events by an independently managed index, as opposed to the events' timestamps, is because
+    /// it was discovered that Lua, which the technology used to conduct high-level operations within injected Omnified code (including the
+    /// creation of Apocalypse message files), lacks built-in support for capturing the current time with millisecond resolution.
+    /// </para>
+    /// <para>
+    /// Given that it is often the case that multiple Apocalypse events can occur within the same second, relying on a timestamp that
+    /// is only precise up to the second would easily result in events being ordered inaccurately.
+    /// </para>
+    /// </remarks>
+    public int Index
+    { get; set; }
+
+    /// <summary>
     /// Gets the date and time at which this Apocalypse event occurred.
     /// </summary>
     public DateTime Timestamp  
@@ -66,6 +83,13 @@ public abstract class ApocalypseEvent
             }
         }
     }
+
+    /// <summary>
+    /// Gets or sets a value indicating if the event's <see cref="EffectSound"/> is exempt from having its playback interrupted upon 
+    /// another event (with a sound effect) occurring.
+    /// </summary>
+    public virtual bool IsEffectSoundUninterruptible
+        => false;
 
     private WeightedRandom<Func<Stream>> SoundMap
         => _soundMap.Value;
