@@ -14,7 +14,9 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Threading;
 using BadEcho.Fenestra;
+using BadEcho.Fenestra.Extensions;
 using BadEcho.Odin;
 using BadEcho.Odin.Configuration;
 using BadEcho.Odin.Extensibility.Hosting;
@@ -272,7 +274,8 @@ public sealed class AnchorPointPanel : Panel
             return;
 
         _configuration = configurationProvider.GetConfiguration<VisionConfiguration>();
-
-        InvalidateMeasure();
+        
+        // We can expect the configuration change events to often originate on non-UI threads.
+        this.Invoke(InvalidateMeasure, DispatcherPriority.Normal);
     }
 }
