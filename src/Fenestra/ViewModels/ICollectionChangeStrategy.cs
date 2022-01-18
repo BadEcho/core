@@ -54,14 +54,4 @@ public interface ICollectionChangeStrategy<TChildViewModel>
     /// <param name="collectionViewModel">A collection view model to trim.</param>
     /// <param name="countExceeded">The number of child view models causing the overcapacity.</param>
     void TrimExcess(IAncestorViewModel<TChildViewModel> collectionViewModel, int countExceeded);
-
-    /// <summary>
-    /// Resets the contents of the provided view model's collection to be in line with this strategy.
-    /// </summary>
-    /// <param name="collectionViewModel">A collection view model to bring in line with this strategy.</param>
-    /// <remarks>
-    /// This is meant to be used only when the collection view model needs a complete and intrusive realignment of its
-    /// contents in response to events such as the adaptation of a brand new strategy, and not for individual changes.
-    /// </remarks>
-    void Reset(IAncestorViewModel<TChildViewModel> collectionViewModel);
 }

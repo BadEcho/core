@@ -122,18 +122,6 @@ public sealed class PresortedInsertionStrategy<TChildViewModel, TKey> : ICollect
         }
     }
 
-    /// <inheritdoc/>
-    public void Reset(IAncestorViewModel<TChildViewModel> collectionViewModel)
-    {
-        Require.NotNull(collectionViewModel, nameof(collectionViewModel));
-        // Calling the sort methods directly on the view model collection will send a collection reset notification to be sent to
-        // any bound views. Use sparingly!
-        if (_descending)
-            collectionViewModel.Children.OrderByDescending(_keySelector);
-        else
-            collectionViewModel.Children.OrderBy(_keySelector);
-    }
-
     private IEnumerable<TChildViewModel> Sort(IEnumerable<TChildViewModel> collection)
     {
         return _descending
