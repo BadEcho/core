@@ -26,7 +26,8 @@ namespace BadEcho.Omnified.Vision.Windows;
 internal sealed class VisionContextAssembler : IContextAssembler<VisionViewModel>
 {
     private readonly VisionViewModel _viewModel = new();
-
+    
+    private Dispatcher? _dispatcher;
     private bool _isAssembled;
         
     /// <inheritdoc/>
@@ -35,24 +36,26 @@ internal sealed class VisionContextAssembler : IContextAssembler<VisionViewModel
         if (_isAssembled)
             return _viewModel;
 
+        _dispatcher = dispatcher;
+
         IConfigurationProvider configurationProvider
             = PluginHost.LoadRequirement<IConfigurationProvider>(true);
 
         configurationProvider.ConfigurationChanged += HandleConfigurationChanged;
 
-        ApplyConfiguration(configurationProvider, dispatcher);
+        ApplyConfiguration(configurationProvider);
 
         _isAssembled = true;
 
         return _viewModel;
     }
 
-    private void ApplyConfiguration(IConfigurationProvider configurationProvider, Dispatcher? dispatcher = null)
+    private void ApplyConfiguration(IConfigurationProvider configurationProvider)
     {
         VisionConfiguration configuration
             = configurationProvider.GetConfiguration<VisionConfiguration>();
 
-        configuration.Dispatcher = dispatcher;
+        configuration.Dispatcher = _dispatcher;
 
         _viewModel.Disconnect();
         _viewModel.ApplyConfiguration(configuration);
