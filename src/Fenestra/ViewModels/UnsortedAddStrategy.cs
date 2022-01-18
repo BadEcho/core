@@ -65,4 +65,12 @@ public sealed class UnsortedAddStrategy<TChildViewModel> : ICollectionChangeStra
             collectionViewModel.Children.RemoveAt(0);
         }
     }
+
+    /// <inheritdoc/>
+    /// <remarks>
+    /// Given that this strategy is unsorted, any given collection view model can be considered to already be in line with
+    /// this strategy.
+    /// </remarks>
+    public void Reset(IAncestorViewModel<TChildViewModel> collectionViewModel)
+    { }
 }

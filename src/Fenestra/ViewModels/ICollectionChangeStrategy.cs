@@ -23,45 +23,45 @@ public interface ICollectionChangeStrategy<TChildViewModel>
     /// <summary>
     /// Adds a single view model as a child of a view model's collection.
     /// </summary>
-    /// <param name="collectionViewModel">
-    /// A view model which has the capability of having one or more children view models.
-    /// </param>
+    /// <param name="collectionViewModel">A collection view model to add a single view model to.</param>
     /// <param name="viewModel">The view model to add as a child.</param>
     void Add(IAncestorViewModel<TChildViewModel> collectionViewModel, TChildViewModel viewModel);
 
     /// <summary>
-    /// Adds a sequence of items as children of a view model's collection.
+    /// Adds a sequence of view models as children of a view model's collection.
     /// </summary>
-    /// <param name="collectionViewModel">
-    /// A view model which has the capability of having one or more children view models.
-    /// </param>
+    /// <param name="collectionViewModel">A collection view model to add a sequence of view models to.</param>
     /// <param name="viewModels">The sequence of view models to add as children.</param>
     void AddRange(IAncestorViewModel<TChildViewModel> collectionViewModel, IEnumerable<TChildViewModel> viewModels);
 
     /// <summary>
     /// Removes a single view model from a view model's collection.
     /// </summary>
-    /// <param name="collectionViewModel">
-    /// A view model which has the capability of having one or more children view models.
-    /// </param>
+    /// <param name="collectionViewModel">A collection view model to remove a single view model from.</param>
     /// <param name="viewModel">The view model to remove.</param>
     void Remove(IAncestorViewModel<TChildViewModel> collectionViewModel, TChildViewModel viewModel);
 
     /// <summary>
     /// Removes a sequence of view models from a view model's collection.
     /// </summary>
-    /// <param name="collectionViewModel">
-    /// A view model which has the capability of having one or more children view models.
-    /// </param>
+    /// <param name="collectionViewModel">A collection view model to remove a sequence of view models from.</param>
     /// <param name="viewModels">The view models to remove.</param>
     void RemoveRange(IAncestorViewModel<TChildViewModel> collectionViewModel, IEnumerable<TChildViewModel> viewModels);
 
     /// <summary>
     /// Removes all items exceeding the allowed capacity of the view model's collection.
     /// </summary>
-    /// <param name="collectionViewModel">
-    /// A view model which has the capability of having one or more children view models.
-    /// </param>
-    /// <param name="countExceeded">The number if child view models causing the overcapacity.</param>
+    /// <param name="collectionViewModel">A collection view model to trim.</param>
+    /// <param name="countExceeded">The number of child view models causing the overcapacity.</param>
     void TrimExcess(IAncestorViewModel<TChildViewModel> collectionViewModel, int countExceeded);
+
+    /// <summary>
+    /// Resets the contents of the provided view model's collection to be in line with this strategy.
+    /// </summary>
+    /// <param name="collectionViewModel">A collection view model to bring in line with this strategy.</param>
+    /// <remarks>
+    /// This is meant to be used only when the collection view model needs a complete and intrusive realignment of its
+    /// contents in response to events such as the adaptation of a brand new strategy, and not for individual changes.
+    /// </remarks>
+    void Reset(IAncestorViewModel<TChildViewModel> collectionViewModel);
 }

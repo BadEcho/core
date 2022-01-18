@@ -24,8 +24,8 @@ namespace BadEcho.Fenestra.ViewModels;
 /// This strategy allows for collection view model sorts and batch insertions without requiring a collection reset notification, which
 /// may be undesirable for certain scenarios. Removals are unaffected by this strategy; simple removal operations are performed.
 /// </remarks>
-/// <typeparam name="TChildViewModel"></typeparam>
-/// <typeparam name="TKey"></typeparam>
+/// <typeparam name="TChildViewModel">The type of view model generated as children of the collection.</typeparam>
+/// <typeparam name="TKey">The type of key returned by the selector used to sort the children.</typeparam>
 public sealed class PresortedInsertionStrategy<TChildViewModel, TKey> : ICollectionChangeStrategy<TChildViewModel>
     where TChildViewModel : class, IViewModel
 {
@@ -64,7 +64,6 @@ public sealed class PresortedInsertionStrategy<TChildViewModel, TKey> : ICollect
             = collectionViewModel.Children.Concat(viewModel.AsEnumerable());
 
         List<TChildViewModel> sortedChildren = Sort(allChildren).ToList();
-
         int index = sortedChildren.IndexOf(viewModel);
 
         collectionViewModel.Children.Insert(index, viewModel);
@@ -121,6 +120,18 @@ public sealed class PresortedInsertionStrategy<TChildViewModel, TKey> : ICollect
             else
                 collectionViewModel.Children.RemoveAt(0);
         }
+    }
+
+    /// <inheritdoc/>
+    public void Reset(IAncestorViewModel<TChildViewModel> collectionViewModel)
+    {
+        Require.NotNull(collectionViewModel, nameof(collectionViewModel));
+        // Calling the sort methods directly on the view model collection will send a collection reset notification to be sent to
+        // any bound views. Use sparingly!
+        if (_descending)
+            collectionViewModel.Children.OrderByDescending(_keySelector);
+        else
+            collectionViewModel.Children.OrderBy(_keySelector);
     }
 
     private IEnumerable<TChildViewModel> Sort(IEnumerable<TChildViewModel> collection)
