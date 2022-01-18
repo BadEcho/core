@@ -48,13 +48,6 @@
                                      To="1"
                                      Duration="00:00:01"
                                      />
-                    <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" 
-                                     To="1.0" 
-                                     Duration="00:00:01">
-                        <DoubleAnimation.EasingFunction>
-                            <CubicEase EasingMode="EaseInOut"/>
-                        </DoubleAnimation.EasingFunction>
-                    </DoubleAnimation>
                 </Storyboard>
             </BeginStoryboard>
         </EventTrigger>
@@ -65,13 +58,6 @@
                                      To="0"
                                      Duration="00:00:01"
                                      />
-                    <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" 
-                                     To="0" 
-                                     Duration="00:00:01">
-                        <DoubleAnimation.EasingFunction>
-                            <CubicEase EasingMode="EaseInOut"/>
-                        </DoubleAnimation.EasingFunction>
-                    </DoubleAnimation>
                 </Storyboard>
             </BeginStoryboard>
         </EventTrigger>
