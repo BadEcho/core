@@ -35,10 +35,7 @@ internal sealed class StatisticsModule : VisionModule<IStatistic, StatisticsView
     [ImportingConstructor]
     public StatisticsModule([Import(DEPENDENCY_NAME)] IVisionConfiguration configuration)
         : base(configuration)
-    {
-        if (configuration.Dispatcher != null)
-            ViewModel.ChangeDispatcher(configuration.Dispatcher);
-    }
+    { }
 
     /// <inheritdoc/>
     public override string MessageFile
@@ -47,6 +44,17 @@ internal sealed class StatisticsModule : VisionModule<IStatistic, StatisticsView
     /// <inheritdoc/>
     protected override AnchorPointLocation DefaultLocation
         => AnchorPointLocation.TopLeft;
+
+    /// <inheritdoc/>
+    protected override StatisticsViewModel InitializeViewModel()
+    {
+        var viewModel = new StatisticsViewModel();
+
+        if (Configuration.Dispatcher != null)
+            viewModel.ChangeDispatcher(Configuration.Dispatcher);
+
+        return viewModel;
+    }
 
     protected override IEnumerable<IStatistic>? ParseMessages(string messages)
     {

@@ -11,8 +11,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Fenestra.Messaging;
 using BadEcho.Fenestra.ViewModels;
-using BadEcho.Odin;
+using BadEcho.Odin.Collections;
+using BadEcho.Omnified.Vision.Extensibility;
 
 namespace BadEcho.Omnified.Vision.Apocalypse.ViewModels;
 
@@ -21,15 +23,37 @@ namespace BadEcho.Omnified.Vision.Apocalypse.ViewModels;
 /// </summary>
 internal sealed class ApocalypseViewModel : PolymorphicCollectionViewModel<ApocalypseEvent, IApocalypseEventViewModel>
 {
-    private double _effectMessageMaxWidth;
+    private readonly double _effectMessageMaxWidth;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ApocalypseViewModel"/> class.
     /// </summary>
-    public ApocalypseViewModel()
-        : base(new CollectionViewModelOptions { AsyncBatchBindings = true, Capacity = 3 },
-               new PresortedInsertionStrategy<IApocalypseEventViewModel, DateTime>(vm => vm.Timestamp, true))
-    {   // TODO: change capacity to configured max messages.
+    /// <param name="configuration">The Apocalypse module configuration to apply to this view model.</param>
+    /// <remarks>
+    /// <para>
+    /// The maximum number of messages in the module's configuration controls how many events are shown on the overlay during the
+    /// periods of time when no new events are coming in. When a burst of new events do happen to be coming in, we allow for this
+    /// capacity to be exceeded for a brief time, in order to lessen the chance that events occur and are never seen.
+    /// </para>
+    /// <para>
+    /// Eventually, the collection of events gets trimmed down to its normal capacity. This is after a brief delay to, again,
+    /// allow for at least a chance of them being seen. If the number of events in excess is ever so much, however, that it exceeds
+    /// an amount that is double the number of allowed events, then an immediate trimming occurs (otherwise the entire screen might
+    /// get filled up when we're experiencing a crazier-than-normal gameplay situation).
+    /// </para>
+    /// </remarks>
+    public ApocalypseViewModel(ApocalypseModuleConfiguration configuration)
+        : base(new CollectionViewModelOptions
+               {
+                   AsyncBatchBindings = true,
+                   Capacity = configuration.MaxMessages,
+                   CapacityEnforcementDelayLimit = configuration.MaxMessages * 2
+               },
+               new PresortedInsertionStrategy<IApocalypseEventViewModel, int>(vm => vm.Index, 
+                                                                              OrderFromLocation(configuration)))
+    {
+        _effectMessageMaxWidth = configuration.EffectMessageMaxWidth;
+
         // Events from Player Apocalypse die rolls.
         RegisterDerivation<ExtraDamageEvent, PlayerApocalypseEventViewModel<ExtraDamageEvent>>();
         RegisterDerivation<TeleportitisEvent, PlayerApocalypseEventViewModel<TeleportitisEvent>>();
@@ -44,6 +68,12 @@ internal sealed class ApocalypseViewModel : PolymorphicCollectionViewModel<Apoca
         RegisterDerivation<EnemyApocalypseEvent, ApocalypseEventViewModel<EnemyApocalypseEvent>>();
     }
 
+    /// <summary>
+    /// Gets the mediator for messages to be sent or received through.
+    /// </summary>
+    public Mediator Mediator 
+    { get; } = new();
+
     /// <inheritdoc/>
     public override IApocalypseEventViewModel CreateChild(ApocalypseEvent model)
     {
@@ -54,14 +84,21 @@ internal sealed class ApocalypseViewModel : PolymorphicCollectionViewModel<Apoca
         return viewModel;
     }
 
-    /// <summary>
-    /// Provides the provided Apocalypse module configuration to this Apocalypse root view model instance.
-    /// </summary>
-    /// <param name="configuration">The Apocalypse module configuration to apply to this view model.</param>
-    public void ApplyConfiguration(ApocalypseModuleConfiguration configuration)
+    /// <inheritdoc/>
+    protected override void OnChildrenChanged(CollectionPropertyChangedEventArgs e)
     {
-        Require.NotNull(configuration, nameof(configuration));
+        base.OnChildrenChanged(e);
 
-        _effectMessageMaxWidth = configuration.EffectMessageMaxWidth;
+        if (e.Action is CollectionPropertyChangedAction.Add)
+            Mediator.Broadcast(SystemMessages.CancelAnimationsRequested);
     }
+
+    private static bool OrderFromLocation(VisionModuleConfiguration configuration)
+        => configuration.Location switch
+        {
+            AnchorPointLocation.TopLeft => false,
+            AnchorPointLocation.TopCenter => false,
+            AnchorPointLocation.TopRight => false,
+            _ => true
+        };
 }

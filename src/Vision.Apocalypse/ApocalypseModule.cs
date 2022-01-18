@@ -39,15 +39,7 @@ internal sealed class ApocalypseModule : VisionModule<ApocalypseEvent, Apocalyps
     [ImportingConstructor]
     public ApocalypseModule([Import(DEPENDENCY_NAME)] IVisionConfiguration configuration)
         : base(configuration)
-    {
-        var moduleConfiguration
-            = configuration.Modules.GetConfiguration<ApocalypseModuleConfiguration>(ModuleName);
-
-        ViewModel.ApplyConfiguration(moduleConfiguration);
-
-        if (configuration.Dispatcher != null)
-            ViewModel.ChangeDispatcher(configuration.Dispatcher);
-    }
+    { }
 
     /// <inheritdoc/>
     public override string MessageFile
@@ -60,6 +52,20 @@ internal sealed class ApocalypseModule : VisionModule<ApocalypseEvent, Apocalyps
     /// <inheritdoc/>
     protected override AnchorPointLocation DefaultLocation
         => AnchorPointLocation.TopCenter;
+
+    /// <inheritdoc/>
+    protected override ApocalypseViewModel InitializeViewModel()
+    {
+        var moduleConfiguration
+            = Configuration.Modules.GetConfiguration<ApocalypseModuleConfiguration>(ModuleName);
+
+        var viewModel = new ApocalypseViewModel(moduleConfiguration);
+
+        if (Configuration.Dispatcher != null)
+            viewModel.ChangeDispatcher(Configuration.Dispatcher);
+
+        return viewModel;
+    }
 
     /// <inheritdoc/>
     protected override IEnumerable<ApocalypseEvent> ParseMessages(string messages)

@@ -24,10 +24,12 @@ namespace BadEcho.Omnified.Vision.Extensibility;
 /// Provides a base snap-in module granting Vision to Omnified data.
 /// </summary>
 public abstract class VisionModule<TModel, TViewModel> : IVisionModule
-    where TViewModel : class, IViewModel<TModel>, new()
+    where TViewModel : class, IViewModel<TModel>
 {
     private readonly AnchorPointLocation? _configuredLocation;
-    private readonly int _maximumMessages;
+    private readonly int _maxMessages;
+
+    private TViewModel? _viewModel;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="VisionModule{TModel, TViewModel}"/> class.
@@ -36,12 +38,14 @@ public abstract class VisionModule<TModel, TViewModel> : IVisionModule
     protected VisionModule(IVisionConfiguration configuration)
     {
         Require.NotNull(configuration, nameof(configuration));
+
+        Configuration = configuration;
             
         var moduleConfiguration 
-            = configuration.Modules.GetConfiguration<VisionModuleConfiguration>(ModuleName);
+            = Configuration.Modules.GetConfiguration<VisionModuleConfiguration>(ModuleName);
 
         _configuredLocation = moduleConfiguration.Location;
-        _maximumMessages = moduleConfiguration.MaxMessages;
+        _maxMessages = moduleConfiguration.MaxMessages;
     }
 
     /// <inheritdoc/>
@@ -67,10 +71,16 @@ public abstract class VisionModule<TModel, TViewModel> : IVisionModule
         => GetType().Assembly.GetName().Name ?? string.Empty;
 
     /// <summary>
+    /// Gets the configuration settings for the Vision application.
+    /// </summary>
+    protected IVisionConfiguration Configuration
+    { get; }
+
+    /// <summary>
     /// Gets the module's root view model instance.
     /// </summary>
-    protected TViewModel ViewModel
-    { get; } = new();
+    protected TViewModel ViewModel 
+        => _viewModel ??= InitializeViewModel();
 
     /// <summary>
     /// Gets the default location of the module's anchor point.
@@ -90,6 +100,12 @@ public abstract class VisionModule<TModel, TViewModel> : IVisionModule
 
         return ViewModel;
     }
+    
+    /// <summary>
+    /// Initializes the root view model for this module.
+    /// </summary>
+    /// <returns>An initialized <typeparamref name="TViewModel"/> instance to serve as this module's root data context.</returns>
+    protected abstract TViewModel InitializeViewModel();
 
     /// <summary>
     /// Parses bindable <typeparamref name="TModel"/> objects from the provided contents of a message file.
@@ -105,7 +121,7 @@ public abstract class VisionModule<TModel, TViewModel> : IVisionModule
             IEnumerable<TModel> parsedMessages = ParseMessages(messages)
                 ?? throw new ArgumentException(Strings.NullMessageValue, nameof(messages));
 
-            return _maximumMessages > 0 ? parsedMessages.TakeLast(_maximumMessages) : parsedMessages;
+            return _maxMessages > 0 ? parsedMessages.TakeLast(_maxMessages) : parsedMessages;
         }
         catch (JsonException jsonEx)
         {
