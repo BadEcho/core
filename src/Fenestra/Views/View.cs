@@ -36,9 +36,9 @@ public class View : UserControl
     protected View() 
         => UserInterface.BuildEnvironment();
 
-    private static object? OnCoerceDataContext(DependencyObject d, object? baseValue)
+    private static object? OnCoerceDataContext(DependencyObject sender, object? baseValue)
     {
-        View view = (View) d;
+        View view = (View) sender;
 
         return view.EnsureLocalContext(baseValue);
     }
