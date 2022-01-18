@@ -19,9 +19,6 @@ namespace BadEcho.Odin;
 /// Provides a weighted random number value generator.
 /// </summary>
 /// <typeparam name="T">The type of value generated.</typeparam>
-/// <remarks>
-/// TODO: To be revisited to make thread-safe and not so bare bones.
-/// </remarks>
 public sealed class WeightedRandom<T>
 {
     private readonly List<T> _values = new();
@@ -39,5 +36,5 @@ public sealed class WeightedRandom<T>
     /// </summary>
     /// <returns>The next <typeparamref name="T"/> weighted value in the sequence.</returns>
     public T? Next()
-        => _values.Count == 0 ? default : _values[RandomNumberGenerator.GetInt32(0, _values.Count - 1)];
+        => _values.Count == 0 ? default : _values[RandomNumberGenerator.GetInt32(0, _values.Count)];
 }
