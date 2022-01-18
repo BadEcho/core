@@ -128,13 +128,10 @@ local function dumpPlayerApocalypseEvent()
         return jsonEncode(FatalisCuredEvent(apocalypseEvent, fatalisDeaths, fatalisMinutesAfflicted))
     end
 
-    -- A 'fatalisState' of 1 means we have been exposed to Fatalis, and that the next hit (and all other hits,
-    -- until it is cured) will immediately kill the player.
-    if fatalisState == 1 then
-        local fatalisHealthLost = readInteger("fatalisHealthLost")
-
-        -- The Fatalis affliction is now active.
-        writeInteger("fatalisState", 2)
+    -- A 'fatalisState' of 2 means our exposure to Fatalis has developed into an affliction and, because we've just been damaged,
+    -- we're dead.     
+    if fatalisState == 2 then
+        local fatalisHealthLost = toInt(readFloat("fatalisHealthLost"))
 
         return jsonEncode(FatalisDeathEvent(apocalypseEvent, fatalisHealthLost))
     end
@@ -172,8 +169,15 @@ local function dumpPlayerApocalypseEvent()
         apocalypseEvent = RiskOfMurderEvent(apocalypseEvent, murderRoll)
         
         if murderRoll <= 3 then
-            -- Normal damage. If 'fatalisState' has been set to 1, then we've been exposed to the dreaded Fatalis.            
-            apocalypseEvent = NormalDamageEvent(apocalypseEvent, fatalisState == 1)                            
+            local fatalisAfflicted = fatalisState == 1
+
+            if fatalisAfflicted then 
+                -- The Fatalis will now be treated as an affliction upon the next hit to the player.
+                writeInteger("fatalisState", 2)
+            end
+
+            -- Normal damage. If we've been exposeed to Fatalis, then we must be sure to announce it!
+            apocalypseEvent = NormalDamageEvent(apocalypseEvent, fatalisAfflicted)                            
         else
             -- Murder!
             local murderDamageX = readFloat("murderDamageX")
@@ -182,7 +186,7 @@ local function dumpPlayerApocalypseEvent()
         end
     -- Orgasm!    
     else 
-        local orgasmHealthHealed = readFloat("orgasmHealthHealed")
+        local orgasmHealthHealed = toInt(readFloat("orgasmHealthHealed"))
 
         apocalypseEvent = OrgasmEvent(apocalypseEvent, orgasmHealthHealed)
     end
@@ -196,19 +200,19 @@ local function dumpEnemyApocalypseEvent()
 
     local logEnemyApocalypseCrit = readInteger("logEnemyApocalypseCrit")    
     local lastEnemyDamageEventBonusX = readFloat("lastEnemyDamageEventBonusX")
-    local lastEnemyDamageEventBonusAmount = readFloat("lastEnemyDamageEventBonusAmount")
+    local lastEnemyDamageEventBonusAmount = toInt(readFloat("lastEnemyDamageEventBonusAmount"))
 
     if logEnemyApocalypseCrit == 1 then
         local playerCritDamageResult = readInteger("playerCritDamageResult")
         local playerCritDamageResultUpper = readInteger("playerCritDamageResultUpper")
-        local playerCritDamageResultLower = readInteger("playerCritDamageResultLower")        
+        local playerCritDamageResultLower = readInteger("playerCritDamageResultLower")                
 
         local playerCritDamageRange
             = playerCritDamageResultUpper - playerCritDamageResultLower
         local playerCritExtremeMinimum
             = playerCritDamageResultUpper - (playerCritDamageRange * (1/3))
-
-        local isExtreme = playerCritDamageResult >= critHighDamageMinimum
+      
+        local isExtreme = playerCritDamageResult >= playerCritExtremeMinimum
 
         apocalypseEvent = EnemyApocalypseEvent(apocalypseEvent,
                                                lastEnemyDamageEventBonusAmount,
