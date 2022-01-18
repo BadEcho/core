@@ -84,6 +84,12 @@ using BadEcho.Odin.Properties;
                            Target = "~M:BadEcho.Odin.Extensions.ObjectExtensions.GetHashCode``3(``0,``1,``2)~System.Int32",
                            Justification = "This is an extension method that provides code useful to all objects. Whether or not the parameter is used is moot, it is very much required to be here.")]
 
+[assembly: SuppressMessage("Style", 
+                           "IDE0060:Remove unused parameter",
+                           Scope = "member", 
+                           Target = "~M:BadEcho.Odin.Extensions.ObjectExtensions.GetHashCode``4(``0,``1,``2,``3)~System.Int32",
+                           Justification = "This is an extension method that provides code useful to all objects. Whether or not the parameter is used is moot, it is very much required to be here.")]
+
 [assembly: SuppressMessage("Design", 
                            "CA1028:Enum Storage should be Int32", 
                            Scope = "type", 
