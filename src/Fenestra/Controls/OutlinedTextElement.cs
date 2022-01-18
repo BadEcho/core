@@ -524,7 +524,7 @@ public sealed class OutlinedTextElement : FrameworkElement
         textElement.UpdateOuterOutlinePen();
     }
 
-    private static object OnCoerceTextFormatString(DependencyObject d, object baseValue)
+    private static object OnCoerceTextFormatString(DependencyObject sender, object baseValue)
         => string.IsNullOrEmpty((string) baseValue)
             ? SELF_FORMAT_ITEM
             : baseValue;
