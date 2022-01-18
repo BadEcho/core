@@ -78,10 +78,24 @@ public sealed class CollectionViewModelOptions
     { get; set; } = 1000;
 
     /// <summary>
-    /// Gets or sets the maximum number of items the view model collection can hold at any given time.
+    /// Gets or sets the maximum number of items the child view model collection can hold at any given time.
     /// </summary>
     public int Capacity 
-    { get; set; }    
+    { get; set; }
+
+    /// <summary>
+    /// Gets or sets the amount of time that must elapse before any actions required to ensure that the items in the child view model collection
+    /// do not exceed any defined capacity are executed.
+    /// </summary>
+    public TimeSpan CapacityEnforcementDelay
+    { get; set; }
+
+    /// <summary>
+    /// Gets or sets a limit on the number of items the child view model collection may hold before any delay imposed on capacity enforcement
+    /// is simply skipped, resulting in the immediate removal of excess items.
+    /// </summary>
+    public int CapacityEnforcementDelayLimit
+    { get; set; }
 
     /// <summary>
     /// Gets or sets the method meant to handle changes in either the children collection's composition or property values of items

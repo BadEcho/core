@@ -40,12 +40,14 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
     private readonly ConcurrentQueue<TChildViewModel> _bindingQueue = new();
     private readonly List<TModel> _processedModels = new();
     private readonly object _processedModelsLock = new();
+    private readonly object _capacityEnforcementLock = new();
 
     private readonly ICollectionViewModel<TModel, TChildViewModel> _viewModel;
     private readonly ICollectionChangeStrategy<TChildViewModel> _changeStrategy;
     private readonly CollectionViewModelOptions _options;
 
     private DispatcherTimer _bindingTimer = new(DispatcherPriority.Background);
+    private DispatcherTimer _capacityEnforcementTimer = new(DispatcherPriority.Background);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CollectionViewModelEngine{TModel,TChildViewModel}"/> class.
@@ -78,6 +80,9 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
         _bindingTimer.Interval = options.BindingDelay;
         _bindingTimer.Tick += HandleBindingTimerTick;
 
+        _capacityEnforcementTimer.Interval = options.CapacityEnforcementDelay;
+        _capacityEnforcementTimer.Tick += HandleCapacityEnforcementTimerTick;
+
         Children = new AtomicObservableCollection<TChildViewModel>();
 
         var collectionChangePublisher = new CollectionPropertyChangePublisher<TChildViewModel>(Children);
@@ -97,6 +102,13 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
     /// </summary>
     private bool DelayBindings
         => _options.BindingDelay != default;
+
+    /// <summary>
+    /// Gets a value indicating if capacity enforcement actions on the child view model collection should be delayed following
+    /// the addition of new items to the child view model collection.
+    /// </summary>
+    private bool DelayCapacityEnforcement
+        => _options.CapacityEnforcementDelay != default;
 
     /// <summary>
     /// Gets the dispatcher in use by this engine and child view model collection it provides.
@@ -124,6 +136,16 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
                         };
 
         _bindingTimer.Tick += HandleBindingTimerTick;
+
+        _capacityEnforcementTimer.Stop();
+        _capacityEnforcementTimer.Tick -= HandleCapacityEnforcementTimerTick;
+
+        _capacityEnforcementTimer = new DispatcherTimer(DispatcherPriority.Background, dispatcher)
+                                    {
+                                        Interval = _options.CapacityEnforcementDelay
+                                    };
+
+        _capacityEnforcementTimer.Tick += HandleCapacityEnforcementTimerTick;
 
         Children.ChangeDispatcher(dispatcher);
     }
@@ -309,7 +331,7 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
         if (!DelayBindings)
         {
             _changeStrategy.Add(_viewModel, viewModel);
-            CheckCapacity();
+            RequestEnforceCapacity();
 
             return;
         }
@@ -346,7 +368,7 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
         if (!DelayBindings)
         {
             _changeStrategy.AddRange(_viewModel, createdChildren);
-            CheckCapacity();
+            RequestEnforceCapacity();
         }
 
         foreach (TChildViewModel createdChild in createdChildren)
@@ -404,14 +426,25 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
         }
     }
 
-    private void CheckCapacity()
+    private void RequestEnforceCapacity()
     {
         if (_options.Capacity <= 0)
             return;
 
-        int exceededCount = Children.Count - _options.Capacity;
+        if (!DelayCapacityEnforcement || _options.CapacityEnforcementDelayLimit > 0 && Children.Count >= _options.CapacityEnforcementDelayLimit)
+            EnforceCapacity();
+        else
+            _capacityEnforcementTimer.Start();
+    }
 
-        _changeStrategy.TrimExcess(_viewModel, exceededCount);
+    private void EnforceCapacity()
+    {
+        lock (_capacityEnforcementLock)
+        {
+            int exceededCount = Children.Count - _options.Capacity;
+
+            _changeStrategy.TrimExcess(_viewModel, exceededCount);
+        }
     }
 
     private void ProcessFailedBinding(Task failedBinding)
@@ -463,6 +496,13 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
         }
 
         _changeStrategy.Add(_viewModel, child);
-        CheckCapacity();
+        RequestEnforceCapacity();
+    }
+
+    private void HandleCapacityEnforcementTimerTick(object? sender, EventArgs e)
+    {
+        _capacityEnforcementTimer.Stop();
+
+        EnforceCapacity();
     }
 }
