@@ -223,6 +223,15 @@ namespace BadEcho.Fenestra.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Arithmetic converter had an unsupported arithmetic operation value set as its conversion operation..
+        /// </summary>
+        internal static string InvalidArithmeticConverterOperation {
+            get {
+                return ResourceManager.GetString("InvalidArithmeticConverterOperation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot register a callback of type &apos;{0}&apos; to the message &apos;{1}&apos;, which expects a callback of type &apos;{2}&apos;..
         /// </summary>
         internal static string InvalidMessageCallbackType {

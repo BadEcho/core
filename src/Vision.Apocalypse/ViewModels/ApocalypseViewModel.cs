@@ -28,6 +28,13 @@ internal sealed class ApocalypseViewModel : PolymorphicCollectionViewModel<Apoca
     /// <summary>
     /// Initializes a new instance of the <see cref="ApocalypseViewModel"/> class.
     /// </summary>
+    public ApocalypseViewModel()
+        : this(new ApocalypseModuleConfiguration())
+    { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ApocalypseViewModel"/> class.
+    /// </summary>
     /// <param name="configuration">The Apocalypse module configuration to apply to this view model.</param>
     /// <remarks>
     /// <para>
@@ -53,6 +60,7 @@ internal sealed class ApocalypseViewModel : PolymorphicCollectionViewModel<Apoca
                                                                               OrderFromLocation(configuration)))
     {
         _effectMessageMaxWidth = configuration.EffectMessageMaxWidth;
+        DirectionalCoefficient = CoefficientFromLocation(configuration);
 
         // Events from Player Apocalypse die rolls.
         RegisterDerivation<ExtraDamageEvent, PlayerApocalypseEventViewModel<ExtraDamageEvent>>();
@@ -73,6 +81,13 @@ internal sealed class ApocalypseViewModel : PolymorphicCollectionViewModel<Apoca
     /// </summary>
     public Mediator Mediator 
     { get; } = new();
+
+    /// <summary>
+    /// Gets a value that can be applied on quantities where directionality must be congruous with the location of the
+    /// Apocalypse Vision module's anchor point.
+    /// </summary>
+    public double DirectionalCoefficient 
+    { get; }
 
     /// <inheritdoc/>
     public override IApocalypseEventViewModel CreateChild(ApocalypseEvent model)
@@ -100,5 +115,14 @@ internal sealed class ApocalypseViewModel : PolymorphicCollectionViewModel<Apoca
             AnchorPointLocation.TopCenter => false,
             AnchorPointLocation.TopRight => false,
             _ => true
+        };
+
+    private static double CoefficientFromLocation(VisionModuleConfiguration configuration)
+        => configuration.Location switch
+        {
+            AnchorPointLocation.TopLeft => 1,
+            AnchorPointLocation.TopCenter => 1,
+            AnchorPointLocation.TopRight => 1,
+            _ => -1
         };
 }

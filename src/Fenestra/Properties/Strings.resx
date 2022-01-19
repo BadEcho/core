@@ -191,4 +191,7 @@
 	<data name="MediatorDispatcherNotAccessible" xml:space="preserve">
 		<value>Mediator can only be created on threads with an accessible Dispatcher.</value>
 	</data>
+	<data name="InvalidArithmeticConverterOperation" xml:space="preserve">
+		<value>Arithmetic converter had an unsupported arithmetic operation value set as its conversion operation.</value>
+	</data>
 </root>

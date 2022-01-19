@@ -43,15 +43,49 @@
         </vm:ApocalypseViewModel>
     </d:DesignProperties.DataContext>
     <fenestra:View.Resources>
-        <DataTemplate x:Key="DesignTimeContentTemplate">
+        <!--Design-time child content templates, to aid in the visualization of various Apocalypse event views during development.
+            While we have the infrastructure to automatically infer a view based on its view model, many of the Apocalypse view models
+            can't easily be initialized in XAML (i.e. any with generics).-->
+        <d:DataTemplate x:Key="DesignTimePlayerEventTemplate">
             <v:PlayerApocalypseEventView/>
-        </DataTemplate>
+        </d:DataTemplate>
+        <d:DataTemplate x:Key="DesignTimeRiskEventTemplate">
+            <v:RiskOfMurderEventView/>
+        </d:DataTemplate>
+        <!--Many Apocalypse event view models require view associations that are sensitive to the places both it and any immediately 
+            implemented interface occupy within the object hierarchy; this warrants the use of a specialized template selector.-->
         <fenestra:ViewContextTemplateSelector x:Key="ContextSelector"/>
         <Style TargetType="ContentControl">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ContentControl}">
                         <Border Margin="0,5,0,5">
+                            <Border.Resources>
+                                <fenestra:ArithmeticConverter x:Key="DirectionalConverter"
+                                                              Operand="35"
+                                                              Operation="Multiplication"
+                                                              />
+                                <Storyboard x:Key="RevealBounce">
+                                    <DoubleAnimation Storyboard.TargetProperty="(Border.Background).(GradientBrush.Opacity)" 
+                                                     BeginTime="00:00:05"
+                                                     From="1"
+                                                     To="0"
+                                                     />
+                                    <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                                                     Duration="00:00:01"
+                                                     From="{Binding DataContext.DirectionalCoefficient, 
+                                                                    Converter={StaticResource DirectionalConverter},
+                                                                    RelativeSource={RelativeSource AncestorType={x:Type fenestra:View}}}"
+                                                     To="0">
+                                        <DoubleAnimation.EasingFunction>
+                                            <BounceEase Bounces="3"
+                                                        EasingMode="EaseOut"
+                                                        Bounciness="2"
+                                                        />
+                                        </DoubleAnimation.EasingFunction>
+                                    </DoubleAnimation>
+                                </Storyboard>
+                            </Border.Resources>
                             <Border.RenderTransform>
                                 <TranslateTransform/>
                             </Border.RenderTransform>
@@ -63,30 +97,41 @@
                             </Border.Background>
                             <Border.Triggers>
                                 <EventTrigger RoutedEvent="Loaded">
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetProperty="(Border.Background).(GradientBrush.Opacity)" 
-                                                              BeginTime="00:00:05"
-                                                              From="1"
-                                                              To="0"
-                                                              />
-                                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
-                                                             Duration="00:00:02"
-                                                             From="-35"
-                                                             To="0"
-                                                             >
-                                                <DoubleAnimation.EasingFunction>
-                                                    <BounceEase Bounces="3"
-                                                                EasingMode="EaseOut"
-                                                                Bounciness="2"
-                                                                />
-                                                </DoubleAnimation.EasingFunction>
-                                            </DoubleAnimation>
-                                        </Storyboard>
-                                    </BeginStoryboard>
+                                    <!--The BeginStoryboard action must have a name, as giving it name will result in the runtime making the
+                                        resulting storyboard controllable, a capability this view requires.-->
+                                    <BeginStoryboard x:Name="RevealBounceAction" Storyboard="{StaticResource RevealBounce}"/>
                                 </EventTrigger>
                             </Border.Triggers>
+                            <fenestra:CancelableAnimationBehavior.State>
+                                <fenestra:CancelableAnimationState Storyboard="{StaticResource RevealBounce}"
+                                                                   Mediator="{Binding   DataContext.Mediator, 
+                                                                                        RelativeSource={RelativeSource AncestorType={x:Type fenestra:View}}}"
+                                                                   />
+                            </fenestra:CancelableAnimationBehavior.State>
                             <Border>
+                                <Border.Resources>
+                                    <Storyboard x:Key="RevealShimmer">
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[0].(GradientStop.Offset)"
+                                                                       BeginTime="00:00:02">
+                                            <EasingDoubleKeyFrame KeyTime="00:00:03" 
+                                                                  Value="0.8"
+                                                                  />
+                                        </DoubleAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[1].(GradientStop.Offset)"
+                                                                       BeginTime="00:00:02">
+                                            <EasingDoubleKeyFrame KeyTime="00:00:03" Value="0.9"/>
+                                        </DoubleAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[2].(GradientStop.Offset)"
+                                                                       BeginTime="00:00:02">
+                                            <EasingDoubleKeyFrame KeyTime="00:00:03" Value="1"/>
+                                        </DoubleAnimationUsingKeyFrames>
+                                        <DoubleAnimation Storyboard.TargetProperty="(Border.Background).(GradientBrush.Opacity)"
+                                                         BeginTime="00:00:05"
+                                                         From="1"
+                                                         To="0"
+                                                         />
+                                    </Storyboard>
+                                </Border.Resources>
                                 <Border.Background>
                                     <LinearGradientBrush EndPoint="1.7,1" StartPoint="-0.5,0">
                                         <GradientStop Color="#00FFFFFF"/>
@@ -96,29 +141,17 @@
                                 </Border.Background>
                                 <Border.Triggers>
                                     <EventTrigger RoutedEvent="Loaded">
-                                        <BeginStoryboard>
-                                            <Storyboard>
-                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[0].(GradientStop.Offset)"
-                                                                               BeginTime="00:00:02">
-                                                    <EasingDoubleKeyFrame KeyTime="00:00:03" Value="0.8"/>
-                                                </DoubleAnimationUsingKeyFrames>
-                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[1].(GradientStop.Offset)"
-                                                                               BeginTime="00:00:02">
-                                                    <EasingDoubleKeyFrame KeyTime="00:00:03" Value="0.9"/>
-                                                </DoubleAnimationUsingKeyFrames>
-                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[2].(GradientStop.Offset)"
-                                                                               BeginTime="00:00:02">
-                                                    <EasingDoubleKeyFrame KeyTime="00:00:03" Value="1"/>
-                                                </DoubleAnimationUsingKeyFrames>
-                                                <DoubleAnimation Storyboard.TargetProperty="(Border.Background).(GradientBrush.Opacity)"
-                                                                 BeginTime="00:00:05"
-                                                                 From="1"
-                                                                 To="0"
-                                                                 />
-                                            </Storyboard>
-                                        </BeginStoryboard>
+                                        <!--The BeginStoryboard action must have a name, as giving it name will result in the runtime making the
+                                            resulting storyboard controllable, a capability this view requires.-->
+                                        <BeginStoryboard x:Name="RevealShimmerAction" Storyboard="{StaticResource RevealShimmer}"/>
                                     </EventTrigger>
                                 </Border.Triggers>
+                                <fenestra:CancelableAnimationBehavior.State>
+                                    <fenestra:CancelableAnimationState Storyboard="{StaticResource RevealShimmer}" 
+                                                                       Mediator="{Binding   DataContext.Mediator, 
+                                                                                            RelativeSource={RelativeSource AncestorType={x:Type fenestra:View}}}"
+                                                                       />
+                                </fenestra:CancelableAnimationBehavior.State>
                                 <ContentPresenter/>
                             </Border>
                         </Border>
@@ -152,7 +185,7 @@
                         </Border.BorderBrush>
                         <ContentControl Content="{Binding}"
                                         ContentTemplateSelector="{StaticResource ContextSelector}"
-                                        d:ContentTemplate="{StaticResource DesignTimeContentTemplate}"
+                                        d:ContentTemplate="{StaticResource DesignTimePlayerEventTemplate}"
                                         />
                     </Border>
                 </DataTemplate>
@@ -161,7 +194,7 @@
                 <DataTemplate>
                     <ContentControl Content="{Binding}"
                                     ContentTemplateSelector="{StaticResource ContextSelector}"
-                                    d:ContentTemplate="{StaticResource DesignTimeContentTemplate}"
+                                    d:ContentTemplate="{StaticResource DesignTimeRiskEventTemplate}"
                                     />
                 </DataTemplate>
             </fenestra:PositionalItemTemplateSelector.EndingTemplate>
