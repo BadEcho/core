@@ -44,12 +44,6 @@ using BadEcho.Odin.Properties;
                            Target = "~M:BadEcho.Fenestra.EngineException.#ctor(System.String,System.Exception,System.Boolean)",
                            Justification = "This constructor makes a call to the base constructor, and expression bodies don't look appetizing at all next to such an invocation.")]
 
-[assembly: SuppressMessage("Style", 
-                           "IDE0021:Use expression body for constructors",
-                           Scope = "member", 
-                           Target = "~M:BadEcho.Fenestra.EngineException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)",
-                           Justification = "This constructor makes a call to the base constructor, and expression bodies don't look appetizing at all next to such an invocation.")]
-
 [assembly: SuppressMessage("Design", 
                            "CA1033:Interface methods should be callable by child types", 
                            Scope = "member", 
