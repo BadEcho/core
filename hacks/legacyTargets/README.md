@@ -17,7 +17,7 @@ In order to reduce file size, the reverse engineered data structures were remove
 
 ## No Support or Guarantee That Legacy Hacks Are Operational
 
-While there is absolutely zero support being offered by myself for any of these older titles, I am quite certain that there's some valuable hacking information in more than a few them that some intrepid binary explorers out there will find quite useful.
+While there is absolutely zero support being offered by myself for any of these older titles, I am quite certain that there's some valuable hacking information in more than a few of them that some intrepid binary explorers out there will find quite useful.
 
 It's been a while since I hacked these games and [broadcasted their playthroughs on stream](https://twitch.tv/omni), so if there have been any updates to any of these games, you will probably have to fix them on your own. 
 
