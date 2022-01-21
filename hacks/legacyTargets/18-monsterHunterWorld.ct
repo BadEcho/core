@@ -1,0 +1,2979 @@
+<!--
+    Omnified Monster Hunter: World
+    Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
+    Copyright 2022 Bad Echo LLC
+
+    Bad Echo Technologies are licensed under a
+    Creative Commons Attribution-NonCommercial 4.0 International License.
+
+    See accompanying file LICENSE.md or a copy at:
+    http://creativecommons.org/licenses/by-nc/4.0/
+-->
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="31">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>4</ID>
+      <Description>"Enable Debugging"</Description>
+      <LastState Activated="1"/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+KERNELBASE.SetThreadContext:
+  db C3 90 90 90
+
+[DISABLE]
+KERNELBASE.SetThreadContext:
+  db 48 83 EC 28
+
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>244</ID>
+      <Description>"OMNIFY"</Description>
+      <Options moHideChildren="1"/>
+      <LastState Activated="1"/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+{$lua}
+function FloorIt(number)
+	if number ~= nil then
+		return math.floor(number)
+	end
+	
+	return nil
+end
+
+function ActivateLoggers()
+	if loggersTimer == nil then
+		loggersTimer = createTimer(getMainForm())
+	end
+	
+	loggersTimer.Interval = 300
+	loggersTimer.OnTimer = function()
+		local stats = assert(io.open("stats.txt","w"))
+		
+		local playerHealth = readFloat("[playerHealth]+0x64")
+		local playerMaxHealth = readFloat("[playerHealth]+0x60")
+		local playerStamina = readFloat("[playerStamina]+0x6C")
+		local playerMaxStamina = readFloat("[playerStamina]+0x74")
+		local palicoHealth = readFloat("[palicoHealth]+0x64")
+		local palicoMaxHealth = readFloat("[palicoHealth]+0x60")
+		local enemyHealth = readFloat("lastEnemyHealthValue")
+        local enemySpeedX = readFloat("enemySpeedX")
+		
+		playerHealth = FloorIt(playerHealth)
+		playerMaxHealth = FloorIt(playerMaxHealth)
+		playerStamina = FloorIt(playerStamina)
+		playerMaxStamina = FloorIt(playerMaxStamina)
+		palicoHealth = FloorIt(palicoHealth)
+		palicoMaxHealth = FloorIt(palicoMaxHealth)
+		enemyHealth = FloorIt(enemyHealth)
+				
+		if playerHealth ~= nil and playerMaxHealth ~= nil then
+			stats:write("Health: ", playerHealth, "/", playerMaxHealth, "\n")
+		end
+		
+		if playerStamina ~= nil and playerMaxStamina ~= nil then
+			stats:write("Stamina: ", playerStamina, "/", playerMaxStamina, "\n")
+		end
+		
+		if palicoHealth ~= nil and palicoMaxHealth ~= nil then
+			stats:write("Palico Health: ", palicoHealth, "/", palicoMaxHealth, "\n")
+		end
+		
+		if enemyHealth ~= nil then
+			stats:write("Enemy: ", enemyHealth, "\n")
+		end
+		
+		local lastDamageToPlayer = readFloat("lastDamageToPlayer")
+		local maxDamageToPlayer = readFloat("maxDamageToPlayer")
+		local lastDamageByPlayer = readFloat("lastDamageByPlayer")
+		local maxDamageByPlayer = readFloat("maxDamageByPlayer")
+		local totalDamageByPlayer = readFloat("totalDamageByPlayer")
+		
+		lastDamageToPlayer = FloorIt(lastDamageToPlayer)
+		maxDamageToPlayer = FloorIt(maxDamageToPlayer)
+		lastDamageByPlayer = FloorIt(lastDamageByPlayer)
+		maxDamageByPlayer = FloorIt(maxDamageByPlayer)
+		totalDamageByPlayer = FloorIt(totalDamageByPlayer)
+		
+		if lastDamageToPlayer ~= nil and maxDamageToPlayer ~= nil then
+			stats:write("Enemy L/M Dmg: ", lastDamageToPlayer, "/", maxDamageToPlayer, "\n")
+		end
+		
+		if lastDamageByPlayer ~= nil and maxDamageByPlayer ~= nil then
+			stats:write("Player L/M Dmg: ", lastDamageByPlayer, "/", maxDamageByPlayer, "\n")
+		end
+		
+		if totalDamageByPlayer ~= nil then
+			stats:write("Player Total Dmg: ", totalDamageByPlayer, "\n")
+		end
+		
+		local xCoords = readFloat("[playerCoords]+0x160")
+		local yCoords = readFloat("[playerCoords]+0x164")
+		local zCoords = readFloat("[playerCoords]+0x168")
+		
+		if xCoords ~= nil and yCoords ~= nil and zCoords ~= nil then
+			stats:write("X: ", xCoords, "\n")
+			stats:write("Y: ", yCoords, "\n")
+			stats:write("Z: ", zCoords, "\n")
+		end
+		
+		stats:close()
+		
+		local log = assert(io.open("log.txt", "a"))
+		
+		local ts = os.time()
+		local timestamp = os.date('%H:%M-', ts)
+		
+		local logEntryEnemyRoll = "Enemy rolls a"
+		local logEntryPlayerHealth
+			= "damage to the player!\nPlayer now has"
+			
+		local logApocalypse
+			= readInteger("logApocalypse")
+			
+		local apocalypseResult
+			= readInteger("apocalypseResult")
+			
+		local riskOfMurderResult
+			= readInteger("riskOfMurderResult")
+			
+		local extraDamageX
+			= readFloat("extraDamageX")
+
+		if logApocalypse == 1 and apocalypseResult ~= nil
+							  and lastDamageToPlayer ~= nil
+							  and playerHealth ~= nil
+							  and timestamp ~= nil
+							  and extraDamageX ~= nil
+							  then
+			writeInteger("logApocalypse", 0)
+			
+			local apocalypseEnemyRoll = 	
+				string.format("%s%s %i: ", timestamp, 
+										   logEntryEnemyRoll, 
+										   apocalypseResult)
+										   
+			local apocalypseDamagedHealth =
+				string.format("%.0f %s %.0f health.\n", lastDamageToPlayer,
+														logEntryPlayerHealth,
+														playerHealth)														
+
+			if apocalypseResult &gt;= 1 and apocalypseResult &lt;= 4 then
+				log:write(apocalypseEnemyRoll,
+						  extraDamageX,
+						  "x DAMAGE causing ",
+						  apocalypseDamagedHealth)
+			elseif apocalypseResult == 5 or apocalypseResult == 6 then
+				log:write(apocalypseEnemyRoll,
+						  "SUDDEN TELEPORTITIS causing ",
+						  apocalypseDamagedHealth)
+			elseif apocalypseResult &gt;= 7 and apocalypseResult &lt;= 9 then
+				log:write(apocalypseEnemyRoll,
+						  "RISK OF MURDER!\n")
+						  
+				local riskOfMurderEnemyRoll =
+					string.format("%s%s %i: ", timestamp,
+											   logEntryEnemyRoll,
+											   riskOfMurderResult)
+											   
+				if riskOfMurderResult &lt;= 3 then
+					log:write(riskOfMurderEnemyRoll,
+							  "WHEW! Just normal damage causing ",
+							  apocalypseDamagedHealth)
+				else
+					log:write(riskOfMurderEnemyRoll,
+							  "Player has been SIXTY NINED causing ",
+							  apocalypseDamagedHealth)
+				end
+			else
+				log:write(apocalypseEnemyRoll,
+						  "Player achieves orgasm!\nPlayer is healed fully to ",
+						  playerHealth,
+						  " health.\n")
+			end
+			
+			
+			
+		
+		end
+
+		local logKamehameha = readInteger("logKamehameha")
+		local gokuDamageX = readFloat("gokuDamageX")
+		
+		if logKamehameha == 1 and lastDamageByPlayer ~= nil 
+							  and timestamp ~= nil then
+			writeInteger("logKamehameha", 0)
+			log:write(timestamp,
+					  "Player has unlocked his inner Goku and performs a devastating KAMEHAMEHAAAAA attack causing ",
+					  gokuDamageX,
+					  "x extra damage for a total of ",
+					  lastDamageByPlayer,
+					  " damage!\n")
+		end
+		
+		log:close()
+	end
+
+	function mark()
+		local currentX = readFloat("[playerCoords]+0x160")
+		local currentY = readFloat("[playerCoords]+0x164")
+		local currentZ = readFloat("[playerCoords]+0x168")
+		
+		if currentX ~= nil and currentY ~= nil 
+						   and currentZ ~= nil then
+			writeFloat("teleportX",currentX)
+			writeFloat("teleportY",currentY)
+			writeFloat("teleportZ",currentZ)
+		end
+	end
+	
+	function recall()
+		writeInteger("teleport",1)
+	end
+	
+	function portToCanteen()
+		writeFloat("teleportX",9448.418945)
+		writeFloat("teleportY",5604.434082)
+		writeFloat("teleportZ",-5752.708984)
+		writeInteger("teleport",1)
+	end
+	
+	createHotkey(mark, VK_NUMPAD4)
+	createHotkey(recall, VK_NUMPAD5)
+	createHotkey(portToCanteen, VK_NUMPAD6)
+end
+
+{$asm}	  
+luacall(ActivateLoggers())
+
+// Global memory.
+alloc(zero,8)
+alloc(damageThreshold,8)
+alloc(doubleX,8)
+
+zero:
+  dd 0
+
+damageThreshold:
+  dd (float)3.5
+  
+doubleX:
+  dd (float)2.0
+
+// Random number generation function.
+// After r12-r14 pushes:
+// [rsp+20]: initialization state address, 0 if first time
+// [rsp+28]: upper bounds
+// [rsp+30]: lower bounds
+// return value is in EAX
+alloc(generateRandomNumber,$1000)
+
+registersymbol(generateRandomNumber)
+
+generateRandomNumber:
+  push r12
+  push r13
+  push r14
+  mov r12,[rsp+20]
+  mov r13,[rsp+28]
+  mov r14,[rsp+30]
+  push rbx
+  push rcx
+  push rdx
+  push r8
+  push r10
+  push r11
+  cmp [r12],0
+  jne getRandomNumber
+initializeSeed:
+  call kernel32.GetTickCount
+  push eax
+  call msvcrt.srand
+  pop eax
+  mov [r12],1
+getRandomNumber:
+  call msvcrt.rand
+  xor edx,edx
+  mov ebx,r14
+  mov ecx,r13
+  cmp ecx,ebx
+  cmovl ecx,ebx
+  inc ecx
+  sub ecx,ebx
+  idiv ecx
+  add edx,ebx
+  mov eax,edx
+  pop r11
+  pop r10
+  pop r8
+  pop rdx
+  pop rcx
+  pop rbx
+  pop r14
+  pop r13
+  pop r12
+  ret 18
+
+// Player Apocalypse System Function
+// [rsp+48]: Player's coordinates (aligned at X-coord)
+// [rsp+50]: Amount to Max Player Health
+// [rsp+60]: Player's health (aligned at current health)
+// [rsp+68]: Damage Amount
+// Updated damage is in EAX. 
+// Updated health before damage is in EBX.
+alloc(executePlayerApocalypse,$1000)
+alloc(playerApocalypseRandomState,8)
+alloc(logApocalypse,8)
+alloc(negativeOne,8)
+alloc(apocalypseResult,8)
+alloc(apocalypseResultUpper,8)
+alloc(apocalypseResultLower,8)
+alloc(teleportitisResult,8)
+alloc(teleportitisResultUpper,8)
+alloc(teleportitisResultLower,8)
+alloc(teleportitisDivisor,8)
+alloc(teleportitisShifter,8)
+alloc(negativeVerticalDisplacementEnabled,8)
+alloc(teleportitisDisplacementX,8)
+alloc(riskOfMurderResult,8)
+alloc(riskOfMurderResultUpper,8)
+alloc(riskOfMurderResultLower,8)
+alloc(extraDamageX,8)
+alloc(sixtyNineDamageX,8)
+alloc(maxDamageToPlayer,8)
+alloc(lastDamageToPlayer,8)
+alloc(playerGodMode,8)
+
+registersymbol(executePlayerApocalypse)
+registersymbol(logApocalypse)
+registersymbol(apocalypseResult)
+registersymbol(negativeVerticalDisplacementEnabled)
+registersymbol(teleportitisDisplacementX)
+registersymbol(riskOfMurderResult)
+registersymbol(extraDamageX)
+registersymbol(maxDamageToPlayer)
+registersymbol(lastDamageToPlayer)
+registersymbol(playerGodMode)
+
+executePlayerApocalypse:
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  sub rsp,10
+  movdqu [rsp],xmm2
+  sub rsp,10
+  movdqu [rsp],xmm3
+  mov rax,[rsp+60]
+  movss xmm3,[rax]
+  movss xmm0,[rsp+68]
+  mov rax,damageThreshold
+  ucomiss xmm0,[rax]  
+  jbe exitPlayerApocalypse
+  cmp [playerGodMode],1
+  jne applyApocalypse
+  xorps xmm0,xmm0
+  jmp exitPlayerApocalypse  
+applyApocalypse:
+  push [apocalypseResultLower]
+  push [apocalypseResultUpper]
+  mov rax,playerApocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [apocalypseResult],eax
+  cmp eax,4
+  jle extraDamage
+  cmp eax,6
+  jle teleportitis
+  cmp eax,9
+  jle riskOfMurder
+  jmp suddenGasm
+extraDamage:
+  mulss xmm0,[extraDamageX]
+  jmp updateEnemyDamageStats
+teleportitis:
+  mov rbx,[rsp+48]
+  push [teleportitisResultLower]
+  push [teleportitisResultUpper]
+  mov rax,playerApocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [teleportitisResult],eax
+  cvtsi2ss xmm1,[teleportitisResult]
+  divss xmm1,[teleportitisDivisor]
+  subss xmm1,[teleportitisShifter]
+  mulss xmm1,[teleportitisDisplacementX]
+  movss xmm2,[rbx]
+  addss xmm2,xmm1
+  movss [rbx],xmm2
+  push [teleportitisResultLower]
+  push [teleportitisResultUpper]
+  mov rax,playerApocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [teleportitisResult],eax
+  cvtsi2ss xmm1,[teleportitisResult]
+  divss xmm1,[teleportitisDivisor]
+  cmp [negativeVerticalDisplacementEnabled],1
+  jne skipNegativeVerticalDisplacement
+  subss xmm1,[teleportitisShifter]
+skipNegativeVerticalDisplacement:
+  mulss xmm1,[teleportitisDisplacementX]
+  movss xmm2,[rbx+4]
+  addss xmm2,xmm1
+  movss [rbx+4],xmm2
+  push [teleportitisResultLower]
+  push [teleportitisResultUpper]
+  mov rax,playerApocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [teleportitisResult],eax
+  cvtsi2ss xmm1,[teleportitisResult]
+  divss xmm1,[teleportitisDivisor]
+  subss xmm1,[teleportitisShifter]
+  mulss xmm1,[teleportitisDisplacementX]
+  movss xmm2,[rbx+8]
+  addss xmm2,xmm1
+  movss [rbx+8],xmm2
+  jmp updateEnemyDamageStats
+riskOfMurder:
+  push [riskOfMurderResultLower]
+  push [riskOfMurderResultUpper]
+  mov rax,playerApocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [riskOfMurderResult],eax
+  cmp eax,3
+  jle updateEnemyDamageStats
+  jmp sixtyNine
+sixtyNine:
+  mulss xmm0,[sixtyNineDamageX]
+  jmp updateEnemyDamageStats
+suddenGasm:  
+  addss xmm3,[rsp+50]
+  xorps xmm0,xmm0
+  jmp applyPlayerApocalypseExit
+updateEnemyDamageStats:
+  ucomiss xmm0,[maxDamageToPlayer]
+  jna skipMaxEnemyDamageUpdate
+  movss [maxDamageToPlayer],xmm0
+skipMaxEnemyDamageUpdate:
+  movss [lastDamageToPlayer],xmm0
+applyPlayerApocalypseExit:
+  mov [logApocalypse],1
+  jmp exitPlayerApocalypse
+exitPlayerApocalypse:
+  xor rax,rax
+  movd eax,xmm0
+  movd ebx,xmm3
+  movdqu xmm3,[rsp]
+  add rsp,10
+  movdqu xmm2,[rsp]
+  add rsp,10
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10  
+  ret 30
+  
+playerApocalypseRandomState:
+  dd 0
+  
+logApocalypse:
+  dd 0
+  
+apocalypseResult:
+  dd 0
+  
+apocalypseResultUpper:
+  dd #10
+  
+apocalypseResultLower:
+  dd 1
+  
+teleportitisResult:
+  dd 0
+  
+teleportitisResultUpper:
+  dd #10000
+  
+teleportitisResultLower:
+  dd 0
+  
+teleportitisDivisor:
+  dd (float)1000.0
+  
+teleportitisShifter:
+  dd (float)5.0
+
+negativeVerticalDisplacementEnabled:
+  dd 0
+  
+teleportitisDisplacementX:
+  dd (float)500.0
+  
+negativeOne:
+  dd (float)-1.0
+
+riskOfMurderResult:
+  dd 0
+  
+riskOfMurderResultUpper:
+  dd #5
+  
+riskOfMurderResultLower:
+  dd 1
+  
+extraDamageX:
+  dd (float)2.0
+  
+sixtyNineDamageX:
+  dd (float)69.0
+  
+maxDamageToPlayer:
+  dd 0
+  
+lastDamageToPlayer:
+  dd 0
+  
+playerGodMode:
+  dd 0  
+
+  
+// Enemy Apocalypse System Function
+// [rsp+28]: Target Health Value
+// [rsp+30]: Damage Amount
+alloc(executeEnemyApocalypse,$1000)
+alloc(maxDamageByPlayer,8)
+alloc(lastDamageByPlayer,8)
+alloc(totalDamageByPlayer,8)
+alloc(logKamehameha,8)
+alloc(gokuResult,8)
+alloc(gokuResultUpper,8)
+alloc(gokuResultLower,8)
+alloc(gokuDamageX,8)
+alloc(playerDamageX,8)
+alloc(lastEnemyHealthValue,8)
+alloc(playerCritChanceResultUpper,8)
+alloc(playerCritChanceResultLower,8)
+alloc(playerCritChanceResult,8)
+alloc(playerCritDamageResultUpper,8)
+alloc(playerCritDamageResultLower,8)
+alloc(playerCritDamageResult,8)
+alloc(playerCritDamageDivisor,8)
+alloc(logPlayerCrit,8)
+alloc(enemyApocalypseRandomState,8)
+
+registersymbol(executeEnemyApocalypse)
+registersymbol(maxDamageByPlayer)
+registersymbol(lastDamageByPlayer)
+registersymbol(totalDamageByPlayer)
+registersymbol(logKamehameha)
+registersymbol(gokuDamageX)
+registersymbol(gokuResultUpper)
+registersymbol(playerDamageX)
+registersymbol(lastEnemyHealthValue)
+registersymbol(playerCritDamageResult)
+registersymbol(logPlayerCrit)
+
+executeEnemyApocalypse:
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  movss xmm0,[rsp+30]
+  mov rax,zero
+  ucomiss xmm0,[rax]
+  jbe exitEnemyApocalypse
+  movss xmm1,[rsp+28]
+applyPlayerDamage:
+  mulss xmm0,[playerDamageX]
+  push [playerCritChanceResultLower]
+  push [playerCritChanceResultUpper]
+  mov rax,enemyApocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [playerCritChanceResult],eax
+  cmp eax,25
+  jg checkKamehameha
+  sub rsp,10
+  movdqu [rsp],xmm2
+  push [playerCritDamageResultLower]
+  push [playerCritDamageResultUpper]
+  mov rax,enemyApocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [playerCritDamageResult],eax
+  cvtsi2ss xmm2,[playerCritDamageResult]
+  divss xmm2,[playerCritDamageDivisor]
+  mulss xmm0,xmm2
+  mov [logPlayerCrit],1
+  movdqu xmm2,[rsp]
+  add rsp,10
+checkKamehameha:
+  push [gokuResultLower]
+  push [gokuResultUpper]
+  mov rax,enemyApocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [gokuResult],eax
+  cmp eax,#69
+  jne updatePlayerDamageStats
+  mov [logKamehameha],1
+  mulss xmm0,[gokuDamageX]  
+updatePlayerDamageStats:
+  subss xmm1,xmm0
+  movss [lastEnemyHealthValue],xmm1
+  ucomiss xmm0,[maxDamageByPlayer]
+  jna skipMaxPlayerDamageUpdate
+  movss [maxDamageByPlayer],xmm0
+skipMaxPlayerDamageUpdate:
+  movss [lastDamageByPlayer],xmm0
+  movss xmm1,xmm0
+  addss xmm1,[totalDamageByPlayer]
+  movss [totalDamageByPlayer],xmm1
+exitEnemyApocalypse:
+  xor rax,rax
+  movd eax,xmm0
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+  ret 18
+
+ 
+totalDamageByPlayer:
+  dd 0
+
+maxDamageByPlayer:
+  dd 0
+  
+lastDamageByPlayer:
+  dd 0  
+
+logKamehameha:
+  dd 0
+
+gokuResult:
+  dd 0
+  
+gokuResultUpper:
+  dd #750
+  
+gokuResultLower:
+  dd 0
+  
+gokuDamageX:
+  dd (float)10000.0
+  
+playerDamageX:
+  dd (float)3.0
+  
+lastEnemyHealthValue:
+  dd 0
+  
+playerCritChanceResult:
+  dd 0
+  
+playerCritChanceResultUpper:
+  dd #400
+  
+playerCritChanceResultLower:
+  dd 0
+  
+playerCritDamageResult:
+  dd 0
+  
+playerCritDamageResultUpper:
+  dd #50
+  
+playerCritDamageResultLower:
+  dd #20
+  
+playerCritDamageDivisor:
+  dd (float)10.0
+  
+logPlayerCrit:
+  dd 0
+  
+enemyApocalypseRandomState:
+  dd 0
+  
+  
+// Predator System Functions
+alloc(enemySpeedX,8)
+alloc(aggroDistance,8)
+alloc(threatDistance,8)
+alloc(speedNormalizationDivisor,8)
+
+registersymbol(enemySpeedX)
+registersymbol(aggroDistance)
+
+enemySpeedX:
+  dd (float)1.5
+  
+aggroDistance:
+  dd (float)1000.0
+  
+threatDistance:
+  dd (float)150.0
+  
+speedNormalizationDivisor:
+  dd (float)3.0
+
+
+// Determines the distance between the player and another
+// creature.
+// [rsp+28]: Enemy Z Coordinate
+// [rsp+30]: Enemy Y Coordinate
+// [rsp+34]: Enemy X Coordinate
+// [rsp+38]: Player Z Coordinate
+// [rsp+40]: Player Y Coordinate
+// [rsp+44]: Player X Coordinate
+// Distance is in EAX
+alloc(findCoordinateDistance,$1000)
+
+registersymbol(findCoordinateDistance)
+
+findCoordinateDistance:
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  movups xmm0,[rsp+28]
+  movups xmm1,[rsp+38]
+  subps xmm0,xmm1
+  mulps xmm0,xmm0
+  movdqu xmm1,xmm0
+  shufps xmm1,xmm0,0xB
+  addss xmm0,xmm1
+  shufps xmm1,xmm1,0x1
+  addss xmm0,xmm1
+  sqrtss xmm0,xmm0
+  movd eax,xmm0
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+  ret 20
+
+// Calculates the scaled base speed.
+// [rsp+28]: Enemy Depth Scale
+// [rsp+30]: Enemy Height Scale
+// [rsp+34]: Enemy Width Scale
+// Scaled speed is in EAX.
+alloc(calculateScaledSpeed,$1000)
+alloc(averageScaleDivisor,8)
+alloc(averageScaleX,8)
+alloc(scaledShifter,8)
+alloc(scaledSpeedWhenNegative,8)
+
+registersymbol(calculateScaledSpeed)
+
+calculateScaledSpeed:
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  // Find average of the three scales.
+  movss xmm0,[rsp+28]
+  movss xmm1,[rsp+30]
+  addss xmm0,xmm1
+  movss xmm1,[rsp+34]
+  addss xmm0,xmm1
+  divss xmm0,[averageScaleDivisor]
+  // Plug the scale average into the scaled speed formula.
+  mulss xmm0,[averageScaleX]
+  addss xmm0,[scaledShifter]  
+  mulss xmm0,[enemySpeedX]
+  divss xmm0,[speedNormalizationDivisor]
+  movss xmm1,xmm0
+  movd eax,xmm1
+  shr eax,1F
+  test eax,eax
+  je commitScaledSpeed
+  movss xmm0,[scaledSpeedWhenNegative]
+commitScaledSpeed:
+  movd eax,xmm0
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+  ret 10
+
+
+averageScaleDivisor:
+  dd (float)3.0
+    
+averageScaleX:
+  dd (float)-1.67
+  
+scaledShifter:
+  dd (float)4.675
+  
+scaledSpeedWhenNegative:
+  dd (float)0.5
+
+// Determines if enemy is moving towards the player.
+// [rsp+38]: Change to Enemy's Z
+// [rsp+40]: Change to Enemy's Y
+// [rsp+44]: Change to Enemy's X
+// [rsp+48]: Enemy's Z Coordinate
+// [rsp+50]: Enemy's Y Coordinate
+// [rsp+54]: Enemy's X Coordinate
+// [rsp+58]: Player's Z Coordinate
+// [rsp+60]: Player's Y Coordinate
+// [rsp+64]: Player's X Coordinate
+// EAX is 1 if enemy is moving towards player, otherwise 0.
+alloc(isMovingTowards,$1000)
+
+registersymbol(isMovingTowards)
+
+isMovingTowards:
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  sub rsp,10
+  movdqu [rsp],xmm2
+  movss xmm0,[rsp+60]
+  subss xmm0,[rsp+50]
+  movss xmm1,[rsp+40]
+  movd eax,xmm0
+  shr eax,1F
+  test eax,eax
+  jne isYChangeNegative
+  movd eax,xmm1
+  shr eax,1F
+  test eax,eax
+  je confirmMovingTowards
+  xor rax,rax
+  jmp isXMovingTowards  
+isYChangeNegative:
+  movd eax,xmm1
+  shr eax,1F
+  test eax,eax
+  jne confirmMovingTowards
+  xor rax,rax
+isXMovingTowards:
+  movss xmm0,[rsp+64]
+  subss xmm0,[rsp+54]
+  movss xmm1,[rsp+44]
+  movd eax,xmm0
+  shr eax,1F
+  test eax,eax
+  jne isXChangeNegative
+  movd eax,xmm1
+  shr eax,1F
+  test eax,eax
+  je confirmMovingTowards
+  xor rax,rax
+  jmp isZMovingTowards  
+isXChangeNegative:
+  movd eax,xmm1
+  shr eax,1F
+  test eax,eax
+  jne confirmMovingTowards
+  xor rax,rax
+isZMovingTowards:
+  movss xmm0,[rsp+58]
+  subss xmm0,[rsp+48]
+  movss xmm1,[rsp+38]  
+  movd eax,xmm0
+  shr eax,1F
+  test eax,eax
+  jne isZChangeNegative
+  movd eax,xmm1
+  shr eax,1F
+  test eax,eax
+  je confirmMovingTowards
+  xor rax,rax
+  jmp isMovingTowardsExit  
+isZChangeNegative:
+  movd eax,xmm1
+  shr eax,1F
+  test eax,eax
+  jne confirmMovingTowards
+  xor rax,rax
+  jmp isMovingTowardsExit
+confirmMovingTowards:
+  mov eax,1
+isMovingTowardsExit:
+  movdqu xmm2,[rsp]
+  add rsp,10
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]  
+  add rsp,10
+  ret 30
+    
+
+// Main Predator System Function
+// [rsp+98]: Change to Enemy's Z
+// [rsp+A0]: Change to Enemy's Y
+// [rsp+A4]: Change to Enemy's X
+// [rsp+A8]: Enemy Depth Scale 
+// [rsp+B0]: Enemy Width Scale
+// [rsp+B4]: Enemy Height Scale
+// [rsp+B8]: Enemy's Z Coordinate
+// [rsp+C0]: Enemy's Y Coordinate
+// [rsp+C4]: Enemy's X Coordinate
+// [rsp+C8]: Player's Z Coordinate
+// [rsp+D0]: Player's Y Coordinate
+// [rsp+D4]: Player's X Coordinate
+// EAX has updated change to enemy X, EBX has updated
+// change to enemy Y, ECX has updated change to enemy Z
+alloc(executePredator,$1000)
+alloc(indifferenceDistanceX,8)
+alloc(defaultSpeedX,8)
+
+registersymbol(executePredator)
+
+executePredator:
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  sub rsp,10
+  movdqu [rsp],xmm2
+  sub rsp,10
+  movdqu [rsp],xmm3
+  sub rsp,10
+  movdqu [rsp],xmm4
+  sub rsp,10
+  movdqu [rsp],xmm5
+  sub rsp,10
+  movdqu [rsp],xmm6
+  sub rsp,10
+  movdqu [rsp],xmm7
+  sub rsp,10
+  movdqu [rsp],xmm8
+  xorps xmm8,xmm8
+  movss xmm8,[defaultSpeedX]
+  movups xmm0,[rsp+C8]
+  movups xmm1,[rsp+B8]
+  movups xmm2,[rsp+A8]
+  movups xmm3,[rsp+98]
+  sub rsp,10
+  movdqu [rsp],xmm2
+  call calculateScaledSpeed
+  movd xmm4,eax
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  call findCoordinateDistance
+  movd xmm5,eax
+  ucomiss xmm5,[aggroDistance]
+  jbe areaOfAggro
+  movss xmm7,[aggroDistance]
+  mulss xmm7,[indifferenceDistanceX]
+  ucomiss xmm5,xmm7
+  jb areaOfSketchiness
+areaOfIndifference:
+  movss xmm8,xmm4
+  jmp executePredatorExit
+areaOfSketchiness:
+  movss xmm8,xmm4
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  sub rsp,10
+  movdqu [rsp],xmm3
+  call isMovingTowards
+  cmp eax,1
+  jne executePredatorExit
+  mulss xmm8,[doubleX]
+  jmp executePredatorExit
+areaOfAggro:
+  ucomiss xmm5,[threatDistance]
+  jbe executePredatorExit
+  movss xmm8,xmm4
+  mulss xmm8,[doubleX]
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  sub rsp,10
+  movdqu [rsp],xmm3
+  call isMovingTowards
+  cmp eax,0  
+  je executePredatorExit    
+  mulss xmm8,[doubleX]
+executePredatorExit:
+  shufps xmm8,xmm8,0x0
+  mulps xmm3,xmm8
+  movd ecx,xmm3
+  shufps xmm3,xmm3,0x87
+  movd ebx,xmm3
+  shufps xmm3,xmm3,0x87
+  movd eax,xmm3
+  movdqu xmm8,[rsp]
+  add rsp,10
+  movdqu xmm7,[rsp]
+  add rsp,10
+  movdqu xmm6,[rsp]
+  add rsp,10
+  movdqu xmm5,[rsp]
+  add rsp,10
+  movdqu xmm4,[rsp]
+  add rsp,10
+  movdqu xmm3,[rsp]
+  add rsp,10
+  movdqu xmm2,[rsp]
+  add rsp,10
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+  ret 40
+
+defaultSpeedX:
+  dd (float)1.0
+  
+indifferenceDistanceX:
+  dd (float)2.0 
+
+
+// Gets the player's coordinates.
+define(omniPlayerCoordsHook,"MonsterHunterWorld.exe"+20A79A17)
+// UNIQUE AOB: CB 8B 83 60 01 00 00
+assert(omniPlayerCoordsHook, 8B 83 60 01 00 00)
+alloc(getPlayerCoords,$1000, omniPlayerCoordsHook)
+alloc(palicoModeHeightX,8)
+alloc(playerCoords,8)
+
+registersymbol(omniPlayerCoordsHook)
+registersymbol(playerCoords)
+
+getPlayerCoords:
+  sub rsp,10
+  movdqu [rsp],xmm0
+  mov [playerCoords],rbx
+  movss xmm0,[palicoModeHeightX]
+  movss [rbx+184],xmm0
+  movdqu xmm0,[rsp]
+  add rsp,10
+getPlayerCoordsOriginalCode:
+  mov eax,[rbx+00000160]
+  jmp getPlayerCoordsReturn
+
+
+omniPlayerCoordsHook:
+  jmp getPlayerCoords
+  nop
+getPlayerCoordsReturn:
+
+palicoModeHeightX:
+  dd (float)0.5
+
+
+// Gets the player's health.
+define(omniPlayerHealthHook,"MonsterHunterWorld.exe"+14DFA748)
+// UNIQUE AOBs: 0F 2F 49 64 F3 0F 11 49 60 73 08
+//              FE 4D 8B 41 38 41 50 4C 8B 2C 24
+assert(omniPlayerHealthHook, 0F 2F 49 64 F3 0F 11 49 60)
+alloc(getPlayerHealth,$1000, omniPlayerHealthHook)
+alloc(playerHealth,8)
+alloc(palicoHealth,8)
+
+registersymbol(omniPlayerHealthHook)
+registersymbol(playerHealth)
+registersymbol(palicoHealth)
+
+getPlayerHealth:
+  pushf
+  cmp r12,1
+  je savePlayerHealth
+  cmp r12,0
+  je checkForPalicoHealth
+  jmp getPlayerHealthOriginalCode
+savePlayerHealth:
+  mov [playerHealth],rcx
+  jmp getPlayerHealthOriginalCode
+checkForPalicoHealth:
+  cmp rdx,0
+  je getPlayerHealthOriginalCode
+  mov [palicoHealth],rcx
+getPlayerHealthOriginalCode:
+  popf
+  comiss xmm1,[rcx+64]
+  movss [rcx+60],xmm1
+  jmp getPlayerHealthReturn
+
+
+omniPlayerHealthHook:
+  jmp getPlayerHealth
+  nop 4
+getPlayerHealthReturn:
+
+// Gets the player's stamina.
+define(omniPlayerStaminaHook,"MonsterHunterWorld.exe"+200E179E)
+//UNIQUE AOBs: 1A F3 0F 10 40 6C
+//             F3 0F 5D 83 B8 02 00 00 0F 2F 05 * * * * 0F
+assert(omniPlayerStaminaHook, F3 0F 10 40 6C)
+alloc(getPlayerStamina,$1000, omniPlayerStaminaHook)
+alloc(playerStamina,8)
+
+registersymbol(omniPlayerStaminaHook)
+registersymbol(playerStamina)
+
+getPlayerStamina:
+  mov [playerStamina],rax
+getPlayerStaminaOriginalCode:
+  movss xmm0,[rax+6C]
+  jmp getPlayerStaminaReturn
+
+
+omniPlayerStaminaHook:
+  jmp getPlayerStamina
+getPlayerStaminaReturn:
+ 
+ 
+// Initiates the Player Apocalypse.
+define(omnifyPlayerApocalypseHook,"MonsterHunterWorld.exe"+1176594)
+// UNIQUE AOB: F3 48 0F 2C CF 0F
+// xmm7: Damage to be applied
+// rcx: Health Target
+assert(omnifyPlayerApocalypseHook, F3 48 0F 2C CF)
+alloc(initiatePlayerApocalypse,$1000, omnifyPlayerApocalypseHook)
+
+registersymbol(omnifyPlayerApocalypseHook)
+
+initiatePlayerApocalypse:
+  pushf
+  push rbx
+  mov rbx,playerHealth
+  cmp [rbx],0
+  pop rbx
+  je initiatePlayerApocalypseOriginalCode
+  push rax
+  push rcx
+  push rdx
+  push r10
+  sub rsp,10
+  movdqu [rsp],xmm1
+  push rbx
+  mov rbx,playerHealth
+  mov rcx,[rbx]
+  movss xmm1,[rcx+0x60]
+  subss xmm1,[rcx+0x64]
+  mov rbx,playerCoords
+  mov r10,[rbx]
+  pop rbx
+  lea rdx,[r10+160] 
+  lea rcx,[rcx+0x64]  
+  push rbx
+  sub rsp,10
+  movd [rsp],xmm7
+  push rcx
+  sub rsp,10
+  movd [rsp],xmm1
+  push rdx
+  call executePlayerApocalypse
+  movd xmm7,eax  
+  movd xmm8,ebx
+  pop rbx
+  movdqu xmm1,[rsp]
+  add rsp,10
+  pop r10
+  pop rdx
+  pop rcx
+  pop rax   
+initiatePlayerApocalypseOriginalCode:
+  popf
+  cvttss2si rcx,xmm7
+  jmp initiatePlayerApocalypseReturn
+
+
+omnifyPlayerApocalypseHook:
+  jmp initiatePlayerApocalypse
+initiatePlayerApocalypseReturn:
+
+
+// Initiates the Enemy Apocalypse.
+define(omnifyEnemyApocalypseHook,"MonsterHunterWorld.exe"+726FC3A)
+// UNIQUE AOBs: 4C 8D 44 24 60 45 31 C9 C6
+//              C7 44 24 28 00 00 00 00 C7 44 24 6C
+// [RCX+10] == health target
+// [RSI+41EC] == damage
+assert(omnifyEnemyApocalypseHook, F3 0F 5C B6 F4 41 00 00)
+alloc(initiateEnemyApocalypse,$1000, omnifyEnemyApocalypseHook)
+alloc(captureMode,8)
+alloc(captureThreshold,8)
+alloc(murderEverything,8)
+
+registersymbol(omnifyEnemyApocalypseHook)
+registersymbol(captureMode)
+registersymbol(murderEverything)
+
+initiateEnemyApocalypse:
+  pushf
+  push rax
+  push rbx
+  sub rsp,10
+  movdqu [rsp],xmm0
+  cmp [murderEverything],1
+  je commitTotalMurder
+  movss xmm0,[rsi+000041F4]
+  push rcx
+  mov rcx,damageThreshold
+  ucomiss xmm0,[rcx]
+  pop rcx
+  jbe initiateEnemyApocalypseRestoreSSE
+  mov rbx,[rsi+10]
+  sub rsp,10
+  movd [rsp],xmm0
+  push [rbx+64]
+  call executeEnemyApocalypse  
+  cmp [captureMode],1
+  jne updateEnemyDamage
+  movss xmm0,[rbx+64]
+  ucomiss xmm0,[captureThreshold]
+  jbe updateEnemyDamage
+  subss xmm0,[captureThreshold]
+  movd eax,xmm0  
+updateEnemyDamage:
+  movd xmm0,eax
+  movss [rsi+000041F4],xmm0
+  jmp initiateEnemyApocalypseRestoreSSE
+commitTotalMurder:
+  mov rbx,[rsi+10]
+  movss xmm0,[rbx+64]
+  movss [rsi+41F4],xmm0
+initiateEnemyApocalypseRestoreSSE:
+  movdqu xmm0,[rsp]
+  add rsp,10
+  pop rbx
+  pop rax
+initiateEnemyApocalypseOriginalCode:
+  popf
+  subss xmm6,[rsi+000041F4]
+  jmp initiateEnemyApocalypseReturn
+
+
+omnifyEnemyApocalypseHook:
+  jmp initiateEnemyApocalypse
+  nop 3
+initiateEnemyApocalypseReturn:
+
+captureMode:
+  dd 0
+  
+captureThreshold:
+  dd (float)400.0
+
+murderEverything:
+  dd 0
+
+// Applies the Abomination Hunter hack.
+define(omnifyAbominationHook,MonsterHunterWorld.exe+1F8A59F7)
+// UNIQUE AOBs: 8B 83 60 01 00 00 89 83 20
+//              C3 66 2E 0F 1F 84 00 00 00 00 00 48 89 5C 24 08 57 48 83 EC 30 0F 29
+assert(omnifyAbominationHook, 8B 83 60 01 00 00)
+alloc(abominifyCreature,$1000, omnifyAbominationHook)
+alloc(abominifyRandomState,8)
+alloc(abominifyMorphStepsResultUpper,8)
+alloc(abominifyMorphStepsResultLower,8)
+alloc(abominifyHeightResultUpper,8)
+alloc(abominifyHeightResultLower,8)
+alloc(abominifyWidthResultUpper,8)
+alloc(abominifyWidthResultLower,8)
+alloc(abominifyDepthResultUpper,8)
+alloc(abominifyDepthResultLower,8)
+alloc(abominifyMorphModeResultUpper,8)
+alloc(abominifyMorphModeResultLower,8)
+alloc(unnaturalBigThreshold,8)
+alloc(unnaturalBigX,8)
+alloc(unnaturalSmallX,8)
+alloc(abominifyDivisor,8)
+alloc(exclusionIdFirst,8)
+alloc(exclusionIdSecond,8)
+alloc(exclusionIdThird,8)
+//alloc(exclusionIdFourth,8)
+alloc(annoyingGuyX,8)
+alloc(annoyingGuyY,8)
+alloc(annoyingGuyZ,8)
+alloc(stopMorphs,8)
+
+registersymbol(omnifyAbominationHook)
+registersymbol(abominifyMorphStepsResultUpper)
+registersymbol(abominifyMorphStepsResultLower)
+registersymbol(abominifyHeightResultUpper)
+registersymbol(abominifyHeightResultLower)
+registersymbol(abominifyWidthResultUpper)
+registersymbol(abominifyWidthResultLower)
+registersymbol(abominifyDepthResultUpper)
+registersymbol(abominifyDepthResultLower)
+registersymbol(unnaturalBigThreshold)
+registersymbol(unnaturalBigX)
+registersymbol(unnaturalSmallX)
+registersymbol(stopMorphs)
+
+abominifyCreature:
+  pushf
+  push rax
+  mov rax,playerCoords
+  cmp [rax],0
+  pop rax
+  je abominifyCreatureOriginalCode
+  push rax
+  mov rax,playerCoords
+  cmp rbx,[rax]
+  pop rax  
+  je abominifyCreatureOriginalCode
+  sub rsp,10
+  movdqu [rsp],xmm0
+  push rax
+  movss xmm0,[rbx+174]
+  ucomiss xmm0,[exclusionIdFirst]
+  jz generateNewMorphTargetsExit
+  ucomiss xmm0,[exclusionIdSecond]
+  jz generateNewMorphTargetsExit
+  ucomiss xmm0,[exclusionIdThird]
+  jz generateNewMorphTargetsExit
+  movss xmm0,[rbx+160]
+  ucomiss xmm0,[annoyingGuyX]
+  jnz skipAnnoyingGuyCheck
+  movss xmm0,[rbx+164]
+  ucomiss xmm0,[annoyingGuyY]
+  jnz skipAnnoyingGuyCheck
+  movss xmm0,[rbx+168]
+  ucomiss xmm0,[annoyingGuyZ]
+  jz generateNewMorphTargetsExit  
+skipAnnoyingGuyCheck:  
+  pop rax
+  movdqu xmm0,[rsp]
+  add rsp,10
+  cmp [rbx+F98],0
+  je generateNewMorphTargets
+  cmp [stopMorphs],1
+  je abominifyCreatureOriginalCode
+  dec [rbx+F98]
+  jmp stepMorph
+generateNewMorphTargets:
+  sub rsp,10
+  movdqu [rsp],xmm0
+  movss xmm0,[rbx+180]
+  movss [rbx+620],xmm0
+  movss xmm0,[rbx+184]
+  movss [rbx+624],xmm0
+  movss xmm0,[rbx+188]
+  movss [rbx+628],xmm0
+  push rax
+  cmp [rbx+428],1
+  je generateNewMorphTargetsExit
+  movss xmm0,[rbx+F94]
+  mov rax,zero
+  ucomiss xmm0,[rax]
+  ja skipGenerateMorphSteps
+  push [abominifyMorphStepsResultLower]
+  push [abominifyMorphStepsResultUpper]
+  mov rax,abominifyRandomState
+  push rax
+  call generateRandomNumber
+  cvtsi2ss xmm0,eax
+  movss [rbx+F94],xmm0
+skipGenerateMorphSteps:   
+  movss xmm0,[rbx+F94]
+  cvtss2si eax,xmm0
+  mov [rbx+F98],eax
+  push [abominifyWidthResultLower]
+  push [abominifyWidthResultUpper]
+  mov rax,abominifyRandomState
+  push rax
+  call generateRandomNumber
+  cvtsi2ss xmm0,eax
+  divss xmm0,[abominifyDivisor]
+  movss [rbx+F9C],xmm0
+  push rcx 
+  push rdx
+  mov rcx,[rbx+78]
+  mov rdx,[rcx+F0]
+  cmp rdx,0  
+  pop rdx
+  pop rcx
+  jne nonUniformMorphing  
+generateMonsterMorphTargets:
+  cmp [rbx+428],0
+  jne skipGenerateMorphMode
+  push [abominifyMorphModeResultLower]
+  push [abominifyMorphModeResultUpper]
+  mov rax,abominifyRandomState
+  push rax
+  call generateRandomNumber
+  jmp applyMorphMode
+skipGenerateMorphMode:  
+  mov eax,[rbx+428]  
+applyMorphMode:
+  cmp eax,1
+  je staticUnnaturalMorphing
+  cmp eax,2
+  je uniformMorphing
+  jmp nonUniformMorphing
+staticUnnaturalMorphing:  
+  mov [rbx+428],1
+  ucomiss xmm0,[unnaturalBigThreshold]
+  ja unnaturalBiggify
+  mulss xmm0,[unnaturalSmallX]
+  jmp unnaturalizeIt
+unnaturalBiggify:
+  mulss xmm0,[unnaturalBigX]
+unnaturalizeIt:
+  movss [rbx+180],xmm0
+  movss [rbx+184],xmm0
+  movss [rbx+188],xmm0  
+  jmp generateNewMorphTargetsExit
+uniformMorphing:
+  mov [rbx+428],2
+  movss [rbx+618],xmm0
+  movss [rbx+61C],xmm0
+  jmp generateNewMorphTargetsExit
+nonUniformMorphing:
+  mov [rbx+428],3
+  push [abominifyHeightResultLower]
+  push [abominifyHeightResultUpper]
+  mov rax,abominifyRandomState
+  push rax
+  call generateRandomNumber
+  cvtsi2ss xmm0,eax
+  divss xmm0,[abominifyDivisor]
+  movss [rbx+618],xmm0
+  push [abominifyDepthResultLower]
+  push [abominifyDepthResultUpper]
+  mov rax,abominifyRandomState
+  push rax
+  call generateRandomNumber
+  cvtsi2ss xmm0,eax
+  divss xmm0,[abominifyDivisor]
+  movss [rbx+61C],xmm0   
+generateNewMorphTargetsExit:
+  pop rax
+  movdqu xmm0,[rsp]
+  add rsp,10
+  jmp abominifyCreatureOriginalCode
+stepMorph:
+  cmp [rbx+428],1  
+  je abominifyCreatureOriginalCode
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  push rax
+  push rcx
+  movss xmm0,[rbx+F94]
+  cvtss2si eax,xmm0
+  mov ecx,[rbx+F98]
+  sub eax,ecx
+  cvtsi2ss xmm1,eax
+  divss xmm1,[rbx+F94]
+  // Width Step
+  movss xmm0,[rbx+F9C]
+  subss xmm0,[rbx+620]
+  mulss xmm0,xmm1
+  addss xmm0,[rbx+620]
+  movss [rbx+180],xmm0
+  // Height Step
+  movss xmm0,[rbx+618]
+  subss xmm0,[rbx+624]
+  mulss xmm0,xmm1
+  addss xmm0,[rbx+624]
+  movss [rbx+184],xmm0
+  // Depth Step
+  movss xmm0,[rbx+61C]
+  subss xmm0,[rbx+628]
+  mulss xmm0,xmm1
+  addss xmm0,[rbx+628]
+  movss [rbx+188],xmm0
+  pop rcx
+  pop rax
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+abominifyCreatureOriginalCode:
+  popf
+  mov eax,[rbx+00000160]
+  jmp abominifyCreatureReturn
+
+
+omnifyAbominationHook:
+  jmp abominifyCreature
+  nop 
+abominifyCreatureReturn:
+
+abominifyRandomState:
+  dd 0
+
+abominifyMorphStepsResultUpper:
+  dd #400
+  
+abominifyMorphStepsResultLower:
+  dd #25
+  
+abominifyHeightResultUpper: 
+  dd #150
+  
+abominifyHeightResultLower:
+  dd #25
+  
+abominifyWidthResultUpper:
+  dd #250
+  
+abominifyWidthResultLower:
+  dd #25
+  
+abominifyDepthResultUpper:
+  dd #170
+  
+abominifyDepthResultLower:
+  dd #25
+  
+abominifyMorphModeResultUpper:
+  dd 4
+  
+abominifyMorphModeResultLower:
+  dd 1
+  
+abominifyDivisor:
+  dd (float)100.0
+  
+unnaturalBigThreshold:
+  dd (float)1.25
+  
+unnaturalSmallX:
+  dd (float)0.5
+  
+unnaturalBigX:
+  dd (float)2.0
+  
+exclusionIdFirst:
+  dd (float)0.6293204427
+
+exclusionIdSecond:
+  dd (float)0.1822355241
+
+exclusionIdThird:
+  dd (float)-0.9995308518
+
+//exclusionIdFourth:
+//  dd (float)-0.4792398512
+
+annoyingGuyX:
+  dd (float)6588.301758
+
+annoyingGuyY:
+  dd (float)2120.893311
+
+annoyingGuyZ:
+  dd (float)-1209.513672
+  
+stopMorphs:
+  dd 0
+
+// Teleports the player to a marked location.
+define(omnifyTeleportPlayerHook,"MonsterHunterWorld.exe"+1F8A3A97)
+//UNIQUE AOBs: 44 8B AF E0 0B 00 00
+//             F3 0F 10 40 08 F3 0F 58 46 08 F3 0F 11 46 08 44
+assert(omnifyTeleportPlayerHook, 44 8B AF E0 0B 00 00)
+alloc(teleportPlayer,$1000, omnifyTeleportPlayerHook)
+alloc(teleport,8)
+alloc(teleportX,8)
+alloc(teleportY,8)
+alloc(teleportZ,8)
+
+registersymbol(teleport)
+registersymbol(teleportX)
+registersymbol(teleportY)
+registersymbol(teleportZ)
+
+registersymbol(omnifyTeleportPlayerHook)
+
+teleportPlayer:
+  pushf
+  push rax
+  mov rax,[playerCoords]
+  cmp rax,0
+  pop rax
+  je teleportPlayerOriginalCode
+  push rax
+  push rbx
+  mov rax,[playerCoords]
+  lea rbx,[rax+160]
+  cmp rsi,rbx
+  pop rbx
+  pop rax
+  jne teleportPlayerOriginalCode  
+  cmp [teleport],1
+  jne teleportPlayerOriginalCode
+  sub rsp,10
+  movdqu [rsp],xmm0
+  movss xmm0,[teleportX]
+  movss [rsi],xmm0
+  movss [rsi+8F0],xmm0
+  movss xmm0,[teleportY]
+  movss [rsi+4],xmm0
+  movss [rsi+8F4],xmm0
+  movss xmm0,[teleportZ]
+  movss [rsi+8],xmm0
+  movss [rsi+8F8],xmm0
+  mov [teleport],0 
+  movdqu xmm0,[rsp]
+  add rsp,10  
+teleportPlayerOriginalCode:
+  popf
+  mov r13d,[rdi+00000BE0]
+  jmp teleportPlayerReturn
+
+
+omnifyTeleportPlayerHook:
+  jmp teleportPlayer
+  nop 2
+teleportPlayerReturn:
+
+// Initiates the Predator system.
+define(omnifyPredatorHook,"MonsterHunterWorld.exe"+1F8A55BB)
+//UNIQUE AOBs: F3 0F 10 80 50 E2 00 00 F3
+//             F3 0F 58 87 60 01 00 00 F3 0F 11
+// RAX: Movement struct (0xE250 - 0xE258 is X,Y,Z offset)
+// RDI: Location struct
+assert(omnifyPredatorHook, F3 0F 10 80 50 E2 00 00)
+alloc(initiatePredator,$1000, omnifyPredatorHook)
+alloc(playerSpeedX,8)
+
+registersymbol(playerSpeedX)
+registersymbol(omnifyPredatorHook)
+
+initiatePredator:
+  pushf  
+  sub rsp,10
+  movdqu [rsp],xmm1
+  sub rsp,10
+  movdqu [rsp],xmm2
+  sub rsp,10
+  movdqu [rsp],xmm3
+//  movss xmm1,[rax+0xE250]
+//  ucomiss xmm1,[zero]
+//  ja continueInitiatePredator
+//  movss xmm1,[rax+0xE254]
+//  ucomiss xmm1,[zero]
+//  ja continueInitiatePredator
+//  movss xmm1,[rax+0xE258]
+//  ucomiss xmm1,[zero]
+//  jbe initiatePredatorExit
+continueInitiatePredator:
+  movss xmm1,[rdi+160]
+  //cmp edx,0
+  //jne initiatePredatorExit
+  push rbx
+  mov rbx,playerCoords
+  cmp [rbx],0
+  pop rbx
+  je initiatePredatorExit  
+  push rbx
+  mov rbx,playerCoords
+  cmp rdi,[rbx]  
+  pop rbx
+  je fuckUpPlayerSpeed   
+  push rax
+  push rbx
+  push rcx
+  mov rbx,playerCoords
+  mov rcx,[rbx]
+  push [rcx+160]
+  push [rcx+168]
+  push [rdi+160]
+  push [rdi+168]
+  push [rdi+180]
+  push [rdi+188]
+  push [rax+0xE250]
+  push [rax+0xE258]
+  call executePredator
+  movd xmm1,eax
+  movd xmm2,ebx
+  movd xmm3,ecx
+  pop rcx
+  pop rbx
+  pop rax
+  jmp fuckUpSpeed
+fuckUpPlayerSpeed:
+  movss xmm1,[rax+0xE250]
+  mulss xmm1,[playerSpeedX]
+  movss xmm2,[rax+0xE254]
+  mulss xmm2,[playerSpeedX]
+  movss xmm3,[rax+0xE258]
+  mulss xmm3,[playerSpeedX]
+fuckUpSpeed:  
+  movss [rax+0xE250],xmm1
+  movss [rax+0xE254],xmm2
+  movss [rax+0xE258],xmm3  
+initiatePredatorExit:
+  movdqu xmm3,[rsp]
+  add rsp,10
+  movdqu xmm2,[rsp]
+  add rsp,10
+  movdqu xmm1,[rsp]
+  add rsp,10
+initiatePredatorOriginalCode:
+  popf
+  movss xmm0,[rax+0000E250]
+  jmp initiatePredatorReturn
+
+
+omnifyPredatorHook:
+  jmp initiatePredator
+  nop 3
+initiatePredatorReturn:
+  
+playerSpeedX:
+  dd (float)1.0
+
+// Sets the number of faints allowed in an investigation to a more appropriate value.
+define(omnifyInvestigationFaintsHook,"MonsterHunterWorld.exe"+14A9C5F9)
+// UNIQUE AOB: EF 00 00 00 0F B6 82 F0 00 00 00
+assert(omnifyInvestigationFaintsHook, 0F B6 82 F0 00 00 00)
+alloc(increaseInvestigationFaints,$1000, omnifyInvestigationFaintsHook)
+
+registersymbol(omnifyInvestigationFaintsHook)
+
+increaseInvestigationFaints:
+  pushf
+  cmp r12,0
+  jne increaseInvestigationFaintsOriginalCode
+  cmp r15,0
+  jne increaseInvestigationFaintsOriginalCode
+  cmp rbp,r14
+  jne increaseInvestigationFaintsOriginalCode
+  mov al,0
+  mov [rdx+F0],al
+increaseInvestigationFaintsOriginalCode:
+  popf
+  movzx eax,byte ptr [rdx+000000F0]
+  jmp increaseInvestigationFaintsReturn
+
+
+omnifyInvestigationFaintsHook:
+  jmp increaseInvestigationFaints
+  nop 2
+increaseInvestigationFaintsReturn:
+
+
+// Have you been working out?
+define(omnifyWorkoutHook,"MonsterHunterWorld.exe"+2074E8F0)
+// UNIQUE AOBs: F3 0F 11 8B 28 76 00 00
+// 				48 83 EC 50 0F 29 74 24 40 48 89 CB 48 8B 89 30
+
+assert(omnifyWorkoutHook, F3 0F 11 8B 28 76 00 00)
+alloc(workItBaby,$1000, omnifyWorkoutHook)
+alloc(playerBaseHealth,8)
+
+registersymbol(omnifyWorkoutHook)
+registersymbol(playerBaseHealth)
+
+workItBaby:
+  pushf
+  sub rsp,10
+  movdqu [rsp],xmm2
+  movss xmm2,[playerBaseHealth]
+  maxss xmm1,xmm2  
+  movdqu xmm2,[rsp]
+  add rsp,10
+workItBabyOriginalCode:
+  popf
+  movss [rbx+00007628],xmm1
+  jmp workItBabyReturn
+
+
+omnifyWorkoutHook:
+  jmp workItBaby
+  nop 3
+workItBabyReturn:
+
+playerBaseHealth:
+  dd (float)150.0
+
+
+[DISABLE]
+// Cleanup of global memory
+dealloc(zero)
+dealloc(damageThreshold)
+dealloc(doubleX)
+
+// Cleanup of generateRandomNumber
+unregistersymbol(generateRandomNumber)
+
+dealloc(generateRandomNumber)
+
+
+// Cleanup of omnifyInvestigationFaintsHook
+omnifyInvestigationFaintsHook:
+  db 0F B6 82 F0 00 00 00
+
+unregistersymbol(omnifyInvestigationFaintsHook)
+
+dealloc(increaseInvestigationFaints)
+
+
+// Cleanup of omnifyWorkoutHook
+omnifyWorkoutHook:
+  db F3 0F 11 8B 28 76 00 00
+
+unregistersymbol(omnifyWorkoutHook)
+unregistersymbol(playerBaseHealth)
+
+dealloc(workItBaby)
+
+// Cleanup of omniPlayerStaminaHook
+omniPlayerStaminaHook:
+  db F3 0F 10 40 6C
+
+unregistersymbol(playerStamina)
+unregistersymbol(omniPlayerStaminaHook)
+
+dealloc(playerStamina)
+dealloc(getPlayerStamina)
+
+
+// Cleanup of omnifyPredatorHook
+omnifyPredatorHook:
+  db F3 0F 10 80 50 E2 00 00
+
+unregistersymbol(omnifyPredatorHook)
+unregistersymbol(playerSpeedX)
+
+dealloc(playerSpeedX)
+dealloc(initiatePredator)
+
+// Cleanup of omnifyTeleportPlayerHook
+omnifyTeleportPlayerHook:
+  db 44 8B AF E0 0B 00 00
+
+unregistersymbol(omnifyTeleportPlayerHook)
+unregistersymbol(teleport)
+unregistersymbol(teleportX)
+unregistersymbol(teleportY)
+unregistersymbol(teleportZ)
+
+dealloc(teleport)
+dealloc(teleportX)
+dealloc(teleportY)
+dealloc(teleportZ)
+dealloc(teleportPlayer) 
+
+// Cleanup of omnifyAbominationHook
+omnifyAbominationHook:
+  db 8B 83 60 01 00 00
+
+unregistersymbol(omnifyAbominationHook)
+unregistersymbol(abominifyMorphStepsResultUpper)
+unregistersymbol(abominifyMorphStepsResultLower)
+unregistersymbol(abominifyHeightResultUpper)
+unregistersymbol(abominifyHeightResultLower)
+unregistersymbol(abominifyWidthResultUpper)
+unregistersymbol(abominifyWidthResultLower)
+unregistersymbol(abominifyDepthResultUpper)
+unregistersymbol(abominifyDepthResultLower)
+unregistersymbol(unnaturalBigThreshold)
+unregistersymbol(unnaturalBigX)
+unregistersymbol(unnaturalSmallX)
+unregistersymbol(stopMorphs)
+
+dealloc(stopMorphs)
+dealloc(exclusionIdFirst)
+dealloc(exclusionIdSecond)
+dealloc(exclusionIdThird)
+//dealloc(exclusionIdFourth)
+dealloc(annoyingGuyX)
+dealloc(annoyingGuyY)
+dealloc(annoyingGuyZ)
+dealloc(abominifyRandomState)
+dealloc(abominifyMorphStepsResultUpper)
+dealloc(abominifyMorphStepsResultLower)
+dealloc(abominifyHeightResultUpper)
+dealloc(abominifyHeightResultLower)
+dealloc(abominifyWidthResultUpper)
+dealloc(abominifyWidthResultLower)
+dealloc(abominifyDepthResultUpper)
+dealloc(abominifyDepthResultLower)
+dealloc(abominifyMorphModeResultUpper)
+dealloc(abominifyMorphModeResultLower)
+dealloc(unnaturalBigThreshold)
+dealloc(unnaturalBigX)
+dealloc(unnaturalSmallX)
+dealloc(abominifyDivisor)
+dealloc(abominifyCreature)
+
+// Cleanup of Player Apocalypse System Function
+unregistersymbol(logApocalypse)
+unregistersymbol(apocalypseResult)
+unregistersymbol(riskOfMurderResult)
+unregistersymbol(negativeVerticalDisplacementEnabled)
+unregistersymbol(teleportitisDisplacementX)
+unregistersymbol(extraDamageX)
+unregistersymbol(maxDamageToPlayer)
+unregistersymbol(playerGodMode)
+unregistersymbol(lastDamageToPlayer)
+unregistersymbol(executePlayerApocalypse)
+
+dealloc(playerApocalypseRandomState)
+dealloc(logApocalypse)
+dealloc(apocalypseResult)
+dealloc(apocalypseResultUpper)
+dealloc(apocalypseResultLower)
+dealloc(negativeOne)
+dealloc(teleportitisResult)
+dealloc(teleportitisResultUpper)
+dealloc(teleportitisResultLower)
+dealloc(teleportitisDivisor)
+dealloc(teleportitisShifter)
+dealloc(negativeVerticalDisplacementEnabled)
+dealloc(teleportitisDisplacementX)
+dealloc(riskOfMurderResult)
+dealloc(riskOfMurderResultUpper)
+dealloc(riskOfMurderResultLower)
+dealloc(extraDamageX)
+dealloc(sixtyNineDamageX)
+dealloc(maxDamageToPlayer)
+dealloc(lastDamageToPlayer)
+dealloc(executePlayerApocalypse)
+dealloc(playerGodMode)
+
+// Cleanup of Enemy Apocalypse System Function
+unregistersymbol(maxDamageByPlayer)
+unregistersymbol(lastDamageByPlayer)
+unregistersymbol(totalDamageByPlayer)
+unregistersymbol(logKamehameha)
+unregistersymbol(gokuDamageX)
+unregistersymbol(gokuResultUpper)
+unregistersymbol(playerDamageX)
+unregistersymbol(lastEnemyHealthValue)
+unregistersymbol(playerCritDamageResult)
+unregistersymbol(logPlayerCrit)
+unregistersymbol(executeEnemyApocalypse)
+
+dealloc(maxDamageByPlayer)
+dealloc(lastDamageByPlayer)
+dealloc(totalDamageByPlayer)
+dealloc(logKamehameha)
+dealloc(gokuResult)
+dealloc(gokuResultUpper)
+dealloc(gokuResultLower)
+dealloc(gokuDamageX)
+dealloc(playerDamageX)
+dealloc(lastEnemyHealthValue)
+dealloc(playerCritChanceResultUpper)
+dealloc(playerCritChanceResultLower)
+dealloc(playerCritChanceResult)
+dealloc(playerCritDamageResultUpper)
+dealloc(playerCritDamageResultLower)
+dealloc(playerCritDamageResult)
+dealloc(playerCritDamageDivisor)
+dealloc(logPlayerCrit)
+dealloc(enemyApocalypseRandomState)
+dealloc(executeEnemyApocalypse)
+
+
+// Cleanup of findCoordinateDistance
+unregistersymbol(findCoordinateDistance)
+
+dealloc(findCoordinateDistance)
+
+// Cleanup of calculateScaledSpeed
+unregistersymbol(calculateScaledSpeed)
+
+dealloc(averageScaleDivisor)
+dealloc(averageScaleX)
+dealloc(scaledShifter)
+dealloc(scaledSpeedWhenNegative)
+dealloc(calculateScaledSpeed)
+
+// Cleanup of isMovingTowards
+unregistersymbol(isMovingTowards)
+
+dealloc(isMovingTowards)
+
+
+// Cleanup of Predator System Function
+unregistersymbol(executePredator)
+unregistersymbol(enemySpeedX)
+unregistersymbol(aggroDistance)
+
+dealloc(enemySpeedX)
+dealloc(aggroDistance)
+dealloc(threatDistance)
+dealloc(indifferenceDistanceX)
+dealloc(speedNormalizationDivisor)
+dealloc(defaultSpeedX)
+dealloc(executePredator)
+
+
+// Cleanup of omnifyPlayerApocalypseHook
+omnifyPlayerApocalypseHook:
+  db F3 48 0F 2C CF
+
+unregistersymbol(omnifyPlayerApocalypseHook)
+
+dealloc(initiatePlayerApocalypse)
+
+// Cleanup of omnifyEnemyApocalypseHook
+omnifyEnemyApocalypseHook:
+  db F3 0F 5C B6 F4 41 00 00
+
+unregistersymbol(omnifyEnemyApocalypseHook)
+unregistersymbol(captureMode)
+unregistersymbol(murderEverything)
+
+dealloc(captureThreshold)
+dealloc(captureMode)
+dealloc(murderEverything)
+dealloc(initiateEnemyApocalypse)
+
+// Cleanup of omniPlayerCoordsHook
+omniPlayerCoordsHook:
+  db 8B 83 60 01 00 00
+
+unregistersymbol(omniPlayerCoordsHook)
+unregistersymbol(playerCoords)
+
+dealloc(palicoModeHeightX)
+dealloc(playerCoords)
+dealloc(getPlayerCoords)
+
+// Cleanup of omniPlayerHealthHook
+omniPlayerHealthHook:
+  db 0F 2F 49 64 F3 0F 11 49 60
+
+unregistersymbol(omniPlayerHealthHook)
+unregistersymbol(playerHealth)
+unregistersymbol(palicoHealth)
+
+dealloc(playerHealth)
+dealloc(palicoHealth)
+dealloc(getPlayerHealth)
+
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>269</ID>
+          <Description>"Tiny People"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+abominifyHeightResultUpper:
+  dd #80
+
+abominifyHeightResultLower:
+  dd #10
+
+abominifyWidthResultUpper:
+  dd #80
+
+abominifyWidthResultLower:
+  dd #10
+
+abominifyDepthResultUpper:
+  dd #80
+
+abominifyDepthResultLower:
+  dd #10
+
+[DISABLE]
+
+abominifyHeightResultUpper:
+  dd #170
+
+abominifyHeightResultLower:
+  dd #10
+
+abominifyWidthResultUpper:
+  dd #250
+
+abominifyWidthResultLower:
+  dd #10
+
+abominifyDepthResultUpper:
+  dd #170
+
+abominifyDepthResultLower:
+  dd #10
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>329</ID>
+          <Description>"Murder Everything"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+murderEverything:
+  dd 1
+
+[DISABLE]
+
+murderEverything:
+  dd 0
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>323</ID>
+          <Description>"Buff Player Damage"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+playerDamageX:
+  dd (float)500.0
+
+[DISABLE]
+
+playerDamageX:
+  dd (float)3.0
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>186</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>327</ID>
+          <Description>"Enable Capture Mode"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+captureMode:
+  dd 1
+
+[DISABLE]
+captureMode:
+  dd 0
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>219</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>319</ID>
+          <Description>"Stop Morphs"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+stopMorphs:
+  dd 1
+
+[DISABLE]
+
+stopMorphs:
+  dd 0
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>222</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>271</ID>
+          <Description>"Abomination"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>272</ID>
+              <Description>"Upper Width"</Description>
+              <LastState Value="250" RealAddress="19A171028"/>
+              <VariableType>4 Bytes</VariableType>
+              <Address>abominifyWidthResultUpper</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>274</ID>
+              <Description>"Depth Upper"</Description>
+              <LastState Value="170" RealAddress="19A171038"/>
+              <VariableType>4 Bytes</VariableType>
+              <Address>abominifyDepthResultUpper</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>273</ID>
+              <Description>"Height Upper"</Description>
+              <LastState Value="150" RealAddress="19A171018"/>
+              <VariableType>4 Bytes</VariableType>
+              <Address>abominifyHeightResultUpper</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>249</ID>
+          <Description>"Player"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" Activated="1" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>263</ID>
+              <Description>"Damage Multiplier"</Description>
+              <LastState Value="3" RealAddress="199FF3100"/>
+              <VariableType>Float</VariableType>
+              <Address>playerDamageX</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>251</ID>
+              <Description>"Health"</Description>
+              <LastState Value="200" RealAddress="6DDB8414"/>
+              <VariableType>Float</VariableType>
+              <Address>playerHealth</Address>
+              <Offsets>
+                <Offset>64</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>325</ID>
+              <Description>"Max Health"</Description>
+              <LastState Value="200" RealAddress="6DDB8410"/>
+              <VariableType>Float</VariableType>
+              <Address>playerHealth</Address>
+              <Offsets>
+                <Offset>60</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>265</ID>
+              <Description>"Stamina"</Description>
+              <LastState Value="1" RealAddress="A743A4CC"/>
+              <VariableType>Float</VariableType>
+              <Address>A743A4CC</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>245</ID>
+              <Description>"Location"</Description>
+              <Options moHideChildren="1"/>
+              <LastState Value="" RealAddress="12DBA0080"/>
+              <GroupHeader>1</GroupHeader>
+              <Address>playerCoords</Address>
+              <Offsets>
+                <Offset>0</Offset>
+              </Offsets>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>246</ID>
+                  <Description>"X"</Description>
+                  <LastState Value="4990.193359" RealAddress="12DBA01E0"/>
+                  <VariableType>Float</VariableType>
+                  <Address>playerCoords</Address>
+                  <Offsets>
+                    <Offset>160</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>247</ID>
+                  <Description>"Y"</Description>
+                  <LastState Value="815.1186523" RealAddress="12DBA01E4"/>
+                  <VariableType>Float</VariableType>
+                  <Address>playerCoords</Address>
+                  <Offsets>
+                    <Offset>164</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>248</ID>
+                  <Description>"Z"</Description>
+                  <LastState Value="-827.703186" RealAddress="12DBA01E8"/>
+                  <VariableType>Float</VariableType>
+                  <Address>playerCoords</Address>
+                  <Offsets>
+                    <Offset>168</Offset>
+                  </Offsets>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>267</ID>
+              <Description>"Speed Multiplier"</Description>
+              <LastState Value="3" RealAddress="19A1B1000"/>
+              <VariableType>Float</VariableType>
+              <Address>playerSpeedX</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>250</ID>
+          <Description>"Palico"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>252</ID>
+              <Description>"Health"</Description>
+              <LastState Value="528.2857056" RealAddress="1B7020604"/>
+              <VariableType>Float</VariableType>
+              <Address>palicoHealth</Address>
+              <Offsets>
+                <Offset>64</Offset>
+              </Offsets>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>253</ID>
+          <Description>"Enemy"</Description>
+          <LastState Value="" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>254</ID>
+              <Description>"Health"</Description>
+              <LastState Value="5757.5" RealAddress="199FF3108"/>
+              <VariableType>Float</VariableType>
+              <Address>lastEnemyHealthValue</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>266</ID>
+              <Description>"Speed Multiplier"</Description>
+              <LastState Value="1.5" RealAddress="199FF3158"/>
+              <VariableType>Float</VariableType>
+              <Address>enemySpeedX</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>312</ID>
+      <Description>"Delivery Item"</Description>
+      <LastState Value="0" RealAddress="5FAA5A50"/>
+      <VariableType>4 Bytes</VariableType>
+      <Address>5FAA5A50</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>313</ID>
+      <Description>"No description"</Description>
+      <LastState Value="5604.434082" RealAddress="19A1A1010"/>
+      <VariableType>Float</VariableType>
+      <Address>teleportY</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>314</ID>
+      <Description>"No description"</Description>
+      <LastState Value="5604.434082" RealAddress="19A1A1010"/>
+      <VariableType>Float</VariableType>
+      <Address>teleportY</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>315</ID>
+      <Description>"No description"</Description>
+      <LastState Value="9448.418945" RealAddress="19A1A1008"/>
+      <VariableType>Float</VariableType>
+      <Address>teleportX</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>316</ID>
+      <Description>"No description"</Description>
+      <VariableType>4 Bytes</VariableType>
+      <Address>7F760118</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>317</ID>
+      <Description>"No description"</Description>
+      <LastState Value="11738667" RealAddress="A28DB050"/>
+      <VariableType>4 Bytes</VariableType>
+      <Address>A28DB050</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>318</ID>
+      <Description>"No description"</Description>
+      <LastState Value="0" RealAddress="199FF20B8"/>
+      <VariableType>4 Bytes</VariableType>
+      <Address>playerGodMode</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>320</ID>
+      <Description>"Investigation Faints"</Description>
+      <LastState Value="84" RealAddress="91B27430"/>
+      <VariableType>Byte</VariableType>
+      <Address>91B27430</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>321</ID>
+      <Description>"Byte"</Description>
+      <LastState Value="0" RealAddress="5D018958"/>
+      <VariableType>Byte</VariableType>
+      <Address>5D018958</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>322</ID>
+      <Description>"No description"</Description>
+      <LastState Value="0" RealAddress="199FF20B8"/>
+      <VariableType>4 Bytes</VariableType>
+      <Address>playerGodMode</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>324</ID>
+      <Description>"No description"</Description>
+      <LastState Value="750" RealAddress="199FF30E8"/>
+      <VariableType>4 Bytes</VariableType>
+      <Address>gokuResultUpper</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>326</ID>
+      <Description>"Base Health"</Description>
+      <VariableType>Float</VariableType>
+      <Address>129AD76A8</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>328</ID>
+      <Description>"No description"</Description>
+      <LastState Value="0" RealAddress="199FF20B8"/>
+      <VariableType>4 Bytes</VariableType>
+      <Address>playerGodMode</Address>
+    </CheatEntry>
+  </CheatEntries>
+  <CheatCodes>
+    <CodeEntry Color="20000000">
+      <Description>Change of mov eax,[rdi+00000160]</Description>
+      <AddressString>MonsterHunterWorld.exe+F3B0375</AddressString>
+      <Before>
+        <Byte>A9</Byte>
+        <Byte>CC</Byte>
+        <Byte>0D</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>8B</Byte>
+        <Byte>87</Byte>
+        <Byte>60</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>89</Byte>
+        <Byte>81</Byte>
+        <Byte>D0</Byte>
+        <Byte>0D</Byte>
+        <Byte>00</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of mov eax,[rbx+00000164]</Description>
+      <AddressString>MonsterHunterWorld.exe+1CDD2093</AddressString>
+      <Before>
+        <Byte>83</Byte>
+        <Byte>20</Byte>
+        <Byte>15</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>8B</Byte>
+        <Byte>83</Byte>
+        <Byte>64</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>89</Byte>
+        <Byte>83</Byte>
+        <Byte>24</Byte>
+        <Byte>15</Byte>
+        <Byte>00</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movss [rbx+00000164],xmm1</Description>
+      <AddressString>MonsterHunterWorld.exe+1EC677D</AddressString>
+      <Before>
+        <Byte>83</Byte>
+        <Byte>68</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>8B</Byte>
+        <Byte>64</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>89</Byte>
+        <Byte>BB</Byte>
+        <Byte>6C</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movss [rdi+00000164],xmm0</Description>
+      <AddressString>MonsterHunterWorld.exe+1E3BE19F</AddressString>
+      <Before>
+        <Byte>87</Byte>
+        <Byte>68</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>87</Byte>
+        <Byte>64</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>44</Byte>
+        <Byte>89</Byte>
+        <Byte>B7</Byte>
+        <Byte>6C</Byte>
+        <Byte>01</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movss [rdi+00000164],xmm1</Description>
+      <AddressString>MonsterHunterWorld.exe+1CDD1DD3</AddressString>
+      <Before>
+        <Byte>8F</Byte>
+        <Byte>64</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>8F</Byte>
+        <Byte>64</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>80</Byte>
+        <Byte>58</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movss [rsi+04],xmm7</Description>
+      <AddressString>MonsterHunterWorld.exe+1CDD0CFC</AddressString>
+      <Before>
+        <Byte>89</Byte>
+        <Byte>F0</Byte>
+        <Byte>4C</Byte>
+        <Byte>89</Byte>
+        <Byte>E1</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>7E</Byte>
+        <Byte>04</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>D7</Byte>
+        <Byte>F3</Byte>
+        <Byte>44</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movss [rsi+04],xmm1</Description>
+      <AddressString>MonsterHunterWorld.exe+1CDD0FC3</AddressString>
+      <Before>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>4E</Byte>
+        <Byte>04</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>4E</Byte>
+        <Byte>04</Byte>
+      </Actual>
+      <After>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>40</Byte>
+        <Byte>08</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movss [rsi],xmm0</Description>
+      <AddressString>MonsterHunterWorld.exe+1CDD0FB5</AddressString>
+      <Before>
+        <Byte>F9</Byte>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>06</Byte>
+      </Actual>
+      <After>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>48</Byte>
+        <Byte>04</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movss [rsi+08],xmm0</Description>
+      <AddressString>MonsterHunterWorld.exe+1CDD0FD2</AddressString>
+      <Before>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>46</Byte>
+        <Byte>08</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>46</Byte>
+        <Byte>08</Byte>
+      </Actual>
+      <After>
+        <Byte>E9</Byte>
+        <Byte>24</Byte>
+        <Byte>F0</Byte>
+        <Byte>95</Byte>
+        <Byte>24</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of addss xmm1,[rsi+04]</Description>
+      <AddressString>MonsterHunterWorld.exe+1CDD0FBE</AddressString>
+      <Before>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>48</Byte>
+        <Byte>04</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>4E</Byte>
+        <Byte>04</Byte>
+      </Actual>
+      <After>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>4E</Byte>
+        <Byte>04</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of addss xmm0,[rax]</Description>
+      <AddressString>MonsterHunterWorld.exe+1CDD0FB1</AddressString>
+      <Before>
+        <Byte>05</Byte>
+        <Byte>E6</Byte>
+        <Byte>48</Byte>
+        <Byte>89</Byte>
+        <Byte>F9</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>06</Byte>
+        <Byte>F3</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movss xmm1,[rax+04]</Description>
+      <AddressString>MonsterHunterWorld.exe+1CDD0FB9</AddressString>
+      <Before>
+        <Byte>00</Byte>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>06</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>48</Byte>
+        <Byte>04</Byte>
+      </Actual>
+      <After>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>4E</Byte>
+        <Byte>04</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of addss xmm0,[rsi+08]</Description>
+      <AddressString>MonsterHunterWorld.exe+1CDD0FCD</AddressString>
+      <Before>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>40</Byte>
+        <Byte>08</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>46</Byte>
+        <Byte>08</Byte>
+      </Actual>
+      <After>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>46</Byte>
+        <Byte>08</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movss [rbx+00000160],xmm0</Description>
+      <AddressString>MonsterHunterWorld.exe+1EC6767</AddressString>
+      <Before>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>4C</Byte>
+        <Byte>24</Byte>
+        <Byte>24</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>83</Byte>
+        <Byte>60</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>44</Byte>
+        <Byte>24</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movss [rbx+00000168],xmm0</Description>
+      <AddressString>MonsterHunterWorld.exe+1EC6775</AddressString>
+      <Before>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>44</Byte>
+        <Byte>24</Byte>
+        <Byte>28</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>83</Byte>
+        <Byte>68</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movss [rdi+00000160],xmm1</Description>
+      <AddressString>MonsterHunterWorld.exe+1E3BE1B1</AddressString>
+      <Before>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>C3</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>8F</Byte>
+        <Byte>60</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>C6</Byte>
+        <Byte>C3</Byte>
+        <Byte>55</Byte>
+        <Byte>F3</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movss [rdi+00000160],xmm0</Description>
+      <AddressString>MonsterHunterWorld.exe+1CDD1DBB</AddressString>
+      <Before>
+        <Byte>87</Byte>
+        <Byte>60</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>87</Byte>
+        <Byte>60</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>88</Byte>
+        <Byte>54</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of addss xmm0,[rdi+00000168]</Description>
+      <AddressString>MonsterHunterWorld.exe+1CDD1DE3</AddressString>
+      <Before>
+        <Byte>80</Byte>
+        <Byte>58</Byte>
+        <Byte>E2</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>87</Byte>
+        <Byte>68</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>87</Byte>
+        <Byte>68</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movss [rdi+00000168],xmm0</Description>
+      <AddressString>MonsterHunterWorld.exe+1CDD1DEB</AddressString>
+      <Before>
+        <Byte>87</Byte>
+        <Byte>68</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>87</Byte>
+        <Byte>68</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>84</Byte>
+        <Byte>C9</Byte>
+        <Byte>74</Byte>
+        <Byte>3B</Byte>
+        <Byte>48</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of mov [rdi+68],al</Description>
+      <AddressString>MonsterHunterWorld.exe+1CBDD0FC</AddressString>
+      <Before>
+        <Byte>86</Byte>
+        <Byte>88</Byte>
+        <Byte>59</Byte>
+        <Byte>10</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>88</Byte>
+        <Byte>47</Byte>
+        <Byte>68</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>B6</Byte>
+        <Byte>86</Byte>
+        <Byte>89</Byte>
+        <Byte>59</Byte>
+      </After>
+    </CodeEntry>
+  </CheatCodes>
+  <UserdefinedSymbols/>
+  <LuaScript>getAutoAttachList().add("MonsterHunterWorld.exe")
+</LuaScript>
+</CheatTable>

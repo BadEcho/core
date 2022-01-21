@@ -1,0 +1,353 @@
+<!--
+    Omnified Mass Effect 2
+    Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
+    Copyright 2022 Bad Echo LLC
+
+    Bad Echo Technologies are licensed under a
+    Creative Commons Attribution-NonCommercial 4.0 International License.
+
+    See accompanying file LICENSE.md or a copy at:
+    http://creativecommons.org/licenses/by-nc/4.0/
+-->
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="29">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>4</ID>
+      <Description>"OMNIFY"</Description>
+      <Options moHideChildren="1"/>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Omnify your god damn Mass Effect 2
+  By: Omni
+}
+[ENABLE]
+
+aobscanmodule(omniShieldHook,ME2Game.exe,D9 00 8B 4C 24 04 D9 19 C2 14 00 8B) // should be unique
+aobscanmodule(omniCoordsHook,ME2Game.exe,8B 4B 04 D8 4C 24 40) // should be unique
+aobscanmodule(omniHealthHook,ME2Game.exe,C1 F3 0F 11 00 59) // should be unique
+aobscanmodule(omnifyDamageHook,ME2Game.exe,F3 0F 10 07 F3 0F 5C 44 24 10) // should be unique
+aobscanmodule(omnifyMoveXHook,ME2Game.exe,50 F3 0F 10 44 24 48 F3) // should be unique
+aobscanmodule(omnifyMoveYHook,ME2Game.exe,00 8B 45 10 F3 0F 11 83 10 01 00 00 F3 0F 10 44 24 4C) // should be unique
+
+alloc(getShield,$1000)
+alloc(getHealth,$1000)
+alloc(getCoords,$1000)
+
+alloc(fuckDamage,$1000)
+alloc(fuckXSpeed,$1000)
+alloc(fuckYSpeed,$1000)
+
+alloc(fuckSpeedMultiplier, 16)
+alloc(fuckSpeedAdditive, 16)
+alloc(zero, 16)
+
+alloc(pShield, 8)
+alloc(pHealth, 8)
+alloc(pCoords, 8)
+
+label(fuckDamageMultiplier)
+registersymbol(fuckDamageMultiplier)
+registersymbol(omniShieldHook)
+registersymbol(omniHealthHook)
+registersymbol(omnifyDamageHook)
+registersymbol(omniCoordsHook)
+
+registersymbol(omnifyMoveXHook)
+registersymbol(omnifyMoveYHook)
+
+registersymbol(pShield)
+registersymbol(pHealth)
+registersymbol(pCoords)
+
+//
+// getShield: This grabs the player's shield and sets pShield to it.
+//
+getShield:
+                             // This function is called for looking up the shield of every entity in the game.
+getShieldCode:               // Through observation, we learned, when the player's shield is being accesesed, that:
+  cmp ebp,00000000           // The EBP register is always 0.
+  jne getShieldOriginalCode
+  cmp eax,edx                // The EAX and EDX registers are identical.
+  jne getShieldOriginalCode
+  cmp esp,0192DCC4           // ESP is set to this value.
+  jne getShieldOriginalCode  // This criteria is enough to filter out all non-player shield reads.
+  mov [pShield],eax
+getShieldOriginalCode:
+  fld dword ptr [eax]
+  mov ecx,[esp+04]
+  jmp getShieldReturn
+
+omniShieldHook:
+  jmp getShield
+  nop
+getShieldReturn:
+
+//
+// getHealth: Grabs the player's health and sets pHealth to it.
+//
+getHealth:
+
+getHealthCode:
+  cmp ecx,192E22C             // This is the "magic number" for when it is the player's health being read.
+  jne getHealthOriginalCode
+  mov [pHealth],eax
+getHealthOriginalCode:
+  movss [eax],xmm0
+  pop ecx
+  jmp getHealthReturn
+
+omniHealthHook+01:
+  jmp getHealth
+getHealthReturn:
+
+//
+// fuckDamage: Amplifies all damage to the player's shield and health by 5x.
+//
+fuckDamage:
+
+fuckDamageCode:
+  cmp edi,[pHealth]                 // EDI points to the health or shield being damaged.
+  je commitTheFucking               // So we only want to proceed if it belongs to the player.
+  cmp edi,[pShield]
+  je commitTheFucking
+  jmp fuckDamageOriginalCode
+commitTheFucking:
+  movss xmm0,[esp+10]               // The fucking shall occur. The damage to be applied is found at [ESP+10].
+  mulss xmm0,[fuckDamageMultiplier] // So after loading that value, we multiply it by our damage multiplier.
+  movss [esp+10],xmm0               // And now we just got fucked.
+fuckDamageOriginalCode:
+  movss xmm0,[edi]
+  subss xmm0,[esp+10]
+  jmp fuckDamageReturn
+
+omnifyDamageHook:
+  jmp fuckDamage
+  nop 5
+fuckDamageReturn:
+
+//
+// getCoords: Grabs the player's coordinates and sets pCoords to it.
+//
+getCoords:
+
+getCoordsCode:
+  mov [pCoords], ebx             // Amazingly, the code we're hooking into ONLY reads from
+  mov ecx,[ebx+04]               // the player's coordinates (most of the time we deal with
+  fmul dword ptr [esp+40]        // common functions that are not restricted to the player at all).
+  jmp getCoordsReturn
+
+omniCoordsHook:
+  jmp getCoords
+  nop 2
+getCoordsReturn:
+
+//
+// fuckXSpeed: Applies multiplicative and additive modifiers to non-player movement along the x-axis.
+//
+fuckXSpeed:
+
+fuckXSpeedCode:
+  movss xmm0,[esp+48]                // The movement differential is found at [ESP+48].
+  push esi
+  mov esi,[pCoords]                  // We want to make sure we only fuck with non-player speed.
+  add esi,-110                       // The EBX register points to a struct that encompasses the coordinates being updated by this code.
+  cmp ebx,esi                        // So we check if it is the player's by taking the player's coordinate address
+  pop esi                            // and subtracting an offset so we have the player's "encompassing struct" and then compare.
+  je fuckXSpeedReturn
+  mulss xmm0,[fuckSpeedMultiplier]   // Movement speed multiplied!
+  movss xmm1,[zero]                  // Next we're going to apply the additive modifier, but we only want to apply it
+  cmpss xmm1,xmm0,0                  // if there actually is a change in movement -- otherwise the NPC will move just
+  push esi                           // from rotating their camera. They will disappear into the sunset and never be seen
+  movd esi,xmm1                      // seen again.
+  test esi,esi
+  pop esi
+  jne fuckXSpeedReturn
+  movss xmm1,[zero]                  // Now that we know that there is some movement going on, we want to determine the "direction"
+  cmpss xmm1,xmm0,1                  // of the movement before applying the additive modifier -- in essence we want the modifier
+  push esi                           // being applied to have the same sign as differential. This is cuz we want to boost the movement
+  movd esi,xmm1                      // in that direction! We don't want to cancel it out. Failing to do this would force everything
+  test esi,esi                       // to move in only one direction.
+  pop esi
+  jne addPositiveX                   // If the differential is positive, we add the modifier to it. If negative, we subtract.
+  subss xmm0,[fuckSpeedAdditive]
+  jmp fuckXSpeedReturn
+addPositiveX:
+  addss xmm0,[fuckSpeedAdditive]
+  jmp fuckXSpeedReturn
+
+omnifyMoveXHook+01:
+  jmp fuckXSpeed
+  nop
+fuckXSpeedReturn:
+
+//
+// fuckYSpeed: Applies multiplicative and additive modifiers to non-player movement along the y-axis.
+//
+fuckYSpeed:
+
+fuckYSpeedCode:
+  movss xmm0,[esp+4C]                     // Refer to fuckXSpeed's documentation. The actions taken here are identical.
+  push esi
+  mov esi,[pCoords]
+  add esi,-110
+  cmp ebx,esi
+  pop esi
+  je fuckYSpeedReturn
+  mulss xmm0,[fuckSpeedMultiplier]
+  movss xmm1,[zero]
+  cmpss xmm1,xmm0,0
+  push esi
+  movd esi,xmm1
+  test esi,esi
+  pop esi
+  jne fuckYSpeedReturn
+  movss xmm1,[zero]
+  cmpss xmm1,xmm0,1
+  push esi
+  movd esi,xmm1
+  test esi,esi
+  pop esi
+  jne addPositiveY
+  subss xmm0,[fuckSpeedAdditive]
+  jmp fuckYSpeedReturn
+addPositiveY:
+  addss xmm0,[fuckSpeedAdditive]
+  jmp fuckYSpeedReturn
+
+omnifyMoveYHook+0C:
+  jmp fuckYSpeed
+  nop
+fuckYSpeedReturn:
+
+pShield:
+  dd 0
+
+pHealth:
+  dd 0
+
+pCoords:
+  dd 0
+
+fuckDamageMultiplier:
+  dd (float)5.0
+
+fuckSpeedMultiplier:
+  dd  (float)2.0
+
+fuckSpeedAdditive:                // The reason we use an additive modifier is because raising the multiplicative
+  dd (float)5.0                   // modifier over 2.0 risks the game becoming VERY unstable. Also, the additive modifier
+                                  // adds some lovely jankiness to the experience.
+zero:
+  dd 0
+
+[DISABLE]
+
+omniShieldHook:
+  db D9 00 8B 4C 24 04
+
+omniHealthHook+01:
+  db F3 0F 11 00 59
+
+omnifyDamageHook:
+  db F3 0F 10 07 F3 0F 5C 44 24 10
+
+omniCoordsHook:
+  db 8B 4B 04 D8 4C 24 40
+
+omnifyMoveXHook+01:
+  db F3 0F 10 44 24 48
+
+omnifyMoveYHook+0C:
+  db F3 0F 10 44 24 4C
+
+unregistersymbol(omniShieldHook)
+unregistersymbol(omniHealthHook)
+unregistersymbol(omniCoordsHook)
+
+unregistersymbol(omnifyDamageHook)
+unregistersymbol(omnifyMoveXHook)
+unregistersymbol(omnifyMoveYHook)
+
+unregistersymbol(fuckDamageMultiplier)
+unregistersymbol(pShield)
+unregistersymbol(pHealth)
+unregistersymbol(pCoords)
+
+dealloc(getShield)
+dealloc(getHealth)
+dealloc(fuckDamage)
+dealloc(getCoords)
+
+dealloc(fuckXSpeed)
+dealloc(fuckYSpeed)
+
+dealloc(fuckSpeedMultiplier)
+dealloc(fuckSpeedAdditive)
+dealloc(zero)
+
+dealloc(pShield)
+dealloc(pHealth)
+dealloc(pCoords)
+</AssemblerScript>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Toggle Activation</Action>
+          <Keys>
+            <Key>17</Key>
+            <Key>79</Key>
+          </Keys>
+          <ID>0</ID>
+        </Hotkey>
+      </Hotkeys>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>18</ID>
+          <Description>"Player's Health"</Description>
+          <VariableType>Float</VariableType>
+          <Address>pHealth</Address>
+          <Offsets>
+            <Offset>0</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>5</ID>
+          <Description>"Player's Shield"</Description>
+          <VariableType>Float</VariableType>
+          <Address>pShield</Address>
+          <Offsets>
+            <Offset>0</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>15</ID>
+          <Description>"Player's X Coord"</Description>
+          <VariableType>Float</VariableType>
+          <Address>pCoords</Address>
+          <Offsets>
+            <Offset>4</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>14</ID>
+          <Description>"Player's Y Coord"</Description>
+          <VariableType>Float</VariableType>
+          <Address>pCoords</Address>
+          <Offsets>
+            <Offset>0</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>16</ID>
+          <Description>"Player's Z Coord"</Description>
+          <VariableType>Float</VariableType>
+          <Address>pCoords</Address>
+          <Offsets>
+            <Offset>8</Offset>
+          </Offsets>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols/>
+</CheatTable>

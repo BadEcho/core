@@ -1,0 +1,1965 @@
+<!--
+    Omnified Borderlands 3
+    Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
+    Copyright 2022 Bad Echo LLC
+
+    Bad Echo Technologies are licensed under a
+    Creative Commons Attribution-NonCommercial 4.0 International License.
+
+    See accompanying file LICENSE.md or a copy at:
+    http://creativecommons.org/licenses/by-nc/4.0/
+-->
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="29">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>1</ID>
+      <Description>"OMNIFY"</Description>
+      <Options moHideChildren="1"/>
+      <LastState Activated="1"/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>// FIX GETCOORDS, SOMETIMES NOT ME
+// MAP OUT C rax player struct
+// ADD SANCTUARY SUPPORT FOR TEAMMATES
+[ENABLE]
+{$lua}
+function triggerTeleportToSecond()
+  writeInteger("teleportToSecondEnabled",1)
+end
+
+createHotkey(triggerTeleportToSecond, VK_NUMPAD4)
+
+function triggerTeleportToFirst()
+  writeInteger("teleportToFirstEnabled",1)
+end
+
+createHotkey(triggerTeleportToFirst, VK_NUMPAD5)
+
+disableGangbangTimer = createTimer(getMainForm())
+disableGangbangTimer.Interval = 5000
+disableGangbangTimer.Enabled = false
+disableGangbangTimer.OnTimer = function()
+  writeInteger("gangbangEnabled",0)
+  disableGangbangTimer.Enabled = false
+  gangbangTimer.Enabled = true
+end
+
+gangbangTimer = createTimer(getMainForm())
+gangbangTimer.Interval = 1000
+gangbangTimer.OnTimer = function()
+   if readInteger("gangbangEnabled") == 1 then
+     gangbangTimer.Enabled = false
+     disableGangbangTimer.Enabled = true
+   end
+end
+
+function ActivateLoggers()
+  if loggersTimer == nil then
+    loggersTimer = createTimer(getMainForm())
+  end
+
+  loggersTimer.Interval = 200
+  loggersTimer.OnTimer = function()
+    local file = assert(io.open("stats.txt", "w"))
+
+    local omniBulletCount = readInteger("bulletCount")
+
+    if omniBulletCount ~= nil then
+      file:write("Omni Shots Fired: ", omniBulletCount, "\n")
+    end
+
+    local omniDistance = readInteger("playerFitbit")
+    local inkyDistance = readInteger("secondPlayerFitbit")
+
+    if omniDistance ~= nil then
+      file:write("Omni Fitbit: ", math.floor(omniDistance * 0.04), "\n")
+    end
+
+    if inkyDistance ~= nil then
+      file:write("Inky Fitbit: ", math.floor(inkyDistance * 0.04), "\n")
+    end
+
+    file:close()
+  end
+
+  loggersTimer.Enabled = true
+end
+
+{$asm}
+luacall(ActivateLoggers())
+aobscanmodule(omniPlayerHook,Borderlands3.exe,8B 01 39 42 10 75) // should be unique
+aobscanmodule(omniMoneyHook,Borderlands3.exe,49 3B C8 74 12 48 39 51) // should be unique
+aobscanmodule(omniCoordsHook,Borderlands3.exe,0F 10 89 20 02 00 00 48 8D 44 24 78) // should be unique
+aobscanmodule(omniTeammateCoordsHook,Borderlands3.exe,70 48 8B 88 68 01 00 00 48 85 C9 74 23 0F 10 89 20 02 00 00) // should be unique
+aobscanmodule(omniStatsHook,Borderlands3.exe,8B 80 D8 01 00 00 89 86) // should be unique
+aobscanmodule(omniBackpackHook,Borderlands3.exe,8B 83 C8 05 00 00 F3) // should be unique
+aobscanmodule(omniPetCoordsHook,Borderlands3.exe,0F 10 90 20 02 00 00 0F 28 CA F3 0F 11 54 24 20) // should be unique
+aobscanmodule(omniEquippedWeaponHook,Borderlands3.exe,48 8B 03 0F 5B F6 FF 90 18) // should be unique
+aobscanmodule(omniMaxAmmoHook,Borderlands3.exe,89 18 C6 40 04 01) // should be unique broke
+aobscanmodule(omniGoldenKeysHook,Borderlands3.exe,74 F8 8B 40 08) // should be unique
+aobscanmodule(omniVehicleHealthHook,Borderlands3.exe,F3 0F 10 89 A0 00 00 00 F3 0F 10) // should be unique
+aobscanmodule(omniVehicleBoostHook,Borderlands3.exe,F3 0F 10 93 A0 00 00 00 F3) // should be unique
+aobscanmodule(omniReviveTimerHook,Borderlands3.exe,F3 0F 10 83 A0 00 00 00 0F 2F C2) // should be unique
+aobscanmodule(omniBulletCountHook,Borderlands3.exe,89 BB C0 01 00 00 48 8B 7C) // should be unique
+aobscanmodule(omnifyDamageHook,Borderlands3.exe,F3 0F 5C F1 EB 04) // should be unique
+aobscanmodule(omnifySpeedHook,Borderlands3.exe,F3 0F 58 36 F3 0F 58 46 04) // should be unique
+aobscanmodule(omnifyLoseEridiumHook,Borderlands3.exe,89 4A 18 48 8D 54 24 48) // should be unique
+aobscanmodule(omnifyVehicleBoostHook,Borderlands3.exe,F3 0F 11 83 A0 00 00 00 77) // should be unique
+aobscanmodule(omnifyTimersHook,Borderlands3.exe,F3 0F 11 83 A0 00 00 00 48) // should be unique
+aobscanmodule(omnifyNoKeysHook,Borderlands3.exe,89 50 08 44 39 C2) // should be unique
+
+alloc(getPlayer,$1000,omniPlayerHook)
+alloc(getCoords,$1000,omniCoordsHook)
+alloc(getTeammateCoords,$1000,omniTeammateCoordsHook)
+alloc(getMoney,$1000,omniMoneyHook)
+alloc(getStats,$1000,omniStatsHook)
+alloc(getBackpack,$1000,omniBackpackHook)
+alloc(getPetCoords,$1000,omniPetCoordsHook)
+alloc(getEquippedWeapon,$1000,omniEquippedWeaponHook)
+alloc(getMaxAmmo,$1000,omniMaxAmmoHook)
+alloc(getGoldenKeys,$1000,omniGoldenKeysHook)
+alloc(getVehicleHealth,$1000,omniVehicleHealthHook)
+alloc(getVehicleBoost,$1000,omniVehicleBoostHook)
+alloc(getReviveTimer,$1000,omniReviveTimerHook)
+alloc(getBulletCount,$1000,omniBulletCountHook)
+
+alloc(fuckPlayerUp,$1000,omnifyDamageHook)
+alloc(fuckSpeedUp,$1000,omnifySpeedHook)
+alloc(fuckEridiumUp,$1000,omnifyLoseEridiumHook)
+alloc(pumpBoostUp,$1000,omnifyVehicleBoostHook)
+alloc(fuckTimersUp,$1000,omnifyTimersHook)
+alloc(stealGoldenChest,$1000,omnifyNoKeysHook)
+
+alloc(zero,8)
+alloc(healthDamageMultiplier,8)
+alloc(shieldDamageMultiplier,8)
+alloc(vehicleDamageMultiplier,8)
+alloc(playerDamageMultiplier,8)
+alloc(enemySpeedMultiplier,8)
+alloc(playerSpeedMultiplier,8)
+alloc(zSpeedMultiplier,8)
+alloc(beautyWidth,8)
+alloc(beautyHeight,8)
+alloc(playerWidth,8)
+alloc(playerHeight,8)
+alloc(playerFfylTime,8)
+alloc(playerReviveTime,8)
+alloc(permanentBoost,8)
+alloc(bulletCount,8)
+
+alloc(pPlayerHealth,8)
+alloc(pPlayerHealthType,8)
+alloc(pPlayerFfyl,8)
+alloc(pPlayerRevive,8)
+alloc(pPlayerShield,8)
+alloc(pPetRespawn,8)
+alloc(pSecondPlayerHealth,8)
+alloc(pSecondPlayerShield,8)
+alloc(pVehicleHealth,8)
+alloc(pVehicleBoost,8)
+alloc(pCoords,8)
+alloc(pSecondCoords,8)
+alloc(pMoney,8)
+alloc(pEridium,8)
+alloc(pGoldenKeys,8)
+alloc(pStats,8)
+alloc(pPetCoords,8)
+alloc(pBackpack,8)
+alloc(pMaxPistolAmmo,8)
+alloc(pMaxSMGAmmo,8)
+alloc(pMaxAssaultAmmo,8)
+alloc(pMaxShotgunAmmo,8)
+alloc(pMaxRocketAmmo,8)
+alloc(pMaxGrenadesAmmo,8)
+alloc(pMaxSniperAmmo,8)
+alloc(pEquippedWeapon,8)
+
+alloc(playerFitbit,8)
+alloc(secondPlayerFitbit,8)
+
+alloc(gangbangRandom,8)
+alloc(gangbangLowerBound,8)
+alloc(gangbangUpperBound,8)
+alloc(gangbangEnabled,8)
+
+alloc(teleportToFirstEnabled,1)
+alloc(teleportToSecondEnabled,1)
+
+// Reverse engineered hooks.
+registersymbol(omniPlayerHook)
+registersymbol(omniMoneyHook)
+registersymbol(omniCoordsHook)
+registersymbol(omniTeammateCoordsHook)
+registersymbol(omniGoldenKeysHook)
+registersymbol(omniStatsHook)
+registersymbol(omniBackpackHook)
+registersymbol(omniPetCoordsHook)
+registersymbol(omniMaxAmmoHook)
+registersymbol(omniEquippedWeaponHook)
+registersymbol(omniVehicleHealthHook)
+registersymbol(omniVehicleBoostHook)
+registersymbol(omniReviveTimerHook)
+registersymbol(omniBulletCountHook)
+
+// Omnification hooks.
+registersymbol(omnifyDamageHook)
+registersymbol(omnifySpeedHook)
+registersymbol(omnifyLoseEridiumHook)
+registersymbol(omnifyVehicleBoostHook)
+registersymbol(omnifyTimersHook)
+registersymbol(omnifyNoKeysHook)
+registersymbol(shieldDamageMultiplier)
+registersymbol(healthDamageMultiplier)
+registersymbol(vehicleDamageMultiplier)
+registersymbol(playerDamageMultiplier)
+registersymbol(enemySpeedMultiplier)
+registersymbol(playerSpeedMultiplier)
+registersymbol(beautyHeight)
+registersymbol(beautyWidth)
+registersymbol(playerHeight)
+registersymbol(playerWidth)
+registersymbol(playerReviveTime)
+registersymbol(playerFfylTime)
+
+// Game data.
+registersymbol(pPlayerHealth)
+registersymbol(pPlayerHealthType)
+registersymbol(pPlayerFfyl)
+registersymbol(pPlayerRevive)
+registersymbol(pPlayerShield)
+registersymbol(pPetRespawn)
+registersymbol(pSecondPlayerHealth)
+registersymbol(pSecondPlayerShield)
+registersymbol(pVehicleHealth)
+registersymbol(pVehicleBoost)
+registersymbol(pMoney)
+registersymbol(pEridium)
+registersymbol(pCoords)
+registersymbol(pSecondCoords)
+registersymbol(pGoldenKeys)
+registersymbol(pMaxPistolAmmo)
+registersymbol(pMaxSMGAmmo)
+registersymbol(pMaxAssaultAmmo)
+registersymbol(pMaxShotgunAmmo)
+registersymbol(pMaxRocketAmmo)
+registersymbol(pMaxGrenadesAmmo)
+registersymbol(pMaxSniperAmmo)
+registersymbol(pStats)
+registersymbol(pPetCoords)
+registersymbol(pBackpack)
+registersymbol(pEquippedWeapon)
+
+registersymbol(playerFitbit)
+registersymbol(secondPlayerFitbit)
+registersymbol(bulletCount)
+
+registersymbol(gangbangRandom)
+registersymbol(gangbangUpperBound)
+registersymbol(gangbangLowerBound)
+
+registersymbol(teleportToFirstEnabled)
+registersymbol(teleportToSecondEnabled)getSecondPlayerHealth
+
+//
+// getPlayer: Grabs the player structures.
+//            Health: x+A0
+//
+//            rax == 1: health
+//            rax == 2: shield   only player when rbx has value
+//            rax == A: unknown
+//            rax == B: unknown
+//            rax == C: unknown (sniper max located at F0)
+//            rax == E: unknown
+//            rax == D: unknown
+//            rax == F: unkown
+//            rax == 10: unknwon
+//            rax == 11: unknown
+//            rax == 12: unkonwn
+//0000000286CC5678  R13==0x1 and RAX==0x1 and RBP==0x2
+getPlayer:
+  cmp rbx,0
+  je getPlayerOriginalCode
+  cmp r13,1
+  je getPlayerOrTeammate
+  cmp r13,38
+  jne getPlayerOriginalCode
+  cmp rax,1
+  je getPlayerHealth
+  cmp rax,2
+  je getPlayerShield
+  jmp getPlayerOriginalCode
+getPlayerOrTeammate:
+  cmp rbp,1c
+  jne getTeammate
+  cmp rax,b
+  je getPetRespawn
+  jmp getPlayerOriginalCode
+getPetRespawn:
+  push rbx
+  mov rbx,pPetRespawn
+  mov [rbx],rcx
+  pop rbx
+  jmp getPlayerOriginalCode
+getTeammate:
+  cmp rbp,2
+  je getSecondPlayer
+  jmp getPlayerOriginalCode
+getSecondPlayer:
+  cmp rax,1
+  je getSecondPlayerHealth
+  cmp rax,2
+  je getSecondPlayerShield
+  jmp getPlayerOriginalCode
+getSecondPlayerHealth:
+  push rbx
+  push rdx
+  mov rbx,[rcx+8]
+  mov rdx,pPlayerHealthType
+  cmp rbx,[rdx]
+  pop rdx
+  pop rbx
+  jne getPlayerOriginalCode
+  push rbx
+  mov rbx,pSecondPlayerHealth
+  mov [rbx],rcx
+  pop rbx
+  jmp getPlayerOriginalCode
+getSecondPlayerShield:
+  push rbx
+  mov rbx,pSecondPlayerShield
+  mov [rbx],rcx
+  pop rbx
+  jmp getPlayerOriginalCode
+getPlayerHealth:
+  push rbx
+  push rcx
+  push rdx
+  mov rbx,pPlayerHealth
+  mov [rbx],rcx
+  mov rbx,[rcx+8]
+  mov rdx,pPlayerHealthType
+  mov [rdx],rbx
+  pop rdx
+  pop rcx
+  pop rbx
+  push rbx
+  push rcx
+  mov rbx,pPlayerFfyl
+  add rcx,C98
+  mov [rbx],rcx
+  pop rcx
+  pop rbx
+  jmp getPlayerOriginalCode
+getPlayerShield:
+  push rbx
+  mov rbx,pPlayerShield
+  mov [rbx],rcx
+  pop rbx
+  jmp getPlayerOriginalCode
+getPlayerOriginalCode:
+  mov eax,[rcx]
+  cmp [rdx+10],eax
+  jmp getPlayerReturn
+
+omniPlayerHook:
+  jmp getPlayer
+getPlayerReturn:
+
+//
+// getMoney: Grabs the player's money.
+//
+getMoney:
+  cmp [rcx+10],rdx
+  jne getMoneyOriginalCode
+  push rax
+  mov rax,pMoney
+  mov [rax],rcx
+  add [rax],18
+  pop rax
+  push rax
+  mov rax,pEridium
+  mov [rax],rcx
+  add [rax],58
+  pop rax
+getMoneyOriginalCode:
+  cmp rcx,r8
+  je Borderlands3.exe+2EE7E55
+  jmp getMoneyReturn
+
+omniMoneyHook:
+  jmp getMoney
+getMoneyReturn:
+
+//
+// getCoords: Grabs the player's location structure.
+//               X: x+220
+//               Y: x+224
+//               Z: x+228
+//               Player: rbx == 0x0
+//
+getCoords:
+  pushf
+  cmp rbx,100
+  jg getCoordsOriginalCode
+//  cmp rbx,2
+//  je getPlayerCoords
+//  cmp rbx,4
+//  je getPlayerCoords
+//  cmp rbx,5
+//  je getPlayerCoords
+//  cmp rbx,6
+//  je getPlayerCoords
+//  cmp rbx,3
+//  jne getCoordsOriginalCode
+getPlayerCoords:
+  push rax
+  mov rax,pCoords
+  mov [rax],rcx
+  pop rax
+getCoordsOriginalCode:
+  movups xmm1,[rcx+00000220]
+teleportToFirst:
+  push rdx
+  mov rdx,teleportToFirstEnabled
+  cmp [rdx],1
+  pop rdx
+  jne teleportToSecond
+  push rdx
+  mov rdx,teleportToFirstEnabled
+  mov [rdx],0
+  pop rdx
+  push rax
+  push rbx
+  push rcx
+  push rdx
+  sub rsp,16
+  movdqu [rsp],xmm13
+  mov rax,pSecondCoords
+  mov rbx,pCoords
+  mov rcx,[rax]
+  mov rdx,[rbx]
+  movdqu xmm13,[rdx+220]
+  movdqu [rcx+220],xmm13
+  movdqu xmm13,[rsp]
+  add rsp,16
+  pop rdx
+  pop rcx
+  pop rbx
+  pop rax
+  jmp getCoordsExit
+teleportToSecond:
+  push rdx
+  mov rdx,teleportToSecondEnabled
+  cmp [rdx],1
+  pop rdx
+  jne getCoordsExit
+  push rdx
+  mov rdx,teleportToSecondEnabled
+  mov [rdx],0
+  pop rdx
+  push rax
+  push rbx
+  push rcx
+  push rdx
+  sub rsp,16
+  movdqu [rsp],xmm13
+  mov rax,pCoords
+  mov rbx,pSecondCoords
+  mov rcx,[rax]
+  mov rdx,[rbx]
+  movdqu xmm13,[rdx+220]
+  movdqu [rcx+220],xmm13
+  movdqu xmm13,[rsp]
+  add rsp,16
+  pop rdx
+  pop rcx
+  pop rbx
+  pop rax
+getCoordsExit:
+  popf
+  jmp getCoordsReturn
+
+omniCoordsHook:
+  jmp getCoords
+  nop 2
+getCoordsReturn:
+
+//
+// getPetCoords: Grabs the player's pet's location structure.
+//               X: x+220
+//               Y: x+224
+//               Z: x+228
+//
+getPetCoords:
+  pushf
+  mov [pPetCoords],rax
+getPetCoordsOriginalCode:
+  movups xmm2,[rax+00000220]
+getPetCoordsExit:
+  popf
+  jmp getPetCoordsReturn
+
+omniPetCoordsHook:
+  jmp getPetCoords
+  nop 2
+getPetCoordsReturn:
+
+//
+// getTeammateCoords
+getTeammateCoords:
+  pushf
+  cmp r12,1
+  jne getTeammateCoordsOriginalCode
+  push rax
+  mov rax,pSecondCoords
+  mov [rax],rcx
+  pop rax
+getTeammateCoordsOriginalCode:
+  movups xmm1,[rcx+00000220]
+getTeammateCoordsExit:
+  popf
+  jmp getTeammateCoordsReturn
+
+omniTeammateCoordsHook+0D:
+  jmp getTeammateCoords
+  nop 2
+getTeammateCoordsReturn:
+
+//
+// getStats: Grabs the player's statistics structure.
+//           Current XP: x+1d8
+//
+getStats:
+  pushf
+  push rbx
+  mov rbx,pStats
+  mov [rbx],rax
+  pop rbx
+  mov eax,[rax+000001D8]
+getStatsExit:
+  popf
+  jmp getStatsReturn
+
+omniStatsHook:
+  jmp getStats
+  nop
+getStatsReturn:
+
+//
+// getBackpack: Grabs the player's backpack structure.
+//              Grenades: x+5C8
+//
+getBackpack:
+  pushf
+  push rax
+  mov rax,pBackpack
+  mov [rax],rbx
+  pop rax
+  mov eax,[rbx+000005C8]
+getBackpackExit:
+  popf
+  jmp getBackpackReturn
+
+omniBackpackHook:
+  jmp getBackpack
+  nop
+getBackpackReturn:
+
+//
+// getEquippedWeapon: Grabs the player's currently equipped weapon structure.
+//
+//
+getEquippedWeapon:
+  pushf
+  push rcx
+  mov rcx,pEquippedWeapon
+  mov [rcx],rbx
+  pop rcx
+  mov rax,[rbx]
+  cvtdq2ps xmm6,xmm6
+getEquippedWeaponExit:
+  popf
+  jmp getEquippedWeaponReturn
+
+omniEquippedWeaponHook:
+  jmp getEquippedWeapon
+  nop
+getEquippedWeaponReturn:
+
+//
+// getGoldenKeys: What u think?
+//
+getGoldenKeys:
+  pushf
+  push rbx
+  mov rbx,pGoldenKeys
+  mov [rbx],rax
+  add [rbx],8
+  pop rbx
+  popf
+  je Borderlands3.exe+1452A3F6
+  mov eax,[rax+08]
+  jmp getGoldenKeysReturn
+
+omniGoldenKeysHook:
+  jmp getGoldenKeys
+getGoldenKeysReturn:
+
+//
+// getMaxAmmo: Grabs all the player's max ammo counts.
+//
+getMaxAmmo:
+  pushf
+  push rbx
+  cmp r12,0
+  je getPistolMaxAmmo
+  cmp r12,1
+  je getSMGMaxAmmo
+  cmp r12,2
+  je getAssaultMaxAmmo
+  cmp r12,3
+  je getShotgunMaxAmmo
+  cmp r12,4
+  je getRocketMaxAmmo
+  cmp r12,5
+  je getSniperMaxAmmo
+  cmp r12,6
+  je getGrenadesMaxAmmo
+  jmp getMaxAmmoOriginalCode
+getPistolMaxAmmo:
+  mov rbx,pMaxPistolAmmo
+  jmp saveMaxAmmo
+getSMGMaxAmmo:
+  mov rbx,pMaxSMGAmmo
+  jmp saveMaxAmmo
+getAssaultMaxAmmo:
+  mov rbx,pMaxAssaultAmmo
+  jmp saveMaxAmmo
+getShotgunMaxAmmo:
+  mov rbx,pMaxShotgunAmmo
+  jmp saveMaxAmmo
+getRocketMaxAmmo:
+  mov rbx,pMaxRocketAmmo
+  jmp saveMaxAmmo
+getSniperMaxAmmo:
+  mov rbx,pMaxSniperAmmo
+  jmp saveMaxAmmo
+getGrenadesMaxAmmo:
+  mov rbx,pMaxGrenadesAmmo
+saveMaxAmmo:
+  mov [rbx],rax
+getMaxAmmoOriginalCode:
+  pop rbx
+  mov [rax],ebx
+  mov byte ptr [rax+04],01
+  popf
+  jmp getMaxAmmoReturn
+
+omniMaxAmmoHook:
+  jmp getMaxAmmo
+  nop
+getMaxAmmoReturn:
+
+//
+// getVehicleHealth: Gets the health for the vehicle the player is driving.
+//
+getVehicleHealth:
+  push rax
+  mov rax,pVehicleHealth
+  mov [rax],rcx
+  pop rax
+  movss xmm1,[rcx+000000A0]
+  jmp getVehicleHealthReturn
+
+omniVehicleHealthHook:
+  jmp getVehicleHealth
+  nop 3
+getVehicleHealthReturn:
+
+//
+// getVehicleBoost: Locates zeeeee boost meter for the vehicle. Bitch.
+//
+getVehicleBoost:
+  pushf
+  cmp rdi,1
+  jne getVehicleBoostOriginalCode
+  push rax
+  sub rsp,16
+  movdqu [esp],xmm0
+  sub rsp,16
+  movdqu [esp],xmm1
+  movss xmm0,[rbx+AC]
+  movss xmm1,[permanentBoost]
+  cmpss xmm0,xmm1,0
+  movd eax,xmm0
+  movdqu xmm1,[esp]
+  add rsp,16
+  movdqu xmm0,[esp]
+  add rsp,16
+  test eax,eax
+  pop rax
+  je getVehicleBoostOriginalCode
+  push rax
+  mov rax,pVehicleBoost
+  mov [rax],rbx
+  pop rax
+getVehicleBoostOriginalCode:
+  popf
+  movss xmm2,[rbx+000000A0]
+  jmp getVehicleBoostReturn
+
+omniVehicleBoostHook:
+  jmp getVehicleBoost
+  nop 3
+getVehicleBoostReturn:
+
+//
+// getReviveTimer: Gets the timer for how long it takes to get the player up during FFYL.
+//
+getReviveTimer:
+  pushf
+  cmp r8,15
+  jne getReviveTimerOriginalCode
+  push rax
+  mov rax,pPlayerRevive
+  mov [rax],rbx
+  pop rax
+getReviveTimerOriginalCode:
+  popf
+  movss xmm0,[rbx+000000A0]
+  jmp getReviveTimerReturn
+
+omniReviveTimerHook:
+  jmp getReviveTimer
+  nop 3
+getReviveTimerReturn:
+
+//
+// getBulletCount: Maintains count of total bullets fired.
+//
+getBulletCount:
+  pushf
+  push rax
+  mov rax,pEquippedWeapon
+  cmp [rax],rbx
+  pop rax
+  jne getBulletCountOriginalCode
+  push rax
+  mov eax,[bulletCount]
+  inc eax
+  mov [bulletCount],eax
+  pop rax
+getBulletCountOriginalCode:
+  popf
+  mov [rbx+000001C0],edi
+  jmp getBulletCountReturn
+
+omniBulletCountHook:
+  jmp getBulletCount
+  nop
+getBulletCountReturn:
+
+//
+// fuckPlayerUp: One punch shields bitch!
+//
+fuckPlayerUp:
+  pushf
+  cmp rcx,[pPlayerShield]
+  je fuckShieldUp
+  cmp rcx,[pPlayerHealth]
+  je fuckHealthUp
+  cmp rcx,[pSecondPlayerShield]
+  je fuckShieldUp
+  cmp rcx,[pSecondPlayerHealth]
+  je fuckHealthUp
+  cmp rcx,[pVehicleHealth]
+  je fuckVehicleUp
+  jmp fuckEnemiesUp
+fuckHealthUp:
+  mulss xmm1,[healthDamageMultiplier]
+  jmp damageEntity
+fuckShieldUp:
+  mulss xmm1,[shieldDamageMultiplier]
+  jmp damageEntity
+fuckVehicleUp:
+  mulss xmm1,[vehicleDamageMultiplier]
+  jmp damageEntity
+fuckEnemiesUp:
+  mulss xmm1,[playerDamageMultiplier]
+damageEntity:
+  subss xmm6,xmm1
+  popf
+  jmp Borderlands3.exe+2C02376
+
+omnifyDamageHook:
+  jmp fuckPlayerUp
+  nop
+fuckPlayerUpReturn:
+
+//
+// fuckSpeedUp: Boosts the movement of enemies and (optionally) the player.
+//
+//              Updated coords: xmm12
+//              Original coords: [rdi+220]
+fuckSpeedUp:
+  pushf
+  cmp r14,1
+  jne applyChange
+  cmp [pCoords],0
+  je applyChange
+  sub rsp,16
+  movdqu [rsp],xmm13
+  sub rsp,16
+  movdqu [rsp],xmm14
+  sub rsp,16
+  movdqu [esp],xmm15
+  movdqu xmm13,[rsi]
+  cmp rdi,[pCoords]
+  je updateFirstPlayerFitbit
+  cmp rdi,[pSecondCoords]
+  je updateSecondPlayerFitbit
+  cmp rdi,[pPetCoords]
+  je applyPlayerMultiplier
+applyEnemyMultiplier:
+  sub rsp,16
+  movdqu [rsp],xmm3
+  movss xmm3,[beautyWidth]
+  movss [rdi+208],xmm3
+  movss xmm3,[beautyHeight]
+  movss [rdi+20C],xmm3
+  movdqu xmm3,[rsp]
+  add rsp,16
+  movss xmm14,[enemySpeedMultiplier]
+  jmp updateChange
+updateFirstPlayerFitbit:
+  inc [playerFitbit]
+  jmp applyPlayerMultiplier
+updateSecondPlayerFitbit:
+  inc [secondPlayerFitbit]
+applyPlayerMultiplier:
+  sub rsp,16
+  movdqu [rsp],xmm3
+  movss xmm3,[playerWidth]
+  movss [rdi+208],xmm3
+  movss xmm3,[playerHeight]
+  movss [rdi+20C],xmm3
+  movdqu xmm3,[rsp]
+  add rsp,16
+  cmp rdi,[pPetCoords]
+  je updatePlayerChange
+catchAGangbang:
+  push rax
+  push rbx
+  push rcx
+  push rdx
+  push rdi
+  mov rdi,[gangbangRandom]
+  cmp rdi,0
+  pop rdi
+  je initializeSeed
+  call msvcrt.rand
+  jmp nextRandomNumber
+initializeSeed:
+  call kernel32.GetTickCount
+  call msvcrt.srand
+nextRandomNumber:
+  xor edx,edx
+  mov ebx,[gangbangLowerBound]
+  mov ecx,[gangbangUpperBound]
+  cmp ecx,ebx
+  cmovl ecx,ebx
+  inc ecx
+  sub ecx,ebx
+  idiv ecx
+  add edx,ebx
+  mov [gangbangRandom],edx
+  pop rdx
+  pop rcx
+  pop rbx
+  pop rax
+updatePlayerChange:
+  movss xmm14,[playerSpeedMultiplier]
+updateChange:
+  shufps xmm14,xmm14,00
+  movss xmm15,[zSpeedMultiplier]
+  shufps xmm15,xmm15,00
+  shufps xmm14,xmm15,00
+  mulps xmm13,xmm14
+  movdqu [rsi],xmm13
+  movdqu xmm15,[rsp]
+  add rsp,16
+  movdqu xmm14,[rsp]
+  add rsp,16
+  movdqu xmm13,[rsp]
+  add rsp,16
+  jmp applyChange
+applyChange:
+  addss xmm6,[rsi]
+  addss xmm0,[rsi+04]
+fuckUpSpeedExit:
+  popf
+  jmp fuckSpeedUpReturn
+
+omnifySpeedHook:
+  jmp fuckSpeedUp
+  nop 4
+fuckSpeedUpReturn:
+
+//
+// fuckEridiumUp: Lose Eridium when you die! Don't Die!
+//
+fuckEridiumUp:
+  mov [rdx+18],ecx
+  push eax
+  mov eax,[rdx+58]
+  sub eax,A
+  mov [rdx+58],eax
+  pop eax
+  lea rdx,[rsp+48]
+  jmp fuckEridiumUpReturn
+
+omnifyLoseEridiumHook:
+  jmp fuckEridiumUp
+  nop 3
+fuckEridiumUpReturn:
+
+//
+// pumpBoostUp: Gimme dat infinite vehicle boost baby!
+//
+pumpBoostUp:
+  pushf
+  cmp rbx,[pVehicleBoost]
+  jne pumpBoostUpOriginalCode
+  movss xmm0,[permanentBoost]
+pumpBoostUpOriginalCode:
+  popf
+  movss [rbx+000000A0],xmm0
+  jmp pumpBoostUpReturn
+
+omnifyVehicleBoostHook:
+  jmp pumpBoostUp
+  nop 3
+pumpBoostUpReturn:
+
+//
+// fuckTimersUp: Halves the player's FFYL and revive timers.
+//
+fuckTimersUp:
+  pushf
+  cmp rbx,[pPlayerFfyl]
+  je fuckFfylTimerUp
+  cmp rbx,[pPlayerRevive]
+  je fuckReviveTimerUp
+  jmp fuckTimersUpOriginalCode
+fuckFfylTimerUp:
+  movss xmm0,[playerFfylTime]
+  jmp fuckTimersUpOriginalCode
+fuckReviveTimerUp:
+  movss xmm0,[playerReviveTime]
+fuckTimersUpOriginalCode:
+  popf
+  movss [rbx+000000A0],xmm0
+  jmp fuckTimersUpReturn
+
+omnifyTimersHook:
+  jmp fuckTimersUp
+  nop 3
+fuckTimersUpReturn:
+
+//
+// stealGoldenChest: Makes the Golden Chest cost 0 keys.
+//
+stealGoldenChest:
+  pushf
+  cmp [rax+08],0
+  je stealGoldenChestOriginalCode
+  jmp stealGoldenChestExit
+stealGoldenChestOriginalCode:
+  mov [rax+08],edx
+stealGoldenChestExit:
+  popf
+  cmp edx,r8d
+  jmp stealGoldenChestReturn
+
+omnifyNoKeysHook:
+  jmp stealGoldenChest
+  nop
+stealGoldenChestReturn:
+
+pPlayerHealth:
+  dd 0
+
+pPlayerHealthType:
+  dd 0
+
+pPlayerFfyl:
+  dd 0
+
+pPlayerRevive:
+  dd 0
+
+pPlayerShield:
+  dd 0
+
+pPetRespawn:
+  dd 0
+
+pSecondPlayerHealth:
+  dd 0
+
+pSecondPlayerShield:
+  dd 0
+
+pVehicleHealth:
+  dd 0
+
+pVehicleBoost:
+  dd 0
+
+pMoney:
+  dd 0
+
+pEridium:
+  dd 0
+
+pCoords:
+  dd 0
+
+pStats:
+  dd 0
+
+pBackpack:
+  dd 0
+
+pMaxPistolAmmo:
+  dd 0
+
+pMaxSMGAmmo:
+  dd 0
+
+pMaxAssaultAmmo:
+  dd 0
+
+pMaxShotgunAmmo:
+  dd 0
+
+pMaxRocketAmmo:
+  dd 0
+
+pMaxGrenadesAmmo:
+  dd 0
+
+pMaxSniperAmmo:
+  dd 0
+
+pPetCoords:
+  dd 0
+
+pEquippedWeapon:
+  dd 0
+
+zero:
+  dd 0
+
+healthDamageMultiplier:
+  dd (float)69.0
+
+shieldDamageMultiplier:
+  dd (float)10.0
+
+vehicleDamageMultiplier:
+  dd (float)42.0
+
+playerDamageMultiplier:
+  dd (float)1.0
+
+enemySpeedMultiplier:
+  dd (float)1.45
+
+playerSpeedMultiplier:
+  dd (float)1.0
+
+zSpeedMultiplier:
+  dd (float)1.0
+
+beautyWidth:
+  dd (float)5.0
+
+beautyHeight:
+  dd (float)3.0
+
+playerWidth:
+  dd (float)1.0
+
+playerHeight:
+  dd (float)1.0
+
+playerReviveTime:
+  dd (float)2.0
+
+playerFfylTime:
+  dd (float)6.0
+
+permanentBoost:
+  dd (float)100.0
+
+playerFitbit:
+  dd 0
+
+secondPlayerFitbit:
+  dd 0
+
+bulletCount:
+  dd 0
+
+gangbangRandom:
+  dd 0
+
+gangbangLowerBound:
+  dd 1
+
+gangbangUpperBound:
+  dd 2710
+
+teleportToFirstEnabled:
+  db 0
+
+teleportToSecondEnabled:
+  db 0
+
+[DISABLE]
+{$lua}
+gangbangTimer.Enabled = false
+
+{$asm}
+
+omniPlayerHook:
+  db 8B 01 39 42 10
+
+omniMoneyHook:
+  db 49 3B C8 74 12
+
+omniCoordsHook:
+  db 0F 10 89 20 02 00 00
+
+omniTeammateCoordsHook+0D:
+  db 0F 10 89 20 02 00 00
+
+omniStatsHook:
+  db 8B 80 D8 01 00 00
+
+omniBackpackHook:
+  db 8B 83 C8 05 00 00
+
+omniPetCoordsHook:
+  db 0F 10 90 20 02 00 00
+
+omniEquippedWeaponHook:
+  db 48 8B 03 0F 5B F6
+
+omniGoldenKeysHook:
+  db 74 F8 8B 40 08
+
+omniMaxAmmoHook:
+  db 89 18 C6 40 04 01
+
+omniVehicleHealthHook:
+  db F3 0F 10 89 A0 00 00 00
+
+omniVehicleBoostHook:
+  db F3 0F 10 93 A0 00 00 00
+
+omniReviveTimerHook:
+  db F3 0F 10 83 A0 00 00 00
+
+omniBulletCountHook:
+  db 89 BB C0 01 00 00
+
+omnifyDamageHook:
+  db F3 0F 5C F1 EB 04
+
+omnifySpeedHook:
+  db F3 0F 58 36 F3 0F 58 46 04
+
+omnifyLoseEridiumHook:
+  db 89 4A 18 48 8D 54 24 48
+
+omnifyVehicleBoostHook:
+  db F3 0F 11 83 A0 00 00 00
+
+omnifyTimersHook:
+  db F3 0F 11 83 A0 00 00 00
+
+omnifyNoKeysHook:
+  db 89 50 08 44 39 C2
+
+unregistersymbol(omniPlayerHook)
+unregistersymbol(omniMoneyHook)
+unregistersymbol(omniCoordsHook)
+unregistersymbol(omniTeammateCoordsHook)
+unregistersymbol(omniStatsHook)
+unregistersymbol(omniBackpackHook)
+unregistersymbol(omniPetCoordsHook)
+unregistersymbol(omniEquippedWeaponHook)
+unregistersymbol(omniMaxAmmoHook)
+unregistersymbol(omniGoldenKeysHook)
+unregistersymbol(omniVehicleHealthHook)
+unregistersymbol(omniVehicleBoostHook)
+unregistersymbol(omniReviveTimerHook)
+unregistersymbol(omniBulletCountHook)
+
+unregistersymbol(omnifyDamageHook)
+unregistersymbol(omnifySpeedHook)
+unregistersymbol(omnifyLoseEridiumHook)
+unregistersymbol(omnifyVehicleBoostHook)
+unregistersymbol(omnifyTimersHook)
+unregistersymbol(omnifyNoKeysHook)
+unregistersymbol(healthDamageMultiplier)
+unregistersymbol(shieldDamageMultiplier)
+unregistersymbol(vehicleDamageMultiplier)
+unregistersymbol(playerDamageMultiplier)
+unregistersymbol(enemySpeedMultiplier)
+unregistersymbol(playerSpeedMultiplier)
+unregistersymbol(beautyHeight)
+unregistersymbol(beautyWidth)
+unregistersymbol(playerWidth)
+unregistersymbol(playerHeight)
+unregistersymbol(playerReviveTime)
+unregistersymbol(playerFfylTime)
+unregistersymbol(bulletCount)
+
+unregistersymbol(playerFitbit)
+unregistersymbol(secondPlayerFitbit)
+
+unregistersymbol(gangbangRandom)
+unregistersymbol(gangbangLowerBound)
+unregistersymbol(gangbangUpperBound)
+
+unregistersymbol(pPlayerHealth)
+unregistersymbol(pPlayerHealthType)
+unregistersymbol(pPlayerFfyl)
+unregistersymbol(pPlayerRevive)
+unregistersymbol(pPlayerShield)
+unregistersymbol(pPetRespawn)
+unregistersymbol(pSecondPlayerHealth)
+unregistersymbol(pSecondPlayerShield)
+unregistersymbol(pVehicleHealth)
+unregistersymbol(pVehicleBoost)
+unregistersymbol(pMoney)
+unregistersymbol(pEridium)
+unregistersymbol(pCoords)
+unregistersymbol(pStats)
+unregistersymbol(pPetCoords)
+unregistersymbol(pBackpack)
+unregistersymbol(pEquippedWeapon)
+unregistersymbol(pGoldenKeys)
+unregistersymbol(pMaxPistolAmmo)
+unregistersymbol(pMaxSMGAmmo)
+unregistersymbol(pMaxAssaultAmmo)
+unregistersymbol(pMaxShotgunAmmo)
+unregistersymbol(pMaxRocketAmmo)
+unregistersymbol(pMaxGrenadesAmmo)
+unregistersymbol(pMaxSniperAmmo)
+
+unregistersymbol(teleportToFirstEnabled)
+unregistersymbol(teleportToSecondEnabled)
+
+dealloc(pPlayerHealth)
+dealloc(pPlayerHealthType)
+dealloc(pPlayerFfyl)
+dealloc(pPlayerRevive)
+dealloc(pPlayerShield)
+dealloc(pPetRespawn)
+dealloc(pSecondPlayerHealth)
+dealloc(pSecondPlayerShield)
+dealloc(pVehicleHealth)
+dealloc(pVehicleBoost)
+dealloc(pMoney)
+dealloc(pEridium)
+dealloc(pCoords)
+dealloc(pStats)
+dealloc(pPetCoords)
+dealloc(pBackpack)
+dealloc(pEquippedWeapon)
+dealloc(pGoldenKeys)
+dealloc(pMaxPistolAmmo)
+dealloc(pMaxSMGAmmo)
+dealloc(pMaxAssaultAmmo)
+dealloc(pMaxShotgunAmmo)
+dealloc(pMaxRocketAmmo)
+dealloc(pMaxGrenadesAmmo)
+dealloc(pMaxSniperAmmo)
+
+dealloc(zero)
+dealloc(healthDamageMultiplier)
+dealloc(shieldDamageMultiplier)
+dealloc(vehicleDamageMultiplier)
+dealloc(playerDamageMultiplier)
+dealloc(enemySpeedMultiplier)
+dealloc(playerSpeedMultiplier)
+dealloc(zSpeedMultiplier)
+dealloc(beautyHeight)
+dealloc(beautyWidth)
+dealloc(playerWidth)
+dealloc(playerHeight)
+dealloc(playerReviveTime)
+dealloc(playerFfylTime)
+dealloc(permanentBoost)
+dealloc(bulletCount)
+
+dealloc(playerFitbit)
+dealloc(secondPlayerFitbit)
+
+dealloc(gangbangRandom)
+dealloc(gangbangUpperBound)
+dealloc(gangbangLowerBound)
+dealloc(gangbangEnabled)
+
+dealloc(getPlayer)
+dealloc(getMoney)
+dealloc(getCoords)
+dealloc(getTeammateCoords)
+dealloc(getStats)
+dealloc(getBackpack)
+dealloc(getPetCoords)
+dealloc(getEquippedWeapon)
+dealloc(getGoldenKeys)
+dealloc(getMaxAmmo)
+dealloc(getVehicleHealth)
+dealloc(getVehicleBoost)
+dealloc(getReviveTimer)
+dealloc(getBulletCount)
+
+dealloc(fuckPlayerUp)
+dealloc(fuckSpeedUp)
+dealloc(fuckEridiumUp)
+dealloc(pumpBoostUp)
+dealloc(stealGoldenChest)
+
+dealloc(teleportToFirstEnabled)
+dealloc(teleportToSecondEnabled)
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>2</ID>
+          <Description>"Player"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" Activated="1" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>303</ID>
+              <Description>"Damage Multiplier"</Description>
+              <LastState Value="1" RealAddress="173281020"/>
+              <VariableType>Float</VariableType>
+              <Address>playerDamageMultiplier</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>268</ID>
+              <Description>"Speed Multiplier"</Description>
+              <LastState Value="1" RealAddress="173281030"/>
+              <VariableType>Float</VariableType>
+              <Address>playerSpeedMultiplier</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>389</ID>
+              <Description>"Bullet Count"</Description>
+              <LastState Value="12003" RealAddress="173281078"/>
+              <VariableType>4 Bytes</VariableType>
+              <Address>bulletCount</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>326</ID>
+              <Description>"Stats"</Description>
+              <Options moHideChildren="1"/>
+              <LastState Value="" RealAddress="00000000"/>
+              <GroupHeader>1</GroupHeader>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>141</ID>
+                  <Description>"Current XP"</Description>
+                  <LastState Value="4949890" RealAddress="1FDEB6F98"/>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>pStats</Address>
+                  <Offsets>
+                    <Offset>1d8</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>322</ID>
+                  <Description>"Width"</Description>
+                  <LastState Value="1" RealAddress="19554CA78"/>
+                  <VariableType>Float</VariableType>
+                  <Address>pCoords</Address>
+                  <Offsets>
+                    <Offset>208</Offset>
+                  </Offsets>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>233</ID>
+              <Description>"Vitals"</Description>
+              <Options moHideChildren="1"/>
+              <LastState Value="" RealAddress="00000000"/>
+              <GroupHeader>1</GroupHeader>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>387</ID>
+                  <Description>"Starting Time to Die"</Description>
+                  <LastState Value="6" RealAddress="173281060"/>
+                  <VariableType>Float</VariableType>
+                  <Address>playerFfylTime</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>384</ID>
+                  <Description>"Time to Die"</Description>
+                  <LastState Value="0" RealAddress="B77DE390"/>
+                  <VariableType>Float</VariableType>
+                  <Address>pPlayerFfyl</Address>
+                  <Offsets>
+                    <Offset>A0</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>388</ID>
+                  <Description>"Starting Time to Revive"</Description>
+                  <LastState Value="2" RealAddress="173281068"/>
+                  <VariableType>Float</VariableType>
+                  <Address>playerReviveTime</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>386</ID>
+                  <Description>"Time to Revive"</Description>
+                  <LastState Value="0" RealAddress="B77DEA58"/>
+                  <VariableType>Float</VariableType>
+                  <Address>pPlayerRevive</Address>
+                  <Offsets>
+                    <Offset>A0</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>235</ID>
+                  <Description>"Shield"</Description>
+                  <Options moHideChildren="1"/>
+                  <LastState Value="" RealAddress="00000000"/>
+                  <GroupHeader>1</GroupHeader>
+                  <CheatEntries>
+                    <CheatEntry>
+                      <ID>257</ID>
+                      <Description>"Damage Multiplier"</Description>
+                      <LastState Value="10" RealAddress="173281010"/>
+                      <VariableType>Float</VariableType>
+                      <Address>shieldDamageMultiplier</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>140</ID>
+                      <Description>"Current"</Description>
+                      <LastState Value="50608.1875" RealAddress="B77DD7F0"/>
+                      <VariableType>Float</VariableType>
+                      <Address>pPlayerShield</Address>
+                      <Offsets>
+                        <Offset>A0</Offset>
+                      </Offsets>
+                      <CheatEntries>
+                        <CheatEntry>
+                          <ID>139</ID>
+                          <Description>"Max"</Description>
+                          <LastState Value="50608.1875" RealAddress="B77DD7FC"/>
+                          <VariableType>Float</VariableType>
+                          <Address>pPlayerShield</Address>
+                          <Offsets>
+                            <Offset>AC</Offset>
+                          </Offsets>
+                        </CheatEntry>
+                      </CheatEntries>
+                    </CheatEntry>
+                  </CheatEntries>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>234</ID>
+                  <Description>"Health"</Description>
+                  <Options moHideChildren="1"/>
+                  <LastState Value="" RealAddress="00000000"/>
+                  <GroupHeader>1</GroupHeader>
+                  <CheatEntries>
+                    <CheatEntry>
+                      <ID>265</ID>
+                      <Description>"Damage Multiplier"</Description>
+                      <LastState Value="69" RealAddress="173281008"/>
+                      <VariableType>Float</VariableType>
+                      <Address>healthDamageMultiplier</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>330</ID>
+                      <Description>"Current"</Description>
+                      <LastState Value="1" RealAddress="B77DD6F8"/>
+                      <VariableType>Float</VariableType>
+                      <Address>pPlayerHealth</Address>
+                      <Offsets>
+                        <Offset>A0</Offset>
+                      </Offsets>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>138</ID>
+                      <Description>"Max"</Description>
+                      <LastState Value="1" RealAddress="B77DD704"/>
+                      <VariableType>Float</VariableType>
+                      <Address>pPlayerHealth</Address>
+                      <Offsets>
+                        <Offset>AC</Offset>
+                      </Offsets>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>352</ID>
+                      <Description>"Type"</Description>
+                      <LastState Value="1165530432" RealAddress="1B64C0A00"/>
+                      <VariableType>4 Bytes</VariableType>
+                      <Address>pPlayerHealthType</Address>
+                      <Offsets>
+                        <Offset>0</Offset>
+                      </Offsets>
+                    </CheatEntry>
+                  </CheatEntries>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>350</ID>
+              <Description>"Vehicle"</Description>
+              <Options moHideChildren="1"/>
+              <LastState Value="" Activated="1" RealAddress="00000000"/>
+              <GroupHeader>1</GroupHeader>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>349</ID>
+                  <Description>"Health"</Description>
+                  <LastState Value="1" RealAddress="B77DD6F8"/>
+                  <VariableType>Float</VariableType>
+                  <Address>pVehicleHealth</Address>
+                  <Offsets>
+                    <Offset>A0</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>363</ID>
+                  <Description>"Boost"</Description>
+                  <LastState Value="0.1058203056" RealAddress="4BB442C0"/>
+                  <VariableType>Float</VariableType>
+                  <Address>pVehicleBoost</Address>
+                  <Offsets>
+                    <Offset>A0</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>351</ID>
+                  <Description>"Damage Multiplier"</Description>
+                  <LastState Value="42" RealAddress="173281018"/>
+                  <VariableType>Float</VariableType>
+                  <Address>vehicleDamageMultiplier</Address>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>236</ID>
+              <Description>"Inventory"</Description>
+              <Options moHideChildren="1"/>
+              <LastState Value="" Activated="1" RealAddress="00000000"/>
+              <GroupHeader>1</GroupHeader>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>340</ID>
+                  <Description>"Max Ammo"</Description>
+                  <Options moHideChildren="1"/>
+                  <LastState Value="" RealAddress="00000000"/>
+                  <GroupHeader>1</GroupHeader>
+                  <CheatEntries>
+                    <CheatEntry>
+                      <ID>341</ID>
+                      <Description>"Pistol"</Description>
+                      <LastState Value="1000" RealAddress="1BA74644"/>
+                      <VariableType>4 Bytes</VariableType>
+                      <Address>pMaxPistolAmmo</Address>
+                      <Offsets>
+                        <Offset>0</Offset>
+                      </Offsets>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>342</ID>
+                      <Description>"SMG"</Description>
+                      <LastState Value="1800" RealAddress="1BA73244"/>
+                      <VariableType>4 Bytes</VariableType>
+                      <Address>pMaxSMGAmmo</Address>
+                      <Offsets>
+                        <Offset>0</Offset>
+                      </Offsets>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>343</ID>
+                      <Description>"Assault"</Description>
+                      <LastState Value="1400" RealAddress="1FE732844"/>
+                      <VariableType>4 Bytes</VariableType>
+                      <Address>pMaxAssaultAmmo</Address>
+                      <Offsets>
+                        <Offset>0</Offset>
+                      </Offsets>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>344</ID>
+                      <Description>"Shotgun"</Description>
+                      <LastState Value="240" RealAddress="1FE739B44"/>
+                      <VariableType>4 Bytes</VariableType>
+                      <Address>pMaxShotgunAmmo</Address>
+                      <Offsets>
+                        <Offset>0</Offset>
+                      </Offsets>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>345</ID>
+                      <Description>"Rocket"</Description>
+                      <LastState Value="36" RealAddress="4AC7F544"/>
+                      <VariableType>4 Bytes</VariableType>
+                      <Address>pMaxRocketAmmo</Address>
+                      <Offsets>
+                        <Offset>0</Offset>
+                      </Offsets>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>305</ID>
+                      <Description>"Sniper"</Description>
+                      <LastState Value="144" RealAddress="4AC798C4"/>
+                      <VariableType>4 Bytes</VariableType>
+                      <Address>pMaxSniperAmmo</Address>
+                      <Offsets>
+                        <Offset>0</Offset>
+                      </Offsets>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>346</ID>
+                      <Description>"Grenades"</Description>
+                      <LastState Value="11" RealAddress="4AC76944"/>
+                      <VariableType>4 Bytes</VariableType>
+                      <Address>pMaxGrenadesAmmo</Address>
+                      <Offsets>
+                        <Offset>0</Offset>
+                      </Offsets>
+                    </CheatEntry>
+                  </CheatEntries>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>264</ID>
+                  <Description>"Golden Keys"</Description>
+                  <LastState Value="22" RealAddress="1A614CD88"/>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>pGoldenKeys</Address>
+                  <Offsets>
+                    <Offset>0</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>243</ID>
+                  <Description>"Equipped Weapon"</Description>
+                  <Options moHideChildren="1"/>
+                  <LastState Value="" Activated="1" RealAddress="00000000"/>
+                  <GroupHeader>1</GroupHeader>
+                  <CheatEntries>
+                    <CheatEntry>
+                      <ID>247</ID>
+                      <Description>"Damage"</Description>
+                      <LastState Value="69" RealAddress="2943034B0"/>
+                      <VariableType>4 Bytes</VariableType>
+                      <Address>pEquippedWeapon</Address>
+                      <Offsets>
+                        <Offset>1b0</Offset>
+                      </Offsets>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>245</ID>
+                      <Description>"Magazine Size"</Description>
+                      <LastState Value="25" RealAddress="2943034B4"/>
+                      <VariableType>4 Bytes</VariableType>
+                      <Address>pEquippedWeapon</Address>
+                      <Offsets>
+                        <Offset>1b4</Offset>
+                      </Offsets>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>246</ID>
+                      <Description>"Loaded Ammo"</Description>
+                      <LastState Value="25" RealAddress="2943034C0"/>
+                      <VariableType>4 Bytes</VariableType>
+                      <Address>pEquippedWeapon</Address>
+                      <Offsets>
+                        <Offset>1c0</Offset>
+                      </Offsets>
+                    </CheatEntry>
+                  </CheatEntries>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>238</ID>
+                  <Description>"Grenades"</Description>
+                  <LastState Value="11" RealAddress="1AA61CE38"/>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>pBackpack</Address>
+                  <Offsets>
+                    <Offset>5c8</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>339</ID>
+                  <Description>"Eridium"</Description>
+                  <LastState Value="8" RealAddress="4CA2CD58"/>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>pEridium</Address>
+                  <Offsets>
+                    <Offset>0</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>7</ID>
+                  <Description>"Money"</Description>
+                  <LastState Value="14458213" RealAddress="4CA2CD18"/>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>pMoney</Address>
+                  <Offsets>
+                    <Offset>0</Offset>
+                  </Offsets>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>237</ID>
+              <Description>"Location"</Description>
+              <Options moHideChildren="1"/>
+              <LastState Value="" Activated="1" RealAddress="00000000"/>
+              <GroupHeader>1</GroupHeader>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>367</ID>
+                  <Description>"Number of Steps"</Description>
+                  <LastState Value="1276886" RealAddress="173281150"/>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>playerFitbit</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>131</ID>
+                  <Description>"X"</Description>
+                  <LastState Value="-28932.63867" RealAddress="19554CA90"/>
+                  <VariableType>Float</VariableType>
+                  <Address>pCoords</Address>
+                  <Offsets>
+                    <Offset>220</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>132</ID>
+                  <Description>"Y"</Description>
+                  <LastState Value="-18918.92578" RealAddress="19554CA94"/>
+                  <VariableType>Float</VariableType>
+                  <Address>pCoords</Address>
+                  <Offsets>
+                    <Offset>224</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>133</ID>
+                  <Description>"Z"</Description>
+                  <LastState Value="7187.945312" RealAddress="19554CA98"/>
+                  <VariableType>Float</VariableType>
+                  <Address>pCoords</Address>
+                  <Offsets>
+                    <Offset>228</Offset>
+                  </Offsets>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>254</ID>
+          <Description>"Second Player"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" Activated="1" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>368</ID>
+              <Description>"Number of Steps"</Description>
+              <LastState Value="894670" RealAddress="173281158"/>
+              <VariableType>4 Bytes</VariableType>
+              <Address>secondPlayerFitbit</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>290</ID>
+              <Description>"X"</Description>
+              <LastState Value="-29380.39062" RealAddress="1894EFA30"/>
+              <VariableType>Float</VariableType>
+              <Address>pSecondCoords</Address>
+              <Offsets>
+                <Offset>220</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>301</ID>
+              <Description>"Y"</Description>
+              <LastState Value="-18566.96484" RealAddress="1894EFA34"/>
+              <VariableType>Float</VariableType>
+              <Address>pSecondCoords</Address>
+              <Offsets>
+                <Offset>224</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>302</ID>
+              <Description>"Z"</Description>
+              <LastState Value="7169.835938" RealAddress="1894EFA38"/>
+              <VariableType>Float</VariableType>
+              <Address>pSecondCoords</Address>
+              <Offsets>
+                <Offset>228</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>256</ID>
+              <Description>"Shield"</Description>
+              <LastState Value="19507.88086" RealAddress="21BB29800"/>
+              <VariableType>Float</VariableType>
+              <Address>pSecondPlayerShield</Address>
+              <Offsets>
+                <Offset>A0</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>255</ID>
+              <Description>"Health"</Description>
+              <LastState Value="11689.86816" RealAddress="21BB29708"/>
+              <VariableType>Float</VariableType>
+              <Address>pSecondPlayerHealth</Address>
+              <Offsets>
+                <Offset>A0</Offset>
+              </Offsets>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>228</ID>
+          <Description>"Pet"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>262</ID>
+              <Description>"Spawn Timer"</Description>
+              <LastState Value="60" RealAddress="B77DE0A8"/>
+              <VariableType>Float</VariableType>
+              <Address>pPetRespawn</Address>
+              <Offsets>
+                <Offset>A0</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>263</ID>
+              <Description>"Time to Spawn"</Description>
+              <LastState Value="60" RealAddress="B77DE028"/>
+              <VariableType>Float</VariableType>
+              <Address>pPetRespawn</Address>
+              <Offsets>
+                <Offset>20</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>229</ID>
+              <Description>"X"</Description>
+              <LastState Value="-29490.33594" RealAddress="18CEF33C0"/>
+              <VariableType>Float</VariableType>
+              <Address>pPetCoords</Address>
+              <Offsets>
+                <Offset>220</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>230</ID>
+              <Description>"Y"</Description>
+              <LastState Value="-18708.16016" RealAddress="18CEF33C4"/>
+              <VariableType>Float</VariableType>
+              <Address>pPetCoords</Address>
+              <Offsets>
+                <Offset>224</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>231</ID>
+              <Description>"Z"</Description>
+              <LastState Value="7136.560059" RealAddress="18CEF33C8"/>
+              <VariableType>Float</VariableType>
+              <Address>pPetCoords</Address>
+              <Offsets>
+                <Offset>228</Offset>
+              </Offsets>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>267</ID>
+          <Description>"Enemy"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" Activated="1" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>328</ID>
+              <Description>"Width"</Description>
+              <LastState Value="1" RealAddress="173281040"/>
+              <VariableType>Float</VariableType>
+              <Address>beautyWidth</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>327</ID>
+              <Description>"Height"</Description>
+              <LastState Value="1" RealAddress="173281048"/>
+              <VariableType>Float</VariableType>
+              <Address>beautyHeight</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>266</ID>
+              <Description>"Speed Multiplier"</Description>
+              <LastState Value="1.450000048" RealAddress="173281028"/>
+              <VariableType>Float</VariableType>
+              <Address>enemySpeedMultiplier</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>390</ID>
+      <Description>"No description"</Description>
+      <LastState Value="2" RealAddress="52508D14"/>
+      <VariableType>4 Bytes</VariableType>
+      <Address>52508D14</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>391</ID>
+      <Description>"No description"</Description>
+      <LastState Value="0" RealAddress="2787BA540"/>
+      <VariableType>4 Bytes</VariableType>
+      <Address>2787BA540</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>392</ID>
+      <Description>"No description"</Description>
+      <LastState Value="0" RealAddress="2787BA5B8"/>
+      <VariableType>4 Bytes</VariableType>
+      <Address>2787BA5B8</Address>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols>
+    <SymbolEntry>
+      <Name>getNormalizedCoords</Name>
+      <Address>7FFD84E00000</Address>
+    </SymbolEntry>
+  </UserdefinedSymbols>
+  <LuaScript>getAutoAttachList().add("Borderlands3.exe")
+</LuaScript>
+</CheatTable>

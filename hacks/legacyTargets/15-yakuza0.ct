@@ -1,0 +1,1337 @@
+<!--
+    Omnified Yakuza 0
+    Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
+    Copyright 2022 Bad Echo LLC
+
+    Bad Echo Technologies are licensed under a
+    Creative Commons Attribution-NonCommercial 4.0 International License.
+
+    See accompanying file LICENSE.md or a copy at:
+    http://creativecommons.org/licenses/by-nc/4.0/
+-->
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="29">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>12</ID>
+      <Description>"OMNIFY"</Description>
+      <Options moHideChildren="1"/>
+      <LastState Activated="1"/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{
+  Omnified Yakuza 0	  
+}
+
+[ENABLE]
+{$lua}
+function ActivateLoggers()
+  if loggersTimer == nil then
+    loggersTimer = createTimer(getMainForm())
+  end
+
+  loggersTimer.Interval = 200
+  loggersTimer.OnTimer = function()
+    local stats = assert(io.open("stats.txt", "w"))
+
+    local currentHealth = readSmallInteger("[playerHealth]+0x16")
+    local maxHealth = readSmallInteger("[playerHealth]+0x18")
+
+    if currentHealth ~= nil and maxHealth ~= nil then
+      stats:write("Health: ", currentHealth, "/", maxHealth, "\n")
+    end
+
+    local lastEnemyCurrentHealth = readSmallInteger("[lastEnemyHealth]+0x16")
+    local lastEnemyMaxHealth = readSmallInteger("[lastEnemyHealth]+0x18")
+
+    if lastEnemyCurrentHealth ~= nil and lastEnemyMaxHealth ~= nil then
+      stats:write("Enemy: ", lastEnemyCurrentHealth, "/", lastEnemyMaxHealth, "\n")
+    end
+
+    local xCoords = readFloat("[playerCoords]+0x60")
+    local yCoords = readFloat("[playerCoords]+0x64")
+    local zCoords = readFloat("[playerCoords]+0x68")
+
+    if xCoords ~= nil then
+      stats:write("X: ", xCoords, "\n")
+    end
+
+    if yCoords ~= nil then
+      stats:write("Y: ", yCoords, "\n")
+    end
+
+    if zCoords ~= nil then
+      stats:write("Z: ", zCoords, "\n")
+    end
+
+    local maxDamageToPlayer = readInteger("maxDamageToPlayer")
+    local lastDamageToPlayer = readInteger("lastDamageToPlayer")
+    local maxDamageByPlayer = readInteger("maxDamageByPlayer")
+    local lastDamageByPlayer = readInteger("lastDamageByPlayer")
+
+    if maxDamageToPlayer ~= nil then
+      stats:write("Max Damage To Player: ", maxDamageToPlayer, "\n")
+    end
+
+    if lastDamageToPlayer ~= nil then
+      stats:write("Last Damage To Player: ", lastDamageToPlayer, "\n")
+    end
+
+    if maxDamageByPlayer ~= nil then
+      stats:write("Max Damage By Player: ", maxDamageByPlayer, "\n")
+    end
+
+    if lastDamageByPlayer ~= nil then
+      stats:write("Last Damage By Player: ", lastDamageByPlayer, "\n")
+    end
+
+    stats:close()
+
+    local log = assert(io.open("log.txt", "a"))
+
+    local logApocalypse = readInteger("logApocalypse")
+    local apocalypseResult = readInteger("apocalypseResult")
+    local riskOfMurderResult = readInteger("riskOfMurderResult")
+    local logEntryEnemyRoll = "Enemy rolls a "
+    local logEntryPlayerHealth = " damage to the player!\nPlayer now has "
+
+    if logApocalypse == 1 and apocalypseResult ~= nil
+                          and lastDamageToPlayer ~= nil
+                          and currentHealth ~= nil
+                          then
+      writeInteger("logApocalypse", 0)
+
+      if apocalypseResult &gt;= 1 and apocalypseResult &lt;=5 then
+        log:write(logEntryEnemyRoll,
+                  apocalypseResult,
+                  ": QUINTUPLE DAMAGE causing ",
+                  lastDamageToPlayer,
+                  logEntryPlayerHealth,
+                  currentHealth,
+                  " health.\n")
+      elseif apocalypseResult &gt;= 6 and apocalypseResult &lt;= 9 then
+        log:write(logEntryEnemyRoll,
+                  apocalypseResult,
+                  ": RISK OF MURDER!\n")
+        if riskOfMurderResult == 5 or riskOfMurderResult == 4 then
+          log:write(logEntryEnemyRoll,
+                    riskOfMurderResult,
+                    ": Player has been SIXTY NINED causing ",
+                    lastDamageToPlayer,
+                    logEntryPlayerHealth,
+                    currentHealth,
+                    " health.\n")
+        elseif riskOfMurderResult == 6 then
+          log:write(logEntryEnemyRoll,
+                    riskOfMurderResult,
+                    ": OOH! FUCK! FULL HEAT METER MOTHERFUCKER!\n")
+        else
+          log:write(logEntryEnemyRoll,
+                    riskOfMurderResult,
+                    ": OOOH! Lucky bitch. Got away with normal damage causing ",
+                    lastDamageToPlayer,
+                    logEntryPlayerHealth,
+                    currentHealth,
+                    " health.\n")
+        end
+      elseif apocalypseResult == 0xA then
+       log:write(logEntryEnemyRoll,
+                 apocalypseResult,
+                 ": Player achieves orgasm!\nPlayer is healed fully to ",
+                 currentHealth,
+                 " health.\n")
+	  elseif apocalypseResult == 0xB then
+        log:write(logEntryEnemyRoll,
+                  apocalypseResult,
+                  ": Player POLYMORPHED!\n")
+      end
+
+    end
+
+    local logKamehameha = readInteger("logKamehameha")
+    local gokuResult = readInteger("gokuResult")
+
+    if logKamehameha == 1 and gokuResult ~= nil then
+       writeInteger("logKamehameha", 0)
+       if gokuResult == 69 and lastDamageByPlayer ~= nil then
+         log:write("Player has unlocked his inner Goku and performs a devastating KAMEHAMEHAAAAAAAA attack causing ",
+                   lastDamageByPlayer,
+                   " damage!\n")
+       end
+    end
+
+    log:close()
+
+    loggersTimer.Enabled = true
+  end
+
+  loggersTimer.Enabled = true
+end
+
+{$asm}
+luacall(ActivateLoggers())
+
+// Random number generation function.
+// After r12-r14 pushes:
+// [rsp+20]: last random number, 0 if uninitialized
+// [rsp+28]: upper bounds
+// [rsp+30]: lower bounds
+// return value is in EAX
+alloc(generateRandomNumber,$1000)
+
+registersymbol(generateRandomNumber)
+
+generateRandomNumber:
+  push r12
+  push r13
+  push r14
+  mov r12,[rsp+20]
+  mov r13,[rsp+28]
+  mov r14,[rsp+30]
+  push rbx
+  push rcx
+  push rdx
+  push r8
+  push r10
+  push r11
+  cmp r12,0
+  jne getRandomNumber
+initializeSeed:
+  call kernel32.GetTickCount
+  push eax
+  call msvcrt.srand
+  pop eax
+getRandomNumber:
+  call msvcrt.rand
+  xor edx,edx
+  mov ebx,r14
+  mov ecx,r13
+  cmp ecx,ebx
+  cmovl ecx,ebx
+  inc ecx
+  sub ecx,ebx
+  idiv ecx
+  add edx,ebx
+  mov eax,edx
+  pop r11
+  pop r10
+  pop r8
+  pop rdx
+  pop rcx
+  pop rbx
+  pop r14
+  pop r13
+  pop r12
+  ret 18
+
+// Background audio game loop.
+define(backgroundAudio,"Yakuza0.exe"+42708D)
+
+registersymbol(backgroundAudio)
+
+backgroundAudio:
+  call Yakuza0.exe+BE2B20
+  
+// Gets the player's health.
+define(omniPlayerHealthHook,"Yakuza0.exe"+F0017)
+
+assert(omniPlayerHealthHook,0F B7 40 16 66 44 0F 6E C0)
+alloc(getPlayerHealth,$1000,omniPlayerHealthHook)
+alloc(playerHealth,8)
+
+registersymbol(omniPlayerHealthHook)
+registersymbol(playerHealth)
+
+getPlayerHealth:
+  push rbx
+  mov rbx,playerHealth
+  mov [rbx],rax
+  pop rbx
+getPlayerHealthOriginalCode:
+  movzx eax, word ptr[rax+16]
+  movd xmm8,eax
+  jmp getPlayerHealthReturn
+
+
+omniPlayerHealthHook:
+  jmp getPlayerHealth
+  nop 4
+getPlayerHealthReturn:
+
+playerHealth:
+  dd 0
+
+// Gets the player's coordinates and makes Kiryu fat.
+define(omniPlayerCoordsHook,"Yakuza0.exe"+572840)
+
+assert(omniPlayerCoordsHook, 0F 28 41 60 48 8B C2)
+alloc(getPlayerCoords,$1000, omniPlayerCoordsHook)
+alloc(playerCoords,8)
+alloc(chunKiryuXScale,8)
+alloc(chunKiryuYScale,8)
+alloc(chunKiryuZScale,8)
+alloc(beautifulNpcXScale,8)
+alloc(beautifulNpcYScale,8)
+alloc(beautifulNpcZScale,8)
+alloc(badJunOdaY,8)
+
+registersymbol(omniPlayerCoordsHook)
+registersymbol(playerCoords)
+registersymbol(chunKiryuXScale)
+registersymbol(chunKiryuYScale)
+registersymbol(chunKiryuZScale)
+registersymbol(beautifulNpcXScale)
+registersymbol(beautifulNpcYScale)
+registersymbol(beautifulNpcZScale)
+
+getPlayerCoords:
+  pushf
+  push rax
+  mov rax,playerCoords
+  cmp [rax],rcx
+  pop rax
+  je updatePlayerCoords
+  cmp rbx,0x14EE10
+  je updatePlayerCoords
+  cmp rdx,0x14F840
+  je checkDancingPlayer
+  cmp rbx,0x14F9E0  // NPC
+  je checkForPlayerOrNpc
+  cmp rbx,0x14F850
+  je updateNpcCoords
+  jmp getPlayerCoordsOriginalCode
+checkForPlayerOrNpc:
+  cmp r12,0
+  jne updateNpcCoords
+  cmp r10,0
+  jne updateNpcCoords
+  jmp updatePlayerCoords
+checkDancingPlayer:
+  cmp rsi,0x0
+  jne getPlayerCoordsOriginalCode
+  cmp rdi,0x0
+  je getPlayerCoordsOriginalCode
+  jmp updatePlayerCoords
+updateNpcCoords:
+  sub rsp,16
+  movdqu [rsp],xmm0
+  movss xmm0,[beautifulNpcXScale]
+  movss [rcx+20],xmm0
+  movss xmm0,[beautifulNpcYScale]
+  movss [rcx+34],xmm0
+  movss xmm0,[beautifulNpcZScale]
+  movss [rcx+48],xmm0
+  movdqu xmm0,[rsp]
+  add rsp,16
+  jmp getPlayerCoordsOriginalCode
+updatePlayerCoords:
+  push rax
+  mov rax,playerCoords
+  mov [rax],rcx  
+  pop rax
+  // Chunkify Kiryu.
+  sub rsp,16
+  movdqu [rsp],xmm0
+  movss xmm0,[chunKiryuXScale]
+  movss [rcx+20],xmm0
+  movss xmm0,[chunKiryuYScale]
+  movss [rcx+34],xmm0
+  movss xmm0,[chunKiryuZScale]
+  movss [rcx+48],xmm0
+  // Correct bad Jun Oda spawn.
+  movss xmm0,[rcx+64]
+  cmpss xmm0,[badJunOdaY],1
+  push rax
+  movd eax,xmm0
+  test eax,eax
+  pop rax
+  je updatePlayerCoordsExit
+  xorps xmm0,xmm0
+  movss [rcx+60],xmm0
+  movss [rcx+64],xmm0
+  movss [rcx+68],xmm0
+updatePlayerCoordsExit:
+  movdqu xmm0,[rsp]
+  add rsp,16
+getPlayerCoordsOriginalCode:
+  popf
+  movaps xmm0,[rcx+60]
+  mov rax,rdx
+  jmp getPlayerCoordsReturn
+
+
+omniPlayerCoordsHook:
+  jmp getPlayerCoords
+  nop 2
+getPlayerCoordsReturn:
+
+chunKiryuXScale:
+  dd (float)4.5
+  
+chunKiryuYScale:
+  dd (float)0.9
+
+chunKiryuZScale:
+  dd (float)1.0
+
+beautifulNpcXScale:
+  dd (float)3.0
+
+beautifulNpcYScale:
+  dd (float)1.5
+
+beautifulNpcZScale:
+  dd (float)1.5
+
+badJunOdaY:
+  dd (float)-199.0
+
+
+// Gets the player's Heat Meter.
+define(omniHeatMeterHook,"Yakuza0.exe"+2DE8AA)
+
+assert(omniHeatMeterHook, F3 0F 11 70 1C)
+alloc(getHeatMeter,$1000, omniHeatMeterHook)
+alloc(heatMeter,8)
+
+registersymbol(omniHeatMeterHook)
+registersymbol(heatMeter)
+
+getHeatMeter:
+  push rbx
+  mov rbx,heatMeter
+  mov [rbx],rax
+  pop rbx
+getHeatMeterOriginalCode:
+  movss [rax+1C],xmm6
+  jmp getHeatMeterReturn
+
+
+omniHeatMeterHook:
+  jmp getHeatMeter
+getHeatMeterReturn:
+
+
+// Omni's Yakuza Apocalypse System
+define(omnifyDamageHook,"Yakuza0.exe"+31CE2E)
+
+assert(omnifyDamageHook, 41 2B C2 3B C1)
+alloc(fuckUpDamage,$1000, omnifyDamageHook)
+alloc(apocalypseResult,8)
+alloc(apocalypseResultUpper,8)
+alloc(apocalypseResultLower,8)
+alloc(riskOfMurderResult,8)
+alloc(riskOfMurderResultUpper,8)
+alloc(riskOfMurderResultLower,8)
+alloc(playerGodMode,8)
+alloc(playerDamageX,8)
+alloc(logApocalypse,8)
+alloc(logKamehameha,8)
+alloc(gokuResult,8)
+alloc(gokuResultUpper,8)
+alloc(gokuResultLower,8)
+alloc(scaleDefault,8)
+alloc(polyDivisor,8)
+alloc(polyXScaleResult,8)
+alloc(polyXScaleResultUpper,8)
+alloc(polyXScaleResultLower,8)
+alloc(polyYScaleResult,8)
+alloc(polyYScaleResultUpper,8)
+alloc(polyYScaleResultLower,8)
+alloc(polyZScaleResult,8)
+alloc(polyZScaleResultUpper,8)
+alloc(polyZScaleResultLower,8)
+alloc(maxDamageToPlayer,8)
+alloc(lastDamageToPlayer,8)
+alloc(maxDamageByPlayer,8)
+alloc(lastDamageByPlayer,8)
+alloc(lastEnemyHealth,8)
+
+registersymbol(omnifyDamageHook)
+registersymbol(apocalypseResult)
+registersymbol(riskOfMurderResult)
+registersymbol(playerGodMode)
+registersymbol(playerDamageX)
+registersymbol(maxDamageToPlayer)
+registersymbol(lastDamageToPlayer)
+registersymbol(maxDamageByPlayer)
+registersymbol(lastDamageByPlayer)
+registersymbol(lastEnemyHealth)
+registersymbol(logApocalypse)
+registersymbol(logKamehameha)
+registersymbol(gokuResult)
+registersymbol(polyXScaleResult)
+registersymbol(polyYScaleResult)
+registersymbol(polyZScaleResult)
+
+fuckUpDamage:
+  pushf
+  push rax
+  mov rax,playerHealth
+  cmp r8,[rax]
+  pop rax
+  jne fuckEnemyUp
+  cmp [playerGodMode],1
+  jne applyApocalypse
+  mov r10,0
+  jmp fuckUpDamageOriginalCode  
+applyApocalypse:
+  mov [logApocalypse],1
+  push rax
+  push [apocalypseResultLower]
+  push [apocalypseResultUpper]
+  push [apocalypseResult]
+  call generateRandomNumber
+  mov [apocalypseResult],eax
+  cmp eax,5
+  jle qpKiryu
+  cmp eax,9
+  jle riskOfMurder
+  cmp eax,0xB
+  je polymorph
+  jmp gasmKiryu
+qpKiryu:
+  push rdx
+  mov eax,r10
+  mov edx,5
+  mul edx
+  mov r10,eax
+  pop rdx
+  pop rax
+  jmp updateEnemyDamageStats
+riskOfMurder:
+  push [riskOfMurderResultLower]
+  push [riskOfMurderResultUpper]
+  push [riskOfMurderResult]
+  call generateRandomNumber
+  mov [riskOfMurderResult],eax
+  cmp eax,4,
+  je sixtyNineKiryu
+  cmp eax,5
+  je sixtyNineKiryu
+  cmp eax,6
+  je fillHeatMeter
+  pop rax
+  jmp updateEnemyDamageStats  
+sixtyNineKiryu:
+  push rdx
+  mov eax,r10
+  mov edx,#69
+  mul edx
+  mov r10,eax
+  pop rdx
+  pop rax
+  jmp updateEnemyDamageStats
+fillHeatMeter:
+  mov eax,0x469F
+  push rbx
+  mov rbx,[heatMeter]
+  mov [rbx+1E],eax
+  pop rbx
+  pop rax
+ jmp fuckUpDamageOriginalCode
+polymorph:
+  sub rsp,16
+  movdqu [rsp],xmm0  
+  movss xmm0,[scaleDefault]
+  movss [chunKiryuXScale],xmm0
+  movss [chunKiryuYScale],xmm0
+  movss [chunKiryuZScale],xmm0
+  push [polyXScaleResultLower]
+  push [polyXScaleResultUpper]
+  push [polyXScaleResult]
+  call generateRandomNumber
+  mov [polyXScaleResult],eax  
+  cvtsi2ss xmm0,[polyXScaleResult]
+  divss xmm0,[polyDivisor]
+  mulss xmm0,[chunKiryuXScale]
+  movss [chunKiryuXScale],xmm0
+  push [polyYScaleResultLower]
+  push [polyYScaleResultUpper]
+  push [polyYScaleResult]
+  call generateRandomNumber
+  mov [polyYScaleResult],eax
+  cvtsi2ss xmm0,[polyYScaleResult]
+  divss xmm0,[polyDivisor]
+  mulss xmm0,[chunKiryuYScale]
+  movss [chunKiryuYScale],xmm0
+  push [polyZScaleResultLower]
+  push [polyZScaleResultUpper]
+  push [polyZScaleResult]
+  call generateRandomNumber
+  mov [polyZScaleResult],eax
+  cvtsi2ss xmm0,[polyZScaleResult]
+  divss xmm0,[polyDivisor]
+  mulss xmm0,[chunKiryuZScale]
+  movss [chunKiryuZScale],xmm0  
+  movdqu xmm0,[rsp]
+  add rsp,16
+  pop rax
+  jmp updateEnemyDamageStats
+gasmKiryu:
+  pop rax
+  mov r10,0
+  mov eax,[r8+18]
+  jmp fuckUpDamageOriginalCode
+updateEnemyDamageStats:
+  push rax
+  mov eax,[maxDamageToPlayer]
+  cmp eax,r10
+  pop rax
+  jge skipHighestEnemyDamageUpdate
+  mov [maxDamageToPlayer],r10  
+skipHighestEnemyDamageUpdate:
+  mov [lastDamageToPlayer],r10
+  jmp fuckUpDamageOriginalCode
+fuckEnemyUp:
+  push rax
+  mov rax,lastEnemyHealth
+  mov [rax],r8
+  push rdx
+  push [gokuResultLower]
+  push [gokuResultUpper]
+  push [gokuResult]
+  call generateRandomNumber
+  mov [gokuResult],eax
+  cmp eax,#69
+  jne applyPlayerDamage
+  mov [logKamehameha],1
+  mov eax,r10
+  mov edx,#10000
+  mul edx
+  mov r10,eax
+applyPlayerDamage:
+  mov eax,r10
+  mul [playerDamageX]
+  mov r10,eax
+  pop rdx
+updatePlayerDamageStats:
+  mov eax,[maxDamageByPlayer]
+  cmp eax,r10
+  pop rax
+  jge skipHighestPlayerDamageUpdate
+  mov [maxDamageByPlayer],r10
+skipHighestPlayerDamageUpdate:
+  mov [lastDamageByPlayer],r10
+fuckUpDamageOriginalCode:
+  popf
+  sub eax,r10d
+  cmp eax,ecx
+  jmp fuckUpDamageReturn
+
+
+omnifyDamageHook:
+  jmp fuckUpDamage
+fuckUpDamageReturn:
+
+apocalypseResult:
+  dd 0
+  
+apocalypseResultUpper:
+  dd B
+  
+apocalypseResultLower:
+  dd 1
+  
+riskOfMurderResult:
+  dd 0
+  
+riskOfMurderResultUpper:
+  dd 6
+  
+riskOfMurderResultLower:
+  dd 1 
+  
+playerGodMode:
+  dd 0
+  
+playerDamageX:
+  dd 1
+  
+logApocalypse:
+  dd 0
+
+gokuResult:
+  dd 0
+
+gokuResultUpper:
+  dd #5000
+
+gokuResultLower:
+  dd 1
+
+logKamehameha:
+  dd 0
+  
+scaleDefault:
+  dd (float)1.0
+  
+polyDivisor:
+  dd (float)2000.0
+  
+polyXScaleResult:
+  dd 0
+  
+polyXScaleResultLower:
+  dd #1000
+  
+ polyXScaleResultUpper:
+  dd #14000
+  
+polyYScaleResult:
+  dd 0
+  
+polyYScaleResultLower:
+  dd #1000
+  
+polyYScaleResultUpper: 
+   dd #5000
+   
+polyZScaleResult:
+   dd 0
+   
+polyZScaleResultLower:
+   dd #1000
+   
+polyZScaleResultUpper:
+   dd #16000
+
+[DISABLE]
+
+// Cleanup of background audio.
+backgroundAudio:
+  db E8 8E BA 7B 00
+
+unregistersymbol(backgroundAudio)
+
+// Cleanup of generateRandomNumber
+unregistersymbol(generateRandomNumber)
+
+dealloc(generateRandomNumber)
+
+// Cleanup of omniPlayerHealthHook
+omniPlayerHealthHook:
+  db 0F B7 40 16 66 44 0F 6E C0
+
+unregistersymbol(playerHealth)
+unregistersymbol(omniPlayerHealthHook)
+
+dealloc(playerHealth)
+dealloc(getPlayerHealth)
+
+
+// Cleanup of omniPlayerCoordsHook
+omniPlayerCoordsHook:
+  db 0F 28 41 60 48 8B C2
+
+unregistersymbol(playerCoords)
+unregistersymbol(chunKiryuXScale)
+unregistersymbol(chunKiryuYScale)
+unregistersymbol(chunKiryuZScale)
+unregistersymbol(beautifulNpcXScale)
+unregistersymbol(beautifulNpcYScale)
+unregistersymbol(beautifulNpcZScale)
+unregistersymbol(omniPlayerCoordsHook)
+
+dealloc(playerCoords)
+dealloc(badJunOdaY)
+dealloc(chunKiryuXScale)
+dealloc(chunKiryuYScale)
+dealloc(chunKiryuZScale)
+dealloc(beautifulNpcXScale)
+dealloc(beautifulNpcYScale)
+dealloc(beautifulNpcZScale)
+dealloc(getPlayerCoords)
+
+// Cleanup of omniHeatMeterHook
+omniHeatMeterHook:
+  db F3 0F 11 70 1C
+
+unregistersymbol(heatMeter)
+unregistersymbol(omniHeatMeterHook)
+
+dealloc(heatMeter)
+dealloc(getHeatMeter)
+
+// Cleanup of omnifyDamageHook
+omnifyDamageHook:
+  db 41 2B C2 3B C1
+
+unregistersymbol(polyXScaleResult)
+unregistersymbol(polyYScaleResult)
+unregistersymbol(polyZScaleResult)
+unregistersymbol(logKamehameha)
+unregistersymbol(gokuResult)
+unregistersymbol(logApocalypse)
+unregistersymbol(apocalypseResult)
+unregistersymbol(riskOfMurderResult)
+unregistersymbol(playerGodMode)
+unregistersymbol(playerDamageX)
+unregistersymbol(maxDamageToPlayer)
+unregistersymbol(lastDamageToPlayer)
+unregistersymbol(maxDamageByPlayer)
+unregistersymbol(lastDamageByPlayer)
+unregistersymbol(lastEnemyHealth)
+unregistersymbol(omnifyDamageHook)
+
+dealloc(scaleDefault)
+dealloc(polyDivisor)
+dealloc(polyXScaleResult)
+dealloc(polyXScaleResultUpper)
+dealloc(polyXScaleResultLower)
+dealloc(polyYScaleResult)
+dealloc(polyYScaleResultUpper)
+dealloc(polyYScaleResultLower)
+dealloc(polyZScaleResult)
+dealloc(polyZScaleResultUpper)
+dealloc(polyZScaleResultLower)
+dealloc(logKamehameha)
+dealloc(gokuResult)
+dealloc(gokuResultUpper)
+dealloc(gokuResultLower)
+dealloc(apocalypseResult)
+dealloc(apocalypseResultUpper)
+dealloc(apocalypseResultLower)
+dealloc(riskOfMurderResult)
+dealloc(riskOfMurderResultUpper)
+dealloc(riskOfMurderResultLower)
+dealloc(playerGodMode)
+dealloc(playerDamageX)
+dealloc(logApocalypse)
+dealloc(maxDamageToPlayer)
+dealloc(lastDamageToPlayer)
+dealloc(maxDamageByPlayer)
+dealloc(lastDamageByPlayer)
+dealloc(lastEnemyHealth)
+dealloc(fuckUpDamage)
+
+
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>80</ID>
+          <Description>"Location"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" Activated="1" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>84</ID>
+              <Description>"THICC Mode"</Description>
+              <LastState Activated="1"/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+
+
+chunKiryuXScale:
+  dd (float)4.5
+
+chunKiryuYScale:
+  dd (float)0.9
+
+chunKiryuZScale:
+  dd (float)4.5
+
+
+beautifulNpcYScale:
+  dd (float)1.5
+
+beautifulNpcZScale:
+  dd (float)1.5
+
+
+[DISABLE]
+
+chunKiryuXScale:
+  dd (float)4.5
+
+chunKiryuYScale:
+  dd (float)0.9
+
+chunKiryuZScale:
+  dd (float)1.0
+
+beautifulNpcYScale:
+  dd (float)1.1
+
+beautifulNpcZScale:
+  dd (float)1.0
+</AssemblerScript>
+              <Hotkeys>
+                <Hotkey>
+                  <Action>Toggle Activation</Action>
+                  <Keys>
+                    <Key>111</Key>
+                  </Keys>
+                  <ID>0</ID>
+                </Hotkey>
+                <Hotkey>
+                  <Action>Deactivate</Action>
+                  <Keys>
+                    <Key>106</Key>
+                  </Keys>
+                  <ID>1</ID>
+                </Hotkey>
+              </Hotkeys>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>282</ID>
+              <Description>"Normal Mode"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+chunKiryuXScale:
+  dd (float)1.0
+
+chunKiryuYScale:
+  dd (float)1.0
+
+chunKiryuZScale:
+  dd (float)1.0
+
+beautifulNpcXScale:
+  dd (float)1.0
+
+beautifulNpcYScale:
+  dd (float)1.0
+
+beautifulNpcZScale:
+  dd (float)1.0
+
+[DISABLE]
+chunKiryuXScale:
+  dd (float)4.5
+
+chunKiryuYScale:
+  dd (float)0.9
+
+chunKiryuZScale:
+  dd (float)1.0
+
+beautifulNpcXScale:
+  dd (float)3.0
+
+beautifulNpcYScale:
+  dd (float)1.5
+
+beautifulNpcZScale:
+  dd (float)1.5
+</AssemblerScript>
+              <Hotkeys>
+                <Hotkey>
+                  <Action>Toggle Activation</Action>
+                  <Keys>
+                    <Key>106</Key>
+                  </Keys>
+                  <ID>0</ID>
+                </Hotkey>
+              </Hotkeys>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>77</ID>
+              <Description>"X"</Description>
+              <LastState Value="-76.81295776" RealAddress="7FF4D97F32A0"/>
+              <VariableType>Float</VariableType>
+              <Address>playerCoords</Address>
+              <Offsets>
+                <Offset>60</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>78</ID>
+              <Description>"Y"</Description>
+              <LastState Value="3.278255463E-6" RealAddress="7FF4D97F32A4"/>
+              <VariableType>Float</VariableType>
+              <Address>playerCoords</Address>
+              <Offsets>
+                <Offset>64</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>79</ID>
+              <Description>"Z"</Description>
+              <LastState Value="71.31310272" RealAddress="7FF4D97F32A8"/>
+              <VariableType>Float</VariableType>
+              <Address>playerCoords</Address>
+              <Offsets>
+                <Offset>68</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>92</ID>
+              <Description>"X Scale"</Description>
+              <LastState Value="4.5" RealAddress="7FF4D97F3260"/>
+              <VariableType>Float</VariableType>
+              <Address>playerCoords</Address>
+              <Offsets>
+                <Offset>20</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>93</ID>
+              <Description>"Y Scale"</Description>
+              <LastState Value="0.8999999762" RealAddress="7FF4D97F3274"/>
+              <VariableType>Float</VariableType>
+              <Address>playerCoords</Address>
+              <Offsets>
+                <Offset>34</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>99</ID>
+              <Description>"Z Scale"</Description>
+              <LastState Value="4.5" RealAddress="7FF4D97F3288"/>
+              <VariableType>Float</VariableType>
+              <Address>playerCoords</Address>
+              <Offsets>
+                <Offset>48</Offset>
+              </Offsets>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>86</ID>
+          <Description>"God Mode"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+playerGodMode:
+  dd 1
+
+[DISABLE]
+
+playerGodMode:
+  dd 0
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>284</ID>
+          <Description>"Last Enemy Health"</Description>
+          <LastState Value="16257" RealAddress="7FF4D82B3196"/>
+          <VariableType>2 Bytes</VariableType>
+          <Address>lastEnemyHealth</Address>
+          <Offsets>
+            <Offset>16</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>13</ID>
+          <Description>"Current Health"</Description>
+          <LastState Value="1175" RealAddress="7FF4D42F2B86"/>
+          <VariableType>2 Bytes</VariableType>
+          <Address>playerHealth</Address>
+          <Offsets>
+            <Offset>16</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>14</ID>
+          <Description>"Max Health"</Description>
+          <LastState Value="1175" RealAddress="7FF4D42F2B88"/>
+          <VariableType>2 Bytes</VariableType>
+          <Address>playerHealth</Address>
+          <Offsets>
+            <Offset>18</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>91</ID>
+          <Description>"Heat Meter"</Description>
+          <LastState Value="0" RealAddress="7FF4D42F2B8E"/>
+          <VariableType>2 Bytes</VariableType>
+          <Address>heatMeter</Address>
+          <Offsets>
+            <Offset>1E</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>85</ID>
+          <Description>"Damage Multiplier"</Description>
+          <LastState Value="1" RealAddress="13FFC1038"/>
+          <VariableType>4 Bytes</VariableType>
+          <Address>playerDamageX</Address>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <CheatCodes>
+    <CodeEntry>
+      <Description>Change of movaps [rdi+00000320],xmm0</Description>
+      <AddressString>Yakuza0.exe+18D4EC</AddressString>
+      <Before>
+        <Byte>E8</Byte>
+        <Byte>64</Byte>
+        <Byte>3E</Byte>
+        <Byte>E7</Byte>
+        <Byte>FF</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>87</Byte>
+        <Byte>20</Byte>
+        <Byte>03</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>8B</Byte>
+        <Byte>9C</Byte>
+        <Byte>24</Byte>
+        <Byte>00</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of movdqa [rdi+00000320],xmm0</Description>
+      <AddressString>Yakuza0.exe+18D24F</AddressString>
+      <Before>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>06</Byte>
+      </Before>
+      <Actual>
+        <Byte>66</Byte>
+        <Byte>0F</Byte>
+        <Byte>7F</Byte>
+        <Byte>87</Byte>
+        <Byte>20</Byte>
+        <Byte>03</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>83</Byte>
+        <Byte>BF</Byte>
+        <Byte>78</Byte>
+        <Byte>02</Byte>
+        <Byte>00</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of movss [rdi+000003CC],xmm3</Description>
+      <AddressString>Yakuza0.exe+18C918</AddressString>
+      <Before>
+        <Byte>DC</Byte>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>5D</Byte>
+        <Byte>DD</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>9F</Byte>
+        <Byte>CC</Byte>
+        <Byte>03</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>E8</Byte>
+        <Byte>AB</Byte>
+        <Byte>65</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of movss [rdi+000003CC],xmm9</Description>
+      <AddressString>Yakuza0.exe+18C8DE</AddressString>
+      <Before>
+        <Byte>F3</Byte>
+        <Byte>45</Byte>
+        <Byte>0F</Byte>
+        <Byte>5F</Byte>
+        <Byte>CB</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>44</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>8F</Byte>
+        <Byte>CC</Byte>
+        <Byte>03</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>76</Byte>
+        <Byte>11</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of movss [rdi+000003CC],xmm9</Description>
+      <AddressString>Yakuza0.exe+18C7E2</AddressString>
+      <Before>
+        <Byte>8F</Byte>
+        <Byte>CC</Byte>
+        <Byte>03</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>44</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>8F</Byte>
+        <Byte>CC</Byte>
+        <Byte>03</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>EB</Byte>
+        <Byte>15</Byte>
+        <Byte>F3</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of movaps [rcx+00000320],xmm1</Description>
+      <AddressString>Yakuza0.exe+18AC0C</AddressString>
+      <Before>
+        <Byte>08</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>4D</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>89</Byte>
+        <Byte>20</Byte>
+        <Byte>03</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>C1</Byte>
+        <Byte>4C</Byte>
+        <Byte>8D</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of movss [rbx+000003CC],xmm1</Description>
+      <AddressString>Yakuza0.exe+19358A</AddressString>
+      <Before>
+        <Byte>9B</Byte>
+        <Byte>C4</Byte>
+        <Byte>03</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>8B</Byte>
+        <Byte>CC</Byte>
+        <Byte>03</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>7A</Byte>
+        <Byte>02</Byte>
+        <Byte>74</Byte>
+        <Byte>0A</Byte>
+        <Byte>81</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of minss xmm3,xmm5</Description>
+      <AddressString>Yakuza0.exe+18C914</AddressString>
+      <Before>
+        <Byte>5F</Byte>
+        <Byte>E7</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>DC</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>5D</Byte>
+        <Byte>DD</Byte>
+      </Actual>
+      <After>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>9F</Byte>
+        <Byte>CC</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of movss [rdi+000003CC],xmm3</Description>
+      <AddressString>13FFB000C</AddressString>
+      <Before>
+        <Byte>00</Byte>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>5D</Byte>
+        <Byte>DD</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>9F</Byte>
+        <Byte>CC</Byte>
+        <Byte>03</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>E9</Byte>
+        <Byte>07</Byte>
+        <Byte>C9</Byte>
+        <Byte>1D</Byte>
+        <Byte>00</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of movaps [rcx-000006E0],xmm0</Description>
+      <AddressString>Yakuza0.exe+6B2193</AddressString>
+      <Before>
+        <Byte>C1</Byte>
+        <Byte>40</Byte>
+        <Byte>07</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>81</Byte>
+        <Byte>20</Byte>
+        <Byte>F9</Byte>
+        <Byte>FF</Byte>
+        <Byte>FF</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>0A</Byte>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+      </After>
+    </CodeEntry>
+  </CheatCodes>
+  <UserdefinedSymbols/>
+  <LuaScript>getAutoAttachList().add("Yakuza0.exe")
+</LuaScript>
+</CheatTable>

@@ -1,0 +1,1219 @@
+<!--
+    Omnified Dragon's Dogma
+    Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
+    Copyright 2022 Bad Echo LLC
+
+    Bad Echo Technologies are licensed under a
+    Creative Commons Attribution-NonCommercial 4.0 International License.
+
+    See accompanying file LICENSE.md or a copy at:
+    http://creativecommons.org/licenses/by-nc/4.0/
+-->
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="31">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>121</ID>
+      <Description>"OMNIFY"</Description>
+      <Options moHideChildren="1"/>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{
+ Omnified Dragon's Dogma
+ Written By: Matt Weber
+ Copyright 2020 Bad Echo LLC
+
+ Visit my hackpad for my information on what I do:
+ https://badecho.com
+
+ Catch my live streams on my official Twitch channel:
+ https://twitch.tv/omni
+}
+	  
+[ENABLE]
+	  
+{$lua}
+function register()
+  require("Omnified")
+  registerOmnification()
+end
+
+{$asm}
+luacall(register())
+
+alloc(checkBadPointer,$1000)
+
+registersymbol(checkBadPointer)
+
+checkBadPointer:
+  push rax
+  push rdx
+  push rbp
+  mov rbp,rsp
+  and esp, 0xfffffff0
+  sub rsp,20
+  mov edx,4
+  call isBadReadPtr
+  mov rcx,eax
+  mov rsp,rbp
+checkBadPointerCleanup:
+  pop rbp
+  pop rdx
+  pop rax
+  ret
+
+// Gets requisite player information.
+// eax: Address of player's health struct.
+define(omniPlayerHook, "DDDA.exe" + 332605)
+
+assert(omniPlayerHook, F3 0F 10 40 08)
+alloc(getPlayer,$1000, omniPlayerHook)
+alloc(playerHealth,8)
+alloc(playerLocation,8)
+
+registersymbol(omniPlayerHook)
+registersymbol(playerHealth)
+registersymbol(playerLocation)
+
+getPlayer:
+  pushf
+  push ebx
+  mov [playerHealth],eax
+  // The health structure itself points to the the location structure
+  // at 0x1B4.
+  mov ebx,[eax+1B4]
+  mov [playerLocation],ebx
+  pop ebx
+getPlayerOriginalCode:
+  popf
+  movss xmm0,[eax+08]
+  jmp getPlayerReturn
+
+
+omniPlayerHook:
+  jmp getPlayer
+getPlayerReturn:
+
+
+// Gets the player's stamina struct.
+// edi: Contains the player's stamina struct.
+define(omniPlayerStaminaHook, "DDDA.exe" + 332654)
+
+assert(omniPlayerStaminaHook, F3 0F 10 8F A8 02 00 00)
+alloc(getPlayerStamina,$1000, omniPlayerStaminaHook)
+alloc(playerStamina,8)
+
+registersymbol(omniPlayerStaminaHook)
+registersymbol(playerStamina)
+
+getPlayerStamina:
+  mov [playerStamina],edi
+getPlayerStaminaOriginalCode:
+  movss xmm1,[edi+000002A8]
+  jmp getPlayerStaminaReturn
+
+
+omniPlayerStaminaHook:
+  jmp getPlayerStamina
+  nop 3
+getPlayerStaminaReturn:
+
+
+// Gets location information for the player's primary pawn.
+define(omniPrimaryPawnLocationHook, "DDDA.exe" + 13FC5)
+
+assert(omniPrimaryPawnLocationHook, F3 0F 10 46 40)
+alloc(getPrimaryPawnLocation,$1000, omniPrimaryPawnLocationHook)
+alloc(pawnPrimaryLocation,8)
+
+registersymbol(omniPrimaryPawnLocationHook)
+registersymbol(pawnPrimaryLocation)
+
+getPrimaryPawnLocation:
+  mov [pawnPrimaryLocation],esi
+getPrimaryPawnLocationOriginalCode:
+  movss xmm0,[esi+40]
+  jmp getPrimaryPawnLocationReturn
+
+
+omniPrimaryPawnLocationHook:
+  jmp getPrimaryPawnLocation
+  
+getPrimaryPawnLocationReturn:
+
+
+// Gets health information for the player's primary pawn, and
+// both health and location information for the player's non-primary pawns.
+// eax: Address of the pawn's health struct.
+define(omniPawnsHook, "DDDA.exe" + 33273D)
+
+assert(omniPawnsHook, F3 0F 10 40 08)
+alloc(getPawns,$1000, omniPawnsHook)
+alloc(pawnPrimaryHealth,8)
+alloc(pawnSecondaryHealth,8)
+alloc(pawnSecondaryLocation,8)
+alloc(pawnTertiaryHealth,8)
+alloc(pawnTertiaryLocation,8)
+
+registersymbol(omniPawnsHook)
+registersymbol(pawnPrimaryHealth)
+registersymbol(pawnSecondaryHealth)
+registersymbol(pawnSecondaryLocation)
+registersymbol(pawnTertiaryHealth)
+registersymbol(pawnTertiaryLocation)
+
+
+getPawns:
+  pushf
+  push ebx
+  // The location structure can be found in the health structure at offset
+  // 0x1B4.  
+  mov ebx,[eax+1B4]
+  // The primary pawn location is recorded in its own exclusive hook.
+  cmp [pawnPrimaryLocation],ebx
+  jne getNonPrimaryPawns
+  mov [pawnPrimaryHealth],eax
+  jmp getPawnsCleanup
+getNonPrimaryPawns:
+  // Primary pawn aside, the secondary pawn can be differentiated from the
+  // tertiary pawn by looking at the parity flag, set by an earlier 
+  // comparison. It will always be 1 for one pawn, and 0 for the other.
+  jp getTertiaryPawn
+  mov [pawnSecondaryHealth],eax
+  mov [pawnSecondaryLocation],ebx
+  jmp getPawnsCleanup
+getTertiaryPawn:
+  mov [pawnTertiaryHealth],eax
+  mov [pawnTertiaryLocation],ebx
+getPawnsCleanup:
+  pop ebx
+getPawnsOriginalCode:
+  popf
+  movss xmm0,[eax+08]
+  jmp getPawnsReturn
+
+
+omniPawnsHook:
+  jmp getPawns
+  
+getPawnsReturn:
+
+
+
+// Initiates the Apocalypse system.
+// edi: Health structure of damage target.
+// esp+1A: Damage amount.
+// xmm0: Working health value.
+// esp+166: Location structure of damage source.
+define(omnifyApocalypseHook, "DDDA.exe" + 376F82)
+
+assert(omnifyApocalypseHook, F3 0F 5C 44 24 0C)
+alloc(initiateApocalypse,$1000, omnifyApocalypseHook)
+
+registersymbol(omnifyApocalypseHook)
+
+initiateApocalypse:
+  pushf
+  // Backing up the eax and ebx registers are they will be used
+  // to hold return values from the Apocalypse functions.
+  push eax
+  push ebx
+  // Backing up a working register that will be used to hold
+  // temporary values.
+  push ecx
+  // The damage amount is found at [esp+1A], its address having
+  // shfited due to stack preservation efforts.
+  mov eax,[esp+1A]  
+  // If the player is the target of the damage, we'll want to execute
+  // the Player Apocalypse. Otherwise, if an NPC is receiving damage,
+  // we'll want to ensure the player is the source of that damage.
+  cmp [playerHealth],edi
+  je initiatePlayerApocalypse
+  // The location structure for the entity dealing the damage
+  // can be found at [esp+166], its address having shifted due to
+  // stack preservation efforts.
+  mov ecx,[esp+166]
+  cmp [playerLocation],ecx
+  je initiateEnemyApocalypse
+  jmp initiateApocalypseExit 
+initiatePlayerApocalypse:
+  // We realign the player's location structure so it begins at the
+  // X coordinate.
+  mov ebx,[playerLocation]
+  lea ecx,[ebx+40]
+  // Push the damage amount parameter.
+  push eax
+  // Push the working health value parameter.
+  sub esp,4
+  movd [esp],xmm0
+  // Push the maximum health value parameter.
+  push [edi+C]
+  // Push the aligned coordinates struct parameter.
+  push ecx
+  call executePlayerApocalypse
+  jmp initiateApocalypseUpdateDamage
+initiateEnemyApocalypse:
+  // Push the damage amount parameter.
+  push eax
+  // push the working health value parameter.
+  sub rsp,4
+  movd [esp],xmm0
+  call executeEnemyApocalypse
+initiateApocalypseUpdateDamage:
+  // Take the updated damage amount and store it in its proper place.
+  mov [esp+1A],eax
+  // Take the updated working health value and store it in its proper
+  // place.
+  movd xmm0,ebx
+initiateApocalypseExit:
+  pop ecx
+  pop ebx
+  pop eax
+initiateApocalypseOriginalCode:
+  popf
+  subss xmm0,[esp+0C]
+  jmp initiateApocalypseReturn
+
+
+omnifyApocalypseHook:
+  jmp initiateApocalypse
+  nop 
+initiateApocalypseReturn:
+
+negativeVerticalDisplacementEnabled:
+  dd 0
+
+teleportitisDisplacementX:
+  dd (float)300.0
+
+  
+// Initiates the Predator system.
+// esi: Moving creature's location structure.
+// [esp+5E]: Start of movement offsets set.
+define(omnifyPredatorHook, "DDDA.exe" + 44D030)
+
+assert(omnifyPredatorHook, F3 0F 10 74 24 30)
+alloc(initiatePredator,$1000, omnifyPredatorHook)
+alloc(playerSpeedX,8)
+alloc(disablePredator,8)
+alloc(identityValue,8)
+
+registersymbol(omnifyPredatorHook)
+registersymbol(playerSpeedX)
+registersymbol(disablePredator)
+
+initiatePredator:
+  pushf
+  cmp [disablePredator],1
+  je initiatePredatorOriginalCode
+  // Ensure that the player location structure has been initialized.
+  cmp [playerLocation],0
+  je initiatePredatorOriginalCode
+  // Ensure that the moving entity is not the player.
+  cmp [playerLocation],esi
+  je applyPlayerSpeed
+  // Ensure that the moving entity is not one of the pawns.
+  cmp [pawnPrimaryLocation],esi
+  je initiatePredatorOriginalCode
+  cmp [pawnSecondaryLocation],esi
+  je initiatePredatorOriginalCode
+  cmp [pawnTertiaryLocation],esi
+  je initiatePredatorOriginalCode
+  // Backing up a few SSE registers to hold temporary values.
+  sub esp,10
+  movdqu [esp],xmm0
+  sub esp,10
+  movdqu [esp],xmm1
+  // Backing up the registers used by the Predator system to store its
+  // return values.
+  push eax
+  push ebx
+  push ecx
+initiatePredatorExecute:
+  // Let's load the movement offsets from the stack now before we affect
+  // the stack any more than we already have.
+  movups xmm0,[esp+5E]
+  // We will now push the player's coordinates to the stack as the first
+  // parameter. In addition to pushing the X, Y, and Z coordinates, which 
+  // must be pushed individually in reverse order since only 4 bytes of data 
+  // are pushed at a time since this is 32-bit.
+  // We must also push the 4 bytes of memory found immediately after the 
+  // Z coordinate. 
+  // We have to do this because Omnified functions were written with the 
+  // expectation that the smallest amount of data that could be pushed 
+  // to the stack at a time would be 8 bytes (which is typically the case 
+  // with 64-bit applications).
+  mov eax,[playerLocation]
+  push [eax+44]
+  push [eax+40]
+  push [eax+4C]  
+  push [eax+48]   
+  // We now push the moving creature's coordinates to the stack, keeping in
+  // mind the fact that we have to make 4 pushes for a total of 16 bytes.
+  push [esi+44]
+  push [esi+40]
+  push [esi+4C]  
+  push [esi+48]  
+  // Scales must be pushed to memory in a manner similar to how we pushed the
+  // coordinates.
+  movss xmm1,[identityValue]
+  shufps xmm1,xmm1,0
+  sub esp,10
+  movdqu [esp],xmm1
+  // Now it is time to pass the movement offsets parameter. We currently have
+  // them loaded into xmm0, however we need to provide the values to the 
+  // Predator system as if they were being pushed directly from memory. The
+  // following code accomplishes this by putting xmm0's high words onto the
+  // xmm1 register and then moving the xmm0 and xmm1 registers onto the stack
+  // as quadwords.
+  movhlps xmm1,xmm0
+  sub esp,8
+  movq [esp],xmm0
+  sub esp,8
+  movq [esp],xmm1
+  // With all the parameter passed, it is time to call the Predator system.
+  call executePredator
+  jmp initiatePredatorCleanup
+applyPlayerSpeed:
+  sub esp,10
+  movdqu [esp],xmm0
+  sub esp,10
+  movdqu [esp],xmm1
+  push eax
+  push ebx
+  push ecx
+  mov eax,[esp+5E]
+  mov ebx,[esp+62]
+  mov ecx,[esp+66]
+  movss xmm0,[playerSpeedX]
+  movd xmm1,eax
+  mulss xmm1,xmm0
+  movd eax,xmm1
+  movd xmm1,ecx
+  mulss xmm1,xmm0
+  movd ecx,xmm1
+initiatePredatorCleanup:
+  // We take the return values from the Predator system and plop 'em directly
+  // back to their counterparts on the stack.
+  mov [esp+5E],eax
+  mov [esp+62],ebx
+  mov [esp+66],ecx
+  pop ecx
+  pop ebx
+  pop eax
+  movdqu xmm1,[esp]
+  add esp,10
+  movdqu xmm0,[esp]
+  add esp,10
+initiatePredatorOriginalCode:
+  popf
+  movss xmm6,[esp+30]
+  jmp initiatePredatorReturn
+
+
+omnifyPredatorHook:
+  jmp initiatePredator
+  nop
+initiatePredatorReturn:
+
+playerSpeedX:
+  dd (float)1.0
+
+threatDistance:
+  dd (float)150.0
+  
+aggroDistance:
+  dd (float)880.0
+
+// Positive and negative limit enforcement is essentially disabled.  
+positiveLimit:
+  dd (float)10000.0
+
+negativeLimit:
+  dd (float)-10000.0
+  
+enemySpeedX:
+  dd (float)1.15
+  
+aggressionSpeedX:
+  dd (float)0.85
+  
+identityValue:
+  dd (float)1.0
+  
+// Initiates the Predator system for sprinting movement.
+// edi: Moving creature's location structure.
+// xmm2: X movement offset.
+// xmm3: Y movement offset.
+// xmm6: Z movement offset.
+// xmm0: Value following Z movement offset.
+define(omnifyPredatorSprintingHook, "DDDA.exe" + C5E7E5)
+
+assert(omnifyPredatorSprintingHook, F3 0F 58 57 40)
+alloc(initiatePredatorSprinting,$1000, omnifyPredatorSprintingHook)
+
+registersymbol(omnifyPredatorSprintingHook)
+
+initiatePredatorSprinting:
+  pushf
+  cmp [disablePredator],1
+  je initiatePredatorSprintingOriginalCode
+  // Ensure that the player location structure has been initialized.
+  cmp [playerLocation],0
+  je initiatePredatorSprintingOriginalCode
+  // Ensure that the moving entity is not the player.
+  cmp [playerLocation],edi
+  je initiatePredatorSprintingOriginalCode
+  // Ensure that the moving entity is not one of the pawns.
+  cmp [pawnPrimaryLocation],edi
+  je initiatePredatorSprintingOriginalCode
+  cmp [pawnSecondaryLocation],edi
+  je initiatePredatorSprintingOriginalCode
+  cmp [pawnTertiaryLocation],edi
+  je initiatePredatorSprintingOriginalCode
+  // Backing up a SSE registers to hold temporary values.
+  sub esp,10
+  movdqu [esp],xmm1
+  // Backing up the registers used by the Predator system to store its
+  // return values.
+  push eax
+  push ebx
+  push ecx
+initiatePredatorSprintingExecute:
+  // Pushing the player's coordinates as the first parameter.
+  // See the documentation in the main Predator initiation hook for
+  // more information.
+  mov eax,[playerLocation]
+  push [eax+44]
+  push [eax+40]
+  push [eax+4C]  
+  push [eax+48] 
+  // Pushing the moving creature's coordinates to the stack for the second
+  // parameter.
+  push [edi+44]
+  push [edi+40]
+  push [edi+4C]  
+  push [edi+48]  
+    // Scales must be pushed to memory in a manner similar to how we pushed the
+  // coordinates.
+  movss xmm1,[identityValue]
+  shufps xmm1,xmm1,0
+  sub esp,10
+  movdqu [esp],xmm1
+  
+  // We now dump the movement offsets to the stack for the fourth parameter.
+  // We have to do it in reverse paired order as the Predator system expects
+  // 8 byte pushes.
+  sub esp,4
+  movd [esp],xmm3
+  sub esp,4
+  movd [esp],xmm2
+  sub esp,4
+  movd [esp],xmm0
+  sub esp,4
+  movd [esp],xmm6
+  // With everything loaded we call the Predator system.
+  call executePredator
+initiatePredatorSprintingCleanup:
+  // We take the return values from the Predator system and plop 'em directly
+  // back to their counterparts.
+  movd xmm2,eax
+  movd xmm3,ebx
+  movd xmm6,ecx
+  pop ecx
+  pop ebx
+  pop eax  
+  movdqu xmm1,[esp]
+  add esp,10
+initiatePredatorSprintingOriginalCode:
+  popf
+  addss xmm2,[edi+40]
+  jmp initiatePredatorSprintingReturn
+
+
+omnifyPredatorSprintingHook:
+  jmp initiatePredatorSprinting
+  
+initiatePredatorSprintingReturn:
+
+
+// Initiates the Abomnification system.
+// esi: Address to creature's location structure.
+define(omnifyAbomnificationHook, "DDDA.exe" + 44D03D)
+
+assert(omnifyAbomnificationHook, F3 0F 58 76 40)
+alloc(initiateAbomnification,$1000, omnifyAbomnificationHook)
+alloc(abomnifyPlayer,8)
+alloc(baseScaleThreshold,8)
+
+registersymbol(omnifyAbomnificationHook)
+registersymbol(abomnifyPlayer)
+
+initiateAbomnification:
+  pushf
+  // Ensure that the player isn't the one being subjected to Abomnification.
+  cmp [abomnifyPlayer],1
+  je continueAbomnification
+  cmp [playerLocation],	esi
+  je initiateAbomnificationOriginalCode
+continueAbomnification:
+  sub esp,10
+  movdqu [esp],xmm0
+  push eax
+  push ebx
+  push ecx
+  // Check if base scale exceeds threshold.
+  movss xmm0,[baseScaleThreshold]
+  ucomiss xmm0,[esi+60]
+  jbe initiateAbomnificationCleanup
+  // Load the address for where the morph scale ID can be found.
+  lea eax,[esi+300]
+  // Push our morph scale ID address as the sole parameter, and then
+  // get the Abomnification party started.
+  push eax
+  call executeAbomnification
+  // The eax register will be set to a negative value if the system is
+  // disabled or an error occurred.
+  test eax,0x80000000  
+  jne normalizeAbomnification
+  // Set the width to the Abomnified value.
+  mov [esi+60],eax
+  // Set the height to the Abomnified value.
+  mov [esi+64],ebx
+  // Set the depth to the Abomnified value.
+  mov [esi+68],ecx 
+  jmp initiateAbomnificationCleanup
+normalizeAbomnification:
+  // Reset all scales to 1.0.
+  movss xmm0,[identityValue]
+  movd eax,xmm0
+  mov [esi+60],eax
+  mov [esi+64],eax
+  mov [esi+68],eax 
+initiateAbomnificationCleanup:
+  pop ecx
+  pop ebx
+  pop eax
+  movdqu xmm0,[esp]
+  add esp,10
+initiateAbomnificationOriginalCode:
+  popf
+  addss xmm6,[esi+40]
+  jmp initiateAbomnificationReturn
+
+
+omnifyAbomnificationHook:
+  jmp initiateAbomnification
+initiateAbomnificationReturn:
+
+abominifyMorphStepsResultUpper:
+  dd #700
+
+abominifyHeightResultUpper:
+  dd #185
+
+abominifyHeightResultLower:
+  dd #50
+  
+abominifyWidthResultUpper:
+  dd #150  
+
+abomnifyPlayer:
+  dd 0
+  
+baseScaleThreshold:
+  dd (float)4.0
+
+
+// Applies Abomnification scales to human heads.
+// eax: A scales structure.
+define(omnifyAbomnifyHeadsHook, "DDDA.exe" + 41BD49)
+
+assert(omnifyAbomnifyHeadsHook, 8B 50 20 FF D2)
+alloc(abomnifyHeads,$1000, omnifyAbomnifyHeadsHook)
+
+registersymbol(omnifyAbomnifyHeadsHook)
+
+abomnifyHeads:
+  pushf
+  // Female head scaling structures are accessed with an offset of 0x270.
+  // Male head scaling structures are accessed with an offset of 0x8F0.
+  cmp ebx,0x270
+  je continueAbomnifyHeads
+  cmp ebx,0x8F0
+  jne abomnifyHeadsOriginalCode  
+continueAbomnifyHeads:
+  sub esp,10
+  movdqu [esp],xmm0
+  push eax
+  // Load the location structure from the scales structure.
+  mov eax,[ecx+54]
+  // Load the body width scale into the head width scale.
+  movss xmm0,[eax+60]
+  movd [ecx+80],xmm0
+  // Load the body height scale into the head height scale.
+  movss xmm0,[eax+64]
+  movd [ecx+84],xmm0
+  // Load the body depth scale into the head depth scale.
+  movss xmm0,[eax+68]
+  movd [ecx+88],xmm0
+  pop eax
+  movdqu xmm0,[esp]
+  add esp,10  
+abomnifyHeadsOriginalCode:
+  popf
+  mov edx,[eax+20]
+  call edx
+  jmp abomnifyHeadsReturn
+
+
+omnifyAbomnifyHeadsHook:
+  jmp abomnifyHeads
+abomnifyHeadsReturn:
+
+
+[DISABLE]
+
+luacall(unregister())
+
+unregistersymbol(checkBadPointer)
+
+dealloc(checkBadPointer)
+
+// Cleanup of omniPlayerHook
+omniPlayerHook:
+db F3 0F 10 40 08
+
+unregistersymbol(omniPlayerHook)
+unregistersymbol(playerLocation)
+unregistersymbol(playerHealth)
+
+dealloc(playerHealth)
+dealloc(playerLocation)
+dealloc(getPlayer)
+
+
+// Cleanup of omniPlayerStaminaHook
+omniPlayerStaminaHook:
+db F3 0F 10 8F A8 02 00 00
+  
+unregistersymbol(omniPlayerStaminaHook)
+unregistersymbol(playerStamina)
+
+dealloc(playerStamina)
+dealloc(getPlayerStamina)
+
+
+// Cleanup of omniPawnsHook
+omniPawnsHook:
+db F3 0F 10 40 08
+  
+unregistersymbol(omniPawnsHook)
+unregistersymbol(pawnPrimaryHealth)
+unregistersymbol(pawnSecondaryHealth)
+unregistersymbol(pawnSecondaryLocation)
+unregistersymbol(pawnTertiaryHealth)
+unregistersymbol(pawnTertiaryLocation)
+
+dealloc(getPawns)
+dealloc(pawnPrimaryHealth)
+dealloc(pawnSecondaryHealth)
+dealloc(pawnSecondaryLocation)
+dealloc(pawnTertiaryHealth)
+dealloc(pawnTertiaryLocation)
+
+
+// Cleanup of omniPrimaryPawnLocationHook
+omniPrimaryPawnLocationHook:
+db F3 0F 10 46 40
+  
+unregistersymbol(omniPrimaryPawnLocationHook)
+unregistersymbol(pawnPrimaryLocation)
+
+dealloc(pawnPrimaryLocation)
+dealloc(getPrimaryPawnLocation)
+
+// Cleanup of omnifyPredatorHook
+omnifyPredatorHook:
+db F3 0F 10 74 24 30
+  
+unregistersymbol(omnifyPredatorHook)
+unregistersymbol(playerSpeedX)
+unregistersymbol(disablePredator)
+
+dealloc(identityValue)
+dealloc(disablePredator)
+dealloc(playerSpeedX)
+dealloc(identityValue)
+dealloc(initiatePredator)
+
+
+// Cleanup of omnifyPredatorSprintingHook
+omnifyPredatorSprintingHook:
+db F3 0F 58 57 40
+  
+unregistersymbol(omnifyPredatorSprintingHook)
+
+dealloc(initiatePredatorSprinting)
+
+
+// Cleanup of omnifyApocalypseHook
+omnifyApocalypseHook:
+db F3 0F 5C 44 24 0C
+  
+unregistersymbol(omnifyApocalypseHook)
+
+dealloc(initiateApocalypse)
+
+
+// Cleanup of omnifyAbomnificationHook
+omnifyAbomnificationHook:
+db F3 0F 58 76 40
+  
+unregistersymbol(omnifyAbomnificationHook)
+unregistersymbol(abomnifyPlayer)
+
+dealloc(baseScaleThreshold)
+dealloc(abomnifyPlayer)
+dealloc(initiateAbomnification)
+
+
+// Cleanup of omnifyAbomnifyHeadsHook
+omnifyAbomnifyHeadsHook:
+db 8B 50 20 FF D2
+  
+unregistersymbol(omnifyAbomnifyHeadsHook)
+
+dealloc(abomnifyHeads)
+
+
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>163</ID>
+          <Description>"Enemy Health"</Description>
+          <VariableType>Float</VariableType>
+          <Address>lastEnemyHealthValue</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>157</ID>
+          <Description>"Effects"</Description>
+          <LastState Value="" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>156</ID>
+              <Description>"Speed Morphs"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+
+speedMorph:
+  dd 1
+
+[DISABLE]
+
+speedMorph:
+  dd 0
+</AssemblerScript>
+              <Hotkeys>
+                <Hotkey>
+                  <Action>Toggle Activation</Action>
+                  <Keys>
+                    <Key>97</Key>
+                  </Keys>
+                  <ID>0</ID>
+                </Hotkey>
+              </Hotkeys>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>158</ID>
+              <Description>"Lower Player Damage"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+playerDamageX:
+  dd (float)0.3
+
+[DISABLE]
+playerDamageX:
+  dd (float)1.0
+</AssemblerScript>
+              <Hotkeys>
+                <Hotkey>
+                  <Action>Toggle Activation</Action>
+                  <Keys>
+                    <Key>98</Key>
+                  </Keys>
+                  <ID>0</ID>
+                </Hotkey>
+              </Hotkeys>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>159</ID>
+              <Description>"Abomnify Player"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+
+abomnifyPlayer:
+  dd 1
+
+[DISABLE]
+
+abomnifyPlayer:
+  dd 0
+</AssemblerScript>
+              <Hotkeys>
+                <Hotkey>
+                  <Action>Toggle Activation</Action>
+                  <Keys>
+                    <Key>99</Key>
+                  </Keys>
+                  <ID>0</ID>
+                </Hotkey>
+              </Hotkeys>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>160</ID>
+              <Description>"Super Slow Enemies"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+enemySpeedX:
+  dd (float)0.1
+
+threatDistance:
+  dd (float)0.1
+
+[DISABLE]
+enemySpeedX:
+  dd (float)1.2
+
+threatDistance:
+  dd (float)150.0
+</AssemblerScript>
+              <Hotkeys>
+                <Hotkey>
+                  <Action>Toggle Activation</Action>
+                  <Keys>
+                    <Key>102</Key>
+                  </Keys>
+                  <ID>0</ID>
+                </Hotkey>
+              </Hotkeys>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>161</ID>
+              <Description>"Super Fast Omni"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+playerSpeedX:
+  dd (float)3.0
+
+[DISABLE]
+playerSpeedX:
+  dd (float)1.0
+</AssemblerScript>
+              <Hotkeys>
+                <Hotkey>
+                  <Action>Toggle Activation</Action>
+                  <Keys>
+                    <Key>107</Key>
+                  </Keys>
+                  <ID>0</ID>
+                </Hotkey>
+              </Hotkeys>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>162</ID>
+              <Description>"Buffed Damage"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+playerDamageX:
+  dd (float)3.0
+
+[DISABLE]
+playerDamageX:
+  dd (float)1.0
+</AssemblerScript>
+              <Hotkeys>
+                <Hotkey>
+                  <Action>Toggle Activation</Action>
+                  <Keys>
+                    <Key>103</Key>
+                  </Keys>
+                  <ID>0</ID>
+                </Hotkey>
+              </Hotkeys>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>166</ID>
+              <Description>"Super Buffed Damage"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+playerDamageX:
+  dd (float)20.0
+
+[DISABLE]
+playerDamageX:
+  dd (float)1.0
+</AssemblerScript>
+              <Hotkeys>
+                <Hotkey>
+                  <Action>Toggle Activation</Action>
+                  <Keys>
+                    <Key>109</Key>
+                  </Keys>
+                  <ID>0</ID>
+                </Hotkey>
+              </Hotkeys>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>165</ID>
+              <Description>"Stop Abomnification"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+disableAbomnification:
+  dd 1
+
+[DISABLE]
+disableAbomnification:
+  dd 0
+</AssemblerScript>
+              <Hotkeys>
+                <Hotkey>
+                  <Action>Toggle Activation</Action>
+                  <Keys>
+                    <Key>104</Key>
+                  </Keys>
+                  <ID>0</ID>
+                </Hotkey>
+              </Hotkeys>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>139</ID>
+          <Description>"Player"</Description>
+          <LastState Value="" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>122</ID>
+              <Description>"Health"</Description>
+              <VariableType>Float</VariableType>
+              <Address>playerHealth</Address>
+              <Offsets>
+                <Offset>8</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>137</ID>
+              <Description>"Stamina"</Description>
+              <VariableType>Float</VariableType>
+              <Address>playerStamina</Address>
+              <Offsets>
+                <Offset>2A8</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>125</ID>
+              <Description>"X"</Description>
+              <VariableType>Float</VariableType>
+              <Address>playerLocation</Address>
+              <Offsets>
+                <Offset>40</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>126</ID>
+              <Description>"Y"</Description>
+              <VariableType>Float</VariableType>
+              <Address>playerLocation</Address>
+              <Offsets>
+                <Offset>44</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>127</ID>
+              <Description>"Z"</Description>
+              <VariableType>Float</VariableType>
+              <Address>playerLocation</Address>
+              <Offsets>
+                <Offset>48</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>155</ID>
+              <Description>"Speed"</Description>
+              <VariableType>Float</VariableType>
+              <Address>playerSpeedX</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>140</ID>
+          <Description>"Primary Pawn"</Description>
+          <LastState Value="" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>152</ID>
+              <Description>"Health"</Description>
+              <VariableType>Float</VariableType>
+              <Address>pawnPrimaryHealth</Address>
+              <Offsets>
+                <Offset>8</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>141</ID>
+              <Description>"X"</Description>
+              <VariableType>Float</VariableType>
+              <Address>pawnPrimaryLocation</Address>
+              <Offsets>
+                <Offset>40</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>142</ID>
+              <Description>"Y"</Description>
+              <VariableType>Float</VariableType>
+              <Address>pawnPrimaryLocation</Address>
+              <Offsets>
+                <Offset>44</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>143</ID>
+              <Description>"Z"</Description>
+              <VariableType>Float</VariableType>
+              <Address>pawnPrimaryLocation</Address>
+              <Offsets>
+                <Offset>48</Offset>
+              </Offsets>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>144</ID>
+          <Description>"Secondary Pawn"</Description>
+          <LastState Value="" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>153</ID>
+              <Description>"Health"</Description>
+              <VariableType>Float</VariableType>
+              <Address>pawnSecondaryHealth</Address>
+              <Offsets>
+                <Offset>8</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>145</ID>
+              <Description>"X"</Description>
+              <VariableType>Float</VariableType>
+              <Address>pawnSecondaryLocation</Address>
+              <Offsets>
+                <Offset>40</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>146</ID>
+              <Description>"Y"</Description>
+              <VariableType>Float</VariableType>
+              <Address>pawnSecondaryLocation</Address>
+              <Offsets>
+                <Offset>44</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>147</ID>
+              <Description>"Z"</Description>
+              <VariableType>Float</VariableType>
+              <Address>pawnSecondaryLocation</Address>
+              <Offsets>
+                <Offset>48</Offset>
+              </Offsets>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>148</ID>
+          <Description>"Tertiary Pawn"</Description>
+          <LastState Value="" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>154</ID>
+              <Description>"Health"</Description>
+              <VariableType>Float</VariableType>
+              <Address>pawnTertiaryHealth</Address>
+              <Offsets>
+                <Offset>8</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>149</ID>
+              <Description>"X"</Description>
+              <VariableType>Float</VariableType>
+              <Address>pawnTertiaryLocation</Address>
+              <Offsets>
+                <Offset>40</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>150</ID>
+              <Description>"Y"</Description>
+              <VariableType>Float</VariableType>
+              <Address>pawnTertiaryLocation</Address>
+              <Offsets>
+                <Offset>44</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>151</ID>
+              <Description>"Z"</Description>
+              <VariableType>Float</VariableType>
+              <Address>pawnTertiaryLocation</Address>
+              <Offsets>
+                <Offset>48</Offset>
+              </Offsets>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>138</ID>
+          <Description>"Disable Abom"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>disableAbomnification</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>164</ID>
+          <Description>"Force Scrub"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>forceScrub</Address>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Set Value</Action>
+              <Keys>
+                <Key>105</Key>
+              </Keys>
+              <Value>1</Value>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols/>
+  <LuaScript>getAutoAttachList().add("DDDA.exe")  
+</LuaScript>
+</CheatTable>

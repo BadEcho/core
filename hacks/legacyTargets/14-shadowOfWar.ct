@@ -1,0 +1,1492 @@
+<!--
+    Omnified Middle-earth: Shadow of War
+    Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
+    Copyright 2022 Bad Echo LLC
+
+    Bad Echo Technologies are licensed under a
+    Creative Commons Attribution-NonCommercial 4.0 International License.
+
+    See accompanying file LICENSE.md or a copy at:
+    http://creativecommons.org/licenses/by-nc/4.0/
+-->
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="29">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>7</ID>
+      <Description>"OMNIFY"</Description>
+      <Options moHideChildren="1"/>
+      <LastState Activated="1"/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{
+  Omnified Shadow of War
+
+  ...Bitches!
+}
+
+[ENABLE]
+{$lua}
+function ActivateLoggers()
+
+  if loggersTimer == nil then
+    loggersTimer = createTimer(getMainForm())
+  end
+
+  loggersTimer.Interval = 200
+  loggersTimer.OnTimer = function()
+    local file = assert(io.open("stats.txt", "w"))
+    local log = assert(io.open("log.txt", "a"))
+
+    local apocalypseResult = readInteger("apocalypseResult")
+    local tickleResult = readInteger("tickleResult")
+
+    local lastDamageToPlayer = readFloat("lastDamageToPlayer")
+    local lastDamageByPlayer = readFloat("lastDamageByPlayer")
+    local playerHealth = readFloat("[playerHealth]+0x42C")
+    local logEntryEnemyRoll = "Enemy rolls a "
+    local logEntryPlayerHealth = " damage to the player!\nPlayer now has "
+
+    local logApocalypse = readInteger("logApocalypse")
+
+    if logApocalypse == 1 and apocalypseResult ~= nil and lastDamageToPlayer ~= nil and playerHealth ~= nil then
+       writeInteger("logApocalypse", 0)
+       if apocalypseResult &gt;= 1 and apocalypseResult &lt;= 5 then
+         log:write(logEntryEnemyRoll,
+                   apocalypseResult,
+                   ": DOUBLE DAMAGE causing ",
+                   math.floor(lastDamageToPlayer),
+                   logEntryPlayerHealth,
+                   playerHealth,
+                   " health.\n")
+       elseif apocalypseResult &gt;= 6 and apocalypseResult &lt;= 9 then
+         log:write(logEntryEnemyRoll,
+                   apocalypseResult,
+                   ": RISK OF MURDER!\n")
+         if tickleResult == 5 or tickleResult == 4 then
+           log:write(logEntryEnemyRoll,
+                     tickleResult,
+                     ": Player has been SIXTY NINED causing ",
+                     math.floor(lastDamageToPlayer),
+                     logEntryPlayerHealth,
+                     playerHealth,
+                     " health.\n")
+         else
+           log:write(logEntryEnemyRoll,
+                     tickleResult,
+                     ": LAST CHANCE. We may be fucked!\n")
+         end
+
+       elseif apocalypseResult == 0xA then
+         log:write(logEntryEnemyRoll,
+                   apocalypseResult,
+                   ": Player achieves orgasm and is healed fully to ",
+                   playerHealth,
+                   " health.\n")
+       end
+    end
+
+    local gokuResult = readInteger("gokuResult")
+
+    local logKamehameha = readInteger("logKamehameha")
+
+    if logKamehameha == 1 and gokuResult ~= nil then
+      writeInteger("logKamehameha", 0)
+      if gokuResult == 69 and lastDamageByPlayer ~= nil then
+        log:write("\nPlayer has unlocked his inner Goku and performs a devastating KAMEHAMEHAAAAAAAAA attack causing ",
+                  math.floor(lastDamageByPlayer),
+                  " damage!")
+      end
+    end
+
+    local maxDamageToPlayer = readFloat("maxDamageToPlayer")
+
+    if maxDamageToPlayer ~= nil then
+      file:write("Max Damage To Player: ", math.floor(maxDamageToPlayer), "\n")
+    end
+
+    if lastDamageToPlayer ~= nil then
+      file:write("Last Damage To Player: ", math.floor(lastDamageToPlayer), "\n")
+    end
+
+    local focusRate = readFloat("playerFocusRate")
+
+    if focusRate ~= nil then
+      file:write("Focus Rate: ", focusRate, "\n")
+    end
+
+    local xCoords = readFloat("[playerCoords]+0xAC")
+    local yCoords = readFloat("[playerCoords]+0xB4")
+    local zCoords = readFloat("[playerCoords]+0xB0")
+
+    if xCoords ~= nil and yCoords ~= nil and zCoords ~= nil then
+
+      file:write("X : ", xCoords, "\n")
+      file:write("Y : ", yCoords, "\n")
+      file:write("Z : ", zCoords, "\n")
+
+    end
+
+	local powerMeter = readInteger("powerMeter")
+	
+	if powerMeter ~= nil then
+	  file:write("Power Meter: ", powerMeter, "%\n")
+	end
+
+    local maxDamageByPlayer = readFloat("maxDamageByPlayer")
+
+    if maxDamageByPlayer ~= nil then
+       file:write("Max Damage By Player: ", math.floor(maxDamageByPlayer), "\n")
+    end
+
+    if lastDamageByPlayer ~= nil then
+       file:write("Last Damage By Player: ", math.floor(lastDamageByPlayer), "\n")
+    end
+
+    file:close()
+    log:close()
+
+    loggersTimer.Enabled = true
+  end
+
+  loggersTimer.Enabled = true
+
+end
+
+function DeactivateLoggers()
+  if loggersTimer ~= nil then
+    loggersTimer.destroy()
+  end
+
+end
+{$asm}
+
+luacall(ActivateLoggers())
+
+// Random number generation function.
+// After r12-r14 pushes:
+// [rsp+20]: last random number, 0 if uninitialized
+// [rsp+28]: upper bounds
+// [rsp+30]: lower bounds
+// return value is in EAX
+alloc(generateRandomNumber,$1000)
+
+registersymbol(generateRandomNumber)
+
+generateRandomNumber:
+  push r12
+  push r13
+  push r14
+  mov r12,[rsp+20]
+  mov r13,[rsp+28]
+  mov r14,[rsp+30]
+  push rbx
+  push rcx
+  push rdx
+  push r8
+  push r10
+  push r11
+  cmp r12,0
+  jne getRandomNumber
+initializeSeed:
+  call kernel32.GetTickCount
+  push eax
+  call msvcrt.srand
+  pop eax
+getRandomNumber:
+  call msvcrt.rand
+  xor edx,edx
+  mov ebx,r14
+  mov ecx,r13
+  cmp ecx,ebx
+  cmovl ecx,ebx
+  inc ecx
+  sub ecx,ebx
+  idiv ecx
+  add edx,ebx
+  mov eax,edx
+  pop r11
+  pop r10
+  pop r8
+  pop rdx
+  pop rcx
+  pop rbx
+  pop r14
+  pop r13
+  pop r12
+  ret 18
+
+// Gets the player's health.
+aobscanmodule(omniPlayerHealthHook, ShadowOfWar.exe, F3 0F 10 80 2C 04 00 00 48)
+alloc(getPlayerHealth,$1000, omniPlayerHealthHook)
+alloc(playerHealth,8)
+
+registersymbol(omniPlayerHealthHook)
+registersymbol(playerHealth)
+
+getPlayerHealth:
+  push rbx
+  mov rbx,playerHealth
+  mov [rbx],rax
+  pop rbx
+getPlayerHealthOriginalCode:
+  movss xmm0,[rax+0000042C]
+  jmp getPlayerHealthReturn
+
+
+omniPlayerHealthHook:
+  jmp getPlayerHealth
+  nop 3
+getPlayerHealthReturn:
+
+playerHealth:
+  dd 0
+
+// Gets the player's health as displayed in the UI.
+//
+//   x+04: Red Health Meter
+//   x+08: Gray Health Meter
+aobscanmodule(omniPlayerVisualHealthHook, ShadowOfWar.exe, F3 0F 10 5B 04 F3 0F 5E D8)
+alloc(getPlayerVisualHealth,$1000, omniPlayerVisualHealthHook)
+alloc(playerVisualHealth,8)
+
+registersymbol(omniPlayerVisualHealthHook)
+registersymbol(playerVisualHealth)
+
+getPlayerVisualHealth:
+  pushf
+  cmp r9,0
+  jne getPlayerVisualHealthOriginalCode
+  push rax
+  mov rax,playerVisualHealth
+  mov [rax],rbx
+  pop rax
+getPlayerVisualHealthOriginalCode:
+  popf
+  movss xmm3,[rbx+04]
+  jmp getPlayerVisualHealthReturn
+
+
+omniPlayerVisualHealthHook:
+  jmp getPlayerVisualHealth
+getPlayerVisualHealthReturn:
+
+playerVisualHealth:
+  dd 0
+
+// Gets the player's Focus. Baby.
+aobscanmodule(omniPlayerFocusHook, ShadowOfWar.exe, F3 0F 10 8B 3C 02 00 00 F3 0F 10 93)
+alloc(getPlayerFocus,$1000, omniPlayerFocusHook)
+alloc(playerFocus,8)
+
+registersymbol(omniPlayerFocusHook)
+registersymbol(playerFocus)
+
+getPlayerFocus:
+  push rax  
+  mov rax,playerFocus
+  mov [rax],rbx
+  pop rax
+getPlayerFocusOriginalCode:
+  movss xmm1,[rbx+0000023C]
+  jmp getPlayerFocusReturn
+
+
+omniPlayerFocusHook:
+  jmp getPlayerFocus
+  nop 3
+getPlayerFocusReturn:
+
+playerFocus:
+  dd 0
+
+// Gets the player's coordinates.
+//
+//   x+AC: X Coords
+//   x+B0: Z Coords
+//   x+B4: Y Coords
+//
+aobscanmodule(omniPlayerCoordsHook, ShadowOfWar.exe, 1E 8B 86 AC 00 00 00)
+alloc(getPlayerCoords,$1000, omniPlayerCoordsHook)
+alloc(playerCoords,8)
+
+registersymbol(omniPlayerCoordsHook)
+registersymbol(playerCoords)
+
+getPlayerCoords:
+  push rbx
+  mov rbx,playerCoords
+  mov [rbx],rsi
+  pop rbx
+getPlayerCoordsOriginalCode:
+  mov eax,[rsi+000000AC]
+  jmp getPlayerCoordsReturn
+
+
+omniPlayerCoordsHook+01:
+  jmp getPlayerCoords
+  nop
+getPlayerCoordsReturn:
+
+
+// Finds the coordinates of the player's mount.
+// Coords are in RSI register.
+aobscanmodule(omniMountCoordsHook, ShadowOfWar.exe, 48 8B 8E 28 25 00 00 F2 0F 10)
+alloc(getMountCoords,$1000,omniMountCoordsHook)
+alloc(mountCoords,8)
+
+registersymbol(omniMountCoordsHook)
+registersymbol(mountCoords)
+
+getMountCoords:
+  pop rax
+  mov rax,mountCoords
+  mov [rax],rsi
+  push rax
+getMountCoordsOriginalCode:
+  mov rcx,[rsi+00002528]
+  jmp getMountCoordsReturn
+
+
+omniMountCoordsHook:
+  jmp getMountCoords
+  nop 2
+getMountCoordsReturn:
+
+// Gets the player's arrows.
+aobscanmodule(omniPlayerArrowsHook, ShadowOfWar.exe, C9 48 03 C0 41 8B 84 C0 B0 00 00 00)
+alloc(getPlayerArrows,$1000, omniPlayerArrowsHook)
+alloc(playerArrows,8)
+
+registersymbol(omniPlayerArrowsHook)
+registersymbol(playerArrows)
+
+getPlayerArrows:
+  push rbx
+  mov rbx,playerArrows
+  mov [rbx],r8
+  pop rbx
+getPlayerArrowsOriginalCode:
+  mov eax,[r8+rax*8+000000B0]
+  jmp getPlayerArrowsReturn
+  
+
+omniPlayerArrowsHook+04:
+  jmp getPlayerArrows
+  nop 3
+getPlayerArrowsReturn:
+
+// Gets the player's XP for their current level.
+aobscanmodule(omniPlayerXpHook, ShadowOfWar.exe, 8B 82 6C 05 00 00)
+alloc(getPlayerXp,$1000, omniPlayerXpHook)
+alloc(playerXp,8)
+
+registersymbol(omniPlayerXpHook)
+registersymbol(playerXp)
+
+getPlayerXp:
+  push rax
+  mov rax,playerXp
+  mov [rax],rdx
+  pop rax
+getPlayerXpOriginalCode:
+  mov eax,[rdx+0000056C]
+  jmp getPlayerXpReturn
+
+
+omniPlayerXpHook:
+  jmp getPlayerXp
+  nop
+getPlayerXpReturn:
+
+// Gets the XP required until the player levels.
+aobscanmodule(omniPlayerLastXpHook, ShadowOfWar.exe,0F 10 42 20 0F 11 81 20 01 00 00) // should be unique
+alloc(getPlayerLastXp,$1000, omniPlayerLastXpHook)
+alloc(playerLastXpValue,8)
+alloc(playerLastMaxXpValue,8)
+
+registersymbol(omniPlayerLastXpHook)
+
+getPlayerLastXp:
+  push rax
+  mov eax,[rcx+11C]
+  mov [playerLastMaxXpValue],eax
+  mov eax,[rcx+118]
+  mov [playerLastXpValue],eax
+  pop rax
+getPlayerLastXpOriginalCode:
+  movups xmm0,[rdx+20]
+  movups [rcx+00000120],xmm0
+  jmp getPlayerLastXpReturn
+
+omniPlayerLastXpHook:
+  jmp getPlayerLastXp
+  nop 6
+getPlayerLastXpReturn:
+
+playerLastMaxXpValue:
+  dd 0
+
+
+// Behold! The Omni Power Meter!
+aobscanmodule(omnifyPowerMeterHook, ShadowOfWar.exe, 4C 89 2B 44 89 6B 08 E9 3F)
+alloc(updatePowerMeter,$1000, omnifyPowerMeterHook)
+alloc(powerMeter,8)
+
+registersymbol(omnifyPowerMeterHook)
+registersymbol(powerMeter)
+
+updatePowerMeter:
+  pushf
+  cmp rbx,0x14D670
+  jne updatePowerMeterOriginalCode
+  push rax 
+  mov eax,[powerMeter]
+  add eax,1F4
+  mov [powerMeter],eax
+  pop rax
+updatePowerMeterOriginalCode:
+  popf
+  mov [rbx],r13
+  mov [rbx+08],r13d
+  jmp updatePowerMeterReturn
+
+
+omnifyPowerMeterHook:
+  jmp updatePowerMeter
+  nop 2
+updatePowerMeterReturn:
+
+powerMeter:
+  dd 0
+
+
+// Amplifies damage done to player by 69x and damage done to enemies by a default of 1x (no change).
+//
+//   rdi+28: holds damage to be applied to health
+aobscanmodule(omnifyDamageHook, ShadowOfWar.exe, F3 0F 5C 47 28 0F)
+alloc(fuckDamageUp,$1000,omnifyDamageHook)
+alloc(enemyDamageX,8)
+alloc(doubleDamage,8)
+alloc(playerDamageX,8)
+alloc(playerGodMode,8)
+alloc(lastChangeThreshold,8)
+alloc(maxDamageToPlayer,8)
+alloc(lastDamageToPlayer,8)
+alloc(lastDamageByPlayer,8)
+alloc(maxDamageByPlayer,8)
+alloc(apocalypseResult,8)
+alloc(apocalypseResultUpper,8)
+alloc(apocalypseResultLower,8)
+alloc(tickleResult,8)
+alloc(tickleResultUpper,8)
+alloc(tickleResultLower,8)
+alloc(gokuResult,8)
+alloc(gokuResultUpper,8)
+alloc(gokuResultLower,8)
+alloc(kamehameha,8)
+alloc(powerMeterDivisor,8)
+alloc(perfectCounterDamage,8)
+alloc(logApocalypse,8)
+alloc(logKamehameha,8)
+
+registersymbol(omnifyDamageHook)
+registersymbol(enemyDamageX)
+registersymbol(playerDamageX)
+registersymbol(playerGodMode)
+registersymbol(maxDamageToPlayer)
+registersymbol(lastDamageToPlayer)
+registersymbol(maxDamageByPlayer)
+registersymbol(lastDamageByPlayer)
+registersymbol(apocalypseResult)
+registersymbol(tickleResult)
+registersymbol(gokuResult)
+registersymbol(logApocalypse)
+registersymbol(logKamehameha)
+
+fuckDamageUp:
+  pushf
+  push rax
+  mov rax,playerHealth
+  cmp rbx,[rax]
+  pop rax
+  jne fuckEnemyUp
+  push rax
+  sub rsp,16
+  movdqu [rsp],xmm1
+  movss xmm1,[rbx+42c]
+  cmpss xmm1,[lastChanceThreshold],0
+  movd eax,xmm1
+  movdqu xmm1,[rsp]
+  add rsp,16
+  test eax,eax
+  pop rax
+  jne fuckDamageUpOriginalCode
+  push rax
+  mov eax,[playerGodMode]
+  cmp eax,1
+  pop rax
+  jne continueFuckDamageUp
+  sub rsp,16
+  movdqu [rsp],xmm1
+  movss xmm1,[rdi+28]
+  xorps xmm1,xmm1
+  movss [rdi+28],xmm1
+  movdqu xmm1,[rsp]
+  add rsp,16
+  jmp fuckDamageUpOriginalCode
+continueFuckDamageUp:
+  mov [logApocalypse],1
+  push rax
+  push [apocalypseResultLower]
+  push [apocalypseResultUpper]
+  push [apocalypseResult]
+  call generateRandomNumber
+  mov [apocalypseResult],eax
+  cmp eax,5
+  jle doubleTeamPlayer
+  cmp eax,9
+  jle murderPlayer
+  jmp sexPlayer
+doubleTeamPlayer:
+  pop rax
+  sub rsp,16
+  movdqu [rsp],xmm1
+  sub rsp,16
+  movdqu [rsp],xmm2
+  movss xmm1,[rdi+28]
+  mulss xmm1,[doubleDamage]
+  movss xmm2,[rbx+42c]
+  cmpss xmm2,xmm1,1
+  push rax
+  movd eax,xmm2
+  test eax,eax
+  pop rax
+  je applyDoubleDamage
+  movss xmm2,[rbx+42c]
+  subss xmm2,[lastChanceThreshold]
+  movss xmm1,xmm2
+applyDoubleDamage:
+  movss [rdi+28],xmm1
+  movdqu xmm2,[rsp]
+  add rsp,16
+  movdqu xmm1,[rsp]
+  add rsp,16
+  jmp fuckPlayerDamageUpExit
+murderPlayer:
+  pop rax
+  push rax
+  push [tickleResultLower]
+  push [tickleResultUpper]
+  push [tickleResult]
+  call generateRandomNumber
+  mov [tickleResult],eax
+  cmp eax,5
+  je sixtyNinePlayer
+  cmp eax,4
+  je sixtyNinePlayer
+ticklePlayerButt:
+  pop rax
+  sub rsp,16
+  movdqu [rsp],xmm1
+  movss xmm1,[rbx+42C]
+  subss xmm1,[lastChanceThreshold]
+  movss [rdi+28],xmm1
+  movdqu xmm1,[rsp]
+  add rsp,16
+  jmp fuckPlayerDamageUpExit
+sixtyNinePlayer:
+  pop rax
+  sub rsp,16
+  movdqu [rsp],xmm1
+  movss xmm1,[rdi+28]
+  mulss xmm1,[enemyDamageX]
+  movss [rdi+28],xmm1
+  movdqu xmm1,[rsp]
+  add rsp,16
+  jmp fuckPlayerDamageUpExit
+sexPlayer:
+  pop rax
+  sub rsp,16
+  movdqu [rsp],xmm1
+  movss xmm1,[rbx+428]
+  movss [rbx+42C],xmm1
+  xorps xmm1,xmm1
+  movss [rdi+28],xmm1
+  movdqu xmm1,[rsp]
+  add rsp,16
+  jmp fuckDamageUpOriginalCode
+fuckPlayerDamageUpExit:
+  mov [powerMeter],0
+  sub rsp,16
+  movdqu [rsp],xmm1
+  sub rsp,16
+  movdqu [rsp],xmm2
+  movss xmm1,[maxDamageToPlayer]
+  movss xmm2,[rdi+28]
+  cmpss xmm1,xmm2,1
+  push rax
+  movd eax,xmm1
+  test eax,eax
+  pop rax
+  je skipHighestDamageUpdate
+  movss [maxDamageToPlayer],xmm2
+skipHighestDamageUpdate:
+  push rax
+  movd eax,xmm2
+  test eax,eax
+  je skipLastDamageUpdate
+  movss [lastDamageToPlayer],xmm2
+skipLastDamageUpdate:
+  pop rax
+  movdqu xmm2,[rsp]
+  add rsp,16
+  movdqu xmm1,[rsp]
+  add rsp,16
+  jmp fuckDamageUpOriginalCode
+fuckEnemyUp:
+  push rax
+  push rbx
+  mov rax,playerHealth
+  mov rbx,[rsp+18]
+  shr rbx,0x10
+  cmp [rax],rbx
+  pop rbx
+  pop rax
+  jne fuckDamageUpOriginalCode
+  sub rsp,16
+  movdqu [rsp],xmm1
+  movss xmm1,[rdi+28]
+  push rax
+  push [gokuResultLower]
+  push [gokuResultUpper]
+  push [gokuResult]
+  call generateRandomNumber
+  mov [gokuResult],eax
+  cmp eax,0x45
+  pop rax
+  jne applyPowerMeter
+  mov [logKamehameha],1
+  mulss xmm1,[kamehameha]
+applyPowerMeter:
+  mulss xmm1,[playerDamageX]
+  sub rsp,16
+  movdqu [rsp],xmm2
+  movss xmm2,[perfectCounterDamage]
+  cmpss xmm2,xmm1,0
+  push rax
+  movd eax,xmm2
+  test eax,eax
+  pop rax
+  jne applyPowerMeterExit
+  cvtsi2ss xmm2,[powerMeter]
+  divss xmm2,[powerMeterDivisor]
+  mulss xmm2,xmm1
+  addss xmm1,xmm2
+  mov [powerMeter],0
+updatePlayerDamageStats:
+  sub rsp,16
+  movdqu [rsp],xmm3
+  movss xmm3,[maxDamageByPlayer]
+  movss xmm2,xmm1
+  cmpss xmm3,xmm2,1
+  push rax
+  movd eax,xmm3
+  test eax,eax
+  pop rax
+  je skipHighestPlayerDamageUpdate
+  movss [maxDamageByPlayer],xmm1
+skipHighestPlayerDamageUpdate:
+  push rax
+  movd eax,xmm1
+  test eax,eax
+  je skipLastPlayerDamageUpdate
+  movss [lastDamageByPlayer],xmm1
+skipLastPlayerDamageUpdate:
+  pop rax
+  movdqu xmm3,[rsp]
+  add rsp,16
+applyPowerMeterExit:
+  movdqu xmm2,[rsp]
+  add rsp,16
+applyEnemyDamage:
+  movss [rdi+28],xmm1
+  movdqu xmm1,[rsp]
+  add rsp,16
+fuckDamageUpOriginalCode:
+  popf
+  subss xmm0,[rdi+28]
+  jmp fuckDamageUpReturn
+
+omnifyDamageHook:
+  jmp fuckDamageUp
+fuckDamageUpReturn:
+
+enemyDamageX:
+  dd (float)69.0
+
+doubleDamage:
+  dd (float)2.0
+
+playerDamageX:
+  dd (float)1.0
+
+playerGodMode:
+  dd 0
+
+lastChanceThreshold:
+  dd (float)3.0
+
+apocalypseResult:
+  dd 0
+
+apocalypseResultUpper:
+  dd A
+
+apocalypseResultLower:
+  dd 1
+
+tickleResult:
+  dd 0
+
+tickleResultUpper:
+  dd 5
+
+tickleResultLower:
+  dd 1
+
+gokuResult:
+  dd 0
+
+gokuResultUpper:
+  dd 3E8
+
+gokuResultLower:
+  dd 1
+
+kamehameha:
+  dd (float)10000.0
+  
+powerMeterDivisor:
+  dd (float)100.0
+
+perfectCounterDamage:
+  dd (float)3000.0
+
+logApocalypse:
+  dd 0
+
+logKamehameha:
+  dd 0
+
+
+// Applies a random amount of spunk to the player's Focus bar. Making it go both up and down
+// ...veryyyy randomly. As fuck. Between 0.002x and 2x the normal amount.
+//
+//   xmm1: Change to be applied to Focus.
+aobscanmodule(omnifyBogusFocusHook, ShadowOfWar.exe, 0F 28 C1 0F 2F D9)
+alloc(fuckUpFocusViscosity,$1000, omnifyBogusFocusHook)
+alloc(playerFocusRate,8)
+alloc(playerFocusLastDirection,8)
+alloc(playerFocusRateRandom,8)
+alloc(playerFocusRateUpper,8)
+alloc(playerFocusRateLower,8)
+alloc(playerFocusRateDivisor,8)
+alloc(zero,8)
+
+registersymbol(omnifyBogusFocusHook)
+registersymbol(playerFocusRate)
+registersymbol(playerFocusRateUpper)
+registersymbol(playerFocusRateLower)
+registersymbol(playerFocusRateDivisor)
+
+fuckUpFocusViscosity:
+  pushf
+  push rax
+  movd rax,xmm1
+  shr rax,1F
+  test rax,rax
+  mov eax,[playerFocusLastDirection]
+  jne checkNegativeChange
+checkPositiveChange:
+  mov [playerFocusLastDirection],1
+  cmp eax,1
+  jmp actOnDirection
+checkNegativeChange:
+  mov [playerFocusLastDirection],0
+  cmp eax,0
+actOnDirection:
+  pop rax
+  je adjustFocusChange
+  push rax
+  push [playerFocusRateLower]
+  push [playerFocusRateUpper]
+  push [playerFocusRateRandom]
+  call generateRandomNumber
+  mov [playerFocusRateRandom],eax
+  pop rax
+  sub rsp,16
+  movdqu [rsp],xmm4
+  cvtsi2ss xmm4,[playerFocusRateRandom]
+  divss xmm4,[playerFocusRateDivisor]
+  movss [playerFocusRate],xmm4
+  movdqu xmm4,[rsp]
+  add rsp,16
+adjustFocusChange:
+  mulss xmm1,[playerFocusRate]
+fuckUpFocusViscosityOriginalCode:
+  popf
+  movaps xmm0,xmm1
+  comiss xmm3,xmm1
+  jmp fuckUpFocusViscosityReturn
+
+
+omnifyBogusFocusHook:
+  jmp fuckUpFocusViscosity
+  nop
+fuckUpFocusViscosityReturn:
+
+playerFocusRate:
+  dd (float)1.0
+
+playerFocusRateRandom:
+  dd 0
+
+playerFocusLastDirection:
+  dd 0
+
+playerFocusRateUpper:
+  dd 1388
+
+playerFocusRateLower:
+  dd 1
+
+playerFocusRateDivisor:
+  dd (float)1000.0
+
+zero:
+  dd (float)0.0
+
+
+// Make dem enemies super fuckin' fast.
+aobscanmodule(omnifySpeedHook, ShadowOfWar.exe, 41 8B 00 41 89 81 AC 00 00 00)
+alloc(fuckUpSpeed, $1000, omnifySpeedHook)
+alloc(enemySpeedX,8)
+alloc(playerSpeedX,8)
+alloc(zThreshold,8)
+
+registersymbol(omnifySpeedHook)
+registersymbol(enemySpeedX)
+registersymbol(playerSpeedX)
+
+fuckUpSpeed:
+  pushf
+  cmp rbx,C
+  je fuckUpSpeedOriginalCode
+  cmp r13,0
+  jne fuckUpSpeedOriginalCode
+  push rcx
+  sub rcx,rbx
+  cmp rcx,C8
+  pop rcx
+  jne fuckUpSpeedOriginalCode
+  push rax
+  mov eax,[r9+170]
+  cmp eax,0x726C6162
+  pop rax
+  je fuckUpSpeedOriginalCode
+  push rax
+  sub rsp,16
+  movdqu [rsp],xmm0
+  sub rsp,16
+  movdqu [rsp],xmm1
+  movss xmm0,[r9+B0]
+  movss xmm1,[zThreshold]
+  cmpss xmm0,xmm1,1
+  movd rax,xmm0
+  movdqu xmm0,[rsp]
+  add rsp,16
+  movdqu xmm1,[rsp]
+  add rsp,16
+  test eax,eax
+  pop eax
+  jne fuckUpSpeedOriginalCode
+  sub rsp,16
+  movdqu [rsp],xmm0
+  sub rsp,16
+  movdqu [rsp],xmm1
+  push r8
+  mov r8,playerCoords
+  cmp r9,[r8]
+  pop r8
+  je fuckUpPlayerSpeed
+  push r8
+  mov r8,mountCoords
+  cmp r9,[r8]
+  pop r8
+  je fuckUpPlayerSpeed
+fuckUpEnemySpeed:
+  movss xmm1,[enemySpeedX]
+  jmp applySpeedMultiplier
+fuckUpPlayerSpeed:
+  movss xmm1,[playerSpeedX]
+applySpeedMultiplier:
+  movss xmm0,[r8]
+  subss xmm0,[r9+AC]
+  mulss xmm0,xmm1
+  addss xmm0,[r9+AC]
+  movss [r8],xmm0
+  movss xmm0,[r8+8]
+  subss xmm0,[r9+B4]
+  mulss xmm0,xmm1
+  addss xmm0,[r9+B4]
+  movss [r8+8],xmm0
+  movdqu xmm1,[rsp]
+  add rsp,16
+  movdqu xmm0,[rsp]
+  add rsp,16
+fuckUpSpeedOriginalCode:
+  popf
+  mov eax,[r8]
+  mov [r9+000000AC],eax
+  jmp fuckUpSpeedReturn
+
+
+omnifySpeedHook:
+  jmp fuckUpSpeed
+  nop 5
+fuckUpSpeedReturn:
+
+enemySpeedX:
+  dd (float)3.0
+
+playerSpeedX:
+  dd (float)1.0
+
+zThreshold:
+  dd (float)-90000.0
+
+// Boosts the XP that the player gets.
+aobscanmodule(omnifyPlayerXpHook,ShadowOfWar.exe,8B 47 18 89 83 6C 05 00 00) // should be unique
+alloc(boostPlayerXp,$1000, omnifyPlayerXpHook)
+
+registersymbol(omnifyPlayerXpHook)
+
+boostPlayerXp:
+  pushf
+  push rdx
+  push rbx
+  mov eax,[rdi+18]
+  cmp eax,[playerLastXpValue]
+  jl boostLeveledPlayerXp
+  mov ebx,[playerLastXpValue]
+  jmp commitPlayerXp
+ boostLeveledPlayerXp:
+  mov ebx,[playerLastXpValue]
+  mov edx,[playerLastMaxXpValue]
+  add eax,edx
+calculatePlayerXp:
+  sub eax,ebx
+  mov edx,2
+  mul edx
+  mov ebx,eax
+  mov eax,[rdi+18]
+  add eax,ebx
+  mov ebx,[playerLastMaxXpValue]
+  cmp eax,ebx
+  jle commitPlayerXp
+  mov eax,ebx
+  sub eax,1
+commitPlayerXp:
+  pop rbx
+  pop rdx
+  mov [rdi+18],eax
+boostPlayerXpOriginalCode:
+  popf
+  mov eax,[rdi+18]
+  mov [rbx+0000056C],eax
+  jmp boostPlayerXpReturn
+
+
+omnifyPlayerXpHook:
+  jmp boostPlayerXp
+  nop 4
+boostPlayerXpReturn:
+
+
+[DISABLE]
+//luacall(DeactivateLoggers())
+
+unregistersymbol(generateRandomNumber)
+
+dealloc(generateRandomNumber)
+
+// Cleanup of omniPlayerHealthHook
+omniPlayerHealthHook:
+  db F3 0F 10 80 2C 04 00 00
+
+unregistersymbol(omniPlayerHealthHook)
+unregistersymbol(playerHealth)
+
+dealloc(playerHealth)
+dealloc(getPlayerHealth)
+
+
+//Cleanup of omniPlayerVisualHealthHook
+omniPlayerVisualHealthHook:
+  db F3 0F 10 5B 04
+
+unregistersymbol(omniPlayerVisualHealthHook)
+unregistersymbol(playerVisualHealth)
+
+dealloc(playerVisualHealth)
+dealloc(getPlayerVisualHealth)
+
+
+// Cleanup of omniPlayerFocusHook
+omniPlayerFocusHook:
+  db F3 0F 10 8B 3C 02 00 00
+
+unregistersymbol(omniPlayerFocusHook)
+unregistersymbol(playerFocus)
+
+dealloc(playerFocus)
+dealloc(getPlayerFocus)
+
+// Cleanup of omniPlayerCoordsHook
+omniPlayerCoordsHook+01:
+  db 8B 86 AC 00 00 00
+
+unregistersymbol(omniPlayerCoordsHook)
+unregistersymbol(playerCoords)
+
+dealloc(playerCoords)
+dealloc(getPlayerCoords)
+
+
+// Cleanup of omniMountCoordsHook
+omniMountCoordsHook:
+  db 48 8B 8E 28 25 00 00
+
+unregistersymbol(omniMountCoordsHook)
+unregistersymbol(mountCoords)
+
+dealloc(getMountCoords)
+dealloc(mountCoords)
+
+
+// Cleanup of omniPlayerArrowsHook
+omniPlayerArrowsHook+04:
+  db 41 8B 84 C0 B0 00 00 00
+
+unregistersymbol(playerArrows)
+unregistersymbol(omniPlayerArrowsHook)
+
+dealloc(playerArrows)
+dealloc(getPlayerArrows)
+
+
+// Cleanup of omniPlayerXpHook
+omniPlayerXpHook:
+  db 8B 82 6C 05 00 00
+
+unregistersymbol(playerXp)
+unregistersymbol(omniPlayerXpHook)
+
+dealloc(playerXp)
+dealloc(getPlayerXp)
+
+
+// Cleanup of omniPlayerLastXpHook
+omniPlayerLastXpHook:
+  db 0F 10 42 20 0F 11 81 20 01 00 00
+
+unregistersymbol(omniPlayerLastXpHook)
+
+dealloc(playerLastXpValue)
+dealloc(playerLastMaxXpValue)
+dealloc(getPlayerLastXp)
+
+// Cleanup of omnifyDamageHook
+omnifyDamageHook:
+  db F3 0F 5C 47 28
+
+unregistersymbol(omnifyDamageHook)
+unregistersymbol(playerGodMode)
+unregistersymbol(enemyDamageX)
+unregistersymbol(playerDamageX)
+unregistersymbol(maxDamageToPlayer)
+unregistersymbol(lastDamageToPlayer)
+unregistersymbol(maxDamageByPlayer)
+unregistersymbol(lastDamageByPlayer)
+unregistersymbol(apocalypseResult)
+unregistersymbol(tickleResult)
+unregistersymbol(gokuResult)
+unregistersymbol(logApocalypse)
+unregistersymbol(logKamehameha)
+
+dealloc(logApocalypse)
+dealloc(logKamehameha)
+dealloc(perfectCounterDamage)
+dealloc(maxDamageToPlayer)
+dealloc(lastDamageToPlayer)
+dealloc(maxDamageByPlayer)
+dealloc(lastDamageByPlayer)
+dealloc(lastChanceThreshold)
+dealloc(apocalypseResult)
+dealloc(apocalypseResultUpper)
+dealloc(apocalypseResultLower)
+dealloc(tickleResult)
+dealloc(tickleResultUpper)
+dealloc(tickleResultLower)
+dealloc(gokuResult)
+dealloc(gokuResultUpper)
+dealloc(gokuResultLower)
+dealloc(powerMeterDivisor)
+dealloc(kamehameha)
+dealloc(playerGodMode)
+dealloc(enemyDamageX)
+dealloc(doubleDamage)
+dealloc(playerDamageX)
+dealloc(fuckDamageUp)
+
+
+// Cleanup of omnifyBogusFocusHook
+omnifyBogusFocusHook:
+  db 0F 28 C1 0F 2F D9
+
+unregistersymbol(omnifyBogusFocusHook)
+unregistersymbol(playerFocusRate)
+unregistersymbol(playerFocusRateUpper)
+unregistersymbol(playerFocusRateLower)
+unregistersymbol(playerFocusRateDivisor)
+
+dealloc(playerFocusRate)
+dealloc(playerFocusLastDirection)
+dealloc(playerFocusRateUpper)
+dealloc(playerFocusRateLower)
+dealloc(playerFocusRateRandom)
+dealloc(playerFocusRateDivisor)
+dealloc(fuckUpFocusViscosity)
+
+
+// Cleanup of omnifySpeedHook
+omnifySpeedHook:
+  db 41 8B 00 41 89 81 AC 00 00 00
+
+unregistersymbol(omnifySpeedHook)
+unregistersymbol(enemySpeedX)
+unregistersymbol(playerSpeedX)
+
+dealloc(fuckUpSpeed)
+dealloc(enemySpeedX)
+dealloc(playerSpeedX)
+dealloc(zThreshold)
+
+
+// Cleanup of omnifyPowerMeterHook
+omnifyPowerMeterHook:
+  db 4C 89 2B 44 89 6B 08
+
+unregistersymbol(omnifyPowerMeterHook)
+unregistersymbol(powerMeter)
+
+dealloc(powerMeter)
+dealloc(updatePowerMeter)
+
+
+// Cleanup of omnifyPlayerXpHook
+omnifyPlayerXpHook:
+  db 8B 47 18 89 83 6C 05 00 00
+
+unregistersymbol(omnifyPlayerXpHook)
+
+dealloc(boostPlayerXp)
+
+
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>8</ID>
+          <Description>"Player"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" Activated="1" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>171</ID>
+              <Description>"Inject Crack"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+
+playerSpeedX:
+  dd (float)4.0
+
+[DISABLE]
+
+playerSpeedX:
+  dd (float)1.0
+</AssemblerScript>
+              <Hotkeys>
+                <Hotkey>
+                  <Action>Toggle Activation</Action>
+                  <Keys>
+                    <Key>106</Key>
+                  </Keys>
+                  <ID>0</ID>
+                </Hotkey>
+              </Hotkeys>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>28</ID>
+              <Description>"Damage Multiplier"</Description>
+              <VariableType>Float</VariableType>
+              <Address>playerDamageX</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>179</ID>
+              <Description>"Arrows"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>playerArrows</Address>
+              <Offsets>
+                <Offset>B0</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>170</ID>
+              <Description>"God Mode"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+
+playerGodMode:
+  dd 1
+
+playerDamageX:
+  dd (float)10000.0
+
+[DISABLE]
+
+playerGodMode:
+  dd 0
+
+playerDamageX:
+  dd (float)1.0
+</AssemblerScript>
+              <Hotkeys>
+                <Hotkey>
+                  <Action>Toggle Activation</Action>
+                  <Keys>
+                    <Key>111</Key>
+                  </Keys>
+                  <ID>0</ID>
+                </Hotkey>
+              </Hotkeys>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>151</ID>
+              <Description>"Speed Multipler"</Description>
+              <VariableType>Float</VariableType>
+              <Address>playerSpeedX</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>143</ID>
+              <Description>"Location"</Description>
+              <Options moHideChildren="1"/>
+              <LastState Value="" Activated="1" RealAddress="00000000"/>
+              <GroupHeader>1</GroupHeader>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>144</ID>
+                  <Description>"X"</Description>
+                  <VariableType>Float</VariableType>
+                  <Address>playerCoords</Address>
+                  <Offsets>
+                    <Offset>AC</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>146</ID>
+                  <Description>"Y"</Description>
+                  <VariableType>Float</VariableType>
+                  <Address>playerCoords</Address>
+                  <Offsets>
+                    <Offset>B4</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>145</ID>
+                  <Description>"Z"</Description>
+                  <VariableType>Float</VariableType>
+                  <Address>playerCoords</Address>
+                  <Offsets>
+                    <Offset>B0</Offset>
+                  </Offsets>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>166</ID>
+              <Description>"Mount"</Description>
+              <Options moHideChildren="1"/>
+              <LastState Value="" Activated="1" RealAddress="00000000"/>
+              <GroupHeader>1</GroupHeader>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>167</ID>
+                  <Description>"X"</Description>
+                  <VariableType>Float</VariableType>
+                  <Address>mountCoords</Address>
+                  <Offsets>
+                    <Offset>AC</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>168</ID>
+                  <Description>"Y"</Description>
+                  <VariableType>Float</VariableType>
+                  <Address>mountCoords</Address>
+                  <Offsets>
+                    <Offset>B4</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>169</ID>
+                  <Description>"Z"</Description>
+                  <VariableType>Float</VariableType>
+                  <Address>mountCoords</Address>
+                  <Offsets>
+                    <Offset>B0</Offset>
+                  </Offsets>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>22</ID>
+              <Description>"Focus"</Description>
+              <Options moHideChildren="1"/>
+              <LastState Value="" Activated="1" RealAddress="00000000"/>
+              <GroupHeader>1</GroupHeader>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>24</ID>
+                  <Description>"Maximum"</Description>
+                  <VariableType>Float</VariableType>
+                  <Address>playerFocus</Address>
+                  <Offsets>
+                    <Offset>A8</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>23</ID>
+                  <Description>"Current"</Description>
+                  <VariableType>Float</VariableType>
+                  <Address>playerFocus</Address>
+                  <Offsets>
+                    <Offset>23C</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>25</ID>
+                  <Description>"Change Rate"</Description>
+                  <VariableType>Float</VariableType>
+                  <Address>playerFocusRate</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>27</ID>
+                  <Description>"Change Rate Lower Bounds"</Description>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>playerFocusRateLower</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>26</ID>
+                  <Description>"Change Rate Upper Bounds"</Description>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>playerFocusRateUpper</Address>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>181</ID>
+              <Description>"XP"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>playerXp</Address>
+              <Offsets>
+                <Offset>56C</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>9</ID>
+              <Description>"Health"</Description>
+              <Options moHideChildren="1"/>
+              <LastState Value="" Activated="1" RealAddress="00000000"/>
+              <GroupHeader>1</GroupHeader>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>13</ID>
+                  <Description>"Maximum"</Description>
+                  <VariableType>Float</VariableType>
+                  <Address>playerHealth</Address>
+                  <Offsets>
+                    <Offset>428</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>10</ID>
+                  <Description>"Current"</Description>
+                  <VariableType>Float</VariableType>
+                  <Address>playerHealth</Address>
+                  <Offsets>
+                    <Offset>42C</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>12</ID>
+                  <Description>"Gray Bar"</Description>
+                  <VariableType>Float</VariableType>
+                  <Address>playerVisualHealth</Address>
+                  <Offsets>
+                    <Offset>8</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>11</ID>
+                  <Description>"Red Bar"</Description>
+                  <VariableType>Float</VariableType>
+                  <Address>playerVisualHealth</Address>
+                  <Offsets>
+                    <Offset>4</Offset>
+                  </Offsets>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>14</ID>
+          <Description>"Enemy"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" Activated="1" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>15</ID>
+              <Description>"Damage Multiplier"</Description>
+              <VariableType>Float</VariableType>
+              <Address>enemyDamageX</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>150</ID>
+              <Description>"Speed Multiplier"</Description>
+              <VariableType>Float</VariableType>
+              <Address>enemySpeedX</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols/>
+  <LuaScript>getAutoAttachList().add("ShadowOfWar.exe")
+</LuaScript>
+</CheatTable>

@@ -1,0 +1,442 @@
+<!--
+    Omnified Mass Effect 3
+    Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
+    Copyright 2022 Bad Echo LLC
+
+    Bad Echo Technologies are licensed under a
+    Creative Commons Attribution-NonCommercial 4.0 International License.
+
+    See accompanying file LICENSE.md or a copy at:
+    http://creativecommons.org/licenses/by-nc/4.0/
+-->
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="29">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>1</ID>
+      <Description>"OMNIFY"</Description>
+      <Options moHideChildren="1"/>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : MassEffect3.exe
+  Version: 
+  Date   : 2020-01-15
+  Author : Omni
+
+  This hack shall own your soul bitch.
+}
+[ENABLE]
+
+aobscanmodule(omniShieldHook,MassEffect3.exe,85 C9 74 04 D9 00 D9 19 5E) // should be unique
+aobscanmodule(omniHealthHook,MassEffect3.exe,D9 46 6C 8B 4D 0C) // should be unique
+aobscanmodule(omniCoordsHook,MassEffect3.exe,8B 01 8B 90 50 05 00 00 FF D2 85 C0 75 36) // should be unique
+aobscanmodule(omnifyShieldHook,MassEffect3.exe,F3 0F 11 00 8B E5 5D C2 08 00 CC) // should be unique
+aobscanmodule(omnifyHealthHook,MassEffect3.exe,85 C9 74 04 D9 00 D9 19 8B) // should be unique
+aobscanmodule(omnifySpeedHook,MassEffect3.exe,54 F3 0F 10 44 24 4C) // should be unique
+
+
+alloc(getCoords,$1000)
+alloc(getShield,$1000)
+alloc(getHealth,$1000)
+
+alloc(fuckShields,$1000)
+alloc(fuckSpeed,$1000)
+alloc(fuckHealth,$1000)
+
+alloc(fuckSpeedMultiplier, 16)
+alloc(fuckHealthMultiplier, 16)
+alloc(zero, 16)
+alloc(tinyShepSize,16)
+alloc(bigShepHeight,16)
+
+
+alloc(pCoords,8)
+alloc(pShield,8)
+alloc(pHealth,8)
+
+registersymbol(tinyShepSize)
+registersymbol(bigShepHeight)
+registersymbol(omnifySpeedHook)
+registersymbol(omnifyHealthHook)
+registersymbol(omnifyShieldHook)
+registersymbol(omniCoordsHook)
+registersymbol(omniShieldHook)
+registersymbol(omniHealthHook)
+
+registersymbol(pCoords)
+registersymbol(pShield)
+registersymbol(pHealth)
+
+getCoords:
+
+getCoordsCode:
+  mov [pCoords],ecx
+  movss xmm1,[tinyShepSize]
+  movss [ecx+D4],xmm1
+  movss xmm1,[bigShepHeight]
+  movss [ecx+D8],xmm1
+getCoordsOriginalCode:
+  mov eax,[ecx]
+  mov edx,[eax+00000550]
+  jmp getCoordsReturn
+
+omniCoordsHook:
+  jmp getCoords
+  nop 3
+getCoordsReturn:
+
+getHealth:
+
+getHealthCode:
+  cmp esp,201E394
+  jne getHealthOriginalCode
+  push edi
+  mov edi,esi
+  add edi,6C
+  mov [pHealth],edi
+  pop edi
+getHealthOriginalCode:
+  fld dword ptr [esi+6C]
+  mov ecx,[ebp+0C]
+  jmp getHealthReturn
+
+omniHealthHook:
+  jmp getHealth
+  nop
+getHealthReturn:
+
+getShield:
+
+getShieldCode:
+  cmp ecx,0201E394
+  jne getShieldOriginalCode
+  mov [pShield],eax
+getShieldOriginalCode:
+  test ecx,ecx
+  je MassEffect3.exe+3F2C7
+  fld dword ptr [eax]
+  jmp getShieldReturn
+
+omniShieldHook:
+  jmp getShield
+  nop
+getShieldReturn:
+
+fuckShields:
+
+fuckShieldsCode:
+  cmp eax,[pShield]
+  jne setShieldsCode
+  movss xmm3,[eax]
+  cmpss xmm3,xmm0,2
+  push esi
+  movd esi,xmm3
+  test esi,esi
+  pop esi
+  jne setShieldsCode
+  movss xmm0,[zero]
+setShieldsCode:
+  movss [eax],xmm0
+  mov esp,ebp
+  jmp fuckShieldsReturn
+
+omnifyShieldHook:
+  jmp fuckShields
+  nopwwwwwwww
+fuckShieldsReturn:
+
+fuckHealth:
+
+fuckHealthCode:
+  test ecx,ecx
+  je MassEffect3.exe+3F1BA
+  cmp ecx,[pHealth]
+  jne fuckHealthOriginalCode
+  movss xmm0,[eax]
+  movss xmm1,[ecx]
+  subss xmm0,xmm1
+  mulss xmm0,[fuckHealthMultiplier]
+  addss xmm1,xmm0
+  movss [eax],xmm1
+fuckHealthOriginalCode:
+  fld dword ptr [eax]
+  jmp fuckHealthReturn
+
+omnifyHealthHook:
+  jmp fuckHealth
+  nop
+fuckHealthReturn:
+
+fuckSpeed:
+
+fuckSpeedCode:
+  cmp edx,1
+  je fuckSpeedOriginalCode
+  cmp ebx,[pCoords]
+  je fuckSpeedOriginalCode
+  cmp edi,0
+  jne fuckSpeedOriginalCode
+//  cmp ebp,0201E914
+//  je fuckSpeedOriginalCode
+//  cmp ebx,0201E814
+//  je fuckSpeedOriginalCode
+  movss xmm0,[esp+4C]
+  mulss xmm0,[fuckSpeedMultiplier]
+  movss [esp+4C],xmm0
+  movss xmm0,[esp+50]
+  mulss xmm0,[fuckSpeedMultiplier]
+  movss [esp+50],xmm0
+fuckSpeedOriginalCode:
+  movss xmm0,[esp+4C]
+  jmp fuckSpeedReturn
+
+omnifySpeedHook+01:
+  jmp fuckSpeed
+  nop
+fuckSpeedReturn:
+
+pCoords:
+  dd 0
+
+pHealth:
+  dd 0
+
+pShield:
+  dd 0
+
+zero:
+  dd 0
+
+tinyShepSize:
+  dd (float)1
+
+bigShepHeight:
+  dd (float)1
+
+fuckSpeedMultiplier:
+  dd (float)8
+
+fuckHealthMultiplier:
+  dd (float)5.0
+
+[DISABLE]
+
+omniCoordsHook:
+  db 8B 01 8B 90 50 05 00 00
+
+omniHealthHook:
+  db D9 46 6C 8B 4D 0C
+
+omniShieldHook:
+  db 85 C9 74 04 D9 00
+
+omnifyShieldHook:
+  db F3 0F 11 00 8B E5
+
+omnifyHealthHook:
+  db 85 C9 74 04 D9 00
+
+omnifySpeedHook+01:
+  db F3 0F 10 44 24 4C
+
+
+unregistersymbol(omnifySpeedHook)
+unregistersymbol(omnifyShieldHook)
+unregistersymbol(omniCoordsHook)
+unregistersymbol(omniHealthHook)
+unregistersymbol(omniShieldHook)
+unregistersymbol(omnifyHealthHook)
+
+unregistersymbol(pCoords)
+unregistersymbol(pHealth)
+unregistersymbol(pShield)
+unregistersymbol(tinyShepSize)
+unregistersymbol(bigShepHeight)
+
+dealloc(fuckSpeed)
+dealloc(fuckShields)
+dealloc(fuckHealth)
+
+
+dealloc(fuckHealthMultiplier)
+dealloc(fuckSpeedMultiplier)
+dealloc(zero)
+dealloc(bigShepHeight)
+dealloc(tinyShepSize)
+
+dealloc(getCoords)
+dealloc(getHealth)
+dealloc(getShield)
+</AssemblerScript>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Toggle Activation</Action>
+          <Keys>
+            <Key>17</Key>
+            <Key>79</Key>
+          </Keys>
+          <ID>0</ID>
+        </Hotkey>
+      </Hotkeys>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>8</ID>
+          <Description>"Player's Health"</Description>
+          <VariableType>Float</VariableType>
+          <Address>pHealth</Address>
+          <Offsets>
+            <Offset>0</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>4</ID>
+          <Description>"Player's Shield"</Description>
+          <VariableType>Float</VariableType>
+          <Address>pShield</Address>
+          <Offsets>
+            <Offset>0</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>56</ID>
+          <Description>"Player's X Coord"</Description>
+          <VariableType>Float</VariableType>
+          <Address>pCoords</Address>
+          <Offsets>
+            <Offset>BC</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>57</ID>
+          <Description>"Player's Y Coord"</Description>
+          <VariableType>Float</VariableType>
+          <Address>pCoords</Address>
+          <Offsets>
+            <Offset>B8</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>58</ID>
+          <Description>"Player's Z Coord"</Description>
+          <VariableType>Float</VariableType>
+          <Address>pCoords</Address>
+          <Offsets>
+            <Offset>C0</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>63</ID>
+          <Description>"Player's Height"</Description>
+          <VariableType>Float</VariableType>
+          <Address>pCoords</Address>
+          <Offsets>
+            <Offset>D4</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>64</ID>
+          <Description>"Player's Width"</Description>
+          <VariableType>Float</VariableType>
+          <Address>pCoords</Address>
+          <Offsets>
+            <Offset>D8</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>68</ID>
+          <Description>"Fun Talkin'"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+tinyShepSize:
+  dd (float)1
+
+bigShepHeight:
+  dd (float)20
+
+
+[DISABLE]
+tinyShepSize:
+  dd (float)1
+
+bigShepHeight:
+  dd (float)1
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>17</Key>
+                <Key>73</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>69</ID>
+          <Description>"Small Walkin'"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+tinyShepSize:
+  dd (float)4
+
+bigShepHeight:
+  dd (float).75
+
+[DISABLE]
+
+tinyShepSize:
+  dd (float)1
+
+bigShepHeight:
+  dd (float)1
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>17</Key>
+                <Key>80</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>73</ID>
+      <Description>"X Movement per Second"</Description>
+      <VariableType>Float</VariableType>
+      <Address>2757A0EC</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>75</ID>
+      <Description>"Player"</Description>
+      <VariableType>Byte</VariableType>
+      <Address>0201E69c</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>76</ID>
+      <Description>"Garrus"</Description>
+      <VariableType>Byte</VariableType>
+      <Address>0201e7cc</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>77</ID>
+      <Description>"Tali"</Description>
+      <VariableType>Byte</VariableType>
+      <Address>0201e64c</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>78</ID>
+      <Description>"Y Coordinate"</Description>
+      <VariableType>Float</VariableType>
+      <Address>4A4C2AB8</Address>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols/>
+</CheatTable>

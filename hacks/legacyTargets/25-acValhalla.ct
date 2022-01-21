@@ -1,0 +1,4535 @@
+<!--
+    Omnified Assassin's Creed: Valhalla
+    Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
+    Copyright 2022 Bad Echo LLC
+
+    Bad Echo Technologies are licensed under a
+    Creative Commons Attribution-NonCommercial 4.0 International License.
+
+    See accompanying file LICENSE.md or a copy at:
+    http://creativecommons.org/licenses/by-nc/4.0/
+-->
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="31">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>5</ID>
+      <Description>"OMNIFY"</Description>
+      <Options moHideChildren="1"/>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{
+ Omnified Asassin's Creed: Valhalla
+ Written By: Matt Weber
+ Copyright 2021 Bad Echo LLC
+
+ Visit my hackpad for my information on what I do:
+ https://badecho.com
+
+ Catch my live streams on my official Twitch channel:
+ https://twitch.tv/omni
+}
+	  
+[ENABLE]
+	  
+{$lua}
+function enableOmnified()
+	require("Omnified")
+	registerOmnification()
+end
+
+{$asm}
+luacall(enableOmnified())
+
+// Creates pointers for the player's root, health, and location
+// structures.
+// UNIQUE AOB: 8B BB 38 01 00 00 75
+define(omniPlayerHook, "ACValhalla.exe" + 21C5B73)
+
+assert(omniPlayerHook, 8B BB 38 01 00 00)
+alloc(getPlayer,$1000, omniPlayerHook)
+alloc(player,8)
+alloc(playerHealth,8)
+alloc(playerLocation,8)
+
+registersymbol(omniPlayerHook)
+registersymbol(player)
+registersymbol(playerHealth)
+registersymbol(playerLocation)
+
+getPlayer:
+  push rax
+  push rbx
+  push rcx
+  mov rax,playerHealth
+  mov [rax],rbx
+  // Root structure can be found at [playerHealth+70].
+  mov rax,player
+  mov rcx,[rbx+70]
+  mov [rax],rcx
+  // Location structure aligned for movement can be found 
+  // at [player+1D0].
+  mov rax,playerLocation
+  mov rbx,[rcx+1D0]
+  mov [rax],rbx
+  pop rcx
+  pop rbx
+  pop rax
+getPlayerOriginalCode:
+  mov edi,[rbx+00000138]
+  jmp getPlayerReturn
+
+
+omniPlayerHook:
+  jmp getPlayer
+  nop 
+getPlayerReturn:
+
+// Initiates the Apocalypse system.
+// Unique AOB: 2B 45 BC 89 44 24 58
+define(omnifyApocalypseHook, "ACValhalla.exe" + 217A8A6)
+
+assert(omnifyApocalypseHook, 2B 45 BC 89 44 24 58)
+alloc(initiateApocalypse,$1000, omnifyApocalypseHook)
+
+registersymbol(omnifyApocalypseHook)
+
+initiateApocalypse:
+  pushf
+  // Backing up a few SSE registers to hold converted floating points.
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  sub rsp,10
+  movdqu [rsp],xmm2
+  // Backing up the rbx register as it will be overwritten by
+  // the Apocalypse register. We don't care about the rax register
+  // as we'll be changing it anyway.
+  push rbx
+  // Backing up a working register to aid in value calculations, etc.
+  push rcx
+  // Let's grab the damage source right now before the stack shifts
+  // anymore.
+  mov rcx,[rsp+44A]
+skipLocationCheck:
+  // We'll convert the working health and damage amount to floats.
+  cvtsi2ss xmm0,eax
+  cvtsi2ss xmm1,[rbp-44]
+  // If the player is the one receiving the damage, then the rdi register
+  // will point to the player's location structure.
+  mov rbx,playerLocation
+  cmp [rbx],rdi
+  je initiatePlayerApocalypse
+  // The player is the one damaging the NPC if the player's root structure
+  // is listed as the damage source.
+  mov rbx,player
+  cmp [rbx],rcx
+  je initiateEnemyApocalypse
+  jmp initiateApocalypseExit
+initiatePlayerApocalypse:
+  // During kill animations on some enemies, the game will sometimes call
+  // this code as if the player is receiving the damage. 
+  // [rsp+20] seems to be set to (float)1.0 when this is the case.
+  mov rcx,[rsp+20]  
+  cmp rcx,0x3F800000
+  je initiateApocalypseExit
+  // Realign the player's coordinates so it begins at the X coordinate.
+  mov rbx,playerLocation
+  mov rcx,[rbx]
+  lea rax,[rcx+50]
+  // Convert the player's maximum health to floating point.
+  mov rbx,playerHealth
+  mov rcx,[rbx]  
+  cvtsi2ss xmm2,[rcx+13C]
+  // Push the damage amount parameter.
+  sub rsp,8
+  movd [rsp],xmm1
+  // Push the working health value parameter.
+  sub rsp,8
+  movd [rsp],xmm0
+  // Push the maximum health value parameter.
+  sub rsp,8
+  movd [rsp],xmm2
+  // Push the aligned coordinates struct parameter.
+  push rax
+  call executePlayerApocalypse
+  jmp initiateApocalypseUpdateDamage
+initiateEnemyApocalypse:
+  // Push the damage amount parameter.
+  sub rsp,8
+  movd [rsp],xmm1
+  // Push the working health value parameter.
+  sub rsp,8
+  movd [rsp],xmm0
+  call executeEnemyApocalypse
+initiateApocalypseUpdateDamage:
+  // Convert the updated damage amount to an integer.
+  movd xmm0,eax
+  cvtss2si eax,xmm0
+  mov [rbp-44],eax
+  // Convert the updated working health value to an integer.
+  movd xmm0,ebx
+  cvtss2si eax,xmm0
+initiateApocalypseExit:
+  pop rcx
+  pop rbx  
+  movdqu xmm2,[rsp]
+  add rsp,10
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+initiateApocalypseOriginalCode:
+  popf
+  sub eax,[rbp-44]
+  mov [rsp+58],eax
+  jmp initiateApocalypseReturn
+
+omnifyApocalypseHook:
+  jmp initiateApocalypse
+  nop 2
+initiateApocalypseReturn:
+
+
+negativeVerticalDisplacementEnabled:
+  dd 0
+  
+teleportitisDisplacementX:
+  dd (float)5.0
+  
+yIsVertical:
+  dd 0
+  
+extraDamageX:
+  dd (float)2.0
+  
+  
+// Bypasses the one hit kill protection system.
+// Unique AOB: 41 8B C8 2B C8 3B F1
+define(omnifyDepussifyGameHook, "ACValhalla.exe" + 211DAD3)
+
+assert(omnifyDepussifyGameHook, 41 8B C8 2B C8)
+alloc(depussifyGame,$1000, omnifyDepussifyGameHook)
+
+registersymbol(omnifyDepussifyGameHook)
+
+depussifyGame:
+  // If eax is any value greater than zero, it will result in one-hit
+  // kill protection code going off, which will prevent the player from
+  // dying no matter how high the damage is if there health is greater than
+  // or equal to a safety threshold (roughly 75% or so maximum health).
+  mov eax,0
+depussifyGameOriginalCode:
+  mov ecx,r8d
+  sub ecx,eax
+  jmp depussifyGameReturn
+
+
+omnifyDepussifyGameHook:
+  jmp depussifyGame
+depussifyGameReturn:
+
+
+// Bypasses a single location update pulse so that coordinates changes
+// from a teleportitis effect are not overwritten.
+// Unique AOB: 0F 28 48 30 0F 29 49 50
+define(omnifyBypassTeleportitisOverwriteHook, "ACValhalla.exe" + 7FC94A)
+
+assert(omnifyBypassTeleportitisOverwriteHook,0F 28 48 30 0F 29 49 50)
+alloc(bypassTeleportitisOverwrite,$1000,omnifyBypassTeleportitisOverwriteHook)
+
+registersymbol(omnifyBypassTeleportitisOverwriteHook)
+
+bypassTeleportitisOverwrite:
+  pushf
+  // Ensure that the player location struct has been initialized.
+  push rax
+  mov rax,playerLocation
+  cmp [rax],0  
+  pop rax
+  je bypassTeleportitisOverwriteOriginalCode  
+  // Backup registers used to hold the player's location structures.
+  push rax
+  push rbx
+  push rdx
+  // Backup the "updated location" structure address.
+  mov rdx,rax
+  mov rax,playerLocation
+  mov rbx,[rax]
+  // If the player is the one moving, we make sure that any new coordinates
+  // resulting from a recent teleport stick for one additional location
+  // update tick.
+  cmp rbx,rcx
+  jne bypassTeleportitisOverwriteExit
+  mov rax,teleported
+  cmp [rax],1
+  jne bypassTeleportitisOverwriteExit
+  // Clear the flag so this only happens once.
+  mov [rax],0
+  // Take the current coordinates and store them in the "updated location" 
+  // structure used in the original code as the source for the new coordinates.
+  movups xmm1,[rcx+50]
+  movups [rdx+30],xmm1
+bypassTeleportitisOverwriteExit:  
+  // Restore backed up values.
+  pop rdx
+  pop rbx
+  pop rax
+bypassTeleportitisOverwriteOriginalCode:
+  popf
+  movaps xmm1,[rax+30]
+  movaps [rcx+50],xmm1
+  jmp bypassTeleportitisOverwriteReturn
+
+omnifyBypassTeleportitisOverwriteHook:
+  jmp bypassTeleportitisOverwrite
+  nop 3
+bypassTeleportitisOverwriteReturn:
+
+
+// Initiates the Predator system.
+// Unique AOB:0F 58 C3 0F 11 06 F3
+// xmm0: Target's current coordinate values.
+// xmm3: Target's movement offsets.
+define(omnifyPredatorHook, "ACValhalla.exe" + F26083)
+
+assert(omnifyPredatorHook, 0F 58 C3 0F 11 06)
+alloc(initiatePredator,$1000, omnifyPredatorHook)
+alloc(identityValue,8)
+alloc(playerSpeedX,8)
+alloc(disablePredator,8)
+
+registersymbol(omnifyPredatorHook)
+registersymbol(playerSpeedX)
+registersymbol(disablePredator)
+        
+initiatePredator:
+  pushf
+  // Ensure that the player location struct has been initialized.
+  push rax
+  mov rax,playerLocation
+  cmp [rax],0
+  pop rax
+  je initiatePredatorOriginalCode
+  cmp [disablePredator],1
+  je initiatePredatorOriginalCode
+  // Backing up a few SSE registers we'll be using to perform a little
+  // memory management.
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  // Backing up the registers used by the Predator system to hold its
+  // return values.
+  push rax
+  push rbx
+  push rcx
+  // If it is the player moving, we'll want to avoid Predator execution
+  // and simply apply the player speed modifier.
+  // An interim data structure linking to the creature's location
+  // structure can be found on the stack.
+  mov rax,[rsp+14A]
+  // The location structure is found at the 0x18 offset of this
+  // interim structure.
+  push rcx
+  lea rcx,[rax+18]
+  call checkBadPointer
+  cmp rcx,0
+  pop rcx
+  jne initiatePredatorCleanup
+  mov rbx,[rax+18]
+  mov rax,playerLocation
+  cmp rbx,[rax]
+  je applyPlayerSpeed  
+initiatePredatorExecute:
+  // The player's coordinates are pushed as the first parameter.
+  mov rax,playerLocation
+  mov rbx,[rax]
+  push [rbx+50]
+  push [rbx+58]
+  // Parameters values are expected to have been pushed to the stack as
+  // if a m32 operand was used. Since two of the parameter sets are on
+  // SSE registers, we'll need to split low and high words, and then
+  // dump them onto the stack as quadwords (low and then high).
+  movhlps xmm1,xmm0
+  // Lets push the target's coordinates as the second parameter.
+  sub rsp,8
+  movq [rsp],xmm0
+  sub rsp,8
+  movq [rsp],xmm1  
+  // An identity matrix is used as we have not made the determination as
+  // of yet as to whether the game uses true scaling or not. 
+  // We pass this as the third parameter.
+  movss xmm0,[identityValue]
+  shufps xmm0,xmm0,0
+  sub rsp,10
+  movdqu [rsp],xmm0
+  // Now we split up the movement offset SSE register.
+  movhlps xmm1,xmm3
+  // Lets push the target's movement offsets as the final parameter.
+  sub rsp,8
+  movq [rsp],xmm3
+  sub rsp,8
+  movq [rsp],xmm1
+  // Time to execute dat Predator system.
+  call executePredator
+  jmp initiatePredatorExit
+applyPlayerSpeed:
+  // We'll be applying the player speed multiplier to all movement offsets
+  // except the Z (vertical) offset.
+  sub rsp,10
+  // We want to preserve the Z offset before applying the multiplier.
+  movups [rsp],xmm3
+  mov ecx,[rsp+8]
+  movss xmm0,[playerSpeedX]
+  shufps xmm0,xmm0,0
+  mulps xmm3,xmm0
+  movups [rsp],xmm3
+  // Load the modifier X and Y offsets.
+  mov eax,[rsp]
+  mov ebx,[rsp+4]
+  add rsp,10
+initiatePredatorExit:
+  // We'll need to make some room on the stack for temporary use so
+  // we can load updated values back onto the SSE register used by
+  // the original code to apply the movement offsets.
+  sub rsp,10
+  // Start with the original movement offsets.
+  movups [rsp],xmm3
+  // Apply the updated offsets.
+  mov [rsp],eax
+  mov [rsp+4],ebx
+  mov [rsp+8],ecx
+  movups xmm3,[rsp]
+  add rsp,10
+initiatePredatorCleanup:
+  // Restore backed up values.
+  pop rcx
+  pop rbx
+  pop rax
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10  
+initiatePredatorOriginalCode:
+  popf
+  addps xmm0,xmm3
+  movups [rsi],xmm0
+  jmp initiatePredatorReturn
+
+
+omnifyPredatorHook:
+  jmp initiatePredator
+  nop 
+initiatePredatorReturn:
+
+
+identityValue:
+  dd (float)1.0
+  
+playerSpeedX:
+  dd (float)1.0
+  
+threatDistance:
+  dd (float)3.0
+  
+skipBoostY:
+  dd 0
+  
+skipBoostZ:
+  dd 1
+  
+  
+// Initiates the Abomnification system.
+// UNIQUE AOB: 0F 10 56 50 4C 8D 4C 24 30
+define(omnifyAbomnificationHook, "ACValhalla.exe" + 286E5B0)
+
+assert(omnifyAbomnificationHook, 0F 10 56 50 4C 8D 4C 24 30)
+alloc(initiateAbomnification,$1000, omnifyAbomnificationHook)
+
+registersymbol(omnifyAbomnificationHook)
+
+initiateAbomnification:
+  pushf
+  // Ensure that the player location struct has been initialized.
+  push rax
+  mov rax,playerLocation
+  cmp [rax],0
+  pop rax
+  je initiateAbomnificationOriginalCode 
+  // Back up the registers used to hold return values.
+  push rax
+  push rbx
+  push rcx
+  // Ensure that the player isn't going to be Abomnified.
+  mov rax,playerLocation
+  mov rbx,[rax]
+  cmp rbx,rsi
+  je initiateAbomnificationExit
+  // Push the identifying address parameter and call the Abomnification system.  
+  push rsi
+  call executeAbomnification    
+initiateAbomnificationExit:
+  // Restore the preserved values on the stack.
+  pop rcx
+  pop rbx
+  pop rax
+initiateAbomnificationOriginalCode:
+  popf
+  movups xmm2,[rsi+50]
+  lea r9,[rsp+30]
+  jmp initiateAbomnificationReturn
+
+
+omnifyAbomnificationHook:
+  jmp initiateAbomnification
+  nop 4
+initiateAbomnificationReturn:
+
+
+abominifyMorphStepsResultUpper:
+  dd #800
+  
+abominifyMorphStepsResultLower:
+  dd #100
+
+abominifyWidthResultUpper:
+  dd #250
+  
+abominifyHeightResultUpper:
+  dd #160
+  
+abominifyDepthResultUpper:
+  dd #200
+  
+unnaturalSmallX:
+  dd (float)0.5625
+  
+  
+// Initiates the Abomnification system for the player.
+// UNIQUE AOB: 0F 57 C9 0F 10 73 50
+define(omnifyPlayerAbomnificationHook, "ACValhalla.exe" + 1681F5D)
+
+assert(omnifyPlayerAbomnificationHook, 0F 57 C9 0F 10 73 50)
+alloc(initiatePlayerAbomnification,$1000, omnifyPlayerAbomnificationHook)
+
+registersymbol(omnifyPlayerAbomnificationHook)
+
+initiatePlayerAbomnification:
+  pushf
+  // Back up the registers used to hold return values.
+  push rax
+  push rbx
+  push rcx
+  // Push the identifying address parameter and call the Abomnification system.
+  push rbx
+  call executeAbomnification
+  // Restore the preserved values on the stack.
+  pop rcx
+  pop rbx
+  pop rax
+initiatePlayerAbomnificationOriginalCode:
+  popf
+  xorps xmm1,xmm1
+  movups xmm6,[rbx+50]
+  jmp initiatePlayerAbomnificationReturn
+
+
+omnifyPlayerAbomnificationHook:
+  jmp initiatePlayerAbomnification
+  nop 2
+initiatePlayerAbomnificationReturn:
+  
+
+// Applies Abomnification generated scale multipliers.
+// Unique AOB: 0F 11 62 10 4C 03 C1
+define(omnifyApplyAbomnificationHook, "ACValhalla.exe" + EA8D53)
+
+assert(omnifyApplyAbomnificationHook, 44 0F 59 05 15 47 42 03)
+alloc(applyAbomnification,$1000, omnifyApplyAbomnificationHook)
+alloc(abomnifyPlayer,8)
+alloc(abomnificationRadius,8)
+
+registersymbol(omnifyApplyAbomnificationHook)
+registersymbol(abomnifyPlayer)
+registersymbol(abomnificationRadius)
+
+applyAbomnification:
+  pushf
+  // Ensure that the player location struct has been initialized.
+  push rax
+  mov rax,playerLocation
+  cmp [rax],0
+  pop rax
+  je applyAbomnificationOriginalCode
+  // Backing up an SSE register to hold our multiplier.
+  sub rsp,10
+  movdqu [rsp],xmm0  
+  // Backing up the registers used to hold return values by the
+  // Abomnification system.
+  push rax
+  push rbx
+  push rcx  
+  // A rendering supplementary data structure is stored on the stack.
+  mov rax,[rsp+6A]
+  // If the bytes at 0x14 are not zeroed, then the rendering data structure
+  // is not pointing to a location structure.
+  mov rbx,[rax+14]
+  cmp ebx,0
+  jne applyAbomnificationExit
+  // The location structure is found here, however we need to check that 
+  // it's a valid pointer, as there is still a chance for some junk data here.
+  mov rbx,[rax+18]  
+  push rcx
+  lea rcx,[rbx+50]
+  call checkBadPointer
+  cmp ecx,0
+  pop rcx
+  jne applyAbomnificationExit    
+  cmp [abomnifyPlayer],1
+  je continueAbomnification
+  // Ensure that the player isn't going to be Abomnified.
+  mov rax,playerLocation
+  cmp rbx,[rax]
+  je applyAbomnificationExit
+continueAbomnification:
+  // Push the player's and rendering target's coordinates to the stack
+  // and then calculate the distance between them.
+  mov rax,playerLocation
+  mov rcx,[rax]
+  push [rcx+50]
+  push [rcx+58]
+  push [rbx+50]
+  push [rbx+58]  
+  call findCoordinateDistance
+  // If the rendering target isn't within the radius, we abort Abomnification.
+  movd xmm0,eax
+  ucomiss xmm0,[abomnificationRadius]
+  ja applyAbomnificationExit
+  // Push the identifying address parameter and get the Abomnified scales.  
+  push rbx
+  call getAbomnifiedScales
+  // Make some room on the stack so we can construct the multiplier SSE register.
+  sub rsp,10
+  movss xmm0,[identityValue]
+  shufps xmm0,xmm0,0
+  movups [rsp],xmm0
+  mov [rsp],eax
+  mov [rsp+4],ecx
+  mov [rsp+8],ebx
+  movups xmm0,[rsp]
+  add rsp,10
+  // Apply the Abomnified scale multipliers to the register that will be applied
+  // against the global scale parameters.
+  mulps xmm8,xmm0
+applyAbomnificationExit:
+  // Restore the preserved values on the stack.
+  pop rcx
+  pop rbx
+  pop rax
+  movdqu xmm0,[rsp]
+  add rsp,10
+applyAbomnificationOriginalCode:
+  popf 
+  mulps xmm8,[ACValhalla.exe+42CD470]
+  jmp applyAbomnificationReturn
+
+
+omnifyApplyAbomnificationHook:
+  jmp applyAbomnification
+  nop 3
+applyAbomnificationReturn:
+
+
+abomnifyPlayer:
+  dd 0
+  
+abomnificationRadius:
+  dd (float)30.0
+
+
+// Perverts the God's Favor.
+// Unique AOB: E8 03 00 00 8B 42 4C 3B 42 50
+define(omnifyGodFavorPervertHook, "ACValhalla.exe" + 27562CB)
+
+assert(omnifyGodFavorPervertHook, 8B 42 4C 3B 42 50)
+alloc(pervertGodFavor,$1000, omnifyGodFavorPervertHook)
+
+registersymbol(omnifyGodFavorPervertHook)
+
+pervertGodFavor:
+  pushf
+  cmp [rdx+4C],0
+  jne pervertGodFavorOriginalCode
+  mov [rdx+4C],#69
+pervertGodFavorOriginalCode:
+  popf
+  mov eax,[rdx+4C]
+  cmp eax,[rdx+50]
+  jmp pervertGodFavorReturn
+
+
+omnifyGodFavorPervertHook:
+  jmp pervertGodFavor
+  nop 
+pervertGodFavorReturn:
+
+
+[DISABLE]
+
+{$lua}
+function disableOmnified()
+  require("Omnified")
+  unregisterOmnification()
+end
+
+{$asm}
+luacall(disableOmnified())
+
+
+// Cleanup of omnifyGodFavorPervertHook
+omnifyGodFavorPervertHook:
+db 8B 42 4C 3B 42 50
+  
+unregistersymbol(omnifyGodFavorPervertHook)
+
+dealloc(pervertGodFavor)
+
+
+// Cleanup of omnifyApplyAbomnificationHook
+omnifyApplyAbomnificationHook:
+  db 44 0F 59 05 15 47 42 03
+  
+unregistersymbol(omnifyApplyAbomnificationHook)
+unregistersymbol(abomnifyPlayer)
+unregistersymbol(abomnificationRadius)
+
+dealloc(applyAbomnification)
+dealloc(abomnificationRadius)
+dealloc(abomnifyPlayer)
+
+
+// Cleanup of omnifyAbomnificationHook
+omnifyAbomnificationHook:
+db 0F 10 56 50 4C 8D 4C 24 30
+  
+unregistersymbol(omnifyAbomnificationHook)
+
+dealloc(initiateAbomnification)
+
+
+// Cleanup of omnifyPlayerAbomnificationHook
+omnifyPlayerAbomnificationHook:
+db 0F 57 C9 0F 10 73 50
+  
+unregistersymbol(omnifyPlayerAbomnificationHook)
+
+dealloc(initiatePlayerAbomnification)
+
+
+// Cleanup of omnifyApocalypseHook
+omnifyApocalypseHook:
+db 2B 45 BC 89 44 24 58
+  
+unregistersymbol(omnifyApocalypseHook)
+
+dealloc(initiateApocalypse)
+
+
+// Cleanup of omnifyBypassTeleportitisOverwriteHook
+omnifyBypassTeleportitisOverwriteHook:
+db 0F 28 48 30 0F 29 49 50
+
+unregistersymbol(omnifyBypassTeleportitisOverwriteHook)
+
+dealloc(bypassTeleportitisOverwrite)
+
+
+// Cleanup of omnifyPredatorHook
+omnifyPredatorHook:
+db 0F 58 C3 0F 11 06
+  
+unregistersymbol(omnifyPredatorHook)
+unregistersymbol(playerSpeedX)
+unregistersymbol(disablePredator)
+
+dealloc(identityValue)
+dealloc(playerSpeedX)
+dealloc(initiatePredator)
+dealloc(disablePredator)
+
+
+// Cleanup of omnifyDepussifyGameHook
+omnifyDepussifyGameHook:
+  db 41 8B C8 2B C8
+  
+unregistersymbol(omnifyDepussifyGameHook)
+
+dealloc(depussifyGame)
+
+
+// Cleanup of omniPlayerHook
+omniPlayerHook:
+  db 8B BB 38 01 00 00
+  
+unregistersymbol(omniPlayerHook)
+unregistersymbol(playerHealth)
+unregistersymbol(playerLocation)
+unregistersymbol(player)
+
+dealloc(player)
+dealloc(playerHealth)
+dealloc(playerLocation)
+dealloc(getPlayer)
+
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>6</ID>
+          <Description>"Health"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>playerHealth</Address>
+          <Offsets>
+            <Offset>138</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>7</ID>
+          <Description>"X"</Description>
+          <VariableType>Float</VariableType>
+          <Address>playerLocation</Address>
+          <Offsets>
+            <Offset>50</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>8</ID>
+          <Description>"Y"</Description>
+          <VariableType>Float</VariableType>
+          <Address>playerLocation</Address>
+          <Offsets>
+            <Offset>54</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>9</ID>
+          <Description>"Z"</Description>
+          <VariableType>Float</VariableType>
+          <Address>playerLocation</Address>
+          <Offsets>
+            <Offset>58</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>10</ID>
+          <Description>"Boost Player Speed"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+playerSpeedX:
+  dd (float)3.0
+
+[DISABLE]
+playerSpeedX:
+  dd (float)1.0
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>107</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>11</ID>
+          <Description>"Disable Abomnification"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+disableAbomnification:
+  dd 1
+
+[DISABLE]
+disableAbomnification:
+  dd 0
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>109</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>12</ID>
+          <Description>"Wiggle Mode"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript Async="1">[ENABLE]
+
+overrideMorphSteps:
+  dd 1
+
+overrideMorphStepsValue:
+  dd (float)3.0
+
+abominifyHeightResultUpper:
+  dd #104
+
+abominifyHeightResultLower:
+  dd #100
+
+abominifyWidthResultUpper:
+  dd #106
+
+abominifyWidthResultLower:
+  dd #100
+
+abominifyDepthResultUpper:
+  dd #106
+
+abominifyDepthResultLower:
+  dd #100
+
+[DISABLE]
+
+overrideMorphSteps:
+  dd 0
+
+abominifyWidthResultUpper:
+  dd #250
+
+abominifyWidthResultLower:
+  dd #25
+
+abominifyHeightResultUpper:
+  dd #160
+
+abominifyHeightResultLower:
+  dd #25
+
+abominifyDepthResultUpper:
+  dd #200
+
+abominifyDepthResultLower:
+  dd #25
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>106</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>14</ID>
+          <Description>"Lower Player Damage"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+playerDamageX:
+  dd (float)0.5
+
+[DISABLE]
+playerDamageX:
+  dd (float)1.0
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>97</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>28</ID>
+          <Description>"Disable Predator"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+disablePredator:
+  dd 1
+
+[DISABLE]
+disablePredator:
+  dd 0
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>111</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>15</ID>
+          <Description>"Fast Creature Morphs"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+speedMorph:
+  dd 1
+
+[DISABLE]
+speedMorph:
+  dd 0
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>98</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>16</ID>
+          <Description>"Super Slow Enemies"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+threatDistance:
+  dd (float)0.001
+
+enemySpeedX:
+  dd (float)0.1
+
+
+[DISABLE]
+threatDistance:
+  dd (float)2.5
+
+enemySpeedX:
+  dd (float)1.25
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>99</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>17</ID>
+          <Description>"Boost Player Damage"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+playerDamageX:
+  dd (float)3.0
+
+[DISABLE]
+playerDamageX:
+  dd (float)1.0
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>100</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>21</ID>
+          <Description>"Stop Abomnification"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+stopMorphs:
+  dd 1
+
+[DISABLE]
+stopMorphs:
+  dd 0
+
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>101</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>23</ID>
+          <Description>"Abomnify Player"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+abomnifyPlayer:
+  dd 1
+
+[DISABLE]
+abomnifyPlayer:
+  dd 0
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>102</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>24</ID>
+          <Description>"Abomnification Radius"</Description>
+          <VariableType>Float</VariableType>
+          <Address>abomnificationRadius</Address>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>13</ID>
+      <Description>"Morph Steps"</Description>
+      <VariableType>Float</VariableType>
+      <Address>overrideMorphStepsValue</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>18</ID>
+      <Description>"No Description"</Description>
+      <VariableType>Float</VariableType>
+      <Address>20534B5DA10</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>19</ID>
+      <Description>"No Description"</Description>
+      <VariableType>Float</VariableType>
+      <Address>206473BFFE0</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>20</ID>
+      <Description>"No description"</Description>
+      <VariableType>Float</VariableType>
+      <Address>20534B5DA10</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>22</ID>
+      <Description>"Morph Divisor"</Description>
+      <VariableType>Float</VariableType>
+      <Address>speedMorphDivisor</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>25</ID>
+      <Description>"No description"</Description>
+      <VariableType>Float</VariableType>
+      <Address>speedMorphDivisor</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>26</ID>
+      <Description>"No description"</Description>
+      <VariableType>4 Bytes</VariableType>
+      <Address>2DE4ECC0A4C</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>27</ID>
+      <Description>"No description"</Description>
+      <VariableType>4 Bytes</VariableType>
+      <Address>2DE4ECC0A50</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>29</ID>
+      <Description>"TD"</Description>
+      <VariableType>Float</VariableType>
+      <Address>teleportitisDisplacementX</Address>
+    </CheatEntry>
+  </CheatEntries>
+  <CheatCodes>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps [rcx+50],xmm1</Description>
+      <AddressString>ACValhalla.exe+7E906E</AddressString>
+      <Before>
+        <Byte>40</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>48</Byte>
+        <Byte>30</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>49</Byte>
+        <Byte>50</Byte>
+      </Actual>
+      <After>
+        <Byte>C3</Byte>
+        <Byte>CC</Byte>
+        <Byte>CC</Byte>
+        <Byte>CC</Byte>
+        <Byte>CC</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps [rcx+30],xmm1</Description>
+      <AddressString>ACValhalla.exe+7E905E</AddressString>
+      <Before>
+        <Byte>20</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>48</Byte>
+        <Byte>10</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>49</Byte>
+        <Byte>30</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>40</Byte>
+        <Byte>20</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [r10+20],xmm0</Description>
+      <AddressString>ACValhalla.exe+CE983D</AddressString>
+      <Before>
+        <Byte>42</Byte>
+        <Byte>20</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>CA</Byte>
+      </Before>
+      <Actual>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>42</Byte>
+        <Byte>20</Byte>
+      </Actual>
+      <After>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>0A</Byte>
+        <Byte>41</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx],xmm0</Description>
+      <AddressString>ACValhalla.exe+CE96D7</AddressString>
+      <Before>
+        <Byte>00</Byte>
+        <Byte>48</Byte>
+        <Byte>83</Byte>
+        <Byte>C0</Byte>
+        <Byte>40</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>01</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>8D</Byte>
+        <Byte>49</Byte>
+        <Byte>40</Byte>
+        <Byte>48</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [r11+20],xmm0</Description>
+      <AddressString>ACValhalla.exe+CE9852</AddressString>
+      <Before>
+        <Byte>43</Byte>
+        <Byte>20</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>C6</Byte>
+      </Before>
+      <Actual>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>43</Byte>
+        <Byte>20</Byte>
+      </Actual>
+      <After>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>0B</Byte>
+        <Byte>48</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rbx+rbp+20],xmm12</Description>
+      <AddressString>ACValhalla.exe+CE9B3C</AddressString>
+      <Before>
+        <Byte>40</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>D5</Byte>
+      </Before>
+      <Actual>
+        <Byte>44</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>64</Byte>
+        <Byte>2B</Byte>
+        <Byte>20</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>8D</Byte>
+        <Byte>54</Byte>
+        <Byte>24</Byte>
+        <Byte>30</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+rax],xmm5</Description>
+      <AddressString>ACValhalla.exe+CEE242</AddressString>
+      <Before>
+        <Byte>66</Byte>
+        <Byte>0F</Byte>
+        <Byte>38</Byte>
+        <Byte>14</Byte>
+        <Byte>EC</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>2C</Byte>
+        <Byte>01</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>83</Byte>
+        <Byte>C1</Byte>
+        <Byte>50</Byte>
+        <Byte>49</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movdqu [rsi+rax+10],xmm0</Description>
+      <AddressString>ACValhalla.exe+CEE6E8</AddressString>
+      <Before>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>44</Byte>
+        <Byte>0A</Byte>
+        <Byte>10</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>7F</Byte>
+        <Byte>44</Byte>
+        <Byte>06</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>0C</Byte>
+        <Byte>0A</Byte>
+        <Byte>F3</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movdqu [rdx+10],xmm0</Description>
+      <AddressString>ACValhalla.exe+D08D9C</AddressString>
+      <Before>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>40</Byte>
+        <Byte>10</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>7F</Byte>
+        <Byte>42</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>08</Byte>
+        <Byte>F3</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rax+rbx+10],xmm4</Description>
+      <AddressString>ACValhalla.exe+E83236</AddressString>
+      <Before>
+        <Byte>59</Byte>
+        <Byte>D7</Byte>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>E2</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>64</Byte>
+        <Byte>18</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>49</Byte>
+        <Byte>83</Byte>
+        <Byte>C7</Byte>
+        <Byte>08</Byte>
+        <Byte>48</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rdx+10],xmm4</Description>
+      <AddressString>ACValhalla.exe+E8F4E8</AddressString>
+      <Before>
+        <Byte>59</Byte>
+        <Byte>D1</Byte>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>E2</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>62</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>4C</Byte>
+        <Byte>03</Byte>
+        <Byte>C1</Byte>
+        <Byte>48</Byte>
+        <Byte>03</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rax+30],xmm9</Description>
+      <AddressString>ACValhalla.exe+15A5A54</AddressString>
+      <Before>
+        <Byte>20</Byte>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>C6</Byte>
+      </Before>
+      <Actual>
+        <Byte>44</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>48</Byte>
+        <Byte>30</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>C6</Byte>
+        <Byte>C0</Byte>
+        <Byte>C6</Byte>
+        <Byte>44</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+50],xmm0</Description>
+      <AddressString>ACValhalla.exe+A5DE2A</AddressString>
+      <Before>
+        <Byte>81</Byte>
+        <Byte>A0</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>41</Byte>
+        <Byte>50</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>81</Byte>
+        <Byte>B0</Byte>
+        <Byte>00</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+50],xmm1</Description>
+      <AddressString>ACValhalla.exe+A95C60</AddressString>
+      <Before>
+        <Byte>03</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>57</Byte>
+        <Byte>C8</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>49</Byte>
+        <Byte>50</Byte>
+      </Actual>
+      <After>
+        <Byte>8B</Byte>
+        <Byte>CF</Byte>
+        <Byte>66</Byte>
+        <Byte>66</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rax-10],xmm3</Description>
+      <AddressString>ACValhalla.exe+A95F1B</AddressString>
+      <Before>
+        <Byte>C2</Byte>
+        <Byte>0F</Byte>
+        <Byte>C6</Byte>
+        <Byte>C2</Byte>
+        <Byte>AA</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>58</Byte>
+        <Byte>F0</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>DA</Byte>
+        <Byte>0F</Byte>
+        <Byte>C6</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rax],xmm3</Description>
+      <AddressString>ACValhalla.exe+A95F6A</AddressString>
+      <Before>
+        <Byte>C2</Byte>
+        <Byte>0F</Byte>
+        <Byte>C6</Byte>
+        <Byte>C2</Byte>
+        <Byte>AA</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>18</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>C6</Byte>
+        <Byte>0F</Byte>
+        <Byte>C6</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rax+10],xmm4</Description>
+      <AddressString>ACValhalla.exe+A95FBD</AddressString>
+      <Before>
+        <Byte>59</Byte>
+        <Byte>D0</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>D8</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>60</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>D9</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rax+20],xmm3</Description>
+      <AddressString>ACValhalla.exe+A95FD1</AddressString>
+      <Before>
+        <Byte>C0</Byte>
+        <Byte>FF</Byte>
+        <Byte>0F</Byte>
+        <Byte>5E</Byte>
+        <Byte>D8</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>58</Byte>
+        <Byte>20</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>83</Byte>
+        <Byte>C0</Byte>
+        <Byte>40</Byte>
+        <Byte>48</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+rdx],xmm0</Description>
+      <AddressString>ACValhalla.exe+38B2758</AddressString>
+      <Before>
+        <Byte>42</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>04</Byte>
+        <Byte>2A</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>04</Byte>
+        <Byte>11</Byte>
+      </Actual>
+      <After>
+        <Byte>42</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>4C</Byte>
+        <Byte>2A</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps [ACValhalla.exe+5F86820],xmm0</Description>
+      <AddressString>ACValhalla.exe+18773AD</AddressString>
+      <Before>
+        <Byte>8A</Byte>
+        <Byte>D0</Byte>
+        <Byte>05</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>05</Byte>
+        <Byte>6C</Byte>
+        <Byte>F4</Byte>
+        <Byte>70</Byte>
+        <Byte>04</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>8D</Byte>
+        <Byte>05</Byte>
+        <Byte>B5</Byte>
+        <Byte>F3</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movss [r8+2C],xmm6</Description>
+      <AddressString>ACValhalla.exe+388ADEA</AddressString>
+      <Before>
+        <Byte>0F</Byte>
+        <Byte>5C</Byte>
+        <Byte>F1</Byte>
+        <Byte>72</Byte>
+        <Byte>08</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>70</Byte>
+        <Byte>2C</Byte>
+      </Actual>
+      <After>
+        <Byte>EB</Byte>
+        <Byte>15</Byte>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>5C</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of mov [rcx+2C],r11d</Description>
+      <AddressString>ACValhalla.exe+384C29F</AddressString>
+      <Before>
+        <Byte>44</Byte>
+        <Byte>4C</Byte>
+        <Byte>89</Byte>
+        <Byte>59</Byte>
+        <Byte>24</Byte>
+      </Before>
+      <Actual>
+        <Byte>44</Byte>
+        <Byte>89</Byte>
+        <Byte>59</Byte>
+        <Byte>2C</Byte>
+      </Actual>
+      <After>
+        <Byte>C7</Byte>
+        <Byte>41</Byte>
+        <Byte>30</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rdi],xmm0</Description>
+      <AddressString>ACValhalla.exe+17D24B8</AddressString>
+      <Before>
+        <Byte>08</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>07</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>07</Byte>
+      </Actual>
+      <After>
+        <Byte>C1</Byte>
+        <Byte>EA</Byte>
+        <Byte>11</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rax+30],xmm14</Description>
+      <AddressString>ACValhalla.exe+B0DAD8</AddressString>
+      <Before>
+        <Byte>44</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>68</Byte>
+        <Byte>20</Byte>
+      </Before>
+      <Actual>
+        <Byte>44</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>70</Byte>
+        <Byte>30</Byte>
+      </Actual>
+      <After>
+        <Byte>44</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>78</Byte>
+        <Byte>40</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rdi+10],xmm5</Description>
+      <AddressString>ACValhalla.exe+AB6781</AddressString>
+      <Before>
+        <Byte>66</Byte>
+        <Byte>0F</Byte>
+        <Byte>38</Byte>
+        <Byte>14</Byte>
+        <Byte>EA</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>6F</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>0F</Byte>
+        <Byte>0F</Byte>
+        <Byte>C6</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rdi],xmm2</Description>
+      <AddressString>ACValhalla.exe+AB6729</AddressString>
+      <Before>
+        <Byte>66</Byte>
+        <Byte>0F</Byte>
+        <Byte>38</Byte>
+        <Byte>14</Byte>
+        <Byte>D1</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>17</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>CE</Byte>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rdi],xmm1</Description>
+      <AddressString>ACValhalla.exe+AB679A</AddressString>
+      <Before>
+        <Byte>CF</Byte>
+        <Byte>0F</Byte>
+        <Byte>C6</Byte>
+        <Byte>C9</Byte>
+        <Byte>39</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>0F</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>05</Byte>
+        <Byte>4C</Byte>
+        <Byte>66</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rdx+rax],xmm0</Description>
+      <AddressString>ACValhalla.exe+91B37A</AddressString>
+      <Before>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>48</Byte>
+        <Byte>23</Byte>
+        <Byte>C1</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>04</Byte>
+        <Byte>02</Byte>
+      </Actual>
+      <After>
+        <Byte>F2</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>44</Byte>
+        <Byte>24</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rsi],xmm14</Description>
+      <AddressString>ACValhalla.exe+DE0F95</AddressString>
+      <Before>
+        <Byte>24</Byte>
+        <Byte>80</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>44</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>36</Byte>
+      </Actual>
+      <After>
+        <Byte>44</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>74</Byte>
+        <Byte>24</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rdi],xmm7</Description>
+      <AddressString>ACValhalla.exe+DEAFF1</AddressString>
+      <Before>
+        <Byte>E0</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>C8</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>3F</Byte>
+      </Actual>
+      <After>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>57</Byte>
+        <Byte>C9</Byte>
+        <Byte>C6</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rdx+r10+30],xmm9</Description>
+      <AddressString>ACValhalla.exe+D098FC</AddressString>
+      <Before>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>6C</Byte>
+        <Byte>12</Byte>
+        <Byte>20</Byte>
+      </Before>
+      <Actual>
+        <Byte>46</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>4C</Byte>
+        <Byte>12</Byte>
+        <Byte>30</Byte>
+      </Actual>
+      <After>
+        <Byte>44</Byte>
+        <Byte>8B</Byte>
+        <Byte>4B</Byte>
+        <Byte>2C</Byte>
+        <Byte>41</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rdx+r10+10],xmm1</Description>
+      <AddressString>ACValhalla.exe+D098E7</AddressString>
+      <Before>
+        <Byte>42</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>34</Byte>
+        <Byte>12</Byte>
+      </Before>
+      <Actual>
+        <Byte>42</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>4C</Byte>
+        <Byte>12</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>C6</Byte>
+        <Byte>ED</Byte>
+        <Byte>22</Byte>
+        <Byte>41</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rsi+000001C0],xmm15</Description>
+      <AddressString>ACValhalla.exe+D0F0F4</AddressString>
+      <Before>
+        <Byte>8E</Byte>
+        <Byte>B0</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>44</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>BE</Byte>
+        <Byte>C0</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>86</Byte>
+        <Byte>D0</Byte>
+        <Byte>01</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+rax+30],xmm3</Description>
+      <AddressString>ACValhalla.exe+D14A61</AddressString>
+      <Before>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>6C</Byte>
+        <Byte>01</Byte>
+        <Byte>20</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>5C</Byte>
+        <Byte>01</Byte>
+        <Byte>30</Byte>
+      </Actual>
+      <After>
+        <Byte>3B</Byte>
+        <Byte>56</Byte>
+        <Byte>7C</Byte>
+        <Byte>0F</Byte>
+        <Byte>82</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+rax+10],xmm1</Description>
+      <AddressString>ACValhalla.exe+D14A4E</AddressString>
+      <Before>
+        <Byte>F4</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>34</Byte>
+        <Byte>01</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>4C</Byte>
+        <Byte>01</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>C6</Byte>
+        <Byte>ED</Byte>
+        <Byte>22</Byte>
+        <Byte>41</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rax+rdx],xmm1</Description>
+      <AddressString>ACValhalla.exe+D0929A</AddressString>
+      <Before>
+        <Byte>09</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>41</Byte>
+        <Byte>10</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>0C</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>44</Byte>
+        <Byte>10</Byte>
+        <Byte>10</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rdi],xmm1</Description>
+      <AddressString>ACValhalla.exe+D14B3E</AddressString>
+      <Before>
+        <Byte>CA</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>D1</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>0F</Byte>
+      </Actual>
+      <After>
+        <Byte>E8</Byte>
+        <Byte>8A</Byte>
+        <Byte>18</Byte>
+        <Byte>A0</Byte>
+        <Byte>FF</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+rax],xmm0</Description>
+      <AddressString>ACValhalla.exe+D08A95</AddressString>
+      <Before>
+        <Byte>C2</Byte>
+        <Byte>48</Byte>
+        <Byte>C1</Byte>
+        <Byte>E1</Byte>
+        <Byte>05</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>04</Byte>
+        <Byte>01</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>4C</Byte>
+        <Byte>01</Byte>
+        <Byte>10</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+rax],xmm5</Description>
+      <AddressString>ACValhalla.exe+D08A1E</AddressString>
+      <Before>
+        <Byte>C2</Byte>
+        <Byte>48</Byte>
+        <Byte>C1</Byte>
+        <Byte>E1</Byte>
+        <Byte>05</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>2C</Byte>
+        <Byte>01</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>74</Byte>
+        <Byte>01</Byte>
+        <Byte>10</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+rax+10],xmm6</Description>
+      <AddressString>ACValhalla.exe+D08A22</AddressString>
+      <Before>
+        <Byte>05</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>2C</Byte>
+        <Byte>01</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>74</Byte>
+        <Byte>01</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>8B</Byte>
+        <Byte>46</Byte>
+        <Byte>7C</Byte>
+        <Byte>44</Byte>
+        <Byte>8B</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rax+r15],xmm9</Description>
+      <AddressString>ACValhalla.exe+D09478</AddressString>
+      <Before>
+        <Byte>0D</Byte>
+        <Byte>F8</Byte>
+        <Byte>0F</Byte>
+        <Byte>45</Byte>
+        <Byte>03</Byte>
+      </Before>
+      <Actual>
+        <Byte>46</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>0C</Byte>
+        <Byte>38</Byte>
+      </Actual>
+      <After>
+        <Byte>46</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>44</Byte>
+        <Byte>38</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+rax],xmm0</Description>
+      <AddressString>ACValhalla.exe+D0F84B</AddressString>
+      <Before>
+        <Byte>03</Byte>
+        <Byte>48</Byte>
+        <Byte>C1</Byte>
+        <Byte>E1</Byte>
+        <Byte>05</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>04</Byte>
+        <Byte>01</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>8B</Byte>
+        <Byte>43</Byte>
+        <Byte>60</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [r9+rdx*8+00000160],xmm5</Description>
+      <AddressString>ACValhalla.exe+D0C1E4</AddressString>
+      <Before>
+        <Byte>03</Byte>
+        <Byte>D2</Byte>
+        <Byte>41</Byte>
+        <Byte>FF</Byte>
+        <Byte>C0</Byte>
+      </Before>
+      <Actual>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>AC</Byte>
+        <Byte>D1</Byte>
+        <Byte>60</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>8B</Byte>
+        <Byte>4B</Byte>
+        <Byte>2C</Byte>
+        <Byte>44</Byte>
+        <Byte>3B</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [r11+rdx*8+000000D0],xmm1</Description>
+      <AddressString>ACValhalla.exe+D0F2A1</AddressString>
+      <Before>
+        <Byte>C1</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>B6</Byte>
+        <Byte>C1</Byte>
+      </Before>
+      <Actual>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>8C</Byte>
+        <Byte>D3</Byte>
+        <Byte>D0</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>41</Byte>
+        <Byte>8B</Byte>
+        <Byte>48</Byte>
+        <Byte>2C</Byte>
+        <Byte>3B</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rax+rdi],xmm5</Description>
+      <AddressString>ACValhalla.exe+D0F49C</AddressString>
+      <Before>
+        <Byte>2D</Byte>
+        <Byte>D4</Byte>
+        <Byte>AF</Byte>
+        <Byte>44</Byte>
+        <Byte>03</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>2C</Byte>
+        <Byte>38</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>8B</Byte>
+        <Byte>4C</Byte>
+        <Byte>24</Byte>
+        <Byte>20</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of mulps xmm8,[ACValhalla.exe+415A470]</Description>
+      <AddressString>ACValhalla.exe+E8F453</AddressString>
+      <Before>
+        <Byte>12</Byte>
+        <Byte>F8</Byte>
+        <Byte>0F</Byte>
+        <Byte>57</Byte>
+        <Byte>D9</Byte>
+      </Before>
+      <Actual>
+        <Byte>44</Byte>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>05</Byte>
+        <Byte>15</Byte>
+        <Byte>B0</Byte>
+        <Byte>2C</Byte>
+        <Byte>03</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>C6</Byte>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of mulps xmm4,[ACValhalla.exe+415A470]</Description>
+      <AddressString>ACValhalla.exe+D31911</AddressString>
+      <Before>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>44</Byte>
+        <Byte>24</Byte>
+        <Byte>30</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>25</Byte>
+        <Byte>58</Byte>
+        <Byte>8B</Byte>
+        <Byte>42</Byte>
+        <Byte>03</Byte>
+      </Actual>
+      <After>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>26</Byte>
+        <Byte>41</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of mulps xmm4,[ACValhalla.exe+415A470]</Description>
+      <AddressString>ACValhalla.exe+D2650D</AddressString>
+      <Before>
+        <Byte>59</Byte>
+        <Byte>C1</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>D1</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>25</Byte>
+        <Byte>5C</Byte>
+        <Byte>3F</Byte>
+        <Byte>43</Byte>
+        <Byte>03</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>C6</Byte>
+        <Byte>D1</Byte>
+        <Byte>D2</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of mulps xmm4,[ACValhalla.exe+415A470]</Description>
+      <AddressString>ACValhalla.exe+8F89FF</AddressString>
+      <Before>
+        <Byte>59</Byte>
+        <Byte>C7</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>E0</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>25</Byte>
+        <Byte>6A</Byte>
+        <Byte>1A</Byte>
+        <Byte>86</Byte>
+        <Byte>03</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>21</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of mulps xmm5,[ACValhalla.exe+415A470]</Description>
+      <AddressString>ACValhalla.exe+D2642F</AddressString>
+      <Before>
+        <Byte>59</Byte>
+        <Byte>C4</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>E8</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>2D</Byte>
+        <Byte>3A</Byte>
+        <Byte>40</Byte>
+        <Byte>43</Byte>
+        <Byte>03</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>CD</Byte>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of mulps xmm1,[ACValhalla.exe+415A470]</Description>
+      <AddressString>ACValhalla.exe+D0C326</AddressString>
+      <Before>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>44</Byte>
+        <Byte>24</Byte>
+        <Byte>50</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>0D</Byte>
+        <Byte>43</Byte>
+        <Byte>E1</Byte>
+        <Byte>44</Byte>
+        <Byte>03</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>CD</Byte>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of mulps xmm5,[ACValhalla.exe+415A470]</Description>
+      <AddressString>ACValhalla.exe+D0F495</AddressString>
+      <Before>
+        <Byte>EE</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>E9</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>2D</Byte>
+        <Byte>D4</Byte>
+        <Byte>AF</Byte>
+        <Byte>44</Byte>
+        <Byte>03</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>2C</Byte>
+        <Byte>38</Byte>
+        <Byte>48</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of mulps xmm4,[ACValhalla.exe+415A470]</Description>
+      <AddressString>ACValhalla.exe+EA5FCD</AddressString>
+      <Before>
+        <Byte>59</Byte>
+        <Byte>CB</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>E1</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>25</Byte>
+        <Byte>9C</Byte>
+        <Byte>44</Byte>
+        <Byte>2B</Byte>
+        <Byte>03</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>20</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of mulps xmm1,[ACValhalla.exe+415A470]</Description>
+      <AddressString>ACValhalla.exe+F660CF</AddressString>
+      <Before>
+        <Byte>59</Byte>
+        <Byte>C4</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>C8</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>0D</Byte>
+        <Byte>9A</Byte>
+        <Byte>43</Byte>
+        <Byte>1F</Byte>
+        <Byte>03</Byte>
+      </Actual>
+      <After>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>0E</Byte>
+        <Byte>EB</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of mulps xmm4,[ACValhalla.exe+415A470]</Description>
+      <AddressString>ACValhalla.exe+DBECE2</AddressString>
+      <Before>
+        <Byte>59</Byte>
+        <Byte>C5</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>E0</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>25</Byte>
+        <Byte>87</Byte>
+        <Byte>B7</Byte>
+        <Byte>39</Byte>
+        <Byte>03</Byte>
+      </Actual>
+      <After>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>26</Byte>
+        <Byte>41</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of mulps xmm3,[ACValhalla.exe+415A470]</Description>
+      <AddressString>ACValhalla.exe+14A8758</AddressString>
+      <Before>
+        <Byte>59</Byte>
+        <Byte>C6</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>D8</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>1D</Byte>
+        <Byte>11</Byte>
+        <Byte>1D</Byte>
+        <Byte>CB</Byte>
+        <Byte>02</Byte>
+      </Actual>
+      <After>
+        <Byte>66</Byte>
+        <Byte>83</Byte>
+        <Byte>F8</Byte>
+        <Byte>02</Byte>
+        <Byte>76</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movsd [rsi+20],xmm2</Description>
+      <AddressString>ACValhalla.exe+3FFB820</AddressString>
+      <Before>
+        <Byte>D0</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>66</Byte>
+        <Byte>10</Byte>
+      </Before>
+      <Actual>
+        <Byte>F2</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>56</Byte>
+        <Byte>20</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>56</Byte>
+        <Byte>10</Byte>
+        <Byte>F2</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movsd [rbx+20],xmm0</Description>
+      <AddressString>ACValhalla.exe+3A5CBAB</AddressString>
+      <Before>
+        <Byte>5A</Byte>
+        <Byte>C5</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>CC</Byte>
+      </Before>
+      <Actual>
+        <Byte>F2</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>43</Byte>
+        <Byte>20</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>C4</Byte>
+        <Byte>44</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movdqu [rax+rdx+10],xmm0</Description>
+      <AddressString>ACValhalla.exe+D0F812</AddressString>
+      <Before>
+        <Byte>CA</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>41</Byte>
+        <Byte>10</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>7F</Byte>
+        <Byte>44</Byte>
+        <Byte>10</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>EB</Byte>
+        <Byte>3E</Byte>
+        <Byte>48</Byte>
+        <Byte>8B</Byte>
+        <Byte>43</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rax+rsi+10],xmm3</Description>
+      <AddressString>ACValhalla.exe+D0C513</AddressString>
+      <Before>
+        <Byte>58</Byte>
+        <Byte>DA</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>DF</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>5C</Byte>
+        <Byte>30</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>8B</Byte>
+        <Byte>8C</Byte>
+        <Byte>24</Byte>
+        <Byte>80</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rax],xmm0</Description>
+      <AddressString>ACValhalla.exe+CE96D0</AddressString>
+      <Before>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>83</Byte>
+        <Byte>C0</Byte>
+        <Byte>40</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [r11],xmm1</Description>
+      <AddressString>ACValhalla.exe+CE9862</AddressString>
+      <Before>
+        <Byte>C7</Byte>
+        <Byte>10</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>CA</Byte>
+      </Before>
+      <Actual>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>0B</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>73</Byte>
+        <Byte>20</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rbx+rbp],xmm7</Description>
+      <AddressString>ACValhalla.exe+CE9BC0</AddressString>
+      <Before>
+        <Byte>F6</Byte>
+        <Byte>28</Byte>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>D6</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>3C</Byte>
+        <Byte>2B</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>E5</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rax+r15+10],xmm13</Description>
+      <AddressString>ACValhalla.exe+D0F0D7</AddressString>
+      <Before>
+        <Byte>00</Byte>
+        <Byte>48</Byte>
+        <Byte>C1</Byte>
+        <Byte>E0</Byte>
+        <Byte>05</Byte>
+      </Before>
+      <Actual>
+        <Byte>46</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>6C</Byte>
+        <Byte>38</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>BE</Byte>
+        <Byte>90</Byte>
+        <Byte>01</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rax+rsi+10],xmm3</Description>
+      <AddressString>7FF6AC430021</AddressString>
+      <Before>
+        <Byte>24</Byte>
+        <Byte>48</Byte>
+        <Byte>83</Byte>
+        <Byte>C4</Byte>
+        <Byte>10</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>5C</Byte>
+        <Byte>30</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>E9</Byte>
+        <Byte>ED</Byte>
+        <Byte>C4</Byte>
+        <Byte>D1</Byte>
+        <Byte>00</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movsd [rdx+rax+10],xmm0</Description>
+      <AddressString>ACValhalla.exe+91B384</AddressString>
+      <Before>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>44</Byte>
+        <Byte>24</Byte>
+        <Byte>20</Byte>
+      </Before>
+      <Actual>
+        <Byte>F2</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>44</Byte>
+        <Byte>02</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>8B</Byte>
+        <Byte>4C</Byte>
+        <Byte>24</Byte>
+        <Byte>38</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps [rax],xmm0</Description>
+      <AddressString>ACValhalla.exe+7E51D8</AddressString>
+      <Before>
+        <Byte>40</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>41</Byte>
+        <Byte>20</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>49</Byte>
+        <Byte>30</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps [rax+10],xmm1</Description>
+      <AddressString>ACValhalla.exe+7E51DF</AddressString>
+      <Before>
+        <Byte>00</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>49</Byte>
+        <Byte>30</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>48</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>41</Byte>
+        <Byte>40</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps [rax+20],xmm0</Description>
+      <AddressString>ACValhalla.exe+7E51E7</AddressString>
+      <Before>
+        <Byte>90</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>41</Byte>
+        <Byte>40</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>40</Byte>
+        <Byte>20</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>49</Byte>
+        <Byte>50</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps [rax+30],xmm1</Description>
+      <AddressString>ACValhalla.exe+7E51EF</AddressString>
+      <Before>
+        <Byte>90</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>49</Byte>
+        <Byte>50</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>48</Byte>
+        <Byte>30</Byte>
+      </Actual>
+      <After>
+        <Byte>F0</Byte>
+        <Byte>FF</Byte>
+        <Byte>8B</Byte>
+        <Byte>CC</Byte>
+        <Byte>00</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [r8],xmm1</Description>
+      <AddressString>ACValhalla.exe+CEEAC7</AddressString>
+      <Before>
+        <Byte>66</Byte>
+        <Byte>0F</Byte>
+        <Byte>38</Byte>
+        <Byte>14</Byte>
+        <Byte>CA</Byte>
+      </Before>
+      <Actual>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>08</Byte>
+      </Actual>
+      <After>
+        <Byte>49</Byte>
+        <Byte>83</Byte>
+        <Byte>C0</Byte>
+        <Byte>50</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+rdx],xmm1</Description>
+      <AddressString>ACValhalla.exe+CE60F1</AddressString>
+      <Before>
+        <Byte>66</Byte>
+        <Byte>0F</Byte>
+        <Byte>38</Byte>
+        <Byte>14</Byte>
+        <Byte>CA</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>0C</Byte>
+        <Byte>11</Byte>
+      </Actual>
+      <After>
+        <Byte>EB</Byte>
+        <Byte>4E</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+rdx*8],xmm2</Description>
+      <AddressString>ACValhalla.exe+CDF91B</AddressString>
+      <Before>
+        <Byte>D3</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>14</Byte>
+        <Byte>D1</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>14</Byte>
+        <Byte>D1</Byte>
+      </Actual>
+      <After>
+        <Byte>4D</Byte>
+        <Byte>3B</Byte>
+        <Byte>D1</Byte>
+        <Byte>0F</Byte>
+        <Byte>85</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rdx],xmm2</Description>
+      <AddressString>ACValhalla.exe+CE5C8E</AddressString>
+      <Before>
+        <Byte>59</Byte>
+        <Byte>D3</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>D7</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>12</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>8B</Byte>
+        <Byte>4C</Byte>
+        <Byte>24</Byte>
+        <Byte>10</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+rdx],xmm1</Description>
+      <AddressString>ACValhalla.exe+CE612B</AddressString>
+      <Before>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>54</Byte>
+        <Byte>11</Byte>
+        <Byte>20</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>0C</Byte>
+        <Byte>11</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>54</Byte>
+        <Byte>15</Byte>
+        <Byte>AA</Byte>
+        <Byte>6C</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+rdx],xmm0</Description>
+      <AddressString>ACValhalla.exe+CE6141</AddressString>
+      <Before>
+        <Byte>11</Byte>
+        <Byte>20</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>C1</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>04</Byte>
+        <Byte>11</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>83</Byte>
+        <Byte>C1</Byte>
+        <Byte>50</Byte>
+        <Byte>49</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rdx+r8*8],xmm2</Description>
+      <AddressString>ACValhalla.exe+CE679E</AddressString>
+      <Before>
+        <Byte>42</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>14</Byte>
+        <Byte>C2</Byte>
+      </Before>
+      <Actual>
+        <Byte>42</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>14</Byte>
+        <Byte>C2</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>83</Byte>
+        <Byte>EB</Byte>
+        <Byte>01</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+r8*8],xmm8</Description>
+      <AddressString>ACValhalla.exe+CE6888</AddressString>
+      <Before>
+        <Byte>46</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>04</Byte>
+        <Byte>C1</Byte>
+      </Before>
+      <Actual>
+        <Byte>46</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>04</Byte>
+        <Byte>C1</Byte>
+      </Actual>
+      <After>
+        <Byte>49</Byte>
+        <Byte>83</Byte>
+        <Byte>EA</Byte>
+        <Byte>01</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+rdx*8],xmm7</Description>
+      <AddressString>ACValhalla.exe+CE687F</AddressString>
+      <Before>
+        <Byte>C2</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>3C</Byte>
+        <Byte>D1</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>3C</Byte>
+        <Byte>D1</Byte>
+      </Actual>
+      <After>
+        <Byte>46</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>04</Byte>
+        <Byte>C1</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [r8],xmm0</Description>
+      <AddressString>ACValhalla.exe+CE6647</AddressString>
+      <Before>
+        <Byte>C2</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>50</Byte>
+        <Byte>10</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rdx],xmm9</Description>
+      <AddressString>ACValhalla.exe+CE016C</AddressString>
+      <Before>
+        <Byte>44</Byte>
+        <Byte>0F</Byte>
+        <Byte>38</Byte>
+        <Byte>14</Byte>
+        <Byte>CC</Byte>
+      </Before>
+      <Actual>
+        <Byte>44</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>0A</Byte>
+      </Actual>
+      <After>
+        <Byte>49</Byte>
+        <Byte>81</Byte>
+        <Byte>C1</Byte>
+        <Byte>10</Byte>
+        <Byte>01</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rax],xmm0</Description>
+      <AddressString>ACValhalla.exe+CEEB0F</AddressString>
+      <Before>
+        <Byte>00</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>04</Byte>
+        <Byte>24</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>83</Byte>
+        <Byte>C0</Byte>
+        <Byte>50</Byte>
+        <Byte>4C</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+rdx+20],xmm2</Description>
+      <AddressString>ACValhalla.exe+CE6126</AddressString>
+      <Before>
+        <Byte>58</Byte>
+        <Byte>C8</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>C5</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>54</Byte>
+        <Byte>11</Byte>
+        <Byte>20</Byte>
+      </Actual>
+      <After>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+rdx+20],xmm2</Description>
+      <AddressString>ACValhalla.exe+CE6139</AddressString>
+      <Before>
+        <Byte>46</Byte>
+        <Byte>03</Byte>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>C2</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>54</Byte>
+        <Byte>11</Byte>
+        <Byte>20</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>C1</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+20],xmm1</Description>
+      <AddressString>ACValhalla.exe+CEE566</AddressString>
+      <Before>
+        <Byte>59</Byte>
+        <Byte>CA</Byte>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>C8</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>49</Byte>
+        <Byte>20</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>83</Byte>
+        <Byte>C1</Byte>
+        <Byte>50</Byte>
+        <Byte>49</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+rax+10],xmm0</Description>
+      <AddressString>ACValhalla.exe+CEE220</AddressString>
+      <Before>
+        <Byte>01</Byte>
+        <Byte>30</Byte>
+        <Byte>0F</Byte>
+        <Byte>15</Byte>
+        <Byte>C5</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>44</Byte>
+        <Byte>01</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>C6</Byte>
+        <Byte>DB</Byte>
+        <Byte>22</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+rax+20],xmm3</Description>
+      <AddressString>ACValhalla.exe+CEE22D</AddressString>
+      <Before>
+        <Byte>22</Byte>
+        <Byte>0F</Byte>
+        <Byte>C6</Byte>
+        <Byte>DF</Byte>
+        <Byte>E4</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>5C</Byte>
+        <Byte>01</Byte>
+        <Byte>20</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>05</Byte>
+        <Byte>87</Byte>
+        <Byte>ED</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+rax+30],xmm8</Description>
+      <AddressString>ACValhalla.exe+CEE217</AddressString>
+      <Before>
+        <Byte>14</Byte>
+        <Byte>C5</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>C4</Byte>
+      </Before>
+      <Actual>
+        <Byte>44</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>44</Byte>
+        <Byte>01</Byte>
+        <Byte>30</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>15</Byte>
+        <Byte>C5</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+60],xmm4</Description>
+      <AddressString>ACValhalla.exe+CEED4B</AddressString>
+      <Before>
+        <Byte>D8</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>D1</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>61</Byte>
+        <Byte>60</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>D9</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+70],xmm3</Description>
+      <AddressString>ACValhalla.exe+CEED55</AddressString>
+      <Before>
+        <Byte>58</Byte>
+        <Byte>D9</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>DA</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>59</Byte>
+        <Byte>70</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>8B</Byte>
+        <Byte>4C</Byte>
+        <Byte>24</Byte>
+        <Byte>40</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rsi+00000080],xmm1</Description>
+      <AddressString>ACValhalla.exe+CE0D68</AddressString>
+      <Before>
+        <Byte>66</Byte>
+        <Byte>0F</Byte>
+        <Byte>38</Byte>
+        <Byte>14</Byte>
+        <Byte>CA</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>8E</Byte>
+        <Byte>80</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>56</Byte>
+        <Byte>30</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rsi+00000090],xmm3</Description>
+      <AddressString>ACValhalla.exe+CE0E54</AddressString>
+      <Before>
+        <Byte>66</Byte>
+        <Byte>0F</Byte>
+        <Byte>38</Byte>
+        <Byte>14</Byte>
+        <Byte>DE</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>9E</Byte>
+        <Byte>90</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>81</Byte>
+        <Byte>C6</Byte>
+        <Byte>10</Byte>
+        <Byte>01</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+40],xmm6</Description>
+      <AddressString>ACValhalla.exe+CEED1B</AddressString>
+      <Before>
+        <Byte>51</Byte>
+        <Byte>30</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>DA</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>71</Byte>
+        <Byte>40</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>C6</Byte>
+        <Byte>DA</Byte>
+        <Byte>55</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+50],xmm5</Description>
+      <AddressString>ACValhalla.exe+CEED35</AddressString>
+      <Before>
+        <Byte>DA</Byte>
+        <Byte>0F</Byte>
+        <Byte>C6</Byte>
+        <Byte>CA</Byte>
+        <Byte>AA</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>69</Byte>
+        <Byte>50</Byte>
+      </Actual>
+      <After>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>C0</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rdx+40],xmm0</Description>
+      <AddressString>ACValhalla.exe+9689A0</AddressString>
+      <Before>
+        <Byte>5F</Byte>
+        <Byte>C2</Byte>
+        <Byte>0F</Byte>
+        <Byte>5D</Byte>
+        <Byte>C5</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>42</Byte>
+        <Byte>40</Byte>
+      </Actual>
+      <After>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>49</Byte>
+        <Byte>40</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rdx+30],xmm1</Description>
+      <AddressString>ACValhalla.exe+96898E</AddressString>
+      <Before>
+        <Byte>5F</Byte>
+        <Byte>C8</Byte>
+        <Byte>0F</Byte>
+        <Byte>5D</Byte>
+        <Byte>CD</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>4A</Byte>
+        <Byte>30</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>CB</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+00000090],xmm0</Description>
+      <AddressString>ACValhalla.exe+9688E5</AddressString>
+      <Before>
+        <Byte>10</Byte>
+        <Byte>01</Byte>
+        <Byte>0F</Byte>
+        <Byte>5C</Byte>
+        <Byte>D1</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>81</Byte>
+        <Byte>90</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>49</Byte>
+        <Byte>10</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+000000A0],xmm1</Description>
+      <AddressString>ACValhalla.exe+9688F1</AddressString>
+      <Before>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>49</Byte>
+        <Byte>10</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>89</Byte>
+        <Byte>A0</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>41</Byte>
+        <Byte>20</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx+000000B0],xmm0</Description>
+      <AddressString>ACValhalla.exe+9688FD</AddressString>
+      <Before>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>41</Byte>
+        <Byte>20</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>81</Byte>
+        <Byte>B0</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>49</Byte>
+        <Byte>30</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rdx],xmm5</Description>
+      <AddressString>ACValhalla.exe+D08892</AddressString>
+      <Before>
+        <Byte>08</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>7A</Byte>
+        <Byte>10</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>2A</Byte>
+      </Actual>
+      <After>
+        <Byte>8B</Byte>
+        <Byte>4E</Byte>
+        <Byte>74</Byte>
+        <Byte>44</Byte>
+        <Byte>3B</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rdx+10],xmm7</Description>
+      <AddressString>ACValhalla.exe+D0888E</AddressString>
+      <Before>
+        <Byte>49</Byte>
+        <Byte>03</Byte>
+        <Byte>54</Byte>
+        <Byte>24</Byte>
+        <Byte>08</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>7A</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>8B</Byte>
+        <Byte>4E</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rax],xmm4</Description>
+      <AddressString>ACValhalla.exe+D08719</AddressString>
+      <Before>
+        <Byte>08</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>78</Byte>
+        <Byte>10</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>20</Byte>
+      </Actual>
+      <After>
+        <Byte>8B</Byte>
+        <Byte>4E</Byte>
+        <Byte>74</Byte>
+        <Byte>45</Byte>
+        <Byte>33</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rax+10],xmm7</Description>
+      <AddressString>ACValhalla.exe+D08715</AddressString>
+      <Before>
+        <Byte>49</Byte>
+        <Byte>03</Byte>
+        <Byte>44</Byte>
+        <Byte>24</Byte>
+        <Byte>08</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>78</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>8B</Byte>
+        <Byte>4E</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rsi],xmm0</Description>
+      <AddressString>ACValhalla.exe+EA4E95</AddressString>
+      <Before>
+        <Byte>0F</Byte>
+        <Byte>7F</Byte>
+        <Byte>7C</Byte>
+        <Byte>24</Byte>
+        <Byte>70</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>06</Byte>
+      </Actual>
+      <After>
+        <Byte>C7</Byte>
+        <Byte>44</Byte>
+        <Byte>24</Byte>
+        <Byte>7C</Byte>
+        <Byte>00</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rsi],xmm3</Description>
+      <AddressString>ACValhalla.exe+EA4FC4</AddressString>
+      <Before>
+        <Byte>DE</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>DC</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>1E</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>7E</Byte>
+        <Byte>10</Byte>
+        <Byte>48</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rsi+10],xmm1</Description>
+      <AddressString>ACValhalla.exe+EA4EA5</AddressString>
+      <Before>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>44</Byte>
+        <Byte>24</Byte>
+        <Byte>70</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>4E</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>07</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rsi+10],xmm7</Description>
+      <AddressString>ACValhalla.exe+EA4FC7</AddressString>
+      <Before>
+        <Byte>58</Byte>
+        <Byte>DC</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>7E</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>83</Byte>
+        <Byte>C6</Byte>
+        <Byte>40</Byte>
+        <Byte>48</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx-20],xmm1</Description>
+      <AddressString>ACValhalla.exe+12D6A4B</AddressString>
+      <Before>
+        <Byte>66</Byte>
+        <Byte>0F</Byte>
+        <Byte>38</Byte>
+        <Byte>14</Byte>
+        <Byte>CB</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>49</Byte>
+        <Byte>E0</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>C7</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps [rcx+20],xmm0</Description>
+      <AddressString>ACValhalla.exe+7E9D76</AddressString>
+      <Before>
+        <Byte>8B</Byte>
+        <Byte>02</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>41</Byte>
+        <Byte>20</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>48</Byte>
+        <Byte>10</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps [rcx+30],xmm1</Description>
+      <AddressString>ACValhalla.exe+7E9D7E</AddressString>
+      <Before>
+        <Byte>90</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>48</Byte>
+        <Byte>10</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>49</Byte>
+        <Byte>30</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>40</Byte>
+        <Byte>20</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps [rcx+40],xmm0</Description>
+      <AddressString>ACValhalla.exe+7E9D86</AddressString>
+      <Before>
+        <Byte>90</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>40</Byte>
+        <Byte>20</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>41</Byte>
+        <Byte>40</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>48</Byte>
+        <Byte>30</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movdqu [rax+rdx],xmm0</Description>
+      <AddressString>ACValhalla.exe+D0F7F4</AddressString>
+      <Before>
+        <Byte>60</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>7F</Byte>
+        <Byte>04</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>8B</Byte>
+        <Byte>43</Byte>
+        <Byte>70</Byte>
+        <Byte>F6</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rax+r15],xmm0</Description>
+      <AddressString>ACValhalla.exe+D0A021</AddressString>
+      <Before>
+        <Byte>40</Byte>
+        <Byte>48</Byte>
+        <Byte>C1</Byte>
+        <Byte>E0</Byte>
+        <Byte>05</Byte>
+      </Before>
+      <Actual>
+        <Byte>42</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>04</Byte>
+        <Byte>38</Byte>
+      </Actual>
+      <After>
+        <Byte>8B</Byte>
+        <Byte>47</Byte>
+        <Byte>50</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rax+r15+10],xmm0</Description>
+      <AddressString>ACValhalla.exe+D0A032</AddressString>
+      <Before>
+        <Byte>50</Byte>
+        <Byte>48</Byte>
+        <Byte>C1</Byte>
+        <Byte>E0</Byte>
+        <Byte>05</Byte>
+      </Before>
+      <Actual>
+        <Byte>42</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>44</Byte>
+        <Byte>38</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>3B</Byte>
+        <Byte>AE</Byte>
+        <Byte>E4</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rax+r13],xmm2</Description>
+      <AddressString>ACValhalla.exe+D0AF63</AddressString>
+      <Before>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>D7</Byte>
+      </Before>
+      <Actual>
+        <Byte>42</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>14</Byte>
+        <Byte>28</Byte>
+      </Actual>
+      <After>
+        <Byte>E9</Byte>
+        <Byte>9A</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [r10+rdx*8],xmm1</Description>
+      <AddressString>ACValhalla.exe+D0BBC5</AddressString>
+      <Before>
+        <Byte>C0</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>B6</Byte>
+        <Byte>C0</Byte>
+      </Before>
+      <Actual>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>0C</Byte>
+        <Byte>D2</Byte>
+      </Actual>
+      <After>
+        <Byte>8B</Byte>
+        <Byte>4B</Byte>
+        <Byte>2C</Byte>
+        <Byte>3B</Byte>
+        <Byte>C1</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rcx],xmm0</Description>
+      <AddressString>ACValhalla.exe+3F0B980</AddressString>
+      <Before>
+        <Byte>80</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>01</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>83</Byte>
+        <Byte>C1</Byte>
+        <Byte>10</Byte>
+        <Byte>49</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rdx+rax],xmm6</Description>
+      <AddressString>ACValhalla.exe+151FA27</AddressString>
+      <Before>
+        <Byte>D5</Byte>
+        <Byte>48</Byte>
+        <Byte>C1</Byte>
+        <Byte>E2</Byte>
+        <Byte>04</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>34</Byte>
+        <Byte>02</Byte>
+      </Actual>
+      <After>
+        <Byte>49</Byte>
+        <Byte>8B</Byte>
+        <Byte>0E</Byte>
+        <Byte>0F</Byte>
+        <Byte>B7</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movdqu [rdx],xmm1</Description>
+      <AddressString>ACValhalla.exe+D08DA5</AddressString>
+      <Before>
+        <Byte>10</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>08</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>7F</Byte>
+        <Byte>0A</Byte>
+      </Actual>
+      <After>
+        <Byte>44</Byte>
+        <Byte>3B</Byte>
+        <Byte>4E</Byte>
+        <Byte>64</Byte>
+        <Byte>72</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movdqu [rsi+rax],xmm1</Description>
+      <AddressString>ACValhalla.exe+CEE6F2</AddressString>
+      <Before>
+        <Byte>10</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>0C</Byte>
+        <Byte>0A</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>7F</Byte>
+        <Byte>0C</Byte>
+        <Byte>06</Byte>
+      </Actual>
+      <After>
+        <Byte>49</Byte>
+        <Byte>83</Byte>
+        <Byte>C0</Byte>
+        <Byte>50</Byte>
+        <Byte>48</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rdx],xmm8</Description>
+      <AddressString>ACValhalla.exe+E8F4CB</AddressString>
+      <Before>
+        <Byte>B8</Byte>
+        <Byte>20</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>44</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>02</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>D1</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of mulps xmm2,[ACValhalla.exe+415A470]</Description>
+      <AddressString>ACValhalla.exe+E8F326</AddressString>
+      <Before>
+        <Byte>58</Byte>
+        <Byte>D3</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>D5</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>15</Byte>
+        <Byte>43</Byte>
+        <Byte>B1</Byte>
+        <Byte>2C</Byte>
+        <Byte>03</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>12</Byte>
+        <Byte>48</Byte>
+        <Byte>83</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of addps xmm7,xmm6</Description>
+      <AddressString>ACValhalla.exe+E9B143</AddressString>
+      <Before>
+        <Byte>15</Byte>
+        <Byte>1D</Byte>
+        <Byte>1D</Byte>
+        <Byte>2B</Byte>
+        <Byte>03</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>FE</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>35</Byte>
+        <Byte>23</Byte>
+        <Byte>F3</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps [rsp+60],xmm6</Description>
+      <AddressString>ACValhalla.exe+E9B14D</AddressString>
+      <Before>
+        <Byte>35</Byte>
+        <Byte>23</Byte>
+        <Byte>F3</Byte>
+        <Byte>2B</Byte>
+        <Byte>03</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>74</Byte>
+        <Byte>24</Byte>
+        <Byte>60</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>54</Byte>
+        <Byte>24</Byte>
+        <Byte>70</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of mulps xmm5,[ACValhalla.exe+415A470]</Description>
+      <AddressString>ACValhalla.exe+EA481B</AddressString>
+      <Before>
+        <Byte>28</Byte>
+        <Byte>EA</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>E8</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>2D</Byte>
+        <Byte>4E</Byte>
+        <Byte>5C</Byte>
+        <Byte>2B</Byte>
+        <Byte>03</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>2A</Byte>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of mulps xmm1,[ACValhalla.exe+415A470]</Description>
+      <AddressString>ACValhalla.exe+E8E7E8</AddressString>
+      <Before>
+        <Byte>12</Byte>
+        <Byte>C0</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>C2</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>0D</Byte>
+        <Byte>81</Byte>
+        <Byte>BC</Byte>
+        <Byte>2C</Byte>
+        <Byte>03</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>57</Byte>
+        <Byte>C4</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of mulps xmm6,[ACValhalla.exe+415A470]</Description>
+      <AddressString>ACValhalla.exe+E96586</AddressString>
+      <Before>
+        <Byte>59</Byte>
+        <Byte>C0</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>F0</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>35</Byte>
+        <Byte>E3</Byte>
+        <Byte>3E</Byte>
+        <Byte>2C</Byte>
+        <Byte>03</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>85</Byte>
+        <Byte>C9</Byte>
+        <Byte>74</Byte>
+        <Byte>08</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of mulps xmm1,[ACValhalla.exe+415A470]</Description>
+      <AddressString>ACValhalla.exe+E96782</AddressString>
+      <Before>
+        <Byte>C4</Byte>
+        <Byte>0F</Byte>
+        <Byte>C6</Byte>
+        <Byte>D2</Byte>
+        <Byte>22</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>0D</Byte>
+        <Byte>E7</Byte>
+        <Byte>3C</Byte>
+        <Byte>2C</Byte>
+        <Byte>03</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>4C</Byte>
+        <Byte>24</Byte>
+        <Byte>60</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rdx],xmm7</Description>
+      <AddressString>ACValhalla.exe+91DFFB</AddressString>
+      <Before>
+        <Byte>66</Byte>
+        <Byte>0F</Byte>
+        <Byte>38</Byte>
+        <Byte>14</Byte>
+        <Byte>FD</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>3A</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>7C</Byte>
+        <Byte>24</Byte>
+        <Byte>10</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movups [rdi+rax*8+20],xmm8</Description>
+      <AddressString>ACValhalla.exe+C0566E</AddressString>
+      <Before>
+        <Byte>14</Byte>
+        <Byte>C8</Byte>
+        <Byte>0F</Byte>
+        <Byte>15</Byte>
+        <Byte>D0</Byte>
+      </Before>
+      <Actual>
+        <Byte>44</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>44</Byte>
+        <Byte>C7</Byte>
+        <Byte>20</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>0C</Byte>
+        <Byte>C7</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of mulps xmm6,[ACValhalla.exe+415A470]</Description>
+      <AddressString>ACValhalla.exe+12D2B11</AddressString>
+      <Before>
+        <Byte>59</Byte>
+        <Byte>C3</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>F0</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>35</Byte>
+        <Byte>58</Byte>
+        <Byte>79</Byte>
+        <Byte>E8</Byte>
+        <Byte>02</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>37</Byte>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of mulps xmm3,[ACValhalla.exe+415A470]</Description>
+      <AddressString>ACValhalla.exe+12D30FB</AddressString>
+      <Before>
+        <Byte>59</Byte>
+        <Byte>FC</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>DF</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>1D</Byte>
+        <Byte>6E</Byte>
+        <Byte>73</Byte>
+        <Byte>E8</Byte>
+        <Byte>02</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>1F</Byte>
+        <Byte>0F</Byte>
+        <Byte>5C</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of mulps xmm12,[ACValhalla.exe+415A470]</Description>
+      <AddressString>ACValhalla.exe+12D90A9</AddressString>
+      <Before>
+        <Byte>15</Byte>
+        <Byte>97</Byte>
+        <Byte>3F</Byte>
+        <Byte>E7</Byte>
+        <Byte>02</Byte>
+      </Before>
+      <Actual>
+        <Byte>44</Byte>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>25</Byte>
+        <Byte>BF</Byte>
+        <Byte>13</Byte>
+        <Byte>E8</Byte>
+        <Byte>02</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>F1</Byte>
+        <Byte>66</Byte>
+        <Byte>41</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of mulps xmm5,[ACValhalla.exe+415A470]</Description>
+      <AddressString>ACValhalla.exe+12E174C</AddressString>
+      <Before>
+        <Byte>C2</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>2F</Byte>
+        <Byte>C1</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>2D</Byte>
+        <Byte>1D</Byte>
+        <Byte>8D</Byte>
+        <Byte>E7</Byte>
+        <Byte>02</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>6D</Byte>
+        <Byte>90</Byte>
+        <Byte>76</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps [rcx+50],xmm1</Description>
+      <AddressString>7FF6133F005D</AddressString>
+      <Before>
+        <Byte>9D</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>48</Byte>
+        <Byte>30</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>49</Byte>
+        <Byte>50</Byte>
+      </Actual>
+      <After>
+        <Byte>E9</Byte>
+        <Byte>2C</Byte>
+        <Byte>9D</Byte>
+        <Byte>82</Byte>
+        <Byte>00</Byte>
+      </After>
+    </CodeEntry>
+  </CheatCodes>
+  <UserdefinedSymbols/>
+  <LuaScript>getAutoAttachList().add("ACValhalla.exe")
+</LuaScript>
+</CheatTable>

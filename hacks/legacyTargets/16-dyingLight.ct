@@ -1,0 +1,2126 @@
+<!--
+    Omnified Dying Light
+    Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
+    Copyright 2022 Bad Echo LLC
+
+    Bad Echo Technologies are licensed under a
+    Creative Commons Attribution-NonCommercial 4.0 International License.
+
+    See accompanying file LICENSE.md or a copy at:
+    http://creativecommons.org/licenses/by-nc/4.0/
+-->
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="29">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>780</ID>
+      <Description>"OMNIFY"</Description>
+      <Options moHideChildren="1"/>
+      <LastState Activated="1"/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{
+    Omnified Dying Light
+             ...Bitch.	c
+}
+[ENABLE]
+{$lua}
+function ActivateLoggers()
+	if loggersTimer == nil then
+		loggersTimer = createTimer(getMainForm())
+	end
+
+	loggersTimer.Interval = 100
+	loggersTimer.OnTimer = function()
+		local stats = assert(io.open("stats.txt", "w"))
+		
+		local timeOfDay = readFloat("[time]+0xA4")		
+		
+		if timeOfDay ~= nil then		
+			local normalizedTime = (timeOfDay*1439)/60		
+		
+			local hours = math.floor(normalizedTime)		
+			local minutes = math.floor((normalizedTime - hours)*60)
+		
+			stats:write("Time: ", hours, ":", minutes, "\n")
+		end
+		
+		local currentHealth = readFloat("[player]+0x122C")
+		local maxHealth = readFloat("[playerStats]+0x8")
+		
+		if currentHealth ~= nil and maxHealth ~= nil then
+			stats:write("Health: ", 
+						math.floor(currentHealth), 
+						"/", 
+						math.floor(maxHealth), 
+						"\n")
+		end
+		
+		local lastEnemyHealth = readFloat("lastEnemyHealth")
+
+		if lastEnemyHealth ~= nil then
+			stats:write("Enemy: ", math.floor(lastEnemyHealth), "\n")
+		end
+
+        local enemySpeedX = readFloat("enemySpeedX")
+
+        if enemySpeedX ~= nil then
+           stats:write("Enemy Speed: ", enemySpeedX, "x\n")
+        end
+		
+		local medkits = readInteger("[backpack]+0x40")
+		
+		if medkits ~= nil then
+			stats:write("Medkits: ", medkits, "\n")
+		end
+		
+		local xCoords = readFloat("[playerOneCoords]+0xBC")
+		local yCoords = readFloat("[playerOneCoords]+0xC0")
+		local zCoords = readFloat("[playerOneCoords]+0xC4")
+		
+		if xCoords ~= nil and yCoords ~= nil and zCoords ~= nil then
+			stats:write("X: ", xCoords, "\n")
+			stats:write("Y: ", yCoords, "\n")
+			stats:write("Z: ", zCoords, "\n")
+		end
+		
+		local maxDamageToPlayer = readFloat("maxDamageToPlayer")
+		local lastDamageToPlayer = readFloat("lastDamageToPlayer")
+		local maxDamageByPlayer = readFloat("maxDamageByPlayer")
+		local lastDamageByPlayer = readFloat("lastDamageByPlayer")
+		
+		if maxDamageToPlayer ~= nil then
+			stats:write("Max Damage To Player: ",
+                        math.floor(maxDamageToPlayer),
+                        "\n")
+		end
+		
+		if lastDamageToPlayer ~= nil then
+			stats:write("Last Damage To Player: ",
+                        math.floor(lastDamageToPlayer),
+                        "\n")
+		end
+		
+		if maxDamageByPlayer ~= nil then
+			stats:write("Max Damage By Player: ",
+                        math.floor(maxDamageByPlayer),
+                        "\n")
+		end
+		
+		if lastDamageByPlayer ~= nil then
+			stats:write("Last Damage By Player: ",
+                        math.floor(lastDamageByPlayer),
+                        "\n")
+		end
+		
+		local ringGateCount = readInteger("ringGateCount")
+		
+		if ringGateCount ~= nil then
+			stats:write("Ring Gate Ragdolls: ", ringGateCount, "\n")
+		end
+				
+		stats:close()
+		
+		local log = assert(io.open("log.txt", "a"))
+
+        local ts = os.time()
+        local timestamp = os.date('%H:%M-', ts)
+		
+		local logApocalypse = readInteger("logApocalypse")
+		local apocalypseResult = readInteger("apocalypseResult")
+		local riskOfMurderResult = readInteger("riskOfMurderResult")
+		local logEntryEnemyRoll = "Enemy rolls a "
+		local logEntryPlayerHealth = " damage to the player!\nPlayer now has "
+		
+		local nightTime = readFloat("nightTime")
+		local morningTime = readFloat("morningTime")
+		local logEclipse = ": SOLAR ECLIPSE PUNCH causing "
+		local logSupernova = ": SUPERNOVA PUNCH causing "
+
+		if logApocalypse == 1 and apocalypseResult ~= nil
+							  and lastDamageToPlayer ~= nil
+							  and currentHealth ~= nil
+                              and timestamp ~= nil
+							  then
+			writeInteger("logApocalypse", 0)
+
+			if apocalypseResult &gt;= 1 and apocalypseResult &lt;= 4 then
+				log:write(timestamp,
+                          logEntryEnemyRoll,
+						  apocalypseResult,
+						  ": DOUBLE DAMAGE causing ",
+						  math.floor(lastDamageToPlayer),
+						  logEntryPlayerHealth,
+						  math.floor(currentHealth),
+						  " health.\n")
+			elseif apocalypseResult == 5 or apocalypseResult == 6 then
+				log:write(timestamp,
+                          logEntryEnemyRoll,
+						  apocalypseResult,
+						  ": SUDDEN TELEPORTITIS causing ",
+                          math.floor(lastDamageToPlayer),
+                          logEntryPlayerHealth,
+                          math.floor(currentHealth),
+                          " health.\n")
+			elseif apocalypseResult &gt;= 7 and apocalypseResult &lt;= 9 then
+				log:write(timestamp,
+                          logEntryEnemyRoll,
+						  apocalypseResult,
+						  ": RISK OF MURDER!\n")
+				if riskOfMurderResult &gt;= 1 and riskOfMurderResult &lt;= 3 and timeOfDay ~= nil then
+					local logPunch = logSupernova
+					if timeOfDay &gt;= nightTime or timeOfDay &lt; morningTime then
+						logPunch = logEclipse
+					end
+					
+	       			log:write(timestamp,
+                              logEntryEnemyRoll,
+							  riskOfMurderResult,
+							  logPunch,
+							  math.floor(lastDamageToPlayer),
+							  logEntryPlayerHealth,
+							  math.floor(currentHealth),
+							  " health.\n")
+				else 
+	    			log:write(timestamp,
+                              logEntryEnemyRoll,
+							  riskOfMurderResult,
+							  ": Player has been SIXTY NINED causing ",
+							  math.floor(lastDamageToPlayer),
+							  logEntryPlayerHealth,
+							  math.floor(currentHealth),
+							  " health.\n")
+				end
+			else
+				log:write(timestamp,
+                          logEntryEnemyRoll,
+						  apocalypseResult,
+						  ": Player achieves orgasm!\nPlayer is healed fully to ",
+						  math.floor(currentHealth),
+						  " health.\n")
+			end
+		end
+		
+		local logKamehameha = readInteger("logKamehameha")
+		
+		if logKamehameha == 1 and lastDamageByPlayer ~= nil and timestamp ~= nil then
+			writeInteger("logKamehameha",0)
+			log:write(timestamp,
+                      "Player has unlocked his inner Goku and performs a devastating KAMEHAMEHAAAAA attack causing ",
+					  math.floor(lastDamageByPlayer),
+					  " damage!\n")
+		end
+		
+		log:close()
+		
+		loggersTimer.Enabled = true
+	end
+
+	loggersTimer.Enabled = true
+end
+
+{$asm}
+luacall(ActivateLoggers())
+
+// Global memory
+alloc(zero,8)
+
+zero:
+  dd 0
+  
+
+// Random number generation function.
+// After r12-r14 pushes:
+// [rsp+20]: last random number, 0 if uninitialized
+// [rsp+28]: upper bounds
+// [rsp+30]: lower bounds
+// return value is in EAX
+alloc(generateRandomNumber,$1000)
+
+registersymbol(generateRandomNumber)
+
+generateRandomNumber:
+  push r12
+  push r13
+  push r14d
+  mov r13,[rsp+28]
+  mov r14,[rsp+30]
+  push rbx
+  push rcx
+  push rdx
+  push r8
+  push r10
+  push r11
+  cmp r12,0
+  jne getRandomNumber
+initializeSeed:
+  call kernel32.GetTickCount
+  push eax
+  call msvcrt.srand
+  pop eax
+getRandomNumber:
+  call msvcrt.rand
+  xor edx,edx
+  mov ebx,r14
+  mov ecx,r13
+  cmp ecx,ebx
+  cmovl ecx,ebx
+  inc ecx
+  sub ecx,ebx
+  idiv ecx
+  add edx,ebx
+  mov eax,edx
+  pop r11
+  pop r10
+  pop r8
+  pop rdx
+  pop rcx
+  pop rbx
+  pop r14
+  pop r13
+  pop r12
+  ret 18
+
+
+
+// Gets the main player struct.
+define(omniPlayerHook,"gamedll_x64_rwdi.dll"+AD8D4A)
+
+assert(omniPlayerHook, 8B 87 2C 12 00 00)
+// UNIQUE AOB: 8B 87 2C 12 00 00 89 87
+alloc(getPlayer,$1000, omniPlayerHook)
+alloc(player,8)
+
+registersymbol(omniPlayerHook)
+registersymbol(player)
+
+getPlayer:
+  mov [player],rdi
+getPlayerOriginalCode:
+  mov eax,[rdi+0000122C]
+  jmp getPlayerReturn
+
+
+omniPlayerHook:
+  jmp getPlayer
+  nop 
+getPlayerReturn:
+
+// Gets the player's stats.
+define(omniPlayerStatsHook,"gamedll_x64_rwdi.dll"+B8F493)
+
+assert(omniPlayerStatsHook, F3 41 0F 59 41 08)
+// UNIQUE AOB: F3 41 0F 59 41 08 C3 F3
+alloc(getPlayerStats,$1000, omniPlayerStatsHook)
+alloc(playerStats,8)
+
+registersymbol(omniPlayerStatsHook)
+registersymbol(playerStats)
+
+getPlayerStats:
+  mov [playerStats],r9
+getPlayerStatsOriginalCode:
+  mulss xmm0,[r9+08]
+  jmp getPlayerStatsReturn
+
+
+omniPlayerStatsHook:
+  jmp getPlayerStats
+  nop
+getPlayerStatsReturn:
+
+
+
+// Gets the player's coordinates.
+define(omniPlayerCoordsHook,"engine_x64_rwdi.dll"+3263CB)
+// UNIQUE AOB: 48 8B 01 FF 90 48 01 00 00 FF
+assert(omniPlayerCoordsHook, 48 8B 01 FF 90 48 01 00 00)
+alloc(getPlayerCoords,$1000, omniPlayerCoordsHook)
+alloc(playerOneCoords,8)
+
+registersymbol(omniPlayerCoordsHook)
+registersymbol(playerOneCoords)
+
+getPlayerCoords:
+  pushf
+  jmp getPlayerCoordsOriginalCode
+  cmp r9,0
+  jne getPlayerCoordsOriginalCode
+  push rax
+  mov rax,[rcx+700]
+  mov [playerOneCoords],rax
+  pop rax
+getPlayerCoordsOriginalCode:
+  popf
+  mov rax,[rcx]
+  call qword ptr [rax+00000148]
+  jmp getPlayerCoordsReturn
+
+
+omniPlayerCoordsHook:
+  jmp getPlayerCoords
+  nop 4
+getPlayerCoordsReturn:
+
+
+// Gets the coordinates of teammates.
+define(omniTeammateCoordsHook,"engine_x64_rwdi.dll"+37FB1C)
+// UNIQUE AOB: 89 81 BC 00 00 00 8B 42 04
+assert(omniTeammateCoordsHook, 89 81 BC 00 00 00)
+alloc(getTeammateCoords,$1000, omniTeammateCoordsHook)
+alloc(playerTwoCoords,8)
+alloc(teleportX,8)
+alloc(teleportY,8)
+alloc(teleportZ,8)
+alloc(teleport,8)
+
+registersymbol(omniTeammateCoordsHook)
+registersymbol(playerTwoCoords)
+registersymbol(teleportX)
+registersymbol(teleportY)
+registersymbol(teleportZ)
+registersymbol(teleport)
+
+getTeammateCoords:
+  pushf
+  cmp r12,0x1
+  je getPlayerTwoCoords
+  push rax
+  mov eax,[rcx+114]
+  cmp eax,64
+  pop rax
+  je getPlayerOneCoords
+  push rax
+  mov eax,[rcx+114]
+  cmp eax,0x1E
+  pop rax
+  jle getTeammateCoordsOriginalCode
+  jmp getTeammateCoordsOriginalCode
+getPlayerOneCoords:
+  mov [playerOneCoords],rcx
+  cmp [teleport],1
+  jne getTeammateCoordsOriginalCode
+  mov [teleport],0
+  mov eax,[teleportY]
+  mov [rdx+4],eax
+  mov eax,[teleportZ]
+  mov [rdx+8],eax
+  mov eax,[teleportX]
+  jmp getTeammateCoordsOriginalCode
+getPlayerTwoCoords:
+  mov [playerTwoCoords],rcx
+getTeammateCoordsOriginalCode:
+  popf
+  mov [rcx+000000BC],eax
+  jmp getTeammateCoordsReturn
+
+
+omniTeammateCoordsHook:
+  jmp getTeammateCoords
+  nop
+getTeammateCoordsReturn:
+
+teleport:
+  dd 0
+
+
+// Gets the time of day.
+define(omniTimeHook,"gamedll_x64_rwdi.dll"+397E33)
+// UNIQUE AOB: F3 0F 10 8F A4 00 00 00 F3 0F 10 35
+assert(omniTimeHook, F3 0F 10 8F A4 00 00 00)
+alloc(getTime,$1000, omniTimeHook)
+alloc(time,8)
+
+registersymbol(omniTimeHook)
+registersymbol(time)
+
+getTime:
+  mov [time],rdi
+getTimeOriginalCode:
+  movss xmm1,[rdi+000000A4]
+  jmp getTimeReturn
+
+
+omniTimeHook:
+  jmp getTime
+  nop 3
+getTimeReturn:
+
+
+
+// Gets the player's backpack.
+define(omniBackpackHook,"gamedll_x64_rwdi.dll"+B02FF3)
+// UNIQUE AOB: 03 6F 40 8B 4C 24 38
+assert(omniBackpackHook, 03 6F 40 8B 4C 24 38)	
+alloc(getBackpack,$1000, omniBackpackHook)
+alloc(backpack,8)
+
+registersymbol(omniBackpackHook)
+registersymbol(backpack)
+
+getBackpack:
+  mov [backpack],rdi
+getBackpackOriginalCode:
+  add ebp,[rdi+40]
+  mov ecx,[rsp+38]
+  jmp getBackpackReturn
+
+
+omniBackpackHook:
+  jmp getBackpack
+  nop 2
+getBackpackReturn:
+
+
+// Gets the player's money.
+define(omniMoneyHook,"gamedll_x64_rwdi.dll"+726627)
+// UNIQUE AOB: 2C B8 00 8B CE 48 85 C0 74 03 8B 48 40
+assert(omniMoneyHook, 74 03 8B 48 40)
+alloc(getMoney,$1000, omniMoneyHook)
+alloc(money,8)
+
+registersymbol(omniMoneyHook)
+registersymbol(money)
+
+getMoney:
+  mov [money],rax
+getMoneyOriginalCode:
+  je gamedll_x64_rwdi.dll+72662C
+  mov ecx,[rax+40]
+  jmp getMoneyReturn
+
+
+omniMoneyHook:
+  jmp getMoney
+getMoneyReturn:
+
+// Gets the player's various XP pools.
+define(omniPlayerXPHook,"gamedll_x64_rwdi.dll"+3FA5E5)
+
+assert(omniPlayerXPHook, 8B 48 28 89 4B 48)
+alloc(getPlayerXP,$1000, omniPlayerXPHook)
+alloc(xp,8)
+
+registersymbol(omniPlayerXPHook)
+registersymbol(xp)
+
+getPlayerXP:
+  mov [xp],rax
+getPlayerXPOriginalCode:
+  mov ecx,[rax+28]
+  mov [rbx+48],ecx
+  jmp getPlayerXPReturn
+
+
+omniPlayerXPHook:
+  jmp getPlayerXP
+  nop 
+getPlayerXPReturn:
+
+
+// Skips time validation.
+define(omnifyTimeValidationHook,"gamedll_x64_rwdi.dll"+39823D) // or 3989B2
+// UNIQUE AOB: F3 0F 11 B7 A4 00 00 00 0F
+assert(omnifyTimeValidationHook, F3 0F 11 B7 A4 00 00 00)
+alloc(skipTimeValidation,$1000, omnifyTimeValidationHook)
+
+registersymbol(omnifyTimeValidationHook)
+
+skipTimeValidation:
+  cmp r10,0
+  je skipTimeValidationOriginalCode
+  cmp r11,0
+  je skipTimeValidationOriginalCode
+  jmp skipTimeValidationReturn
+skipTimeValidationOriginalCode:
+  movss [rdi+000000A4],xmm6
+  jmp skipTimeValidationReturn
+
+
+omnifyTimeValidationHook:
+  jmp skipTimeValidation
+  nop 3
+skipTimeValidationReturn:
+
+
+
+// Omnification of environmental damage.
+define(omnifyEnvironmentalDamage,"gamedll_x64_rwdi.dll"+C20FFA)
+// UNIQUE AOB: F3 0F 5C C7 0F 28 C8 FF 57 20 B2 08 49 8B CD
+assert(omnifyEnvironmentalDamage, F3 0F 5C C7 0F 28 C8)
+alloc(fuckUpEnvironmentalDamage,$1000, omnifyEnvironmentalDamage)
+
+registersymbol(omnifyEnvironmentalDamage)
+
+fuckUpEnvironmentalDamage:
+
+fuckUpEnvironmentalDamageOriginalCode:
+  subss xmm0,xmm7
+  movaps xmm1,xmm0
+  jmp fuckUpEnvironmentalDamageReturn
+
+
+omnifyEnvironmentalDamage:
+  jmp fuckUpEnvironmentalDamage
+  nop 2
+fuckUpEnvironmentalDamageReturn:
+
+
+
+// Omnification of player damage.
+define(omnifyPlayerDamageHook,"gamedll_x64_rwdi.dll"+216167)
+// UNIQUE AOB: F3 41 0F 5C C0 41 0F 2F C1
+assert(omnifyPlayerDamageHook, F3 41 0F 5C C0)
+alloc(fuckUpPlayerDamage,$1000, omnifyPlayerDamageHook)
+alloc(playerDamageX,8)
+alloc(maxDamageByPlayer,8)
+alloc(lastDamageByPlayer,8)
+alloc(lastEnemyHealth,8)
+alloc(logKamehameha,8)
+alloc(gokuResult,8)
+alloc(gokuResultLower,8)
+alloc(gokuResultUpper,8)
+alloc(kamehameha,8)
+
+registersymbol(omnifyPlayerDamageHook)
+registersymbol(playerDamageX)
+registersymbol(maxDamageByPlayer)
+registersymbol(lastDamageByPlayer)
+registersymbol(lastEnemyHealth)
+registersymbol(logKamehameha)
+
+fuckUpPlayerDamage:
+  pushf  
+  ucomiss xmm8,[zero]
+  jz fuckUpPlayerDamageOriginalCode
+  cmp r8,0x7
+  jle fuckUpPlayerDamageOriginalCode
+  cmp r8,0xFFFFFFF
+  jg fuckUpPlayerDamageOriginalCode
+  cmp rdi,0
+  je fuckUpPlayerDamageOriginalCode
+  push rax
+  push [gokuResultLower]
+  push [gokuResultUpper]
+  push [gokuResult]
+  call generateRandomNumber
+  mov [gokuResult],eax
+  cmp eax,#69
+  pop rax
+  jne applyPlayerDamage
+  mov [logKamehameha],1
+  mulss xmm8,[kamehameha]
+applyPlayerDamage:
+  mulss xmm8,[playerDamageX]  
+  ucomiss xmm8,[maxDamageByPlayer]
+  jnae skipMaxPlayerDamageUpdate
+  movss [maxDamageByPlayer],xmm8
+skipMaxPlayerDamageUpdate:
+  movss [lastDamageByPlayer],xmm8  
+fuckUpPlayerDamageOriginalCode:
+  popf
+  subss xmm0,xmm8
+updateLastEnemyHealth:
+  movss [lastEnemyHealth],xmm0
+  jmp fuckUpPlawyerDamageReturn
+
+        
+omnifyPlayerDamageHook:
+  jmp fuckUpPlayerDamage
+fuckUpPlayerDamageReturn:
+
+
+playerDamageX:
+  dd (float)3.0
+
+logKamehameha:
+  dd 0
+  
+kamehameha:
+  dd (float)10000.0
+  
+gokuResult:
+  dd 0
+  
+gokuResultUpper:
+  dd #250
+  
+gokuResultLower:
+  dd 1
+
+
+// Apocalypse System
+define(omnifyApocalypseHook,"gamedll_x64_rwdi.dll"+ADAB38)
+// UNIQUE AOB: F3 0F 5C 44 24 78 0F
+assert(omnifyApocalypseHook, F3 0F 5C 44 24 78)
+alloc(initiateDoomsday,$1000, omnifyApocalypseHook)
+alloc(maxDamageToPlayer,8)
+alloc(lastDamageToPlayer,8)
+alloc(logApocalypse,8)
+alloc(apocalypseResult,8)
+alloc(apocalypseResultUpper,8)
+alloc(apocalypseResultLower,8)
+alloc(doubleDamageX,8)
+alloc(riskOfMurderResult,8)
+alloc(riskOfMurderResultUpper,8)
+alloc(riskOfMurderResultLower,8)
+alloc(nightTime,8)
+alloc(morningTime,8)
+alloc(morningShiftLower,8)
+alloc(morningShiftUpper,8)
+alloc(morningShift,8)
+alloc(dayShift,8)
+alloc(nightShiftLower,8)
+alloc(nightShift,8)
+alloc(dayMax,8)
+alloc(sixtyNineDamageX,8)
+alloc(teleportitisResult,8)
+alloc(teleportitisResultUpper,8)
+alloc(teleportitisResultLower,8)
+alloc(teleportitisDivisor,8)
+alloc(teleportitisShifter,8)
+alloc(playerGodMode,8)
+alloc(damageMinimum,8)
+
+registersymbol(omnifyApocalypseHook)
+registersymbol(maxDamageToPlayer)
+registersymbol(lastDamageToPlayer)
+registersymbol(logApocalypse)
+registersymbol(apocalypseResult)
+registersymbol(riskOfMurderResult)
+registersymbol(playerGodMode)
+registersymbol(nightTime)
+registersymbol(morningTime)
+
+initiateDoomsday:
+  pushf
+  sub rsp,16
+  movdqu [rsp],xmm1
+  movss xmm1,[rsp+90]
+  ucomiss xmm1,[damageMinimum]
+  jb initiateDoomsdayExitWithoutLogging
+  cmp [playerGodMode],1
+  jne applyApocalypse
+  xorps xmm1,xmm1
+  jmp initiateDoomsdayExitWithoutLogging
+applyApocalypse:
+  cmp rdx,0xFFFFF
+  jge initiateDoomsdayExitWithoutLogging
+  push rax
+  push [apocalypseResultLower]
+  push [apocalypseResultUpper]
+  push [apocalypseResult]
+  call generateRandomNumber
+  mov [apocalypseResult],eax
+  cmp eax,4
+  jle doubleDamage
+  cmp eax,6
+  jle randomTeleport
+  cmp eax,9
+  jle riskOfMurder
+  pop rax
+  jmp suddenGasm
+doubleDamage:
+  mulss xmm1,[doubleDamageX]
+  jmp updateEnemyDamageStats
+randomTeleport:
+  sub rsp,16
+  movdqu [rsp],xmm2
+  sub rsp,16
+  movdqu [rsp],xmm3
+  push [teleportitisResultLower]
+  push [teleportitisResultUpper]
+  push [teleportitisResult]
+  call generateRandomNumber
+  mov [teleportitisResult],eax
+  cvtsi2ss xmm2,[teleportitisResult]
+  divss xmm2,[teleportitisDivisor]
+  subss xmm2,[teleportitisShifter]
+  mov rax,[playerOneCoords]
+  movss xmm3,[rax+BC]
+  addss xmm3,xmm2
+  movss [rax+BC],xmm3
+  push [teleportitisResultLower]
+  push [teleportitisResultUpper]
+  push [teleportitisResult]
+  call generateRandomNumber
+  mov [teleportitisResult],eax
+  cvtsi2ss xmm2,[teleportitisResult]
+  divss xmm2,[teleportitisDivisor]
+  subss xmm2,[teleportitisShifter]
+  mov rax,[playerOneCoords]
+  movss xmm3,[rax+C0]
+  addss xmm3,xmm2
+  movss [rax+C0],xmm3
+  push [teleportitisResultLower]
+  push [teleportitisResultUpper]
+  push [teleportitisResult]
+  call generateRandomNumber
+  mov [teleportitisResult],eax
+  cvtsi2ss xmm2,[teleportitisResult]
+  divss xmm2,[teleportitisDivisor]
+  subss xmm2,[teleportitisShifter]
+  mov rax,[playerOneCoords]
+  movss xmm3,[rax+C4]
+  addss xmm3,xmm2
+  movss [rax+C4],xmm3
+  movdqu xmm3,[rsp]
+  add rsp,16
+  movdqu xmm2,[rsp]
+  add rsp,16
+  jmp updateEnemyDamageStats
+riskOfMurder:
+  push [riskOfMurderResultLower]
+  push [riskOfMurderResultUpper]
+  push [riskOfMurderResult]
+  call generateRandomNumber
+  mov [riskOfMurderResult],eax
+  cmp eax,3
+  jle eclipsePunch
+  jmp sixtyNine 
+eclipsePunch:
+  sub rsp,16
+  movdqu [rsp],xmm2
+  movss xmm2,[morningShiftLower]
+  mov rax,[time]
+  ucomiss xmm2,[rax+A4]
+  ja dayShiftPunch
+  movss xmm2,[morningShiftUpper]
+  ucomiss xmm2,[rax+A4]
+  ja morningShiftPunch
+  movss xmm2,[nightShiftLower]
+  ucomiss xmm2,[rax+A4]
+  jbe nightShiftPunch
+dayShiftPunch:
+  movss xmm2,[dayShift]  
+  jmp commitTime
+morningShiftPunch:  
+  movss xmm2,[morningShift]
+  jmp commitTime
+nightShiftPunch:
+  movss xmm2,[nightShift]
+commitTime:
+  addss xmm2,[rax+A4]
+  movss [rax+A4],xmm2
+  movss xmm2,[dayMax]
+  ucomiss xmm2,[rax+A4]
+  ja commitTimeExit
+  sub rsp,16
+  movdqu [rsp],xmm3
+  movss xmm3,[rax+A4]
+  subss xmm3,xmm2
+  movss xmm2,xmm3 
+  movdqu xmm3,[rsp]
+  add rsp,16  
+commitTimeExit:
+  movdqu xmm2,[rsp]
+  add rsp,16
+  jmp updateEnemyDamageStats
+sixtyNine:
+  mulss xmm1,[sixtyNineDamageX]
+  jmp updateEnemyDamageStats
+suddenGasm:  
+  push rax
+  mov rax,[playerStats]
+  movss xmm0,[rax+8]
+  pop rax
+  xorps xmm1,xmm1  
+  jmp initiateDoomsdayExit
+updateEnemyDamageStats:
+  pop rax
+  ucomiss xmm1,[maxDamageToPlayer]
+  jnae skipMaxEnemyDamageUpdate
+  movss [maxDamageToPlayer],xmm1
+skipMaxEnemyDamageUpdate:
+  movss [lastDamageToPlayer],xmm1
+initiateDoomsdayExit:
+  mov [logApocalypse],1
+initiateDoomsdayExitWithoutLogging:
+  movss [rsp+90],xmm1
+  movdqu xmm1,[rsp]
+  add rsp,16
+initiateDoomsdayOriginalCode:
+  popf
+  subss xmm0,[rsp+78]
+  jmp initiateDoomsdayReturn
+
+
+omnifyApocalypseHook:
+  jmp initiateDoomsday
+  nop
+initiateDoomsdayReturn:
+
+apocalypseResult:
+  dd 0
+  
+apocalypseResultUpper:
+  dd #10
+  
+apocalypseResultLower:
+  dd 1
+  
+doubleDamageX:
+  dd (float)2.0
+  
+riskOfMurderResult:
+  dd 0
+  
+riskOfMurderResultUpper:
+  dd 5
+  
+riskOfMurderResultLower:
+  dd 1
+  
+nightTime:
+  dd (float)0.88
+  
+morningTime:
+  dd (float)0.25017
+  
+sixtyNineDamageX:
+  dd (float)69.0
+  
+morningShiftLower:
+  dd (float)0.25017
+ 
+morningShiftUpper:
+  dd (float)0.3753
+    
+morningShift:
+  dd (float)0.6254
+    
+dayShift:
+  dd (float)0.5
+  
+nightShiftLower:
+  dd (float)0.7505
+  
+nightShift:
+  dd (float)0.3752
+  
+dayMax:
+  dd (float)1.0
+  
+teleportitisResult:
+  dd 0
+  
+teleportitisResultUpper:
+  dd #10000
+  
+teleportitisResultLower:
+  dd #0
+  
+teleportitisDivisor:
+  dd (float)1000.0
+  
+teleportitisShifter:
+  dd (float)5.0
+  
+playerGodMode:
+  dd 0
+  
+logApocalypse:
+  dd 0
+
+damageMinimum:
+ dd (float)1.0
+
+// Predator System
+define(omnifyPredatorHook,"engine_x64_rwdi.dll"+383D19)
+// UNIQUE AOB: 20 F3 0F 59 83 D8 00 00 00
+assert(omnifyPredatorHook, F3 0F 59 83 D8 00 00 00)
+alloc(initiatePredator,$1000, omnifyPredatorHook)
+alloc(enemySpeedX,8)
+alloc(playerSpeedX,8)
+alloc(enableRingGate,8)
+
+registersymbol(omnifyPredatorHook)
+registersymbol(enemySpeedX)
+registersymbol(playerSpeedX)
+registersymbol(enableRingGate)
+
+initiatePredator:
+  pushf
+  sub rsp,16
+  movdqu [rsp],xmm4
+  sub rsp,16
+  movdqu [rsp],xmm5
+  cmp rbx,[playerOneCoords]
+  je fuckUpPlayerSpeed
+  push rax
+  mov eax,[rbx+114]
+  cmp eax,0x1E
+  pop rax
+  jg fuckUpPlayerSpeed
+  push rax
+  mov rax,[rbx+114]
+  cmp rax,0xFFFFFFFFFFFFFFFF
+  pop rax
+  je initiatePredatorExit
+  cmp [enableRingGate],1
+  je fuckUpEnemySpeed
+  cmp [rbx+108],1
+  jne fuckUpEnemySpeed
+  cmp [rbx+10C],1
+  jne initiatePredatorExit
+fuckUpEnemySpeed:
+  movss xmm5,[enemySpeedX]
+  jmp fuckUpSpeed  
+fuckUpPlayerSpeed:
+  movss xmm5,[playerSpeedX]  
+fuckUpSpeed:
+  movss xmm4,[rbx+D8]
+  mulss xmm4,xmm5
+  movss [rbx+D8],xmm4
+  movss xmm4,[rbx+E0]
+  mulss xmm4,xmm5
+  movss [rbx+E0],xmm4
+  xorps xmm4,xmm4
+initiatePredatorExit:
+  movdqu xmm5,[rsp]
+  add rsp,16
+  movdqu xmm4,[rsp]
+  add rsp,16
+initiatePredatorOriginalCode:
+  popf
+  mulss xmm0,[rbx+000000D8] // DC E0
+  jmp initiatePredatorReturn
+
+
+omnifyPredatorHook:
+  jmp initiatePredator
+  nop 3
+initiatePredatorReturn:
+
+
+enemySpeedX:
+  dd (float)2.5
+
+playerSpeedX:
+  dd (float)1.0
+
+enableRingGate:
+  dd 0
+
+
+// Applies a speed limit to the Predator systems
+define(omnifyPredatorSpeedLimitHook,"engine_x64_rwdi.dll"+383D31)
+
+assert(omnifyPredatorSpeedLimitHook, F3 0F 58 83 BC 00 00 00))
+alloc(applySpeedLimit,$1000, omnifyPredatorSpeedLimitHook)
+alloc(positiveSpeedThreshold,8)
+alloc(negativeSpeedThreshold,8)
+alloc(positiveSpeedLimit,8)
+alloc(negativeSpeedLimit,8)
+alloc(globalSpeedModifier,8)
+alloc(ringGateResult,8)
+alloc(ringGateResultLower,8)
+alloc(ringGateResultUpper,8)
+alloc(ringGateCount,8)
+
+registersymbol(omnifyPredatorSpeedLimitHook)
+registersymbol(positiveSpeedLimit)
+registersymbol(negativeSpeedLimit)
+registersymbol(ringGateCount)
+
+applySpeedLimit:
+  pushf
+  cmp rbx,[playerOneCoords]
+  je applySpeedLimitOriginalCode
+  push rax
+  mov eax,[rbx+114]
+  cmp eax,0x1E
+  pop rax  
+  jg applySpeedLimitOriginalCode
+  sub rsp,16
+  movss [rsp],xmm1
+  ucomiss xmm0,[positiveSpeedThreshold]
+  ja correctXPositiveOffset
+  ucomiss xmm0,[negativeSpeedThreshold]
+  jb correctXNegativeOffset
+  jmp applyZSpeedLimit
+correctXPositiveOffset:
+  movss xmm0,[positiveSpeedLimit]  
+  movss xmm1,xmm0
+  divss xmm1,[globalSpeedModifier]
+  movss [rbx+D8],xmm1
+  mov [rbx+108],1
+  jmp applyZSpeedLimit
+correctXNegativeOffset:
+  movss xmm0,[negativeSpeedLimit]
+  movss xmm1,xmm0
+  divss xmm1,[globalSpeedModifier]
+  movss [rbx+D8],xmm1
+  mov [rbx+108],1
+applyZSpeedLimit:
+  ucomiss xmm2,[positiveSpeedThreshold]
+  ja correctZPositiveOffset
+  ucomiss xmm2,[negativeSpeedThreshold]
+  jb correctZNegativeOffset
+  jmp applySpeedLimitExit
+correctZPositiveOffset:
+  movss xmm2,[positiveSpeedLimit]
+  movss xmm1,xmm0
+  divss xmm1,[globalSpeedModifier]
+  movss [rbx+E0],xmm1
+  mov [rbx+108],1
+  jmp applySpeedLimitExit
+correctZNegativeOffset:
+  movss xmm2,[negativeSpeedLimit]
+  movss xmm1,xmm0
+  divss xmm1,[globalSpeedModifier]
+  movss [rbx+E0],xmm1
+  mov [rbx+108],1
+applySpeedLimitExit:
+  cmp [rbx+108],1
+  jne skipRingGateCheck
+  cmp [rbx+110],1
+  je skipRingGateCheck
+  mov [rbx+110],1
+  push rax
+  push [ringGateResultLower]
+  push [ringGateResultUpper]
+  push [ringGateResult]
+  call generateRandomNumber
+  mov [ringGateResult],eax  
+  cmp eax,6
+  pop rax
+  jne skipRingGateCheck
+  mov [rbx+10C],1
+  inc [ringGateCount]
+skipRingGateCheck:
+  movss xmm1,[rsp]
+  add rsp,16
+applySpeedLimitOriginalCode:
+  popf
+  addss xmm0,[rbx+000000BC]
+  jmp applySpeedLimitReturn
+
+
+omnifyPredatorSpeedLimitHook:
+  jmp applySpeedLimit
+  nop 3
+applySpeedLimitReturn:
+
+positiveSpeedThreshold:
+  dd (float)1.0
+  
+negativeSpeedThreshold:
+  dd (float)-1.0
+
+positiveSpeedLimit:
+  dd (float)0.1
+  
+negativeSpeedLimit:
+  dd (float)-0.1
+  
+globalSpeedModifier:
+  dd (float)0.02
+  
+ringGateResult:
+  dd 0
+  
+ringGateResultLower:
+  dd 1
+  
+ringGateResultUpper:
+  dd 10
+  
+ringGateCount:
+  dd 0
+  
+// Awards the Omni justifiable amounts of XP. Bitch.
+define(omnifyXPGainsHook,"gamedll_x64_rwdi.dll"+B76846)
+
+assert(omnifyXPGainsHook, 01 74 11 08 40 84 ED)
+alloc(gimmeMoreXP,$1000, omnifyXPGainsHook)
+alloc(xpX,8)
+
+registersymbol(omnifyXPGainsHook)
+registersymbol(xpX)
+
+gimmeMoreXP:
+  pushf
+  cmp esi,0
+  jl gimmeMoreXPOriginalCode
+  push rax
+  push rdx
+  mov eax,esi
+  mul [xpX]
+  mov esi,eax
+  pop rdx
+  pop rax
+gimmeMoreXPOriginalCode:
+  popf
+  add [rcx+rdx+08],esi
+  jmp gimmeMoreXPReturn
+
+
+omnifyXPGainsHook:
+  jmp gimmeMoreXP
+  nop 2
+gimmeMoreXPReturn:
+
+xpX:
+  dd 3
+  
+// More Because I Can -- Other XP Pools
+define(omnifyOtherXPGainsHook,"gamedll_x64_rwdi.dll"+AE6BCB)
+
+assert(omnifyOtherXPGainsHook, 44 01 64 19 08)
+alloc(gimmeMoreOtherXP,$1000, omnifyOtherXPGainsHook)
+alloc(otherXpX,8)
+// UNIQUE AOB: 44 01 64 19 08
+registersymbol(omnifyOtherXPGainsHook)
+registersymbol(otherXpX)
+
+gimmeMoreOtherXP:
+  push rax
+  push rdx
+  mov eax,r12d
+  mul [otherXpX]
+  mov r12d,eax
+  pop rdx
+  pop rax
+gimmeMoreOtherXPOriginalCode:
+  add [rcx+rbx+08],r12d
+  jmp gimmeMoreOtherXPReturn
+
+
+omnifyOtherXPGainsHook:
+  jmp gimmeMoreOtherXP
+gimmeMoreOtherXPReturn:
+
+otherXpX:
+  dd 2
+
+[DISABLE]
+// Cleanup of global memory
+dealloc(zero)
+
+// Cleanup of generateRandomNumber
+unregistersymbol(generateRandomNumber)
+
+dealloc(generateRandomNumber)
+
+
+// Cleanup of omniPlayerHook
+omniPlayerHook:
+  db 8B 87 2C 12 00 00
+
+unregistersymbol(omniPlayerHook)
+unregistersymbol(player)
+
+dealloc(player)
+dealloc(getPlayer)
+
+
+// Cleanup of omniPlayerStatsHook
+omniPlayerStatsHook:
+  db F3 41 0F 59 41 08
+
+unregistersymbol(omniPlayerStatsHook)
+unregistersymbol(playerStats)
+
+dealloc(playerStats)
+dealloc(getPlayerStats)
+
+
+// Cleanup of omniPlayerCoordsHook
+omniPlayerCoordsHook:
+  db 48 8B 01 FF 90 48 01 00 00
+
+unregistersymbol(omniPlayerCoordsHook)
+unregistersymbol(playerOneCoords)
+
+dealloc(playerOneCoords)
+dealloc(getPlayerCoords)
+
+
+// Cleanup of omniTeammateCoordsHook
+omniTeammateCoordsHook:
+  db 89 81 BC 00 00 00
+
+unregistersymbol(omniTeammateCoordsHook)
+unregistersymbol(playerTwoCoords)
+unregistersymbol(teleport)
+unregistersymbol(teleportX)
+unregistersymbol(teleportY)
+unregistersymbol(teleportZ)
+
+dealloc(teleport)
+dealloc(teleportX)
+dealloc(teleportY)
+dealloc(teleportZ)
+dealloc(playerTwoCoords)
+dealloc(getTeammateCoords)
+
+
+// Cleanup of omniTimeHook
+omniTimeHook:
+  db F3 0F 10 8F A4 00 00 00
+
+unregistersymbol(omniTimeHook)
+unregistersymbol(time)
+
+dealloc(time)
+dealloc(getTime)
+
+
+// Cleanup of omniBackpackHook
+omniBackpackHook:
+  db 03 6F 40 8B 4C 24 38
+
+unregistersymbol(omniBackpackHook)
+unregistersymbol(backpack)
+
+dealloc(backpack)
+dealloc(getBackpack)
+
+
+// Cleanup of omniMoneyHook
+omniMoneyHook:
+  db 74 03 8B 48 40
+
+unregistersymbol(omniMoneyHook)
+unregistersymbol(money)
+
+dealloc(money)
+dealloc(getMoney)
+
+
+// Cleanup of omniPlayerXPHook
+omniPlayerXPHook:
+  db 8B 48 28 89 4B 48
+
+unregistersymbol(xp)
+unregistersymbol(omniPlayerXPHook)
+
+dealloc(xp)
+dealloc(getPlayerXP)
+
+// Cleanup of omnifyTimeValidationHook
+omnifyTimeValidationHook:
+  db F3 0F 11 B7 A4 00 00 00
+
+unregistersymbol(omnifyTimeValidationHook)
+
+dealloc(skipTimeValidation)
+
+
+// Cleanup of omnifyEnvironmentalDamage
+omnifyEnvironmentalDamage:
+  db F3 0F 5C C7 0F 28 C8
+
+unregistersymbol(omnifyEnvironmentalDamage)
+
+dealloc(fuckUpEnvironmentalDamage)
+
+
+// Cleanup of omnifyPlayerDamageHook
+omnifyPlayerDamageHook:
+  db F3 41 0F 5C C0
+
+unregistersymbol(omnifyPlayerDamageHook)
+unregistersymbol(playerDamageX)
+unregistersymbol(maxDamageByPlayer)
+unregistersymbol(lastDamageByPlayer)
+unregistersymbol(lastEnemyHealth)
+unregistersymbol(logKamehameha)
+
+dealloc(playerDamageX)
+dealloc(maxDamageByPlayer)
+dealloc(lastDamageByPlayer)
+dealloc(lastEnemyHealth)
+dealloc(gokuResult)
+dealloc(gokuResultUpper)
+dealloc(gokuResultLower)
+dealloc(kamehameha)
+dealloc(logKamehameha)
+dealloc(fuckUpPlayerDamage)
+
+
+// Cleanup of omnifyApocalypseHook
+omnifyApocalypseHook:
+  db F3 0F 5C 44 24 78
+
+unregistersymbol(omnifyApocalypseHook)
+unregistersymbol(maxDamageToPlayer)
+unregistersymbol(lastDamageToPlayer)
+unregistersymbol(logApocalypse)
+unregistersymbol(apocalypseResult)
+unregistersymbol(riskOfMurderResult)
+unregistersymbol(playerGodMode)
+unregistersymbol(morningTime)
+unregistersymbol(nightTime)
+
+dealloc(damageMinimum)
+dealloc(logApocalypse)
+dealloc(apocalypseResult)
+dealloc(apocalypseResultUpper)
+dealloc(apocalypseResultLower)
+dealloc(doubleDamageX)
+dealloc(riskOfMurderResult)
+dealloc(riskOfMurderResultUpper)
+dealloc(riskOfMurderResultLower)
+dealloc(nightTime)
+dealloc(morningTime)
+dealloc(morningShiftLower)
+dealloc(morningShiftUpper)
+dealloc(morningShift)
+dealloc(dayShift)
+dealloc(dayMax)
+dealloc(nightShiftLower)
+dealloc(nightShift)
+dealloc(sixtyNineDamageX)
+dealloc(teleportitisResult)
+dealloc(teleportitisResultUpper)
+dealloc(teleportitisResultLower)
+dealloc(teleportitisDivisor)
+dealloc(teleportitisShifter)
+dealloc(playerGodMode)
+dealloc(maxDamageToPlayer)
+dealloc(lastDamageToPlayer)
+dealloc(initiateDoomsday)
+
+
+// Cleanup of omnifyPredatorHook
+omnifyPredatorHook:
+  db F3 0F 59 83 D8 00 00 00
+
+unregistersymbol(omnifyPredatorHook)
+unregistersymbol(enemySpeedX)
+unregistersymbol(playerSpeedX)
+unregistersymbol(enableRingGate)
+
+dealloc(playerSpeedX)
+dealloc(enemySpeedX)
+dealloc(enableRingGate)
+dealloc(initiatePredator)
+
+
+// Cleanup of omnifyPredatorSpeedLimitHook
+omnifyPredatorSpeedLimitHook:
+  db F3 0F 58 83 BC 00 00 00
+
+unregistersymbol(omnifyPredatorSpeedLimitHook)
+unregistersymbol(negativeSpeedLimit)
+unregistersymbol(positiveSpeedLimit)
+unregistersymbol(ringGateCount)
+
+dealloc(ringGateCount)
+dealloc(ringGateResult)
+dealloc(ringGateResultLower)
+dealloc(ringGateResultUpper)
+dealloc(globalSpeedModifier)
+dealloc(negativeSpeedLimit)
+dealloc(positiveSpeedLimit)
+dealloc(positiveSpeedThreshold)
+dealloc(negativeSpeedThreshold)
+dealloc(applySpeedLimit)
+
+
+// Cleanup of omnifyXPGainsHook
+omnifyXPGainsHook:
+  db 01 74 11 08 40 84 ED
+
+unregistersymbol(omnifyXPGainsHook)
+unregistersymbol(xpX)
+
+dealloc(xpX)
+dealloc(gimmeMoreXP)
+  
+
+// Cleanup of omnifyOtherXPGainsHook
+omnifyOtherXPGainsHook:
+  db 44 01 64 19 08
+
+unregistersymbol(omnifyOtherXPGainsHook)
+unregistersymbol(otherXpX)
+
+dealloc(otherXpX)
+dealloc(gimmeMoreOtherXP)
+
+  
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>819</ID>
+          <Description>"Player Damage Multiplier"</Description>
+          <VariableType>Float</VariableType>
+          <Address>playerDamageX</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>835</ID>
+          <Description>"Enable Ring Gate"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>enableRingGate</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>846</ID>
+          <Description>"Ring Gate Count"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>ringGateCount</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>842</ID>
+          <Description>"Points"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" Activated="1" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>839</ID>
+              <Description>"XP Multiplier"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>xpX</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>843</ID>
+              <Description>"Agility XP"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>xp</Address>
+              <Offsets>
+                <Offset>28</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>844</ID>
+              <Description>"Power XP"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>xp</Address>
+              <Offsets>
+                <Offset>48</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>845</ID>
+              <Description>"Driver XP"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>xp</Address>
+              <Offsets>
+                <Offset>C8</Offset>
+              </Offsets>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>870</ID>
+          <Description>"Teleports"</Description>
+          <LastState Value="" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>830</ID>
+              <Description>"Go to Volatile Cave"</Description>
+              <LastState Activated="1"/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+teleport:
+  dd 1
+
+teleportX:
+  dd (float)-1206.428955
+
+teleportY:
+  dd (float)75.13790894
+
+teleportZ:
+  dd (float)638.0823975
+
+[DISABLE]
+teleport:
+  dd 1
+
+teleportX:
+  dd (float)-1206.428955
+
+teleportY:
+  dd (float)75.13790894
+
+teleportZ:
+  dd (float)638.0823975
+</AssemblerScript>
+              <Hotkeys>
+                <Hotkey>
+                  <Action>Toggle Activation</Action>
+                  <Keys>
+                    <Key>106</Key>
+                  </Keys>
+                  <ID>0</ID>
+                </Hotkey>
+              </Hotkeys>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>820</ID>
+              <Description>"Go to Jazir Camp"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+teleport:
+  dd 1
+
+teleportX:
+  dd (float)-669.604187
+
+teleportY:
+  dd (float)53.83626175
+
+teleportZ:
+  dd (float)-165.7140808
+
+[DISABLE]
+teleport:
+  dd 1
+
+teleportX:
+  dd (float)-669.604187
+
+teleportY:
+  dd (float)53.83626175
+
+teleportZ:
+  dd (float)-165.7140808
+</AssemblerScript>
+              <Hotkeys>
+                <Hotkey>
+                  <Action>Toggle Activation</Action>
+                  <Keys>
+                    <Key>111</Key>
+                  </Keys>
+                  <ID>0</ID>
+                </Hotkey>
+              </Hotkeys>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>869</ID>
+              <Description>"Go to Mansion"</Description>
+              <LastState Activated="1"/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+teleport:
+  dd 1
+
+teleportX:
+  dd (float)526.9976807
+
+teleportY:
+  dd (float)54.83830261
+
+teleportZ:
+  dd (float)-1212.290039
+
+[DISABLE]
+teleport:
+  dd 1
+
+teleportX:
+  dd (float)526.9976807
+
+teleportY:
+  dd (float)54.83830261
+
+teleportZ:
+  dd (float)-1212.290039
+
+</AssemblerScript>
+              <Hotkeys>
+                <Hotkey>
+                  <Action>Toggle Activation</Action>
+                  <Keys>
+                    <Key>107</Key>
+                  </Keys>
+                  <ID>0</ID>
+                </Hotkey>
+              </Hotkeys>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>795</ID>
+          <Description>"Time"</Description>
+          <VariableType>Float</VariableType>
+          <Address>time</Address>
+          <Offsets>
+            <Offset>A4</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>822</ID>
+          <Description>"Money"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>money</Address>
+          <Offsets>
+            <Offset>40</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>817</ID>
+          <Description>"God Mode"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+playerGodMode:
+  dd 1
+
+[DISABLE]
+
+playerGodMode:
+  dd 0
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>793</ID>
+          <Description>"Health"</Description>
+          <VariableType>Float</VariableType>
+          <Address>player</Address>
+          <Offsets>
+            <Offset>122c</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>799</ID>
+          <Description>"Max Health"</Description>
+          <VariableType>Float</VariableType>
+          <Address>playerStats</Address>
+          <Offsets>
+            <Offset>8</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>818</ID>
+          <Description>"Last Enemy Health"</Description>
+          <VariableType>Float</VariableType>
+          <Address>lastEnemyHealth</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>796</ID>
+          <Description>"Medkits"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>backpack</Address>
+          <Offsets>
+            <Offset>40</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>789</ID>
+          <Description>"Location"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>781</ID>
+              <Description>"X"</Description>
+              <VariableType>Float</VariableType>
+              <Address>playerOneCoords</Address>
+              <Offsets>
+                <Offset>BC</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>782</ID>
+              <Description>"Y"</Description>
+              <VariableType>Float</VariableType>
+              <Address>playerOneCoords</Address>
+              <Offsets>
+                <Offset>C0</Offset>
+              </Offsets>
+              <Hotkeys>
+                <Hotkey>
+                  <Action>Increase Value</Action>
+                  <Keys>
+                    <Key>109</Key>
+                  </Keys>
+                  <Value>100</Value>
+                  <ID>0</ID>
+                </Hotkey>
+              </Hotkeys>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>783</ID>
+              <Description>"Z"</Description>
+              <VariableType>Float</VariableType>
+              <Address>playerOneCoords</Address>
+              <Offsets>
+                <Offset>C4</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>829</ID>
+              <Description>"Player Speed"</Description>
+              <VariableType>Float</VariableType>
+              <Address>playerSpeedX</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>823</ID>
+              <Description>"Enemy Speed"</Description>
+              <VariableType>Float</VariableType>
+              <Address>enemySpeedX</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>831</ID>
+              <Description>"Positive Speed Limit"</Description>
+              <VariableType>Float</VariableType>
+              <Address>positiveSpeedLimit</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>832</ID>
+              <Description>"Negative Speed Limit"</Description>
+              <VariableType>Float</VariableType>
+              <Address>negativeSpeedLimit</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>790</ID>
+          <Description>"Second Player"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>788</ID>
+              <Description>"X"</Description>
+              <VariableType>Float</VariableType>
+              <Address>playerTwoCoords</Address>
+              <Offsets>
+                <Offset>BC</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>791</ID>
+              <Description>"Y"</Description>
+              <VariableType>Float</VariableType>
+              <Address>playerTwoCoords</Address>
+              <Offsets>
+                <Offset>C0</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>792</ID>
+              <Description>"Z"</Description>
+              <VariableType>Float</VariableType>
+              <Address>playerTwoCoords</Address>
+              <Offsets>
+                <Offset>C4</Offset>
+              </Offsets>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <CheatCodes>
+    <CodeEntry>
+      <Description>Change of movss [rdi+000000A4],xmm6</Description>
+      <AddressString>gamedll_x64_rwdi.dll+398A22</AddressString>
+      <Before>
+        <Byte>9F</Byte>
+        <Byte>A0</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>B7</Byte>
+        <Byte>A4</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>4C</Byte>
+        <Byte>89</Byte>
+        <Byte>AF</Byte>
+        <Byte>AC</Byte>
+        <Byte>00</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of movss [rbx+000000BC],xmm0</Description>
+      <AddressString>engine_x64_rwdi.dll+384239</AddressString>
+      <Before>
+        <Byte>93</Byte>
+        <Byte>C4</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>83</Byte>
+        <Byte>BC</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>8B</Byte>
+        <Byte>C0</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of movss [r12+000000BC],xmm6</Description>
+      <AddressString>engine_x64_rwdi.dll+3BC74B</AddressString>
+      <Before>
+        <Byte>24</Byte>
+        <Byte>C4</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>B4</Byte>
+        <Byte>24</Byte>
+        <Byte>BC</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>F3</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>BC</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of movss [r12+000000C0],xmm7</Description>
+      <AddressString>engine_x64_rwdi.dll+3BC755</AddressString>
+      <Before>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>BC</Byte>
+        <Byte>24</Byte>
+        <Byte>C0</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>F3</Byte>
+        <Byte>45</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>84</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of movss [r12+000000C4],xmm8</Description>
+      <AddressString>engine_x64_rwdi.dll+3BC75F</AddressString>
+      <Before>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>45</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>84</Byte>
+        <Byte>24</Byte>
+        <Byte>C4</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>7C</Byte>
+        <Byte>24</Byte>
+        <Byte>40</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of movss [rbx+000000BC],xmm0</Description>
+      <AddressString>engine_x64_rwdi.dll+383D49</AddressString>
+      <Before>
+        <Byte>93</Byte>
+        <Byte>C4</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>83</Byte>
+        <Byte>BC</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>8B</Byte>
+        <Byte>C0</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of movss [rbx+000000C0],xmm1</Description>
+      <AddressString>engine_x64_rwdi.dll+383D51</AddressString>
+      <Before>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>8B</Byte>
+        <Byte>C0</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>93</Byte>
+        <Byte>C4</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of movss [rbx+000000C4],xmm2</Description>
+      <AddressString>engine_x64_rwdi.dll+383D59</AddressString>
+      <Before>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>93</Byte>
+        <Byte>C4</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>E8</Byte>
+        <Byte>EA</Byte>
+        <Byte>FB</Byte>
+        <Byte>FF</Byte>
+        <Byte>FF</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of mov [rcx+000000BC],eax</Description>
+      <AddressString>7FFD99920083</AddressString>
+      <Before>
+        <Byte>0F</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>66</Byte>
+        <Byte>9D</Byte>
+      </Before>
+      <Actual>
+        <Byte>89</Byte>
+        <Byte>81</Byte>
+        <Byte>BC</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>E9</Byte>
+        <Byte>94</Byte>
+        <Byte>FA</Byte>
+        <Byte>39</Byte>
+        <Byte>00</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of movss [rcx+2C],xmm7</Description>
+      <AddressString>engine_x64_rwdi.dll+3DD157</AddressString>
+      <Before>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>71</Byte>
+        <Byte>28</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>79</Byte>
+        <Byte>2C</Byte>
+      </Actual>
+      <After>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>BB</Byte>
+        <Byte>14</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of addss xmm1,[r8+04]</Description>
+      <AddressString>engine_x64_rwdi.dll+38BAAA</AddressString>
+      <Before>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>48</Byte>
+        <Byte>2C</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>48</Byte>
+        <Byte>04</Byte>
+      </Actual>
+      <After>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>4A</Byte>
+        <Byte>0C</Byte>
+      </After>
+    </CodeEntry>
+  </CheatCodes>
+  <UserdefinedSymbols/>
+  <LuaScript>getAutoAttachList().add("DyingLightGame.exe")
+</LuaScript>
+</CheatTable>

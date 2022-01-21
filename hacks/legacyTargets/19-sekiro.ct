@@ -1,0 +1,3065 @@
+<!--
+    Omnified Sekiro: Shadows Die Twice
+    Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
+    Copyright 2022 Bad Echo LLC
+
+    Bad Echo Technologies are licensed under a
+    Creative Commons Attribution-NonCommercial 4.0 International License.
+
+    See accompanying file LICENSE.md or a copy at:
+    http://creativecommons.org/licenses/by-nc/4.0/
+-->
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="31">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>4</ID>
+      <Description>"OMNIFIED"</Description>
+      <Options moHideChildren="1"/>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+
+
+{$lua}
+function FloorIt(number)
+	if number ~= nil then
+		return math.floor(number)
+	end
+
+	return nil
+end
+
+function ActivateLoggers()
+	if loggersTimer == nil then
+		loggersTimer = createTimer(getMainForm())
+	end
+
+	loggersTimer.Interval = 500
+	loggersTimer.OnTimer = function()
+
+
+		local playerHealth = readInteger("[playerData]+0x130")
+		local playerMaxHealth = readInteger("[playerData]+0x138")
+		local playerPosture = readInteger("[playerData]+0x148")
+		local playerMaxPosture = readInteger("[playerData]+0x150")
+		local enemyHealth = readFloat("lastEnemyHealthValue")
+
+		enemyHealth = FloorIt(enemyHealth)
+		local stats = assert(io.open("\\\\parsec\\c$\\streamData\\stats.txt","w"))
+
+		if playerHealth ~= nil and playerMaxHealth ~= nil then
+			stats:write("Health: ", playerHealth, "/", playerMaxHealth, "\n")
+		end
+
+		if playerPosture ~= nil and playerMaxPosture ~= nil then
+            stats:write("Posture: ", playerPosture, "/", playerMaxPosture, "\n")
+		end
+
+		if enemyHealth ~= nil then
+           stats:write( "Enemy: ", enemyHealth, "\n")
+		end
+
+		local lastDamageToPlayer = readFloat("lastDamageToPlayer")
+		local maxDamageToPlayer = readFloat("maxDamageToPlayer")
+		local lastDamageByPlayer = readFloat("lastDamageByPlayer")
+		local maxDamageByPlayer = readFloat("maxDamageByPlayer")
+		local totalDamageByPlayer = readFloat("totalDamageByPlayer")
+
+		lastDamageToPlayer = FloorIt(lastDamageToPlayer)
+		maxDamageToPlayer = FloorIt(maxDamageToPlayer)
+		lastDamageByPlayer = FloorIt(lastDamageByPlayer)
+		maxDamageByPlayer = FloorIt(maxDamageByPlayer)
+		totalDamageByPlayer = FloorIt(totalDamageByPlayer)
+
+		if lastDamageToPlayer ~= nil and maxDamageToPlayer ~= nil then
+			stats:write( "Enemy L/M Dmg: ", lastDamageToPlayer, "/", maxDamageToPlayer, "\n")
+		end
+
+		if lastDamageByPlayer ~= nil and maxDamageByPlayer ~= nil then
+			stats:write( "Player L/M Dmg: ", lastDamageByPlayer, "/", maxDamageByPlayer, "\n")
+		end
+
+		if totalDamageByPlayer ~= nil then
+			stats:write( "Player Total Dmg: ", totalDamageByPlayer, "\n")
+		end
+
+		local xCoords = readFloat("[playerCoords]+0x80")
+		local yCoords = readFloat("[playerCoords]+0x84")
+		local zCoords = readFloat("[playerCoords]+0x88")
+
+		if xCoords ~= nil and yCoords ~= nil and zCoords ~= nil then
+			stats:write( "X: ", xCoords, "\n")
+			stats:write( "Y: ", yCoords, "\n")
+			stats:write( "Z: ",  zCoords, "\n")
+		end
+
+
+		stats:close()
+
+		local log = assert(io.open("log.txt", "a"))
+
+		local ts = os.time()
+		local timestamp = os.date('%H:%M-', ts)
+
+		local logEntryEnemyRoll = "Enemy rolls a"
+		local logEntryPlayerData
+			= "damage to the player!\nPlayer now has"
+
+		local logApocalypse
+			= readInteger("logApocalypse")
+
+		local logPostureApocalypse
+			= readInteger("logPostureApocalypse")
+
+		local apocalypseResult
+			= readInteger("apocalypseResult")
+
+		local riskOfMurderResult
+			= readInteger("riskOfMurderResult")
+
+		local extraDamageX
+			= readFloat("extraDamageX")
+
+		local lastVerticalDisplacement
+			= readFloat("lastVerticalDisplacement")
+
+		if logApocalypse == 1 and apocalypseResult ~= nil
+							  and lastDamageToPlayer ~= nil
+							  and playerHealth ~= nil
+							  and timestamp ~= nil
+							  and extraDamageX ~= nil
+							  then
+		
+
+			local apocalypseEnemyRoll =
+				string.format("%s%s %i: ", timestamp,
+										   logEntryEnemyRoll,
+										   apocalypseResult)
+
+			local apocalypseDamagedHealth =
+				string.format("%.0f %s %.0f health.\n", lastDamageToPlayer,
+														logEntryPlayerData,
+														playerHealth)
+
+			local apocalypseDamagedPosture =
+				string.format("%.0f %s %.0f posture.\n", lastDamageToPlayer,
+														 logEntryPlayerData,
+														 playerPosture)
+
+			local apocalypseDamage = ""
+
+			if logPostureApocalypse == 1 then
+				apocalypseDamage = apocalypseDamagedPosture
+			else
+				apocalypseDamage = apocalypseDamagedHealth
+			end
+
+			if apocalypseResult &gt;= 1 and apocalypseResult &lt;= 4 then
+				log:write(apocalypseEnemyRoll,
+						  extraDamageX,
+						  "x DAMAGE causing ",
+						  apocalypseDamage)
+			elseif apocalypseResult == 5 or apocalypseResult == 6 and lastVerticalDisplacement ~= nil then
+				log:write(apocalypseEnemyRoll,
+						  "SUDDEN TELEPORTITIS (",
+						  lastVerticalDisplacement,
+						  ") causing ",
+						  apocalypseDamage)
+			elseif apocalypseResult &gt;= 7 and apocalypseResult &lt;= 9 then
+				log:write(apocalypseEnemyRoll,
+						  "RISK OF MURDER!\n")
+
+				local riskOfMurderEnemyRoll =
+					string.format("%s%s %i: ", timestamp,
+											   logEntryEnemyRoll,
+											   riskOfMurderResult)
+
+				if riskOfMurderResult &lt;= 3 then
+					log:write(riskOfMurderEnemyRoll,
+							  "WHEW! Just normal damage causing ",
+							  apocalypseDamage)
+				else
+					log:write(riskOfMurderEnemyRoll,
+							  "Player has been SIXTY NINED causing ",
+							  apocalypseDamage)
+				end
+			else
+				if logPostureApocalypse == 1 then
+					log:write(apocalypseEnemyRoll,
+							  "Player achieves orgasm!\nPlayer is healed fully to ",
+							  playerPosture,
+							  " posture.\n")
+				else
+					log:write(apocalypseEnemyRoll,
+							  "Player achieves orgasm!\nPlayer is healed fully to ",
+							  playerHealth,
+							  " health.\n")
+			    end
+			end
+
+			writeInteger("logApocalypse", 0)
+			writeInteger("logPostureApocalypse", 0)
+
+
+		end
+
+		local logKamehameha = readInteger("logKamehameha")
+		local gokuDamageX = readFloat("gokuDamageX")
+
+		if logKamehameha == 1 and lastDamageByPlayer ~= nil
+							  and timestamp ~= nil then			
+			log:write(timestamp,
+					  "Player has unlocked his inner Goku and performs a devastating KAMEHAMEHAAAAA attack causing ",
+					  gokuDamageX,
+					  "x extra damage for a total of ",
+					  lastDamageByPlayer,
+					  " damage!\n")
+			writeInteger("logKamehameha", 0)
+		end
+
+		local logPlayerCrit = readInteger("logPlayerCrit")
+
+		if logPlayerCrit == 1 and lastDamageByPlayer ~= nil then		
+
+			local playerCritDamageResult = readInteger("playerCritDamageResult")
+
+			if playerCritDamageResult ~= nil then
+				log:write(timestamp,
+						  "Player critically hits (",
+						  playerCritDamageResult/10.0,
+						  "x) enemy for ",
+						  lastDamageByPlayer,
+						  " damage!\n")
+			end
+			
+			writeInteger("logPlayerCrit", 0)
+		end
+
+		log:close()
+	end
+
+end
+
+function mark()
+	local currentX = readFloat("[playerCoords]+0x80")
+	local currentY = readFloat("[playerCoords]+0x84")
+	local currentZ = readFloat("[playerCoords]+0x88")
+
+	if currentX ~= nil and currentY ~= nil and currentZ ~= nil then
+		writeFloat("teleportX",currentX)
+		writeFloat("teleportY",currentY)
+		writeFloat("teleportZ",currentZ)
+	end
+end
+
+function recall()
+	writeInteger("teleport",1)
+end
+
+createHotkey(mark, VK_NUMPAD4)
+createHotkey(recall, VK_NUMPAD5)
+
+{$asm}
+luacall(ActivateLoggers())
+
+
+// Global memory.
+alloc(zero,8)
+alloc(damageThreshold,8)
+alloc(oneAndHalfX,8)
+alloc(doubleX,8)
+
+zero:
+  dd 0
+
+damageThreshold:
+  dd (float)3.5
+
+oneAndHalfX:
+  dd (float)1.5
+
+doubleX:
+  dd (float)2.0
+
+// Random number generation function.
+// After r12-r14 pushes:
+// [rsp+20]: initialization state address, 0 if first time
+// [rsp+28]: upper bounds
+// [rsp+30]: lower bounds
+// return value is in EAX
+alloc(generateRandomNumber,$1000)
+
+registersymbol(generateRandomNumber)
+
+generateRandomNumber:
+  push r12
+  push r13
+  push r14
+  mov r12,[rsp+20]
+  mov r13,[rsp+28]
+  mov r14,[rsp+30]
+  push rbx
+  push rcx
+  push rdx
+  push r8
+  push r10
+  push r11
+  cmp [r12],0
+  jne getRandomNumber
+initializeSeed:
+  call kernel32.GetTickCount
+  push eax
+  call msvcrt.srand
+  pop eax
+  mov [r12],1
+getRandomNumber:
+  call msvcrt.rand
+  xor edx,edx
+  mov ebx,r14
+  mov ecx,r13
+  cmp ecx,ebx
+  cmovl ecx,ebx
+  inc ecx
+  sub ecx,ebx
+  idiv ecx
+  add edx,ebx
+  mov eax,edx
+  pop r11
+  pop r10
+  pop r8
+  pop rdx
+  pop rcx
+  pop rbx
+  pop r14
+  pop r13
+  pop r12
+  ret 18
+
+// Player Apocalypse System Function
+// [rsp+48]: Player's coordinates (aligned at X-coord)
+// [rsp+50]: Max Player Health Amount
+// [rsp+58]: Player's health
+// [rsp+60]: Damage Amount
+// Updated damage is in EAX.
+// Updated health before damage is in EBX.
+alloc(executePlayerApocalypse,$1000)
+alloc(playerApocalypseRandomState,8)
+alloc(logApocalypse,8)
+alloc(negativeOne,8)
+alloc(apocalypseResult,8)
+alloc(apocalypseResultUpper,8)
+alloc(apocalypseResultLower,8)
+alloc(teleportitisResult,8)
+alloc(teleportitisResultUpper,8)
+alloc(teleportitisResultLower,8)
+alloc(teleportitisDivisor,8)
+alloc(teleportitisShifter,8)
+alloc(negativeVerticalDisplacementEnabled,8)
+alloc(teleportitisDisplacementX,8)
+alloc(riskOfMurderResult,8)
+alloc(riskOfMurderResultUpper,8)
+alloc(riskOfMurderResultLower,8)
+alloc(extraDamageX,8)
+alloc(sixtyNineDamageX,8)
+alloc(maxDamageToPlayer,8)
+alloc(lastDamageToPlayer,8)
+alloc(playerGodMode,8)
+alloc(lastVerticalDisplacement,8)
+alloc(teleportitised,8)
+
+registersymbol(executePlayerApocalypse)
+registersymbol(logApocalypse)
+registersymbol(apocalypseResult)
+registersymbol(negativeVerticalDisplacementEnabled)
+registersymbol(teleportitisDisplacementX)
+registersymbol(riskOfMurderResult)
+registersymbol(extraDamageX)
+registersymbol(maxDamageToPlayer)
+registersymbol(lastDamageToPlayer)
+registersymbol(playerGodMode)
+registersymbol(lastVerticalDisplacement)
+registersymbol(teleportitised)
+
+executePlayerApocalypse:
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  sub rsp,10
+  movdqu [rsp],xmm2
+  sub rsp,10
+  movdqu [rsp],xmm3
+  movss xmm3,[rsp+58]
+  movss xmm0,[rsp+60]
+  mov rax,damageThreshold
+  ucomiss xmm0,[rax]
+  jbe exitPlayerApocalypse
+  mov [teleportitised],0
+  cmp [playerGodMode],1
+  jne applyApocalypse
+  xorps xmm0,xmm0
+  jmp exitPlayerApocalypse
+applyApocalypse:
+  push [apocalypseResultLower]
+  push [apocalypseResultUpper]
+  mov rax,playerApocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [apocalypseResult],eax
+  cmp eax,4
+  jle extraDamage
+  cmp eax,6
+  jle teleportitis
+  cmp eax,9
+  jle riskOfMurder
+  jmp suddenGasm
+extraDamage:
+  mulss xmm0,[extraDamageX]
+  jmp updateEnemyDamageStats
+teleportitis:
+  mov rbx,[rsp+48]
+  push [teleportitisResultLower]
+  push [teleportitisResultUpper]
+  mov rax,playerApocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [teleportitisResult],eax
+  cvtsi2ss xmm1,[teleportitisResult]
+  divss xmm1,[teleportitisDivisor]
+  subss xmm1,[teleportitisShifter]
+  mulss xmm1,[teleportitisDisplacementX]
+  movss xmm2,[rbx]
+  addss xmm2,xmm1
+  movss [rbx],xmm2
+  push [teleportitisResultLower]
+  push [teleportitisResultUpper]
+  mov rax,playerApocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [teleportitisResult],eax
+  cvtsi2ss xmm1,[teleportitisResult]
+  divss xmm1,[teleportitisDivisor]
+  cmp [negativeVerticalDisplacementEnabled],1
+  jne skipNegativeVerticalDisplacement
+  subss xmm1,[teleportitisShifter]
+skipNegativeVerticalDisplacement:
+  mulss xmm1,[teleportitisDisplacementX]
+  movss [lastVerticalDisplacement],xmm1
+  movss xmm2,[rbx+4]
+  addss xmm2,xmm1
+  movss [rbx+4],xmm2
+  push [teleportitisResultLower]
+  push [teleportitisResultUpper]
+  mov rax,playerApocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [teleportitisResult],eax
+  cvtsi2ss xmm1,[teleportitisResult]
+  divss xmm1,[teleportitisDivisor]
+  subss xmm1,[teleportitisShifter]
+  mulss xmm1,[teleportitisDisplacementX]
+  movss xmm2,[rbx+8]
+  addss xmm2,xmm1
+  movss [rbx+8],xmm2
+  mov [teleportitised],1
+  jmp updateEnemyDamageStats
+riskOfMurder:
+  push [riskOfMurderResultLower]
+  push [riskOfMurderResultUpper]
+  mov rax,playerApocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [riskOfMurderResult],eax
+  cmp eax,3
+  jle updateEnemyDamageStats
+  jmp sixtyNine
+sixtyNine:
+  mulss xmm0,[sixtyNineDamageX]
+  jmp updateEnemyDamageStats
+suddenGasm:
+  movss xmm3,[rsp+50]
+  xorps xmm0,xmm0
+  jmp applyPlayerApocalypseExit
+updateEnemyDamageStats:
+  ucomiss xmm0,[maxDamageToPlayer]
+  jna skipMaxEnemyDamageUpdate
+  movss [maxDamageToPlayer],xmm0
+skipMaxEnemyDamageUpdate:
+  movss [lastDamageToPlayer],xmm0
+applyPlayerApocalypseExit:
+  mov [logApocalypse],1
+  jmp exitPlayerApocalypse
+exitPlayerApocalypse:
+  xor rax,rax
+  movd eax,xmm0
+  movd ebx,xmm3
+  movdqu xmm3,[rsp]
+  add rsp,10
+  movdqu xmm2,[rsp]
+  add rsp,10
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+  ret 20
+
+playerApocalypseRandomState:
+  dd 0
+
+logApocalypse:
+  dd 0
+
+apocalypseResult:
+  dd 0
+
+apocalypseResultUpper:
+  dd #10
+
+apocalypseResultLower:
+  dd 1
+
+teleportitisResult:
+  dd 0
+
+teleportitisResultUpper:
+  dd #10000
+
+teleportitisResultLower:
+  dd 0
+
+teleportitisDivisor:
+  dd (float)1000.0
+
+teleportitisShifter:
+  dd (float)5.0
+
+negativeVerticalDisplacementEnabled:
+  dd 1
+
+teleportitisDisplacementX:
+  dd (float)1.0
+
+negativeOne:
+  dd (float)-1.0
+
+riskOfMurderResult:
+  dd 0
+
+riskOfMurderResultUpper:
+  dd #5
+
+riskOfMurderResultLower:
+  dd 1
+
+extraDamageX:
+  dd (float)2.0
+
+sixtyNineDamageX:
+  dd (float)69.0
+
+maxDamageToPlayer:
+  dd 0
+
+lastDamageToPlayer:
+  dd 0
+
+playerGodMode:
+  dd 0
+
+lastVerticalDisplacement:
+  dd (float)0.0
+
+
+teleportitised:
+  dd 0
+
+
+// Enemy Apocalypse System Function
+// [rsp+28]: Target Health Value
+// [rsp+30]: Damage Amount
+alloc(executeEnemyApocalypse,$1000)
+alloc(maxDamageByPlayer,8)
+alloc(lastDamageByPlayer,8)
+alloc(totalDamageByPlayer,8)
+alloc(logKamehameha,8)
+alloc(gokuResult,8)
+alloc(gokuResultUpper,8)
+alloc(gokuResultLower,8)
+alloc(gokuDamageX,8)
+alloc(playerDamageX,8)
+alloc(lastEnemyHealthValue,8)
+alloc(playerCritChanceResultUpper,8)
+alloc(playerCritChanceResultLower,8)
+alloc(playerCritChanceResult,8)
+alloc(playerCritDamageResultUpper,8)
+alloc(playerCritDamageResultLower,8)
+alloc(playerCritDamageResult,8)
+alloc(playerCritDamageDivisor,8)
+alloc(logPlayerCrit,8)
+alloc(enemyApocalypseRandomState,8)
+
+registersymbol(executeEnemyApocalypse)
+registersymbol(maxDamageByPlayer)
+registersymbol(lastDamageByPlayer)
+registersymbol(totalDamageByPlayer)
+registersymbol(logKamehameha)
+registersymbol(gokuDamageX)
+registersymbol(gokuResultUpper)
+registersymbol(playerDamageX)
+registersymbol(lastEnemyHealthValue)
+registersymbol(playerCritDamageResult)
+registersymbol(logPlayerCrit)
+
+executeEnemyApocalypse:
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  movss xmm0,[rsp+30]
+  mov rax,zero
+  ucomiss xmm0,[rax]
+  jbe exitEnemyApocalypse
+  movss xmm1,[rsp+28]
+applyPlayerDamage:
+  mulss xmm0,[playerDamageX]
+  push [playerCritChanceResultLower]
+  push [playerCritChanceResultUpper]
+  mov rax,enemyApocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [playerCritChanceResult],eax
+  cmp eax,25
+  jg checkKamehameha
+  sub rsp,10
+  movdqu [rsp],xmm2
+  push [playerCritDamageResultLower]
+  push [playerCritDamageResultUpper]
+  mov rax,enemyApocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [playerCritDamageResult],eax
+  cvtsi2ss xmm2,[playerCritDamageResult]
+  divss xmm2,[playerCritDamageDivisor]
+  mulss xmm0,xmm2
+  mov [logPlayerCrit],1
+  movdqu xmm2,[rsp]
+  add rsp,10
+checkKamehameha:
+  push [gokuResultLower]
+  push [gokuResultUpper]
+  mov rax,enemyApocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [gokuResult],eax
+  cmp eax,#69
+  jne updatePlayerDamageStats
+  mov [logKamehameha],1
+  mulss xmm0,[gokuDamageX]
+updatePlayerDamageStats:
+  subss xmm1,xmm0
+  movss [lastEnemyHealthValue],xmm1
+  ucomiss xmm0,[maxDamageByPlayer]
+  jna skipMaxPlayerDamageUpdate
+  movss [maxDamageByPlayer],xmm0
+skipMaxPlayerDamageUpdate:
+  movss [lastDamageByPlayer],xmm0
+  movss xmm1,xmm0
+  addss xmm1,[totalDamageByPlayer]
+  movss [totalDamageByPlayer],xmm1
+exitEnemyApocalypse:
+  xor rax,rax
+  movd eax,xmm0
+  movss xmm1,[rsp+28]
+  movd ebx,xmm1
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+  ret 10
+
+
+totalDamageByPlayer:
+  dd 0
+
+maxDamageByPlayer:
+  dd 0
+
+lastDamageByPlayer:
+  dd 0
+
+logKamehameha:
+  dd 0
+
+gokuResult:
+  dd 0
+
+gokuResultUpper:
+  dd #2500
+
+gokuResultLower:
+  dd 0
+
+gokuDamageX:
+  dd (float)10000.0
+
+playerDamageX:
+  dd (float)1.0
+
+lastEnemyHealthValue:
+  dd 0
+
+playerCritChanceResult:
+  dd 0
+
+playerCritChanceResultUpper:
+  dd #400
+
+playerCritChanceResultLower:
+  dd 0
+
+playerCritDamageResult:
+  dd 0
+
+playerCritDamageResultUpper:
+  dd #50
+
+playerCritDamageResultLower:
+  dd #20
+
+playerCritDamageDivisor:
+  dd (float)10.0
+
+logPlayerCrit:
+  dd 0
+
+enemyApocalypseRandomState:
+  dd 0
+
+
+
+// Predator System Functions
+alloc(enemySpeedX,8)
+alloc(aggroDistance,8)
+alloc(threatDistance,8)
+alloc(speedNormalizationDivisor,8)
+alloc(skipBoostY,8)
+
+registersymbol(enemySpeedX)
+registersymbol(skipBoostY)
+registersymbol(aggroDistance)
+
+enemySpeedX:
+  dd (float)1.5
+
+aggroDistance:
+  dd (float)10.0
+
+threatDistance:
+  dd (float)2.5
+
+speedNormalizationDivisor:
+  dd (float)3.0
+
+skipBoostY:
+  dd 1
+
+
+// Determines the distance between the player and another
+// creature.
+// [rsp+28]: Enemy Z Coordinate
+// [rsp+30]: Enemy Y Coordinate
+// [rsp+34]: Enemy X Coordinate
+// [rsp+38]: Player Z Coordinate
+// [rsp+40]: Player Y Coordinate
+// [rsp+44]: Player X Coordinate
+// Distance is in EAX
+alloc(findCoordinateDistance,$1000)
+
+registersymbol(findCoordinateDistance)
+
+findCoordinateDistance:
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  movups xmm0,[rsp+28]
+  movups xmm1,[rsp+38]
+  subps xmm0,xmm1
+  mulps xmm0,xmm0
+  movdqu xmm1,xmm0
+  shufps xmm1,xmm0,0xB
+  addss xmm0,xmm1
+  shufps xmm1,xmm1,0x1
+  addss xmm0,xmm1
+  sqrtss xmm0,xmm0
+  movd eax,xmm0
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+  ret 20
+
+// Calculates the scaled base speed.
+// [rsp+28]: Enemy Depth Scale
+// [rsp+30]: Enemy Height Scale
+// [rsp+34]: Enemy Width Scale
+// Scaled speed is in EAX.
+alloc(calculateScaledSpeed,$1000)
+alloc(averageScaleDivisor,8)
+alloc(averageScaleX,8)
+alloc(scaledShifter,8)
+alloc(scaledSpeedWhenNegative,8)
+
+registersymbol(calculateScaledSpeed)
+
+calculateScaledSpeed:
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  // Find average of the three scales.
+  movss xmm0,[rsp+28]
+  movss xmm1,[rsp+30]
+  addss xmm0,xmm1
+  movss xmm1,[rsp+34]
+  addss xmm0,xmm1
+  divss xmm0,[averageScaleDivisor]
+  // Plug the scale average into the scaled speed formula.
+  mulss xmm0,[averageScaleX]
+  addss xmm0,[scaledShifter]
+  mulss xmm0,[enemySpeedX]
+  divss xmm0,[speedNormalizationDivisor]
+  movss xmm1,xmm0
+  movd eax,xmm1
+  shr eax,1F
+  test eax,eax
+  je commitScaledSpeed
+  movss xmm0,[scaledSpeedWhenNegative]
+commitScaledSpeed:
+  movd eax,xmm0
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+  ret 10
+
+
+averageScaleDivisor:
+  dd (float)3.0
+
+averageScaleX:
+  dd (float)-1.67
+
+scaledShifter:
+  dd (float)4.675
+
+scaledSpeedWhenNegative:
+  dd (float)0.5
+
+// Determines if enemy is moving towards the player.
+// [rsp+38]: Change to Enemy's Z
+// [rsp+40]: Change to Enemy's Y
+// [rsp+44]: Change to Enemy's X
+// [rsp+48]: Enemy's Z Coordinate
+// [rsp+50]: Enemy's Y Coordinate
+// [rsp+54]: Enemy's X Coordinate
+// [rsp+58]: Player's Z Coordinate
+// [rsp+60]: Player's Y Coordinate
+// [rsp+64]: Player's X Coordinate
+// EAX is 1 if enemy is moving towards player, otherwise 0.
+alloc(isMovingTowards,$1000)
+
+registersymbol(isMovingTowards)
+
+isMovingTowards:
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  sub rsp,10
+  movdqu [rsp],xmm2
+  movss xmm0,[rsp+60]
+  subss xmm0,[rsp+50]
+  movss xmm1,[rsp+40]
+  movd eax,xmm0
+  shr eax,1F
+  test eax,eax
+  jne isYChangeNegative
+  movd eax,xmm1
+  shr eax,1F
+  test eax,eax
+  je confirmMovingTowards
+  xor rax,rax
+  jmp isXMovingTowards
+isYChangeNegative:
+  movd eax,xmm1
+  shr eax,1F
+  test eax,eax
+  jne confirmMovingTowards
+  xor rax,rax
+isXMovingTowards:
+  movss xmm0,[rsp+64]
+  subss xmm0,[rsp+54]
+  movss xmm1,[rsp+44]
+  movd eax,xmm0
+  shr eax,1F
+  test eax,eax
+  jne isXChangeNegative
+  movd eax,xmm1
+  shr eax,1F
+  test eax,eax
+  je confirmMovingTowards
+  xor rax,rax
+  jmp isZMovingTowards
+isXChangeNegative:
+  movd eax,xmm1
+  shr eax,1F
+  test eax,eax
+  jne confirmMovingTowards
+  xor rax,rax
+isZMovingTowards:
+  movss xmm0,[rsp+58]
+  subss xmm0,[rsp+48]
+  movss xmm1,[rsp+38]
+  movd eax,xmm0
+  shr eax,1F
+  test eax,eax
+  jne isZChangeNegative
+  movd eax,xmm1
+  shr eax,1F
+  test eax,eax
+  je confirmMovingTowards
+  xor rax,rax
+  jmp isMovingTowardsExit
+isZChangeNegative:
+  movd eax,xmm1
+  shr eax,1F
+  test eax,eax
+  jne confirmMovingTowards
+  xor rax,rax
+  jmp isMovingTowardsExit
+confirmMovingTowards:
+  mov eax,1
+isMovingTowardsExit:
+  movdqu xmm2,[rsp]
+  add rsp,10
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+  ret 30
+
+
+// Main Predator System Function
+// [rsp+98]: Change to Enemy's Z
+// [rsp+A0]: Change to Enemy's Y
+// [rsp+A4]: Change to Enemy's X
+// [rsp+A8]: Enemy Depth Scale
+// [rsp+B0]: Enemy Width Scale
+// [rsp+B4]: Enemy Height Scale
+// [rsp+B8]: Enemy's Z Coordinate
+// [rsp+C0]: Enemy's Y Coordinate
+// [rsp+C4]: Enemy's X Coordinate
+// [rsp+C8]: Player's Z Coordinate
+// [rsp+D0]: Player's Y Coordinate
+// [rsp+D4]: Player's X Coordinate
+// EAX has updated change to enemy X, EBX has updated
+// change to enemy Y, ECX has updated change to enemy Z
+alloc(executePredator,$1000)
+alloc(indifferenceDistanceX,8)
+alloc(defaultSpeedX,8)
+alloc(positiveLimit,8)
+alloc(negativeLimit,8)
+alloc(positiveLimitCorrection,8)
+alloc(negativeLimitCorrection,8)
+
+
+registersymbol(executePredator)
+
+executePredator:
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  sub rsp,10
+  movdqu [rsp],xmm2
+  sub rsp,10
+  movdqu [rsp],xmm3
+  sub rsp,10
+  movdqu [rsp],xmm4
+  sub rsp,10
+  movdqu [rsp],xmm5
+  sub rsp,10
+  movdqu [rsp],xmm6
+  sub rsp,10
+  movdqu [rsp],xmm7
+  sub rsp,10
+  movdqu [rsp],xmm8
+  xorps xmm8,xmm8
+  movss xmm8,[defaultSpeedX]
+  movups xmm0,[rsp+C8]
+  movups xmm1,[rsp+B8]
+  movups xmm2,[rsp+A8]
+  movups xmm3,[rsp+98]
+  sub rsp,10
+  movdqu [rsp],xmm2
+  call calculateScaledSpeed
+  movd xmm4,eax
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  call findCoordinateDistance
+  movd xmm5,eax
+  ucomiss xmm5,[aggroDistance]
+  jbe areaOfAggro
+  movss xmm7,[aggroDistance]
+  mulss xmm7,[indifferenceDistanceX]
+  ucomiss xmm5,xmm7
+  jb areaOfSketchiness
+areaOfIndifference:
+  movss xmm8,xmm4
+  jmp executePredatorExit
+areaOfSketchiness:
+  movss xmm8,[defaultSpeedX]
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  sub rsp,10
+  movdqu [rsp],xmm3
+  call isMovingTowards
+  cmp eax,1
+  jne executePredatorExit
+  movss xmm8,xmm4
+  mulss xmm8,[oneAndHalfX]
+  jmp executePredatorExit
+areaOfAggro:
+  ucomiss xmm5,[threatDistance]
+  jbe executePredatorExit
+  movss xmm8,[defaultSpeedX]
+  //mulss xmm8,[doubleX]
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  sub rsp,10
+  movdqu [rsp],xmm3
+  call isMovingTowards
+  cmp eax,0
+  je executePredatorExit
+  movss xmm8,xmm4
+  mulss xmm8,[oneAndHalfX]
+  mulss xmm8,[oneAndHalfX]
+executePredatorExit:
+  mulss xmm3,xmm8
+  movd ecx,xmm3
+  shufps xmm3,xmm3,0x87
+  cmp [skipBoostY],1
+  je commitYChange
+  mulss xmm3,xmm8
+commitYChange:
+  movd ebx,xmm3
+  shufps xmm3,xmm3,0x87
+  mulss xmm3,xmm8
+  movd eax,xmm3
+  push rax
+  shr eax,1F
+  test eax,eax
+  pop rax
+  jne isXLessThanNegativeLimit
+  movd xmm2,eax
+  ucomiss xmm2,[positiveLimit]
+  jbe isZPastLimit
+  mov eax,[positiveLimitCorrection]
+  mov ebx,[zero]
+  jmp isZPastLimit
+isXLessThanNegativeLimit:
+  movd xmm2,eax
+  ucomiss xmm2,[negativeLimit]
+  ja isZPastLimit
+  mov eax,[negativeLimitCorrection]
+  mov ebx,[zero]
+isZPastLimit:
+  push rcx
+  shr ecx,1F
+  test ecx,ecx
+  pop rcx
+  jne isZLessThanNegativeLimit
+  movd xmm2,ecx
+  ucomiss xmm2,[positiveLimit]
+  jbe executePredatorCleanup
+  mov ecx,[positiveLimitCorrection]
+  mov ebx,[zero]
+  jmp executePredatorCleanup
+isZLessThanNegativeLimit:
+  movd xmm2,ecx
+  ucomiss xmm2,[negativeLimit]
+  ja executePredatorCleanup
+  mov ecx,[zero]
+  mov ebx,[zero]
+executePredatorCleanup:
+  movdqu xmm8,[rsp]
+  add rsp,10
+  movdqu xmm7,[rsp]
+  add rsp,10
+  movdqu xmm6,[rsp]
+  add rsp,10
+  movdqu xmm5,[rsp]
+  add rsp,10
+  movdqu xmm4,[rsp]
+  add rsp,10
+  movdqu xmm3,[rsp]
+  add rsp,10
+  movdqu xmm2,[rsp]
+  add rsp,10
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+  ret 40
+
+defaultSpeedX:
+  dd (float)1.0
+
+indifferenceDistanceX:
+  dd (float)2.0
+
+positiveLimit:
+  dd (float)1.0
+
+negativeLimit:
+  dd (float)-1.0
+
+positiveLimitCorrection:
+  dd (float)0.001
+
+negativeLimitCorrection:
+  dd (float)-0.001
+
+
+// Gets the player's data struct.
+define(omniPlayerDataHook,"sekiro.exe"+5A6E50)
+
+assert(omniPlayerDataHook, 8B 81 30 01 00 00)
+alloc(getPlayerData,$1000, omniPlayerDataHook)
+alloc(playerData,8)
+
+registersymbol(omniPlayerDataHook)
+registersymbol(playerData)
+
+getPlayerData:
+  pushf
+  cmp r13,1
+  jne getPlayerDataOriginalCode
+  cmp r14,1
+  jne getPlayerDataOriginalCode
+  cmp r15,1
+  jne getPlayerDataOriginalCode
+  mov [playerData],rcx
+getPlayerDataOriginalCode:
+  popf
+  mov eax,[rcx+00000130]
+  jmp getPlayerDataReturn
+
+
+omniPlayerDataHook:
+  jmp getPlayerData
+  nop
+getPlayerDataReturn:
+
+
+// Gets the player's coordinates.
+define(omniPlayerCoordsHook,"sekiro.exe"+BB41D1)
+
+assert(omniPlayerCoordsHook, 0F 10 83 80 00 00 00)
+alloc(getPlayerCoords,$1000, omniPlayerCoordsHook)
+alloc(player,8)
+alloc(playerCoords,8)
+alloc(playerFallLimit,8)
+alloc(fallDamagePercent,8)
+alloc(fallBuffer,8)
+alloc(teleport,4)
+alloc(teleportX,4)
+alloc(teleportY,4)
+alloc(teleportZ,4)
+
+registersymbol(teleport)
+registersymbol(teleportX)
+registersymbol(teleportY)FallLimit
+registersymbol(teleportZ)
+registersymbol(omniPlayerCoordsHook)
+registersymbol(player)
+registersymbol(playerCoords)
+
+getPlayerCoords:
+  pushf
+  cmp rcx,0
+  je getPlayerCoordsOriginalCode
+  mov [playerCoords],rbx
+   push rcx
+  mov rcx,[rbx+8]
+  mov [player],rcx
+  pop rcx
+  cmp [teleport],1
+  jne checkFallDistance
+  sub rsp,10
+  movdqu [rsp],xmm0
+  movss xmm0,[teleportX]
+  movss [rbx+80],xmm0
+  movss xmm0,[teleportY]
+  movss [rbx+84],xmm0
+  movss xmm0,[teleportZ]
+  movss [rbx+88],xmm0
+  mov [teleport],0
+  movdqu xmm0,[rsp]
+  add rsp,10
+checkFallDistance:
+  cmp [teleportitised],1
+  jne getPlayerCoordsOriginalCode
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  movss xmm0,[rbx+84]
+  movss xmm1,[rbx+854]
+//  ucomiss xmm0,xmm1
+//  jb autoCorrectIfTooFar
+//  mov [teleportitised],0
+//  jmp autoCorrectTeleportExit
+autoCorrectIfTooFar:
+  subss xmm1,xmm0
+  ucomiss xmm1,[playerFallLimit]
+  jb autoCorrectTeleportExit
+  push rax
+  push rbx
+  push rdx
+  movss xmm1,[rbx+854]
+  //addss xmm1,[fallBuffer]
+  movss [rbx+84],xmm1
+  movss xmm1,[rbx+850]
+  movss [rbx+80],xmm1
+  movss xmm1,[rbx+858]
+  movss [rbx+88],xmm1
+  mov rbx,[playerData]
+  mov rax,[rbx+130]
+  cvtsi2ss xmm0,[rbx+138]
+  mulss xmm0,[fallDamagePercent]
+  cvtss2si rdx,xmm0
+  sub eax,edx
+  mov [rbx+130],eax
+  mov [teleportitised],0
+  pop rdx
+  pop rbx
+  pop rax
+autoCorrectTeleportExit:
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+getPlayerCoordsOriginalCode:
+  popf
+  movups xmm0,[rbx+00000080]
+  jmp getPlayerCoordsReturn
+
+
+omniPlayerCoordsHook:
+  jmp getPlayerCoords
+  nop 2
+getPlayerCoordsReturn:
+
+playerFallLimit:
+  dd (float)50.0
+
+fallDamagePercent:
+  dd (float)0.4
+
+fallBuffer:
+  dd (float)12.0
+
+teleport:
+  dd 0
+
+teleportX:
+  dd (float)0.0
+
+teleportY:
+  dd (float)0.0
+
+teleportZ:
+  dd (float)0.0
+
+// Gets the player's spirit emblems.
+define(omniSpiritEmblemsHook,"sekiro.exe"+C25C40)
+
+assert(omniSpiritEmblemsHook, 8B 41 08 C3 CC)
+alloc(getSpiritEmblems,$1000, omniSpiritEmblemsHook)
+alloc(playerEmblems,8)
+
+registersymbol(omniSpiritEmblemsHook)
+registersymbol(playerEmblems)
+
+getSpiritEmblems:
+  pushf
+  cmp r12,0x21
+  jne getSpiritEmblemsOriginalCode
+  mov [playerEmblems],rcx
+getSpiritEmblemsOriginalCode:
+  popf
+  mov eax,[rcx+08]
+  ret
+  int 3
+  jmp getSpiritEmblemsReturn
+
+
+omniSpiritEmblemsHook:
+  jmp getSpiritEmblems
+
+getSpiritEmblemsReturn:
+
+
+// Prevents Teleportitised coords from appearing as 'Last Safe' coords.
+define(omnifyBlockTeleportitisSafetyHook,"sekiro.exe"+BACB34)
+
+assert(omnifyBlockTeleportitisSafetyHook, 66 0F 7F 87 50 08 00 00)
+alloc(blockTeleportitisSafety,$1000, omnifyBlockTeleportitisSafetyHook)
+
+registersymbol(omnifyBlockTeleportitisSafetyHook)
+
+blockTeleportitisSafety:
+  pushf
+  cmp [teleportitised],1
+  jne blockTeleportitisSafetyOriginalCode
+  popf
+  jmp blockTeleportitisSafetyReturn
+blockTeleportitisSafetyOriginalCode:
+  popf
+  movdqa [rdi+00000850],xmm0
+  jmp blockTeleportitisSafetyReturn
+
+
+omnifyBlockTeleportitisSafetyHook:
+  jmp blockTeleportitisSafety
+  nop 3
+blockTeleportitisSafetyReturn:
+
+// Initiates the Apocalypse.
+// rdi contains two's complemented damage
+// rcx contains the target health struct
+define(omnifyApocalypseHook,"sekiro.exe"+BBE2D7)
+
+assert(omnifyApocalypseHook, 48 8B CB 8D 14 07)
+alloc(initiateApocalypse,$1000, omnifyApocalypseHook)
+alloc(ignoreGuardianApeTerrorRoar,8)
+alloc(guardianApeTerrorRoar,8)
+
+registersymbol(omnifyApocalypseHook)
+registersymbol(ignoreGuardianApeTerrorRoar)
+
+initiateApocalypse:
+  pushf
+  push rax
+  mov rax,playerData
+  cmp [rax],0
+  pop rax
+  je initiateApocalypseOriginalCode
+  cmp edi,0
+  jge initiateApocalypseOriginalCode
+  push rbx
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  sub rsp,10
+  movdqu [rsp],xmm2
+  push rax
+  mov rax,playerData
+  mov rbx,[rax]
+  pop rax
+  neg edi
+  cvtsi2ss xmm0,edi
+  cvtsi2ss xmm1,[rbx+130]
+  cmp rcx,rbx
+  jne initiateEnemyApocalypse
+  cmp [ignoreGuardianApeTerrorRoar],1
+  jne initiatePlayerApocalypse
+  cmp edi,[guardianApeTerrorRoar]
+  jne initiatePlayerApocalypse
+  neg edi
+  jmp initiateApocalypseCleanup
+initiatePlayerApocalypse:
+  cvtsi2ss xmm2,[rbx+138]
+  mov rax,playerCoords
+  mov rbx,[rax]
+  lea rax,[rbx+80]
+  sub rsp,8
+  movd [rsp],xmm0
+  sub rsp,8
+  movd [rsp],xmm1
+  sub rsp,8
+  movd [rsp],xmm2
+  push rax
+  call executePlayerApocalypse
+  jmp initiateApocalypseExit
+initiateEnemyApocalypse:
+  cvtsi2ss xmm1,[rcx+130]
+  sub rsp,8
+  movd [rsp],xmm0
+  sub rsp,8
+  movd [rsp],xmm1
+  call executeEnemyApocalypse
+initiateApocalypseExit:
+  movd xmm0,eax
+  cvtss2si edi,xmm0
+  neg edi
+  movd xmm0,ebx
+  cvtss2si eax,xmm0
+initiateApocalypseCleanup:
+  movdqu xmm2,[rsp]
+  add rsp,10
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+  pop rbx
+initiateApocalypseOriginalCode:
+  popf
+  mov rcx,rbx
+  lea edx,[rdi+rax]
+  jmp initiateApocalypseReturn
+
+
+omnifyApocalypseHook:
+  jmp initiateApocalypse
+  nop
+initiateApocalypseReturn:
+
+
+guardianApeTerrorRoar:
+  dd #30
+
+ignoreGuardianApeTerrorRoar:
+  dd 0
+
+
+// Initiates the Predator System.
+// xmm2: Movement offsets
+// rsi: Location struct
+define(omnifyPredatorHook,"sekiro.exe"+BADBD6)
+
+assert(omnifyPredatorHook, 0F 59 C2 0F 58 F0)
+alloc(initiatePredator,$1000, omnifyPredatorHook)
+alloc(identityValue,8)
+alloc(playerSpeedX,8)
+
+registersymbol(omnifyPredatorHook)
+registersymbol(playerSpeedX)
+
+initiatePredator:
+  pushf
+  push rax
+  mov rax,playerCoords
+  cmp [rax],0
+  pop rax
+  je initiatePredatorOriginalCode
+  push rax
+  mov rax,playerCoords
+  cmp rsi,[rax]
+  pop rax
+  je fuckPlayerSpeed
+  sub rsp,10
+  movdqu [rsp],xmm0
+  push rax
+  push rbx
+  push rcx
+  mov rax,playerCoords
+  mov rbx,[rax]
+  movss xmm0,[identityValue]
+  shufps xmm0,xmm0,0x0
+  push [rbx+80]
+  push [rbx+88]
+  push [rsi+80]
+  push [rsi+88]
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,8
+  movhlps xmm0,xmm2
+  movq [rsp],xmm2
+  sub rsp,8
+  movq [rsp],xmm0
+  call executePredator
+  sub rsp,10
+  xorps xmm2,xmm2
+  movups [rsp],xmm2
+  mov [rsp],eax
+  mov [rsp+4],ebx
+  mov [rsp+8],ecx
+  movups xmm2,[rsp]
+  add rsp,10
+  pop rcx
+  pop rbx
+  pop rax
+  movdqu xmm0,[rsp]
+  add rsp,10
+  jmp initiatePredatorOriginalCode
+fuckPlayerSpeed:
+  sub rsp,10
+  movdqu [rsp],xmm0
+  push rax
+  sub rsp,10
+  movups [rsp],xmm2
+  movss xmm0,[rsp]
+  mulss xmm0,[playerSpeedX]
+  movss [rsp],xmm0
+  movss xmm0,[rsp+8]
+  mulss xmm0,[playerSpeedX]
+  movss [rsp+8],xmm0
+  movups xmm2,[rsp]
+  add rsp,10
+  pop rax
+  movdqu xmm0,[rsp]
+  add rsp,10
+initiatePredatorOriginalCode:
+  popf
+  mulps xmm0,xmm2
+  addps xmm6,xmm0
+  jmp initiatePredatorReturn
+
+
+omnifyPredatorHook:
+  jmp initiatePredator
+  nop
+initiatePredatorReturn:
+
+identityValue:
+  dd (float)1.0
+
+playerSpeedX:
+  dd (float)1.0
+
+
+define(omnifyAbominationHook,"sekiro.exe"+F1ADF9)
+assert(omnifyAbominationHook,44 0F 29 0C C8)
+alloc(abominifyCreature,$1000,"sekiro.exe"+F1ADF9)
+
+registersymbol(omnifyAbominationHook)
+
+abominifyCreature:
+  pushf
+  jmp checkRenderingArguments
+  cmp r10,0x0
+  je checkRenderingArguments
+  cmp r10,0x14
+  je checkRenderingArguments
+  cmp r10,0x4000
+  je checkRenderingArguments
+  cmp r10,0xFFFF
+  jle abominifyCreatureNoMatch
+checkRenderingArguments:
+  push rbx
+  mov rbx,[player]
+  cmp rbx,0
+  pop rbx
+  je abominifyCreatureOriginalCode
+  push r12
+  shr r12,10
+  cmp r12,0x7FF40000
+  pop r12
+  jl abominifyCreatureNoMatch
+  push r12
+  shr r12,20
+  cmp r12,0x7FF4
+  pop r12
+  jne abominifyCreatureNoMatch
+  push rbx
+  mov rbx,[r12+58]
+  cmp rbx,0
+  pop rbx
+  je checkForEnemyStructInStack
+  push rbx
+  mov rbx,[r12+58]
+  cmp rbx,[player]
+  pop rbx
+  je abominifyCreatureOriginalCode
+  push rbx
+  mov rbx,[r12+40]
+  cmp rbx,0
+  pop rbx
+  je checkForEnemyStructInStack
+  push rbx
+  mov rbx,[r12+40]
+  shr rbx,10
+  cmp rbx,0x7FF40000
+  pop rbx
+  jl checkForEnemyStructInStack
+  push rbx
+  mov rbx,[r12+40]
+  shr rbx,20
+  cmp rbx,0x7FF4
+  pop rbx
+  jne checkForEnemyStructInStack
+  push rbx
+  push rax
+  mov rbx,[r12+40]
+  mov rax,[rbx]
+  cmp ax,0xD730
+  pop rax
+  pop rbx
+  je applyScalesFromPhysicsDirect
+checkForEnemyStructInStack:
+  push rbx
+  push rax
+  mov rbx,[rsp+272]
+  shr rbx,10
+  cmp rbx,0x7FF40000
+  pop rax
+  pop rbx
+  jl checkForSecondEnemyStructInStack
+  push rbx
+  push rax
+  mov rbx,[rsp+272]
+  shr rbx,20
+  cmp rbx,0x7FF4
+  pop rax
+  pop rbx
+  jne checkForSecondEnemyStructInStack
+  push rbx
+  push rax
+  mov rbx,[rsp+272]
+  mov rax,[rbx]
+  cmp ax,0xCF68
+  pop rax
+  pop rbx
+  jne checkForSecondEnemyStructInStack
+  push rbx
+  push rax
+  mov rbx,[rsp+272]
+  mov rax,[rbx+1FF8]
+  shr rax,10
+  cmp rax,0x7FF40000
+  pop rax
+  pop rbx
+  jl checkForSecondEnemyStructInStack
+  push rbx
+  push rax
+  mov rbx,[rsp+272]
+  mov rax,[rbx+1FF8]
+  shr rax,20
+  cmp rax,0x7FF4
+  pop rax
+  pop rbx
+  jne checkForSecondEnemyStructInStack
+  push rbx
+  push rax
+  mov rbx,[rsp+272]
+  mov rax,[rbx+1FF8]
+  mov rbx,[rax+68]
+  shr rbx,10
+  cmp rbx,0x7FF40000
+  pop rax
+  pop rbx
+  jl checkForSecondEnemyStructInStack
+  push rbx
+  push rax
+  mov rbx,[rsp+272]
+  mov rax,[rbx+1FF8]
+  mov rbx,[rax+68]
+  shr rbx,20
+  cmp rbx,0x7FF4
+  pop rax
+  pop rbx
+  jne checkForSecondEnemyStructInStack
+  push rbx
+  push rax
+  mov rbx,[rsp+272]
+  mov rax,[rbx+1FF8]
+  mov rbx,[rax+68]
+  mov rax,[rbx]
+  cmp ax,0xD730
+  pop rax
+  pop rbx
+  jne checkForSecondEnemyStructInStack
+  sub rsp,10
+  movdqu [rsp],xmm0
+  push rax
+  push rbx
+  mov rax,[rsp+282]
+  mov rbx,[rax+1FF8]
+  mov rax,[rbx+68]
+  pop rbx
+  jmp applyScales
+checkForSecondEnemyStructInStack:
+  push rbx
+  push rax
+  mov rbx,[rsp+1F2]
+  shr rbx,10
+  cmp rbx,0x7FF40000
+  pop rax
+  pop rbx
+  jl checkForEnemyStruct
+  push rbx
+  push rax
+  mov rbx,[rsp+1F2]
+  shr rbx,20
+  cmp rbx,0x7FF4
+  pop rax
+  pop rbx
+  jne checkForEnemyStruct
+  push rbx
+  push rax
+  mov rbx,[rsp+1F2]
+  mov rax,[rbx]
+  cmp ax,0xCF68
+  pop rax
+  pop rbx
+  jne checkForEnemyStruct
+  push rbx
+  push rax
+  mov rbx,[rsp+1F2]
+  mov rax,[rbx+1FF8]
+  shr rax,10
+  cmp rax,0x7FF40000
+  pop rax
+  pop rbx
+  jl checkForEnemyStruct
+  push rbx
+  push rax
+  mov rbx,[rsp+1F2]
+  mov rax,[rbx+1FF8]
+  shr rax,20
+  cmp rax,0x7FF4
+  pop rax
+  pop rbx
+  jne checkForEnemyStruct
+  push rbx
+  push rax
+  mov rbx,[rsp+1F2]
+  mov rax,[rbx+1FF8]
+  mov rbx,[rax+68]
+  shr rbx,10
+  cmp rbx,0x7FF40000
+  pop rax
+  pop rbx
+  jl checkForEnemyStruct
+  push rbx
+  push rax
+  mov rbx,[rsp+1F2]
+  mov rax,[rbx+1FF8]
+  mov rbx,[rax+68]
+  shr rbx,20
+  cmp rbx,0x7FF4
+  pop rax
+  pop rbx
+  jne checkForEnemyStruct
+  push rbx
+  push rax
+  mov rbx,[rsp+1F2]
+  mov rax,[rbx+1FF8]
+  mov rbx,[rax+68]
+  mov rax,[rbx]
+  cmp ax,0xD730
+  pop rax
+  pop rbx
+  jne checkForEnemyStruct
+  sub rsp,10
+  movdqu [rsp],xmm0
+  push rax
+  push rbx
+  mov rax,[rsp+202]
+  mov rbx,[rax+1FF8]
+  mov rax,[rbx+68]
+  pop rbx
+  jmp applyScales
+  //rsp+1f2
+checkForEnemyStruct:
+  push rbx
+  mov rbx,[r12+50]
+  shr rbx,10
+  cmp rbx,0x7FF40000
+  pop rbx
+  jl checkForSecondaryEnemyStruct
+  push rbx
+  mov rbx,[r12+50]
+  shr rbx,20
+  cmp rbx,0x7FF4
+  pop rbx
+  jne checkForSecondaryEnemyStruct
+  push rbx
+  push rax
+  mov rbx,[r12+50]
+  mov rax,[rbx]
+  cmp ax,0xCF68
+  pop rax
+  pop rbx
+  jne checkForSecondaryEnemyStruct
+  push rbx
+  push rax
+  mov rbx,[r12+50]
+  mov rax,[rbx+1FF8]
+  shr rax,10
+  cmp rax,0x7FF40000
+  pop rax
+  pop rbx
+  jl checkForSecondaryEnemyStruct
+  push rbx
+  push rax
+  mov rbx,[r12+50]
+  mov rax,[rbx+1FF8]
+  shr rax,20
+  cmp rax,0x7FF4
+  pop rax
+  pop rbx
+  jne checkForSecondaryEnemyStruct
+  push rbx
+  push rax
+  mov rbx,[r12+50]
+  mov rax,[rbx+1FF8]
+  mov rbx,[rax+68]
+  shr rbx,10
+  cmp rbx,0x7FF40000
+  pop rax
+  pop rbx
+  jl checkForSecondaryEnemyStruct
+  push rbx
+  push rax
+  mov rbx,[r12+50]
+  mov rax,[rbx+1FF8]
+  mov rbx,[rax+68]
+  shr rbx,20
+  cmp rbx,0x7FF4
+  pop rax
+  pop rbx
+  jne checkForSecondaryEnemyStruct
+  push rbx
+  push rax
+  mov rbx,[r12+50]
+  mov rax,[rbx+1FF8]
+  mov rbx,[rax+68]
+  mov rax,[rbx]
+  cmp ax,0xD730
+  pop rax
+  pop rbx
+  jne checkForSecondaryEnemyStruct
+  sub rsp,10
+  movdqu [rsp],xmm0
+  push rax
+  mov rax,[r12+50]
+  push rbx
+  mov rbx,[rax+1FF8]
+  mov rax,[rbx+68]
+  pop rbx
+  jmp applyScales
+checkForSecondaryEnemyStruct:
+  push rbx
+  mov rbx,[r12+C28]
+  shr rbx,10
+  cmp rbx,0x7FF40000
+  pop rbx
+  jl abominifyCreatureNoMatch
+  push rbx
+  mov rbx,[r12+C28]
+  shr rbx,20
+  cmp rbx,0x7FF4
+  pop rbx
+  jne abominifyCreatureNoMatch
+  push rbx
+  push rax
+  mov rbx,[r12+C28]
+  mov rax,[rbx]
+  cmp ax,0xCF68
+  pop rax
+  pop rbx
+  jne abominifyCreatureNoMatch
+  push rbx
+  push rax
+  mov rbx,[r12+C28]
+  mov rax,[rbx+1FF8]
+  shr rax,10
+  cmp rax,0x7FF40000
+  pop rax
+  pop rbx
+  jl abominifyCreatureNoMatch
+  push rbx
+  push rax
+  mov rbx,[r12+C28]
+  mov rax,[rbx+1FF8]
+  shr rax,20
+  cmp rax,0x7FF4
+  pop rax
+  pop rbx
+  jne abominifyCreatureNoMatch
+  push rbx
+  push rax
+  mov rbx,[r12+C28]
+  mov rax,[rbx+1FF8]
+  mov rbx,[rax+68]
+  shr rbx,10
+  cmp rbx,0x7FF40000
+  pop rax
+  pop rbx
+  jl abominifyCreatureNoMatch
+  push rbx
+  push rax
+  mov rbx,[r12+C28]
+  mov rax,[rbx+1FF8]
+  mov rbx,[rax+68]
+  shr rbx,20
+  cmp rbx,0x7FF4
+  pop rax
+  pop rbx
+  jne abominifyCreatureNoMatch
+  push rbx
+  push rax
+  mov rbx,[r12+C28]
+  mov rax,[rbx+1FF8]
+  mov rbx,[rax+68]
+  mov rax,[rbx]
+  cmp ax,0xD730
+  pop rax
+  pop rbx
+  jne abominifyCreatureNoMatch
+  sub rsp,10
+  movdqu [rsp],xmm0
+  push rax
+  mov rax,[r12+C28]
+  push rbx
+  mov rbx,[rax+1FF8]
+  mov rax,[rbx+68]
+  pop rbx
+  jmp applyScales
+checkForTertiaryEnemyStruct:
+   push rbx
+  mov rbx,[r12+2E0]
+  shr rbx,10
+  cmp rbx,0x7FF40000
+  pop rbx
+  jl abominifyCreatureNoMatch
+  push rbx
+  mov rbx,[r12+2E0]
+  shr rbx,20
+  cmp rbx,0x7FF4
+  pop rbx
+  jne abominifyCreatureNoMatch
+  push rbx
+  push rax
+  mov rbx,[r12+2E0]
+  mov rax,[rbx]
+  cmp ax,0xCF68
+  pop rax
+  pop rbx
+  jne abominifyCreatureNoMatch
+  push rbx
+  push rax
+  mov rbx,[r12+2E0]
+  mov rax,[rbx+1FF8]
+  shr rax,10
+  cmp rax,0x7FF40000
+  pop rax
+  pop rbx
+  jl abominifyCreatureNoMatch
+  push rbx
+  push rax
+  mov rbx,[r12+2E0]
+  mov rax,[rbx+1FF8]
+  shr rax,20
+  cmp rax,0x7FF4
+  pop rax
+  pop rbx
+  jne abominifyCreatureNoMatch
+  push rbx
+  push rax
+  mov rbx,[r12+2E0]
+  mov rax,[rbx+1FF8]
+  mov rbx,[rax+68]
+  shr rbx,10
+  cmp rbx,0x7FF40000
+  pop rax
+  pop rbx
+  jl abominifyCreatureNoMatch
+  push rbx
+  push rax
+  mov rbx,[r12+2E0]
+  mov rax,[rbx+1FF8]
+  mov rbx,[rax+68]
+  shr rbx,20
+  cmp rbx,0x7FF4
+  pop rax
+  pop rbx
+  jne abominifyCreatureNoMatch
+  push rbx
+  push rax
+  mov rbx,[r12+2E0]
+  mov rax,[rbx+1FF8]
+  mov rbx,[rax+68]
+  mov rax,[rbx]
+  cmp ax,0xD730
+  pop rax
+  pop rbx
+  jne abominifyCreatureNoMatch
+  sub rsp,10
+  movdqu [rsp],xmm0
+  push rax
+  mov rax,[r12+2E0]
+  push rbx
+  mov rbx,[rax+1FF8]
+  mov rax,[rbx+68]
+  pop rbx
+  jmp applyScales
+applyScalesFromPhysicsDirect:
+  sub rsp,10
+  movdqu [rsp],xmm0
+  push rax
+  mov rax,[r12+40]
+applyScales:
+  movss xmm0,[rax+3FC]
+  ucomiss xmm0,[zero]
+  jz abominifyCreatureExit
+  shufps xmm0,xmm0,0
+  mulps xmm9,xmm0
+  movss xmm0,[rax+400]
+  shufps xmm0,xmm0,0
+  mulps xmm6,xmm0
+  movss xmm0,[rax+404]
+  shufps xmm0,xmm0,0
+  mulps xmm3,xmm0
+abominifyCreatureExit:
+  //pop rbx
+  pop rax
+  movdqu xmm0,[rsp]
+  add rsp,10
+  jmp abominifyCreatureOriginalCode
+abominifyCreatureShouldButNoMatch:
+  nop
+abominifyCreatureNoMatch:
+  nop
+abominifyCreatureOriginalCode:
+  popf
+  movaps [rax+rcx*8],xmm9
+  jmp abominifyCreatureReturn
+
+omnifyAbominationHook:
+  jmp abominifyCreature
+abominifyCreatureReturn:
+
+
+// Performs morphing on creatures' scales.
+define(omnifyScaleMorphHook,"sekiro.exe"+BADBC0)
+
+assert(omnifyScaleMorphHook, 0F 28 B6 80 00 00 00)
+alloc(morphScale,$1000, omnifyScaleMorphHook)
+alloc(abominifyRandomState,8)
+alloc(abominifyMorphStepsResultUpper,8)
+alloc(abominifyMorphStepsResultLower,8)
+alloc(abominifyHeightResultUpper,8)
+alloc(abominifyHeightResultLower,8)
+alloc(abominifyWidthResultUpper,8)
+alloc(abominifyWidthResultLower,8)
+alloc(abominifyDepthResultUpper,8)
+alloc(abominifyDepthResultLower,8)
+alloc(abominifyMorphModeResultUpper,8)
+alloc(abominifyMorphModeResultLower,8)
+alloc(unnaturalBigThreshold,8)
+alloc(unnaturalBigX,8)
+alloc(unnaturalSmallX,8)
+alloc(abominifyDivisor,8)
+alloc(defaultScaleX,8)
+alloc(stopMorphs,8)
+
+
+registersymbol(omnifyScaleMorphHook)
+registersymbol(abominifyMorphStepsResultUpper)
+registersymbol(abominifyMorphStepsResultLower)
+registersymbol(abominifyHeightResultUpper)
+registersymbol(abominifyHeightResultLower)
+registersymbol(abominifyWidthResultUpper)
+registersymbol(abominifyWidthResultLower)
+registersymbol(abominifyDepthResultUpper)
+registersymbol(abominifyDepthResultLower)
+registersymbol(unnaturalBigThreshold)
+registersymbol(unnaturalBigX)
+registersymbol(unnaturalSmallX)
+registersymbol(stopMorphs)
+
+morphScale:
+  pushf
+  push rax
+  mov rax,playerCoords
+  cmp [rax],0
+  pop rax
+  je morphScaleOriginalCode
+  push rax
+  mov rax,playerCoords
+  cmp rsi,[rax]
+  pop rax
+  je morphScaleOriginalCode
+  push rdx
+  mov rdx,rsi
+  cmp [rdx+41C],0
+  je generateNewMorphTargets
+  cmp [stopMorphs],1
+  je morphScaleExit
+  dec [rdx+41C]
+  jmp stepMorph
+generateNewMorphTargets:
+  sub rsp,10
+  movdqu [rsp],xmm0
+  movss xmm0,[rdx+3FC]
+  ucomiss xmm0,[zero]
+  ja skipInitializeDefaultScales
+  movss xmm0,[defaultScaleX]
+  movss [rdx+3FC],xmm0
+  movss [rdx+400],xmm0
+  movss [rdx+404],xmm0
+skipInitializeDefaultScales:
+  movss [rdx+408],xmm0
+  movss xmm0,[rdx+400]
+  movss [rdx+40C],xmm0
+  movss xmm0,[rdx+404]
+  movss [rdx+410],xmm0
+  push rax
+  cmp [rdx+414],1
+  je generateNewMorphTargetsExit
+  movss xmm0,[rdx+418]
+  mov rax,zero
+  ucomiss xmm0,[rax]
+  ja skipGenerateMorphSteps
+  push [abominifyMorphStepsResultLower]
+  push [abominifyMorphStepsResultUpper]
+  mov rax,abominifyRandomState
+  push rax
+  call generateRandomNumber
+  cvtsi2ss xmm0,eax
+  movss [rdx+418],xmm0
+skipGenerateMorphSteps:
+  movss xmm0,[rdx+418]
+  cvtss2si eax,xmm0
+  mov [rdx+41C],eax
+  push [abominifyWidthResultLower]
+  push [abominifyWidthResultUpper]
+  mov rax,abominifyRandomState
+  push rax
+  call generateRandomNumber
+  cvtsi2ss xmm0,eax
+  divss xmm0,[abominifyDivisor]
+  movss [rdx+420],xmm0
+generateMonsterMorphTargets:
+  cmp [rdx+414],0
+  jne skipGenerateMorphMode
+  push [abominifyMorphModeResultLower]
+  push [abominifyMorphModeResultUpper]
+  mov rax,abominifyRandomState
+  push rax
+  call generateRandomNumber
+  jmp applyMorphMode
+skipGenerateMorphMode:
+  mov eax,[rdx+414]
+applyMorphMode:
+  cmp eax,1
+  je staticUnnaturalMorphing
+  cmp eax,7
+  jle uniformMorphing
+  jmp nonUniformMorphing
+staticUnnaturalMorphing:
+  mov [rdx+414],1
+  ucomiss xmm0,[unnaturalBigThreshold]
+  ja unnaturalBiggify
+  mulss xmm0,[unnaturalSmallX]
+  jmp unnaturalizeIt
+unnaturalBiggify:
+  mulss xmm0,[unnaturalBigX]
+unnaturalizeIt:
+  movss [rdx+3FC],xmm0
+  movss [rdx+400],xmm0
+  movss [rdx+404],xmm0
+  jmp generateNewMorphTargetsExit
+uniformMorphing:
+  mov [rdx+414],7
+  movss [rdx+424],xmm0
+  movss [rdx+428],xmm0
+  jmp generateNewMorphTargetsExit
+nonUniformMorphing:
+  mov [rdx+414],8
+  push [abominifyHeightResultLower]
+  push [abominifyHeightResultUpper]
+  mov rax,abominifyRandomState
+  push rax
+  call generateRandomNumber
+  cvtsi2ss xmm0,eax
+  divss xmm0,[abominifyDivisor]
+  movss [rdx+424],xmm0
+  push [abominifyDepthResultLower]
+  push [abominifyDepthResultUpper]
+  mov rax,abominifyRandomState
+  push rax
+  call generateRandomNumber
+  cvtsi2ss xmm0,eax
+  divss xmm0,[abominifyDivisor]
+  movss [rdx+428],xmm0
+generateNewMorphTargetsExit:
+  pop rax
+  movdqu xmm0,[rsp]
+  add rsp,10
+  jmp morphScaleExit
+stepMorph:
+  cmp [rdx+414],1
+  je morphScaleExit
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  push rax
+  push rsi
+  movss xmm0,[rdx+418]
+  cvtss2si eax,xmm0
+  mov esi,[rdx+41C]
+  sub eax,esi
+  cvtsi2ss xmm1,eax
+  divss xmm1,[rdx+418]
+  // Width Step
+  movss xmm0,[rdx+420]
+  subss xmm0,[rdx+408]
+  mulss xmm0,xmm1
+  addss xmm0,[rdx+408]
+  movss [rdx+3FC],xmm0
+  // Height Step
+  movss xmm0,[rdx+424]
+  subss xmm0,[rdx+40C]
+  mulss xmm0,xmm1
+  addss xmm0,[rdx+40C]
+  movss [rdx+400],xmm0
+  // Depth Step
+  movss xmm0,[rdx+428]
+  subss xmm0,[rdx+410]
+  mulss xmm0,xmm1
+  addss xmm0,[rdx+410]
+  movss [rdx+404],xmm0
+  pop rsi
+  pop rax
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+morphScaleExit:
+  pop rdx
+morphScaleOriginalCode:
+  popf
+  movaps xmm6,[rsi+00000080]
+  jmp morphScaleReturn
+
+
+omnifyScaleMorphHook:
+  jmp morphScale
+  nop 2
+morphScaleReturn:
+
+abominifyRandomState:
+  dd 0
+
+abominifyMorphStepsResultUpper:
+  dd #400
+
+abominifyMorphStepsResultLower:
+  dd #25
+
+abominifyHeightResultUpper:
+  dd #200
+
+abominifyHeightResultLower:
+  dd #25
+
+abominifyWidthResultUpper:
+  dd #350
+
+abominifyWidthResultLower:
+  dd #25
+
+abominifyDepthResultUpper:
+  dd #250
+
+abominifyDepthResultLower:
+  dd #25
+
+abominifyMorphModeResultUpper:
+  dd 20
+
+abominifyMorphModeResultLower:
+  dd 1
+
+abominifyDivisor:
+  dd (float)100.0
+
+unnaturalBigThreshold:
+  dd (float)1.0
+
+unnaturalSmallX:
+  dd (float)0.5
+
+unnaturalBigX:
+  dd (float)0.25
+
+stopMorphs:
+  dd 0
+
+defaultScaleX:
+  dd (float)1.0
+
+// Detection hook for a perfect deflect.
+define(omnifyPerfectDeflectDetectHook,"sekiro.exe"+83992F)
+
+assert(omnifyPerfectDeflectDetectHook, 45 84 C9 74 07)
+alloc(detectPerfectDeflect,$1000, omnifyPerfectDeflectDetectHook)
+alloc(deflectIsPerfect,8)
+
+registersymbol(omnifyPerfectDeflectDetectHook)
+registersymbol(deflectIsPerfect)
+
+detectPerfectDeflect:
+  pushf
+  cmp rax,[player]
+  jne detectPerfectDeflectOriginalCode
+  test r9l,r9l
+  je detectPerfectDeflectOriginalCode
+  mov [deflectIsPerfect],1
+detectPerfectDeflectOriginalCode:
+  popf
+  test r9l,r9l
+  je sekiro.exe+83993B
+  jmp detectPerfectDeflectReturn
+
+
+omnifyPerfectDeflectDetectHook:
+  jmp detectPerfectDeflect
+
+detectPerfectDeflectReturn:
+
+deflectIsPerfect:
+  dd 0
+
+
+// Omnifies damage done to Posture.
+// RDI: Target character data struct.
+// ESI: Updated Posture value.
+// EBX: Current Posture value.
+// If EBX-ESI &lt;= 8: Perfect Deflect
+// 			  &gt;  8: Non-perfect deflect or no deflect.
+define(omnifyPostureApocalypseHook,"sekiro.exe"+BBFCD9)
+
+assert(omnifyPostureApocalypseHook, 2B F3 8B D6 4C 89 74 24 38)
+alloc(initiatePostureApocalypse,$1000, omnifyPostureApocalypseHook)
+alloc(logPostureApocalypse,8)
+
+registersymbol(omnifyPostureApocalypseHook)
+registersymbol(logPostureApocalypse)
+
+initiatePostureApocalypse:
+  pushf
+  cmp esi,ebx
+  jge initiatePostureApocalypseOriginalCode
+  push rax
+  mov rax,playerData
+  cmp [rax],0
+  pop rax  
+  je initiatePostureApocalypseOriginalCode    
+  push rax
+  mov rax,playerData
+  cmp rdi,[rax]
+  pop rax
+  jne checkForHealthApocalypse
+  cmp [deflectIsPerfect],1
+  jne checkForHealthApocalypse
+  mov [deflectIsPerfect],0
+  jmp initiatePostureApocalypseOriginalCode
+checkForHealthApocalypse:
+  cmp [logApocalypse],1
+  je initiatePostureApocalypseOriginalCode
+  cmp [logPlayerCrit],1
+  je initiatePostureApocalypseOriginalCode
+applyPostureApocalypse:
+  push rax
+  push rdx
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  sub rsp,10
+  movdqu [rsp],xmm2
+  mov rdx,rbx
+  sub ebx,esi
+  cvtsi2ss xmm0,ebx
+  cvtsi2ss xmm1,edx
+  mov rax,playerData
+  cmp rdi,[rax]
+  jne initiateEnemyPostureApocalypse
+  cvtsi2ss xmm2,[rdi+150]
+  mov rax,playerCoords
+  mov rbx,[rax]
+  lea rax,[rbx+80]
+  sub rsp,8
+  movd [rsp],xmm0
+  sub rsp,8
+  movd [rsp],xmm1
+  sub rsp,8
+  movd [rsp],xmm2
+  push rax
+  call executePlayerApocalypse
+  jmp initiatePostureApocalypseExit
+initiateEnemyPostureApocalypse:
+  sub rsp,8
+  movd [rsp],xmm0
+  sub rsp,8
+  movd [rsp],xmm1
+  call executeEnemyApocalypse 
+  jmp initiatePostureApocalypseExitNoAnnounce
+initiatePostureApocalypseExit:
+  mov [logPostureApocalypse],1
+initiatePostureApocalypseExitNoAnnounce:
+  movd xmm0,eax
+  cvtss2si eax,xmm0
+  movd xmm0,ebx
+  cvtss2si ebx,xmm0
+  mov rdx,rbx
+  sub edx,eax
+  mov esi,edx
+  movdqu xmm2,[rsp]
+  add rsp,10
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+  pop rdx
+  pop rax
+initiatePostureApocalypseOriginalCode:
+  popf
+  sub esi,ebx
+  mov edx,esi
+  mov [rsp+38],r14
+  jmp initiatePostureApocalypseReturn
+omnifyPostureApocalypseHook:
+  jmp initiatePostureApocalypse
+  nop 4
+initiatePostureApocalypseReturn:
+
+
+logPostureApocalypse:
+  dd 0
+
+  // Applies a multiplier to the character's max health.
+define(omnifyPlayerMaxHealth,"sekiro.exe"+BBEB20)
+
+assert(omnifyPlayerMaxHealth, 8B 81 38 01 00 00)
+alloc(applyMaxHealthMultiplier,$1000, omnifyPlayerMaxHealth)
+alloc(maxHealthMultiplier,8)
+
+registersymbol(omnifyPlayerMaxHealth)
+registersymbol(maxHealthMultiplier)
+
+applyMaxHealthMultiplier:
+  push rax
+  mov rax,playerData
+  cmp [rax],0
+  pop rax
+  je applyMaxHealthMultiplierOriginalCode
+  push rax
+  mov rax,playerData
+  cmp rcx,[rax]
+  pop rax
+  jne applyMaxHealthMultiplierOriginalCode
+  push rdx
+  push rbx
+  mov eax,[rcx+00000138]
+  mov rdx,[maxHealthMultiplier]
+  mul rdx
+  pop rbx
+  pop rdx
+  jmp applyMaxHealthMultiplierReturn
+applyMaxHealthMultiplierOriginalCode:
+  mov eax,[rcx+00000138]
+  jmp applyMaxHealthMultiplierReturn
+
+
+omnifyPlayerMaxHealth:
+  jmp applyMaxHealthMultiplier
+  nop
+applyMaxHealthMultiplierReturn:
+
+maxHealthMultiplier:
+  dd 1
+
+[DISABLE]
+
+
+// Cleanup of omnifyPlayerMaxHealth
+omnifyPlayerMaxHealth:
+  db 8B 81 38 01 00 00
+
+unregistersymbol(maxHealthMultiplier)
+unregistersymbol(omnifyPlayerMaxHealth)
+
+dealloc(maxHealthMultiplier)
+dealloc(applyMaxHealthMultiplier)
+
+
+// Cleanup of omniSpiritEmblemsHook
+omniSpiritEmblemsHook:
+  db 8B 41 08 C3 CC
+
+unregistersymbol(playerEmblems)
+unregistersymbol(omniSpiritEmblemsHook)
+
+dealloc(playerEmblems)
+dealloc(getSpiritEmblems)
+
+
+// Cleanup of omnifyPerfectDeflectDetectHook
+omnifyPerfectDeflectDetectHook:
+  db 45 84 C9 74 07
+
+unregistersymbol(deflectIsPerfect)
+unregistersymbol(omnifyPerfectDeflectDetectHook)
+
+dealloc(deflectIsPerfect)
+dealloc(detectPerfectDeflect)
+
+
+// Cleanup of omnifyScaleMorphHook
+omnifyScaleMorphHook:
+  db 0F 28 B6 80 00 00 00
+
+unregistersymbol(omnifyScaleMorphHook)
+unregistersymbol(abominifyMorphStepsResultUpper)
+unregistersymbol(abominifyMorphStepsResultLower)
+unregistersymbol(abominifyHeightResultUpper)
+unregistersymbol(abominifyHeightResultLower)
+unregistersymbol(abominifyWidthResultUpper)
+unregistersymbol(abominifyWidthResultLower)
+unregistersymbol(abominifyDepthResultUpper)
+unregistersymbol(abominifyDepthResultLower)
+unregistersymbol(unnaturalBigThreshold)
+unregistersymbol(unnaturalBigX)
+unregistersymbol(unnaturalSmallX)
+unregistersymbol(stopMorphs)
+
+dealloc(stopMorphs)
+dealloc(defaultScaleX)
+dealloc(abominifyRandomState)
+dealloc(abominifyMorphStepsResultUpper)
+dealloc(abominifyMorphStepsResultLower)
+dealloc(abominifyHeightResultUpper)
+dealloc(abominifyHeightResultLower)
+dealloc(abominifyWidthResultUpper)
+dealloc(abominifyWidthResultLower)
+dealloc(abominifyDepthResultUpper)
+dealloc(abominifyDepthResultLower)
+dealloc(abominifyMorphModeResultUpper)
+dealloc(abominifyMorphModeResultLower)
+dealloc(unnaturalBigThreshold)
+dealloc(unnaturalBigX)
+dealloc(unnaturalSmallX)
+dealloc(abominifyDivisor)
+dealloc(morphScale)
+
+
+// Cleanup of omnifyPostureApocalypseHook
+omnifyPostureApocalypseHook:
+  db 2B F3 8B D6 4C 89 74 24 38
+
+unregistersymbol(omnifyPostureApocalypseHook)
+unregistersymbol(logPostureApocalypse)
+
+dealloc(logPostureApocalypse)
+dealloc(initiatePostureApocalypse)
+
+omnifyAbominationHook:
+  db 44 0F 29 0C C8
+
+unregistersymbol(omnifyAbominationHook)
+
+dealloc(abominifyCreature)
+
+//dealloc(newmem)
+
+// Cleanup of global memory
+dealloc(zero)
+dealloc(damageThreshold)
+dealloc(oneAndHalfX)
+dealloc(doubleX)
+
+// Cleanup of generateRandomNumber
+unregistersymbol(generateRandomNumber)
+
+dealloc(generateRandomNumber)
+
+// Cleanup of Player Apocalypse System Function
+unregistersymbol(logApocalypse)
+unregistersymbol(apocalypseResult)
+unregistersymbol(riskOfMurderResult)
+unregistersymbol(negativeVerticalDisplacementEnabled)
+unregistersymbol(teleportitisDisplacementX)
+unregistersymbol(extraDamageX)
+unregistersymbol(maxDamageToPlayer)
+unregistersymbol(playerGodMode)
+unregistersymbol(lastDamageToPlayer)
+unregistersymbol(lastVerticalDisplacement)
+unregistersymbol(teleportitised)
+unregistersymbol(executePlayerApocalypse)
+
+dealloc(playerApocalypseRandomState)
+dealloc(logApocalypse)
+dealloc(apocalypseResult)
+dealloc(apocalypseResultUpper)
+dealloc(apocalypseResultLower)
+dealloc(negativeOne)
+dealloc(teleportitisResult)
+dealloc(teleportitisResultUpper)
+dealloc(teleportitisResultLower)
+dealloc(teleportitisDivisor)
+dealloc(teleportitisShifter)
+dealloc(negativeVerticalDisplacementEnabled)
+dealloc(teleportitisDisplacementX)
+dealloc(riskOfMurderResult)
+dealloc(riskOfMurderResultUpper)
+dealloc(riskOfMurderResultLower)
+dealloc(extraDamageX)
+dealloc(sixtyNineDamageX)
+dealloc(maxDamageToPlayer)
+dealloc(lastDamageToPlayer)
+dealloc(executePlayerApocalypse)
+dealloc(playerGodMode)
+dealloc(teleportitised)
+dealloc(lastVerticalDisplacement)
+
+
+// Cleanup of Enemy Apocalypse System Function
+unregistersymbol(maxDamageByPlayer)
+unregistersymbol(lastDamageByPlayer)
+unregistersymbol(totalDamageByPlayer)
+unregistersymbol(logKamehameha)
+unregistersymbol(gokuDamageX)
+unregistersymbol(gokuResultUpper)
+unregistersymbol(playerDamageX)
+unregistersymbol(lastEnemyHealthValue)
+unregistersymbol(playerCritDamageResult)
+unregistersymbol(logPlayerCrit)
+unregistersymbol(executeEnemyApocalypse)
+
+dealloc(maxDamageByPlayer)
+dealloc(lastDamageByPlayer)
+dealloc(totalDamageByPlayer)
+dealloc(logKamehameha)
+dealloc(gokuResult)
+dealloc(gokuResultUpper)
+dealloc(gokuResultLower)
+dealloc(gokuDamageX)
+dealloc(playerDamageX)
+dealloc(lastEnemyHealthValue)
+dealloc(playerCritChanceResultUpper)
+dealloc(playerCritChanceResultLower)
+dealloc(playerCritChanceResult)
+dealloc(playerCritDamageResultUpper)
+dealloc(playerCritDamageResultLower)
+dealloc(playerCritDamageResult)
+dealloc(playerCritDamageDivisor)
+dealloc(logPlayerCrit)
+dealloc(enemyApocalypseRandomState)
+dealloc(executeEnemyApocalypse)
+
+
+// Cleanup of findCoordinateDistance
+unregistersymbol(findCoordinateDistance)
+
+dealloc(findCoordinateDistance)
+
+// Cleanup of calculateScaledSpeed
+unregistersymbol(calculateScaledSpeed)
+
+dealloc(averageScaleDivisor)
+dealloc(averageScaleX)
+dealloc(scaledShifter)
+dealloc(scaledSpeedWhenNegative)
+dealloc(calculateScaledSpeed)
+
+// Cleanup of isMovingTowards
+unregistersymbol(isMovingTowards)
+
+dealloc(isMovingTowards)
+
+
+// Cleanup of Predator System Function
+unregistersymbol(executePredator)
+unregistersymbol(enemySpeedX)
+unregistersymbol(skipBoostY)
+unregistersymbol(aggroDistance)
+
+dealloc(enemySpeedX)
+dealloc(skipBoostY)
+dealloc(aggroDistance)
+dealloc(threatDistance)
+dealloc(indifferenceDistanceX)
+dealloc(speedNormalizationDivisor)
+dealloc(defaultSpeedX)
+dealloc(positiveLimit)
+dealloc(negativeLimit)
+dealloc(positiveLimitCorrection)
+dealloc(negativeLimitCorrection)
+dealloc(executePredator)
+
+
+// Cleanup of omniPlayerDataHook
+omniPlayerDataHook:
+  db 8B 81 30 01 00 00
+
+unregistersymbol(omniPlayerDataHook)
+unregistersymbol(playerData)
+
+dealloc(playerData)
+dealloc(getPlayerData)
+
+
+// Cleanup of omniPlayerCoordsHook
+omniPlayerCoordsHook:
+  db 0F 10 83 80 00 00 00
+
+unregistersymbol(omniPlayerCoordsHook)
+unregistersymbol(player)
+unregistersymbol(playerCoords)
+unregistersymbol(teleport)
+unregistersymbol(teleportX)
+unregistersymbol(teleportY)
+unregistersymbol(teleportZ)
+
+dealloc(teleport)
+dealloc(teleportX)
+dealloc(teleportY)
+dealloc(teleportZ)
+dealloc(fallBuffer)
+dealloc(fallDamagePercent)
+dealloc(playerFallLimit)
+dealloc(playerCoords)
+dealloc(player)
+dealloc(getPlayerCoords)
+
+
+// Cleanup of omnifyBlockTeleportitisSafetyHook
+omnifyBlockTeleportitisSafetyHook:
+  db 66 0F 7F 87 50 08 00 00
+
+unregistersymbol(omnifyBlockTeleportitisSafetyHook)
+
+dealloc(blockTeleportitisSafety)
+
+
+// Cleanup of omnifyApocalypseHook
+omnifyApocalypseHook:
+  db 48 8B CB 8D 14 07
+
+unregistersymbol(omnifyApocalypseHook)
+unregistersymbol(ignoreGuardianApeTerrorRoar)
+
+dealloc(ignoreGuardianApeTerrorRoar)
+dealloc(guardianApeTerrorRoar)
+dealloc(initiateApocalypse)
+
+
+
+// Cleanup of omnifyPredatorHook
+omnifyPredatorHook:
+  db 0F 59 C2 0F 58 F0
+
+unregistersymbol(omnifyPredatorHook)
+
+dealloc(identityValue)
+dealloc(playerSpeedX)
+dealloc(initiatePredator)
+
+
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>12</ID>
+          <Description>"Boost Player Damage"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+playerDamageX:
+  dd (float)500.0
+
+[DISABLE]
+
+playerDamageX:
+  dd (float)1.25
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>106</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>21</ID>
+          <Description>"Stop Morphs"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+stopMorphs:
+  dd 1
+
+[DISABLE]
+
+stopMorphs:
+  dd 0
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>111</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>25</ID>
+          <Description>"Crack Head Mode"</Description>
+          <LastState Activated="1"/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+playerSpeedX:
+  dd (float)2.0
+
+playerDamageX:
+  dd (float)1.75
+
+maxHealthMultiplier:
+  dd 2
+
+
+
+[DISABLE]
+
+playerSpeedX:
+  dd (float)1.0
+
+playerDamageX:
+  dd (float)1.0
+
+maxHealthMultiplier:
+  dd 1
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>16</ID>
+          <Description>"Enable God Mode"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+playerGodMode:
+  dd 1
+
+[DISABLE]
+
+playerGodMode:
+  dd 0
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>13</ID>
+          <Description>"Ignore Terror Roar"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+ignoreGuardianApeTerrorRoar:
+  dd 1
+
+[DISABLE]
+
+ignoreGuardianApeTerrorRoar:
+  dd 0
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>5</ID>
+          <Description>"Current Health"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>playerData</Address>
+          <Offsets>
+            <Offset>130</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>10</ID>
+          <Description>"Current Posture"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>playerData</Address>
+          <Offsets>
+            <Offset>148</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>11</ID>
+          <Description>"Current Emblems"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>playerEmblems</Address>
+          <Offsets>
+            <Offset>8</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>7</ID>
+          <Description>"Location"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" Activated="1" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <Address>playerCoords</Address>
+          <Offsets>
+            <Offset>0</Offset>
+          </Offsets>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>6</ID>
+              <Description>"X"</Description>
+              <VariableType>Float</VariableType>
+              <Address>playerCoords</Address>
+              <Offsets>
+                <Offset>80</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>8</ID>
+              <Description>"Y"</Description>
+              <VariableType>Float</VariableType>
+              <Address>playerCoords</Address>
+              <Offsets>
+                <Offset>84</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>9</ID>
+              <Description>"Z"</Description>
+              <VariableType>Float</VariableType>
+              <Address>playerCoords</Address>
+              <Offsets>
+                <Offset>88</Offset>
+              </Offsets>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <CheatCodes>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps [rcx+rdx*8+10],xmm1</Description>
+      <AddressString>sekiro.exe+E40015</AddressString>
+      <Before>
+        <Byte>D1</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>48</Byte>
+        <Byte>10</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>4C</Byte>
+        <Byte>D1</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>40</Byte>
+        <Byte>20</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps xmm6,[r10+rax]</Description>
+      <AddressString>sekiro.exe+F1A5F0</AddressString>
+      <Before>
+        <Byte>10</Byte>
+        <Byte>0F</Byte>
+        <Byte>C6</Byte>
+        <Byte>C1</Byte>
+        <Byte>55</Byte>
+      </Before>
+      <Actual>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>34</Byte>
+        <Byte>02</Byte>
+      </Actual>
+      <After>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>6C</Byte>
+        <Byte>02</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps [rax+rcx*8+10],xmm6</Description>
+      <AddressString>sekiro.exe+F1ADFE</AddressString>
+      <Before>
+        <Byte>44</Byte>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>0C</Byte>
+        <Byte>C8</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>74</Byte>
+        <Byte>C8</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>5C</Byte>
+        <Byte>C8</Byte>
+        <Byte>20</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps [rax+rcx*8],xmm9</Description>
+      <AddressString>sekiro.exe+F1ADF9</AddressString>
+      <Before>
+        <Byte>60</Byte>
+        <Byte>48</Byte>
+        <Byte>8B</Byte>
+        <Byte>40</Byte>
+        <Byte>18</Byte>
+      </Before>
+      <Actual>
+        <Byte>44</Byte>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>0C</Byte>
+        <Byte>C8</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>74</Byte>
+        <Byte>C8</Byte>
+        <Byte>10</Byte>
+      </After>
+    </CodeEntry>
+  </CheatCodes>
+  <UserdefinedSymbols/>  
+  <LuaScript>getAutoAttachList().add("sekiro.exe")
+</LuaScript>
+</CheatTable>

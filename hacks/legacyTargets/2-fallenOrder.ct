@@ -1,0 +1,63 @@
+<!--
+    Omnified Star Wars Jedi: Fallen Order
+    Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
+    Copyright 2022 Bad Echo LLC
+
+    Bad Echo Technologies are licensed under a
+    Creative Commons Attribution-NonCommercial 4.0 International License.
+
+    See accompanying file LICENSE.md or a copy at:
+    http://creativecommons.org/licenses/by-nc/4.0/
+-->
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="29">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>0</ID>
+      <Description>"OMNIFY"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+// Locate the code point where we can access a damage value that is to be
+// to either the player or the enemies.
+aobscanmodule(damageSet,starwarsjedifallenorder.exe,F3 0F 10 8B BC 01 00 00 45)
+registersymbol(damageSet)
+alloc(omniHook,$1000,damageSet)
+
+// Damage that will be applied to the player is handled here.
+label(player)
+// The original code at the point of injection.
+label(code)
+label(return)
+// The almighty 69.
+label(sixtyNineBaby)
+registersymbol(sixtyNineBaby)
+
+omniHook:
+  cmp [rbx+8],40048 // The damage is intended for the player if 40048 is at this address.
+  je player
+  jmp code
+player:
+  mulss xmm6,[sixtyNineBaby] // The player gonna feel 69x the damage from enemies
+code:                        // mudda fucka.
+  movss xmm1,[rbx+000001BC]
+  jmp return
+sixtyNineBaby:
+  dd (float)69
+damageSet:
+  jmp omniHook
+  nop 3
+return:
+
+[DISABLE]
+damageSet:
+  db F3 0F 10 8B BC 01 00 00
+
+unregistersymbol(damageSet)
+unregistersymbol(sixtyNineBaby)
+dealloc(omniHook)
+</AssemblerScript>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols/>  
+</CheatTable>

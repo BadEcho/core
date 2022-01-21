@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "targets"
+		},
+		{
+			"path": "legacyTargets"
 		}
 	],
 	"settings": {
@@ -13,6 +16,9 @@
 			"**/log.txt": true,
 			"**/statistics.json": true
 		},		
-		"lua-local.interpreter": "lua54"
+		"lua-local.interpreter": "lua54",
+		"files.associations": {
+			"*.ct": "xml"
+		}
 	}
 }

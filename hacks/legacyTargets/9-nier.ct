@@ -1,0 +1,458 @@
+<!--
+    Omnified NieR: Automata
+    Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
+    Copyright 2022 Bad Echo LLC
+
+    Bad Echo Technologies are licensed under a
+    Creative Commons Attribution-NonCommercial 4.0 International License.
+
+    See accompanying file LICENSE.md or a copy at:
+    http://creativecommons.org/licenses/by-nc/4.0/
+-->
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="29">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>641</ID>
+      <Description>"Insert Enemy Butt Plug"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+
+aobscanmodule(omnifyEnemyAnalPlug,NieRAutomata.exe,29 B7 58 08 00 00) // should be unique
+alloc(fuckEnemyAss,$1000,"NieRAutomata.exe"+34748A6)
+
+registersymbol(omnifyEnemyAnalPlug)
+
+fuckEnemyAss:
+
+fuckEnemyAssCode:
+  push eax
+  mov eax,69
+  mul esi
+  mov esi,eax
+  pop eax
+  sub [rdi+00000858],esi
+  jmp fuckEnemyAssReturn
+
+omnifyEnemyAnalPlug:
+  jmp fuckEnemyAss
+  nop
+fuckEnemyAssReturn:
+
+[DISABLE]
+
+omnifyEnemyAnalPlug:
+  db 29 B7 58 08 00 00
+
+unregistersymbol(omnifyEnemyAnalPlug)
+
+dealloc(fuckEnemyAss)
+
+</AssemblerScript>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Toggle Activation</Action>
+          <Keys>
+            <Key>106</Key>
+          </Keys>
+          <ID>0</ID>
+        </Hotkey>
+      </Hotkeys>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>622</ID>
+      <Description>"OMNIFY"</Description>
+      <Options moHideChildren="1"/>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+
+aobscanmodule(omniPlayerHook,NieRAutomata.exe,0F 28 40 50 48 8B 5C 24 30) // should be unique
+aobscanmodule(omnifyDamageHook,NieRAutomata.exe,29 BB 68 06 01 00 8B 83 * * * * 41) // should be unique
+aobscanmodule(omnifySpeedHook,NieRAutomata.exe,0F 58 F1 41 0F 58 71 50) // should be unique
+aobscanmodule(omniCompanionHook,NieRAutomata.exe,0F 29 53 50 E8 DB F1 73 00) // should be unique
+aobscanmodule(omnifyFailedHackHook,NieRAutomata.exe,89 83 68 06 01 00 8B) // should be unique
+
+alloc(getPlayer,$1000,"NieRAutomata.exe"+59FD7B)
+alloc(getCompanion,$1000,"NieRAutomata.exe"+1E1EAC)
+
+alloc(fuckPlayerHealth,$1000,"NieRAutomata.exe"+1FA423)
+alloc(fuckEnemySpeed,$1000,"NieRAutomata.exe"+88CE9F)
+alloc(freezeAfterFailedHack,$1000,"NieRAutomata.exe"+1FA5EA)
+
+alloc(darfMode,8)
+alloc(freezeMode,8)
+
+alloc(pPlayer,8)
+alloc(pCompanion,8)
+
+alloc(companionHeight,32)
+alloc(companionWidth,32)
+alloc(enemySpeedMult,16)
+alloc(companionSpeedMult,16)
+
+registersymbol(omniPlayerHook)
+registersymbol(omniCompanionHook)
+
+registersymbol(omnifyDamageHook)
+registersymbol(omnifySpeedHook)
+registersymbol(omnifyFailedHackHook)
+
+registersymbol(darfMode)
+registersymbol(pPlayer)
+registersymbol(pCompanion)
+
+
+//
+// getPlayer: Creates a pointer to the player character's struct.
+//            This code is only executed for the player, so it is one of the easiest ways
+//            to grab the correct address.
+getPlayer:
+  mov [pPlayer],rax
+getPlayerOriginalCode:
+  movaps xmm0,[rax+50]
+  mov rbx,[rsp+30]
+  jmp getPlayerReturn
+
+omniPlayerHook:
+  jmp getPlayer
+  nop 4
+getPlayerReturn:
+
+//
+// getCompanion: Creates a pointer to the companion character's struct. Also makes them look...better.
+//               This particular function can be called for both the player or companion, so to avoid
+//               a race condition we only execute our code if the player's struct has both been location
+//               and not equal to the struct being looked at.
+getCompanion:
+  push rax
+  mov rax,[pPlayer]
+  cmp rax,0
+  pop rax
+  je getCompanionOriginalCode
+  cmp rbx,[pPlayer]
+  je getCompanionOriginalCode
+  mov [pCompanion],rbx
+  movsd xmm13,[companionWidth]    // Here we set the companion's height and width to be more...palatable.
+  movsd xmm14,[companionHeight]
+  movsd [rbx+BC],xmm13
+  movsd [rbx+E4],xmm13
+  movsd [rbx+D0],xmm14
+getCompanionOriginalCode:
+  movaps [rbx+50],xmm2
+  call NieRAutomata.exe+921090
+  jmp getCompanionReturn
+
+omniCompanionHook:
+  jmp getCompanion
+  nop 4
+getCompanionReturn:
+
+//
+// fuckPlayerHealth: Causes all damage made against the player by enemies to be multiplied by 69x.
+//
+fuckPlayerHealth:
+  cmp rbx,[pPlayer]
+  jne applyDamage
+  mov [freezeMode],0  // If the character is frozen due to a failed hack, we reset the status here as
+  push eax            // they are about to DIE!
+  mov eax,69
+  mul edi
+  mov edi,eax
+  pop eax
+applyDamage:
+  sub [rbx+00010668],edi
+  jmp fuckPlayerHealthReturn
+
+omnifyDamageHook:
+  jmp fuckPlayerHealth
+  nop
+fuckPlayerHealthReturn:
+
+//
+// fuckEnemySpeed: Multiplies the movement of all enemies by 4x.
+//                 Also multiplies character speed if darfMode is set to 1.
+//                 Also freezes the player in place if freezeMode is set to 1.
+//                 Also slows down our big ass companions because, due to them
+//                 being bigger, they have longer strides, therefore it compensates for that.
+fuckEnemySpeed:
+  addps xmm6,xmm1
+  cmp r9,[pPlayer]
+  jne checkCompanion
+  push eax
+  mov eax,[freezeMode]
+  cmp eax,1
+  pop eax
+  je freezePlayer
+  push eax
+  mov eax,[darfMode]
+  cmp eax,1
+  pop eax
+  jne updateLocation
+checkCompanion:
+  cmp r9,[pCompanion]
+  jne fuckDaSpeedUpTheAss
+  push eax
+  mov eax,[darfMode]
+  cmp eax,1
+  pop eax
+  jne slowDownCompanion
+fuckDaSpeedUpTheAss:
+  push eax
+  mov eax,[enemySpeedMult]
+  movd xmm13,eax
+  pop eax
+  shufps xmm13,xmm13,00
+  mulps xmm6,xmm13
+  jmp updateLocation
+slowDownCompanion:
+  push eax
+  mov eax,[companionSpeedMult]
+  movd xmm13,eax
+  pop eax
+  shufps xmm13,xmm13,00
+  mulps xmm6,xmm13
+  jmp updateLocation
+freezePlayer:
+  push eax
+  mov eax,0
+  movd xmm13,eax
+  pop eax
+  shufps xmm13,xmm13,00
+  mulps xmm6,xmm13
+updateLocation:
+  addps xmm6,[r9+50]
+  jmp fuckEnemySpeedReturn
+
+omnifySpeedHook:
+  jmp fuckEnemySpeed
+  nop 3
+fuckEnemySpeedReturn:
+
+//
+// freezeAfterFailedHack: Enables freeze mode, which freezes the player in place to die horribly if they fail a hack.
+//
+freezeAfterFailedHack:
+  mov [freezeMode],1
+  jmp freezeAfterFailedHackReturn
+
+omnifyFailedHackHook:
+  jmp freezeAfterFailedHack
+  nop
+freezeAfterFailedHackReturn:
+
+pPlayer:
+  dd 0
+
+darfMode:
+  dd 0
+
+freezeMode:
+  dd 0
+
+enemySpeedMult:
+  dd (float)4.0
+
+companionSpeedMult:
+  dd (float)0.25
+
+companionHeight:
+  dq (double)25.0
+
+companionWidth:
+  dq (double)2500.0
+
+[DISABLE]
+
+omniPlayerHook:
+  db 0F 28 40 50 48 8B 5C 24 30
+
+omniCompanionHook:
+  db 0F 29 53 50 E8 DB F1 73 00
+
+omnifyDamageHook:
+  db 29 BB 68 06 01 00
+
+omnifySpeedHook:
+  db 0F 58 F1 41 0F 58 71 50
+
+omnifyFailedHackHook:
+  db 89 83 68 06 01 00
+
+unregistersymbol(omniPlayerHook)
+unregistersymbol(omniCompanionHook)
+
+unregistersymbol(omnifyDamageHook)
+unregistersymbol(omnifySpeedHook)
+unregistersymbol(omnifyFailedHackHook)
+
+unregistersymbol(pPlayer)
+unregistersymbol(pCompanion)
+
+dealloc(getPlayer)
+dealloc(getCompanion)
+
+dealloc(fuckPlayerHealth)
+dealloc(fuckEnemySpeed)
+dealloc(freezeAfterFailedHack)
+
+dealloc(enemySpeedMult)
+dealloc(companionSpeedMult)
+dealloc(companionHeight)
+dealloc(companionWidth)
+
+dealloc(pPlayer)
+dealloc(pCompanion)
+
+dealloc(darfMode)
+dealloc(freezeMode)
+</AssemblerScript>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Toggle Activation</Action>
+          <Keys>
+            <Key>111</Key>
+          </Keys>
+          <ID>0</ID>
+        </Hotkey>
+      </Hotkeys>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>629</ID>
+          <Description>"Player"</Description>
+          <LastState Value="" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>647</ID>
+              <Description>"Potato Banana"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+
+darfMode:
+  dd 1
+
+[DISABLE]
+
+darfMode:
+  dd 0
+</AssemblerScript>
+              <Hotkeys>
+                <Hotkey>
+                  <Action>Toggle Activation</Action>
+                  <Keys>
+                    <Key>106</Key>
+                  </Keys>
+                  <ID>0</ID>
+                </Hotkey>
+              </Hotkeys>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>628</ID>
+              <Description>"Health"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>pPlayer</Address>
+              <Offsets>
+                <Offset>10668</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>623</ID>
+              <Description>"X Coords"</Description>
+              <VariableType>Float</VariableType>
+              <Address>pPlayer</Address>
+              <Offsets>
+                <Offset>58</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>624</ID>
+              <Description>"Y Coords"</Description>
+              <VariableType>Float</VariableType>
+              <Address>pPlayer</Address>
+              <Offsets>
+                <Offset>50</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>625</ID>
+              <Description>"Z Coords"</Description>
+              <VariableType>Float</VariableType>
+              <Address>pPlayer</Address>
+              <Offsets>
+                <Offset>54</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>639</ID>
+              <Description>"Movement Speed"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>pPlayer</Address>
+              <Offsets>
+                <Offset>16670</Offset>
+              </Offsets>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>630</ID>
+          <Description>"Companion"</Description>
+          <LastState Value="" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>631</ID>
+              <Description>"Health"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>pCompanion</Address>
+              <Offsets>
+                <Offset>10668</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>632</ID>
+              <Description>"X Coords"</Description>
+              <VariableType>Float</VariableType>
+              <Address>pCompanion</Address>
+              <Offsets>
+                <Offset>58</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>633</ID>
+              <Description>"Y Coords"</Description>
+              <VariableType>Float</VariableType>
+              <Address>pCompanion</Address>
+              <Offsets>
+                <Offset>50</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>634</ID>
+              <Description>"Z Coords"</Description>
+              <VariableType>Float</VariableType>
+              <Address>pCompanion</Address>
+              <Offsets>
+                <Offset>54</Offset>
+              </Offsets>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>642</ID>
+                  <Description>"No description"</Description>
+                  <VariableType>Double</VariableType>
+                  <Address>pCompanion</Address>
+                  <Offsets>
+                    <Offset>d0</Offset>
+                  </Offsets>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols/>
+</CheatTable>

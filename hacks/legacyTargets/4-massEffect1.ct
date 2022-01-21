@@ -1,0 +1,257 @@
+<!--
+    Omnified Mass Effect 1
+    Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
+    Copyright 2022 Bad Echo LLC
+
+    Bad Echo Technologies are licensed under a
+    Creative Commons Attribution-NonCommercial 4.0 International License.
+
+    See accompanying file LICENSE.md or a copy at:
+    http://creativecommons.org/licenses/by-nc/4.0/
+-->
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="29">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>20</ID>
+      <Description>"OMNIFY"</Description>
+      <Options moHideChildren="1"/>
+      <LastState Activated="1"/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>// Omnify Mass Effect 1
+// By: Omni
+
+[ENABLE]
+aobscanmodule(omniHealthHook,MassEffect.exe,F3 0F 10 40 48 DD) // should be unique
+aobscanmodule(omniShieldHook,MassEffect.exe,D9 80 60 01 00 00 8D 48 4C DD 5C 24 0C) // should be unique
+aobscanmodule(omniCoordHook,MassEffect.exe,8B 50 04 8B 4B 04) // should be unique
+aobscanmodule(omniHealthFuckHook,MassEffect.exe,D8 64 24 14 D9 5C 24 0C D9 44) // should be unique
+aobscanmodule(omniShieldFuckHook,MassEffect.exe,D8 23 6A 02 8B CE) // should be unique
+
+alloc(getShield,$1000)
+alloc(getHealth,$1000)
+alloc(getCoord,$1000)
+
+alloc(pHealthBase, 8)
+alloc(pShieldBase, 8)
+alloc(pCoordBase, 8)
+
+alloc(fuckYoHealth,$1000)
+alloc(fuckYoShield,$1000)
+
+registersymbol(omniShieldHook)
+registersymbol(omniHealthHook)
+registersymbol(omniCoordHook)
+
+registersymbol(pHealthBase)
+registersymbol(pShieldBase)
+registersymbol(pCoordBase)
+
+registersymbol(omniHealthFuckHook)
+registersymbol(omniShieldFuckHook)
+
+label(sixtyNineBaby)
+registersymbol(sixtyNineBaby)
+
+//
+// getShield: This grabs the player's (and only the player's) shield and sets pShieldBase
+//            to its address
+getShield:
+
+getShieldCode:
+  cmp ebx,006FEEB8
+  jne getShieldOriginalCode
+  mov [pShieldBase], eax
+getShieldOriginalCode:
+  fld dword ptr [eax+00000160]
+  jmp getShieldReturn
+
+omniShieldHook:
+  jmp getShield
+  nop
+getShieldReturn:
+
+//
+// getHealth: This grabs the player's health and sets pHealthBase to its address
+//
+getHealth:
+
+getHealthCode:
+  mov [pHealthBase], eax
+  movss xmm0,[eax+48]
+  jmp getHealthReturn
+
+omniHealthHook:
+  jmp getHealth
+getHealthReturn:
+//
+// fuckYoHealth: Applies 69x damage to player's health.
+//
+fuckYoHealth:
+
+fuckYoHealthCode:
+  push edi
+  sub edi,48
+  cmp edi,[pHealthBase]
+  jne calculateDamagedHealth
+  movss xmm0, dword ptr [esp+18]
+  mulss xmm0,[sixtyNineBaby]
+  movss dword ptr [esp+18],xmm0
+calculateDamagedHealth:
+  pop edi
+  fsub dword ptr [esp+14]
+  fstp dword ptr [esp+0C]
+  jmp fuckYoHealthReturn
+
+omniHealthFuckHook:
+  jmp fuckYoHealth
+  nop 3
+fuckYoHealthReturn:
+
+//
+// fuckYoShield: Applies 69x damage to player's shields.
+//
+fuckYoShield:
+
+fuckYoShieldCode:
+  cmp eax,[pShieldBase]
+  jne calculateDamageShield
+  movss xmm2,[ebx]
+  mulss xmm2,[sixtyNineBaby]
+  movss [ebx],xmm2
+calculateDamageShield:
+  fsub dword ptr [ebx]
+  push 02
+  mov ecx,esi
+  jmp fuckYoShieldReturn
+
+omniShieldFuckHook:
+  jmp fuckYoShield
+  nop
+fuckYoShieldReturn:
+
+//
+// getCoord: This grabs the player's XYZ coordinate-base and sets pCoordBase to its address
+//
+getCoord:
+
+getCoordCode:
+  cmp eax,ebp
+  jne writeXCoord
+  mov [pCoordBase],eax
+
+writeXCoord:
+  mov edx,[eax+04]
+  mov ecx,[ebx+04]
+  jmp getCoordReturn
+
+omniCoordHook:
+  jmp getCoord
+  nop
+getCoordReturn:
+
+pShieldBase:
+  dd 0
+
+pHealthBase:
+  dd 0
+
+pCoordBase:
+  dd 0
+
+sixtyNineBaby:
+  dd (float)69
+
+[DISABLE]
+
+omniShieldHook:
+  db D9 80 60 01 00 00
+
+omniHealthHook:
+  db F3 0F 10 40 48
+
+omniCoordHook:
+  db 8B 50 04 8B 4B 04
+
+omniShieldFuckHook:
+  db D8 23 6A 02 8B CE
+
+omniHealthFuckHook:
+  db D8 64 24 14 D9 5C 24 0C
+
+unregistersymbol(omniShieldHook)
+unregistersymbol(omniHealthHook)
+unregistersymbol(omniCoordHook)
+
+unregistersymbol(pHealthBase)
+unregistersymbol(pShieldBase)
+unregistersymbol(pCoordBase)
+
+unregistersymbol(omniHealthFuckHook)
+unregistersymbol(omniShieldFuckHook)
+
+unregistersymbol(sixtyNineBaby)
+
+dealloc(getHealth)
+dealloc(getShield)
+dealloc(getCoord)
+
+dealloc(fuckYoHealth)
+dealloc(fuckYoShield)
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>5</ID>
+          <Description>"Player Health"</Description>
+          <LastState Value="-19040.05469" RealAddress="2D25C848"/>
+          <VariableType>Float</VariableType>
+          <Address>pHealthBase</Address>
+          <Offsets>
+            <Offset>48</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>2</ID>
+          <Description>"Player Shield"</Description>
+          <LastState Value="0" RealAddress="13A24F60"/>
+          <VariableType>Float</VariableType>
+          <Address>pShieldBase</Address>
+          <Offsets>
+            <Offset>160</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>18</ID>
+          <Description>"Player X Coordinate"</Description>
+          <LastState Value="-34940.94141" RealAddress="2FB1F910"/>
+          <VariableType>Float</VariableType>
+          <Address>pCoordBase</Address>
+          <Offsets>
+            <Offset>0</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>19</ID>
+          <Description>"Player Y Coordinate"</Description>
+          <LastState Value="-74.92736053" RealAddress="2FB1F914"/>
+          <VariableType>Float</VariableType>
+          <Address>pCoordBase</Address>
+          <Offsets>
+            <Offset>4</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>17</ID>
+          <Description>"Player Z Coordinate"</Description>
+          <LastState Value="-57180.22266" RealAddress="2FB1F918"/>
+          <VariableType>Float</VariableType>
+          <Address>pCoordBase</Address>
+          <Offsets>
+            <Offset>8</Offset>
+          </Offsets>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols/>
+</CheatTable>

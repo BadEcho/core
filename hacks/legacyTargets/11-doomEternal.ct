@@ -1,0 +1,167 @@
+<!--
+    Omnified Doom Eternal
+    Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
+    Copyright 2022 Bad Echo LLC
+
+    Bad Echo Technologies are licensed under a
+    Creative Commons Attribution-NonCommercial 4.0 International License.
+    
+    This "Omnified" hack is very short because, on the very first day of streaming my hacking of it,
+    Zenimax issued a DMCA request to Twitch to get me banned.
+    So, not touching another Zenimax game ever. :)
+
+    See accompanying file LICENSE.md or a copy at:
+    http://creativecommons.org/licenses/by-nc/4.0/
+-->
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="29">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>6</ID>
+      <Description>"OMNIFY"</Description>
+      <Options moHideChildren="1"/>
+      <LastState Activated="1"/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+// Get the player's health.
+aobscanmodule(omniHealthHook, DOOMEternalx64vk.exe, F3 0F 10 41 1C F3 0F 5E C1)
+alloc(getHealth,$1000, omniHealthHook)
+alloc(pPlayerHealth,8)
+
+registersymbol(omniHealthHook)
+registersymbol(pPlayerHealth)
+
+getHealth:
+  pushf
+  cmp rdx,0
+  jne getHealthOriginalCode
+  push rax
+  mov rax,pPlayerHealth
+  mov [rax],rcx
+  pop rax
+getHealthOriginalCode:
+  popf
+  movss xmm0,[rcx+1C]
+  jmp getHealthReturn
+
+omniHealthHook:
+  jmp getHealth
+getHealthReturn:
+
+
+// Multiplies damage done to player's health by 666.
+// -Current health: xmm0
+// -Damage to be done: xmm4
+// -RDI: target address
+aobscanmodule(omnifyDamageHook, DOOMEternalx64vk.exe, F3 0F 5C C4 F3 0F 5F DA 0F 2F D0 F3 0F 11 1B F3 0F 11 43 04 0F 82 C2)
+alloc(fuckUpHealth,$1000, omnifyDamageHook)
+alloc(playerHealthDamageX,8)
+
+registersymbol(omnifyDamageHook)
+registersymbol(playerHealthDamageX)
+
+fuckUpHealth:
+  pushf
+  cmp rdi,[pPlayerHealth]
+  jne fuckUpHealthOriginalCode
+  mulss xmm4,[playerHealthDamageX]
+fuckUpHealthOriginalCode:
+  popf
+  subss xmm0,xmm4
+  maxss xmm3,xmm2
+  jmp fuckUpHealthReturn
+
+omnifyDamageHook:
+  jmp fuckUpHealth
+  nop 3
+fuckUpHealthReturn:
+
+playerHealthDamageX:
+  dd (float)666.0
+
+[DISABLE]
+omniHealthHook:
+  db F3 0F 10 41 1C
+
+unregistersymbol(omniHealthHook)
+unregistersymbol(pPlayerHealth)
+
+dealloc(pPlayerHealth)
+dealloc(getHealth)
+
+omnifyDamageHook:
+  db F3 0F 5C C4 F3 0F 5F DA
+
+unregistersymbol(omnifyDamageHook)
+unregistersymbol(playerHealthDamageX)
+
+dealloc(playerHealthDamageX)
+dealloc(fuckUpHealth)
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>7</ID>
+          <Description>"Player"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" Activated="1" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>8</ID>
+              <Description>"Health"</Description>
+              <VariableType>Float</VariableType>
+              <Address>pPlayerHealth</Address>
+              <Offsets>
+                <Offset>1C</Offset>
+              </Offsets>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>9</ID>
+          <Description>"Enemy"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" Activated="1" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>10</ID>
+              <Description>"Damage Multiplier"</Description>
+              <VariableType>Float</VariableType>
+              <Address>playerHealthDamageX</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>11</ID>
+          <Description>"Cheats"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" Activated="1" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>12</ID>
+              <Description>"God Mode"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+
+playerHealthDamageX:
+  dd (float)0.0
+
+
+[DISABLE]
+
+playerHealthDamageX:
+  dd (float)666.0
+</AssemblerScript>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols/>
+  <LuaScript>getAutoAttachList().add("DOOMEternalx64vk.exe")
+</LuaScript>
+</CheatTable>

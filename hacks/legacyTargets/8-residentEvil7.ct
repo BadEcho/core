@@ -1,0 +1,239 @@
+<!--
+    Omnified Resident Evil 7
+    Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
+    Copyright 2022 Bad Echo LLC
+
+    Bad Echo Technologies are licensed under a
+    Creative Commons Attribution-NonCommercial 4.0 International License.
+
+    See accompanying file LICENSE.md or a copy at:
+    http://creativecommons.org/licenses/by-nc/4.0/
+-->
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="29">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>255</ID>
+      <Description>"OMNIFY"</Description>
+      <Options moHideChildren="1"/>
+      <LastState Activated="1"/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+
+aobscanmodule(omniCoordsHook,re7.exe,F3 0F 11 96 30 01 00 00 F3) // should be unique
+aobscanmodule(omniHealthHook,re7.exe,F3 0F 10 40 24 48 8B 43 50 48 39 70 18 0F 85 C7) // should be unique
+
+aobscanmodule(omnifyHealthHook,re7.exe,F2 0F 5C DA 66 0F 5A D3 E8 75) // should be unique
+aobscanmodule(omnifyKeepDeadHook,re7.exe,F3 0F 10 54 24 30 E8 F9) // should be unique
+aobscanmodule(omnifySpeedHook,re7.exe,F3 41 0F 58 D7 F3 0F 10) // should be unique
+
+alloc(getCoords,$1000,"re7.exe"+24F4B49)
+alloc(getHealth,$1000,"re7.exe"+D3B207)
+
+alloc(fuckHealthDamage,$1000,"re7.exe"+1D06B7E)
+alloc(keepPlayerDead,$1000,"re7.exe"+1D004FC)
+alloc(fuckSpeed,$1000,"re7.exe"+24F4915)
+
+alloc(pCoordsBase, 8)
+alloc(pHealthBase, 8)
+
+alloc(fuckHealthMultiplier, 32)
+alloc(fuckSpeedMultiplier, 16)
+
+registersymbol(omniCoordsHook)
+registersymbol(omniHealthHook)
+
+registersymbol(omnifyHealthHook)
+registersymbol(omnifyKeepDeadHook)
+registersymbol(omnifySpeedHook)
+
+registersymbol(pCoordsBase)
+registersymbol(pHealthBase)
+
+getCoords:
+
+getCoordsCode:
+  cmp [rsi+8],2
+  jne getCoordsOriginalCode
+  cmp [rsi+B0],0
+  jne getCoordsOriginalCode
+    cmp [rsi+70],5
+  jne getCoordsOriginalCode
+  cmp rsi,[pCoordsBase]
+  je getCoordsOriginalCode
+  mov [pCoordsBase],rsi
+getCoordsOriginalCode:
+  movss [rsi+00000130],xmm2
+  jmp getCoordsReturn
+
+omniCoordsHook:
+  jmp getCoords
+  nop 3
+getCoordsReturn:
+
+getHealth:
+
+getHealthCode:
+  mov [pHealthBase],rax
+  movss xmm0,[rax+24]
+  jmp getHealthReturn
+
+omniHealthHook:
+  jmp getHealth
+getHealthReturn:
+
+fuckHealthDamage:
+
+fuckHealthDamageCode:
+  cmp rdx,[pHealthBase]
+  jne setHealthDamage
+  mulsd xmm2,[fuckHealthMultiplier]
+setHealthDamage:
+  subsd xmm3,xmm2
+  cvtpd2ps xmm2,xmm3
+  jmp fuckHealthDamageReturn
+
+omnifyHealthHook:
+  jmp fuckHealthDamage
+  nop 3
+fuckHealthDamageReturn:
+
+keepPlayerDead:
+
+keepPlayerDeadCode:
+  cmp rdx,[pHealthBase]
+  je keepPlayerDeadReturn
+  movss xmm2,[rsp+30]
+  jmp keepPlayerDeadReturn
+
+omnifyKeepDeadHook:
+  jmp keepPlayerDead
+  nop
+keepPlayerDeadReturn:
+
+fuckSpeed:
+
+fuckSpeedCode:
+  cmp rsi,[pCoordsBase]
+  je addMovementOffset
+  mulss xmm15,[fuckSpeedMultiplier]
+  mulss xmm4,[fuckSpeedMultiplier]
+addMovementOffset:
+  addss xmm2,xmm15
+  jmp fuckSpeedReturn
+
+omnifySpeedHook:
+  jmp fuckSpeed
+fuckSpeedReturn:
+
+pCoordsBase:
+  dd 0
+
+pHealthBase:
+  dd 0
+
+fuckHealthMultiplier:
+  dq (double)69.0
+
+fuckSpeedMultiplier:
+  dd (float)1.9
+
+zero:
+  dd (float)0.0
+
+[DISABLE]
+
+omniCoordsHook:
+  db F3 0F 11 96 30 01 00 00
+
+omniHealthHook:
+  db F3 0F 10 40 24
+
+omnifyHealthHook:
+  db F2 0F 5C DA 66 0F 5A D3
+
+omnifyKeepDeadHook:
+  db F3 0F 10 54 24 30 E8 F9
+
+omnifySpeedHook:
+  db F3 41 0F 58 D7
+
+unregistersymbol(omniCoordsHook)
+unregistersymbol(omniHealthHook)
+
+unregistersymbol(omnifyHealthHook)
+unregistersymbol(omnifyKeepDeadHook)
+unregistersymbol(omnifySpeedHook)
+
+unregistersymbol(pCoordsBase)
+unregistersymbol(pHealthBase)
+
+dealloc(getCoords)
+dealloc(getHealth)
+
+dealloc(fuckHealthDamage)
+dealloc(keepPlayerDead)
+dealloc(fuckSpeed)
+
+dealloc(pCoordsBase)
+dealloc(pHealthBase)
+
+dealloc(fuckHealthMultiplier)
+dealloc(fuckSpeedMultiplier)
+</AssemblerScript>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Toggle Activation</Action>
+          <Keys>
+            <Key>17</Key>
+            <Key>79</Key>
+          </Keys>
+          <ID>0</ID>
+        </Hotkey>
+      </Hotkeys>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>256</ID>
+          <Description>"Player's X Coord"</Description>
+          <LastState Value="-15.31673241" RealAddress="292BC24B4C0"/>
+          <VariableType>Float</VariableType>
+          <Address>pCoordsBase</Address>
+          <Offsets>
+            <Offset>130</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>257</ID>
+          <Description>"Player's Y Coord"</Description>
+          <LastState Value="-84.60099792" RealAddress="292BC24B4C8"/>
+          <VariableType>Float</VariableType>
+          <Address>pCoordsBase</Address>
+          <Offsets>
+            <Offset>138</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>258</ID>
+          <Description>"Player's Z Coord"</Description>
+          <LastState Value="-32.2967453" RealAddress="292BC24B4C4"/>
+          <VariableType>Float</VariableType>
+          <Address>pCoordsBase</Address>
+          <Offsets>
+            <Offset>134</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>277</ID>
+          <Description>"Player's Health"</Description>
+          <LastState Value="960" RealAddress="292BCD7CA14"/>
+          <VariableType>Float</VariableType>
+          <Address>pHealthBase</Address>
+          <Offsets>
+            <Offset>24</Offset>
+          </Offsets>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols/>
+</CheatTable>

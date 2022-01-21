@@ -1,0 +1,3204 @@
+<!--
+    Omnified Dark Souls
+    Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
+    Copyright 2022 Bad Echo LLC
+
+    Bad Echo Technologies are licensed under a
+    Creative Commons Attribution-NonCommercial 4.0 International License.
+
+    See accompanying file LICENSE.md or a copy at:
+    http://creativecommons.org/licenses/by-nc/4.0/
+-->
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="31"> 
+  <CheatEntries>
+    <CheatEntry>
+      <ID>3</ID>
+      <Description>"OMNIFY"</Description>
+      <Options moHideChildren="1"/>
+      <LastState Activated="1"/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+{$lua}
+
+function FloorIt(number)
+	if number ~= nil then
+		return math.floor(number)
+	end
+
+	return nil
+end
+
+function ActivateLoggers()
+	if loggersTimer == nil then
+		loggersTimer = createTimer(getMainForm())
+	end
+
+	loggersTimer.Interval = 500
+	loggersTimer.OnTimer = function()
+
+
+		local playerHealth = readInteger("[player]+0x3E8")
+		local playerMaxHealth = readInteger("[player]+0x3EC")
+        local playerSouls = readInteger("[playerGameData]+0x94")
+		local enemyHealth = readFloat("lastEnemyHealthValue")
+
+		enemyHealth = FloorIt(enemyHealth)
+		local stats = assert(io.open("\\\\parsec\\c$\\streamData\\stats.txt","w"))
+		--local stats = assert(io.open("stats.txt","w"))
+
+		if playerHealth ~= nil and playerMaxHealth ~= nil then
+			stats:write("Health: ", playerHealth, "/", playerMaxHealth, "\n")
+		end
+
+        if playerSouls ~= nil then
+            stats:write("Souls: ", playerSouls, "\n")
+        end
+
+		if enemyHealth ~= nil then
+           stats:write( "Enemy: ", enemyHealth, "\n")
+		end
+
+		local lastDamageToPlayer = readFloat("lastDamageToPlayer")
+		local maxDamageToPlayer = readFloat("maxDamageToPlayer")
+		local lastDamageByPlayer = readFloat("lastDamageByPlayer")
+		local maxDamageByPlayer = readFloat("maxDamageByPlayer")
+		local totalDamageByPlayer = readFloat("totalDamageByPlayer")
+
+		lastDamageToPlayer = FloorIt(lastDamageToPlayer)
+		maxDamageToPlayer = FloorIt(maxDamageToPlayer)
+		lastDamageByPlayer = FloorIt(lastDamageByPlayer)
+		maxDamageByPlayer = FloorIt(maxDamageByPlayer)
+		totalDamageByPlayer = FloorIt(totalDamageByPlayer)
+
+		if lastDamageToPlayer ~= nil and maxDamageToPlayer ~= nil then
+			stats:write( "Enemy L/M Dmg: ", lastDamageToPlayer, "/", maxDamageToPlayer, "\n")
+		end
+
+		if lastDamageByPlayer ~= nil and maxDamageByPlayer ~= nil then
+			stats:write( "Player L/M Dmg: ", lastDamageByPlayer, "/", maxDamageByPlayer, "\n")
+		end
+
+		if totalDamageByPlayer ~= nil then
+			stats:write( "Player Total Dmg: ", totalDamageByPlayer, "\n")
+		end
+
+		local xCoords = readFloat("[playerCoords]")
+		local yCoords = readFloat("[playerCoords]+0x4")
+		local zCoords = readFloat("[playerCoords]+0x8")
+
+		if xCoords ~= nil and yCoords ~= nil and zCoords ~= nil then
+			stats:write( "X: ", xCoords, "\n")
+			stats:write( "Y: ", yCoords, "\n")
+			stats:write( "Z: ",  zCoords, "\n")
+		end
+
+
+		stats:close()
+
+		local log = assert(io.open("log.txt", "a"))
+
+		local ts = os.time()
+		local timestamp = os.date('%H:%M-', ts)
+
+		local logEntryEnemyRoll = "Enemy rolls a"
+		local logEntryPlayerData
+			= "damage to the player!\nPlayer now has"
+
+		local logApocalypse
+			= readInteger("logApocalypse")
+
+		local apocalypseResult
+			= readInteger("apocalypseResult")
+
+		local riskOfMurderResult
+			= readInteger("riskOfMurderResult")
+
+		local extraDamageX
+			= readFloat("extraDamageX")
+			
+		local lastVerticalDisplacement
+			= readFloat("lastVerticalDisplacement")
+
+		if logApocalypse == 1 and apocalypseResult ~= nil
+							  and lastDamageToPlayer ~= nil
+							  and playerHealth ~= nil
+							  and timestamp ~= nil
+							  and extraDamageX ~= nil
+							  then
+		
+
+			local apocalypseEnemyRoll =
+				string.format("%s%s %i: ", timestamp,
+										   logEntryEnemyRoll,
+										   apocalypseResult)
+
+			local apocalypseDamagedHealth =
+				string.format("%.0f %s %.0f health.\n", lastDamageToPlayer,
+														logEntryPlayerData,
+														playerHealth)
+
+			if apocalypseResult &gt;= 1 and apocalypseResult &lt;= 4 then
+				log:write(apocalypseEnemyRoll,
+						  extraDamageX,
+						  "x DAMAGE causing ",
+						  apocalypseDamagedHealth)
+			elseif apocalypseResult == 5 or apocalypseResult == 6 and lastVerticalDisplacement ~= nil then
+				log:write(apocalypseEnemyRoll,
+						  "SUDDEN TELEPORTITIS (",
+						  lastVerticalDisplacement,
+						  ") causing ",
+						  apocalypseDamagedHealth)
+			elseif apocalypseResult &gt;= 7 and apocalypseResult &lt;= 9 then
+				log:write(apocalypseEnemyRoll,
+						  "RISK OF MURDER!\n")
+
+				local riskOfMurderEnemyRoll =
+					string.format("%s%s %i: ", timestamp,
+											   logEntryEnemyRoll,
+											   riskOfMurderResult)
+
+				if riskOfMurderResult &lt;= 2 then
+					log:write(riskOfMurderEnemyRoll,
+							  "WHEW! Just normal damage causing ",
+							  apocalypseDamagedHealth)
+				else
+					log:write(riskOfMurderEnemyRoll,
+							  "HOLY SHIT! Player has been SIXTY NINED causing ",
+							  apocalypseDamagedHealth)
+                    playSound(findTableFile('Holyshit.wav'))
+				end
+			else				
+					log:write(apocalypseEnemyRoll,
+							  "WOW! Player achieves orgasm!\nPlayer is healed fully to ",
+							  playerHealth,
+							  " health.\n")
+                    playSound(findTableFile('Wow.wav'))
+			end
+
+			writeInteger("logApocalypse", 0)			
+
+
+		end
+
+		local logPlayerCrit = readInteger("logPlayerCrit")
+
+		if logPlayerCrit == 1 and lastDamageByPlayer ~= nil then		
+
+			local playerCritDamageResult = readInteger("playerCritDamageResult")
+
+			if playerCritDamageResult ~= nil then
+				log:write(timestamp,
+						  "Player critically hits (",
+						  playerCritDamageResult/10.0,
+						  "x) enemy for ",
+						  lastDamageByPlayer,
+						  " damage!\n")
+            playSound(findTableFile('chocobo.wav'))
+			end
+			
+			writeInteger("logPlayerCrit", 0)
+		end
+
+		local logKamehameha = readInteger("logKamehameha")
+		local gokuDamageX = readFloat("gokuDamageX")
+
+		if logKamehameha == 1 and lastDamageByPlayer ~= nil
+							  and timestamp ~= nil then
+			log:write(timestamp,
+					  "Player has unlocked his inner Goku and performs a devastating KAMEHAMEHAAAAA attack causing ",
+					  gokuDamageX,
+					  "x extra damage for a total of ",
+					  lastDamageByPlayer,
+					  " damage!\n")
+            playSound(findTableFile('kame.wav'))
+			writeInteger("logKamehameha", 0)
+		end
+
+		log:close()
+	end
+
+end
+
+function mark()
+	local currentX = readFloat("[playerCoords]")
+	local currentY = readFloat("[playerCoords]+0x4")
+	local currentZ = readFloat("[playerCoords]+0x8")
+	
+	if currentX ~= nil and currentY ~= nil and currentZ ~= nil then
+		writeFloat("teleportX",currentX)
+		writeFloat("teleportY",currentY)
+		writeFloat("teleportZ",currentZ)
+	end
+end
+
+function recall()
+	writeInteger("teleport",1)
+end
+
+createHotkey(mark, VK_NUMPAD4)
+createHotkey(recall, VK_NUMPAD5)
+
+{$asm}
+luacall(ActivateLoggers())
+
+// Global memory.
+alloc(zero,8)
+alloc(damageThreshold,8)
+alloc(oneAndHalfX,8)
+alloc(doubleX,8)
+
+zero:
+  dd 0
+
+damageThreshold:
+  dd (float)2.9
+  
+oneAndHalfX:
+  dd (float)1.5
+  
+doubleX:
+  dd (float)2.0
+
+// Random number generation function.
+// After r12-r14 pushes:
+// [rsp+20]: initialization state address, 0 if first time
+// [rsp+28]: upper bounds
+// [rsp+30]: lower bounds
+// return value is in EAX
+alloc(generateRandomNumber,$1000)
+
+registersymbol(generateRandomNumber)
+
+generateRandomNumber:
+  push r12
+  push r13
+  push r14
+  mov r12,[rsp+20]
+  mov r13,[rsp+28]
+  mov r14,[rsp+30]
+  push rbx
+  push rcx
+  push rdx
+  push r8
+  push r10
+  push r11
+  cmp [r12],0
+  jne getRandomNumber
+initializeSeed:
+  call kernel32.GetTickCount
+  push eax
+  call msvcrt.srand
+  pop eax
+  mov [r12],1
+getRandomNumber:
+  call msvcrt.rand
+  xor edx,edx
+  mov ebx,r14
+  mov ecx,r13
+  cmp ecx,ebx
+  cmovl ecx,ebx
+  inc ecx
+  sub ecx,ebx
+  idiv ecx
+  add edx,ebx
+  mov eax,edx
+  pop r11
+  pop r10
+  pop r8
+  pop rdx
+  pop rcx
+  pop rbx
+  pop r14
+  pop r13
+  pop r12
+  ret 18
+  
+// Player Apocalypse System Function
+// [rsp+48]: Player's coordinates (aligned at X-coord)
+// [rsp+50]: Max Player Health Amount
+// [rsp+58]: Player's Health Amount
+// [rsp+60]: Damage Amount
+// Updated damage is in EAX. 
+// Updated health before damage is in EBX.
+alloc(executePlayerApocalypse,$1000)
+alloc(playerApocalypseRandomState,8)
+alloc(logApocalypse,8)
+alloc(negativeOne,8)
+alloc(apocalypseResult,8)
+alloc(apocalypseResultUpper,8)
+alloc(apocalypseResultLower,8)
+alloc(teleported,8)
+alloc(teleportitisResult,8)
+alloc(lastVerticalDisplacement,8)
+alloc(teleportitisResultUpper,8)
+alloc(teleportitisResultLower,8)
+alloc(teleportitisDivisor,8)
+alloc(teleportitisShifter,8)
+alloc(negativeVerticalDisplacementEnabled,8)
+alloc(teleportitisDisplacementX,8)
+alloc(riskOfMurderResult,8)
+alloc(riskOfMurderResultUpper,8)
+alloc(riskOfMurderResultLower,8)
+alloc(extraDamageX,8)
+alloc(sixtyNineDamageX,8)
+alloc(maxDamageToPlayer,8)
+alloc(lastDamageToPlayer,8)
+alloc(playerGodMode,8)
+
+registersymbol(executePlayerApocalypse)
+registersymbol(logApocalypse)
+registersymbol(teleported)
+registersymbol(apocalypseResult)
+registersymbol(negativeVerticalDisplacementEnabled)
+registersymbol(teleportitisDisplacementX)
+registersymbol(riskOfMurderResult)
+registersymbol(extraDamageX)
+registersymbol(maxDamageToPlayer)
+registersymbol(lastDamageToPlayer)
+registersymbol(playerGodMode)
+registersymbol(lastVerticalDisplacement)
+
+executePlayerApocalypse:
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  sub rsp,10
+  movdqu [rsp],xmm2
+  sub rsp,10
+  movdqu [rsp],xmm3  
+  movss xmm3,[rsp+58]
+  movss xmm0,[rsp+60]
+  mov rax,damageThreshold
+  ucomiss xmm0,[rax]  
+  jbe exitPlayerApocalypse
+  cmp [playerGodMode],1
+  jne applyApocalypse
+  xorps xmm0,xmm0
+  jmp exitPlayerApocalypse  
+applyApocalypse:
+  push [apocalypseResultLower]
+  push [apocalypseResultUpper]
+  mov rax,playerApocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [apocalypseResult],eax
+  cmp eax,4
+  jle extraDamage
+  cmp eax,6
+  jle teleportitis
+  cmp eax,9
+  jle riskOfMurder
+  jmp suddenGasm
+extraDamage:
+  mulss xmm0,[extraDamageX]
+  jmp updateEnemyDamageStats
+teleportitis:
+  mov [teleported],1
+  mov rbx,[rsp+48]
+  push [teleportitisResultLower]
+  push [teleportitisResultUpper]
+  mov rax,playerApocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [teleportitisResult],eax
+  cvtsi2ss xmm1,[teleportitisResult]
+  divss xmm1,[teleportitisDivisor]
+  subss xmm1,[teleportitisShifter]
+  mulss xmm1,[teleportitisDisplacementX]
+  movss xmm2,[rbx]
+  addss xmm2,xmm1
+  movss [rbx],xmm2
+  push [teleportitisResultLower]
+  push [teleportitisResultUpper]
+  mov rax,playerApocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [teleportitisResult],eax
+  cvtsi2ss xmm1,[teleportitisResult]
+  divss xmm1,[teleportitisDivisor]
+  cmp [negativeVerticalDisplacementEnabled],1
+  jne skipNegativeVerticalDisplacement
+  subss xmm1,[teleportitisShifter]
+skipNegativeVerticalDisplacement:
+  mulss xmm1,[teleportitisDisplacementX]
+  movss [lastVerticalDisplacement],xmm1
+  movss xmm2,[rbx+4]
+  addss xmm2,xmm1
+  movss [rbx+4],xmm2
+  push [teleportitisResultLower]
+  push [teleportitisResultUpper]
+  mov rax,playerApocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [teleportitisResult],eax
+  cvtsi2ss xmm1,[teleportitisResult]
+  divss xmm1,[teleportitisDivisor]
+  subss xmm1,[teleportitisShifter]
+  mulss xmm1,[teleportitisDisplacementX]
+  movss xmm2,[rbx+8]
+  addss xmm2,xmm1
+  movss [rbx+8],xmm2
+  jmp updateEnemyDamageStats
+riskOfMurder:
+  push [riskOfMurderResultLower]
+  push [riskOfMurderResultUpper]
+  mov rax,playerApocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [riskOfMurderResult],eax
+  cmp eax,2
+  jle updateEnemyDamageStats
+  jmp sixtyNine
+sixtyNine:
+  mulss xmm0,[sixtyNineDamageX]
+  jmp updateEnemyDamageStats
+suddenGasm:  
+  movss xmm3,[rsp+50]
+  xorps xmm0,xmm0
+  jmp applyPlayerApocalypseExit
+updateEnemyDamageStats:
+  ucomiss xmm0,[maxDamageToPlayer]
+  jna skipMaxEnemyDamageUpdate
+  movss [maxDamageToPlayer],xmm0
+skipMaxEnemyDamageUpdate:
+  movss [lastDamageToPlayer],xmm0
+applyPlayerApocalypseExit:
+  mov [logApocalypse],1
+  jmp exitPlayerApocalypse
+exitPlayerApocalypse:
+  xor rax,rax
+  movd eax,xmm0
+  movd ebx,xmm3
+  movdqu xmm3,[rsp]
+  add rsp,10
+  movdqu xmm2,[rsp]
+  add rsp,10
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10  
+  ret 20
+  
+playerApocalypseRandomState:
+  dd 0
+  
+logApocalypse:
+  dd 0
+  
+apocalypseResult:
+  dd 0
+  
+apocalypseResultUpper:
+  dd #10
+  
+apocalypseResultLower:
+  dd 1
+  
+teleportitisResult:
+  dd 0
+  
+teleportitisResultUpper:
+  dd #10000
+  
+teleportitisResultLower:
+  dd 0
+  
+teleportitisDivisor:
+  dd (float)1000.0
+  
+teleportitisShifter:
+  dd (float)5.0
+
+negativeVerticalDisplacementEnabled:
+  dd 1
+  
+teleportitisDisplacementX:
+  dd (float)2.0
+  
+negativeOne:
+  dd (float)-1.0
+
+riskOfMurderResult:
+  dd 0
+  
+riskOfMurderResultUpper:
+  dd #5
+  
+riskOfMurderResultLower:
+  dd 1
+  
+extraDamageX:
+  dd (float)2.0
+  
+sixtyNineDamageX:
+  dd (float)69.0
+  
+maxDamageToPlayer:
+  dd 0
+  
+lastDamageToPlayer:
+  dd 0
+  
+playerGodMode:
+  dd 0  
+
+  
+// Enemy Apocalypse System Function
+// [rsp+28]: Target Health Value
+// [rsp+30]: Damage Amount
+alloc(executeEnemyApocalypse,$1000)
+alloc(maxDamageByPlayer,8)
+alloc(lastDamageByPlayer,8)
+alloc(totalDamageByPlayer,8)
+alloc(logKamehameha,8)
+alloc(gokuResult,8)
+alloc(gokuResultUpper,8)
+alloc(gokuResultLower,8)
+alloc(gokuDamageX,8)
+alloc(playerDamageX,8)
+alloc(lastEnemyHealthValue,8)
+alloc(playerCritChanceResultUpper,8)
+alloc(playerCritChanceResultLower,8)
+alloc(playerCritChanceResult,8)
+alloc(playerCritDamageResultUpper,8)
+alloc(playerCritDamageResultLower,8)
+alloc(playerCritDamageResult,8)
+alloc(playerCritDamageDivisor,8)
+alloc(logPlayerCrit,8)
+alloc(enemyApocalypseRandomState,8)
+
+registersymbol(executeEnemyApocalypse)
+registersymbol(maxDamageByPlayer)
+registersymbol(lastDamageByPlayer)
+registersymbol(totalDamageByPlayer)
+registersymbol(logKamehameha)
+registersymbol(gokuDamageX)
+registersymbol(gokuResultUpper)
+registersymbol(playerDamageX)
+registersymbol(lastEnemyHealthValue)
+registersymbol(playerCritDamageResult)
+registersymbol(logPlayerCrit)
+
+executeEnemyApocalypse:
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  movss xmm0,[rsp+30]
+  mov rax,zero
+  ucomiss xmm0,[rax]
+  jbe exitEnemyApocalypse
+  movss xmm1,[rsp+28]
+applyPlayerDamage:
+  mulss xmm0,[playerDamageX]
+  push [playerCritChanceResultLower]
+  push [playerCritChanceResultUpper]
+  mov rax,enemyApocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [playerCritChanceResult],eax
+  cmp eax,25
+  jg checkKamehameha
+  sub rsp,10
+  movdqu [rsp],xmm2
+  push [playerCritDamageResultLower]
+  push [playerCritDamageResultUpper]
+  mov rax,enemyApocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [playerCritDamageResult],eax
+  cvtsi2ss xmm2,[playerCritDamageResult]
+  divss xmm2,[playerCritDamageDivisor]
+  mulss xmm0,xmm2
+  mov [logPlayerCrit],1
+  movdqu xmm2,[rsp]
+  add rsp,10
+checkKamehameha:
+  push [gokuResultLower]
+  push [gokuResultUpper]
+  mov rax,enemyApocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [gokuResult],eax
+  cmp eax,#69
+  jne updatePlayerDamageStats
+  mov [logKamehameha],1
+  mulss xmm0,[gokuDamageX]  
+updatePlayerDamageStats:
+  subss xmm1,xmm0
+  movss [lastEnemyHealthValue],xmm1
+  ucomiss xmm0,[maxDamageByPlayer]
+  jna skipMaxPlayerDamageUpdate
+  movss [maxDamageByPlayer],xmm0
+skipMaxPlayerDamageUpdate:
+  movss [lastDamageByPlayer],xmm0
+  movss xmm1,xmm0
+  addss xmm1,[totalDamageByPlayer]
+  movss [totalDamageByPlayer],xmm1
+exitEnemyApocalypse:
+  xor rax,rax
+  movd eax,xmm0
+  movss xmm1,[rsp+28]
+  movd ebx,xmm1
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+  ret 10
+
+ 
+totalDamageByPlayer:
+  dd 0
+
+maxDamageByPlayer:
+  dd 0
+  
+lastDamageByPlayer:
+  dd 0  
+
+logKamehameha:
+  dd 0
+
+gokuResult:
+  dd 0
+  
+gokuResultUpper:
+  dd #777
+  
+gokuResultLower:
+  dd 0
+  
+gokuDamageX:
+  dd (float)10000.0
+  
+playerDamageX:
+  dd (float)1.0
+  
+lastEnemyHealthValue:
+  dd 0
+  
+playerCritChanceResult:
+  dd 0
+  
+playerCritChanceResultUpper:
+  dd #800
+  
+playerCritChanceResultLower:
+  dd 0
+  
+playerCritDamageResult:
+  dd 0
+  
+playerCritDamageResultUpper:
+  dd #50
+  
+playerCritDamageResultLower:
+  dd #20
+  
+playerCritDamageDivisor:
+  dd (float)10.0
+  
+logPlayerCrit:
+  dd 0
+  
+enemyApocalypseRandomState:
+  dd 0
+  
+// Predator System Functions
+alloc(enemySpeedX,8)
+alloc(aggroDistance,8)
+alloc(threatDistance,8)
+alloc(speedNormalizationDivisor,8)
+alloc(skipBoostY,8)
+
+registersymbol(enemySpeedX)
+registersymbol(skipBoostY)
+registersymbol(aggroDistance)
+
+enemySpeedX:
+  dd (float)1.75
+
+aggroDistance:
+  dd (float)10.0
+
+threatDistance:
+  dd (float)2.75
+
+speedNormalizationDivisor:
+  dd (float)3.0
+
+skipBoostY:
+  dd 1
+
+
+// Determines the distance between the player and another
+// creature.
+// [rsp+28]: Enemy Z Coordinate
+// [rsp+30]: Enemy Y Coordinate
+// [rsp+34]: Enemy X Coordinate
+// [rsp+38]: Player Z Coordinate
+// [rsp+40]: Player Y Coordinate
+// [rsp+44]: Player X Coordinate
+// Distance is in EAX
+alloc(findCoordinateDistance,$1000)
+
+registersymbol(findCoordinateDistance)
+
+findCoordinateDistance:
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  movups xmm0,[rsp+28]
+  movups xmm1,[rsp+38]
+  subps xmm0,xmm1
+  mulps xmm0,xmm0
+  movdqu xmm1,xmm0
+  shufps xmm1,xmm0,0xB
+  addss xmm0,xmm1
+  shufps xmm1,xmm1,0x1
+  addss xmm0,xmm1
+  sqrtss xmm0,xmm0
+  movd eax,xmm0
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+  ret 20
+
+// Calculates the scaled base speed.
+// [rsp+28]: Enemy Depth Scale
+// [rsp+30]: Enemy Height Scale
+// [rsp+34]: Enemy Width Scale
+// Scaled speed is in EAX.
+alloc(calculateScaledSpeed,$1000)
+alloc(averageScaleDivisor,8)
+alloc(averageScaleX,8)
+alloc(scaledShifter,8)
+alloc(scaledSpeedWhenNegative,8)
+
+registersymbol(calculateScaledSpeed)
+
+calculateScaledSpeed:
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  // Find average of the three scales.
+  movss xmm0,[rsp+28]
+  movss xmm1,[rsp+30]
+  addss xmm0,xmm1
+  movss xmm1,[rsp+34]
+  addss xmm0,xmm1
+  divss xmm0,[averageScaleDivisor]
+  // Plug the scale average into the scaled speed formula.
+  mulss xmm0,[averageScaleX]
+  addss xmm0,[scaledShifter]
+  mulss xmm0,[enemySpeedX]
+  divss xmm0,[speedNormalizationDivisor]
+  movss xmm1,xmm0
+  movd eax,xmm1
+  shr eax,1F
+  test eax,eax
+  je commitScaledSpeed
+  movss xmm0,[scaledSpeedWhenNegative]
+commitScaledSpeed:
+  movd eax,xmm0
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+  ret 10
+
+
+averageScaleDivisor:
+  dd (float)3.0
+
+averageScaleX:
+  dd (float)-1.67
+
+scaledShifter:
+  dd (float)4.675
+
+scaledSpeedWhenNegative:
+  dd (float)0.5
+
+// Determines if enemy is moving towards the player.
+// [rsp+38]: Change to Enemy's Z
+// [rsp+40]: Change to Enemy's Y
+// [rsp+44]: Change to Enemy's X
+// [rsp+48]: Enemy's Z Coordinate
+// [rsp+50]: Enemy's Y Coordinate
+// [rsp+54]: Enemy's X Coordinate
+// [rsp+58]: Player's Z Coordinate
+// [rsp+60]: Player's Y Coordinate
+// [rsp+64]: Player's X Coordinate
+// EAX is 1 if enemy is moving towards player, otherwise 0.
+alloc(isMovingTowards,$1000)
+
+registersymbol(isMovingTowards)
+
+isMovingTowards:
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  sub rsp,10
+  movdqu [rsp],xmm2
+  movss xmm0,[rsp+60]
+  subss xmm0,[rsp+50]
+  movss xmm1,[rsp+40]
+  movd eax,xmm0
+  shr eax,1F
+  test eax,eax
+  jne isYChangeNegative
+  movd eax,xmm1
+  shr eax,1F
+  test eax,eax
+  je confirmMovingTowards
+  xor rax,rax
+  jmp isXMovingTowards
+isYChangeNegative:
+  movd eax,xmm1
+  shr eax,1F
+  test eax,eax
+  jne confirmMovingTowards
+  xor rax,rax
+isXMovingTowards:
+  movss xmm0,[rsp+64]
+  subss xmm0,[rsp+54]
+  movss xmm1,[rsp+44]
+  movd eax,xmm0
+  shr eax,1F
+  test eax,eax
+  jne isXChangeNegative
+  movd eax,xmm1
+  shr eax,1F
+  test eax,eax
+  je confirmMovingTowards
+  xor rax,rax
+  jmp isZMovingTowards
+isXChangeNegative:
+  movd eax,xmm1
+  shr eax,1F
+  test eax,eax
+  jne confirmMovingTowards
+  xor rax,rax
+isZMovingTowards:
+  movss xmm0,[rsp+58]
+  subss xmm0,[rsp+48]
+  movss xmm1,[rsp+38]
+  movd eax,xmm0
+  shr eax,1F
+  test eax,eax
+  jne isZChangeNegative
+  movd eax,xmm1
+  shr eax,1F
+  test eax,eax
+  je confirmMovingTowards
+  xor rax,rax
+  jmp isMovingTowardsExit
+isZChangeNegative:
+  movd eax,xmm1
+  shr eax,1F
+  test eax,eax
+  jne confirmMovingTowards
+  xor rax,rax
+  jmp isMovingTowardsExit
+confirmMovingTowards:
+  mov eax,1
+isMovingTowardsExit:
+  movdqu xmm2,[rsp]
+  add rsp,10
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+  ret 30
+
+
+// Main Predator System Function
+// [rsp+98]: Change to Enemy's Z
+// [rsp+A0]: Change to Enemy's Y
+// [rsp+A4]: Change to Enemy's X
+// [rsp+A8]: Enemy Depth Scale
+// [rsp+B0]: Enemy Width Scale
+// [rsp+B4]: Enemy Height Scale
+// [rsp+B8]: Enemy's Z Coordinate
+// [rsp+C0]: Enemy's Y Coordinate
+// [rsp+C4]: Enemy's X Coordinate
+// [rsp+C8]: Player's Z Coordinate
+// [rsp+D0]: Player's Y Coordinate
+// [rsp+D4]: Player's X Coordinate
+// EAX has updated change to enemy X, EBX has updated
+// change to enemy Y, ECX has updated change to enemy Z
+alloc(executePredator,$1000)
+alloc(indifferenceDistanceX,8)
+alloc(defaultSpeedX,8)
+alloc(positiveLimit,8)
+alloc(negativeLimit,8)
+alloc(positiveLimitCorrection,8)
+alloc(negativeLimitCorrection,8)
+
+
+registersymbol(executePredator)
+
+executePredator:
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  sub rsp,10
+  movdqu [rsp],xmm2
+  sub rsp,10
+  movdqu [rsp],xmm3
+  sub rsp,10
+  movdqu [rsp],xmm4
+  sub rsp,10
+  movdqu [rsp],xmm5
+  sub rsp,10
+  movdqu [rsp],xmm6
+  sub rsp,10
+  movdqu [rsp],xmm7
+  sub rsp,10
+  movdqu [rsp],xmm8
+  xorps xmm8,xmm8
+  movss xmm8,[defaultSpeedX]
+  movups xmm0,[rsp+C8]
+  movups xmm1,[rsp+B8]
+  movups xmm2,[rsp+A8]
+  movups xmm3,[rsp+98]
+  sub rsp,10
+  movdqu [rsp],xmm2
+  call calculateScaledSpeed
+  movd xmm4,eax
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  call findCoordinateDistance
+  movd xmm5,eax
+  ucomiss xmm5,[aggroDistance]
+  jbe areaOfAggro
+  movss xmm7,[aggroDistance]
+  mulss xmm7,[indifferenceDistanceX]
+  ucomiss xmm5,xmm7
+  jb areaOfSketchiness
+areaOfIndifference:
+  movss xmm8,xmm4
+  jmp executePredatorExit
+areaOfSketchiness:
+  movss xmm8,[defaultSpeedX]
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  sub rsp,10
+  movdqu [rsp],xmm3
+  call isMovingTowards
+  cmp eax,1
+  jne executePredatorExit
+  movss xmm8,xmm4
+  mulss xmm8,[oneAndHalfX]
+  jmp executePredatorExit
+areaOfAggro:
+  ucomiss xmm5,[threatDistance]
+  jbe executePredatorExit
+  movss xmm8,[defaultSpeedX]
+  //mulss xmm8,[doubleX]
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  sub rsp,10
+  movdqu [rsp],xmm3
+  call isMovingTowards
+  cmp eax,0
+  je executePredatorExit
+  movss xmm8,xmm4
+  mulss xmm8,[oneAndHalfX]
+  mulss xmm8,[oneAndHalfX]
+executePredatorExit:
+  mulss xmm3,xmm8
+  movd ecx,xmm3
+  shufps xmm3,xmm3,0x87
+  cmp [skipBoostY],1
+  je commitYChange
+  mulss xmm3,xmm8
+commitYChange:
+  movd ebx,xmm3
+  shufps xmm3,xmm3,0x87
+  mulss xmm3,xmm8
+  movd eax,xmm3
+  push rax
+  shr eax,1F
+  test eax,eax
+  pop rax
+  jne isXLessThanNegativeLimit
+  movd xmm2,eax
+  ucomiss xmm2,[positiveLimit]
+  jbe isZPastLimit
+  mov eax,[positiveLimitCorrection]
+  mov ebx,[zero]
+  jmp isZPastLimit
+isXLessThanNegativeLimit:
+  movd xmm2,eax
+  ucomiss xmm2,[negativeLimit]
+  ja isZPastLimit
+  mov eax,[negativeLimitCorrection]
+  mov ebx,[zero]
+isZPastLimit:
+  push rcx
+  shr ecx,1F
+  test ecx,ecx
+  pop rcx
+  jne isZLessThanNegativeLimit
+  movd xmm2,ecx
+  ucomiss xmm2,[positiveLimit]
+  jbe executePredatorCleanup
+  mov ecx,[positiveLimitCorrection]
+  mov ebx,[zero]
+  jmp executePredatorCleanup
+isZLessThanNegativeLimit:
+  movd xmm2,ecx
+  ucomiss xmm2,[negativeLimit]
+  ja executePredatorCleanup
+  mov ecx,[zero]
+  mov ebx,[zero]
+executePredatorCleanup:
+  movdqu xmm8,[rsp]
+  add rsp,10
+  movdqu xmm7,[rsp]
+  add rsp,10
+  movdqu xmm6,[rsp]
+  add rsp,10
+  movdqu xmm5,[rsp]
+  add rsp,10
+  movdqu xmm4,[rsp]
+  add rsp,10
+  movdqu xmm3,[rsp]
+  add rsp,10
+  movdqu xmm2,[rsp]
+  add rsp,10
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+  ret 40
+
+defaultSpeedX:
+  dd (float)1.0
+
+indifferenceDistanceX:
+  dd (float)2.0
+
+positiveLimit:
+  dd (float)1.0
+
+negativeLimit:
+  dd (float)-1.0
+
+positiveLimitCorrection:
+  dd (float)0.001
+
+negativeLimitCorrection:
+  dd (float)-0.001
+
+
+// Creates a pointer to the player's health.
+define(omniPlayerHook,"DarkSoulsRemastered.exe"+1A33CD)
+
+assert(omniPlayerHook, 83 BF E8 03 00 00 00)
+alloc(getPlayer,$1000, omniPlayerHook)
+alloc(player,8)
+alloc(playerGameData,8)
+
+registersymbol(omniPlayerHook)
+registersymbol(playerGameData)
+registersymbol(player)
+
+getPlayer:
+  mov [player],rdi
+  push rax
+  mov rax,[rdi+578]
+  mov [playerGameData],rax
+  pop rax
+getPlayerOriginalCode:
+  cmp dword ptr [rdi+000003E8],00
+  jmp getPlayerReturn
+
+
+omniPlayerHook:
+  jmp getPlayer
+  nop 2
+getPlayerReturn:
+
+// Gets the player's coordinates.
+define(omniPlayerCoordsHook,"DarkSoulsRemastered.exe"+2B999E)
+
+assert(omniPlayerCoordsHook, F3 0F 10 00 F3 0F 11 44 24 20)
+alloc(getPlayerCoords,$1000, omniPlayerCoordsHook)
+alloc(playerCoords,8)
+alloc(teleport,4)
+alloc(immuneFromTeleport,4)
+alloc(teleportX,4)
+alloc(teleportY,4)
+alloc(teleportZ,4)
+
+registersymbol(playerCoords)
+registersymbol(teleport)
+registersymbol(immuneFromTeleport)
+registersymbol(teleportX)
+registersymbol(teleportY)
+registersymbol(teleportZ)
+registersymbol(omniPlayerCoordsHook)
+
+getPlayerCoords:
+  pushf
+  push rax
+  mov rax,player
+  cmp [rax],0
+  pop rax
+  je getPlayerCoordsOriginalCode
+  push rax
+  push rbx
+  mov rax,[rsp+52]
+  mov rbx,[rax+10]
+  mov rax,player
+  cmp rbx,[rax]
+  pop rbx
+  pop rax
+  jne getPlayerCoordsOriginalCode
+  mov [playerCoords],rax
+  cmp [teleport],1
+  jne getPlayerCoordsOriginalCode
+  sub rsp,10
+  movdqu [rsp],xmm0
+  movss xmm0,[teleportX]
+  movss [rax],xmm0
+  movss xmm0,[teleportY]
+  movss [rax+4],xmm0
+  movss xmm0,[teleportZ]
+  movss [rax+8],xmm0
+  mov [teleport],0
+  mov [immuneFromTeleport],1
+  movdqu xmm0,[rsp]
+  add rsp,10  
+getPlayerCoordsOriginalCode:
+  popf
+  movss xmm0,[rax]
+  movss [rsp+20],xmm0
+  jmp getPlayerCoordsReturn
+
+
+omniPlayerCoordsHook:
+  jmp getPlayerCoords
+  nop 5
+getPlayerCoordsReturn:
+
+teleport:
+  dd 0
+  
+teleportX:
+  dd (float)0.0
+  
+teleportY:
+  dd (float)0.0
+  
+teleportZ:
+  dd (float)0.0
+
+// Initiates the Apocalypse system.
+define(omnifyApocalypseHook,"DarkSoulsRemastered.exe"+25E619)
+
+assert(omnifyApocalypseHook, 03 D7 E9 28 22 0C 00)
+alloc(initiateApocalypse,$1000, omnifyApocalypseHook)
+
+registersymbol(omnifyApocalypseHook)
+
+initiateApocalypse:
+  pushf
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  sub rsp,10
+  movdqu [rsp],xmm2
+  push rax
+  push rbx
+  neg edi
+  cvtsi2ss xmm0,edi
+  cvtsi2ss xmm1,edx  
+  push rax
+  push rcx
+  mov rax,player
+  mov rcx,[rax]
+  mov eax,[rcx+3EC]
+  cvtsi2ss xmm2,eax
+  cmp rcx,rbx
+  pop rcx
+  pop rax  
+  jne initiateEnemyApocalypse
+initiatePlayerApocalypse:
+  mov rax,playerCoords
+  mov rbx,[rax]
+  sub rsp,8
+  movd [rsp],xmm0
+  sub rsp,8
+  movd [rsp],xmm1
+  sub rsp,8
+  movd [rsp],xmm2
+  push rbx
+  call executePlayerApocalypse
+  jmp initiateApocalypseExit
+initiateEnemyApocalypse:
+  sub rsp,8
+  movd [rsp],xmm0
+  sub rsp,8
+  movd [rsp],xmm1
+  call executeEnemyApocalypse
+initiateApocalypseExit:
+  movd xmm0,eax
+  cvtss2si edi,xmm0
+  neg edi
+  movd xmm0,ebx
+  cvtss2si edx,xmm0
+  pop rbx
+  pop rax
+  movdqu xmm2,[rsp]
+  add rsp,10
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+initiateApocalypseOriginalCode:  
+  popf
+  add edx,edi
+  jmp DarkSoulsRemastered.exe+320848
+
+
+omnifyApocalypseHook:
+  jmp initiateApocalypse
+  nop 2
+initiateApocalypseReturn:
+
+// Changes the speed of the player character's movement.
+define(omnifyPlayerSpeedHook,"DarkSoulsRemastered.exe"+2BAE08)
+
+assert(omnifyPlayerSpeedHook, 0F 5C DC 48 C7 44 24 30 00 00 00 00)
+alloc(changePlayerSpeed,$1000, omnifyPlayerSpeedHook)
+
+registersymbol(omnifyPlayerSpeedHook)
+
+changePlayerSpeed:
+ 
+changePlayerSpeedOriginalCode: 
+  subps xmm3,xmm4
+  mov qword ptr [rsp+30],00000000
+  jmp changePlayerSpeedReturn
+
+
+omnifyPlayerSpeedHook:
+  jmp changePlayerSpeed
+  nop 7
+changePlayerSpeedReturn:
+
+// Initiates the Predator system.
+define(omnifyPredatorHook,"DarkSoulsRemastered.exe"+9C2923)
+
+assert(omnifyPredatorHook, 0F 29 81 20 01 00 00)
+alloc(initiatePredator,$1000, omnifyPredatorHook)
+alloc(playerSpeedX,8)
+alloc(identityValue,1)
+
+registersymbol(omnifyPredatorHook)
+registersymbol(playerSpeedX)
+
+initiatePredator:
+  pushf
+  push rax
+  mov rax,playerCoords
+  cmp [rax],0
+  pop rax
+  je initiatePredatorOriginalCode
+  push rax
+  push rbx
+  mov rax,playerCoords
+  mov rbx,[rax]
+  cmp [rbx],0
+  pop rbx
+  pop rax
+  je initiatePredatorOriginalCode
+  cmp [rcx+120],0
+  je initiatePredatorOriginalCode
+  cmp [rcx+124],0
+  je initiatePredatorOriginalCode
+  cmp [rcx+128],0
+  je initiatePredatorOriginalCode
+  push rax
+  push rbx
+  mov rax,playerCoords
+  mov rbx,[rax]
+  sub rbx,0x120  
+  cmp rbx,rcx
+  pop rbx
+  pop rax
+  jne applyPredator
+  cmp [teleported],1
+  jne applyPlayerSpeed
+  mov [teleported],0
+  movaps xmm0,[rcx+120]
+  jmp initiatePredatorOriginalCode
+applyPredator:
+  sub rsp,10
+  movdqu [rsp],xmm1
+  sub rsp,10
+  movdqu [rsp],xmm2
+  push rax
+  push rbx
+  push rcx
+  push rdx
+  mov rdx,rcx
+  movaps xmm1,[rcx+120]
+  subps xmm0,xmm1
+  movss xmm1,[identityValue]
+  shufps xmm1,xmm1,0
+  mov rax,playerCoords
+  mov rbx,[rax]
+  push [rbx]
+  push [rbx+8]
+  push [rcx+120]
+  push [rcx+128]
+  sub rsp,10
+  movdqu [rsp],xmm1
+  sub rsp,8
+  movhlps xmm2,xmm0
+  movq [rsp],xmm0
+  sub rsp,8
+  movq [rsp],xmm2
+  call executePredator
+  sub rsp,10
+  xorps xmm2,xmm2
+  movups [rsp],xmm2
+  mov [rsp],eax
+  mov [rsp+4],ebx
+  mov [rsp+8],ecx
+  movups xmm1,[rsp]
+  movaps xmm0,[rdx+120]
+  addps xmm0,xmm1
+  add rsp,10
+  pop rdx
+  pop rcx
+  pop rbx
+  pop rax
+  movdqu xmm2,[rsp]
+  add rsp,10
+  movdqu xmm1,[rsp]
+  add rsp,10
+  jmp initiatePredatorOriginalCode
+applyPlayerSpeed:
+  sub rsp,10
+  movdqu [rsp],xmm1  
+  movaps xmm1,[rcx+120]  
+  subps xmm0,xmm1   
+  movss xmm1,[playerSpeedX]  
+  sub rsp,10
+  movups [rsp],xmm0
+  movss xmm0,[rsp]
+  mulss xmm0,xmm1
+  movss [rsp],xmm0
+  movss xmm0,[rsp+8]
+  mulss xmm0,xmm1
+  movss [rsp+8],xmm0
+  movups xmm0,[rsp]
+  add rsp,10  
+  movaps xmm1,[rcx+120]
+  addps xmm0,xmm1
+  movdqu xmm1,[rsp]
+  add rsp,10
+initiatePredatorOriginalCode:
+  popf
+  movaps [rcx+00000120],xmm0
+  jmp initiatePredatorReturn
+
+
+omnifyPredatorHook:
+  jmp initiatePredator
+  nop 2
+initiatePredatorReturn:
+
+identityValue:
+  dd (float)1.0
+
+playerSpeedX:
+  dd (float)1.0  
+  
+alloc(morphScaleData,4800)
+alloc(morphScaleIndex,8)
+  
+registersymbol(morphScaleData)
+registersymbol(morphScaleIndex)
+
+morphScaleIndex:
+  dd 0
+
+
+// Performs morphing on creatures' scales.
+define(omnifyScaleMorphHook,"DarkSoulsRemastered.exe"+3797C5)
+
+assert(omnifyScaleMorphHook, 83 B9 E8 03 00 00 00)
+alloc(morphScale,$1000, omnifyScaleMorphHook)
+alloc(abominifyRandomState,8)
+alloc(abominifyMorphStepsResultUpper,8)
+alloc(abominifyMorphStepsResultLower,8)
+alloc(abominifyHeightResultUpper,8)
+alloc(abominifyHeightResultLower,8)
+alloc(abominifyWidthResultUpper,8)
+alloc(abominifyWidthResultLower,8)
+alloc(abominifyDepthResultUpper,8)
+alloc(abominifyDepthResultLower,8)
+alloc(abominifyMorphModeResultUpper,8)
+alloc(abominifyMorphModeResultLower,8)
+alloc(unnaturalBigThreshold,8)
+alloc(unnaturalBigX,8)
+alloc(unnaturalSmallX,8)
+alloc(abominifyDivisor,8)
+alloc(defaultScaleX,8)
+alloc(speedMorph,8)
+alloc(speedMorphDivisor,8)
+alloc(stopMorphs,8)
+
+registersymbol(omnifyScaleMorphHook)
+registersymbol(abominifyMorphStepsResultUpper)
+registersymbol(abominifyMorphStepsResultLower)
+registersymbol(abominifyHeightResultUpper)
+registersymbol(abominifyHeightResultLower)
+registersymbol(abominifyWidthResultUpper)
+registersymbol(abominifyWidthResultLower)
+registersymbol(abominifyDepthResultUpper)
+registersymbol(abominifyDepthResultLower)
+registersymbol(unnaturalBigThreshold)
+registersymbol(unnaturalBigX)
+registersymbol(speedMorphDivisor)
+registersymbol(unnaturalSmallX)
+
+registersymbol(speedMorph)
+registersymbol(stopMorphs)
+
+morphScale:
+  pushf
+  push rax
+  mov rax,player
+  cmp [rax],0
+  pop rax
+  je morphScaleOriginalCode
+  push rax
+  mov rax,player
+  cmp rcx,[rax]
+  pop rax
+  je morphScaleOriginalCode  
+  push rbx
+  push rcx  
+  push rdx
+  mov rbx,[rcx+70]
+  cmp [rbx+100],0
+  jne applyMorphScaleFromData  
+checkMorphDataIndexLimit:
+  cmp [morphScaleIndex],#99
+  jne incrementMorphDataIndex
+  mov [morphScaleIndex],0
+  push rax
+  mov rax,0
+nextMorphDataScrub:
+  add rax,#48
+  cmp rax,#4800
+  je exitMorphDataScrub
+  mov rdx,morphScaleData
+  add rdx,rax
+  mov [rdx],0
+  mov [rdx+4],0
+  mov [rdx+8],0
+  mov [rdx+C],0
+  mov [rdx+10],0
+  mov [rdx+14],0
+  mov [rdx+18],0
+  mov [rdx+1C],0
+  mov [rdx+20],0
+  mov [rdx+24],0
+  mov [rdx+28],0
+  mov [rdx+2C],0
+  jmp nextMorphDataScrub
+exitMorphDataScrub:
+  pop rax
+incrementMorphDataIndex:
+  inc [morphScaleIndex]
+  mov rcx,[morphScaleIndex]
+  mov [rbx+100],rcx
+applyMorphScaleFromData:
+  mov rdx,morphScaleData
+  mov rcx,[rbx+100]   
+  push rax  
+  push rdx
+  mov rax,rcx
+  mov rcx,#48
+  mul rcx
+  mov rcx,rax  
+  pop rdx
+  pop rax
+  add rdx,rcx  
+  cmp [rdx],0
+  je generateNewMorphTargets
+  cmp [stopMorphs],1
+  je morphScaleExit
+  dec [rdx]
+  jmp stepMorph
+generateNewMorphTargets:
+  sub rsp,10
+  movdqu [rsp],xmm0
+  movss xmm0,[rdx+4]
+  ucomiss xmm0,[zero]
+  ja skipInitializeDefaultScales
+  movss xmm0,[defaultScaleX]
+  movss [rdx+4],xmm0
+  movss [rdx+8],xmm0
+  movss [rdx+C],xmm0
+skipInitializeDefaultScales:
+  movss [rdx+14],xmm0
+  movss xmm0,[rdx+8]
+  movss [rdx+18],xmm0
+  movss xmm0,[rdx+C]
+  movss [rdx+1C],xmm0
+  push rax
+  cmp [rdx+10],1
+  je generateNewMorphTargetsExit
+  movss xmm0,[rdx+20]
+  mov rax,zero
+  ucomiss xmm0,[rax]
+  ja skipGenerateMorphSteps
+  push [abominifyMorphStepsResultLower]
+  push [abominifyMorphStepsResultUpper]
+  mov rax,abominifyRandomState
+  push rax
+  call generateRandomNumber
+  cvtsi2ss xmm0,eax
+  movss [rdx+20],xmm0
+skipGenerateMorphSteps:
+  movss xmm0,[rdx+20]
+  cmp [speedMorph],1
+  jne generateMonsterMorphTargets
+  divss xmm0,[speedMorphDivisor]  
+generateMonsterMorphTargets:  
+  cvtss2si eax,xmm0
+  mov [rdx],eax
+  push [abominifyWidthResultLower]
+  push [abominifyWidthResultUpper]
+  mov rax,abominifyRandomState
+  push rax
+  call generateRandomNumber
+  cvtsi2ss xmm0,eax
+  divss xmm0,[abominifyDivisor]
+  movss [rdx+24],xmm0
+  cmp [rdx+10],0
+  jne skipGenerateMorphMode
+  push [abominifyMorphModeResultLower]
+  push [abominifyMorphModeResultUpper]
+  mov rax,abominifyRandomState
+  push rax
+  call generateRandomNumber
+  jmp applyMorphMode
+skipGenerateMorphMode:
+  mov eax,[rdx+10]
+applyMorphMode:
+  cmp eax,1
+  je staticUnnaturalMorphing
+  cmp eax,5
+  jle uniformMorphing
+  jmp nonUniformMorphing
+staticUnnaturalMorphing:
+  mov [rdx+10],1
+  ucomiss xmm0,[unnaturalBigThreshold]
+  ja unnaturalBiggify
+  mulss xmm0,[unnaturalSmallX]
+  jmp unnaturalizeIt
+unnaturalBiggify:
+  mulss xmm0,[unnaturalBigX]
+unnaturalizeIt:
+  movss [rdx+4],xmm0
+  movss [rdx+8],xmm0
+  movss [rdx+C],xmm0
+  jmp generateNewMorphTargetsExit
+uniformMorphing:
+  mov [rdx+10],5
+  movss [rdx+28],xmm0
+  movss [rdx+2C],xmm0
+  jmp generateNewMorphTargetsExit
+nonUniformMorphing:
+  mov [rdx+10],8
+  push [abominifyHeightResultLower]
+  push [abominifyHeightResultUpper]
+  mov rax,abominifyRandomState
+  push rax
+  call generateRandomNumber
+  cvtsi2ss xmm0,eax
+  divss xmm0,[abominifyDivisor]
+  movss [rdx+28],xmm0
+  push [abominifyDepthResultLower]
+  push [abominifyDepthResultUpper]
+  mov rax,abominifyRandomState
+  push rax
+  call generateRandomNumber
+  cvtsi2ss xmm0,eax
+  divss xmm0,[abominifyDivisor]
+  movss [rdx+2C],xmm0
+generateNewMorphTargetsExit:
+  pop rax
+  movdqu xmm0,[rsp]
+  add rsp,10
+  jmp morphScaleExit
+stepMorph:
+  cmp [rdx+10],1
+  je morphScaleExit
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  push rax
+  push rsi
+  movss xmm0,[rdx+20]
+  cmp [speedMorph],1
+  jne generateMorphsForStep
+  divss xmm0,[speedMorphDivisor]  
+generateMorphsForStep:
+  cvtss2si eax,xmm0
+  mov esi,[rdx]
+  sub eax,esi
+  cvtsi2ss xmm1,eax
+  divss xmm1,xmm0 //[rdx+20]
+  // Width Step
+  movss xmm0,[rdx+24]
+  subss xmm0,[rdx+14]
+  mulss xmm0,xmm1
+  addss xmm0,[rdx+14]
+  movss [rdx+4],xmm0
+  // Height Step
+  movss xmm0,[rdx+28]
+  subss xmm0,[rdx+18]
+  mulss xmm0,xmm1
+  addss xmm0,[rdx+18]
+  movss [rdx+8],xmm0
+  // Depth Step
+  movss xmm0,[rdx+2C]
+  subss xmm0,[rdx+1C]
+  mulss xmm0,xmm1
+  addss xmm0,[rdx+1C]
+  movss [rdx+C],xmm0
+  pop rsi
+  pop rax
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+morphScaleExit:  
+  pop rbx  
+  pop rcx
+  pop rdx  
+morphScaleOriginalCode:
+  popf
+  cmp dword ptr [rcx+000003E8],00
+  jmp morphScaleReturn
+
+
+omnifyScaleMorphHook:
+  jmp morphScale
+  nop 2
+morphScaleReturn:
+
+abominifyRandomState:
+  dd 0
+
+abominifyMorphStepsResultUpper:
+  dd #400
+
+abominifyMorphStepsResultLower:
+  dd #25
+
+abominifyHeightResultUpper:
+  dd #200
+
+abominifyHeightResultLower:
+  dd #25
+
+abominifyWidthResultUpper:
+  dd #300
+
+abominifyWidthResultLower:
+  dd #25
+
+abominifyDepthResultUpper:
+  dd #250
+
+abominifyDepthResultLower:
+  dd #25
+
+abominifyMorphModeResultUpper:
+  dd #13
+
+abominifyMorphModeResultLower:
+  dd 1
+
+abominifyDivisor:
+  dd (float)100.0
+
+unnaturalBigThreshold:
+  dd (float)1.0
+
+unnaturalSmallX:
+  dd (float)0.5
+
+unnaturalBigX:
+  dd (float)0.25
+
+stopMorphs:
+  dd 0
+  
+speedMorph:
+  dd 0
+  
+speedMorphDivisor:
+  dd (float)4.0
+
+defaultScaleX:
+  dd (float)1.0
+
+// Applies the Abomnificiation system.
+define(omnifyAbominationHook,"DarkSoulsRemastered.exe"+4352A1)
+
+assert(omnifyAbominationHook, 0F 28 00 66 0F 7F 02)
+alloc(abomnifyCreature,$1000, omnifyAbominationHook)
+
+registersymbol(omnifyAbominationHook)
+
+abomnifyCreature:
+  pushf
+  push rax
+  mov rax,player
+  cmp [rax],0
+  pop rax
+  je abomnifyCreatureOriginalCode
+  push rax
+  push rbx
+  mov rbx,[rsp+82]
+  cmp rbx,0x20000
+  pop rbx  
+  pop rax
+  jl abomnifyCreatureOriginalCode
+  push rax
+  push rbx
+  mov rbx,[rsp+82]
+  mov rax,[rbx+10]
+  mov rbx,player
+  cmp rax,[rbx]
+  pop rbx
+  pop rax
+  je abomnifyCreatureOriginalCode  
+  push rax
+  push rbx
+  mov rbx,[rsp+82]
+  mov rax,[rbx]
+  cmp ax,0x8588
+  pop rbx
+  pop rax
+  je continueAbomnification
+  push rax
+  push rbx
+  mov rbx,[rsp+82]
+  mov rax,[rbx]
+  cmp ax,0x8938
+  pop rbx
+  pop rax
+  jne abomnifyCreatureOriginalCode
+continueAbomnification:
+  push rbx
+  push rcx
+  push rdx  
+  mov rdx,[rsp+8A]
+  mov rbx,[rdx+10]
+  mov rdx,[rbx+70]
+  mov rcx,[rdx+100]
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  cmp rcx,0
+  je abomnifyCreatureExit
+  push rax
+  mov rax,rcx
+  mov rcx,#48
+  mul rcx
+  mov rcx,rax
+  pop rax
+  mov rdx,morphScaleData
+  add rdx,rcx  
+  mov rbx,[rdx+4]
+  cmp rbx,0
+  je abomnifyCreatureExit
+  movss xmm0,[rdx+4]
+  movaps xmm1,[rax]
+  shufps xmm0,xmm0,0
+  mulps xmm1,xmm0
+  movaps [rax],xmm1
+  movaps xmm1,[rax+10]
+  movss xmm0,[rdx+8]
+  shufps xmm0,xmm0,0
+  mulps xmm1,xmm0
+  movaps [rax+10],xmm1
+  movaps xmm1,[rax+20]
+  movss xmm0,[rdx+C]
+  shufps xmm0,xmm0,0
+  mulps xmm1,xmm0
+  movaps [rax+20],xmm1
+abomnifyCreatureExit:
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+  pop rdx
+  pop rcx
+  pop rbx
+abomnifyCreatureOriginalCode:
+  popf
+  movaps xmm0,[rax]
+  movdqa [rdx],xmm0
+  jmp abomnifyCreatureReturn
+
+
+omnifyAbominationHook:
+  jmp abomnifyCreature
+  nop 2
+abomnifyCreatureReturn:
+
+// Grants the player immunity from DEATH while teleporting.
+define(omnifyTeleportImmortalityHook,"DarkSoulsRemastered.exe"+320705)
+
+assert(omnifyTeleportImmortalityHook, 89 83 E8 03 00 00)
+alloc(ensureTeleportImmortality,$1000, omnifyTeleportImmortalityHook)
+
+registersymbol(omnifyTeleportImmortalityHook)
+
+ensureTeleportImmortality:
+  cmp [immuneFromTeleport],1
+  jne ensureTeleportImmortalityOriginalCode
+  mov [immuneFromTeleport],0
+  mov eax,[rbx+3E8]
+ensureTeleportImmortalityOriginalCode:
+  mov [rbx+000003E8],eax
+  jmp ensureTeleportImmortalityReturn
+
+
+omnifyTeleportImmortalityHook:
+  jmp ensureTeleportImmortality
+  nop 
+ensureTeleportImmortalityReturn:
+
+
+[DISABLE]
+
+// Cleanup of global memory
+dealloc(zero)
+dealloc(damageThreshold)
+dealloc(oneAndHalfX)
+dealloc(doubleX)
+
+// Cleanup of generateRandomNumber
+unregistersymbol(generateRandomNumber)
+
+dealloc(generateRandomNumber)
+
+// Cleanup of omnifyScaleMorphHook
+omnifyScaleMorphHook:
+  db 83 B9 E8 03 00 00 00
+
+unregistersymbol(omnifyScaleMorphHook)
+unregistersymbol(abominifyMorphStepsResultUpper)
+unregistersymbol(abominifyMorphStepsResultLower)
+unregistersymbol(abominifyHeightResultUpper)
+unregistersymbol(abominifyHeightResultLower)
+unregistersymbol(abominifyWidthResultUpper)
+unregistersymbol(abominifyWidthResultLower)
+unregistersymbol(abominifyDepthResultUpper)
+unregistersymbol(abominifyDepthResultLower)
+unregistersymbol(unnaturalBigThreshold)
+unregistersymbol(unnaturalBigX)
+unregistersymbol(unnaturalSmallX)
+unregistersymbol(speedMorphDivisor)
+unregistersymbol(speedMorph)
+unregistersymbol(stopMorphs)
+
+dealloc(stopMorphs)
+dealloc(speedMorph)
+dealloc(speedMorphDivisor)
+dealloc(defaultScaleX)
+dealloc(abominifyRandomState)
+dealloc(abominifyMorphStepsResultUpper)
+dealloc(abominifyMorphStepsResultLower)
+dealloc(abominifyHeightResultUpper)
+dealloc(abominifyHeightResultLower)
+dealloc(abominifyWidthResultUpper)
+dealloc(abominifyWidthResultLower)
+dealloc(abominifyDepthResultUpper)
+dealloc(abominifyDepthResultLower)
+dealloc(abominifyMorphModeResultUpper)
+dealloc(abominifyMorphModeResultLower)
+dealloc(unnaturalBigThreshold)
+dealloc(unnaturalBigX)
+dealloc(unnaturalSmallX)
+dealloc(abominifyDivisor)
+dealloc(morphScale)
+
+
+unregistersymbol(morphScaleData)
+unregistersymbol(morphScaleIndex)
+
+dealloc(morphScaleIndex)
+dealloc(morphScaleData)
+
+// Cleanup of omnifyAbominationHook
+omnifyAbominationHook:
+  db 0F 28 00 66 0F 7F 02
+
+unregistersymbol(omnifyAbominationHook)
+
+dealloc(abomnifyCreature)
+
+
+// Cleanup of Player Apocalypse System Function
+unregistersymbol(logApocalypse)
+unregistersymbol(teleported)
+unregistersymbol(apocalypseResult)
+unregistersymbol(riskOfMurderResult)
+unregistersymbol(negativeVerticalDisplacementEnabled)
+unregistersymbol(teleportitisDisplacementX)
+unregistersymbol(extraDamageX)
+unregistersymbol(maxDamageToPlayer)
+unregistersymbol(playerGodMode)
+unregistersymbol(lastDamageToPlayer)
+unregistersymbol(lastVerticalDisplacement)
+unregistersymbol(executePlayerApocalypse)
+
+dealloc(playerApocalypseRandomState)
+dealloc(logApocalypse)
+dealloc(teleported)
+dealloc(apocalypseResult)
+dealloc(apocalypseResultUpper)
+dealloc(apocalypseResultLower)
+dealloc(negativeOne)
+dealloc(teleportitisResult)
+dealloc(teleportitisResultUpper)
+dealloc(teleportitisResultLower)
+dealloc(teleportitisDivisor)
+dealloc(lastVerticalDisplacement)
+dealloc(teleportitisShifter)
+dealloc(negativeVerticalDisplacementEnabled)
+dealloc(teleportitisDisplacementX)
+dealloc(riskOfMurderResult)
+dealloc(riskOfMurderResultUpper)
+dealloc(riskOfMurderResultLower)
+dealloc(extraDamageX)
+dealloc(sixtyNineDamageX)
+dealloc(maxDamageToPlayer)
+dealloc(lastDamageToPlayer)
+dealloc(executePlayerApocalypse)
+dealloc(playerGodMode)
+
+// Cleanup of Enemy Apocalypse System Function
+unregistersymbol(maxDamageByPlayer)
+unregistersymbol(lastDamageByPlayer)
+unregistersymbol(totalDamageByPlayer)
+unregistersymbol(logKamehameha)
+unregistersymbol(gokuDamageX)
+unregistersymbol(gokuResultUpper)
+unregistersymbol(playerDamageX)
+unregistersymbol(lastEnemyHealthValue)
+unregistersymbol(playerCritDamageResult)
+unregistersymbol(logPlayerCrit)
+unregistersymbol(executeEnemyApocalypse)
+
+dealloc(maxDamageByPlayer)
+dealloc(lastDamageByPlayer)
+dealloc(totalDamageByPlayer)
+dealloc(logKamehameha)
+dealloc(gokuResult)
+dealloc(gokuResultUpper)
+dealloc(gokuResultLower)
+dealloc(gokuDamageX)
+dealloc(playerDamageX)
+dealloc(lastEnemyHealthValue)
+dealloc(playerCritChanceResultUpper)
+dealloc(playerCritChanceResultLower)
+dealloc(playerCritChanceResult)
+dealloc(playerCritDamageResultUpper)
+dealloc(playerCritDamageResultLower)
+dealloc(playerCritDamageResult)
+dealloc(playerCritDamageDivisor)
+dealloc(logPlayerCrit)
+dealloc(enemyApocalypseRandomState)
+dealloc(executeEnemyApocalypse)
+
+// Cleanup of omnifyApocalypseHook
+omnifyApocalypseHook:
+  db 03 D7 E9 28 22 0C 00
+  
+
+unregistersymbol(omnifyApocalypseHook)
+
+dealloc(initiateApocalypse)
+
+// Cleanup of omnifyPlayerSpeedHook
+omnifyPlayerSpeedHook:
+  db 0F 5C DC 48 C7 44 24 30 00 00 00 00
+
+unregistersymbol(omnifyPlayerSpeedHook)
+
+dealloc(changePlayerSpeed)
+
+// Cleanup of omnifyPredatorHook
+omnifyPredatorHook:
+  db 0F 29 81 20 01 00 00
+
+unregistersymbol(omnifyPredatorHook)
+unregistersymbol(playerSpeedX)
+
+dealloc(playerSpeedX)
+dealloc(identityValue)
+dealloc(initiatePredator)
+
+// Cleanup of findCoordinateDistance
+unregistersymbol(findCoordinateDistance)
+
+dealloc(findCoordinateDistance)
+
+// Cleanup of calculateScaledSpeed
+unregistersymbol(calculateScaledSpeed)
+
+dealloc(averageScaleDivisor)
+dealloc(averageScaleX)
+dealloc(scaledShifter)
+dealloc(scaledSpeedWhenNegative)
+dealloc(calculateScaledSpeed)
+
+// Cleanup of isMovingTowards
+unregistersymbol(isMovingTowards)
+
+dealloc(isMovingTowards)
+
+
+// Cleanup of Predator System Function
+unregistersymbol(executePredator)
+unregistersymbol(enemySpeedX)
+unregistersymbol(skipBoostY)
+unregistersymbol(aggroDistance)
+
+dealloc(enemySpeedX)
+dealloc(skipBoostY)
+dealloc(aggroDistance)
+dealloc(threatDistance)
+dealloc(indifferenceDistanceX)
+dealloc(speedNormalizationDivisor)
+dealloc(defaultSpeedX)
+dealloc(positiveLimit)
+dealloc(negativeLimit)
+dealloc(positiveLimitCorrection)
+dealloc(negativeLimitCorrection)
+dealloc(executePredator)
+
+// Cleanup of omniPlayerCoordsHook
+omniPlayerCoordsHook:
+  db F3 0F 10 00 F3 0F 11 44 24 20
+
+unregistersymbol(playerCoords)
+unregistersymbol(teleport)
+unregistersymbol(teleportX)
+unregistersymbol(teleportY)
+unregistersymbol(teleportZ)
+unregistersymbol(immuneFromTeleport)
+unregistersymbol(omniPlayerCoordsHook)
+
+dealloc(playerCoords)
+dealloc(teleport)
+dealloc(teleportX)
+dealloc(teleportY)
+dealloc(teleportZ)
+dealloc(immuneFromTeleport)
+dealloc(getPlayerCoords)
+
+// Cleanup of omniPlayerHook
+omniPlayerHook:
+  db 83 BF E8 03 00 00 00
+
+unregistersymbol(player)
+unregistersymbol(playerGameData)
+unregistersymbol(omniPlayerHook)
+
+dealloc(player)
+dealloc(playerGameData)
+dealloc(getPlayer)
+
+// Cleanup of omnifyTeleportImmortalityHook
+omnifyTeleportImmortalityHook:
+  db 89 83 E8 03 00 00
+
+unregistersymbol(omnifyTeleportImmortalityHook)
+
+dealloc(ensureTeleportImmortality)
+
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>244</ID>
+          <Description>"Stop Morphs"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+stopMorphs:
+  dd 1
+
+[DISABLE]
+
+stopMorphs:
+  dd 0
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>111</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>262</ID>
+          <Description>"Super Fast Omni"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+playerSpeedX:
+  dd (float)3.0
+
+[DISABLE]
+
+playerSpeedX:
+  dd (float)1.0
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>107</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>259</ID>
+          <Description>"Enable God Mode"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+playerGodMode:
+  dd 1
+
+[DISABLE]
+
+playerGodMode:
+  dd 0
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>260</ID>
+          <Description>"Player Speed Multiplier"</Description>
+          <LastState Value="1" RealAddress="13FFB1000"/>
+          <VariableType>Float</VariableType>
+          <Address>playerSpeedX</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>258</ID>
+          <Description>"Super Player Damage"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+playerDamageX:
+  dd (float)50.0
+
+[DISABLE]
+
+playerDamageX:
+  dd (float)1.0
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>109</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>256</ID>
+          <Description>"Speed Morphs"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+speedMorph:
+  dd 1
+
+[DISABLE]
+
+speedMorph:
+  dd 0
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>106</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>257</ID>
+          <Description>"Extra Morph Speed"</Description>
+          <LastState Value="4" RealAddress="13FFA1088"/>
+          <VariableType>Float</VariableType>
+          <Address>speedMorphDivisor</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>249</ID>
+          <Description>"Souls"</Description>
+          <LastState Value="3303" RealAddress="0C5BB6A4"/>
+          <VariableType>4 Bytes</VariableType>
+          <Address>playerGameData</Address>
+          <Offsets>
+            <Offset>94</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>250</ID>
+          <Description>"Player Damage"</Description>
+          <LastState Value="1" RealAddress="13FFF3110"/>
+          <VariableType>Float</VariableType>
+          <Address>playerDamageX</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>4</ID>
+          <Description>"Health"</Description>
+          <LastState Value="1590" RealAddress="1C1ABED8"/>
+          <VariableType>4 Bytes</VariableType>
+          <Address>player</Address>
+          <Offsets>
+            <Offset>3E8</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>235</ID>
+          <Description>"X"</Description>
+          <LastState Value="139.7911835" RealAddress="23B2F3A0"/>
+          <VariableType>Float</VariableType>
+          <Address>playerCoords</Address>
+          <Offsets>
+            <Offset>0</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>236</ID>
+          <Description>"Y"</Description>
+          <LastState Value="-252.6143188" RealAddress="23B2F3A4"/>
+          <VariableType>Float</VariableType>
+          <Address>playerCoords</Address>
+          <Offsets>
+            <Offset>4</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>237</ID>
+          <Description>"Z"</Description>
+          <LastState Value="96.7675705" RealAddress="23B2F3A8"/>
+          <VariableType>Float</VariableType>
+          <Address>playerCoords</Address>
+          <Offsets>
+            <Offset>8</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>255</ID>
+          <Description>"Teleportitis Multiplier"</Description>
+          <LastState Value="2" RealAddress="13FFF2088"/>
+          <VariableType>Float</VariableType>
+          <Address>teleportitisDisplacementX</Address>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>251</ID>
+      <Description>"No description"</Description>
+      <LastState Value="0" RealAddress="13FFE1010"/>
+      <VariableType>Float</VariableType>
+      <Address>teleportX</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>252</ID>
+      <Description>"No description"</Description>
+      <LastState Value="0" RealAddress="13FFE1014"/>
+      <VariableType>Float</VariableType>
+      <Address>teleportY</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>253</ID>
+      <Description>"No description"</Description>
+      <LastState Value="0" RealAddress="13FFE1018"/>
+      <VariableType>Float</VariableType>
+      <Address>teleportZ</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>254</ID>
+      <Description>"No description"</Description>
+      <LastState Value="0" RealAddress="0C4FD804"/>
+      <VariableType>4 Bytes</VariableType>
+      <Address>0C4FD804</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>261</ID>
+      <Description>"No description"</Description>
+      <LastState Value="1.75" RealAddress="13FFF3168"/>
+      <VariableType>Float</VariableType>
+      <Address>enemySpeedX</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>263</ID>
+      <Description>"No description"</Description>
+      <LastState Value="0" RealAddress="0C51FAEC"/>
+      <VariableType>4 Bytes</VariableType>
+      <Address>0C51FAEC</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>264</ID>
+      <Description>"Enemy Speed"</Description>
+      <LastState Value="1.75" RealAddress="13FFF3168"/>
+      <VariableType>Float</VariableType>
+      <Address>enemySpeedX</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>265</ID>
+      <Description>"Enemy Speed"</Description>
+      <LastState Value="1.75" RealAddress="13FFF3168"/>
+      <VariableType>Float</VariableType>
+      <Address>enemySpeedX</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>267</ID>
+      <Description>"Humanity"</Description>
+      <LastState Value="8" RealAddress="0C5BB694"/>
+      <VariableType>4 Bytes</VariableType>
+      <Address>0C5BB694</Address>
+    </CheatEntry>
+  </CheatEntries>
+  <CheatCodes>
+    <CodeEntry Color="20000000">
+      <Description>Change of jne 13FFE0019</Description>
+      <AddressString>13FFE0009</AddressString>
+      <Before>
+        <Byte>FA</Byte>
+        <Byte>17</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>85</Byte>
+        <Byte>0A</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>A3</Byte>
+        <Byte>00</Byte>
+        <Byte>10</Byte>
+        <Byte>FE</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps [rcx+00000120],xmm0</Description>
+      <AddressString>DarkSoulsRemastered.exe+9C2923</AddressString>
+      <Before>
+        <Byte>28</Byte>
+        <Byte>02</Byte>
+        <Byte>48</Byte>
+        <Byte>8B</Byte>
+        <Byte>D9</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>81</Byte>
+        <Byte>20</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>85</Byte>
+        <Byte>C0</Byte>
+        <Byte>74</Byte>
+        <Byte>3C</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps [rcx+00000120],xmm0</Description>
+      <AddressString>DarkSoulsRemastered.exe+9C2B75</AddressString>
+      <Before>
+        <Byte>28</Byte>
+        <Byte>02</Byte>
+        <Byte>4C</Byte>
+        <Byte>8B</Byte>
+        <Byte>F9</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>81</Byte>
+        <Byte>20</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>4D</Byte>
+        <Byte>8B</Byte>
+        <Byte>E1</Byte>
+        <Byte>48</Byte>
+        <Byte>8B</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of addps xmm0,xmm3</Description>
+      <AddressString>DarkSoulsRemastered.exe+87F9ED</AddressString>
+      <Before>
+        <Byte>29</Byte>
+        <Byte>01</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>C2</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>C3</Byte>
+      </Actual>
+      <After>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>41</Byte>
+        <Byte>10</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of addps xmm4,[rbx+10]</Description>
+      <AddressString>DarkSoulsRemastered.exe+2B9A03</AddressString>
+      <Before>
+        <Byte>C0</Byte>
+        <Byte>00</Byte>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>E0</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>63</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>DC</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movss xmm0,[rbx+000001C0]</Description>
+      <AddressString>DarkSoulsRemastered.exe+2B99F4</AddressString>
+      <Before>
+        <Byte>20</Byte>
+        <Byte>0F</Byte>
+        <Byte>5C</Byte>
+        <Byte>63</Byte>
+        <Byte>10</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>83</Byte>
+        <Byte>C0</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>C6</Byte>
+        <Byte>C0</Byte>
+        <Byte>00</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of subps xmm4,[rbx+10]</Description>
+      <AddressString>DarkSoulsRemastered.exe+2B99F0</AddressString>
+      <Before>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>64</Byte>
+        <Byte>24</Byte>
+        <Byte>20</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>5C</Byte>
+        <Byte>63</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>83</Byte>
+        <Byte>C0</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of subps xmm0,xmm3</Description>
+      <AddressString>DarkSoulsRemastered.exe+87F9E3</AddressString>
+      <Before>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>7C</Byte>
+        <Byte>24</Byte>
+        <Byte>20</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>5C</Byte>
+        <Byte>C3</Byte>
+      </Actual>
+      <After>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>01</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of addps xmm2,xmm7</Description>
+      <AddressString>DarkSoulsRemastered.exe+87F9B5</AddressString>
+      <Before>
+        <Byte>58</Byte>
+        <Byte>D0</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>D1</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>D7</Byte>
+      </Actual>
+      <After>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>54</Byte>
+        <Byte>00</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of addps xmm7,xmm8</Description>
+      <AddressString>DarkSoulsRemastered.exe+2BBA03</AddressString>
+      <Before>
+        <Byte>D1</Byte>
+        <Byte>44</Byte>
+        <Byte>0F</Byte>
+        <Byte>14</Byte>
+        <Byte>C2</Byte>
+      </Before>
+      <Actual>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>F8</Byte>
+      </Actual>
+      <After>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>F0</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of addps xmm6,xmm8</Description>
+      <AddressString>DarkSoulsRemastered.exe+2BBA07</AddressString>
+      <Before>
+        <Byte>C2</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>F8</Byte>
+      </Before>
+      <Actual>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>F0</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>BC</Byte>
+        <Byte>24</Byte>
+        <Byte>90</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of subps xmm0,[rax+10]</Description>
+      <AddressString>DarkSoulsRemastered.exe+37B595</AddressString>
+      <Before>
+        <Byte>80</Byte>
+        <Byte>10</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>5C</Byte>
+        <Byte>40</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>C6</Byte>
+        <Byte>C0</Byte>
+        <Byte>55</Byte>
+        <Byte>C3</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of addps xmm0,[rax+10]</Description>
+      <AddressString>DarkSoulsRemastered.exe+37A809</AddressString>
+      <Before>
+        <Byte>05</Byte>
+        <Byte>37</Byte>
+        <Byte>82</Byte>
+        <Byte>13</Byte>
+        <Byte>01</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>40</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>8B</Byte>
+        <Byte>43</Byte>
+        <Byte>30</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of subps xmm6,[r8+10]</Description>
+      <AddressString>DarkSoulsRemastered.exe+37CB19</AddressString>
+      <Before>
+        <Byte>B0</Byte>
+        <Byte>10</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>5C</Byte>
+        <Byte>70</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>C6</Byte>
+        <Byte>F6</Byte>
+        <Byte>55</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movss xmm3,[rdx]</Description>
+      <AddressString>DarkSoulsRemastered.exe+1921B2</AddressString>
+      <Before>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>52</Byte>
+        <Byte>04</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>1A</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>14</Byte>
+        <Byte>D8</Byte>
+        <Byte>0F</Byte>
+        <Byte>14</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movss xmm2,[rdx+04]</Description>
+      <AddressString>DarkSoulsRemastered.exe+1921AD</AddressString>
+      <Before>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>42</Byte>
+        <Byte>08</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>52</Byte>
+        <Byte>04</Byte>
+      </Actual>
+      <After>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps [rbx+10],xmm3</Description>
+      <AddressString>DarkSoulsRemastered.exe+2B9A79</AddressString>
+      <Before>
+        <Byte>14</Byte>
+        <Byte>D1</Byte>
+        <Byte>0F</Byte>
+        <Byte>14</Byte>
+        <Byte>DA</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>5B</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>57</Byte>
+        <Byte>C0</Byte>
+        <Byte>C6</Byte>
+        <Byte>83</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of addps xmm0,[rcx+10]</Description>
+      <AddressString>DarkSoulsRemastered.exe+2BBBC6</AddressString>
+      <Before>
+        <Byte>48</Byte>
+        <Byte>89</Byte>
+        <Byte>54</Byte>
+        <Byte>24</Byte>
+        <Byte>38</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>58</Byte>
+        <Byte>41</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>89</Byte>
+        <Byte>54</Byte>
+        <Byte>24</Byte>
+        <Byte>30</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps xmm6,[r8+30]</Description>
+      <AddressString>DarkSoulsRemastered.exe+8DCD1D</AddressString>
+      <Before>
+        <Byte>20</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>29</Byte>
+      </Before>
+      <Actual>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>70</Byte>
+        <Byte>30</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>CD</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps xmm6,[rax+30]</Description>
+      <AddressString>DarkSoulsRemastered.exe+8A2BBD</AddressString>
+      <Before>
+        <Byte>10</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>68</Byte>
+        <Byte>20</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>70</Byte>
+        <Byte>30</Byte>
+      </Actual>
+      <After>
+        <Byte>49</Byte>
+        <Byte>8D</Byte>
+        <Byte>45</Byte>
+        <Byte>40</Byte>
+        <Byte>66</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps xmm0,[rax]</Description>
+      <AddressString>DarkSoulsRemastered.exe+2BAC58</AddressString>
+      <Before>
+        <Byte>41</Byte>
+        <Byte>02</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>44</Byte>
+        <Byte>24</Byte>
+        <Byte>20</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps xmm0,[r9]</Description>
+      <AddressString>DarkSoulsRemastered.exe+2BAD9B</AddressString>
+      <Before>
+        <Byte>24</Byte>
+        <Byte>90</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>01</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>8B</Byte>
+        <Byte>DA</Byte>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movss xmm3,[r9]</Description>
+      <AddressString>DarkSoulsRemastered.exe+2BADC8</AddressString>
+      <Before>
+        <Byte>F3</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>20</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>41</Byte>
+        <Byte>0F</Byte>
+        <Byte>10</Byte>
+        <Byte>19</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>8B</Byte>
+        <Byte>05</Byte>
+        <Byte>AC</Byte>
+        <Byte>5A</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of subps xmm3,xmm4</Description>
+      <AddressString>DarkSoulsRemastered.exe+2BAE08</AddressString>
+      <Before>
+        <Byte>14</Byte>
+        <Byte>D6</Byte>
+        <Byte>0F</Byte>
+        <Byte>14</Byte>
+        <Byte>DA</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>5C</Byte>
+        <Byte>DC</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>C7</Byte>
+        <Byte>44</Byte>
+        <Byte>24</Byte>
+        <Byte>30</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movdqa [rdx+10],xmm1</Description>
+      <AddressString>DarkSoulsRemastered.exe+4352AC</AddressString>
+      <Before>
+        <Byte>02</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>48</Byte>
+        <Byte>10</Byte>
+      </Before>
+      <Actual>
+        <Byte>66</Byte>
+        <Byte>0F</Byte>
+        <Byte>7F</Byte>
+        <Byte>4A</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>40</Byte>
+        <Byte>20</Byte>
+        <Byte>66</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps [rcx],xmm1</Description>
+      <AddressString>13FF9005E</AddressString>
+      <Before>
+        <Byte>C0</Byte>
+        <Byte>00</Byte>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>C8</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>09</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>49</Byte>
+        <Byte>10</Byte>
+        <Byte>F3</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps [rcx+10],xmm1</Description>
+      <AddressString>13FF90074</AddressString>
+      <Before>
+        <Byte>C0</Byte>
+        <Byte>00</Byte>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>C8</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>49</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>49</Byte>
+        <Byte>20</Byte>
+        <Byte>F3</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps [rcx+20],xmm1</Description>
+      <AddressString>13FF9008B</AddressString>
+      <Before>
+        <Byte>C0</Byte>
+        <Byte>00</Byte>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>C8</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>49</Byte>
+        <Byte>20</Byte>
+      </Actual>
+      <After>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>6F</Byte>
+        <Byte>0C</Byte>
+        <Byte>24</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps [rax],xmm1</Description>
+      <AddressString>13FF90056</AddressString>
+      <Before>
+        <Byte>C0</Byte>
+        <Byte>00</Byte>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>C8</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>08</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>48</Byte>
+        <Byte>10</Byte>
+        <Byte>F3</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps [rax+10],xmm1</Description>
+      <AddressString>13FF9006C</AddressString>
+      <Before>
+        <Byte>C0</Byte>
+        <Byte>00</Byte>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>C8</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>48</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>48</Byte>
+        <Byte>20</Byte>
+        <Byte>F3</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps [rax+20],xmm1</Description>
+      <AddressString>13FF90083</AddressString>
+      <Before>
+        <Byte>C0</Byte>
+        <Byte>00</Byte>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>C8</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>48</Byte>
+        <Byte>20</Byte>
+      </Actual>
+      <After>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>6F</Byte>
+        <Byte>0C</Byte>
+        <Byte>24</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps [rcx+00000120],xmm0</Description>
+      <AddressString>13FFB0129</AddressString>
+      <Before>
+        <Byte>83</Byte>
+        <Byte>C4</Byte>
+        <Byte>10</Byte>
+        <Byte>66</Byte>
+        <Byte>9D</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>29</Byte>
+        <Byte>81</Byte>
+        <Byte>20</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>E9</Byte>
+        <Byte>F5</Byte>
+        <Byte>27</Byte>
+        <Byte>A1</Byte>
+        <Byte>00</Byte>
+      </After>
+    </CodeEntry>
+  </CheatCodes>
+  <UserdefinedSymbols/>
+  <LuaScript>getAutoAttachList().add("DarkSoulsRemastered.exe")
+</LuaScript>
+</CheatTable>

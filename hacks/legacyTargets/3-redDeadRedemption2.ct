@@ -1,0 +1,124 @@
+<!--
+    Omnified Red Dead Redemption 2
+    Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
+    Copyright 2022 Bad Echo LLC
+
+    Bad Echo Technologies are licensed under a
+    Creative Commons Attribution-NonCommercial 4.0 International License.
+
+    See accompanying file LICENSE.md or a copy at:
+    http://creativecommons.org/licenses/by-nc/4.0/
+-->
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="30">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>0</ID>
+      <Description>"OMNIFY"</Description>
+      <Options moHideChildren="1"/>
+      <LastState Activated="1"/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+aobscanmodule(omnifyHook,RDR2.exe,F3 0F 11 43 20 FF) // should be unique
+aobscanmodule(omniHealthHook,RDR2.exe,48 8B 41 10 0F 2F 78 20 72 07) // should be unique
+
+alloc(murderPlayer,$1000,"RDR2.exe"+70C745)
+alloc(getHealth,$1000,"RDR2.exe"+C9F328)
+alloc(murderThreshold,16)
+alloc(murder,16)
+alloc(pHealthBase,8)
+
+registersymbol(omnifyHook)
+registersymbol(omniHealthHook)
+registersymbol(pHealthBase)
+
+getHealth:
+
+getHealthCode:
+  mov rax,[rcx+10]
+  mov [pHealthBase],rax
+  comiss xmm7,[rax+20]
+  jmp getHealthReturn
+
+omniHealthHook:
+  jmp getHealth
+  nop 3
+getHealthReturn:
+
+pHealthBase:
+  dd 0
+
+murderThreshold:
+  dd (float)3.0
+
+murder:
+  dd (float)0.0
+
+murderPlayer:
+  cmp rbx,[pHealthBase]
+  jne setHealth
+  // MURDER...MAYBE
+  movss xmm1,[rbx+20]
+  subss xmm1,xmm0
+  cmpss xmm1,[murderThreshold],1
+  push eax
+  movd eax,xmm1
+  test eax,eax
+  pop eax
+  jne setHealth
+  // NOW WE MURDER
+  movss xmm0, [murder]
+
+setHealth:
+  movss [rbx+20],xmm0
+  jmp setHealthReturn
+
+omnifyHook:
+  jmp murderPlayer
+setHealthReturn:
+
+
+[DISABLE]
+
+omnifyHook:
+  db F3 0F 11 43 20
+
+omniHealthHook:
+  db 48 8B 41 10 0F 2F 78 20 72 07
+
+unregistersymbol(omnifyHook)
+unregistersymbol(omniHealthHook)
+dealloc(getHealth)
+dealloc(pHealthBase)
+dealloc(murderPlayer)
+dealloc(murderThreshold)
+dealloc(murder)
+</AssemblerScript>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Toggle Activation</Action>
+          <Keys>
+            <Key>17</Key>
+            <Key>79</Key>
+          </Keys>
+          <Description>Omnify this bitch.</Description>
+          <ID>0</ID>
+          <ActivateSound TTS="EN">OMNIFIED</ActivateSound>
+        </Hotkey>
+      </Hotkeys>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>28</ID>
+          <Description>"Health"</Description>
+          <LastState Value="455" RealAddress="22FC86DF650"/>
+          <VariableType>Float</VariableType>
+          <Address>pHealthBase</Address>
+          <Offsets>
+            <Offset>20</Offset>
+          </Offsets>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols/>
+</CheatTable>

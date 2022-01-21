@@ -1,0 +1,343 @@
+<!--
+    Omnified Resident Evil 2
+    Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
+    Copyright 2022 Bad Echo LLC
+
+    Bad Echo Technologies are licensed under a
+    Creative Commons Attribution-NonCommercial 4.0 International License.
+
+    See accompanying file LICENSE.md or a copy at:
+    http://creativecommons.org/licenses/by-nc/4.0/
+-->
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="29">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>1</ID>
+      <Description>"OMNIFY"</Description>
+      <Options moHideChildren="1"/>
+      <LastState Activated="1"/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+
+aobscanmodule(omniHealthHook,re2.exe,8B 40 58 48 8B 5C 24 30 48 83 C4 20 5F C3 48 8B 5C 24 30 B8 01) // should be unique
+aobscanmodule(omniCoordsHook,re2.exe,8B 47 34 89 46 04) // should be unique
+aobscanmodule(omnifyHealthHook,re2.exe,41 89 41 58 C3 CC CC CC 48) // should be unique
+aobscanmodule(omnifySpeedHook,re2.exe,F3 0F 58 56 30) // should be unique
+aobscanmodule(omniGunClipHook,re2.exe,8B 59 20 85 DB) // should be unique
+aobscanmodule(omnifyPlayerAmmoHook,re2.exe,89 58 20 48 8B 74 24 30) // should be unique
+
+alloc(getHealth,$1000,"re2.exe"+42A663)
+alloc(getCoords,$1000,"re2.exe"+1DD1699)
+alloc(getGunClip,$1000,"re2.exe"+4FDE55)
+
+alloc(fuckHealth,$1000,"re2.exe"+F87428)
+alloc(fuckSpeed,$1000,"re2.exe"+2145B00)
+
+alloc(unfuckAmmo,$1000,"re2.exe"+4FB9FA)
+
+alloc(pCoordsBase,8)
+alloc(pHealthBase,8)
+alloc(pAmmoBase,8)
+
+alloc(fuckSpeedMultiplier, 16)
+
+registersymbol(omniHealthHook)
+registersymbol(omniCoordsHook)
+registersymbol(omniGunClipHook)
+
+registersymbol(omnifyHealthHook)
+registersymbol(omnifySpeedHook)
+registersymbol(omnifyPlayerAmmoHook)
+
+registersymbol(pHealthBase)
+registersymbol(pCoordsBase)
+registersymbol(pAmmoBase)
+
+getCoords:
+
+getCoordsCode:
+  cmp r8,0
+  jne getCoordsOriginalCode
+  mov [pCoordsBase],rdi // +30 +34 +38 +3C
+getCoordsOriginalCode:
+  mov eax,[rdi+34]
+  mov [rsi+04],eax
+  jmp getCoordsReturn
+
+omniCoordsHook:
+  jmp getCoords
+  nop
+getCoordsReturn:
+
+getHealth:
+
+getHealthCode:
+  mov [pHealthBase], rax
+  mov eax,[rax+58]
+  mov rbx,[rsp+30]
+  jmp getHealthReturn
+
+omniHealthHook:
+  jmp getHealth
+  nop 3
+getHealthReturn:
+
+fuckHealth:
+
+fuckHealthCode:
+  cmp r9,[pHealthBase]
+  jne fuckHealthOriginalCode
+  mov eax,0
+fuckHealthOriginalCode:
+  mov [r9+58],eax
+  ret
+  jmp fuckHealthCodeReturn
+
+omnifyHealthHook:
+  jmp fuckHealth
+fuckHealthCodeReturn:
+
+//
+// fuckSpeed: Gives zombies fuckin' fast speed.
+//
+fuckSpeed:
+
+fuckSpeedCode:
+  mulss xmm2,[fuckSpeedMultiplier]
+  //mulss xmm1,[fuckSpeedMultiplier]
+  mulss xmm0,[fuckSpeedMultiplier]
+setLocation:
+  addss xmm2,[rsi+30]
+  jmp fuckSpeedReturn
+
+omnifySpeedHook:
+  jmp fuckSpeed
+fuckSpeedReturn:
+
+//
+// getGunClip: Gets the number of bullets loaded in the player's gun.
+//
+getGunClip:
+
+getGunClipCode:
+  cmp r14,0
+  jne getGunClipOriginalCode
+  mov [pAmmoBase],rcx
+getGunClipOriginalCode:
+  mov ebx,[rcx+20]
+  test ebx,ebx
+  jmp getGunClipReturn
+
+omniGunClipHook:
+  jmp getGunClip
+getGunClipReturn:
+
+//
+// unfuckAmmo: Unfucks your ammo supply.
+//
+unfuckAmmo:
+
+unfuckAmmoCode:
+  cmp rax,[pAmmoBase]
+  je checkIfSkippable
+  cmp r8,0x20
+  jne adjustInventory
+checkIfSkippable:
+  cmp ebx,[rax+20]
+  jl skipInventoryDecrement
+adjustInventory:
+  mov [rax+20],ebx
+skipInventoryDecrement:
+  mov rsi,[rsp+30]
+  jmp unfuckAmmoReturn
+
+omnifyPlayerAmmoHook:
+  jmp unfuckAmmo
+  nop 3
+unfuckAmmoReturn:
+
+pHealthBase:
+  dd 0
+
+pCoordsBase:
+  dd 0
+
+pAmmoBase:
+  dd 0
+
+fuckSpeedMultiplier:
+  dd (float)5.0
+
+[DISABLE]
+
+omniHealthHook:
+  db 8B 40 58 48 8B 5C 24 30
+
+omniCoordsHook:
+  db 8B 47 34 89 46 04
+
+omniGunClipHook:
+  db 8B 59 20 85 DB
+
+omnifyHealthHook:
+  db 41 89 41 58 C3
+
+omnifySpeedHook:
+  db F3 0F 58 56 30
+
+omnifyPlayerAmmoHook:
+  db 89 58 20 48 8B 74 24 30
+
+unregistersymbol(omniHealthHook)
+unregistersymbol(omniCoordsHook)
+unregistersymbol(omniGunClipHook)
+
+unregistersymbol(omnifyHealthHook)
+unregistersymbol(omnifySpeedHook)
+unregistersymbol(omnifyPlayerAmmoHook)
+
+unregistersymbol(pHealthBase)
+unregistersymbol(pCoordsBase)
+unregistersymbol(pAmmoBase)
+
+dealloc(getHealth)
+dealloc(getCoords)
+dealloc(getGunClip)
+
+dealloc(fuckHealth)
+dealloc(fuckSpeed)
+dealloc(unfuckAmmo)
+
+dealloc(fuckSpeedMultiplier)
+
+dealloc(pHealthBase)
+dealloc(pCoordsBase)
+dealloc(pAmmoBase)
+</AssemblerScript>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Toggle Activation</Action>
+          <Keys>
+            <Key>79</Key>
+          </Keys>
+          <ID>0</ID>
+        </Hotkey>
+      </Hotkeys>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>202</ID>
+          <Description>"Boost Player Speed"</Description>
+          <LastState Activated="1"/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+aobscanmodule(omnifyPlayerSpeedHook,re2.exe,F3 41 0F 58 16 F3 41) // should be unique
+
+alloc(unfuckPlayerSpeed,$1000,"re2.exe"+2147894)
+
+alloc(unfuckSpeedMultiplier, 16)
+
+registersymbol(omnifyPlayerSpeedHook)
+
+unfuckPlayerSpeed:
+
+unfuckPlayerSpeedCode:
+//  cmp rdi,[pCoordsBase]
+//  je setLocation
+  movss xmm3,[r14]
+  movss xmm4,[r14+04]
+  movss xmm5,[r14+08]
+  mulss xmm3,[unfuckSpeedMultiplier]
+  mulss xmm4,[unfuckSpeedMultiplier]
+  mulss xmm5,[unfuckSpeedMultiplier]
+  movss [r14],xmm3
+  movss [r14+04],xmm4
+  movss [r14+08],xmm5
+setLocation:
+  addss xmm2,[r14]
+  jmp unfuckPlayerSpeedReturn
+
+omnifyPlayerSpeedHook:
+  jmp unfuckPlayerSpeed
+unfuckPlayerSpeedReturn:
+
+unfuckSpeedMultiplier:
+  dd (float)5.0
+
+[DISABLE]
+
+omnifyPlayerSpeedHook:
+  db F3 41 0F 58 16
+
+unregistersymbol(omnifyPlayerSpeedHook)
+
+dealloc(unfuckSpeedMultiplier)
+
+dealloc(unfuckPlayerSpeed)
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>80</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>191</ID>
+          <Description>"Player's X Coord"</Description>
+          <LastState Value="38.85994339" RealAddress="1DC1EB1DE90"/>
+          <VariableType>Float</VariableType>
+          <Address>pCoordsBase</Address>
+          <Offsets>
+            <Offset>30</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>192</ID>
+          <Description>"Player's Z Coord"</Description>
+          <LastState Value="5.960464478E-8" RealAddress="1DC1EB1DE94"/>
+          <VariableType>Float</VariableType>
+          <Address>pCoordsBase</Address>
+          <Offsets>
+            <Offset>34</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>193</ID>
+          <Description>"Player's Y Coord"</Description>
+          <LastState Value="-15.58742905" RealAddress="1DC1EB1DE98"/>
+          <VariableType>Float</VariableType>
+          <Address>pCoordsBase</Address>
+          <Offsets>
+            <Offset>38</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>196</ID>
+          <Description>"Player's Current Clip"</Description>
+          <LastState Value="6" RealAddress="1DC1C1CE2C0"/>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pAmmoBase</Address>
+          <Offsets>
+            <Offset>20</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>2</ID>
+          <Description>"Player's Health"</Description>
+          <LastState Value="1200" RealAddress="1DC1DDCE738"/>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pHealthBase</Address>
+          <Offsets>
+            <Offset>58</Offset>
+          </Offsets>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols/>
+</CheatTable>

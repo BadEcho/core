@@ -1,0 +1,2373 @@
+<!--
+    Omnified Subnautica
+    Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
+    Copyright 2022 Bad Echo LLC
+
+    Bad Echo Technologies are licensed under a
+    Creative Commons Attribution-NonCommercial 4.0 International License.
+
+    See accompanying file LICENSE.md or a copy at:
+    http://creativecommons.org/licenses/by-nc/4.0/
+-->
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="29">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>12</ID>
+      <Description>"OMNIFY"</Description>
+      <Options moHideChildren="1"/>
+      <LastState Activated="1"/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE] 
+{$lua}
+function ActivateLoggers()
+	if loggersTimer == nil then
+		loggersTimer = createTimer(getMainForm())
+	end
+	
+	loggersTimer.Interval = 200
+	loggersTimer.OnTimer = function()
+		local stats = assert(io.open("stats.txt", "w"))
+		
+		local playerHealth = readFloat("[playerHealth]+0x68")
+		local hunger = readFloat("[sustenance]+0x5C")
+		local thirst = readFloat("[sustenance]+0x60")
+		
+		if playerHealth ~= nil then
+			stats:write("Health: ",
+						math.floor(playerHealth),
+						"\n")
+		end
+		
+		if hunger ~= nil then
+			stats:write("Hunger: ",
+						math.floor(hunger*1000)/1000,
+						"\n")
+		end
+		
+		if thirst ~= nil then
+			stats:write("Thirst: ",
+						math.floor(thirst*1000)/1000,
+						"\n")
+		end
+		
+		local totalTime = readDouble("[totalTime]+0x60")
+		
+		if totalTime ~= nil then
+			local normalizedTime = totalTime / 1200;
+			local days = math.floor(normalizedTime)
+			
+			local timeOfDay = normalizedTime - days
+			
+			local hoursMinutes = (timeOfDay*1439)/60
+			local hours = math.floor(hoursMinutes)
+			local minutes = math.floor((hoursMinutes - hours)*60)
+			
+			stats:write("Day: ",
+						days,
+						"\n")
+						
+			local theTime = string.format("%02d:%02d",hours,minutes)
+
+			stats:write("Time: ", theTime, "\n")
+		end
+		local xCoords = readFloat("[playerCoords]+0x10")			
+		local yCoords = readFloat("[playerCoords]+0x14")
+		local zCoords = readFloat("[playerCoords]+0x18")
+		
+		if xCoords ~= nil and yCoords ~= nil and zCoords ~= nil then
+			stats:write("X: ", xCoords, "\n")
+			stats:write("Y: ", yCoords, "\n")
+			stats:write("Z: ", zCoords, "\n")
+		end
+			
+		local pitch = readFloat("[orientation]+0x5C")
+		local yawRaw = readFloat("[orientation]+0x60")
+		
+		if pitch ~= nil then
+			stats:write("Pitch: ", pitch, "\n")
+		end
+		
+		if yawRaw ~= nil then
+               local yaw = yawRaw - (math.floor(yawRaw/360)*360)
+			stats:write("Yaw: ", yaw, "\n")
+		end
+			
+		local reserveOxygen = readFloat("[oxygenReserve]+0x20")
+		local tankOxygen = readFloat("[oxygenTank]+0x20")
+			
+		if reserveOxygen ~= nil then 
+			stats:write("Reserve O2: ", math.floor(reserveOxygen), "\n")
+		end
+			
+		if tankOxygen ~= nil then
+			stats:write("Tank O2: ", math.floor(tankOxygen), "\n")
+		end
+				
+		local maxDamageToPlayer
+			= readDouble("maxDamageToPlayer")
+		local lastDamageToPlayer
+			= readDouble("lastDamageToPlayer")
+		local maxDamageByPlayer
+			= readDouble("maxDamageByPlayer")
+		local lastDamageByPlayer
+			= readDouble("lastDamageByPlayer")
+		
+		if maxDamageToPlayer ~= nil then
+			stats:write("Max Dmg To Player: ",
+						math.floor(maxDamageToPlayer),
+						"\n")
+		end
+		
+		if lastDamageToPlayer ~= nil then
+			stats:write("Last Dmg To Player: ",
+						math.floor(lastDamageToPlayer),
+						"\n")
+		end
+		
+		if maxDamageByPlayer ~= nil then
+			stats:write("Max Dmg By Player: ",
+						math.floor(maxDamageByPlayer),
+						"\n")
+		end
+		
+		if lastDamageByPlayer ~= nil then
+			stats:write("Last Dmg By Player: ",
+						math.floor(lastDamageByPlayer),
+						"\n")
+		end
+		
+		local enemySpeed = readFloat("enemySpeedX")
+		
+		if enemySpeed ~= nil then
+			stats:write("Enemy Speed: ", enemySpeed, "x\n")
+		end
+		
+		stats:close()
+		
+		local log = assert(io.open("log.txt", "a"))
+		
+		local ts = os.time()
+		local timestamp = os.date('%H:%M-', ts)
+		
+		local logEntryEnemyRoll = "Enemy rolls a "
+		local logEntryPlayerHealth 
+			= " damage to the player!\nPlayer now has "
+			
+		local logApocalypse 
+			= readInteger("logApocalypse")
+		local logApocalypseBurning 
+			= readInteger("logApocalypseBurning")
+		local logApocalypseFart
+			= readInteger("logApocalypseFart")
+		local logApocalypseMushroom
+			= readInteger("logApocalypseMushroom")
+		local logApocalypseStarving
+			= readInteger("logApocalypseStarving")
+
+		if 	lastDamageToPlayer ~= nil and playerHealth ~= nil 
+									  and timestamp ~= nil
+									  then				
+			
+			if (logApocalypse == 1) then
+				writeInteger("logApocalypse",0)
+
+
+                local apocalypseResult = readInteger("apocalypseResult")
+                if apocalypseResult ~= nil then
+					if apocalypseResult &gt;= 1 and apocalypseResult &lt;= 4 then
+						log:write(timestamp,
+								  logEntryEnemyRoll,
+								  apocalypseResult,
+								  ": DOUBLE DAMAGE causing ",
+								  math.floor(lastDamageToPlayer),
+								  logEntryPlayerHealth,
+								  math.floor(playerHealth),
+								  " health.\n")
+					elseif apocalypseResult == 5 or apocalypseResult == 6 then
+						log:write(timestamp,
+								  logEntryEnemyRoll,
+								  apocalypseResult,
+								  ": TELEPORTITIS causing ",
+								  math.floor(lastDamageToPlayer),
+								  logEntryPlayerHealth,
+								  math.floor(playerHealth),
+								  " health.\n")			
+					elseif apocalypseResult &gt;= 7 and apocalypseResult &lt;= 9 then
+						log:write(timestamp,
+								  logEntryEnemyRoll,
+								  apocalypseResult,
+								  ": RISK OF MURDER!\n")
+								  
+						local riskOfMurderResult 
+							= readInteger("riskOfMurderResult")					
+							
+						if riskOfMurderResult &gt;= 1 and riskOfMurderResult &lt;= 3 then
+						    local vomitCometResult = readInteger("vomitCometResult")
+							
+							local vomitCometTarget
+								= (vomitCometResult == 0 and "water!" or "food!")
+							
+							local vomitCometMessage
+								= " damage to the player!\nPlayer vomits out half their " .. vomitCometTarget .. "\n"
+							
+							log:write(timestamp,
+									  logEntryEnemyRoll,
+									  riskOfMurderResult,
+									  ": VOMIT COMET causing ",
+									  math.floor(lastDamageToPlayer),
+									  vomitCometMessage)					  
+						else
+							log:write(timestamp,
+									  logEntryEnemyRoll,
+									  riskOfMurderResult,
+									  ": Player has been SIXTY NINED causing ",
+									  math.floor(lastDamageToPlayer),
+									  logEntryPlayerHealth,
+									  math.floor(playerHealth),
+									  " health.\n")
+						end
+					else 
+						log:write(timestamp,
+								  logEntryEnemyRoll,
+								  apocalypseResult,
+								  ": Player achieves orgasm!\nPlayer is healed fully to ",
+								  math.floor(playerHealth),
+								  " health.\n")
+					end				
+                end
+			end
+		
+			if (logApocalypseBurning == 1) then
+				writeInteger("logApocalypseBurning",0)
+				log:write(timestamp,
+						  "Player was cooked like a hotdog.\nAnd is now dead.\n")
+			end
+			
+			if (logApocalypseFart == 1) then
+				writeInteger("logApocalypseFart",0)
+				
+				local apocalypseFartResult = readInteger("apocalypseFartResult")
+				
+				if apocalypseFartResult == 1 then
+					log:write(timestamp, 
+							  logEntryEnemyRoll,
+							  apocalypseFartResult,
+							  ": VOMIT COMET causing ",
+							  math.floor(lastDamageToPlayer),
+							  " damage to player!\nPlayer vomits out all their food and water!\n")
+				else
+					log:write(timestamp,
+							  logEntryEnemyRoll,
+							  apocalypseFartResult,
+							  ": DEATH BY STUPIDITY!\n")
+				end
+			end
+			
+			if (logApocalypseMushroom == 1) then
+				writeInteger("logApocalypseMushroom",0)
+				
+				local apocalypseMushroomResult = readInteger("apocalypseMushroomResult")
+				
+				if apocalypseMushroomResult &gt;= 1 and apocalypseMushroomResult &lt;= 20 then
+					log:write(timestamp,
+							  logEntryEnemyRoll,
+							  apocalypseMushroomResult,
+							  ": NORMAL DAMAGE causing ",
+							  math.floor(lastDamageToPlayer),
+							  " damage to player!\n")
+				elseif apocalypseMushroomResult &gt;= 21 and apocalypseMushroomResult &lt;= 59 then
+					log:write(timestamp,
+                              logEntryEnemyRoll,
+							  apocalypseMushroomResult,
+							  ": SHOOK causing ",
+							  math.floor(lastDamageToPlayer),
+							  " damage to player!\nFood and drink have been randomized!\n")				
+				else
+					log:write(timestamp,
+                              logEntryEnemyRoll,
+							  apocalypseMushroomResult,
+							  ": DEATH BY BULLSHIT!\n")
+				end
+			end
+			
+			if (logApocalypseStarving == 1) then
+				writeInteger("logApocalypseStarving",0)
+				
+				local apocalypseStarvingResult = readInteger("apocalypseStarvingResult")
+				
+				if apocalypseStarvingResult &gt;= 1 and apocalypseStarvingResult &lt;=8 then
+					log:write(timestamp,
+							  "Your stomach rolls a ",
+							  apocalypseStarvingResult,
+							  ": QUADRUPLE DAMAGE causing ",
+							  math.floor(lastDamageToPlayer),
+							  logEntryPlayerHealth,
+							  math.floor(playerHealth),
+							  " health.\n")
+				elseif apocalypseStarvingResult == 9 then
+					log:write(timestamp,
+							  "Your stomach rolls a ",
+							  apocalypseStarvingResult,
+							  ": SIXTY NINED causing ",
+							  math.floor(lastDamageToPlayer),
+							  logEntryPlayerHealth,
+							  math.floor(playerHealth),
+							  " health.\n")
+				else 
+					log:write(timestamp,
+							  "Your stomach rolls a ",
+							  apocalypseStarvingResult,
+							  ": FASTING ORGASM!\nPlayer is healed fully to ",
+							  math.floor(playerHealth),
+							  " health.\n")
+				end
+			end
+		end
+		
+		local logPlayerCrit = readInteger("logPlayerCrit")
+		
+		if logPlayerCrit == 1 and lastDamageByPlayer ~= nil then
+			writeInteger("logPlayerCrit", 0)
+			
+			local playerCritDamageResult = readInteger("playerCritDamageResult")
+			
+			if playerCritDamageResult ~= nil then
+				log:write(timestamp,
+						  "Player critically hits (",
+						  playerCritDamageResult/10.0,
+						  "x) enemy for ",
+						  lastDamageByPlayer,
+						  " damage!\n")
+			end
+		end
+		
+		log:close()
+	end
+	
+	loggersTimer.Enabled = true
+end
+{$asm}
+luacall(ActivateLoggers())
+
+// Global memory.
+alloc(zeroDouble,8)
+alloc(zeroFloat,8)
+
+zeroDouble:
+  dq 0
+  
+zeroFloat:
+  dd 0
+
+// Random number generation function.
+// After r12-r14 pushes:
+// [rsp+20]: initialization state address, 0 if first time
+// [rsp+28]: upper bounds
+// [rsp+30]: lower bounds
+// return value is in EAX
+alloc(generateRandomNumber,$1000)
+
+registersymbol(generateRandomNumber)
+
+generateRandomNumber:
+  push r12
+  push r13
+  push r14
+  mov r12,[rsp+20]
+  mov r13,[rsp+28]
+  mov r14,[rsp+30]
+  push rbx
+  push rcx
+  push rdx
+  push r8
+  push r10
+  push r11
+  cmp [r12],0
+  jne getRandomNumber
+initializeSeed:
+  call kernel32.GetTickCount
+  push eax
+  call msvcrt.srand
+  pop eax
+  mov [r12],1
+getRandomNumber:
+  call msvcrt.rand
+  xor edx,edx
+  mov ebx,r14
+  mov ecx,r13
+  cmp ecx,ebx
+  cmovl ecx,ebx
+  inc ecx
+  sub ecx,ebx
+  idiv ecx
+  add edx,ebx
+  mov eax,edx
+  pop r11
+  pop r10
+  pop r8
+  pop rdx
+  pop rcx
+  pop rbx
+  pop r14
+  pop r13
+  pop r12
+  ret 18
+
+
+// Predator System Functions
+
+// Determines the distance between the player and another
+// creature.
+// [rsp+28]: Enemy Z Coordinate
+// [rsp+2C]: Enemy Y Coordinate
+// [rsp+30]: Enemy X Coordinate
+// [rsp+38]: Player Z Coordinate
+// [rsp+3C]: Player Y Coordinate
+// [rsp+40]: Player X Coordinate
+// Distance is in EAX
+alloc(findCoordinateDistance,$1000)
+
+registersymbol(findCoordinateDistance)
+
+findCoordinateDistance:
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  movups xmm0,[rsp+28]
+  movups xmm1,[rsp+38]
+  subps xmm0,xmm1
+  mulps xmm0,xmm0
+  movdqu xmm1,xmm0
+  shufps xmm1,xmm0,0xB
+  addss xmm0,xmm1
+  shufps xmm1,xmm1,0x1
+  addss xmm0,xmm1
+  sqrtss xmm0,xmm0
+  movd eax,xmm0
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+  ret 20
+
+
+// Creates a pointer to the player's sustenance struct.
+aobscan(omniSustenanceHook, F3 41 0F 10 46 60 F3 0F 5A)
+alloc(getSustenance,$1000,omniSustenanceHook)
+alloc(sustenance, 8)
+// Unique AOB: 08 F3 0F 10 46 5C
+registersymbol(omniSustenanceHook)
+registersymbol(sustenance)
+
+getSustenance:
+  mov [sustenance],rax
+getSustenanceOriginalCode:
+  movss xmm0,[rax+60]
+  jmp getSustenanceReturn
+
+
+omniSustenanceHook:
+  jmp getSustenance
+  nop
+getSustenanceReturn:
+
+
+
+// Gets the player's health struct.
+aobscan(omniPlayerHealthHook,F3 41 0F 10 46 68 F3 0F 5A C0 49)
+// Unique AOB: D3 F3 41 0F 10 47 68 F3 0F 5A C0 F3
+alloc(getPlayerHealth,$1000, omniPlayerHealthHook)
+alloc(playerHealth,8)
+
+registersymbol(omniPlayerHealthHook)
+registersymbol(playerHealth)
+
+getPlayerHealth:
+  mov [playerHealth],r14
+getPlayerHealthOriginalCode:
+  movss xmm0,[r14+68]
+  jmp getPlayerHealthReturn
+
+
+omniPlayerHealthHook:
+  jmp getPlayerHealth
+  nop 
+getPlayerHealthReturn:
+
+
+
+// Gets the total time that has passed.
+aobscan(omniTotalTimeHook,F2 0F 10 40 60 F2 0F 11 **)
+alloc(getTotalTime,$1000, omniTotalTimeHook)
+alloc(totalTime,8)
+
+registersymbol(omniTotalTimeHook)
+registersymbol(totalTime)
+
+getTotalTime:
+  mov [totalTime],rax
+getTotalTimeOriginalCode:
+  movsd xmm0,[rax+60]
+  jmp getTotalTimeReturn
+
+
+omniTotalTimeHook:
+  jmp getTotalTime
+getTotalTimeReturn:
+
+
+
+// Creates a pointer to the player's coordinates.
+define(omniPlayerCoordsHook,"UnityPlayer.dll"+F7A29E)
+// UNIQUE AOB: 8B 42 10 89 41 70
+assert(omniPlayerCoordsHook, 8B 42 10 89 41 70)
+alloc(getPlayerCoords,$1000, omniPlayerCoordsHook)
+alloc(playerCoords,8)
+alloc(playerId,8)
+
+registersymbol(omniPlayerCoordsHook)
+registersymbol(playerCoords)
+
+getPlayerCoords:
+  pushf
+  push rax
+  mov rax,r13
+  cmp al,0x60
+  pop rax
+  jne getPlayerCoordsOriginalCode
+  push rax
+  mov rax,rdx
+  cmp [rax+1C],0x1060020
+  pop rax
+  je savePlayerCoords
+  push rax
+  mov rax,rdx
+  cmp [rax+1C],0x1060021
+  pop rax
+  jne getPlayerCoordsOriginalCode  
+savePlayerCoords:
+  mov [playerCoords],rdx
+getPlayerCoordsOriginalCode:
+  popf
+  mov eax,[rdx+10]
+  mov [rcx+70],eax
+  jmp getPlayerCoordsReturn
+
+
+omniPlayerCoordsHook:
+  jmp getPlayerCoords
+  nop
+getPlayerCoordsReturn:
+
+playerId:
+  dd (float)49.0
+
+
+// Gets the player's coodinates on land baby.
+define(omniPlayerLandCoordsHook,"UnityPlayer.dll"+8156BD)
+
+assert(omniPlayerLandCoordsHook, F2 0F 10 30 F2 0F 10 78 08)
+alloc(getPlayerLandCoords,$1000, omniPlayerLandCoordsHook)
+alloc(playerLandCoords,8)
+
+registersymbol(omniPlayerLandCoordsHook)
+registersymbol(playerLandCoords)
+
+getPlayerLandCoords:
+  mov [playerLandCoords],rax
+getPlayerLandCoordsOriginalCode:
+  movsd xmm6,[rax]
+  movsd xmm7,[rax+08]
+  jmp getPlayerLandCoordsReturn
+
+
+omniPlayerLandCoordsHook:
+  jmp getPlayerLandCoords
+  nop 4
+getPlayerLandCoordsReturn:
+
+
+// Creates pointer to the player's oxygen supply.
+aobscan(omniOxygenHook, F3 0F 10 50 20 F3 0F 5A D2 F2 0F 5C)
+alloc(getOxygen,$1000, omniOxygenHook)
+alloc(oxygenReserve,8)
+alloc(oxygenTank,8)
+
+//RDI == 0 is base player oxygen (45 sec) RDI ==1 is tank
+registersymbol(omniOxygenHook)
+registersymbol(oxygenReserve)
+registersymbol(oxygenTank)
+
+getOxygen:
+  cmp rdi,1
+  je getOxygenTank
+  mov [oxygenReserve],rax
+  jmp getOxygenOriginalCode
+getOxygenTank:
+  mov [oxygenTank],rax
+getOxygenOriginalCode:
+  movss xmm2,[rax+20]
+  jmp getOxygenReturn
+
+
+omniOxygenHook:
+  jmp getOxygen
+
+getOxygenReturn:
+
+// Gets the player's pitch.
+aobscan(omniOrientationHook, F3 0F 10 46 5C F3 0F 5A C0 48 8B C6 ** ** ** 4E 50)
+alloc(getOrientation,$1000, omniOrientationHook)
+alloc(orientation,8)
+
+registersymbol(omniOrientationHook)
+registersymbol(orientation)
+
+getOrientation:
+  mov [orientation],rsi
+getOrientationOriginalCode:
+  movss xmm0,[rsi+5C]
+  jmp getOrientationReturn
+
+
+omniOrientationHook:
+  jmp getOrientation
+getOrientationReturn:
+
+// Gets the player's weapon.
+aobscan(omniWeaponHook, 8B 00 48 8B CE F3 0F 10 46 30)
+alloc(getWeapon,$1000, omniWeaponHook)
+alloc(weapon,8)
+
+registersymbol(omniWeaponHook)
+registersymbol(weapon)
+
+getWeapon:
+  mov [weapon],rsi
+getWeaponOriginalCode:
+  movss xmm0,[rsi+30]
+  jmp getWeaponReturn
+
+
+omniWeaponHook+05:
+  jmp getWeapon
+getWeaponReturn:
+
+
+// Gets the Seamoth's health.
+aobscan(omniSeamothHealthHook, 50 F3 0F 10 40 68)
+alloc(getSeamothHealth,$1000, omniSeamothHealthHook)
+alloc(seamothHealth,8)
+
+registersymbol(omniSeamothHealthHook)
+registersymbol(seamothHealth)
+
+getSeamothHealth:
+  mov [seamothHealth],rax
+getSeamothHealthOriginalCode:
+  movss xmm0,[rax+68]
+  jmp getSeamothHealthReturn
+
+
+omniSeamothHealthHook+01:
+  jmp getSeamothHealth
+  
+getSeamothHealthReturn:
+
+// Gets the Seamoth's coordinates.
+define(omniSeamothCoordsHook,"UnityPlayer.dll"+F8C21D)
+
+assert(omniSeamothCoordsHook, F3 41 0F 59 89 84 00 00 00)
+alloc(getSeamothCoords,$1000, omniSeamothCoordsHook)
+alloc(seamothCoords,8)
+alloc(seamothId,8)
+alloc(seamothPlayerRange,8)
+
+registersymbol(omniSeamothCoordsHook)
+registersymbol(seamothCoords)
+
+getSeamothCoords:
+  pushf
+  sub rsp,16
+  movdqu [rsp],xmm0
+  push rcx
+  push rax
+  mov rax,[r9+20]
+  cmp al,0
+  je getSeamothCoordsOriginalCode
+  movss xmm0,[seamothId]
+  ucomiss xmm0,[r9+60]
+  jz saveSeamothCoords
+  jmp getSeamothCoordsOriginalCode
+saveSeamothCoords:  
+  mov rcx,[playerCoords]
+  cmp rcx,0
+  je getSeamothCoordsOriginalCode
+  push [rcx+10]
+  push [rcx+18]
+  push [r9+10]
+  push [r9+18]
+  call findCoordinateDistance
+  movd xmm0,eax
+  ucomiss xmm0,[seamothPlayerRange]
+  ja getSeamothCoordsOriginalCode
+  mov [seamothCoords],r9
+getSeamothCoordsOriginalCode:
+  pop rax
+  pop rcx
+  movdqu xmm0,[rsp]
+  add rsp,16
+  popf
+  mulss xmm1,[r9+00000084]
+  jmp getSeamothCoordsReturn
+
+
+
+omniSeamothCoordsHook:
+  jmp getSeamothCoords
+  nop 4
+getSeamothCoordsReturn:
+
+seamothId:
+  dd (float)49.0
+  
+seamothPlayerRange:
+  dd (float)2.0
+
+// Gets the Cyclops' coordinates.
+define(omniCyclopsCoordsHook,"UnityPlayer.dll"+F70B57)
+
+assert(omniCyclopsCoordsHook, 49 8B 85 88 00 00 00)
+alloc(getCyclopsCoords,$1000, omniCyclopsCoordsHook)
+alloc(cyclopsCoords,8)
+
+registersymbol(cyclopsCoords)
+registersymbol(omniCyclopsCoordsHook)
+
+getCyclopsCoords:
+  cmp [r13+B0],0x4940
+  je saveCyclops
+  cmp [r13+B0],0x4A80
+  je saveCyclops
+  cmp [r13+B0],0x4DC0
+  jne getCyclopsCoordsOriginalCode
+saveCyclops:
+  push rax
+  mov rax,[r13+88]
+  mov [cyclopsCoords],rax
+  pop rax
+getCyclopsCoordsOriginalCode:
+  mov rax,[r13+00000088]
+  jmp getCyclopsCoordsReturn
+
+
+omniCyclopsCoordsHook:
+  jmp getCyclopsCoords
+  nop 2
+getCyclopsCoordsReturn:
+
+
+// Gets the Prawn's coordinates.
+define(omniPrawnCoordsHook,"UnityPlayer.dll"+EEBB90)
+
+assert(omniPrawnCoordsHook, F3 44 0F 58 41 10)
+alloc(getPrawnCoords,$1000, omniPrawnCoordsHook)
+alloc(prawnCoords,8)
+
+registersymbol(omniPrawnCoordsHook)
+registersymbol(prawnCoords)
+
+getPrawnCoords:
+  pushf
+  sub rsp,16
+  movdqu [rsp],xmm0
+  push rdx
+  push rax
+  cmp [rcx+1C],0x0
+  je getPrawnCoordsOriginalCode
+  mov rdx,[playerCoords]
+  cmp rdx,0
+  je getPrawnCoordsOriginalCode
+  push [rdx+10]
+  push [rdx+18]
+  push [rcx+10]
+  push [rcx+18]
+  call findCoordinateDistance
+  movd xmm0,eax
+  ucomiss xmm0,[seamothPlayerRange]
+  ja getPrawnCoordsOriginalCode
+  jp getPrawnCoordsOriginalCode
+  mov [prawnCoords],rcx
+getPrawnCoordsOriginalCode:
+  pop rax
+  pop rdx
+  movdqu xmm0,[rsp]
+  add rsp,16
+  popf
+  addss xmm8,[rcx+10]
+  jmp getPrawnCoordsReturn
+
+
+omniPrawnCoordsHook:  
+  jmp getPrawnCoords
+  nop 
+getPrawnCoordsReturn:
+
+// Gets the Prawn grappling hook's coords.
+define(omniGrapplingHookCoordsHook,"UnityPlayer.dll"+F842FE)
+
+assert(omniGrapplingHookCoordsHook, 8B 43 0C 41 89 43 F4)
+alloc(getGrapplingHookCoords,$1000, omniGrapplingHookCoordsHook)
+alloc(grapplingHookCoords,8)
+
+registersymbol(omniGrapplingHookCoordsHook)
+registersymbol(grapplingHookCoords)
+
+getGrapplingHookCoords:
+  pushf
+  mov [grapplingHookCoords],rbx
+getGrapplingHookCoordsOriginalCode:
+  popf
+  mov eax,[rbx+0C]
+  mov [r11-0C],eax
+  jmp getGrapplingHookCoordsReturn
+
+
+omniGrapplingHookCoordsHook:
+  jmp getGrapplingHookCoords
+  nop 2
+getGrapplingHookCoordsReturn:
+
+
+// Apocalypse System
+// R15 == Health of creature taking damage.
+// RSI == Points to the source of damage.
+aobscan(omnifyApocalypseHook, FD FF FF F3 0F 5A D2 F2 0F 5C CA F2 0F 5A C9)
+alloc(initiateApocalypse,$1000, omnifyApocalypseHook)
+alloc(apocalypseRandomState,8)
+alloc(logApocalypse,8)
+alloc(apocalypseResult,8)
+alloc(apocalypseResultUpper,8)
+alloc(apocalypseResultLower,8)
+alloc(logApocalypseFart,8)
+alloc(apocalypseFartResult,8)
+alloc(apocalypseFartResultUpper,8)
+alloc(apocalypseFartResultLower,8)
+alloc(logApocalypseMushroom,8)
+alloc(apocalypseMushroomResult,8)
+alloc(apocalypseMushroomResultUpper,8)
+alloc(apocalypseMushroomResultLower,8)
+alloc(logApocalypseBurning,8)
+alloc(logApocalypseStarving,8)
+alloc(apocalypseStarvingResult,8)
+alloc(apocalypseStarvingResultUpper,8)
+alloc(apocalypseStarvingResultLower,8)
+alloc(riskOfMurderResult,8)
+alloc(riskOfMurderResultUpper,8)
+alloc(riskOfMurderResultLower,8)
+alloc(teleportitisResult,8)
+alloc(teleportitisResultUpper,8)
+alloc(teleportitisResultLower,8)
+alloc(teleportitisDivisor,8)
+alloc(teleportitisShifter,8)
+alloc(teleportitisPitchResult,8)
+alloc(teleportitisPitchResultUpper,8)
+alloc(teleportitisPitchResultLower,8)
+alloc(teleportitisPitchShifter,8)
+alloc(teleportitisYawResult,8)
+alloc(teleportitisYawResultUpper,8)teleportitis
+alloc(teleportitisYawResultLower,8)
+alloc(vomitCometResult,8)
+alloc(vomitCometResultUpper,8)
+alloc(vomitCometResultLower,8)
+alloc(shookResult,8)
+alloc(shookResultUpper,8)
+alloc(shookResultLower,8)
+alloc(playerCritChanceResult,8)
+alloc(playerCritChanceResultUpper,8)
+alloc(playerCritChanceResultLower,8)
+alloc(playerCritDamageResult,8)
+alloc(playerCritDamageResultUpper,8)
+alloc(playerCritDamageResultLower,8)
+alloc(playerCritDamageDivisor,8)
+alloc(logPlayerCrit,8)
+alloc(doubleDamageX,8)
+alloc(quadrupleDamageX,8)
+alloc(sixtyNineDamageX,8)
+alloc(vomitCometDrainX,8)
+alloc(playerGasmHealingAmount,8)
+alloc(seamothGasmHealingAmount,8)
+alloc(playerGodMode,8)
+alloc(maxDamageToPlayer,8)
+alloc(lastDamageToPlayer,8)
+alloc(maxDamageByPlayer,8)
+alloc(lastDamageByPlayer,8)
+alloc(lastEnemyHealth,8)
+alloc(playerDamageX,8)
+
+
+registersymbol(omnifyApocalypseHook)
+registersymbol(apocalypseRandomState)
+registersymbol(logApocalypse)
+registersymbol(apocalypseResult)
+registersymbol(logApocalypseFart)
+registersymbol(apocalypseFartResult)
+registersymbol(logApocalypseMushroom)
+registersymbol(apocalypseMushroomResult)
+registersymbol(logApocalypseBurning)
+registersymbol(logApocalypseStarving)
+registersymbol(apocalypseStarvingResult)
+registersymbol(riskOfMurderResult)
+registersymbol(vomitCometResult)
+registersymbol(shookResult)
+registersymbol(playerCritDamageResult)
+registersymbol(logPlayerCrit)
+registersymbol(maxDamageToPlayer)
+registersymbol(lastDamageToPlayer)
+registersymbol(maxDamageByPlayer)
+registersymbol(lastDamageByPlayer)
+registersymbol(lastEnemyHealth)
+registersymbol(playerGodMode)
+registersymbol(playerDamageX)
+
+
+initiateApocalypse:
+  pushf
+  push rax
+  mov rax,zeroDouble
+  ucomisd xmm2,[rax]
+  pop rax
+  jz initiateApocalypseOriginalCode
+  push rax
+  mov rax,seamothHealth
+  cmp r15,[rax]
+  pop rax
+  je checkGodMode
+  push rax
+  mov rax,playerHealth
+  cmp r15,[rax]
+  pop rax
+  jne checkDamageSource
+checkGodMode:
+  cmp [playerGodMode],1
+  jne applyApocalypse
+  xorps xmm2,xmm2
+  jmp initiateApocalypseOriginalCode
+checkDamageSource:
+  push rax
+  mov rax,weapon
+  cmp rsi,[rax]
+  pop rax
+  je checkForPlayerCrit
+  jmp initiateApocalypseOriginalCode
+applyApocalypse:
+  cmp rdi,0
+  je applyMeleeApocalypse
+  cmp rdi,3
+  je applyMeleeApocalypse
+  cmp rdi,5
+  je applyFartApocalypse
+  cmp rdi,6
+  je applyMushroomApocalypse
+  cmp rdi,1
+  je applyBurningApocalypse
+  cmp rdi,0xB
+  je applyStarvingApocalypse
+  jmp catchUnknownDamageType
+applyMeleeApocalypse:
+  mov [logApocalypse],1
+  push rax
+  push [apocalypseResultLower]
+  push [apocalypseResultUpper]
+  mov rax,apocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [apocalypseResult],eax
+  cmp eax,4
+  jle doubleDamage
+  cmp eax,6
+  jle teleportitis
+  cmp eax,9
+  jle riskOfMurder
+  pop rax
+  jmp suddenGasm
+doubleDamage:
+  mulsd xmm2,[doubleDamageX]
+  jmp updateEnemyDamageStats 
+teleportitis:
+  sub rsp,16
+  movdqu [rsp],xmm3
+  sub rsp,16
+  movdqu [rsp],xmm4
+  push rbx
+  push rcx
+  push rax
+  mov rax,playerHealth
+  cmp r15,[rax]
+  pop rax
+  je teleportPlayer
+  mov rcx,seamothCoords
+  jmp teleport
+teleportPlayer:
+  mov rcx,playerCoords
+teleport:
+  mov rbx,[rcx]
+  pop rcx
+  push [teleportitisResultLower]
+  push [teleportitisResultUpper]
+  mov rax,apocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [teleportitisResult],eax
+  cvtsi2ss xmm3,[teleportitisResult]
+  divss xmm3,[teleportitisDivisor]
+  subss xmm3,[teleportitisShifter]
+  movss xmm4,[rbx+10]
+  addss xmm4,xmm3
+  movss [rbx+10],xmm4
+  push [teleportitisResultLower]
+  push [teleportitisResultUpper]
+  mov rax,apocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [teleportitisResult],eax
+  cvtsi2ss xmm3,[teleportitisResult]
+  divss xmm3,[teleportitisDivisor]
+  subss xmm3,[teleportitisShifter]
+  movss xmm4,[rbx+14]
+  addss xmm4,xmm3
+  movss [rbx+14],xmm4
+  push [teleportitisResultLower]
+  push [teleportitisResultUpper]
+  mov rax,apocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [teleportitisResult],eax
+  cvtsi2ss xmm3,[teleportitisResult]
+  divss xmm3,[teleportitisDivisor]
+  subss xmm3,[teleportitisShifter]
+  movss xmm4,[rbx+18]
+  addss xmm4,xmm3
+  movss [rbx+18],xmm4
+  push [teleportitisPitchResultLower]
+  push [teleportitisPitchResultUpper]
+  mov rax,apocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [teleportitisPitchResult],eax
+  cvtsi2ss xmm3,[teleportitisPitchResult]
+  subss xmm3,[teleportitisPitchShifter]
+  push rax
+  mov rax,orientation
+  mov rbx,[rax]
+  pop rax
+  movss [rbx+5C],xmm3
+  push [teleportitisYawResultLower]
+  push [teleportitisYawResultUpper]
+  mov rax,apocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [teleportitisYawResult],eax
+  cvtsi2ss xmm3,[teleportitisYawResult]
+  movss [rbx+60],xmm3
+  pop rbx
+  movdqu xmm4,[rsp]
+  add rsp,16
+  movdqu xmm3,[rsp]
+  add rsp,16
+  jmp updateEnemyDamageStats
+riskOfMurder:
+  push [riskOfMurderResultLower]
+  push [riskOfMurderResultUpper]
+  mov rax,apocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [riskOfMurderResult],eax
+  cmp eax,3
+  jle vomitCometRandomDrain
+  jmp sixtyNine  
+vomitCometRandomDrain:
+  sub rsp,16
+  movdqu [rsp],xmm3
+  push rbx
+  push rcx
+  mov rcx,sustenance
+  mov rbx,[rcx]
+  pop rcx
+  push [vomitCometResultLower]
+  push [vomitCometResultUpper]
+  mov rax,apocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [vomitCometResult],eax
+  cmp eax,0
+  je vomitCometHalfWater
+  jmp vomitCometHalfFood  
+vomitCometHalfWater:
+  movss xmm3,[rbx+0x60]
+  mulss xmm3,[vomitCometDrainX]
+  movss [rbx+0x60],xmm3
+  jmp vomitCometRandomDrainExit
+vomitCometHalfFood:
+  movss xmm3,[rbx+0x5C]
+  mulss xmm3,[vomitCometDrainX]
+  movss [rbx+0x5C],xmm3
+vomitCometRandomDrainExit:
+  pop rbx
+  movdqu xmm3,[rsp]
+  add rsp,16
+  jmp updateEnemyDamageStats
+sixtyNine:
+  mulsd xmm2,[sixtyNineDamageX]
+  jmp updateEnemyDamageStats
+suddenGasm:
+  push rbx
+  mov rbx,playerHealth
+  cmp r15,[rbx]
+  pop rbx
+  je suddenPlayerGasm
+  movsd xmm1,[seamothGasmHealingAmount]
+  jmp doTheGasm
+suddenPlayerGasm:
+  movsd xmm1,[playerGasmHealingAmount]
+doTheGasm:
+  xorps xmm2,xmm2
+  jmp initiateApocalypseOriginalCode
+applyFartApocalypse:
+  mov [logApocalypseFart],1
+  push rax
+  push [apocalypseFartResultLower]
+  push [apocalypseFartResultUpper]
+  mov rax,apocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [apocalypseFartResult],eax
+  cmp eax,1
+  je vomitCometFullDrain
+  jmp deathByStupidity
+vomitCometFullDrain:
+  sub rsp,16
+  movdqu [rsp],xmm3
+  xorps xmm3,xmm3
+  push rbx
+  push rcx
+  mov rcx,sustenance
+  mov rbx,[rcx]
+  pop rcx
+  movss [rbx+0x60],xmm3
+  movss [rbx+0x5C],xmm3
+  pop rbx
+  movdqu xmm3,[rsp]
+  add rsp,16
+  jmp updateEnemyDamageStats
+deathByStupidity:
+  movsd xmm2,xmm1
+  jmp updateEnemyDamageStats  
+applyMushroomApocalypse:
+  mov [logApocalypseMushroom],1
+  push rax
+  push [apocalypseMushroomResultLower]
+  push [apocalypseMushroomResultUpper]
+  mov rax,apocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [apocalypseMushroomResult],eax
+  cmp eax,#20
+  jle updateEnemyDamageStats
+  cmp eax,#59
+  jle shook
+  jmp deathByBullshit
+shook:
+  sub rsp,16
+  movdqu [rsp],xmm3
+  push [shookResultLower]
+  push [shookResultUpper]
+  mov rax,apocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [shookResult],eax
+  cvtsi2ss xmm3,[shookResult]
+  push rbx
+  push rcx
+  mov rcx,sustenance
+  mov rbx,[rcx]
+  pop rcx
+  movss [rbx+60],xmm3
+  movss [rbx+5C],xmm3
+  pop rbx
+  movdqu xmm3,[rsp]
+  add rsp,16
+  jmp updateEnemyDamageStats
+deathByBullshit:
+  movsd xmm2,xmm1
+  jmp updateEnemyDamageStats  
+applyBurningApocalypse:
+  mov [logApocalypseBurning],1
+  push rax
+  movsd xmm2,xmm1
+  jmp updateEnemyDamageStats
+applyStarvingApocalypse:
+  mov [logApocalypseStarving],1
+  push rax
+  push [apocalypseStarvingResultLower]
+  push [apocalypseStarvingResultUpper]
+  mov rax,apocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [apocalypseStarvingResult],eax
+  cmp eax,8
+  jle quadrupleDamage
+  cmp eax,9
+  je starvingSixtyNine
+  pop rax
+  jmp starvingGasm
+quadrupleDamage:
+  mulsd xmm2,[quadrupleDamageX]
+  jmp updateEnemyDamageStats
+starvingSixtyNine:
+  mulsd xmm2,[sixtyNineDamageX]
+  jmp updateEnemyDamageStats
+starvingGasm:
+  movsd xmm1,[playerGasmHealingAmount]
+  xorps xmm2,xmm2
+  jmp initiateApocalypseOriginalCode
+updateEnemyDamageStats:
+  pop rax
+  ucomisd xmm2,[maxDamageToPlayer]
+  jnae skipMaxEnemyDamageUpdate
+  movsd [maxDamageToPlayer],xmm2
+skipMaxEnemyDamageUpdate:
+  movsd [lastDamageToPlayer],xmm2
+  jmp initiateApocalypseOriginalCode
+checkForPlayerCrit:
+  push rax
+  push [playerCritChanceResultLower]
+  push [playerCritChanceResultUpper]
+  mov rax,apocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [playerCritChanceResult],eax
+  cmp eax,25
+  jg applyPlayerDamage
+  mov [logPlayerCrit],1
+  sub rsp,16
+  movdqu [rsp],xmm3
+  push [playerCritDamageResultLower]
+  push [playerCritDamageResultUpper]
+  mov rax,apocalypseRandomState
+  push rax
+  call generateRandomNumber
+  mov [playerCritDamageResult],eax
+  cvtsi2sd xmm3,[playerCritDamageResult]
+  divsd xmm3,[playerCritDamageDivisor]
+  mulsd xmm2,xmm3
+  movdqu xmm3,[rsp]
+  add rsp,16
+applyPlayerDamage:
+  pop rax
+  mulsd xmm2,[playerDamageX]
+  ucomisd xmm2,[maxDamageByPlayer]
+  jnae skipMaxPlayerDamageUpdate
+  movsd [maxDamageByPlayer],xmm2
+skipMaxPlayerDamageUpdate:
+  movsd [lastDamageByPlayer],xmm2
+  jmp initiateApocalypseOriginalCode
+catchUnknownDamageType:
+  nop
+initiateApocalypseOriginalCode:
+  popf
+  subsd xmm1,xmm2
+  cvtsd2ss xmm1,xmm1
+  jmp initiateApocalypseReturn
+
+
+omnifyApocalypseHook+07:
+  jmp initiateApocalypse
+  nop 3
+initiateApocalypseReturn:
+
+apocalypseRandomState:
+  dd 0
+
+logApocalypse:
+  dd 0
+
+apocalypseResult:
+  dd 0
+
+apocalypseResultUpper:
+  dd #10
+
+apocalypseResultLower:
+  dd 1
+  
+logApocalypseFart:
+  dd 0
+
+apocalypseFartResult:
+  dd 0
+
+apocalypseFartResultUpper:
+  dd 2
+
+apocalypseFartResultLower:
+  dd 1
+  
+logApocalypseMushroom:
+  dd 0
+  
+apocalypseMushroomResult:
+  dd 0
+
+apocalypseMushroomResultUpper:
+  dd #60
+
+apocalypseMushroomResultLower:
+  dd 1
+
+logApocalypseBurning:
+  dd 0
+
+logApocalypseStarving:
+  dd 0
+
+apocalypseStarvingResult:
+  dd 0
+
+apocalypseStarvingResultUpper:
+  dd #10
+
+apocalypseStarvingResultLower:
+  dd 1
+
+riskOfMurderResult:
+  dd 0
+
+riskOfMurderResultUpper:
+  dd 5
+
+riskOfMurderResultLower:
+  dd 1
+
+teleportitisResult:
+  dd 0
+
+teleportitisResultUpper:
+  dd #10000
+
+teleportitisResultLower:
+  dd 0
+
+teleportitisDivisor:
+  dd (float)1000.0
+
+teleportitisShifter:
+  dd (float)5.0
+
+teleportitisPitchResult:
+  dd 0
+
+teleportitisPitchResultUpper:
+  dd #174
+
+teleportitisPitchResultLower:
+  dd 0
+
+teleportitisPitchShifter:
+  dd (float)87.0
+
+teleportitisYawResult:
+  dd 0
+
+teleportitisYawResultUpper:
+  dd #360
+
+teleportitisYawResultLower:
+  dd 0
+  
+vomitCometResult:
+  dd 0
+
+vomitCometResultUpper:
+  dd 1
+
+vomitCometResultLower:
+  dd 0  
+
+shookResult:
+  dd 0
+
+shookResultUpper:
+  dd #100
+
+shookResultLower:
+  dd 0
+
+playerCritChanceResult:
+  dd 0
+
+playerCritChanceResultUpper:
+  dd #400
+
+playerCritChanceResultLower:
+  dd 0
+
+playerCritDamageResult:
+  dd 0
+
+playerCritDamageResultUpper:
+  dd #60
+
+playerCritDamageResultLower:
+  dd #20
+  
+playerCritDamageDivisor:
+  dq (double)10.0
+
+logPlayerCrit:
+  dd 0
+
+doubleDamageX:
+  dq (double)2.0  
+
+quadrupleDamageX:
+  dq (double)4.0
+
+sixtyNineDamageX:
+  dq (double)69.0
+
+vomitCometDrainX:
+  dd (float)0.5
+
+playerGasmHealingAmount:
+  dq (double)100.0
+  
+seamothGasmHealingAmount:
+  dq (double)200.0
+
+playerGodMode:
+  dd 0
+
+maxDamageToPlayer:
+  dq 0
+
+lastDamageToPlayer:
+  dq 0
+
+maxDamageByPlayer:
+  dq 0
+
+lastDamageByPlayer:
+  dq 0
+
+playerDamageX:
+  dq (double)1.0
+  
+// Predator System
+define(omnifyPredatorHook,"UnityPlayer.dll"+F8B4EF)
+
+assert(omnifyPredatorHook, F3 0F 10 0F F3 0F 58 0C 33)
+alloc(initiatePredator,$1000, omnifyPredatorHook)
+alloc(enemySpeedX,8)
+alloc(playerSpeedX,8)
+alloc(aggroDistance,8)
+
+registersymbol(enemySpeedX)
+registersymbol(playerSpeedX)
+registersymbol(omnifyPredatorHook)
+registersymbol(aggroDistance)
+
+initiatePredator:
+  pushf
+  sub rsp,16
+  movdqu [rsp],xmm5
+  push rax
+  push rcx
+  push rdx
+  mov rax,[r13+38]
+  mov rcx,[rax+rbp*8]
+  mov rdx,[rcx+28]
+  cmp rdx,[playerCoords]
+  je fuckUpPlayerSpeed
+  cmp rdx,[seamothCoords]
+  je fuckUpPlayerSpeed
+  cmp rdx,[cyclopsCoords]
+  je fuckUpPlayerSpeed
+  cmp rdx,[grapplingHookCoords]
+  je fuckUpPlayerSpeed
+  push r11
+  mov r11,[prawnCoords]
+  cmp r11,0
+  je skipPrawnCheck
+  sub r11,B0
+  cmp rdx,r11
+skipPrawnCheck:
+  pop r11
+  je fuckUpPlayerSpeed
+  mov rcx,[playerCoords]
+  cmp rcx,0
+  je fuckUpEnemySpeed
+  push [rcx+10]
+  push [rcx+18]
+  push [rdx+10]
+  push [rdx+18]
+  call findCoordinateDistance
+  movd xmm5,eax
+  ucomiss xmm5,[aggroDistance]
+  ja applySpeed
+fuckUpEnemySpeed:
+  mulss xmm0,[enemySpeedX]
+  jmp applySpeed
+fuckUpPlayerSpeed:
+  mulss xmm0,[playerSpeedX]
+applySpeed:
+  pop rdx
+  pop rcx
+  pop rax
+  movdqu xmm5,[rsp]
+  add rsp,16
+initiatePredatorOriginalCode:
+  popf
+  movss xmm1,[rdi]
+  addss xmm1,[rbx+rsi]
+  jmp initiatePredatorReturn
+
+
+omnifyPredatorHook:
+  jmp initiatePredator
+  nop 4
+
+initiatePredatorReturn:
+
+enemySpeedX:
+  dd (float)5.0
+  
+playerSpeedX:
+  dd (float)1.0
+
+aggroDistance:
+  dd (float)150.0
+
+[DISABLE]
+
+// Cleanup of global memory
+dealloc(zero)
+
+// Cleanup of generateRandomNumber
+unregistersymbol(generateRandomNumber)
+
+dealloc(generateRandomNumber)
+
+// Cleanup of findCoordinateDistance
+unregistersymbol(findCoordinateDistance)
+
+dealloc(findCoordinateDistance)
+
+// Cleanup of omniSustenanceHook
+omniSustenanceHook:
+  db F3 41 0F 10 46 60
+
+unregistersymbol(omniSustenanceHook)
+unregistersymbol(sustenance)
+
+dealloc(sustenance)
+dealloc(getSustenance)
+
+
+// Cleanup of omniPlayerHealthHook
+omniPlayerHealthHook:
+  db F3 41 0F 10 46 68
+
+unregistersymbol(omniPlayerHealthHook)
+unregistersymbol(playerHealth)
+
+dealloc(playerHealth)
+dealloc(getPlayerHealth)
+
+
+// Cleanup of omniTotalTimeHook
+omniTotalTimeHook:
+  db F2 0F 10 40 60
+
+unregistersymbol(omniTotalTimeHook)
+unregistersymbol(totalTime)
+
+dealloc(totalTime)
+dealloc(getTotalTime)
+
+
+// Cleanup of omniPlayerCoordsHook
+omniPlayerCoordsHook:
+  db 8B 42 10 89 41 70
+
+unregistersymbol(omniPlayerCoordsHook)
+unregistersymbol(playerCoords)
+
+dealloc(playerCoords)
+dealloc(getPlayerCoords)
+dealloc(playerId)
+
+
+// Cleanup of omniPlayerLandCoordsHook
+omniPlayerLandCoordsHook:
+  db F2 0F 10 30 F2 0F 10 78 08
+
+unregistersymbol(omniPlayerLandCoordsHook)
+unregistersymbol(playerLandCoords)
+
+dealloc(playerLandCoords)
+dealloc(getPlayerLandCoords)
+
+
+// Cleanup of omniOxygenHook
+omniOxygenHook:
+  db F3 0F 10 50 20
+
+unregistersymbol(oxygenReserve)
+unregistersymbol(oxygenTank)
+unregistersymbol(omniOxygenHook)
+
+dealloc(oxygenReserve)
+dealloc(oxygenTank)
+dealloc(getOxygen)
+
+
+// Cleanup of omniOrientationHook
+omniOrientationHook:
+  db F3 0F 10 46 5C
+
+unregistersymbol(omniOrientationHook)
+unregistersymbol(orientation)
+
+dealloc(orientation)
+dealloc(getOrientation)
+
+
+// Cleanup of omniWeaponHook
+omniWeaponHook+05:
+  db F3 0F 10 46 30
+
+unregistersymbol(omniWeaponHook)
+unregistersymbol(weapon)
+
+dealloc(weapon)
+dealloc(getWeapon)
+
+
+// Cleanup of omniSeamothHealthHook
+omniSeamothHealthHook+01:
+  db F3 0F 10 40 68
+
+unregistersymbol(omniSeamothHealthHook)
+unregistersymbol(seamothHealth)
+
+dealloc(seamothHealth)
+dealloc(getSeamothHealth)
+
+
+// Cleanup of omniSeamothCoordsHook
+omniSeamothCoordsHook:
+  db F3 41 0F 59 89 84 00 00 00
+
+unregistersymbol(omniSeamothCoordsHook)
+unregistersymbol(seamothCoords)
+
+dealloc(seamothPlayerRange)
+dealloc(seamothId)
+dealloc(seamothCoords)
+dealloc(getSeamothCoords)
+
+
+// Cleanup of omniCyclopsCoordsHook
+omniCyclopsCoordsHook:
+  db 49 8B 85 88 00 00 00
+
+unregistersymbol(omniCyclopsCoordsHook)
+unregistersymbol(cyclopsCoords)
+
+dealloc(cyclopsCoords)
+dealloc(getCyclopsCoords)
+
+// Cleanup of omniPrawnCoordsHook
+omniPrawnCoordsHook:
+  db F3 44 0F 58 41 10
+
+unregistersymbol(omniPrawnCoordsHook)
+unregistersymbol(prawnCoords)
+
+dealloc(prawnCoords)
+dealloc(getPrawnCoords)
+
+// Cleanup of omniGrapplingHookCoordsHook
+omniGrapplingHookCoordsHook:
+  db 8B 43 0C 41 89 43 F4
+
+unregistersymbol(omniGrapplingHookCoordsHook)
+unregistersymbol(grapplingHookCoords)
+
+dealloc(grapplingHookCoords)
+dealloc(getGrapplingHookCoords)
+
+
+// Cleanup of omnifyApocalypseHook
+omnifyApocalypseHook+07:
+  db F2 0F 5C CA F2 0F 5A C9
+
+unregistersymbol(omnifyApocalypseHook)
+unregistersymbol(logApocalypse)
+unregistersymbol(apocalypseRandomState)
+unregistersymbol(apocalypseResult)
+unregistersymbol(logApocalypseFart)
+unregistersymbol(apocalypseFartResult)
+unregistersymbol(logApocalypseMushroom)
+unregistersymbol(apocalypseMushroomResult)
+unregistersymbol(logApocalypseBurning)
+unregistersymbol(logApocalypseStarving)
+unregistersymbol(apocalypseStarvingResult)
+unregistersymbol(riskOfMurderResult)
+unregistersymbol(vomitCometResult)
+unregistersymbol(shookResult)
+unregistersymbol(maxDamageToPlayer)
+unregistersymbol(lastDamageToPlayer)
+unregistersymbol(maxDamageByPlayer)
+unregistersymbol(lastDamageByPlayer)
+unregistersymbol(lastEnemyHealth)
+unregistersymbol(playerCritDamageResult)
+unregistersymbol(logPlayerCrit)
+unregistersymbol(playerGodMode)
+
+dealloc(apocalypseRandomState)
+dealloc(logApocalypse)
+dealloc(apocalypseResult)
+dealloc(apocalypseResultUpper)
+dealloc(apocalypseResultLower)
+dealloc(logApocalypseFart)
+dealloc(apocalypseFartResult)
+dealloc(apocalypseFartResultUpper)
+dealloc(apocalypseFartResultLower)
+dealloc(logApocalypseMushroom)
+dealloc(apocalypseMushroomResult)
+dealloc(apocalypseMushroomResultUpper)
+dealloc(apocalypseMushroomResultLower)
+dealloc(logApocalypseBurning)
+dealloc(logApocalypseStarving)
+dealloc(apocalypseStarvingResult)
+dealloc(apocalypseStarvingResultUpper)
+dealloc(apocalypseStarvingResultLower)
+dealloc(riskOfMurderResult)
+dealloc(riskOfMurderResultUpper)
+dealloc(riskOfMurderResultLower)
+dealloc(teleportitisResult)
+dealloc(teleportitisResultUpper)
+dealloc(teleportitisResultLower)
+dealloc(teleportitisDivisor)
+dealloc(teleportitisShifter)
+dealloc(teleportitisPitchResult)
+dealloc(teleportitisPitchResultUpper)
+dealloc(teleportitisPitchResultLower)
+dealloc(teleportitisPitchShifter)
+dealloc(teleportitisYawResult)
+dealloc(teleportitisYawResultUpper)
+dealloc(teleportitisYawResultLower)
+dealloc(vomitCometResult)
+dealloc(vomitCometResultUpper)
+dealloc(vomitCometResultLower)
+dealloc(shookResult)
+dealloc(shookResultUpper)
+dealloc(shookResultLower)
+dealloc(playerCritChanceResult)
+dealloc(playerCritChanceResultUpper)
+dealloc(playerCritChanceResultLower)
+dealloc(playerCritDamageResult)
+dealloc(playerCritDamageResultUpper)
+dealloc(playerCritDamageResultLower)
+dealloc(playerCritDamageDivisor)
+dealloc(logPlayerCrit)
+dealloc(doubleDamageX)
+dealloc(quadrupleDamageX)
+dealloc(sixtyNineDamageX)
+dealloc(vomitCometDrainX)
+dealloc(seamothGasmHealingAmount)
+dealloc(playerGasmHealingAmount)
+dealloc(playerGodMode)
+dealloc(maxDamageToPlayer)
+dealloc(lastDamageToPlayer)
+dealloc(maxDamageByPlayer)
+dealloc(lastDamageByPlayer)
+dealloc(lastEnemyHealth)
+dealloc(playerDamageX)
+dealloc(initiateApocalypse)
+
+
+
+// Cleanup of omnifyPredatorHook
+omnifyPredatorHook:
+  db F3 0F 10 0F F3 0F 58 0C 33
+
+
+unregistersymbol(aggroDistance)
+unregistersymbol(enemySpeedX)
+unregistersymbol(playerSpeedX)
+unregistersymbol(omnifyPredatorHook)
+
+dealloc(aggroDistance)
+dealloc(playerSpeedX)
+dealloc(enemySpeedX)
+dealloc(initiatePredator)
+
+
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>22</ID>
+          <Description>"Total Time"</Description>
+          <LastState Value="203280.000007153" RealAddress="1C885508F90"/>
+          <VariableType>Double</VariableType>
+          <Address>totalTime</Address>
+          <Offsets>
+            <Offset>60</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>2458</ID>
+          <Description>"Player Speed"</Description>
+          <LastState Value="1" RealAddress="7FFD02941008"/>
+          <VariableType>Float</VariableType>
+          <Address>playerSpeedX</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>2643</ID>
+          <Description>"Location (Prawn)"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" Activated="1" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>2644</ID>
+              <Description>"X"</Description>
+              <LastState Value="-656.3032837" RealAddress="1C5876826C0"/>
+              <VariableType>Float</VariableType>
+              <Address>prawnCoords</Address>
+              <Offsets>
+                <Offset>10</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>2645</ID>
+              <Description>"Y"</Description>
+              <LastState Value="-2.827841043" RealAddress="1C5876826C4"/>
+              <VariableType>Float</VariableType>
+              <Address>prawnCoords</Address>
+              <Offsets>
+                <Offset>14</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>2646</ID>
+              <Description>"Z"</Description>
+              <LastState Value="-260.1858521" RealAddress="1C5876826C8"/>
+              <VariableType>Float</VariableType>
+              <Address>prawnCoords</Address>
+              <Offsets>
+                <Offset>18</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>2674</ID>
+              <Description>"Grappling Hook X"</Description>
+              <LastState Value="0" RealAddress="1C54C76AE00"/>
+              <VariableType>Float</VariableType>
+              <Address>grapplingHookCoords</Address>
+              <Offsets>
+                <Offset>10</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>3081</ID>
+              <Description>"Grappling Hook Y"</Description>
+              <LastState Value="0" RealAddress="1C54C76AE04"/>
+              <VariableType>Float</VariableType>
+              <Address>grapplingHookCoords</Address>
+              <Offsets>
+                <Offset>14</Offset>
+              </Offsets>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1110</ID>
+          <Description>"Enemy Speed"</Description>
+          <LastState Value="5" RealAddress="7FFD02941000"/>
+          <VariableType>Float</VariableType>
+          <Address>enemySpeedX</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>2454</ID>
+          <Description>"Location (Cyclops)"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" Activated="1" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>2455</ID>
+              <Description>"X"</Description>
+              <LastState Value="0" RealAddress="1C5E3990250"/>
+              <VariableType>Float</VariableType>
+              <Address>cyclopsCoords</Address>
+              <Offsets>
+                <Offset>10</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>2456</ID>
+              <Description>"Y"</Description>
+              <LastState Value="0" RealAddress="1C5E3990254"/>
+              <VariableType>Float</VariableType>
+              <Address>cyclopsCoords</Address>
+              <Offsets>
+                <Offset>14</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>2457</ID>
+              <Description>"Z"</Description>
+              <LastState Value="0" RealAddress="1C5E3990258"/>
+              <VariableType>Float</VariableType>
+              <Address>cyclopsCoords</Address>
+              <Offsets>
+                <Offset>18</Offset>
+              </Offsets>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>120</ID>
+          <Description>"Orientation"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>121</ID>
+              <Description>"Pitch"</Description>
+              <LastState Value="83.01477051" RealAddress="1C871F8641C"/>
+              <VariableType>Float</VariableType>
+              <Address>orientation</Address>
+              <Offsets>
+                <Offset>5C</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>122</ID>
+              <Description>"Yaw"</Description>
+              <LastState Value="89.96006012" RealAddress="1C871F86420"/>
+              <VariableType>Float</VariableType>
+              <Address>orientation</Address>
+              <Offsets>
+                <Offset>60</Offset>
+              </Offsets>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1092</ID>
+          <Description>"Seamoth Health"</Description>
+          <LastState Value="600" RealAddress="1C5FCA727E8"/>
+          <VariableType>Float</VariableType>
+          <Address>seamothHealth</Address>
+          <Offsets>
+            <Offset>68</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1107</ID>
+          <Description>"Location (Seamoth)"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1106</ID>
+              <Description>"X"</Description>
+              <LastState Value="0" RealAddress="1C689541A40"/>
+              <VariableType>Float</VariableType>
+              <Address>seamothCoords</Address>
+              <Offsets>
+                <Offset>10</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1108</ID>
+              <Description>"Y"</Description>
+              <LastState Value="0" RealAddress="1C689541A44"/>
+              <VariableType>Float</VariableType>
+              <Address>seamothCoords</Address>
+              <Offsets>
+                <Offset>14</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1109</ID>
+              <Description>"Z"</Description>
+              <LastState Value="0" RealAddress="1C689541A48"/>
+              <VariableType>Float</VariableType>
+              <Address>seamothCoords</Address>
+              <Offsets>
+                <Offset>18</Offset>
+              </Offsets>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>23</ID>
+          <Description>"Location (Water)"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" Activated="1" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>24</ID>
+              <Description>"X"</Description>
+              <LastState Value="-678.5737305" RealAddress="1C5C67D98F0"/>
+              <VariableType>Float</VariableType>
+              <Address>playerCoords</Address>
+              <Offsets>
+                <Offset>10</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>25</ID>
+              <Description>"Y"</Description>
+              <LastState Value="40.66761017" RealAddress="1C5C67D98F4"/>
+              <VariableType>Float</VariableType>
+              <Address>playerCoords</Address>
+              <Offsets>
+                <Offset>14</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>26</ID>
+              <Description>"Z"</Description>
+              <LastState Value="-106.1405945" RealAddress="1C5C67D98F8"/>
+              <VariableType>Float</VariableType>
+              <Address>playerCoords</Address>
+              <Offsets>
+                <Offset>18</Offset>
+              </Offsets>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>102</ID>
+          <Description>"Location (Land)"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" Activated="1" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>103</ID>
+              <Description>"X"</Description>
+              <LastState Value="-678.57373046875" RealAddress="1C5B93877F8"/>
+              <VariableType>Double</VariableType>
+              <Address>playerLandCoords</Address>
+              <Offsets>
+                <Offset>0</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>104</ID>
+              <Description>"Y"</Description>
+              <LastState Value="40.667610168457" RealAddress="1C5B9387800"/>
+              <VariableType>Double</VariableType>
+              <Address>playerLandCoords</Address>
+              <Offsets>
+                <Offset>8</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>105</ID>
+              <Description>"Z"</Description>
+              <LastState Value="-106.140563964844" RealAddress="1C5B9387808"/>
+              <VariableType>Double</VariableType>
+              <Address>playerLandCoords</Address>
+              <Offsets>
+                <Offset>10</Offset>
+              </Offsets>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>13</ID>
+          <Description>"Stats"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" Activated="1" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>15</ID>
+              <Description>"Thirst"</Description>
+              <LastState Value="59.44432068" RealAddress="1C88594B560"/>
+              <VariableType>Float</VariableType>
+              <Address>sustenance</Address>
+              <Offsets>
+                <Offset>60</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>16</ID>
+              <Description>"Health"</Description>
+              <LastState Value="85.37202454" RealAddress="1C84AA46E28"/>
+              <VariableType>Float</VariableType>
+              <Address>playerHealth</Address>
+              <Offsets>
+                <Offset>68</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>14</ID>
+              <Description>"Hunger"</Description>
+              <LastState Value="86.41268921" RealAddress="1C88594B55C"/>
+              <VariableType>Float</VariableType>
+              <Address>sustenance</Address>
+              <Offsets>
+                <Offset>5C</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>107</ID>
+              <Description>"Tank O2"</Description>
+              <LastState Value="180" RealAddress="1C808213B00"/>
+              <VariableType>Float</VariableType>
+              <Address>oxygenTank</Address>
+              <Offsets>
+                <Offset>20</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>106</ID>
+              <Description>"Reserve O2"</Description>
+              <LastState Value="45" RealAddress="1C6AB2A92F0"/>
+              <VariableType>Float</VariableType>
+              <Address>oxygenReserve</Address>
+              <Offsets>
+                <Offset>20</Offset>
+              </Offsets>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>3360</ID>
+      <Description>"No description"</Description>
+      <VariableType>Float</VariableType>
+      <Address>1E36A6C7054</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>3361</ID>
+      <Description>"No description"</Description>
+      <VariableType>Float</VariableType>
+      <Address>1E36A6C7050</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>3362</ID>
+      <Description>"No description"</Description>
+      <VariableType>Float</VariableType>
+      <Address>1E36A6C7040</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>3363</ID>
+      <Description>"No description"</Description>
+      <LastState Value="0" RealAddress="1C54C76AE04"/>
+      <VariableType>Float</VariableType>
+      <Address>grapplingHookCoords</Address>
+      <Offsets>
+        <Offset>14</Offset>
+      </Offsets>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>3364</ID>
+      <Description>"Pointer"</Description>
+      <ShowAsHex>1</ShowAsHex>
+      <VariableType>8 Bytes</VariableType>
+      <Address>1C5B2B024C0</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>3365</ID>
+      <Description>"Float"</Description>
+      <VariableType>Float</VariableType>
+      <Address>1C5B2B02548</Address>
+      <Offsets>
+        <Offset>14</Offset>
+      </Offsets>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>3366</ID>
+      <Description>"Float"</Description>
+      <VariableType>Float</VariableType>
+      <Address>1C5B2B02548</Address>
+      <Offsets>
+        <Offset>C</Offset>
+      </Offsets>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>3367</ID>
+      <Description>"No description"</Description>
+      <LastState Value="0" RealAddress="1C4CA0E11A8"/>
+      <VariableType>4 Bytes</VariableType>
+      <Address>playerGodMode</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>3368</ID>
+      <Description>"No description"</Description>
+      <LastState Value="0" RealAddress="1C4CA0E11A8"/>
+      <VariableType>4 Bytes</VariableType>
+      <Address>playerGodMode</Address>
+    </CheatEntry>
+  </CheatEntries>
+  <CheatCodes>
+    <CodeEntry>
+      <Description>Change of mov [rdx+10],eax</Description>
+      <AddressString>UnityPlayer.dll+F8B99D</AddressString>
+      <Before>
+        <Byte>42</Byte>
+        <Byte>0C</Byte>
+        <Byte>8B</Byte>
+        <Byte>47</Byte>
+        <Byte>60</Byte>
+      </Before>
+      <Actual>
+        <Byte>89</Byte>
+        <Byte>42</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>8B</Byte>
+        <Byte>47</Byte>
+        <Byte>64</Byte>
+        <Byte>89</Byte>
+        <Byte>42</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of mov [rdx+14],eax</Description>
+      <AddressString>UnityPlayer.dll+F8B9A3</AddressString>
+      <Before>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>8B</Byte>
+        <Byte>47</Byte>
+        <Byte>64</Byte>
+      </Before>
+      <Actual>
+        <Byte>89</Byte>
+        <Byte>42</Byte>
+        <Byte>14</Byte>
+      </Actual>
+      <After>
+        <Byte>8B</Byte>
+        <Byte>47</Byte>
+        <Byte>68</Byte>
+        <Byte>89</Byte>
+        <Byte>42</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of mov [rdx+18],eax</Description>
+      <AddressString>UnityPlayer.dll+F8B9A9</AddressString>
+      <Before>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>8B</Byte>
+        <Byte>47</Byte>
+        <Byte>68</Byte>
+      </Before>
+      <Actual>
+        <Byte>89</Byte>
+        <Byte>42</Byte>
+        <Byte>18</Byte>
+      </Actual>
+      <After>
+        <Byte>8B</Byte>
+        <Byte>07</Byte>
+        <Byte>89</Byte>
+        <Byte>42</Byte>
+        <Byte>40</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of mov [rcx+20],eax</Description>
+      <AddressString>UnityPlayer.dll+F4A263</AddressString>
+      <Before>
+        <Byte>41</Byte>
+        <Byte>1C</Byte>
+        <Byte>8B</Byte>
+        <Byte>42</Byte>
+        <Byte>10</Byte>
+      </Before>
+      <Actual>
+        <Byte>89</Byte>
+        <Byte>41</Byte>
+        <Byte>20</Byte>
+      </Actual>
+      <After>
+        <Byte>8B</Byte>
+        <Byte>42</Byte>
+        <Byte>14</Byte>
+        <Byte>89</Byte>
+        <Byte>41</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of mov [rcx+24],eax</Description>
+      <AddressString>UnityPlayer.dll+F4A269</AddressString>
+      <Before>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>8B</Byte>
+        <Byte>42</Byte>
+        <Byte>14</Byte>
+      </Before>
+      <Actual>
+        <Byte>89</Byte>
+        <Byte>41</Byte>
+        <Byte>24</Byte>
+      </Actual>
+      <After>
+        <Byte>8B</Byte>
+        <Byte>42</Byte>
+        <Byte>18</Byte>
+        <Byte>89</Byte>
+        <Byte>41</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of mov eax,[rdx+18]</Description>
+      <AddressString>UnityPlayer.dll+F4A26C</AddressString>
+      <Before>
+        <Byte>42</Byte>
+        <Byte>14</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+      </Before>
+      <Actual>
+        <Byte>8B</Byte>
+        <Byte>42</Byte>
+        <Byte>18</Byte>
+      </Actual>
+      <After>
+        <Byte>89</Byte>
+        <Byte>41</Byte>
+        <Byte>28</Byte>
+        <Byte>48</Byte>
+        <Byte>85</Byte>
+      </After>
+    </CodeEntry>
+  </CheatCodes>
+  <UserdefinedSymbols/>
+  <LuaScript>getAutoAttachList().add("Subnautica.exe")
+</LuaScript>
+</CheatTable>

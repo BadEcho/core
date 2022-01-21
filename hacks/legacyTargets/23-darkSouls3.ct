@@ -1,0 +1,1588 @@
+<!--
+    Omnified Dark Souls III
+    Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
+    Copyright 2022 Bad Echo LLC
+
+    Bad Echo Technologies are licensed under a
+    Creative Commons Attribution-NonCommercial 4.0 International License.
+
+    See accompanying file LICENSE.md or a copy at:
+    http://creativecommons.org/licenses/by-nc/4.0/
+-->
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="31">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>1458</ID>
+      <Description>"OMNIFY"</Description>
+      <Options moHideChildren="1"/>
+      <LastState Activated="1"/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{
+ Omnified Dark Souls III
+ Written By: Matt Weber
+ Copyright 2020 Bad Echo LLC
+
+ Visit my hackpad for my information on what I do:
+ https://badecho.com
+
+ Catch my live streams on my official Twitch channel:
+ https://twitch.tv/omni
+}
+	  
+[ENABLE]
+{$lua}
+function register()
+  require("Omnified")
+  registerOmnification()
+end
+
+function mark()
+  local currentX = readFloat("[playerCoords]+0x80")
+  local currentY = readFloat("[playerCoords]+0x84")
+  local currentZ = readFloat("[playerCoords]+0x88")
+  
+  if currentX ~= nil and currentY ~= nil and currentZ ~= nil then
+	writeFloat("teleportX",currentX)
+	writeFloat("teleportY",currentY)
+	writeFloat("teleportZ",currentZ)
+  end
+end
+
+function recall()
+  writeInteger("teleport",1)
+end
+
+createHotkey(mark,VK_NUMPAD4)
+createHotkey(recall,VK_NUMPAD5)
+
+{$asm}
+luacall(register())
+
+alloc(checkBadPointer,$1000)
+
+registersymbol(checkBadPointer)
+
+checkBadPointer:
+  push rax
+  push rdx
+  push r8
+  push r9
+  push rbp
+  mov rbp,rsp
+  and spl,F0
+  sub rsp,20
+  mov edx,4
+  call isBadReadPtr
+  mov rcx,eax
+  mov rsp,rbp
+  pop rbp
+  pop r9
+  pop r8
+  pop rdx
+  pop rax
+  ret
+
+// Gets the player's root, coordinates, and vitals structs.
+// Also gets the player's death count.
+// rcx: Address of player's root struct.
+define(omniPlayerHook, "DarkSoulsIII.exe" + C1A78C)
+
+assert(omniPlayerHook, 48 8B 01 FF 90 C0 02 00 00)
+alloc(getPlayer,$1000, omniPlayerHook)
+alloc(player,8)
+alloc(playerCoords,8)
+alloc(playerVitals,8)
+alloc(teleport,8)
+alloc(teleportX,8)
+alloc(teleportY,8)
+alloc(teleportZ,8)
+alloc(playerDeaths,8)
+
+registersymbol(playerDeaths)
+registersymbol(omniPlayerHook)
+registersymbol(player)
+registersymbol(playerCoords)
+registersymbol(playerVitals)
+registersymbol(teleport)
+registersymbol(teleportX)
+registersymbol(teleportY)
+registersymbol(teleportZ)
+
+getPlayer:
+  push rbx
+  push rcx
+  push rdx
+  // The game data manager's pointer lies in a static place in
+  // memory.
+  mov rbx,[DarkSoulsIII.exe+4740178]
+  test rbx,rbx
+  je continueGettingPlayer
+  mov rdx,[rbx+98]
+  mov rbx,playerDeaths
+  mov [rbx],rdx
+continueGettingPlayer:  
+  mov rbx,player
+  mov [rbx],rcx  
+  mov rdx,[rcx+0x1FA0]
+  mov rbx,[rdx+0x100]
+  cmp bl,0
+  jne playerIsEmbered
+  mov [disableTeleportitis],0
+  mov [disableSixtyNine],0
+  jmp loadPlayerModules
+playerIsEmbered:
+  mov [disableTeleportitis],1
+  mov [disableSixtyNine],1
+loadPlayerModules:
+  mov rdx,[rcx+0x1F90]
+  mov rcx,rdx
+  mov rdx,[rcx+0x18]
+  mov rbx,playerVitals
+  mov [rbx],rdx
+  mov rdx,[rcx+0x68]
+  mov rbx,playerCoords
+  mov [rbx],rdx
+  cmp [teleport],1
+  jne getPlayerExit
+  sub rsp,10
+  movdqu [rsp],xmm0
+  movss xmm0,[teleportX]
+  movss [rdx+80],xmm0
+  movss xmm0,[teleportY]
+  movss [rdx+84],xmm0
+  movss xmm0,[teleportZ]
+  movss [rdx+88],xmm0
+  mov [teleport],0
+  movdqu xmm0,[rsp]
+  add rsp,10
+getPlayerExit:
+  pop rdx
+  pop rcx
+  pop rbx
+getPlayerOriginalCode:
+  mov rax,[rcx]
+  call qword ptr [rax+000002C0]
+  jmp getPlayerReturn
+
+
+omniPlayerHook:
+  jmp getPlayer
+  nop 4
+getPlayerReturn:
+
+
+
+// Initiates the Apocalypse system.
+// rcx: Vitals struct of damage target.
+// rsp+20: Root struct of damage source.
+// rax: Working health value.
+// rdi: Damage amount in two's complement form. 
+define(omnifyApocalypseHook, "DarkSoulsIII.exe" + 451C72D)
+
+assert(omnifyApocalypseHook, 8D 0C 38 89 4C 24 48)
+alloc(initiateApocalypse,$1000,omnifyApocalypseHook)
+alloc(disableEnemyApocalypse,8)
+alloc(disableApocalypse,8)
+
+registersymbol(omnifyApocalypseHook)
+registersymbol(disableEnemyApocalypse)
+registersymbol(disableApocalypse)
+
+initiateApocalypse:
+  pushf
+  cmp [disableApocalypse],1
+  je initiateApocalypseOriginalCode
+  // Bail out if damage is from fall.
+  cmp r15w,0x15
+  je initiateApocalypseOriginalCode
+  // Backing up a few SSE registers we'll be using to
+  // hold our converted floating points.
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  sub rsp,10
+  movdqu [rsp],xmm2
+  // Backing up rbx as it is used to hold a return value from the Apocalypse
+  // system and is not meant to be updated upon completion of the initiation.
+  push rbx
+  // Backing up working registers that will hold pointer addresses and other 
+  // temporary values.
+  push rdx
+  push rsi
+  // Take the two's complement of the damage amount so it is positive.
+  neg edi
+  // Convert the working health and damage amount to floating point.
+  cvtsi2ss xmm0,edi
+  cvtsi2ss xmm1,rax 
+  // If the player isn't the target, we need to ensure he/she is the source,
+  // otherwise we want to bail out here and allow normal damage application to
+  // occur.
+  mov rdx,playerVitals  
+  cmp [rdx],rcx
+  je initiatePlayerApocalypse
+  // The damage source is originally at [rsp+20], however due to the code above 
+  // preserving registers values on the stack, its location has moved to [rsp+6A].
+  mov rdx,player
+  mov rsi,[rsp+6A]
+  cmp [rdx],rsi
+  je initiateEnemyApocalypse
+  jmp initiateApocalypseExit  
+initiatePlayerApocalypse:
+  // We realign the player's coordinates struct so it begins at the X coordinate.
+  mov rdx,playerCoords
+  mov rbx,[rdx]
+  lea rdx,[rbx+80]
+  // Convert the player's maximum health to floating point.
+  mov ebx,[rcx+E0]
+  cvtsi2ss xmm2,ebx
+  // Push the damage amount parameter.
+  sub rsp,8
+  movd [rsp],xmm0
+  // Push the working health value parameter.
+  sub rsp,8  
+  movd [rsp],xmm1
+  // Push the maximum health value parameter.
+  sub rsp,8
+  movd [rsp],xmm2
+  // Push the aligned coordinates struct parameter.
+  push rdx
+  call executePlayerApocalypse
+  jmp initiateApocalypseUpdateDamage
+initiateEnemyApocalypse:
+  cmp [disableEnemyApocalypse],1
+  je initiateApocalypseUpdateDamage
+  // Push the damage amount parameter.  
+  sub rsp,8
+  movd [rsp],xmm0
+  // Push the working health value parameter.
+  sub rsp,8
+  movd [rsp],xmm1
+  call executeEnemyApocalypse
+initiateApocalypseUpdateDamage:
+  // Convert the updated damage and working health values back to integers.
+  movd xmm0,eax
+  cvtss2si edi,xmm0  
+  // Convert the updated working health value to an integer.
+  movd xmm0,ebx
+  cvtss2si rax,xmm0  
+initiateApocalypseExit:
+  neg edi
+  // Restore backed up values.  
+  pop rsi
+  pop rdx
+  pop rbx
+  movdqu xmm2,[rsp]
+  add rsp,10
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+initiateApocalypseOriginalCode:
+  popf
+  lea ecx,[rax+rdi]
+  mov [rsp+48],ecx
+  jmp initiateApocalypseReturn
+
+
+omnifyApocalypseHook:
+  jmp initiateApocalypse
+  nop 2
+initiateApocalypseReturn:
+
+
+disableEnemyApocalypse:
+  dd 0
+  
+disableApocalypse:
+  dd 0
+
+teleportitisDisplacementX:
+  dd (float)3.0
+
+// Initiates the Predator system.
+// xmm6: Movement offsets.
+// rbx: Target physics module.
+define(omnifyPredatorHook, "DarkSoulsIII.exe" + 9D2336)
+
+assert(omnifyPredatorHook, 0F 58 F1 E8 E2 FC E0 FF)
+alloc(initiatePredator,$1000,omnifyPredatorHook)
+alloc(playerSpeedX,8)
+alloc(identityValue,8)
+alloc(disablePredator,8)
+
+registersymbol(omnifyPredatorHook)
+registersymbol(disablePredator)
+registersymbol(playerSpeedX)
+
+initiatePredator:
+  pushf
+  cmp [disablePredator],1
+  je initiatePredatorOriginalCode
+  // Ensure that the player coordinates pointer has been initialized.
+  push rax
+  mov rax,playerCoords
+  cmp [rax],0
+  pop rax
+  je initiatePredatorOriginalCode
+  // Ensure that the entity moving is not the player.
+  push rax
+  mov rax,playerCoords
+  cmp rbx,[rax]
+  pop rax
+  // If it is the player, we'll just apply our own player multiplier to
+  // the offsets.
+  je applyPlayerSpeed
+  // Backing up a few SSE registers we'll be using to hold
+  // values for some parameters we'll be passing.
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  // Backing up the registers that are used by the Predator 
+  // system to hold its return values.
+  push rax
+  push rbx
+  push rcx
+initiatePredatorExecute:
+  // We construct an identity matrix, full of just 1's to pass
+  // as the dimensional scale matrix parameter as this game lacks
+  // true scale. More info can be found in Predator overview article!
+  movss xmm0,[identityValue]
+  shufps xmm0,xmm0,0
+  // Dereference the player coordinates pointer, and then
+  // push the player's X, Y, and Z coordinates to the stack
+  // as the first parameter.
+  mov rax,playerCoords
+  mov rcx,[rax]
+  push [rcx+80]
+  push [rcx+88]
+  // Push the enemy's X, Y, and Z coordinates to the stack
+  // as the second parameter.
+  push [rbx+80]
+  push [rbx+88]
+  // We make room for 16 bytes on the stack and dump the identity
+  // matrix values onto the stack directly from xmm0 as the third parameter.
+  // Although we only need to pass values for height, width, and depth,
+  // the Predator system expects this parameter to take up 16 bytes.
+  sub rsp,10
+  movdqu [rsp],xmm0
+  // The Predator system expects the movement offsets to be provided
+  // as if they were being pushed onto the stack directly from memory.
+  // The following code accomplishes this by putting xmm6's high words
+  // onto the xmm1 register and then moving the xmm6 register and then
+  // the xmm1 register onto the stack as quadwords.
+  movhlps xmm1,xmm6
+  sub rsp,8
+  movq [rsp],xmm6
+  sub rsp,8
+  movq [rsp],xmm1
+  // With the fourth parameter passed we execute the Predator system.
+  call executePredator
+initiatePredatorCleanup:
+  // Make some temporary room on the stack to store the returned values
+  // from the Predator system onto for loading into the xmm6 register.
+  sub rsp,10
+  movups [rsp],xmm6
+  mov [rsp],eax
+  mov [rsp+4],ebx
+  mov [rsp+8],ecx
+  movups xmm6,[rsp]
+  add rsp,10
+  // Restore backed up values.
+  pop rcx
+  pop rbx
+  pop rax
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+  jmp initiatePredatorOriginalCode
+applyPlayerSpeed:
+  sub rsp,10
+  movdqu [rsp],xmm0  
+  sub rsp,10  
+  movss xmm0,[playerSpeedX]
+  shufps xmm0,xmm0,0
+  // We create a temporary offset multiplication matrix where the
+  // the Y-coordinate offset will always be 1.0, so it is not boosted.
+  movups [rsp],xmm0
+  movss xmm0,[identityValue]
+  movd [rsp+4],xmm0
+  movd [rsp+C],xmm0
+  movups xmm0,[rsp]
+  add rsp,10
+  mulps xmm6,xmm0
+  movdqu xmm0,[rsp]
+  add rsp,10
+initiatePredatorOriginalCode:
+  popf 
+  addps xmm6,xmm1
+  call DarkSoulsIII.exe+7E2020
+  jmp initiatePredatorReturn
+
+
+omnifyPredatorHook:
+  jmp initiatePredator
+  nop 3
+initiatePredatorReturn:
+
+identityValue:
+  dd (float)1.0
+  
+playerSpeedX:
+  dd (float)1.0
+
+positiveLimit:
+  dd (float)0.8
+
+negativeLimit:
+  dd (float)-0.8
+
+positiveLimitCorrection:
+  dd (float)0.001
+
+negativeLimitCorrection:
+  dd (float)-0.001
+  
+enemySpeedX:
+  dd (float)2.0
+  
+disablePredator:
+  dd 0
+  
+ 
+  
+// Initiates the Abomnification system, generating new scaling parameters
+// for a creature.  
+// rbx: Target physics module.
+define(omnifyAbomnificationHook,"DarkSoulsIII.exe"+9D2360)
+
+assert(omnifyAbomnificationHook,66 0F 7F B3 80 00 00 00)
+alloc(initiateAbomnification,$1000,omnifyAbomnificationHook)
+
+registersymbol(omnifyAbomnificationHook)
+
+initiateAbomnification:
+  pushf
+  cmp [disableAbomnification],1
+  je morphScaleOriginalCode
+  push rax
+  push rbx
+  push rcx 
+  push rdx
+  // Grab the root player structure and then get the address of the morph
+  // ID.
+  mov rcx,[rbx+8]
+  lea rdx,[rcx+1194]
+  push rdx
+  call executeAbomnification
+  // The return values are not used because there is a separate Abomnification
+  // application hook.
+  pop rdx
+  pop rcx
+  pop rbx
+  pop rax
+morphScaleOriginalCode:
+  popf
+  movdqa [rbx+00000080],xmm6
+  jmp morphScaleReturn
+
+omnifyAbomnificationHook:
+  jmp initiateAbomnification
+  nop 3
+morphScaleReturn:
+
+
+
+// Applies the Abomnification system.
+// [rax]: Width matrix values 
+// [rax+10]: Height matrix values
+// [rax+20]: Depth matrix values
+define(omnifyApplyAbomnificationHook, "DarkSoulsIII.exe" + D279FC)
+
+assert(omnifyApplyAbomnificationHook, 0F 28 00 4B 8D 14 76)
+alloc(applyAbomnification,$1000, omnifyApplyAbomnificationHook)
+alloc(abomnifyPlayer,8)
+alloc(disableAbomnify,8)
+alloc(skipTypeCheck,8)
+
+registersymbol(omnifyApplyAbomnificationHook)
+registersymbol(abomnifyPlayer)
+registersymbol(disableAbomnify)
+registersymbol(skipTypeCheck)
+
+applyAbomnification:
+  pushf
+  cmp [disableAbomnify],1
+  je applyAbomnificationOriginalCode
+  // Ensure that the player root structure pointer has been initialized.
+  push rax
+  mov rax,player
+  cmp [rax],0
+  pop rax
+  je applyAbomnificationOriginalCode
+  // Backing up a few registers we'll be using to perform calculations
+  // on the original matrix values with updated scaling parameters.
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  push rbx
+  push rcx
+  // We take a look at the address stored at the place we expect to
+  // find the enemy root structure, and see if it is a valid pointer.
+  mov rbx,[r12+58]
+  lea rcx,[rbx]
+  call checkBadPointer
+  cmp ecx,0
+  je checkAbomnifyType
+  // The root structure sometimes appears at 0x68 instead.
+  mov rbx,[r12+68]
+  lea rcx,[rbx]
+  call checkBadPointer
+  cmp ecx,0
+  jne applyAbomnificationExit
+  // We do one last check to ensure that it isn't a humanoid model.
+  // Human scaling is done in the applyAbomnificationHuman hook.
+checkAbomnifyType:
+  cmp [skipTypeCheck],1
+  je checkAbomnifyPlayer
+  push rax
+  mov rax,[rbx]  
+  cmp ax,0x3EB8
+  pop rax
+  jne applyAbomnificationExit
+  // We then further check to see if the root structure address differs
+  // from the player's own root structure.
+checkAbomnifyPlayer:
+  cmp [abomnifyPlayer],1
+  je loadScaleData
+  mov rcx,player
+  cmp rbx,[rcx]
+  je applyAbomnificationExit  
+loadScaleData:
+  // Now that we know our data is good, we want to check if a morph scale
+  // ID has actually been assigned yet by the Abomnification system.
+  mov rcx,[rbx+1194]
+  cmp rcx,0
+  je applyAbomnificationExit
+  // This should never happen, but we want to ensure we aren't going to access
+  // memory beyond the allocated bounds of our sandbox region.
+  cmp ecx,#999
+  ja applyAbomnificationExit
+  // Each creature has morph scale data that takes up a total of 48 bytes.
+  // So we want to multiply the size of each section by our ID to get the
+  // offset to apply to our base morphScaleData, which will give us the
+  // location to our creature-specific morph scale data.
+  push rax
+  push rdx
+  mov rax,rcx
+  mov rcx,#48
+  mul rcx
+  mov ecx,eax
+  pop rdx
+  pop rax
+  mov rbx,morphScaleData
+  add rbx,rcx
+applyAbomnificationScaleAdjustment:
+  // We want to then do one final check to ensure that some sort of morph
+  // scale data has actually been initialized for the creature.
+  lea rcx,[rbx+4]
+  call checkBadPointer
+  cmp ecx,0
+  jne applyAbomnificationExit
+  mov rcx,[rbx+4]
+  cmp rcx,0
+  je applyAbomnificationExit
+  // We load the scaling parameter for the creature's width, and then multiply
+  // the live width matrix values by it.
+  movss xmm0,[rbx+4]
+  shufps xmm0,xmm0,0
+  movdqu xmm1,[rax]
+  mulps xmm1,xmm0
+  movdqu [rax],xmm1
+  // We load the scaling parameter for the creature's height, and then multiply
+  // the live height matrix values by it.
+  movss xmm0,[rbx+8]
+  shufps xmm0,xmm0,0
+  movdqu xmm1,[rax+10]
+  mulps xmm1,xmm0
+  movdqu [rax+10],xmm1
+  // We load the scaling parameter for the creature's depth, and then multiply
+  // the live depth matrix values by it.
+  movss xmm0,[rbx+C]
+  shufps xmm0,xmm0,0
+  movdqu xmm1,[rax+20]
+  mulps xmm1,xmm0
+  movdqu [rax+20],xmm1  
+applyAbomnificationExit:
+  // Restore backed up values.
+  pop rcx
+  pop rbx
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+applyAbomnificationOriginalCode:
+  popf
+  movaps xmm0,[rax]
+  lea rdx,[r14+r14*2]
+  jmp applyAbomnificationReturn
+
+
+omnifyApplyAbomnificationHook:
+  jmp applyAbomnification
+  nop 2
+applyAbomnificationReturn:
+
+
+abomnifyPlayer:
+  dd 0
+  
+disableAbomnify:
+  dd 0
+
+// Applies the Abomnification for humans. 
+define(omnifyApplyAbomnificationHumanHook, "DarkSoulsIII.exe" + C2FBCE)
+
+assert(omnifyApplyAbomnificationHumanHook, 0F 28 00 4B 8D 0C 76)
+alloc(applyAbomnificationHuman,$1000, omnifyApplyAbomnificationHumanHook)
+alloc(disableAbomnifyHuman,8)
+
+registersymbol(omnifyApplyAbomnificationHumanHook)
+registersymbol(disableAbomnifyHuman)
+
+applyAbomnificationHuman:
+  pushf  
+  cmp [disableAbomnifyHuman],1
+  je applyAbomnificationHumanOriginalCode
+  // Ensure that the player root structure pointer has been initialized.
+  push rax
+  mov rax,player
+  cmp [rax],0
+  pop rax
+  je applyAbomnificationHumanOriginalCode
+  // Backing up a few registers we'll be using to perform calculations
+  // on the original matrix values with updated scaling parameters.
+  sub rsp,10
+  movdqu [rsp],xmm0
+  sub rsp,10
+  movdqu [rsp],xmm1
+  push rbx
+  push rcx
+  // We take a look at the address stored at the place we expect to
+  // find the enemy root structure, and see if it is a valid pointer.
+  mov rbx,[rsp+162]
+  lea rcx,[rbx]
+  call checkBadPointer
+  cmp ecx,0
+  jne applyAbomnificationHumanExit  
+  // We then further check to see if the root structure address differs
+  // from the player's own root structure.
+  cmp [abomnifyPlayer],1
+  je loadScaleHumanData
+  mov rcx,player
+  cmp rbx,[rcx]
+  je applyAbomnificationHumanExit  
+loadScaleHumanData:
+  // Now that we know our data is good, we want to check if a morph scale
+  // ID has actually been assigned yet by the Abomnification system.
+  mov rcx,[rbx+1194]
+  cmp rcx,0
+  je applyAbomnificationHumanExit
+  // This should never happen, but we want to ensure we aren't going to access
+  // memory beyond the allocated bounds of our sandbox region.
+  cmp ecx,#999
+  ja applyAbomnificationHumanExit
+  // Each creature has morph scale data that takes up a total of 48 bytes.
+  // So we want to multiply the size of each section by our ID to get the
+  // offset to apply to our base morphScaleData, which will give us the
+  // location to our creature-specific morph scale data.
+  push rax
+  push rdx
+  mov rax,rcx
+  mov rcx,#48
+  mul rcx
+  mov ecx,eax
+  pop rdx
+  pop rax
+  mov rbx,morphScaleData
+  add rbx,rcx
+applyAbomnificationHumanScaleAdjustment:
+  // We want to then do one final check to ensure that some sort of morph
+  // scale data has actually been initialized for the creature.
+  lea rcx,[rbx+4]
+  call checkBadPointer
+  cmp ecx,0
+  jne applyAbomnificationHumanExit
+  mov rcx,[rbx+4]
+  cmp rcx,0
+  je applyAbomnificationHumanExit
+  // We load the scaling parameter for the creature's width, and then multiply
+  // the live width matrix values by it.
+  movss xmm0,[rbx+4]
+  shufps xmm0,xmm0,0
+  movdqu xmm1,[rax]
+  mulps xmm1,xmm0
+  movdqu [rax],xmm1
+  // We load the scaling parameter for the creature's height, and then multiply
+  // the live height matrix values by it.
+  movss xmm0,[rbx+8]
+  shufps xmm0,xmm0,0
+  movdqu xmm1,[rax+10]
+  mulps xmm1,xmm0
+  movdqu [rax+10],xmm1
+  // We load the scaling parameter for the creature's depth, and then multiply
+  // the live depth matrix values by it.
+  movss xmm0,[rbx+C]
+  shufps xmm0,xmm0,0
+  movdqu xmm1,[rax+20]
+  mulps xmm1,xmm0
+  movdqu [rax+20],xmm1  
+applyAbomnificationHumanExit:
+  // Restore backed up values.
+  pop rcx
+  pop rbx
+  movdqu xmm1,[rsp]
+  add rsp,10
+  movdqu xmm0,[rsp]
+  add rsp,10
+applyAbomnificationHumanOriginalCode:
+  popf
+  movaps xmm0,[rax]
+  lea rcx,[r14+r14*2]
+  jmp applyAbomnificationHumanReturn
+
+
+omnifyApplyAbomnificationHumanHook:
+  jmp applyAbomnificationHuman
+  nop 2
+applyAbomnificationHumanReturn:
+
+
+disableAbomnifyHuman:
+  dd 0
+
+
+[DISABLE]
+{$lua}
+function unregister()
+  require("Omnified")
+  unregisterOmnification()
+end
+
+{$asm}
+
+luacall(unregister())
+
+unregistersymbol(checkBadPointer)
+
+dealloc(checkBadPointer)
+
+
+// Cleanup of omnifyApplyAbomnificationHook
+omnifyApplyAbomnificationHook:
+db 0F 28 00 4B 8D 14 76
+  
+unregistersymbol(omnifyApplyAbomnificationHook)
+unregistersymbol(abomnifyPlayer)
+unregistersymbol(disableAbomnify)
+unregistersymbol(skipTypeCheck)
+
+dealloc(abomnifyPlayer)
+dealloc(disableAbomnify)
+dealloc(skipTypeCheck)
+dealloc(applyAbomnification)
+
+
+
+// Cleanup of omnifyApplyAbomnificationHumanHook
+omnifyApplyAbomnificationHumanHook:
+db 0F 28 00 4B 8D 0C 76
+  
+unregistersymbol(omnifyApplyAbomnificationHumanHook)
+unregistersymbol(disableAbomnifyHuman)
+
+dealloc(disableAbomnifyHuman)
+dealloc(applyAbomnificationHuman)
+
+
+// Cleanup of omnifyAbomnificationHook
+omnifyAbomnificationHook:
+  db 66 0F 7F B3 80 00 00 00
+
+unregistersymbol(omnifyAbomnificationHook)
+
+dealloc(initiateAbomnification)
+
+
+// Cleanup of omnifyPredatorHook
+omnifyPredatorHook:
+db 0F 58 F1 E8 E2 FC E0 FF
+  
+unregistersymbol(omnifyPredatorHook)
+unregistersymbol(playerSpeedX)
+unregistersymbol(disablePredator)
+
+dealloc(identityValue)
+dealloc(playerSpeedX)
+dealloc(disablePredator)
+dealloc(initiatePredator)
+
+// Cleanup of omnifyApocalypseHook
+omnifyApocalypseHook:
+db 8D 0C 38 89 4C 24 48
+  
+unregistersymbol(omnifyApocalypseHook)
+unregistersymbol(disableEnemyApocalypse)
+unregistersymbol(disableApocalypse)
+
+dealloc(disableEnemyApocalypse)
+dealloc(disableApocalypse)
+dealloc(initiateApocalypse)
+
+// Cleanup of omniPlayerHook
+omniPlayerHook:
+db 48 8B 01 FF 90 C0 02 00 00
+
+unregistersymbol(player)
+unregistersymbol(playerCoords)
+unregistersymbol(playerVitals)
+unregistersymbol(teleport)
+unregistersymbol(teleportX)
+unregistersymbol(teleportY)
+unregistersymbol(teleportZ)
+unregistersymbol(omniPlayerHook)
+unregistersymbol(playerDeaths)
+
+dealloc(playerDeaths)
+dealloc(player)
+dealloc(playerCoords)
+dealloc(playerVitals)
+dealloc(teleport)
+dealloc(teleportX)
+dealloc(teleportY)
+dealloc(teleportZ)
+dealloc(getPlayer)
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>1482</ID>
+          <Description>"Debug"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1483</ID>
+              <Description>"Disable Apocalypse"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+disableApocalypse:
+  dd 1
+
+[DISABLE]
+disableApocalypse:
+  dd 0
+</AssemblerScript>
+              <Hotkeys>
+                <Hotkey>
+                  <Action>Toggle Activation</Action>
+                  <Keys>
+                    <Key>111</Key>
+                  </Keys>
+                  <ID>0</ID>
+                </Hotkey>
+              </Hotkeys>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1484</ID>
+              <Description>"Disable Predator"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+disablePredator:
+  dd 1
+
+[DISABLE]
+disablePredator:
+  dd 0
+</AssemblerScript>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1485</ID>
+              <Description>"Disable Abomnification"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+disableAbomnification:
+  dd 1
+
+[DISABLE]
+disableAbomnification:
+  dd 0
+</AssemblerScript>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1486</ID>
+              <Description>"Disable Abomnify"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+disableAbomnify:
+  dd 1
+
+[DISABLE]
+disableAbomnify:
+  dd 0
+</AssemblerScript>
+              <Hotkeys>
+                <Hotkey>
+                  <Action>Toggle Activation</Action>
+                  <Keys>
+                    <Key>109</Key>
+                  </Keys>
+                  <ID>0</ID>
+                </Hotkey>
+              </Hotkeys>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1487</ID>
+              <Description>"Disable Abomnify Human"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+disableAbomnifyHuman:
+  dd 1
+
+[DISABLE]
+disableAbomnifyHuman:
+  dd 0
+</AssemblerScript>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1469</ID>
+          <Description>"Player"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" Activated="1" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>1462</ID>
+              <Description>"Health"</Description>
+              <LastState Value="1049" RealAddress="7FF4B23FEDB8"/>
+              <VariableType>4 Bytes</VariableType>
+              <Address>playerVitals</Address>
+              <Offsets>
+                <Offset>D8</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1497</ID>
+              <Description>"Souls"</Description>
+              <LastState Value="0" RealAddress="7FF49E871844"/>
+              <VariableType>4 Bytes</VariableType>
+              <Address>player</Address>
+              <Offsets>
+                <Offset>74</Offset>
+                <Offset>1FA0</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1459</ID>
+              <Description>"X"</Description>
+              <LastState Value="-152.09021" RealAddress="7FF4B24003D0"/>
+              <VariableType>Float</VariableType>
+              <Address>playerCoords</Address>
+              <Offsets>
+                <Offset>80</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1460</ID>
+              <Description>"Y"</Description>
+              <LastState Value="51.04335022" RealAddress="7FF4B24003D4"/>
+              <VariableType>Float</VariableType>
+              <Address>playerCoords</Address>
+              <Offsets>
+                <Offset>84</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1461</ID>
+              <Description>"Z"</Description>
+              <LastState Value="-229.5986633" RealAddress="7FF4B24003D8"/>
+              <VariableType>Float</VariableType>
+              <Address>playerCoords</Address>
+              <Offsets>
+                <Offset>88</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1475</ID>
+              <Description>"Damage"</Description>
+              <LastState Value="1" RealAddress="023D3138"/>
+              <VariableType>Float</VariableType>
+              <Address>playerDamageX</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1489</ID>
+              <Description>"Lower Damage"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+playerDamageX:
+  dd (float)0.3
+
+[DISABLE]
+playerDamageX:
+  dd (float)1.0
+</AssemblerScript>
+              <Hotkeys>
+                <Hotkey>
+                  <Action>Toggle Activation</Action>
+                  <Keys>
+                    <Key>97</Key>
+                  </Keys>
+                  <ID>0</ID>
+                </Hotkey>
+              </Hotkeys>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1500</ID>
+              <Description>"Super Buff Damage"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+playerDamageX:
+  dd (float)50.0
+
+[DISABLE]
+playerDamageX:
+  dd (float)1.0
+</AssemblerScript>
+              <Hotkeys>
+                <Hotkey>
+                  <Action>Toggle Activation</Action>
+                  <Keys>
+                    <Key>221</Key>
+                  </Keys>
+                  <ID>0</ID>
+                </Hotkey>
+              </Hotkeys>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1468</ID>
+              <Description>"Fast Omni"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+playerSpeedX:
+  dd (float)3.0
+
+[DISABLE]
+playerSpeedX:
+  dd (float)1.0
+</AssemblerScript>
+              <Hotkeys>
+                <Hotkey>
+                  <Action>Toggle Activation</Action>
+                  <Keys>
+                    <Key>107</Key>
+                  </Keys>
+                  <ID>0</ID>
+                </Hotkey>
+              </Hotkeys>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1490</ID>
+              <Description>"Buff Damage"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+playerDamageX:
+  dd (float)3.0
+
+[DISABLE]
+playerDamageX:
+  dd (float)1.0
+</AssemblerScript>
+              <Hotkeys>
+                <Hotkey>
+                  <Action>Toggle Activation</Action>
+                  <Keys>
+                    <Key>98</Key>
+                  </Keys>
+                  <ID>0</ID>
+                </Hotkey>
+              </Hotkeys>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1479</ID>
+              <Description>"Abomnify"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+abomnifyPlayer:
+  dd 1
+
+[DISABLE]
+abomnifyPlayer:
+  dd 0
+</AssemblerScript>
+              <Hotkeys>
+                <Hotkey>
+                  <Action>Toggle Activation</Action>
+                  <Keys>
+                    <Key>99</Key>
+                  </Keys>
+                  <ID>0</ID>
+                </Hotkey>
+              </Hotkeys>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>1473</ID>
+              <Description>"Enable God Mode"</Description>
+              <LastState/>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+playerGodMode:
+  dd 1
+
+[DISABLE]
+playerGodMode:
+  dd 0
+</AssemblerScript>
+              <Hotkeys>
+                <Hotkey>
+                  <Action>Toggle Activation</Action>
+                  <Keys>
+                    <Key>110</Key>
+                  </Keys>
+                  <ID>0</ID>
+                </Hotkey>
+              </Hotkeys>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1488</ID>
+          <Description>"Skip Type Check"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+skipTypeCheck:
+  dd 1
+
+[DISABLE]
+skipTypeCheck:
+  dd 0
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1472</ID>
+          <Description>"Slow Enemies"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+enemySpeedX:
+  dd (float)0.1
+
+threatDistance:
+  dd (float)0.1
+
+[DISABLE]
+enemySpeedX:
+  dd (float)2.0
+
+threatDistance:
+  dd (float)2.5
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>102</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1466</ID>
+          <Description>"Disable Abomnification"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+stopMorphs:
+  dd 1
+
+[DISABLE]
+stopMorphs:
+  dd 0
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1477</ID>
+          <Description>"Disable Enemy Apocalypse"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+disableEnemyApocalypse:
+  dd 1
+
+[DISABLE]
+disableEnemyApocalypse:
+  dd 0
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1474</ID>
+          <Description>"Speed Morph"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+speedMorph:
+  dd 1
+
+[DISABLE]
+speedMorph:
+  dd 0
+</AssemblerScript>
+          <Hotkeys>
+            <Hotkey>
+              <Action>Toggle Activation</Action>
+              <Keys>
+                <Key>106</Key>
+              </Keys>
+              <ID>0</ID>
+            </Hotkey>
+          </Hotkeys>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1476</ID>
+          <Description>"Last Enemy Health"</Description>
+          <LastState Value="5306" RealAddress="023D3140"/>
+          <VariableType>Float</VariableType>
+          <Address>lastEnemyHealthValue</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1471</ID>
+          <Description>"Enemy Speed"</Description>
+          <LastState Value="2" RealAddress="023D3190"/>
+          <VariableType>Float</VariableType>
+          <Address>enemySpeedX</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1478</ID>
+          <Description>"Speed Morph Multiplier"</Description>
+          <LastState Value="4" RealAddress="13FFD1088"/>
+          <VariableType>Float</VariableType>
+          <Address>speedMorphDivisor</Address>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>1480</ID>
+      <Description>"No description"</Description>
+      <LastState Value="0" RealAddress="13FFD10A0"/>
+      <VariableType>4 Bytes</VariableType>
+      <Address>forceScrub</Address>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Set Value</Action>
+          <Keys>
+            <Key>96</Key>
+          </Keys>
+          <Value>1</Value>
+          <ID>0</ID>
+        </Hotkey>
+      </Hotkeys>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>1481</ID>
+      <Description>"Double Something"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : DarkSoulsIII.exe
+  Version: 
+  Date   : 2020-10-26
+  Author : matt
+
+  This script does blah blah blah
+}
+
+define(address,"DarkSoulsIII.exe"+C2FBEE)
+define(bytes,66 0F 7F 41 20)
+
+[ENABLE]
+
+assert(address,bytes)
+alloc(newmem,$1000,"DarkSoulsIII.exe"+C2FBEE)
+alloc(double,8)
+
+label(code)
+label(return)
+
+newmem:
+  sub rsp,10
+  movdqu [rsp],xmm1
+  movss xmm1,[double]
+  shufps xmm1,xmm1,0
+  mulps xmm0,xmm1
+  movdqu xmm1,[rsp]
+  add rsp,10
+code:
+  movdqa [rcx+20],xmm0
+  jmp return
+
+address:
+  jmp newmem
+return:
+
+double:
+  dd (float)2.0
+
+[DISABLE]
+
+address:
+  db bytes
+  // movdqa [rcx+20],xmm0
+
+dealloc(newmem)
+dealloc(double)
+
+{
+// ORIGINAL CODE - INJECTION POINT: "DarkSoulsIII.exe"+C2FBEE
+
+"DarkSoulsIII.exe"+C2FBC8: 48 8B CE                    -  mov rcx,rsi
+"DarkSoulsIII.exe"+C2FBCB: FF 50 28                    -  call qword ptr [rax+28]
+"DarkSoulsIII.exe"+C2FBCE: 0F 28 00                    -  movaps xmm0,[rax]
+"DarkSoulsIII.exe"+C2FBD1: 4B 8D 0C 76                 -  lea rcx,[r14+r14*2]
+"DarkSoulsIII.exe"+C2FBD5: 48 C1 E1 04                 -  shl rcx,04
+"DarkSoulsIII.exe"+C2FBD9: 49 03 4F 10                 -  add rcx,[r15+10]
+"DarkSoulsIII.exe"+C2FBDD: 66 0F 7F 01                 -  movdqa [rcx],xmm0
+"DarkSoulsIII.exe"+C2FBE1: 0F 28 48 10                 -  movaps xmm1,[rax+10]
+"DarkSoulsIII.exe"+C2FBE5: 66 0F 7F 49 10              -  movdqa [rcx+10],xmm1
+"DarkSoulsIII.exe"+C2FBEA: 0F 28 40 20                 -  movaps xmm0,[rax+20]
+// ---------- INJECTING HERE ----------
+"DarkSoulsIII.exe"+C2FBEE: 66 0F 7F 41 20              -  movdqa [rcx+20],xmm0
+// ---------- DONE INJECTING  ----------
+"DarkSoulsIII.exe"+C2FBF3: FF C7                       -  inc edi
+"DarkSoulsIII.exe"+C2FBF5: 3B FD                       -  cmp edi,ebp
+"DarkSoulsIII.exe"+C2FBF7: 0F 8C E5 FE FF FF           -  jl DarkSoulsIII.exe+C2FAE2
+"DarkSoulsIII.exe"+C2FBFD: 44 0F 28 9C 24 B0 00 00 00  -  movaps xmm11,[rsp+000000B0]
+"DarkSoulsIII.exe"+C2FC06: 44 0F 28 94 24 C0 00 00 00  -  movaps xmm10,[rsp+000000C0]
+"DarkSoulsIII.exe"+C2FC0F: 44 0F 28 8C 24 D0 00 00 00  -  movaps xmm9,[rsp+000000D0]
+"DarkSoulsIII.exe"+C2FC18: 4C 8B B4 24 30 01 00 00     -  mov r14,[rsp+00000130]
+"DarkSoulsIII.exe"+C2FC20: 44 0F 28 84 24 E0 00 00 00  -  movaps xmm8,[rsp+000000E0]
+"DarkSoulsIII.exe"+C2FC29: 0F 28 BC 24 F0 00 00 00     -  movaps xmm7,[rsp+000000F0]
+"DarkSoulsIII.exe"+C2FC31: 0F 28 B4 24 00 01 00 00     -  movaps xmm6,[rsp+00000100]
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>1496</ID>
+      <Description>"Base Item Discovery"</Description>
+      <LastState Value="100" RealAddress="143D6AF90"/>
+      <VariableType>Float</VariableType>
+      <Address>143D6AF90</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>1498</ID>
+      <Description>"Disable Teleportitis"</Description>
+      <LastState Value="0" RealAddress="023D20E8"/>
+      <VariableType>4 Bytes</VariableType>
+      <Address>disableTeleportitis</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>1499</ID>
+      <Description>"Disable Sixty Nine"</Description>
+      <LastState Value="0" RealAddress="023D20F0"/>
+      <VariableType>4 Bytes</VariableType>
+      <Address>disableSixtyNine</Address>
+    </CheatEntry>
+  </CheatEntries>
+  <CheatCodes>
+    <CodeEntry Color="20000000">
+      <Description>Change of movdqa [rdx],xmm0</Description>
+      <AddressString>DarkSoulsIII.exe+D27A0B</AddressString>
+      <Before>
+        <Byte>04</Byte>
+        <Byte>48</Byte>
+        <Byte>03</Byte>
+        <Byte>51</Byte>
+        <Byte>10</Byte>
+      </Before>
+      <Actual>
+        <Byte>66</Byte>
+        <Byte>0F</Byte>
+        <Byte>7F</Byte>
+        <Byte>02</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>48</Byte>
+        <Byte>10</Byte>
+        <Byte>66</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movaps xmm1,[rax+10]</Description>
+      <AddressString>DarkSoulsIII.exe+D27A0F</AddressString>
+      <Before>
+        <Byte>10</Byte>
+        <Byte>66</Byte>
+        <Byte>0F</Byte>
+        <Byte>7F</Byte>
+        <Byte>02</Byte>
+      </Before>
+      <Actual>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>48</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>66</Byte>
+        <Byte>0F</Byte>
+        <Byte>7F</Byte>
+        <Byte>4A</Byte>
+        <Byte>10</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movdqa [rdx+10],xmm1</Description>
+      <AddressString>DarkSoulsIII.exe+D27A13</AddressString>
+      <Before>
+        <Byte>02</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>48</Byte>
+        <Byte>10</Byte>
+      </Before>
+      <Actual>
+        <Byte>66</Byte>
+        <Byte>0F</Byte>
+        <Byte>7F</Byte>
+        <Byte>4A</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>40</Byte>
+        <Byte>20</Byte>
+        <Byte>66</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movdqa [rdx+20],xmm0</Description>
+      <AddressString>DarkSoulsIII.exe+D27A1C</AddressString>
+      <Before>
+        <Byte>10</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>40</Byte>
+        <Byte>20</Byte>
+      </Before>
+      <Actual>
+        <Byte>66</Byte>
+        <Byte>0F</Byte>
+        <Byte>7F</Byte>
+        <Byte>42</Byte>
+        <Byte>20</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>FF</Byte>
+        <Byte>C3</Byte>
+        <Byte>FF</Byte>
+        <Byte>C5</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movdqa [rcx+20],xmm0</Description>
+      <AddressString>DarkSoulsIII.exe+C2FBEE</AddressString>
+      <Before>
+        <Byte>10</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>40</Byte>
+        <Byte>20</Byte>
+      </Before>
+      <Actual>
+        <Byte>66</Byte>
+        <Byte>0F</Byte>
+        <Byte>7F</Byte>
+        <Byte>41</Byte>
+        <Byte>20</Byte>
+      </Actual>
+      <After>
+        <Byte>FF</Byte>
+        <Byte>C7</Byte>
+        <Byte>3B</Byte>
+        <Byte>FD</Byte>
+        <Byte>0F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movdqa [rcx+10],xmm1</Description>
+      <AddressString>DarkSoulsIII.exe+C2FBE5</AddressString>
+      <Before>
+        <Byte>01</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>48</Byte>
+        <Byte>10</Byte>
+      </Before>
+      <Actual>
+        <Byte>66</Byte>
+        <Byte>0F</Byte>
+        <Byte>7F</Byte>
+        <Byte>49</Byte>
+        <Byte>10</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>40</Byte>
+        <Byte>20</Byte>
+        <Byte>90</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="20000000">
+      <Description>Change of movdqa [rcx],xmm0</Description>
+      <AddressString>DarkSoulsIII.exe+C2FBDD</AddressString>
+      <Before>
+        <Byte>04</Byte>
+        <Byte>49</Byte>
+        <Byte>03</Byte>
+        <Byte>4F</Byte>
+        <Byte>10</Byte>
+      </Before>
+      <Actual>
+        <Byte>66</Byte>
+        <Byte>0F</Byte>
+        <Byte>7F</Byte>
+        <Byte>01</Byte>
+      </Actual>
+      <After>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>48</Byte>
+        <Byte>10</Byte>
+        <Byte>90</Byte>
+      </After>
+    </CodeEntry>
+  </CheatCodes>
+  <UserdefinedSymbols/>
+  <LuaScript>getAutoAttachList().add("DarkSoulsIII.exe")
+</LuaScript>
+</CheatTable>

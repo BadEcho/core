@@ -1,0 +1,822 @@
+<!--
+    Omnified Metro Exodus
+    Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
+    Copyright 2022 Bad Echo LLC
+
+    Bad Echo Technologies are licensed under a
+    Creative Commons Attribution-NonCommercial 4.0 International License.
+
+    See accompanying file LICENSE.md or a copy at:
+    http://creativecommons.org/licenses/by-nc/4.0/
+-->
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="29">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>13</ID>
+      <Description>"OMNIFY"</Description>
+      <Options moHideChildren="1"/>
+      <LastState Activated="1"/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+
+aobscanmodule(omniCoordsHook,physx3_x64.dll,0F 10 41 20 0F 54 C7) // should be unique
+aobscanmodule(omniPlayerHook,MetroExodus.exe,F3 0F 10 99 88 03 00 00) // should be unique
+aobscanmodule(omniReserveAmmoHook,MetroExodus.exe,FF 90 40 03 00 00 0F B7 F0 BD) // should be unique
+aobscanmodule(omniWeaponHook,MetroExodus.exe,8B A9 70 18 00 00) // should be unique
+aobscanmodule(omnifyDamageHook,MetroExodus.exe,F3 0F 5C 52 14 F3) // should be unique
+aobscanmodule(omnifySpeedHook,MetroExodus.exe,0F 11 8B 30 01 00 00 48 85 C9 74 06) // should be unique
+
+alloc(getCoords,$1000,"physx3_x64.dll"+11DE22)
+alloc(getPlayer,$1000,"MetroExodus.exe"+12094071)
+alloc(getReserveAmmo,$1000,"MetroExodus.exe"+97CFB90)
+alloc(getWeapon,$1000,"MetroExodus.exe"+83D1AE9)
+
+alloc(fuckPlayerUp,$1000,"MetroExodus.exe"+72C2638)
+alloc(fuckSpeedUp,$1000,"MetroExodus.exe"+7AEEC41)
+
+alloc(enemyDamageMultiplier,16)
+alloc(enemySpeedMultiplier,16)
+alloc(enemySpeedZMultiplier,16)
+alloc(enemyMaxDistanceDelta,16)
+alloc(playerDamageMultiplier,16)
+
+alloc(pCoords,8)
+alloc(pPlayer,8)
+alloc(pPlayerHealth,16)
+alloc(pEnemy,8)
+
+alloc(pPrimaryReserveAmmo,8)
+alloc(pSecondaryReserveAmmo,8)
+alloc(pTertiaryReserveCapsules,8)
+alloc(pTertiaryReserveBalls,8)
+alloc(pPrimaryWeapon,8)
+alloc(pSecondaryWeapon,8)
+alloc(pTertiaryWeapon,8)
+
+// Reverse engineered hooks.
+registersymbol(omniCoordsHook)
+registersymbol(omniPlayerHook)
+registersymbol(omniReserveAmmoHook)
+registersymbol(omniWeaponHook)
+
+// Omnification related hooks.
+registersymbol(omnifyDamageHook)
+registersymbol(omnifySpeedHook)
+
+registersymbol(pCoords)
+registersymbol(pPlayer)
+registersymbol(pPlayerHealth)
+registersymbol(pEnemy)
+registersymbol(pPrimaryReserveAmmo)
+registersymbol(pSecondaryReserveAmmo)
+registersymbol(pTertiaryReserveCapsules)
+registersymbol(pTertiaryReserveBalls)
+registersymbol(pPrimaryWeapon)
+registersymbol(pSecondaryWeapon)
+registersymbol(pTertiaryWeapon)
+
+registersymbol(enemyDamageMultiplier)
+registersymbol(enemySpeedMultiplier)
+registersymbol(enemyMaxDistanceDelta)
+
+registersymbol(playerDamageMultiplier)
+
+//
+// getCoords: Grabs the effective player's coordinates from the physx DLL.
+//
+getCoords:
+  cmp r13,0
+  jne getCoordsOriginalCode
+  cmp rdi,0
+  jne getCoordsOriginalCode
+  push rax
+  mov rax,pCoords
+  mov [rax],rcx
+  pop rax
+getCoordsOriginalCode:
+  movups xmm0,[rcx+20]
+  andps xmm0,xmm7
+  jmp getCoordsReturn
+
+omniCoordsHook:
+  jmp getCoords
+  nop 2
+getCoordsReturn:
+
+//
+// getPlayer: Grabs the base player structure. 
+//
+getPlayer:
+  mov [pPlayer],rcx
+  mov [pPlayerHealth],rcx
+  add [pPlayerHealth],388
+getPlayerOriginalCode:
+  movss xmm3,[rcx+00000388]
+  jmp getPlayerReturn
+
+omniPlayerHook:
+  jmp getPlayer
+  nop 3
+getPlayerReturn:
+
+//
+// getReserveAmmo: Grabs the ammo the player has in storage for his or her various weapons.
+// [rcx+20]-&gt;+8 == 8 balls, 7 capsules
+// [rcx+70] == Reserve ammo location.
+// See getWeapon documentation for r11 constant definitions.
+//
+getReserveAmmo:
+  cmp [pPrimaryWeapon],0
+  je getReserveAmmoOriginalCode
+  cmp r11,7fef70
+  je getPrimaryReserveAmmo
+  cmp r11,7ff358
+  je getSecondaryReserveAmmo
+  jmp getReserveAmmoOriginalCode
+getPrimaryReserveAmmo:
+  mov [pPrimaryReserveAmmo],rcx
+  add [pPrimaryReserveAmmo],70
+  jmp getReserveAmmoOriginalCode
+getSecondaryReserveAmmo:
+  push rax
+  mov rax,[rcx+20]
+  cmp [rax+8],8
+  pop rax
+  je getBallsOrSecondary
+  push rax
+  mov rax,[rcx+20]
+  cmp [rax+8],7
+  pop rax
+  je getTertiaryReserveCapsules
+getActualSecondaryReserveAmmo:
+  mov [pSecondaryReserveAmmo],rcx
+  add [pSecondaryReserveAmmo],70
+  jmp getReserveAmmoOriginalCode
+getBallsOrSecondary:
+  push rax
+  mov rax,[rcx+78]
+  cmp [rax+158],1240124 // 01290129 is sometimes balls
+  pop rax
+  je getActualSecondaryReserveAmmo
+  mov [pTertiaryReserveBalls],rcx
+  add [pTertiaryReserveBalls],70
+  jmp getReserveAmmoOriginalCode
+getTertiaryReserveCapsules:
+  mov [pTertiaryReserveCapsules],rcx
+  add [pTertiaryReserveCapsules],70
+  jmp getReserveAmmoOriginalCode
+getReserveAmmoOriginalCode:
+  call qword ptr [rax+00000340]
+  jmp getReserveAmmoReturn
+
+omniReserveAmmoHook:
+  jmp getReserveAmmo
+  nop
+getReserveAmmoReturn:
+
+//
+// getWeapon: Grabs the structure for a particular player weapon.
+//
+// [rcx+1870] == clip ammo
+// [rcx+11A9] == chamber bit
+// r11 == Constant that indicates the type of weapon.
+//     7FEF70 == Primary
+//     7FF358 == Secondary
+//     7FF0F8 == Tertiary
+//
+getWeapon:
+  cmp r11,7fef70
+  je getWeaponPrimary
+  cmp r11,7ff358
+  je getWeaponSecondary
+  cmp r11,7ff0f8
+  je getWeaponTertiary
+  jmp getWeaponOriginalCode
+getWeaponPrimary:
+  mov [pPrimaryWeapon],rcx
+  jmp getWeaponOriginalCode
+getWeaponSecondary:
+  cmp [rcx+40],(float)100000
+  je getWeaponTertiary
+  mov [pSecondaryWeapon],rcx
+  jmp getWeaponOriginalCode
+getWeaponTertiary:
+  mov [pTertiaryWeapon],rcx
+  jmp getWeaponOriginalCode
+getWeaponOriginalCode:
+  mov ebp,[rcx+1870]
+  jmp getWeaponReturn
+
+omniWeaponHook:
+  jmp getWeapon
+  nop
+getWeaponReturn:
+
+//
+// fuckPlayerUp: Does what it says: fucks the player up by multiplying incoming damage.
+//
+// [rdx+14] == Damage to be applied.
+// r8 == Health that will be updated.
+//
+fuckPlayerUp:
+  push rax
+  mov rax,pPlayerHealth
+  cmp r8,[rax]
+  pop rax
+  jne fuckEnemyUp
+  sub rsp,16            // Push xmm2 and fuck the player up.
+  movdqu [rsp],xmm2
+  movss xmm2,[enemyDamageMultiplier]
+  mulss xmm2,[rdx+14]
+  movss [rdx+14],xmm2
+  movdqu xmm2,[rsp]
+  add rsp,16           //Pop xmm2's value.
+  jmp applyDamage
+fuckEnemyUp:
+  push rax
+  mov rax,pPlayer
+  cmp r13,[rax]
+  pop rax
+  jne applyDamage
+  push rax
+  push rbx
+  push rcx
+  push rsi
+  cvttss2si rax,[rdx+8]
+  mov rcx,pCoords
+  mov rsi,[rcx]
+  cvttss2si, rbx,[rsi+20]
+  cmp rax,rbx
+  pop rsi
+  pop rcx
+  pop rbx
+  pop rax
+  jne applyDamage
+  // Force primary weapon reload
+emptyMagazines:
+  push eax
+  mov eax,[pPrimaryWeapon]
+  cmp eax,0
+  je exitPrimaryMagazineEmpty
+  add eax,11A9
+  mov [eax],0
+  add eax,6C7
+  push ebx
+  mov ebx,[pPrimaryReserveAmmo]
+  push ecx
+  cmp ebx,0
+  je exitPrimaryReserveAdd
+  mov ecx,[ebx]
+  add ecx,[eax]
+  mov [ebx],ecx
+exitPrimaryReserveAdd:
+  mov [eax],0
+  pop ecx
+  pop ebx
+exitPrimaryMagazineEmpty:
+  pop eax
+  // Force secondary weapon reload
+  push eax
+  mov eax,[pSecondaryWeapon]
+  cmp eax,0
+  je exitSecondaryMagazineEmpty
+  add eax,11A9
+  mov [eax],0
+  add eax,6C7
+  push ebx
+  mov ebx,[pSecondaryReserveAmmo]
+  push ecx
+  cmp ebx,0
+  je exitSecondaryReserveAdd
+  mov ecx,[ebx]
+  add ecx,[eax]
+  mov [ebx],ecx
+exitSecondaryReserveAdd:
+  mov [eax],0
+  pop ecx
+  pop ebx
+exitSecondaryMagazineEmpty:
+  pop eax
+  // Force tertiary weapon reload
+  push eax
+  mov eax,[pTertiaryWeapon]
+  cmp eax,0
+  je exitTertiaryMagazineEmpty
+  add eax,11A9
+  mov [eax],0
+  add eax,6C7
+  push ebx
+  push ecx
+  push edx
+  mov edx,[eax+68]
+  cmp edx,1
+  je tertiaryCapsulesReserveAdd
+  mov ebx,[pTertiaryReserveBalls]
+  cmp ebx,0
+  je exitTertiaryReserveAdd
+  jmp tertiaryReserveAdd
+tertiaryCapsulesReserveAdd:
+  mov ebx,[pTertiaryReserveCapsules]
+  cmp ebx,0
+  je exitTertiaryReserveAdd
+tertiaryReserveAdd:
+  mov ecx,[ebx]
+  add ecx,[eax]
+  mov [ebx],ecx
+exitTertiaryReserveAdd:
+  mov [eax],0
+  pop edx
+  pop ecx
+  pop ebxw sw
+exitTertiaryMagazineEmpty:
+  pop eax
+  sub rsp,16
+  movdqu [rsp],xmm2    // Push xmm2 and fuck the enemy up.
+  mov [pEnemy],r8
+  sub [pEnemy],388
+  movss xmm2,[playerDamageMultiplier]
+  mulss xmm2,[rdx+14]
+  movss [rdx+14],xmm2
+  movdqu xmm2,[rsp]    //Pop xmm2's value.
+  add rsp,16
+applyDamage:
+  subss xmm2,[rdx+14]
+  jmp fuckPlayerUpReturn
+
+omnifyDamageHook:
+  jmp fuckPlayerUp
+fuckPlayerUpReturn:
+
+//
+// fuckSpeedUp: makes enemies fast as fuck
+//  xmm1: aligned updated coordinates
+//  rbx+130: aligned old coordinates
+fuckSpeedUp:
+  cmp [pPlayer],0
+  je updateLocation
+  push rax
+  mov rax,[pPlayer]
+  cmp rbx,rax
+  pop rax
+  je updateLocation
+  sub rsp,16
+  movdqu [rsp],xmm2
+  sub rsp,16
+  movdqu [rsp],xmm3
+  sub rsp,16
+  movdqu [rsp],xmm4
+  sub rsp,16
+  movdqu [rsp],xmm5
+  movdqu xmm2,[rbx+130]
+  subps xmm1,xmm2
+  movdqu xmm4,xmm1
+  mulps xmm4,xmm4
+  movss xmm5,[enemyMaxDistanceDelta]
+  shufps xmm5,xmm5,00
+  cmpps xmm4,xmm5,1
+  push eax
+  push ebx
+  push ecx
+  sub rsp,16
+  movdqu [rsp],xmm4
+  mov eax,[rsp]
+  mov ebx,[rsp+4]
+  mov ecx,[rsp+8]
+  and eax,ebx
+  and eax,ecx
+  movdqu xmm4,[rsp]
+  add rsp,16
+  movss xmm3,[enemySpeedMultiplier]
+  shufps xmm3,xmm3,00
+  movss xmm4,[enemySpeedZMultiplier]
+  shufps xmm4,xmm4,00
+  unpcklps xmm3,xmm4
+  mulps xmm1,xmm3
+  addps xmm2,xmm1
+  movdqu xmm1,xmm2
+  test eax,eax
+  pop ecx
+  pop ebx
+  pop eax
+  jne applyChange
+  movdqu xmm1,[rbx+130]
+applyChange:
+  movdqu xmm5,[rsp]
+  add rsp,16
+  movdqu xmm4,[rsp]
+  add rsp,16
+  movdqu xmm3,[rsp]
+  add rsp,16
+  movdqu xmm2,[rsp]
+  add rsp,16
+updateLocation:
+  movups [rbx+00000130],xmm1
+  jmp fuckSpeedUpReturn
+
+omnifySpeedHook:
+  jmp fuckSpeedUp
+  nop 2
+fuckSpeedUpReturn:
+
+pCoords:
+  dd 0
+
+pPlayer:
+  dd 0
+
+pPlayerHealth:
+  dd 0
+
+pEnemy:
+  dd 0
+
+pPrimaryReserveAmmo:
+  dd 0
+
+pSecondaryReserveAmmo:
+  dd 0
+
+pTertiaryReserveCapsules:
+  dd 0
+
+pTertiaryReserveBalls:
+  dd 0
+
+pPrimaryWeapon:
+  dd 0
+
+pSecondaryWeapon:
+  dd 0
+
+pTertiaryWeapon:
+  dd 0
+
+enemyDamageMultiplier:
+  dd (float)69.0
+
+enemySpeedMultiplier:
+  dd (float)2.25
+
+enemySpeedZMultiplier:
+  dd (float)1.0
+
+playerDamageMultiplier:
+  dd (float)1.0
+
+enemyMaxDistanceDelta:
+  dd (float)100.0
+
+[DISABLE]
+
+omniCoordsHook:
+   db 0F 10 41 20 0F 54 C7
+
+omniPlayerHook:
+  db F3 0F 10 99 88 03 00 00
+
+omniReserveAmmoHook:
+  db FF 90 40 03 00 00
+
+omniWeaponHook:
+  db 8B A9 70 18 00 00
+
+omnifyDamageHook:
+  db F3 0F 5C 52 14
+
+omnifySpeedHook:
+  db 0F 11 8B 30 01 00 00
+
+unregistersymbol(omniCoordsHook)
+unregistersymbol(omniPlayerHook)
+unregistersymbol(omniReserveAmmoHook)
+unregistersymbol(omniWeaponHook)
+
+unregistersymbol(omnifyDamageHook)
+unregistersymbol(omnifySpeedHook)
+
+unregistersymbol(pCoords)
+unregistersymbol(pPlayer)
+unregistersymbol(pPlayerHealth)
+unregistersymbol(pEnemy)
+unregistersymbol(pPrimaryReserveAmmo)
+unregistersymbol(pSecondaryReserveAmmo)
+unregistersymbol(pTertiaryReserveCapsules)
+unregistersymbol(pTertiaryReserveBalls)
+unregistersymbol(pPrimaryWeapon)
+unregistersymbol(pSecondaryWeapon)
+unregistersymbol(pTertiaryWeapon)
+
+unregistersymbol(enemyDamageMultiplier)
+unregistersymbol(enemySpeedMultiplier)
+unregistersymbol(playerDamageMultiplier)
+
+dealloc(enemyDamageMultiplier)
+dealloc(enemySpeedMultiplier)
+dealloc(enemySpeedZMultiplier)
+dealloc(enemyMaxDistanceDelta)
+dealloc(playerDamageMultiplier)
+
+dealloc(pCoords)
+dealloc(pPlayer)
+dealloc(pPlayerHealth)
+dealloc(pEnemy)
+dealloc(pPrimaryReserveAmmo)
+dealloc(pSecondaryReserveAmmo)
+dealloc(pTertiaryReserveCapsules)
+dealloc(pTertiaryReserveBalls)
+dealloc(pPrimaryWeapon)
+dealloc(pSecondaryWeapon)
+dealloc(pTertiaryWeapon)
+
+dealloc(getCoords)
+dealloc(getPlayer)
+dealloc(getReserveAmmo)
+dealloc(getWeapon)
+
+dealloc(fuckPlayerUp)
+dealloc(fuckSpeedUp)
+</AssemblerScript>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Toggle Activation</Action>
+          <Keys>
+            <Key>17</Key>
+            <Key>79</Key>
+          </Keys>
+          <ID>0</ID>
+        </Hotkey>
+      </Hotkeys>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>52</ID>
+          <Description>"Player"</Description>
+          <LastState Value="" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>55</ID>
+              <Description>"Health"</Description>
+              <LastState Value="1" RealAddress="B45D4EE8"/>
+              <VariableType>Float</VariableType>
+              <Address>pPlayerHealth</Address>
+              <Offsets>
+                <Offset>0</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>76</ID>
+              <Description>"Primary Weapon"</Description>
+              <Options moHideChildren="1"/>
+              <LastState Value="" Activated="1" RealAddress="00000000"/>
+              <GroupHeader>1</GroupHeader>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>72</ID>
+                  <Description>"Magazine"</Description>
+                  <LastState Value="0" RealAddress="B4B13110"/>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>pPrimaryWeapon</Address>
+                  <Offsets>
+                    <Offset>1870</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>74</ID>
+                  <Description>"Chamber"</Description>
+                  <LastState Value="1" RealAddress="B4B12A49"/>
+                  <VariableType>Byte</VariableType>
+                  <Address>pPrimaryWeapon</Address>
+                  <Offsets>
+                    <Offset>11A9</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>68</ID>
+                  <Description>"Reserve"</Description>
+                  <LastState Value="29" RealAddress="EA66B3B0"/>
+                  <VariableType>2 Bytes</VariableType>
+                  <Address>pPrimaryReserveAmmo</Address>
+                  <Offsets>
+                    <Offset>0</Offset>
+                  </Offsets>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>75</ID>
+              <Description>"Secondary Weapon"</Description>
+              <Options moHideChildren="1"/>
+              <LastState Value="" RealAddress="00000000"/>
+              <GroupHeader>1</GroupHeader>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>71</ID>
+                  <Description>"Magazine"</Description>
+                  <LastState Value="0" RealAddress="8EF68010"/>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>pSecondaryWeapon</Address>
+                  <Offsets>
+                    <Offset>1870</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>73</ID>
+                  <Description>"Chamber"</Description>
+                  <LastState Value="1" RealAddress="8EF67949"/>
+                  <VariableType>Byte</VariableType>
+                  <Address>pSecondaryWeapon</Address>
+                  <Offsets>
+                    <Offset>11A9</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>67</ID>
+                  <Description>"Reserve"</Description>
+                  <LastState Value="15" RealAddress="B4375920"/>
+                  <VariableType>2 Bytes</VariableType>
+                  <Address>pSecondaryReserveAmmo</Address>
+                  <Offsets>
+                    <Offset>0</Offset>
+                  </Offsets>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>77</ID>
+              <Description>"Tertiary Weapon"</Description>
+              <Options moHideChildren="1"/>
+              <LastState Value="" Activated="1" RealAddress="00000000"/>
+              <GroupHeader>1</GroupHeader>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>78</ID>
+                  <Description>"Magazine"</Description>
+                  <LastState Value="0" RealAddress="E8FC8970"/>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>pTertiaryWeapon</Address>
+                  <Offsets>
+                    <Offset>1870</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>79</ID>
+                  <Description>"Chamber"</Description>
+                  <LastState Value="0" RealAddress="E8FC82A9"/>
+                  <VariableType>Byte</VariableType>
+                  <Address>pTertiaryWeapon</Address>
+                  <Offsets>
+                    <Offset>11A9</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>144</ID>
+                  <Description>"Is Capsules?"</Description>
+                  <LastState Value="0" RealAddress="E8FC89D8"/>
+                  <VariableType>Byte</VariableType>
+                  <Address>pTertiaryWeapon</Address>
+                  <Offsets>
+                    <Offset>18D8</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>80</ID>
+                  <Description>"Reserve (Capsules)"</Description>
+                  <LastState Value="30" RealAddress="B2EA8930"/>
+                  <VariableType>2 Bytes</VariableType>
+                  <Address>pTertiaryReserveCapsules</Address>
+                  <Offsets>
+                    <Offset>0</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>81</ID>
+                  <Description>"Reserve (Balls)"</Description>
+                  <LastState Value="37" RealAddress="BEEB6310"/>
+                  <VariableType>2 Bytes</VariableType>
+                  <Address>pTertiaryReserveBalls</Address>
+                  <Offsets>
+                    <Offset>0</Offset>
+                  </Offsets>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>43</ID>
+              <Description>"X"</Description>
+              <LastState Value="-171.3130951" RealAddress="B942CFF0"/>
+              <VariableType>Float</VariableType>
+              <Address>pCoords</Address>
+              <Offsets>
+                <Offset>20</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>45</ID>
+              <Description>"Y"</Description>
+              <LastState Value="-696.2900391" RealAddress="B942CFF8"/>
+              <VariableType>Float</VariableType>
+              <Address>pCoords</Address>
+              <Offsets>
+                <Offset>28</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>44</ID>
+              <Description>"Z"</Description>
+              <LastState Value="34.35177231" RealAddress="B942CFF4"/>
+              <VariableType>Float</VariableType>
+              <Address>pCoords</Address>
+              <Offsets>
+                <Offset>24</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>58</ID>
+              <Description>"Damage Multiplier"</Description>
+              <LastState Value="1" RealAddress="13FFB1040"/>
+              <VariableType>Float</VariableType>
+              <Address>playerDamageMultiplier</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>57</ID>
+          <Description>"Enemy"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" Activated="1" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>127</ID>
+              <Description>"Health"</Description>
+              <LastState Value="-0.01253467053" RealAddress="BC4D5E48"/>
+              <VariableType>Float</VariableType>
+              <Address>pEnemy</Address>
+              <Offsets>
+                <Offset>388</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>124</ID>
+              <Description>"X"</Description>
+              <LastState Value="11.07592773" RealAddress="BC4D5BF0"/>
+              <VariableType>Float</VariableType>
+              <Address>pEnemy</Address>
+              <Offsets>
+                <Offset>130</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>126</ID>
+              <Description>"Z"</Description>
+              <LastState Value="1.401298464E-45" RealAddress="BC4D5BF4"/>
+              <VariableType>Float</VariableType>
+              <Address>pEnemy</Address>
+              <Offsets>
+                <Offset>134</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>125</ID>
+              <Description>"Y"</Description>
+              <LastState Value="-0.01253380626" RealAddress="BC4D5BF8"/>
+              <VariableType>Float</VariableType>
+              <Address>pEnemy</Address>
+              <Offsets>
+                <Offset>138</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>135</ID>
+              <Description>"Speed Multiplier"</Description>
+              <LastState Value="2.25" RealAddress="13FFB1010"/>
+              <VariableType>Float</VariableType>
+              <Address>enemySpeedMultiplier</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>143</ID>
+              <Description>"Max Distance Delta"</Description>
+              <LastState Value="100" RealAddress="13FFB1030"/>
+              <VariableType>Float</VariableType>
+              <Address>enemyMaxDistanceDelta</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>56</ID>
+              <Description>"Damage Multiplier"</Description>
+              <LastState Value="69" RealAddress="13FFB1000"/>
+              <VariableType>Float</VariableType>
+              <Address>enemyDamageMultiplier</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols>
+    <SymbolEntry>
+      <Name>getNormalizedCoords</Name>
+      <Address>7FFD84E00000</Address>
+    </SymbolEntry>
+  </UserdefinedSymbols>
+</CheatTable>

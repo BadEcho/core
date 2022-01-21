@@ -1,0 +1,193 @@
+<!--
+    Omnified Assassin's Creed: Odyssey
+    Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
+    Copyright 2022 Bad Echo LLC
+
+    Bad Echo Technologies are licensed under a
+    Creative Commons Attribution-NonCommercial 4.0 International License.
+
+    See accompanying file LICENSE.md or a copy at:
+    http://creativecommons.org/licenses/by-nc/4.0/
+-->
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="29">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>0</ID>
+      <Description>"OMNIFY"</Description>
+      <Options moHideChildren="1"/>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>define(damageSet,"ACOdyssey.exe"+222CA00)
+define(damageSetBytes,48 89 5C 24 08)
+
+[ENABLE]
+aobscanmodule(playerFetchAOB,ACOdyssey.exe,74 0C E8 ** ** ** ** C6 87 ** ** ** ** 00 F6 87)
+registersymbol(playerFetchAOB)
+label(pPlayer)
+registersymbol(pPlayer)
+
+alloc(newmem,2048,playerFetchAOB)
+label(originalcode_enable)
+registersymbol(originalcode_enable)
+label(exit)
+
+assert(damageSet,damageSetBytes)
+alloc(makeDamageOneShot,$1000,"ACOdyssey.exe"+222CA00)
+
+label(return)
+
+newmem: //this is allocated memory, you have read,write,execute access
+//place your code here
+//readmem(playerFetchAOB,2)
+je @f
+reassemble(playerFetchAOB+2)
+readmem(playerFetchAOB+7,7)
+@@:
+readmem(playerFetchAOB+e,7)
+push rax
+mov rax,pPlayer
+mov [rax],rdi
+mov [rax+8],r13
+mov rsi,[rsp+218]          //210
+mov [rax+10],rsi
+mov rsi,[rsp+228]          //220
+mov [rax+18],rsi
+
+end:
+pop rax
+jmp exit
+
+originalcode_enable:
+readmem(playerFetchAOB,21)
+
+exit:
+jmp playerFetchAOB+15
+
+///
+pPlayer:
+///
+
+playerFetchAOB:
+jmp newmem
+
+// This will result in any damage done to the player to instantly kill them.
+// The code being replaced in memory is usually only ever called after the
+// player gets hit with a weapon (but before their health is updated)
+// however it also will be called during the loading of the save game file,
+// as well as when parrying or (perfect) dodging damage.
+// Therefore we abort killing the player if we detect that either we're being
+// called while the save file is being loaded, or if we've detected that we're
+// in the middle of a parry or dodge.
+// Please note that using this while either doing the hand-to-hand competition in
+// the Olympics or fighting Deimos for the first time will cause a crash, so disable
+// it during these events.
+makeDamageOneShot:
+  mov [rsp+08],rbx  // the original instruction being replaced
+  cmp r15,0         // if the r15 register is 0 or 1, then this code is being
+  je return         // called while the save game file is being loaded, so we
+  cmp r15,1         // abort.
+  je return
+  push rdi
+  mov rdi, [pPlayer] // Here we get the player's current (un-updated) health
+  mov rsi,[rdi+130]  // and make a comparison to the health this function
+  cmp [edx],esi      // wants to update it to. If they are equivalent, then this
+  pop rdi            // is being called in the response to a parry or dodge.
+  mov rsi,rdx
+  je return
+  mov [rdx] -1      // The value the health will be updated to is found in memory
+                    // at the address being pointed to by the rdx register.
+  jmp return        // Setting it to a negative value will kill the player.
+
+damageSet:
+  jmp makeDamageOneShot
+return:
+
+[DISABLE]
+damageSet:
+  db damageSetBytes
+  // mov [rsp+08],rbx
+
+dealloc(makeDamageOneShot)
+
+dealloc(newmem)
+playerFetchAOB:
+readmem(originalcode_enable,21)
+unregistersymbol(originalcode_enable)
+
+unregistersymbol(pPlayer)
+unregistersymbol(playerFetchAOB)
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>1</ID>
+          <Description>"Player"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>pPlayer</Address>
+          <Offsets>
+            <Offset>0</Offset>
+          </Offsets>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>2</ID>
+              <Description>"Health"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>pPlayer</Address>
+              <Offsets>
+                <Offset>[playerFetchAOB+17]</Offset>
+              </Offsets>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>3</ID>
+                  <Description>"Max Health"</Description>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>+4</Address>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols>
+    <SymbolEntry>
+      <Name>godModeFlagChkCallAOB</Name>
+      <Address>142159830</Address>
+    </SymbolEntry>
+    <SymbolEntry>
+      <Name>adrenalineWriteOnChangeAOB</Name>
+      <Address>1420FF05E</Address>
+    </SymbolEntry>
+    <SymbolEntry>
+      <Name>adrenalineWrite1OnChangeAOB</Name>
+      <Address>141FC2A81</Address>
+    </SymbolEntry>
+    <SymbolEntry>
+      <Name>aobt21</Name>
+      <Address>1408C60AA</Address>
+    </SymbolEntry>
+    <SymbolEntry>
+      <Name>adrenalineWrite2OnChangeAOB</Name>
+      <Address>141D18152</Address>
+    </SymbolEntry>
+    <SymbolEntry>
+      <Name>damageBarsVisualCalAOB</Name>
+      <Address>1423B0668</Address>
+    </SymbolEntry>
+    <SymbolEntry>
+      <Name>curseHealthPenaltyWriteAOB</Name>
+      <Address>141CD9020</Address>
+    </SymbolEntry>
+    <SymbolEntry>
+      <Name>currencyChkOnBuyQChangeMerchantAccessAOB</Name>
+      <Address>14202CB40</Address>
+    </SymbolEntry>
+    <SymbolEntry>
+      <Name>_freeze</Name>
+      <Address>19DBF280000</Address>
+    </SymbolEntry>
+  </UserdefinedSymbols>
+  <Comments>Info about this table:
+</Comments>
+</CheatTable>
