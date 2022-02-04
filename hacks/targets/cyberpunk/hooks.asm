@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 // Hooks for Omnified Cyberpunk 2077
 // Written By: Matt Weber (https://badecho.com) (https://twitch.tv/omni)
-// Copyright 2021 Bad Echo LLC
+// Copyright 2022 Bad Echo LLC
 // 
 // Bad Echo Technologies are licensed under a
 // Creative Commons Attribution-NonCommercial 4.0 International License.
