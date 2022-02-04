@@ -64,7 +64,7 @@ namespace BadEcho.Omnified.Vision.Properties {
         ///   Looks up a localized string similar to &lt;!--
         ///    &lt;copyright&gt;
         ///        Created by Matt Weber &lt;matt@badecho.com&gt;
-        ///        Copyright @ 2021 Bad Echo LLC. All Rights Reserved.
+        ///        Copyright @ 2022 Bad Echo LLC. All Rights Reserved.
         ///    &lt;/copyright&gt;
         ///--&gt;
         ///&lt;Grid xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;&gt;
@@ -83,7 +83,7 @@ namespace BadEcho.Omnified.Vision.Properties {
         ///   Looks up a localized string similar to &lt;!--
         ///    &lt;copyright&gt;
         ///        Created by Matt Weber &lt;matt@badecho.com&gt;
-        ///        Copyright @ 2021 Bad Echo LLC. All Rights Reserved.
+        ///        Copyright @ 2022 Bad Echo LLC. All Rights Reserved.
         ///    &lt;/copyright&gt;
         ///--&gt;
         ///&lt;Style TargetType=&quot;{x:Type Window}&quot;
