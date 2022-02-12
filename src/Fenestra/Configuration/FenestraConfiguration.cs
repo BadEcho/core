@@ -24,7 +24,7 @@ public sealed class FenestraConfiguration
     /// </summary>
     /// <remarks>
     /// A monitor's index corresponds to where the monitor is in the arrangement defined in the user's display settings, with
-    /// the lowest index being the leftmost monitor and the highest being the rightmost.
+    /// the lowest index being the leftmost monitor and the highest index being the rightmost.
     /// </remarks>
     public int LaunchDisplay
     { get; set; }
