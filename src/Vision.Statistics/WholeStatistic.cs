@@ -17,9 +17,8 @@ namespace BadEcho.Omnified.Vision.Statistics;
 /// Provides an individual statistic exported from an Omnified game concerning a whole, numeric value.
 /// </summary>
 /// <remarks>
-/// The term "whole" has no bearing on the actual value type of the statistic. Rather, a statistic is "whole"
-/// if it stands on its own, and has no relationship or bearing with another value, such as a character's experience
-/// level, which consists of only a single value.
+/// The term "whole" has no bearing on the actual data type of the statistic. Rather, a statistic is "whole"
+/// if it is expressed using a single numeric value, such as a character's experience level.
 /// </remarks>
 public sealed class WholeStatistic : Statistic
 {

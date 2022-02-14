@@ -18,7 +18,7 @@ namespace BadEcho.Omnified.Vision.Statistics;
 /// numeric value.
 /// </summary>
 /// <remarks>
-/// The term "fractional" has no bearing on the actual value types of the statistic. Rather, a statistic is
+/// The term "fractional" has no bearing on the actual data type of the statistic. Rather, a statistic is
 /// "fractional" if it is expressed using values that have some sort of relationship to each other, such as
 /// a character's health, which consists of a current and maximum value.
 /// </remarks>
