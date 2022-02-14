@@ -14,7 +14,7 @@ require("statisticMessages")
 
 function registerExports()
     -- Custom statistics.  
-    AdditionalStatistics = function()
+    additionalStatistics = function()
         local playerAmrita = toInt(readInteger("playerAmrita"))
 
         return { 

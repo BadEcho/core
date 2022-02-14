@@ -65,7 +65,7 @@ function registerExports()
     end
 
     -- Custom statistics.
-    AdditionalStatistics = function()        
+    additionalStatistics = function()        
         local magazine = toInt(readInteger("[playerMagazine]+0x350"))
 
         -- A ridiculous value indicates that the previous place in memory has been freshly reallocated.

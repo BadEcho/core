@@ -101,7 +101,7 @@ local function dumpStatistics()
 
     local additionalIndex = 2
 
-    for _, v in pairs(AdditionalStatistics ~= nil and AdditionalStatistics() or {}) do
+    for _, v in pairs(additionalStatistics ~= nil and additionalStatistics() or {}) do
         additionalIndex = additionalIndex + 1
         table.insert(statistics, additionalIndex, v)
     end 
