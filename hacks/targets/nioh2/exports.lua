@@ -20,8 +20,7 @@ function registerExports()
         return { 
             WholeStatistic("Amrita (XP)", playerAmrita)
         }
-end
-
+    end
 end
 
 function unregisterExports()
