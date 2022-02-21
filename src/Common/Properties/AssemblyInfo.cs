@@ -4,9 +4,9 @@ using System.Runtime.InteropServices;
 #if RELEASE
 using BadEcho.Odin.Properties;
 
-[assembly: InternalsVisibleTo("BadEcho.Odin.Tests,PublicKey="+BuildInfo.PublicKey)]
+[assembly: InternalsVisibleTo("BadEcho.Common.Tests,PublicKey="+BuildInfo.PublicKey)]
 #else
-[assembly: InternalsVisibleTo("BadEcho.Odin.Tests")]
+[assembly: InternalsVisibleTo("BadEcho.Common.Tests")]
 #endif
 
 [assembly: ComVisible(false)]
