@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Odin.Tests", "tests
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Odin.Tests.Plugin", "tests\Common.Tests.Plugin\BadEcho.Odin.Tests.Plugin.csproj", "{EFB519DE-05D6-4062-BBC9-24D9C2F437C0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Odin.XmlConfiguration", "src\Common.XmlConfiguration\BadEcho.Odin.XmlConfiguration.csproj", "{4634C157-58CB-4788-9513-DD9A003FF2AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Odin.XmlConfiguration", "src\XmlConfiguration\BadEcho.Odin.XmlConfiguration.csproj", "{4634C157-58CB-4788-9513-DD9A003FF2AA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Fenestra.Tests", "tests\Fenestra.Tests\BadEcho.Fenestra.Tests.csproj", "{EF172EF6-B2B7-4944-8863-DEEACB2C7199}"
 EndProject
