@@ -20,9 +20,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Odin.XmlConfiguration\BadEcho.Odin.XmlConfiguration.csproj" />
-    <ProjectReference Include="..\..\src\Odin\BadEcho.Odin.csproj" />
-    <ProjectReference Include="..\Odin.Tests.ExtensibilityPoint\BadEcho.Odin.Tests.ExtensibilityPoint.csproj" />
+    <ProjectReference Include="..\..\src\XmlConfiguration\BadEcho.Odin.XmlConfiguration.csproj" />
+    <ProjectReference Include="..\..\src\Common\BadEcho.Odin.csproj" />
+    <ProjectReference Include="..\Common.Tests.ExtensibilityPoint\BadEcho.Odin.Tests.ExtensibilityPoint.csproj" />
   </ItemGroup>
 
   <ItemGroup>

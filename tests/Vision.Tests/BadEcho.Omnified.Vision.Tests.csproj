@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Odin\BadEcho.Odin.csproj" />
+    <ProjectReference Include="..\..\src\Common\BadEcho.Odin.csproj" />
     <ProjectReference Include="..\..\src\Vision.Extensibility\BadEcho.Omnified.Vision.Extensibility.csproj" />
     <ProjectReference Include="..\..\src\Vision\BadEcho.Omnified.Vision.csproj" />
   </ItemGroup>
