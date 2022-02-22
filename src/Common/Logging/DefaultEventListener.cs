@@ -18,7 +18,7 @@ using BadEcho.Properties;
 namespace BadEcho.Logging;
 
 /// <summary>
-/// Provides the default logging behavior for Odin's Logging framework, mainly limited to output to an attached debugger.
+/// Provides the default logging behavior for Bad Echo's Logging framework, mainly limited to output to an attached debugger.
 /// </summary>
 internal sealed class DefaultEventListener : EventListener
 {

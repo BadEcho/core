@@ -17,7 +17,7 @@ namespace BadEcho.Extensibility.Hosting;
 
 /// <summary>
 /// Defines an initialization strategy for a <see cref="PluginContext"/> which influences the manner in which plugins are loaded
-/// through Odin's Extensibility framework.
+/// through Bad Echo's Extensibility framework.
 /// </summary>
 internal interface IPluginContextStrategy
 {

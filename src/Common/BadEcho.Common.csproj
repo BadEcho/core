@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Product>Bad Echo Core Frameworks</Product>
     <Version>0.1.0</Version>
-    <Description>Bad Echo core frameworks containing technologies applicable to all domains.</Description>
+    <Description>Bad Echo core frameworks containing technologies applicable to many domains.</Description>
 		<RootNamespace>BadEcho</RootNamespace>
   </PropertyGroup>
 

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Product>Odin Framework XML Configuration Provider</Product>
+    <Product>Bad Echo Core Frameworks XML Configuration Provider</Product>
     <Version>0.1.0</Version>
     <Description>Provides support for classic .NET XML configuration to Bad Echo core frameworks.</Description>
   </PropertyGroup>

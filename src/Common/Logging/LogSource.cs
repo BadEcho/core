@@ -22,7 +22,7 @@ namespace BadEcho.Logging;
 [EventSource(Name = EVENT_SOURCE_NAME)]
 internal sealed class LogSource : EventSource
 {
-    private const string EVENT_SOURCE_NAME = "BadEcho-Odin";
+    private const string EVENT_SOURCE_NAME = "BadEcho";
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LogSource"/> class.

@@ -18,7 +18,7 @@ using BadEcho.Properties;
 namespace BadEcho.Extensibility;
 
 /// <summary>
-/// Provides an attribute that specifies that a class defines a family of filterable exports to Odin's Extensibility
+/// Provides an attribute that specifies that a class defines a family of filterable exports to Bad Echo's Extensibility
 /// framework.
 /// </summary>
 [MetadataAttribute]

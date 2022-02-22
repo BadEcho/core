@@ -17,7 +17,7 @@ using System.Composition.Hosting;
 namespace BadEcho.Extensibility.Hosting;
 
 /// <summary>
-/// Provides a scoped context for accessing plugins loaded by Odin's Extensibility framework.
+/// Provides a scoped context for accessing plugins loaded by Bad Echo's Extensibility framework.
 /// </summary>
 internal sealed class PluginContext : IDisposable
 {

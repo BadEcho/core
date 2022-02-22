@@ -14,7 +14,7 @@
 namespace BadEcho.Logging;
 
 /// <summary>
-/// Provides the main entry point into Odin's Logging framework, delivering a means for Bad Echo technologies to pass diagnostic
+/// Provides the main entry point into Bad Echo's Logging framework, delivering a means for Bad Echo technologies to pass diagnostic
 /// messages to consuming applications.
 /// </summary>
 public static class Logger

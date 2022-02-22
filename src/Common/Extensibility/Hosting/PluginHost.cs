@@ -21,7 +21,7 @@ using BadEcho.Properties;
 namespace BadEcho.Extensibility.Hosting;
 
 /// <summary>
-/// Provides a platform and host for consuming plugins supported by Odin's Extensibility framework.
+/// Provides a platform and host for consuming plugins supported by Bad Echo's Extensibility framework.
 /// </summary>
 public static class PluginHost
 {

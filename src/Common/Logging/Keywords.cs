@@ -16,7 +16,7 @@ using System.Diagnostics.Tracing;
 namespace BadEcho.Logging;
 
 /// <summary>
-/// Provides keywords used for the categorization and filtering of Odin's Logging framework.
+/// Provides keywords used for the categorization and filtering of Bad Echo's Logging framework.
 /// </summary>
 public static class Keywords
 {

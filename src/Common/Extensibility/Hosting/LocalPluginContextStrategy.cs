@@ -19,11 +19,11 @@ namespace BadEcho.Extensibility.Hosting;
 
 /// <summary>
 /// Provides a strategy that directs a <see cref="PluginContext"/> to make available all plugins discoverable within a local
-/// caller's context through Odin's Extensibility framework.
+/// caller's context through Bad Echo's Extensibility framework.
 /// </summary>
 /// <remarks>
 /// <para>
-/// Assemblies that are neither plugin assemblies nor extensibility points can take advantage of Odin's Extensibility framework
+/// Assemblies that are neither plugin assemblies nor extensibility points can take advantage of Bad Echo's Extensibility framework
 /// through this strategy. A local pluggable part is considered to be a built-in requirement of an assembly and, therefore,
 /// is loaded through a <see cref="PluginHost.LoadRequirement{TContract}(bool)"/> call.
 /// </para>

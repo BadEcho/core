@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
+		<IsPackable>false</IsPackable>
 		<RootNamespace>BadEcho.Tests.Plugin</RootNamespace>
 		<UseCommonOutputDirectory>true</UseCommonOutputDirectory>
 	</PropertyGroup>

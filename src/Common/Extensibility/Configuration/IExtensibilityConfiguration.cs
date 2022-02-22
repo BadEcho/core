@@ -17,7 +17,7 @@ using BadEcho.Properties;
 namespace BadEcho.Extensibility.Configuration;
 
 /// <summary>
-/// Defines configuration settings for Odin's Extensibility framework.
+/// Defines configuration settings for Bad Echo's Extensibility framework.
 /// </summary>
 public interface IExtensibilityConfiguration
 {

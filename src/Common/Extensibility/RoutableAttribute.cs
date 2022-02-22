@@ -18,7 +18,7 @@ using BadEcho.Properties;
 namespace BadEcho.Extensibility;
 
 /// <summary>
-/// Provides an attribute that specifies that a type provides a call-routable plugin adapter to Odin's Extensibility
+/// Provides an attribute that specifies that a type provides a call-routable plugin adapter to Bad Echo's Extensibility
 /// framework.
 /// </summary>
 [MetadataAttribute]

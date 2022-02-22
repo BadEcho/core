@@ -16,7 +16,7 @@ using System.Composition.Convention;
 namespace BadEcho.Extensibility.Hosting;
 
 /// <summary>
-/// Defines a provider of rule configurations used to define objects as Odin's Extensibility framework parts.
+/// Defines a provider of rule configurations used to define objects as parts belonging to Bad Echo's Extensibility framework.
 /// </summary>
 public interface IConventionProvider
 {

@@ -19,7 +19,7 @@ using BadEcho.Extensibility.Configuration;
 namespace BadEcho.Extensibility.Hosting;
 
 /// <summary>
-/// Provides the primary container of the various contexts that make up Odin's Extensibility framework.
+/// Provides the primary container of the various contexts that make up Bad Echo's Extensibility framework.
 /// </summary>
 internal sealed class PluginStore : IDisposable
 {
@@ -98,7 +98,7 @@ internal sealed class PluginStore : IDisposable
     /// A <see cref="HostAdapter{T}"/> for the specified contract type. This will either be an existing host adapter for the
     /// contract type, or a newly initialized instance if one does not already exist.
     /// </returns>
-    /// <remarks>This is an entry point into Odin's Extensibility framework's call-routable plugin system.</remarks>
+    /// <remarks>This is an entry point into Bad Echo's Extensibility framework's call-routable plugin system.</remarks>
     public HostAdapter<T> LoadAdapter<T>()
         where T : notnull
     {
