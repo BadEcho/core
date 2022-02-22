@@ -13,7 +13,6 @@
     
 using System.Windows;
 using System.Windows.Data;
-using BadEcho.Odin;
 
 namespace BadEcho.Fenestra;
 
@@ -67,6 +66,12 @@ internal abstract class TransientBinder : Freezable, IHandlerBypassable
         Require.NotNull(options, nameof(options));
 
         Binding = options.Binding;
+
+        // We copy the current value for the target property on the target object to this binder's own dependency property.
+        // Otherwise, any previously set value for the target property on the target object will be lost when binding this object
+        // to it.
+        this.BypassHandlers(
+            () => SetValue(TargetProperty, targetObject.GetValue(targetProperty)));
 
         var targetBinding = new Binding
                             {
