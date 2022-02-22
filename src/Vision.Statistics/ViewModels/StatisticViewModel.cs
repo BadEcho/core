@@ -12,7 +12,6 @@
 //-----------------------------------------------------------------------
 
 using BadEcho.Fenestra.ViewModels;
-using BadEcho.Odin;
 
 namespace BadEcho.Omnified.Vision.Statistics.ViewModels;
 

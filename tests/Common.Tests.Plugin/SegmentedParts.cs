@@ -11,10 +11,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Odin.Extensibility;
-using BadEcho.Odin.Tests.Extensibility;
+using BadEcho.Extensibility;
+using BadEcho.Tests.Extensibility;
 
-namespace BadEcho.Odin.Tests.Plugin;
+namespace BadEcho.Tests.Plugin;
 
 [Routable(FakeAdapterIds.AlphaFakeIdValue, typeof(ISegmentedContract))]
 public class AlphaFakeAdapter : IPluginAdapter<ISegmentedContract>

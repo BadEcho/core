@@ -11,9 +11,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Odin.Interop;
+using BadEcho.Interop;
 
-namespace BadEcho.Odin.Tests.Interop;
+namespace BadEcho.Tests.Interop;
 
 /// <summary>
 /// Provides some helper functions for testing-related purposes.

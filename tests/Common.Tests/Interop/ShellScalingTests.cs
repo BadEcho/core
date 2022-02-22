@@ -11,10 +11,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Odin.Interop;
+using BadEcho.Interop;
 using Xunit;
 
-namespace BadEcho.Odin.Tests.Interop;
+namespace BadEcho.Tests.Interop;
 
 public class ShellScalingTests
 {

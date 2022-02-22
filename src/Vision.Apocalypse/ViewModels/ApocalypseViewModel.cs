@@ -13,7 +13,7 @@
 
 using BadEcho.Fenestra.Messaging;
 using BadEcho.Fenestra.ViewModels;
-using BadEcho.Odin.Collections;
+using BadEcho.Collections;
 using BadEcho.Omnified.Vision.Extensibility;
 
 namespace BadEcho.Omnified.Vision.Apocalypse.ViewModels;

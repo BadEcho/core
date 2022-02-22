@@ -14,7 +14,7 @@
 using System.Configuration;
 using System.Xml.Serialization;
 
-namespace BadEcho.Odin.XmlConfiguration;
+namespace BadEcho.XmlConfiguration;
 
 /// <summary>
 /// Provides a custom configuration section that supports being bound to an XML namespace.

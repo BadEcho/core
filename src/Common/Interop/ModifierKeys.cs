@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Interop;
+namespace BadEcho.Interop;
 
 /// <summary>
 /// Specifies keys that modify the action of another key when pressed together.

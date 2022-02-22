@@ -11,10 +11,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Odin.Extensibility;
-using BadEcho.Odin.Tests.Extensibility;
+using BadEcho.Extensibility;
+using BadEcho.Tests.Extensibility;
 
-namespace BadEcho.Odin.Tests.Plugin;
+namespace BadEcho.Tests.Plugin;
 
 [FilterableFamily(FamilyIdValue, NAME)]
 public class AlphaFamily : IFilterableFamily

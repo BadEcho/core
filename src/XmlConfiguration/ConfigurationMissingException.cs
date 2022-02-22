@@ -12,10 +12,10 @@
 //-----------------------------------------------------------------------
 
 using System.Runtime.Serialization;
-using BadEcho.Odin.Extensions;
-using BadEcho.Odin.XmlConfiguration.Properties;
+using BadEcho.Extensions;
+using BadEcho.XmlConfiguration.Properties;
 
-namespace BadEcho.Odin.XmlConfiguration;
+namespace BadEcho.XmlConfiguration;
 
 /// <summary>
 /// Provides an exception that is thrown when elements are missing from a component's configuration.

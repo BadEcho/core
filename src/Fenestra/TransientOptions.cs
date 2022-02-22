@@ -12,7 +12,6 @@
 //-----------------------------------------------------------------------
 
 using System.Windows.Data;
-using BadEcho.Odin;
 
 namespace BadEcho.Fenestra;
 

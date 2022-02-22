@@ -13,8 +13,8 @@
 
 using System.Composition;
 using System.Composition.Convention;
-using BadEcho.Odin.Configuration;
-using BadEcho.Odin.Extensibility.Hosting;
+using BadEcho.Configuration;
+using BadEcho.Extensibility.Hosting;
 using BadEcho.Omnified.Vision.Extensibility;
 
 namespace BadEcho.Omnified.Vision;

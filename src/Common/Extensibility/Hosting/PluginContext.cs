@@ -14,7 +14,7 @@
 using System.Composition;
 using System.Composition.Hosting;
 
-namespace BadEcho.Odin.Extensibility.Hosting;
+namespace BadEcho.Extensibility.Hosting;
 
 /// <summary>
 /// Provides a scoped context for accessing plugins loaded by Odin's Extensibility framework.

@@ -11,9 +11,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Odin.Extensibility.Configuration;
+using BadEcho.Extensibility.Configuration;
 
-namespace BadEcho.Odin.XmlConfiguration.Extensibility;
+namespace BadEcho.XmlConfiguration.Extensibility;
 
 /// <summary>
 /// Provides a means to retrieve Extensibility framework configuration sections from classic .NET XML configuration files.

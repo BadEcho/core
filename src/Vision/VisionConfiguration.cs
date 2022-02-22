@@ -14,7 +14,7 @@ using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Threading;
 using BadEcho.Fenestra.Serialization;
-using BadEcho.Odin.Configuration;
+using BadEcho.Configuration;
 using BadEcho.Omnified.Vision.Extensibility;
 
 namespace BadEcho.Omnified.Vision;

@@ -12,9 +12,9 @@
 //-----------------------------------------------------------------------
 
 using System.Collections;
-using BadEcho.Odin.Properties;
+using BadEcho.Properties;
 
-namespace BadEcho.Odin.Collections;
+namespace BadEcho.Collections;
 
 /// <summary>
 /// Provides a cached thread-safe <see cref="ArrayList"/> of weak references that is used for various sensitive operations

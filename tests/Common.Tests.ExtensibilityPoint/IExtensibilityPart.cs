@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Tests.ExtensibilityPoint;
+namespace BadEcho.Tests.ExtensibilityPoint;
 
 public interface IExtensibilityPart
 { }

@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Collections;
+namespace BadEcho.Collections;
 
 /// <summary>
 /// Specifies the type of action resulting in an event whose data is represented by a

@@ -11,9 +11,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Odin.Interop;
+using BadEcho.Interop;
 
-namespace BadEcho.Odin.Threading;
+namespace BadEcho.Threading;
 
 /// <summary>
 /// Provides a synchronization context for a thread executor.

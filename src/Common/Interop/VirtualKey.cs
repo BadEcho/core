@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Interop;
+namespace BadEcho.Interop;
 
 /// <summary>
 /// Specifies a virtual key, which may be anything from an actual keyboard key to a button on the mouse.

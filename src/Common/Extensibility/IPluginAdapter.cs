@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Extensibility;
+namespace BadEcho.Extensibility;
 
 /// <summary>
 /// Defines a connection point between a call-routable plugin and a host, allowing for the plugin to effectively

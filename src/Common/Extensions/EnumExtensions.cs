@@ -12,9 +12,9 @@
 //-----------------------------------------------------------------------
 
 using System.Runtime.CompilerServices;
-using BadEcho.Odin.Properties;
+using BadEcho.Properties;
 
-namespace BadEcho.Odin.Extensions;
+namespace BadEcho.Extensions;
 
 /// <summary>
 /// Provides a set of static methods intended to simplify the use of enumerations.

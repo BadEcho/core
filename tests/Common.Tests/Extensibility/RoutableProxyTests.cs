@@ -11,10 +11,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Odin.Extensibility.Hosting;
+using BadEcho.Extensibility.Hosting;
 using Xunit;
 
-namespace BadEcho.Odin.Tests.Extensibility;
+namespace BadEcho.Tests.Extensibility;
 
 public class RoutableProxyTests
 {

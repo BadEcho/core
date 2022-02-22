@@ -15,11 +15,11 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Loader;
-using BadEcho.Odin.Logging;
-using BadEcho.Odin.Properties;
-using BadEcho.Odin.Threading;
+using BadEcho.Logging;
+using BadEcho.Properties;
+using BadEcho.Threading;
 
-namespace BadEcho.Odin.Interop;
+namespace BadEcho.Interop;
 
 /// <summary>
 /// Provides a way to subclass a window in a managed environment.

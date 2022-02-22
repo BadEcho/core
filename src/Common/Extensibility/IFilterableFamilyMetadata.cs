@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Extensibility;
+namespace BadEcho.Extensibility;
 
 /// <summary>
 /// Defines metadata that describes a filterable family of plugins used by Odin's Extensibility framework to

@@ -13,7 +13,7 @@
 
 using System.Configuration;
 
-namespace BadEcho.Odin.XmlConfiguration.Extensibility;
+namespace BadEcho.XmlConfiguration.Extensibility;
 
 /// <summary>
 /// Provides a configuration element that expresses a claim of ownership over a segmented contract's

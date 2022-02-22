@@ -11,10 +11,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Odin.Configuration;
+using BadEcho.Configuration;
 using Xunit;
 
-namespace BadEcho.Odin.Tests.Configuration;
+namespace BadEcho.Tests.Configuration;
 
 /// <suppressions>
 /// ReSharper disable UnusedAutoPropertyAccessor.Local

@@ -14,7 +14,7 @@
 using System.Text.Json;
 using Xunit;
 
-namespace BadEcho.Odin.Tests.Serialization;
+namespace BadEcho.Tests.Serialization;
 
 public class JsonPolymorphicConverterTests
 {

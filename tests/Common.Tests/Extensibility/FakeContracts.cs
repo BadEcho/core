@@ -11,9 +11,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Odin.Extensibility;
+using BadEcho.Extensibility;
 
-namespace BadEcho.Odin.Tests.Extensibility;
+namespace BadEcho.Tests.Extensibility;
 
 public static class FakeFilterableIds
 {

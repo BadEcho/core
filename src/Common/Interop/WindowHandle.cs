@@ -13,7 +13,7 @@
 
 using System.Runtime.InteropServices;
 
-namespace BadEcho.Odin.Interop;
+namespace BadEcho.Interop;
 
 /// <summary>
 /// Provides a level-0 type for window handles.

@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Extensibility.Configuration;
+namespace BadEcho.Extensibility.Configuration;
 
 /// <summary>
 /// Defines configuration settings for a contract being segmented by one or more call-routable plugins.

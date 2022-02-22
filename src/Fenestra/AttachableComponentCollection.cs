@@ -15,8 +15,8 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Windows;
 using BadEcho.Fenestra.Properties;
-using BadEcho.Odin.Collections;
-using BadEcho.Odin.Extensions;
+using BadEcho.Collections;
+using BadEcho.Extensions;
 
 namespace BadEcho.Fenestra;
 

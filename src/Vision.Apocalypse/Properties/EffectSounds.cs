@@ -14,7 +14,7 @@
 using System.Globalization;
 using System.IO;
 using System.Resources;
-using BadEcho.Odin.Extensions;
+using BadEcho.Extensions;
 
 namespace BadEcho.Omnified.Vision.Apocalypse.Properties;
 

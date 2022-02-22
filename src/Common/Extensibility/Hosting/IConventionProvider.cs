@@ -13,7 +13,7 @@
 
 using System.Composition.Convention;
 
-namespace BadEcho.Odin.Extensibility.Hosting;
+namespace BadEcho.Extensibility.Hosting;
 
 /// <summary>
 /// Defines a provider of rule configurations used to define objects as Odin's Extensibility framework parts.

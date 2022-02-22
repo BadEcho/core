@@ -14,7 +14,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 
-namespace BadEcho.Odin.Collections;
+namespace BadEcho.Collections;
 
 /// <summary>
 /// Provides a thread-safe collection of keys paired with lazy values that can be accessed by multiple threads concurrently.

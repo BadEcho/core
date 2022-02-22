@@ -13,7 +13,7 @@
 
 using System.Configuration;
 
-namespace BadEcho.Odin.XmlConfiguration;
+namespace BadEcho.XmlConfiguration;
 
 /// <summary>
 /// Provides a configuration element containing a collection of <see cref="GuidConfigurationElement"/> child elements.

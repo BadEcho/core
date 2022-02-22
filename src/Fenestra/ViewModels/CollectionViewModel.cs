@@ -12,8 +12,7 @@
 //-----------------------------------------------------------------------
 
 using System.Windows.Threading;
-using BadEcho.Odin;
-using BadEcho.Odin.Collections;
+using BadEcho.Collections;
 
 namespace BadEcho.Fenestra.ViewModels;
 

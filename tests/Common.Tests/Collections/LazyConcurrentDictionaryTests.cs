@@ -11,10 +11,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Odin.Collections;
+using BadEcho.Collections;
 using Xunit;
 
-namespace BadEcho.Odin.Tests.Collections;
+namespace BadEcho.Tests.Collections;
 
 public class LazyConcurrentDictionaryTests
 {

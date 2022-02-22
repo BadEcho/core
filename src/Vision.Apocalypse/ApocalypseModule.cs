@@ -13,8 +13,8 @@
 
 using System.Composition;
 using System.Text.Json;
-using BadEcho.Odin.Extensibility.Hosting;
-using BadEcho.Odin.Extensions;
+using BadEcho.Extensibility.Hosting;
+using BadEcho.Extensions;
 using BadEcho.Omnified.Vision.Apocalypse.ViewModels;
 using BadEcho.Omnified.Vision.Extensibility;
 using BadEcho.Omnified.Vision.Extensibility.Properties;

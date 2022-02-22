@@ -15,10 +15,9 @@ using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Windows.Threading;
 using BadEcho.Fenestra.Properties;
-using BadEcho.Odin;
-using BadEcho.Odin.Collections;
-using BadEcho.Odin.Extensions;
-using BadEcho.Odin.Logging;
+using BadEcho.Collections;
+using BadEcho.Extensions;
+using BadEcho.Logging;
 
 namespace BadEcho.Fenestra.ViewModels;
 

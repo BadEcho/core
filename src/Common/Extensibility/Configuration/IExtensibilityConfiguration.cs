@@ -11,10 +11,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Odin.Extensions;
-using BadEcho.Odin.Properties;
+using BadEcho.Extensions;
+using BadEcho.Properties;
 
-namespace BadEcho.Odin.Extensibility.Configuration;
+namespace BadEcho.Extensibility.Configuration;
 
 /// <summary>
 /// Defines configuration settings for Odin's Extensibility framework.

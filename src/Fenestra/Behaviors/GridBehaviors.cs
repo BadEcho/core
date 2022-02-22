@@ -13,7 +13,6 @@
 
 using System.Windows;
 using System.Windows.Controls;
-using BadEcho.Odin;
 
 namespace BadEcho.Fenestra.Behaviors;
 

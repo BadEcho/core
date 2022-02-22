@@ -11,11 +11,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Odin.Properties;
-using BadEcho.Odin.Threading;
-using ThreadExceptionEventArgs = BadEcho.Odin.Threading.ThreadExceptionEventArgs;
+using BadEcho.Properties;
+using BadEcho.Threading;
 
-namespace BadEcho.Odin.Interop;
+namespace BadEcho.Interop;
 
 /// <summary>
 /// Provides an entity responsible for the execution of an action through a particular thread or context through the use of a
@@ -69,7 +68,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     }
 
     /// <inheritdoc/>
-    public event EventHandler<ThreadExceptionEventArgs>? UnhandledException;
+    public event EventHandler<Threading.ThreadExceptionEventArgs>? UnhandledException;
 
     /// <inheritdoc/>
     public bool IsShutdownStarted 
@@ -295,7 +294,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
         }
     }
     
-    private static void HandleExceptionFilter(object? sender, ThreadExceptionEventArgs e)
+    private static void HandleExceptionFilter(object? sender, Threading.ThreadExceptionEventArgs e)
     {
         if (sender == null)
             return;
@@ -429,12 +428,12 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
 
         exception.Data.Add(_ExceptionProcessedKey, null);
 
-        EventHandler<ThreadExceptionEventArgs>? unhandledException = UnhandledException;
+        EventHandler<Threading.ThreadExceptionEventArgs>? unhandledException = UnhandledException;
 
         if (unhandledException == null)
             return false;
 
-        var eventArgs = new ThreadExceptionEventArgs(exception);
+        var eventArgs = new Threading.ThreadExceptionEventArgs(exception);
 
         unhandledException(this, eventArgs);
 

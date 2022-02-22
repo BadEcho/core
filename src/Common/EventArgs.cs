@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin;
+namespace BadEcho;
 
 /// <summary>
 /// Provides a base generic class for classes that contain event data.

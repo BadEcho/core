@@ -11,10 +11,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Odin.Extensibility;
+using BadEcho.Extensibility;
 using Xunit;
 
-namespace BadEcho.Odin.Tests.Extensions;
+namespace BadEcho.Tests.Extensions;
 
 public class MetadataExtensionsTests
 {

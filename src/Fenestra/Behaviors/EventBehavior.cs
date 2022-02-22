@@ -12,7 +12,6 @@
 //-----------------------------------------------------------------------
 
 using System.Windows;
-using BadEcho.Odin;
 
 namespace BadEcho.Fenestra.Behaviors;
 

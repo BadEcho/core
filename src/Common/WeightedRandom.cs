@@ -13,7 +13,7 @@
 
 using System.Security.Cryptography;
 
-namespace BadEcho.Odin;
+namespace BadEcho;
 
 /// <summary>
 /// Provides a weighted random number value generator.

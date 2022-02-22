@@ -12,7 +12,6 @@
 //-----------------------------------------------------------------------
 
 using System.Runtime.Serialization;
-using BadEcho.Odin;
 
 namespace BadEcho.Fenestra;
 

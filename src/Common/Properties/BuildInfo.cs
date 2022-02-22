@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Properties;
+namespace BadEcho.Properties;
 
 /// <summary>
 /// Provides compile time constants involved with the build process.

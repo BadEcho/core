@@ -13,7 +13,7 @@
 
 using System.Windows;
 using System.Windows.Controls;
-using BadEcho.Odin.Extensions;
+using BadEcho.Extensions;
 
 namespace BadEcho.Fenestra.Selectors;
 

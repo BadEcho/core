@@ -13,11 +13,11 @@
 
 using System.Collections.Specialized;
 using System.ComponentModel;
-using BadEcho.Odin.Extensions;
-using BadEcho.Odin.Logging;
-using BadEcho.Odin.Properties;
+using BadEcho.Logging;
+using BadEcho.Extensions;
+using BadEcho.Properties;
 
-namespace BadEcho.Odin.Collections;
+namespace BadEcho.Collections;
 
 /// <summary>
 /// Provides a publishing service for events pertaining to <see cref="INotifyCollectionChanged"/> capable collections containing

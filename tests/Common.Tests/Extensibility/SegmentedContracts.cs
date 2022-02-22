@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Tests.Extensibility;
+namespace BadEcho.Tests.Extensibility;
 
 public static class FakeAdapterIds
 {

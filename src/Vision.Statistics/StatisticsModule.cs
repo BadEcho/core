@@ -13,7 +13,7 @@
 
 using System.Composition;
 using System.Text.Json;
-using BadEcho.Odin.Extensibility.Hosting;
+using BadEcho.Extensibility.Hosting;
 using BadEcho.Omnified.Vision.Extensibility;
 using BadEcho.Omnified.Vision.Statistics.ViewModels;
 

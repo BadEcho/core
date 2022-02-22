@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Extensibility;
+namespace BadEcho.Extensibility;
 
 /// <summary>
 /// Provides an attribute that specifies that an assembly is an Extensibility point and therefore should be considered as

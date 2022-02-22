@@ -12,9 +12,9 @@
 //-----------------------------------------------------------------------
 
 using System.ComponentModel;
-using BadEcho.Odin.Extensions;
+using BadEcho.Extensions;
 
-namespace BadEcho.Odin.Extensibility;
+namespace BadEcho.Extensibility;
 
 /// <summary>
 /// Provides a set of static methods intended to aid in matters related to metadata from the Managed Extensibility

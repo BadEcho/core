@@ -13,7 +13,7 @@
 
 using System.Runtime.InteropServices;
 
-namespace BadEcho.Odin.Interop;
+namespace BadEcho.Interop;
 
 /// <summary>
 /// Provides interoperability with the base APIs, such as memory management and input/output operations, exposed by Windows.

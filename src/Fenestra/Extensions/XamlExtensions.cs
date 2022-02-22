@@ -16,7 +16,6 @@ using System.Windows.Markup;
 using System.Windows.Threading;
 using System.Xml;
 using BadEcho.Fenestra.Properties;
-using BadEcho.Odin;
 
 namespace BadEcho.Fenestra.Extensions;
 

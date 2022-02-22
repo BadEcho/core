@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Configuration;
+namespace BadEcho.Configuration;
 
 /// <summary>
 /// Defines a provider for a format-neutral source of hot-pluggable configuration data for an application.

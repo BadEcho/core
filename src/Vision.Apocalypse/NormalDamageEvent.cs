@@ -12,7 +12,6 @@
 //-----------------------------------------------------------------------
 
 using System.IO;
-using BadEcho.Odin;
 using BadEcho.Omnified.Vision.Apocalypse.Properties;
 
 namespace BadEcho.Omnified.Vision.Apocalypse;

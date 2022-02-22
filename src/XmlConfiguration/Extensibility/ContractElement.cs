@@ -12,9 +12,9 @@
 //-----------------------------------------------------------------------
 
 using System.Configuration;
-using BadEcho.Odin.Extensibility.Configuration;
+using BadEcho.Extensibility.Configuration;
 
-namespace BadEcho.Odin.XmlConfiguration.Extensibility;
+namespace BadEcho.XmlConfiguration.Extensibility;
 
 /// <summary>
 /// Provides a configuration element for a contract being segmented by one or more call-routable plugins.

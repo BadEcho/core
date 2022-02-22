@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Threading;
+namespace BadEcho.Threading;
 
 /// <summary>
 /// Provides data for thread exception events, allowing the handler to mark the exception as being handled.

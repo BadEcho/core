@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Extensions;
+namespace BadEcho.Extensions;
 
 /// <summary>
 /// Provides a set of static methods to aid in matters related to <see cref="Exception"/> objects.

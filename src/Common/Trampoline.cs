@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin;
+namespace BadEcho;
 
 /// <summary>
 /// Provides a trampoline operation, which allows for a tail-recursive styled operation to be executed as if it was

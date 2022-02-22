@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Interop;
+namespace BadEcho.Interop;
 
 /// <summary>
 /// Specifies a type of device-specific information that can be requested through <see cref="Gdi32.GetDeviceCaps"/>.

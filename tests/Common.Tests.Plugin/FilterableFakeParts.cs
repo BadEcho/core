@@ -13,11 +13,11 @@
 
 using System.Composition;
 using System.Composition.Convention;
-using BadEcho.Odin.Extensibility;
-using BadEcho.Odin.Extensibility.Hosting;
-using BadEcho.Odin.Tests.Extensibility;
+using BadEcho.Extensibility;
+using BadEcho.Extensibility.Hosting;
+using BadEcho.Tests.Extensibility;
 
-namespace BadEcho.Odin.Tests.Plugin;
+namespace BadEcho.Tests.Plugin;
 
 [Export(typeof(IFilterableFakePart))]
 [Filterable(AlphaFamily.FamilyIdValue, typeof(AlphaFakePart))]

@@ -13,7 +13,7 @@
 
 using System.Configuration;
 
-namespace BadEcho.Odin.XmlConfiguration;
+namespace BadEcho.XmlConfiguration;
 
 /// <summary>
 /// Provides a <see cref="ConfigurationElement"/> whose name is used as its key.

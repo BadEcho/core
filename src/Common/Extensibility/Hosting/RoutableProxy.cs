@@ -12,10 +12,10 @@
 //-----------------------------------------------------------------------
 
 using System.Reflection;
-using BadEcho.Odin.Logging;
-using BadEcho.Odin.Properties;
+using BadEcho.Logging;
+using BadEcho.Properties;
 
-namespace BadEcho.Odin.Extensibility.Hosting;
+namespace BadEcho.Extensibility.Hosting;
 
 /// <summary>
 /// Provides a proxy object that handles method dispatch by routing segmented contract method calls to the call-routable

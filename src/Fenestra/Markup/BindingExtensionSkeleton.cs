@@ -20,8 +20,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Markup;
 using BadEcho.Fenestra.Properties;
-using BadEcho.Odin;
-using BadEcho.Odin.Logging;
+using BadEcho.Logging;
 
 namespace BadEcho.Fenestra.Markup;
 

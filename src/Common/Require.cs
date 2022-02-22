@@ -12,9 +12,9 @@
 //-----------------------------------------------------------------------
 
 using System.Diagnostics.CodeAnalysis;
-using BadEcho.Odin.Properties;
+using BadEcho.Properties;
 
-namespace BadEcho.Odin;
+namespace BadEcho;
 
 /// <summary>
 /// Provides a set of static methods that perform common runtime checks on method parameters.

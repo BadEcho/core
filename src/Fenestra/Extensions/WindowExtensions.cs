@@ -13,8 +13,7 @@
 
 using System.Drawing;
 using System.Windows;
-using BadEcho.Odin;
-using BadEcho.Odin.Interop;
+using BadEcho.Interop;
 
 namespace BadEcho.Fenestra.Extensions;
 

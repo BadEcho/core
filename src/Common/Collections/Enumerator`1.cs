@@ -13,7 +13,7 @@
 
 using System.Collections;
 
-namespace BadEcho.Odin.Collections;
+namespace BadEcho.Collections;
 
 /// <summary>
 /// Provides an enumerator that shapes the output of a provided <see cref="IEnumerable"/> object's enumerator.

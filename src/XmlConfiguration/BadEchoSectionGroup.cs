@@ -13,7 +13,7 @@
 
 using System.Configuration;
 
-namespace BadEcho.Odin.XmlConfiguration;
+namespace BadEcho.XmlConfiguration;
 
 /// <summary>
 /// Provides a configuration section group for all Bad Echo related configuration sections.

@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Extensibility.Configuration;
+namespace BadEcho.Extensibility.Configuration;
 
 /// <summary>
 /// Provides configuration settings for Odin's Extensibility framework suitable for binding against with a

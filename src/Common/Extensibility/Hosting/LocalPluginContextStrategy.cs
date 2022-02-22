@@ -15,7 +15,7 @@ using System.Composition.Convention;
 using System.Composition.Hosting;
 using System.Reflection;
 
-namespace BadEcho.Odin.Extensibility.Hosting;
+namespace BadEcho.Extensibility.Hosting;
 
 /// <summary>
 /// Provides a strategy that directs a <see cref="PluginContext"/> to make available all plugins discoverable within a local

@@ -13,8 +13,7 @@
 
 using System.Windows.Threading;
 using BadEcho.Fenestra.Properties;
-using BadEcho.Odin;
-using BadEcho.Odin.Extensions;
+using BadEcho.Extensions;
 
 namespace BadEcho.Fenestra.Messaging;
 

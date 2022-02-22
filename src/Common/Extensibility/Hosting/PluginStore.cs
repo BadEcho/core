@@ -13,10 +13,10 @@
 
 using System.Collections.Concurrent;
 using System.Reflection;
-using BadEcho.Odin.Collections;
-using BadEcho.Odin.Extensibility.Configuration;
+using BadEcho.Collections;
+using BadEcho.Extensibility.Configuration;
 
-namespace BadEcho.Odin.Extensibility.Hosting;
+namespace BadEcho.Extensibility.Hosting;
 
 /// <summary>
 /// Provides the primary container of the various contexts that make up Odin's Extensibility framework.

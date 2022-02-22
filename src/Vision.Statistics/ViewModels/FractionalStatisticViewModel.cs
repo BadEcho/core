@@ -11,8 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Odin;
-
 namespace BadEcho.Omnified.Vision.Statistics.ViewModels;
 
 /// <summary>

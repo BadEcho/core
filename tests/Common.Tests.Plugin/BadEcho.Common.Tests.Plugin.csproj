@@ -1,5 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+	<PropertyGroup>
+		<RootNamespace>BadEcho.Tests.Plugin</RootNamespace>
+		<UseCommonOutputDirectory>true</UseCommonOutputDirectory>
+	</PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="System.Composition" Version="5.0.1" />
   </ItemGroup>

@@ -14,7 +14,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 
-namespace BadEcho.Odin.Configuration;
+namespace BadEcho.Configuration;
 
 /// <summary>
 /// Provides a JSON-based source for hot-pluggable configuration data.

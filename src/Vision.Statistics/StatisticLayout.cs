@@ -13,7 +13,6 @@
 
 using System.Windows;
 using BadEcho.Fenestra;
-using BadEcho.Odin;
 
 namespace BadEcho.Omnified.Vision.Statistics;
 

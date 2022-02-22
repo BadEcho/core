@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Threading;
+namespace BadEcho.Threading;
 
 /// <summary>
 /// Specifies the status of a thread executor operation.

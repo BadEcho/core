@@ -18,8 +18,8 @@ using System.Windows.Controls;
 using System.Windows.Threading;
 using BadEcho.Fenestra.Extensions;
 using BadEcho.Fenestra.Properties;
-using BadEcho.Odin.Logging;
-using ThreadExceptionEventArgs = BadEcho.Odin.Threading.ThreadExceptionEventArgs;
+using BadEcho.Logging;
+using ThreadExceptionEventArgs = BadEcho.Threading.ThreadExceptionEventArgs;
 
 namespace BadEcho.Fenestra;
 

@@ -13,7 +13,7 @@
 
 using System.Windows;
 using System.Windows.Threading;
-using BadEcho.Odin.Configuration;
+using BadEcho.Configuration;
 
 namespace BadEcho.Omnified.Vision.Extensibility;
 

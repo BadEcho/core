@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------
 
 using System.Reflection;
-using BadEcho.Odin.Extensions;
+using BadEcho.Extensions;
 
 namespace BadEcho.Fenestra.Messaging;
 

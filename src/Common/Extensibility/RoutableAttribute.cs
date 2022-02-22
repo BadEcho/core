@@ -12,10 +12,10 @@
 //-----------------------------------------------------------------------
 
 using System.Composition;
-using BadEcho.Odin.Extensions;
-using BadEcho.Odin.Properties;
+using BadEcho.Extensions;
+using BadEcho.Properties;
 
-namespace BadEcho.Odin.Extensibility;
+namespace BadEcho.Extensibility;
 
 /// <summary>
 /// Provides an attribute that specifies that a type provides a call-routable plugin adapter to Odin's Extensibility

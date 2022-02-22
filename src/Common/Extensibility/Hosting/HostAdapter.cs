@@ -11,11 +11,11 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Odin.Extensibility.Configuration;
-using BadEcho.Odin.Extensions;
-using BadEcho.Odin.Properties;
+using BadEcho.Extensibility.Configuration;
+using BadEcho.Extensions;
+using BadEcho.Properties;
 
-namespace BadEcho.Odin.Extensibility.Hosting;
+namespace BadEcho.Extensibility.Hosting;
 
 /// <summary>
 /// Provides an adapter that is responsible for establishing connections between a host and several routable

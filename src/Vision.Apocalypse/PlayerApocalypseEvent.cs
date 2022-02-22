@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Odin.Extensions;
+using BadEcho.Extensions;
 using BadEcho.Omnified.Vision.Apocalypse.Properties;
 
 namespace BadEcho.Omnified.Vision.Apocalypse;

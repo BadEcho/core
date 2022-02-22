@@ -12,9 +12,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Odin.Interop;
+using BadEcho.Interop;
 
-namespace BadEcho.Odin.Tests.Interop;
+namespace BadEcho.Tests.Interop;
 
 /// <summary>
 /// A test referencing environment for <see cref="MonitorEnumProc"/> callbacks.

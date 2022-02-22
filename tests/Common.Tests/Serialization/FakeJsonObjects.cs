@@ -13,9 +13,9 @@
 
 using System.ComponentModel;
 using System.Text.Json;
-using BadEcho.Odin.Serialization;
+using BadEcho.Serialization;
 
-namespace BadEcho.Odin.Tests.Serialization;
+namespace BadEcho.Tests.Serialization;
 
 /// <suppresions>
 /// ReSharper disable LocalizableElement

@@ -13,12 +13,12 @@
 
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using BadEcho.Odin.Extensibility.Configuration;
-using BadEcho.Odin.Extensions;
-using BadEcho.Odin.Logging;
-using BadEcho.Odin.Properties;
+using BadEcho.Extensibility.Configuration;
+using BadEcho.Logging;
+using BadEcho.Extensions;
+using BadEcho.Properties;
 
-namespace BadEcho.Odin.Extensibility.Hosting;
+namespace BadEcho.Extensibility.Hosting;
 
 /// <summary>
 /// Provides a platform and host for consuming plugins supported by Odin's Extensibility framework.

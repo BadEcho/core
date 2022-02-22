@@ -13,7 +13,7 @@
 
 using System.Diagnostics.Tracing;
 
-namespace BadEcho.Odin.Logging;
+namespace BadEcho.Logging;
 
 /// <summary>
 /// Provides keywords used for the categorization and filtering of Odin's Logging framework.

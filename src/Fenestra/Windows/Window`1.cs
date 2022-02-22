@@ -16,7 +16,6 @@ using System.Windows.Controls;
 using System.Windows.Markup;
 using BadEcho.Fenestra.Extensions;
 using BadEcho.Fenestra.Properties;
-using BadEcho.Odin;
 
 namespace BadEcho.Fenestra.Windows;
 

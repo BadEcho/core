@@ -1,5 +1,5 @@
 using System.Runtime.InteropServices;
-using BadEcho.Odin.Extensibility;
+using BadEcho.Extensibility;
 
 [assembly: ComVisible(false)]
 

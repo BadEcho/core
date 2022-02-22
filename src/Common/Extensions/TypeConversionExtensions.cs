@@ -14,7 +14,7 @@
 
 using System.Globalization;
 
-namespace BadEcho.Odin.Extensions;
+namespace BadEcho.Extensions;
 
 /// <summary>
 /// Provides a set of static methods intended to aid in matters related to type conversion.

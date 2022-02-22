@@ -12,10 +12,10 @@
 //-----------------------------------------------------------------------
 
 using System.Runtime.InteropServices;
-using BadEcho.Odin.Extensions;
-using BadEcho.Odin.Properties;
+using BadEcho.Extensions;
+using BadEcho.Properties;
 
-namespace BadEcho.Odin.Interop;
+namespace BadEcho.Interop;
 
 /// <summary>
 /// Provides an encapsulation of a Win32 window, providing information of interest as well as offering ways to manipulate

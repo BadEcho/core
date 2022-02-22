@@ -12,9 +12,9 @@
 //-----------------------------------------------------------------------
 
 using System.Configuration;
-using BadEcho.Odin.Extensibility.Configuration;
+using BadEcho.Extensibility.Configuration;
 
-namespace BadEcho.Odin.XmlConfiguration.Extensibility;
+namespace BadEcho.XmlConfiguration.Extensibility;
 
 /// <summary>
 /// Provides a configuration element for settings options on all instances of Odin's Extensibility framework's

@@ -14,11 +14,11 @@
 using System.Composition.Hosting;
 using System.Reflection;
 using System.Runtime.Loader;
-using BadEcho.Odin.Extensions;
-using BadEcho.Odin.Logging;
-using BadEcho.Odin.Properties;
+using BadEcho.Logging;
+using BadEcho.Extensions;
+using BadEcho.Properties;
 
-namespace BadEcho.Odin.Extensibility.Hosting;
+namespace BadEcho.Extensibility.Hosting;
 
 /// <summary>
 /// Provides a set of static methods intended to aid in matters related to general composition using the Managed

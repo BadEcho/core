@@ -13,10 +13,10 @@
 
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using BadEcho.Odin.Extensions;
-using BadEcho.Odin.Properties;
+using BadEcho.Extensions;
+using BadEcho.Properties;
 
-namespace BadEcho.Odin.Serialization;
+namespace BadEcho.Serialization;
 
 /// <summary>
 /// Provides a base class for converting a hierarchy of objects to or from JSON.

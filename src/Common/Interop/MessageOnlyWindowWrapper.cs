@@ -13,10 +13,10 @@
 
 using System.ComponentModel;
 using System.Runtime.InteropServices;
-using BadEcho.Odin.Collections;
-using BadEcho.Odin.Threading;
+using BadEcho.Collections;
+using BadEcho.Threading;
 
-namespace BadEcho.Odin.Interop;
+namespace BadEcho.Interop;
 
 /// <summary>
 /// Provides a disposable wrapper around an <c>HWND</c> of a message-only window and the messages it receives.

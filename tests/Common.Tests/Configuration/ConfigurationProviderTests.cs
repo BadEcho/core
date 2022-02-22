@@ -11,12 +11,12 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Odin.Extensibility.Configuration;
-using BadEcho.Odin.XmlConfiguration.Extensibility;
+using BadEcho.Extensibility.Configuration;
+using BadEcho.XmlConfiguration.Extensibility;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 
-namespace BadEcho.Odin.Tests.Configuration;
+namespace BadEcho.Tests.Configuration;
 
 public class ConfigurationProviderTests
 {

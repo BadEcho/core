@@ -13,8 +13,8 @@
 
 using System.Windows.Threading;
 using BadEcho.Fenestra.Windows;
-using BadEcho.Odin.Configuration;
-using BadEcho.Odin.Extensibility.Hosting;
+using BadEcho.Configuration;
+using BadEcho.Extensibility.Hosting;
 using BadEcho.Omnified.Vision.Extensibility;
 using BadEcho.Omnified.Vision.ViewModels;
 

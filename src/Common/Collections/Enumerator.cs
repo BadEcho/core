@@ -12,9 +12,9 @@
 //-----------------------------------------------------------------------
 
 using System.Collections;
-using BadEcho.Odin.Properties;
+using BadEcho.Properties;
 
-namespace BadEcho.Odin.Collections;
+namespace BadEcho.Collections;
 
 /// <summary>
 /// Provides a customizable enumerator that supports a simple iteration over a collection.

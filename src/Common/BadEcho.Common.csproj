@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Product>Odin Framework</Product>
+    <Product>Bad Echo Core Frameworks</Product>
     <Version>0.1.0</Version>
     <Description>Bad Echo core frameworks containing technologies applicable to all domains.</Description>
+		<RootNamespace>BadEcho</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

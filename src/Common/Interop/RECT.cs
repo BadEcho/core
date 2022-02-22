@@ -13,7 +13,7 @@
 
 using System.Runtime.InteropServices;
 
-namespace BadEcho.Odin.Interop;
+namespace BadEcho.Interop;
 
 /// <summary>
 /// Provides a definition for the coordinates of the upper-left and lower-right corners of a rectangle.

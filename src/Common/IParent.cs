@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin;
+namespace BadEcho;
 
 /// <summary>
 /// Defines a component which is able to have one or more children.

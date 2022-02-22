@@ -14,11 +14,11 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using BadEcho.Odin.Extensions;
-using BadEcho.Odin.Logging;
-using BadEcho.Odin.Properties;
+using BadEcho.Logging;
+using BadEcho.Extensions;
+using BadEcho.Properties;
 
-namespace BadEcho.Odin.Interop;
+namespace BadEcho.Interop;
 
 /// <summary>
 /// Provides a representation of a display device connected to the computer.

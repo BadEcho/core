@@ -12,10 +12,10 @@
 //-----------------------------------------------------------------------
 
 using System.Composition;
-using BadEcho.Odin.Extensions;
-using BadEcho.Odin.Properties;
+using BadEcho.Extensions;
+using BadEcho.Properties;
 
-namespace BadEcho.Odin.Extensibility;
+namespace BadEcho.Extensibility;
 
 /// <summary>
 /// Provides an attribute that specifies that a class defines a family of filterable exports to Odin's Extensibility

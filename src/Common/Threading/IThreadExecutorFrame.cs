@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Threading;
+namespace BadEcho.Threading;
 
 /// <summary>
 /// Defines a representation of a thread executor frame.

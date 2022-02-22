@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Interop;
+namespace BadEcho.Interop;
 
 /// <summary>
 /// Specifies an attribute of a window that can be retrieved with <see cref="User32.GetWindowLongPtr(WindowHandle, WindowAttribute)"/>

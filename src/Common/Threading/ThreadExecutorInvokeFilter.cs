@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Threading;
+namespace BadEcho.Threading;
 
 /// <summary>
 /// Provides method execution routines designed specifically for thread executor style invocations, optionally offering exception

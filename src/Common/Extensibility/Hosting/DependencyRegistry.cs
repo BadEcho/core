@@ -13,7 +13,7 @@
 
 using System.Composition.Convention;
 
-namespace BadEcho.Odin.Extensibility.Hosting;
+namespace BadEcho.Extensibility.Hosting;
 
 /// <summary>
 /// Provides a means to register dependencies ahead of time for injection into pluggable parts during

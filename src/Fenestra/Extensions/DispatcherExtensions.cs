@@ -12,7 +12,6 @@
 //-----------------------------------------------------------------------
 
 using System.Windows.Threading;
-using BadEcho.Odin;
 
 namespace BadEcho.Fenestra.Extensions;
 

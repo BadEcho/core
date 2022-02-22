@@ -12,10 +12,10 @@
 //-----------------------------------------------------------------------
 
 using System.Diagnostics.Tracing;
-using BadEcho.Odin.Logging;
+using BadEcho.Logging;
 using Xunit;
 
-namespace BadEcho.Odin.Tests.Logging;
+namespace BadEcho.Tests.Logging;
 
 /// <suppressions>
 /// ReSharper disable LocalizableElement

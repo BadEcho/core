@@ -13,9 +13,9 @@
 
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using BadEcho.Odin.Extensions;
+using BadEcho.Extensions;
 
-namespace BadEcho.Odin.Configuration;
+namespace BadEcho.Configuration;
 
 /// <summary>
 /// Provides a JSON-based source for hot-pluggable configuration data with hierarchical extension data support.
@@ -53,7 +53,7 @@ public abstract class JsonConfigurationProvider<TExtensionData> : JsonConfigurat
             => typeToConvert.IsA<ExtensionDataStore<TExtensionData>>();
 
         /// <inheritdoc/>
-        public override ExtensionDataStore<TExtensionData>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override ExtensionDataStore<TExtensionData> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             var extensionDataDocument = JsonDocument.ParseValue(ref reader);
             var configurationReader 

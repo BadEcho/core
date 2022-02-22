@@ -13,7 +13,7 @@
 
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using BadEcho.Odin.Extensions;
+using BadEcho.Extensions;
 
 namespace BadEcho.Fenestra.ViewModels;
 

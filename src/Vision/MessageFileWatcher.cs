@@ -12,8 +12,7 @@
 //-----------------------------------------------------------------------
 
 using System.IO;
-using BadEcho.Odin;
-using BadEcho.Odin.Extensions;
+using BadEcho.Extensions;
 using BadEcho.Omnified.Vision.Extensibility;
 
 namespace BadEcho.Omnified.Vision;

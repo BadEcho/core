@@ -13,7 +13,7 @@
 
 using System.Globalization;
 
-namespace BadEcho.Odin.Extensions;
+namespace BadEcho.Extensions;
 
 /// <summary>
 /// Provides a set of static methods intended to simplify string use and manipulation.

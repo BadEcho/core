@@ -13,9 +13,9 @@
 
 using System.Diagnostics;
 using System.Diagnostics.Tracing;
-using BadEcho.Odin.Properties;
+using BadEcho.Properties;
 
-namespace BadEcho.Odin.Logging;
+namespace BadEcho.Logging;
 
 /// <summary>
 /// Provides the default logging behavior for Odin's Logging framework, mainly limited to output to an attached debugger.

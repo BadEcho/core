@@ -15,9 +15,9 @@ using System.Windows;
 using System.Windows.Threading;
 using BadEcho.Fenestra.Configuration;
 using BadEcho.Fenestra.Extensions;
-using BadEcho.Odin.Configuration;
-using BadEcho.Odin.Extensibility.Hosting;
-using BadEcho.Odin.Interop;
+using BadEcho.Configuration;
+using BadEcho.Extensibility.Hosting;
+using BadEcho.Interop;
 using BadEcho.Omnified.Vision.Windows;
 
 namespace BadEcho.Omnified.Vision;

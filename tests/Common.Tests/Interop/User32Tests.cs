@@ -11,10 +11,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Odin.Interop;
+using BadEcho.Interop;
 using Xunit;
 
-namespace BadEcho.Odin.Tests.Interop;
+namespace BadEcho.Tests.Interop;
 
 /// <summary>
 /// These methods are less for testing the unmanaged functions in question (which one should assume Microsoft themselves have tested),

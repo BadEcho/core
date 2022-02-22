@@ -12,9 +12,9 @@
 //-----------------------------------------------------------------------
 
 using System.Composition.Hosting;
-using BadEcho.Odin.Extensibility.Hosting;
+using BadEcho.Extensibility.Hosting;
 
-namespace BadEcho.Odin.Tests.Extensibility;
+namespace BadEcho.Tests.Extensibility;
 
 internal class EmptyPluginContextStrategy : IPluginContextStrategy
 {

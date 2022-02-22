@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin;
+namespace BadEcho;
 
 /// <summary>
 /// Provides a bouncing method used in a trampolining recursive operation that accepts and returns a single

@@ -14,7 +14,7 @@
 using System.ComponentModel;
 using System.Configuration;
 
-namespace BadEcho.Odin.XmlConfiguration;
+namespace BadEcho.XmlConfiguration;
 
 /// <summary>
 /// Provides a named <see cref="ConfigurationElement"/> where a unique <see cref="Guid"/> value is used as its

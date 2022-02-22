@@ -14,9 +14,9 @@
 using System.Composition.Convention;
 using System.Composition.Hosting;
 using System.Reflection;
-using BadEcho.Odin.Extensions;
+using BadEcho.Extensions;
 
-namespace BadEcho.Odin.Extensibility.Hosting;
+namespace BadEcho.Extensibility.Hosting;
 
 /// <summary>
 /// Provides a strategy that directs a <see cref="PluginContext"/> to make available only the exports that belong to a specific

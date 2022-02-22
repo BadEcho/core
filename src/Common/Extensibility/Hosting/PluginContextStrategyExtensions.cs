@@ -14,7 +14,7 @@
 using System.Composition.Convention;
 using System.Composition.Hosting;
 
-namespace BadEcho.Odin.Extensibility.Hosting;
+namespace BadEcho.Extensibility.Hosting;
 
 /// <summary>
 /// Provides a set of static methods intended to aid in matters related to plugin context strategy initialization.

@@ -13,7 +13,7 @@
 
 using System.Composition;
 
-namespace BadEcho.Odin.Tests.Extensibility;
+namespace BadEcho.Tests.Extensibility;
 
 public sealed class PluggablePart
 {

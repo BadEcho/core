@@ -13,7 +13,7 @@
 
 using System.Composition.Hosting;
 
-namespace BadEcho.Odin.Extensibility.Hosting;
+namespace BadEcho.Extensibility.Hosting;
 
 /// <summary>
 /// Defines an initialization strategy for a <see cref="PluginContext"/> which influences the manner in which plugins are loaded

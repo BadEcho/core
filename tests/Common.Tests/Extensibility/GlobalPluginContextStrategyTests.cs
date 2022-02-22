@@ -12,12 +12,12 @@
 //-----------------------------------------------------------------------
 
 using System.Composition.Hosting;
-using BadEcho.Odin.Extensibility;
-using BadEcho.Odin.Extensibility.Hosting;
-using BadEcho.Odin.Tests.ExtensibilityPoint;
+using BadEcho.Extensibility;
+using BadEcho.Extensibility.Hosting;
+using BadEcho.Tests.ExtensibilityPoint;
 using Xunit;
 
-namespace BadEcho.Odin.Tests.Extensibility;
+namespace BadEcho.Tests.Extensibility;
 
 public class GlobalPluginContextStrategyTests
 {

@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Extensions;
+namespace BadEcho.Extensions;
 
 /// <summary>
 /// Provides a set of static methods that aid in matters related to input/output streams.

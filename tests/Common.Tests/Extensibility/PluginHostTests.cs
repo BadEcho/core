@@ -11,12 +11,12 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Odin.Extensibility.Configuration;
-using BadEcho.Odin.Extensibility.Hosting;
+using BadEcho.Extensibility.Configuration;
+using BadEcho.Extensibility.Hosting;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 
-namespace BadEcho.Odin.Tests.Extensibility;
+namespace BadEcho.Tests.Extensibility;
 
 /// <suppressions>
 /// ReSharper disable AssignNullToNotNullAttribute

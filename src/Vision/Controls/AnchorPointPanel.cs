@@ -17,9 +17,8 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using BadEcho.Fenestra;
 using BadEcho.Fenestra.Extensions;
-using BadEcho.Odin;
-using BadEcho.Odin.Configuration;
-using BadEcho.Odin.Extensibility.Hosting;
+using BadEcho.Configuration;
+using BadEcho.Extensibility.Hosting;
 using BadEcho.Omnified.Vision.Extensibility;
 
 namespace BadEcho.Omnified.Vision.Controls;

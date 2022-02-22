@@ -13,7 +13,7 @@
 
 using System.Runtime.InteropServices;
 
-namespace BadEcho.Odin.Interop;
+namespace BadEcho.Interop;
 
 /// <summary>
 /// Provides interoperability with the Graphics Device Interface functionality of Windows.

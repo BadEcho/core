@@ -12,9 +12,9 @@
 //-----------------------------------------------------------------------
 
 using System.Composition;
-using BadEcho.Odin.Tests.Extensibility;
+using BadEcho.Tests.Extensibility;
 
-namespace BadEcho.Odin.Tests.Plugin;
+namespace BadEcho.Tests.Plugin;
 
 [Export(typeof(IUniqueRequirement))]
 public sealed class UniqueRequirement : IUniqueRequirement

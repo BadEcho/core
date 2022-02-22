@@ -1,5 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <ItemGroup>
+
+	<PropertyGroup>
+		<RootNamespace>BadEcho.Tests.ExtensibilityPoint</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
     <ProjectReference Include="..\..\src\Common\BadEcho.Common.csproj" />
   </ItemGroup>
 </Project>

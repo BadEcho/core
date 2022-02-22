@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------
 
 using System.Collections.ObjectModel;
-using BadEcho.Odin.Extensions;
+using BadEcho.Extensions;
 
 namespace BadEcho.Omnified.Vision.Statistics;
 

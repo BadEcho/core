@@ -12,9 +12,9 @@
 //-----------------------------------------------------------------------
 
 using System.Configuration;
-using BadEcho.Odin.XmlConfiguration.Properties;
+using BadEcho.XmlConfiguration.Properties;
 
-namespace BadEcho.Odin.XmlConfiguration.Extensibility;
+namespace BadEcho.XmlConfiguration.Extensibility;
 
 /// <summary>
 /// Provides a validator for a collection of call-routable plugin configuration elements assigned to

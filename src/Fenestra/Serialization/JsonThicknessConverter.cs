@@ -16,7 +16,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Windows;
 using BadEcho.Fenestra.Properties;
-using BadEcho.Odin;
 
 namespace BadEcho.Fenestra.Serialization;
 

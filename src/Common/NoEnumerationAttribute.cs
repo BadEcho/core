@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin;
+namespace BadEcho;
 
 /// <summary>
 /// Indicates that an <see cref="System.Collections.IEnumerable"/>, passed in as a parameter, will not be

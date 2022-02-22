@@ -14,7 +14,7 @@
 using System.Collections;
 using System.Collections.Specialized;
 
-namespace BadEcho.Odin.Collections;
+namespace BadEcho.Collections;
 
 /// <summary>
 /// Provides data for the <see cref="INotifyCollectionChanged.CollectionChanged"/> event which uses empty instead of

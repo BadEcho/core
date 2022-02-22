@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Configuration;
+namespace BadEcho.Configuration;
 
 /// <summary>
 /// Provides a type-safe means to access extension data of a common object hierarchy.

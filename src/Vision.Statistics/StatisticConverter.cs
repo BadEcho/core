@@ -13,7 +13,7 @@
 
 using System.ComponentModel;
 using System.Text.Json;
-using BadEcho.Odin.Serialization;
+using BadEcho.Serialization;
 using BadEcho.Omnified.Vision.Statistics.Properties;
 
 namespace BadEcho.Omnified.Vision.Statistics;

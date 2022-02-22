@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Configuration;
+namespace BadEcho.Configuration;
 
 /// <summary>
 /// Defines a reader of configuration data.

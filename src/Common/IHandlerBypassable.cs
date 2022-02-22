@@ -13,7 +13,7 @@
 
 using System.Collections.Concurrent;
 
-namespace BadEcho.Odin;
+namespace BadEcho;
 
 /// <summary>
 /// Defines a subscriber of events, capable of optionally having the handling of said events bypassed.

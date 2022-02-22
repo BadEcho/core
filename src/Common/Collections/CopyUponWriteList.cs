@@ -13,7 +13,7 @@
 
 using System.Collections;
 
-namespace BadEcho.Odin.Collections;
+namespace BadEcho.Collections;
 
 /// <summary>
 /// Provides a thread-safe <see cref="ArrayList"/> that performs a copy of itself upon each write to support consistency,

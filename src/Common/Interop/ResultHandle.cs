@@ -12,9 +12,9 @@
 //-----------------------------------------------------------------------
 
 using System.Runtime.InteropServices;
-using BadEcho.Odin.Properties;
+using BadEcho.Properties;
 
-namespace BadEcho.Odin.Interop;
+namespace BadEcho.Interop;
 
 /// <summary>
 /// Specifies an opaque result handle returned by a function.

@@ -3,9 +3,9 @@ using System.Runtime.CompilerServices;
 using BadEcho.Fenestra;
 using System.Windows;
 using System.Windows.Markup;
-using BadEcho.Odin.Extensibility;
+using BadEcho.Extensibility;
 #if RELEASE
-using BadEcho.Odin.Properties;
+using BadEcho.Properties;
 
 [assembly: InternalsVisibleTo("BadEcho.Fenestra.Tests,PublicKey="+BuildInfo.PublicKey)]
 #else
@@ -71,7 +71,7 @@ using BadEcho.Odin.Properties;
 [assembly: SuppressMessage("Maintainability", 
                            "CA1508:Avoid dead conditional code", 
                            Scope = "member", 
-                           Target = "~M:BadEcho.Fenestra.ViewModels.CollectionViewModelEngine`2.HandleChildrenChanged(System.Object,BadEcho.Odin.Collections.CollectionPropertyChangedEventArgs)",
+                           Target = "~M:BadEcho.Fenestra.ViewModels.CollectionViewModelEngine`2.HandleChildrenChanged(System.Object,BadEcho.Collections.CollectionPropertyChangedEventArgs)",
                            Justification = "This is yet another a strange false positive. The source of the value is clearly from a property that has been marked as being a reference that can be null. So, a null check is required.")]
 
 [assembly: SuppressMessage("Style", 

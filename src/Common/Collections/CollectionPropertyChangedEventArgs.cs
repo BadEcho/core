@@ -13,7 +13,7 @@
 
 using System.Collections;
 
-namespace BadEcho.Odin.Collections;
+namespace BadEcho.Collections;
 
 /// <summary>
 /// Provides data for a change in either a collection's composition or a property value of one of the items belonging

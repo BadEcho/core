@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Odin.Extensibility.Configuration;
+namespace BadEcho.Extensibility.Configuration;
 
 /// <summary>
 /// Provides configuration settings for a call-routable plugin suitable for binding against with a

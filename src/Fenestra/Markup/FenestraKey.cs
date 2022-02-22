@@ -14,8 +14,7 @@
 using System.ComponentModel;
 using System.Reflection;
 using System.Windows;
-using BadEcho.Odin;
-using BadEcho.Odin.Extensions;
+using BadEcho.Extensions;
 
 namespace BadEcho.Fenestra.Markup;
 

@@ -13,7 +13,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace BadEcho.Odin;
+namespace BadEcho;
 
 /// <summary>
 /// Provides support for lazy initialization with malleable output.

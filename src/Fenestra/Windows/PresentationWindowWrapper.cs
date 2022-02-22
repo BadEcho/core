@@ -13,8 +13,7 @@
 
 using System.Windows.Interop;
 using BadEcho.Fenestra.Properties;
-using BadEcho.Odin;
-using BadEcho.Odin.Interop;
+using BadEcho.Interop;
 
 namespace BadEcho.Fenestra.Windows;
 

@@ -13,9 +13,8 @@
 
 using System.Text.Json;
 using BadEcho.Fenestra.ViewModels;
-using BadEcho.Odin;
-using BadEcho.Odin.Extensions;
-using BadEcho.Odin.Logging;
+using BadEcho.Extensions;
+using BadEcho.Logging;
 using BadEcho.Omnified.Vision.Extensibility.Properties;
 
 namespace BadEcho.Omnified.Vision.Extensibility;

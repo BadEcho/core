@@ -14,7 +14,7 @@
 using System.Windows;
 using System.Windows.Media.Animation;
 using BadEcho.Fenestra.Properties;
-using BadEcho.Odin.Extensions;
+using BadEcho.Extensions;
 
 namespace BadEcho.Fenestra;
 

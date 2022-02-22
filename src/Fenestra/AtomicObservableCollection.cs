@@ -16,7 +16,6 @@ using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Threading;
 using BadEcho.Fenestra.Extensions;
-using BadEcho.Odin;
 
 namespace BadEcho.Fenestra;
 

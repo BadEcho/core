@@ -12,9 +12,9 @@
 //-----------------------------------------------------------------------
 
 using System.Configuration;
-using BadEcho.Odin.Collections;
+using BadEcho.Collections;
 
-namespace BadEcho.Odin.XmlConfiguration;
+namespace BadEcho.XmlConfiguration;
 
 /// <summary>
 /// Provides a configuration element containing a collection of strongly-typed child elements.

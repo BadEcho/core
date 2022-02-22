@@ -14,11 +14,10 @@
 using System.Windows;
 using System.Windows.Interop;
 using BadEcho.Fenestra.Windows;
-using BadEcho.Odin;
-using BadEcho.Odin.Interop;
+using BadEcho.Interop;
 using BadEcho.Omnified.Vision.Properties;
 using BadEcho.Omnified.Vision.ViewModels;
-using ModifierKeys = BadEcho.Odin.Interop.ModifierKeys;
+using ModifierKeys = BadEcho.Interop.ModifierKeys;
 
 namespace BadEcho.Omnified.Vision.Windows;
 

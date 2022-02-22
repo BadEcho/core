@@ -14,7 +14,7 @@
 using System.Diagnostics.Tracing;
 using System.Runtime.CompilerServices;
 
-namespace BadEcho.Odin.Logging;
+namespace BadEcho.Logging;
 
 /// <summary>
 /// Provides a source for diagnostic messages from Bad Echo technologies to external listeners.

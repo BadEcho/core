@@ -12,9 +12,9 @@
 //-----------------------------------------------------------------------
 
 using System.Diagnostics.CodeAnalysis;
-using BadEcho.Odin.Extensions;
+using BadEcho.Extensions;
 
-namespace BadEcho.Odin.Configuration;
+namespace BadEcho.Configuration;
 
 /// <summary>
 /// Provides a format-neutral source of hot-pluggable configuration data for an application.

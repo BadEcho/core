@@ -13,10 +13,10 @@
 
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using BadEcho.Odin.Extensions;
-using BadEcho.Odin.Properties;
+using BadEcho.Extensions;
+using BadEcho.Properties;
 
-namespace BadEcho.Odin.Threading;
+namespace BadEcho.Threading;
 
 /// <summary>
 /// Provides a representation of a delegate that has been posted to an executor's queue.

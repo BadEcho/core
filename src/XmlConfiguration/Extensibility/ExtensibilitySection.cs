@@ -12,9 +12,9 @@
 //-----------------------------------------------------------------------
 
 using System.Configuration;
-using BadEcho.Odin.Extensibility.Configuration;
+using BadEcho.Extensibility.Configuration;
 
-namespace BadEcho.Odin.XmlConfiguration.Extensibility;
+namespace BadEcho.XmlConfiguration.Extensibility;
 
 /// <summary>
 /// Provides a configuration section for Odin's Extensibility framework.
@@ -62,7 +62,7 @@ internal sealed class ExtensibilitySection : BindableConfigurationSection, IExte
     /// Gets an instance of this configuration section from the current application's default configuration.
     /// </summary>
     /// <returns>This section as it is declared in the current application's default configuration.</returns>
-    internal static ExtensibilitySection GetSection()
+    internal static ExtensibilitySection GetSection() 
         => (ExtensibilitySection) ConfigurationManager.GetSection(SectionPath) ?? new ExtensibilitySection();
 
     /// <summary>
