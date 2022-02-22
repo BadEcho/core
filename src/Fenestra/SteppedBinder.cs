@@ -16,8 +16,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Threading;
 using BadEcho.Fenestra.Properties;
-using BadEcho.Odin;
-using BadEcho.Odin.Extensions;
+using BadEcho.Extensions;
 
 namespace BadEcho.Fenestra;
 
@@ -142,7 +141,7 @@ internal sealed class SteppedBinder : TransientBinder
     /// <inheritdoc/>
     protected override void WriteSourceValue(object value)
     {
-        object nextValue = GetNextWritableValue(value, SourceProperty.Name);
+        object nextValue = GetNextWritableValue(value, SourceProperty.Name, _sourceStepTimer.Interval);
             
         base.WriteSourceValue(nextValue);
     }
@@ -150,7 +149,7 @@ internal sealed class SteppedBinder : TransientBinder
     /// <inheritdoc/>
     protected override void WriteTargetValue(object value)
     {
-        object nextValue = GetNextWritableValue(value, TargetProperty.Name);
+        object nextValue = GetNextWritableValue(value, TargetProperty.Name, _targetStepTimer.Interval);
             
         base.WriteTargetValue(nextValue);
     }
@@ -205,7 +204,7 @@ internal sealed class SteppedBinder : TransientBinder
         return ConvertPropertyValue(value, property.Name);
     }
 
-    private object GetNextWritableValue(object baseValue, string propertyName)
+    private object GetNextWritableValue(object baseValue, string propertyName, double stepInterval)
     {
         double nextStepValue;
 
@@ -214,6 +213,8 @@ internal sealed class SteppedBinder : TransientBinder
         else
         {
             _sequenceStopwatch.Stop();
+
+            bool steppingUpwards = _endingStepValue > _startingStepValue;
 
             // Calculate where in the step sequence we should be given the time it's taken to get here.
             double expectedStepDelta =
@@ -227,9 +228,22 @@ internal sealed class SteppedBinder : TransientBinder
             _sequenceStopwatch.Start();
 
             // Ensure the time-corrected step value does not exceed the value marking the end of the sequence.
-            nextStepValue = _endingStepValue > _startingStepValue
+            nextStepValue = steppingUpwards
                 ? Math.Min(_endingStepValue, nextValue)
                 : Math.Max(_endingStepValue, nextValue);
+
+            if (_isInteger)
+            {   // If the step value needs to be an integer, we perform the rounding here first, as simply casting our step value
+                // to an integer will result in the truncation of all decimal digits, this may lead to inaccurate effective stepping durations.
+                double roundedStepValue = Math.Round(nextStepValue, MidpointRounding.AwayFromZero);
+                TimeSpan nextStepTime = _sequenceStopwatch.Elapsed + TimeSpan.FromMilliseconds(stepInterval);
+
+                // If our rounded value is such that the next step value actually ends up being the target, final value, we will actually
+                // allow the typecast truncation to occur, so long as that another step interval doesn't exceed the desired duration of the
+                // entire stepping sequence. This is to prevent the stepping sequence from finishing too early.
+                if (!roundedStepValue.ApproximatelyEquals(_endingStepValue) || nextStepTime > _steppingDuration)
+                    nextStepValue = roundedStepValue;
+            }
         }
 
         // Although it looks like we could replace the following lines with a single ternary conditional operator,
