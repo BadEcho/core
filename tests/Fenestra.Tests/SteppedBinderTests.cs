@@ -186,6 +186,7 @@ public class SteppedBinderTests
                                  {
                                      SteppingDuration = steppingDuration,
                                      MinimumSteps = 0,
+                                     StepAmount = 1.0,
                                      IsInteger = true
                                  });
     }
@@ -195,21 +196,32 @@ public class SteppedBinderTests
         bool updatedToFinalValue = false;
 
         var textBox = new TextBox { Text = initialTargetValue };
-        textBox.TextChanged += TextBox_TextChanged;
+
         var binder = new SteppedBinder(textBox,
                                        TextBox.TextProperty,
                                        new SteppingOptions(_binding)
                                        {
                                            SteppingDuration = steppingDuration,
                                            MinimumSteps = 0,
+                                           StepAmount = 1.0,
                                            IsInteger = true
                                        });
 
         var stopwatch = new Stopwatch();
 
+        textBox.TextChanged += (_, _) =>
+                               {
+                                   if (Convert.ToInt32(textBox.Text) != newSourceValue)
+                                       return;
+
+                                   stopwatch.Stop();
+                                   updatedToFinalValue = true;
+                               };
+
+        // This is only needed for tests where the text box's text never actually ends up changing.
         binder.Changed += (_, _) =>
                           {
-                              if (Convert.ToInt32(textBox.Text) != newSourceValue)
+                              if (textBox.Text != newSourceValue.ToString())
                                   return;
 
                               stopwatch.Stop();
@@ -220,17 +232,12 @@ public class SteppedBinderTests
 
         _sourceObject.Value = newSourceValue;
 
-        while (!updatedToFinalValue) 
+        while (!updatedToFinalValue)
             textBox.ProcessMessages();
 
         Dispatcher.CurrentDispatcher.InvokeShutdown();
 
         return stopwatch.Elapsed;
-    }
-
-    private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-    {
-
     }
 
     private TimeSpan UpdateTarget(int initialSourceValue, string initialTargetValue, string newTargetValue, TimeSpan steppingDuration)
@@ -246,6 +253,7 @@ public class SteppedBinderTests
                                        {
                                            SteppingDuration = steppingDuration,
                                            MinimumSteps = 0,
+                                           StepAmount = 1.0,
                                            IsInteger = true
                                        });
 
