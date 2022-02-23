@@ -7,5 +7,5 @@ using System.Runtime.InteropServices;
 [assembly: SuppressMessage("Performance", 
                            "CA1812:Avoid uninstantiated internal classes", 
                            Scope = "type", 
-                           Target = "~T:BadEcho.Omnified.Vision.Apocalypse.ViewModels.ApocalypseViewModel",
+                           Target = "~T:BadEcho.Vision.Apocalypse.ViewModels.ApocalypseViewModel",
                            Justification = "This class is absolutely instantiated by ApocalypseModule, as a consequence of that class being derived from VisionModule, which instantiates the provided TViewModel type via the new() constraint. Not sure how the Roslyn analyzer is missing this.")]

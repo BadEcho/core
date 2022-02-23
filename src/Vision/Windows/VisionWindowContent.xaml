@@ -15,8 +15,8 @@
       xmlns:badEcho="http://schemas.badecho.com/presentation/2022/02/xaml"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.ViewModels;assembly=BadEcho.Omnified.Vision"
-      xmlns:c="clr-namespace:BadEcho.Omnified.Vision.Controls;assembly=BadEcho.Omnified.Vision"
+      xmlns:vm="clr-namespace:BadEcho.Vision.ViewModels;assembly=BadEcho.Vision"
+      xmlns:c="clr-namespace:BadEcho.Vision.Controls;assembly=BadEcho.Vision"
       d:DataContext="{d:DesignInstance Type=vm:VisionViewModel}"
       mc:Ignorable="d"
       VerticalAlignment="Stretch">

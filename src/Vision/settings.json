@@ -4,10 +4,10 @@
   "titleLocation": "TopLeft",
   "messageFilesDirectory": "..\\..\\hacks\\targets\\nioh2",
   "modules": {
-    "BadEcho.Omnified.Vision.Statistics": {
+    "BadEcho.Vision.Statistics": {
       "location": "TopLeft"
     },
-    "BadEcho.Omnified.Vision.Apocalypse": {
+    "BadEcho.Vision.Apocalypse": {
       "location": "BottomCenter",
       "maxMessages": 3,
       "effectMessageMaxWidth": 650

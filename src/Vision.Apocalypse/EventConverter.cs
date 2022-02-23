@@ -14,9 +14,9 @@
 using System.ComponentModel;
 using System.Text.Json;
 using BadEcho.Serialization;
-using BadEcho.Omnified.Vision.Apocalypse.Properties;
+using BadEcho.Vision.Apocalypse.Properties;
 
-namespace BadEcho.Omnified.Vision.Apocalypse;
+namespace BadEcho.Vision.Apocalypse;
 
 /// <summary>
 /// Provides a converter of <see cref="ApocalypseEvent"/> objects to or from JSON.

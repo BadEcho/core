@@ -15,10 +15,10 @@ using System.Windows.Threading;
 using BadEcho.Presentation.Windows;
 using BadEcho.Configuration;
 using BadEcho.Extensibility.Hosting;
-using BadEcho.Omnified.Vision.Extensibility;
-using BadEcho.Omnified.Vision.ViewModels;
+using BadEcho.Vision.Extensibility;
+using BadEcho.Vision.ViewModels;
 
-namespace BadEcho.Omnified.Vision.Windows;
+namespace BadEcho.Vision.Windows;
 
 /// <summary>
 /// Provides an assembler of a Vision main window's data context.

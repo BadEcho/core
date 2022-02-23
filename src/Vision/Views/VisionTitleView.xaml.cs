@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Omnified.Vision.Views;
+namespace BadEcho.Vision.Views;
 
 /// <summary>
 /// Provides a view for displaying Vision's application title.

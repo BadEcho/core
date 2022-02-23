@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Omnified.Vision.Extensibility;
+namespace BadEcho.Vision.Extensibility;
 
 /// <summary>
 /// Defines a provider of a Vision module's message file.

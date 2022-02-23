@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Omnified.Vision.Apocalypse.Views;
+namespace BadEcho.Vision.Apocalypse.Views;
 
 /// <summary>
 /// Provides a view for displaying dice rolls made by the Apocalypse system.

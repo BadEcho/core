@@ -10,15 +10,15 @@
 		http://creativecommons.org/licenses/by-nc/4.0/
     </copyright>
 -->
-<Application x:Class="BadEcho.Omnified.Vision.App"
+<Application x:Class="BadEcho.Vision.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Startup="HandleStartup">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/BadEcho.Omnified.Vision;component/Themes/Root.xaml"/>
-                <ResourceDictionary Source="/BadEcho.Omnified.Vision.Extensibility;component/Themes/Root.xaml"/>
+                <ResourceDictionary Source="/BadEcho.Vision;component/Themes/Root.xaml"/>
+                <ResourceDictionary Source="/BadEcho.Vision.Extensibility;component/Themes/Root.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

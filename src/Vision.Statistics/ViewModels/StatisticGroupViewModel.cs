@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Omnified.Vision.Statistics.ViewModels;
+namespace BadEcho.Vision.Statistics.ViewModels;
 
 /// <summary>
 /// Provides a view model that facilitates the display of a grouping of similar statistics exported from an Omnified

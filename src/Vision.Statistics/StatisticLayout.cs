@@ -14,7 +14,7 @@
 using System.Windows;
 using BadEcho.Presentation;
 
-namespace BadEcho.Omnified.Vision.Statistics;
+namespace BadEcho.Vision.Statistics;
 
 /// <summary>
 /// Provides inheritable layout properties for statistic displays.

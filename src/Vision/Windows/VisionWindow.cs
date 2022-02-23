@@ -15,11 +15,11 @@ using System.Windows;
 using System.Windows.Interop;
 using BadEcho.Presentation.Windows;
 using BadEcho.Interop;
-using BadEcho.Omnified.Vision.Properties;
-using BadEcho.Omnified.Vision.ViewModels;
+using BadEcho.Vision.Properties;
+using BadEcho.Vision.ViewModels;
 using ModifierKeys = BadEcho.Interop.ModifierKeys;
 
-namespace BadEcho.Omnified.Vision.Windows;
+namespace BadEcho.Vision.Windows;
 
 /// <summary>
 /// Provides the main window for the Vision application.

@@ -12,9 +12,9 @@
 //-----------------------------------------------------------------------
 
 using BadEcho.Extensions;
-using BadEcho.Omnified.Vision.Apocalypse.Properties;
+using BadEcho.Vision.Apocalypse.Properties;
 
-namespace BadEcho.Omnified.Vision.Apocalypse;
+namespace BadEcho.Vision.Apocalypse;
 
 /// <summary>
 /// Provides a description for a Player Apocalypse "extra damage" event that occurred in an Omnified game.

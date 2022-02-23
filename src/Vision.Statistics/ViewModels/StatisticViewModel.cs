@@ -13,7 +13,7 @@
 
 using BadEcho.Presentation.ViewModels;
 
-namespace BadEcho.Omnified.Vision.Statistics.ViewModels;
+namespace BadEcho.Vision.Statistics.ViewModels;
 
 /// <summary>
 /// Provides a base view model that facilitates the display of an individual statistic exported from an Omnified game.

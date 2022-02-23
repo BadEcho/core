@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Omnified.Vision.Extensibility;
+namespace BadEcho.Vision.Extensibility;
 
 /// <summary>
 /// Specifies the location of a Vision module's anchor point on the screen.

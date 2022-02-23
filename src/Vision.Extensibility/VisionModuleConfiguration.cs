@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace BadEcho.Omnified.Vision.Extensibility;
+namespace BadEcho.Vision.Extensibility;
 
 /// <summary>
 /// Provides configuration settings for an individual Vision module.

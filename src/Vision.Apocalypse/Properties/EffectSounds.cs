@@ -16,7 +16,7 @@ using System.IO;
 using System.Resources;
 using BadEcho.Extensions;
 
-namespace BadEcho.Omnified.Vision.Apocalypse.Properties;
+namespace BadEcho.Vision.Apocalypse.Properties;
 
 /// <summary>
 /// Provides access to sound effect resources.
@@ -28,7 +28,7 @@ namespace BadEcho.Omnified.Vision.Apocalypse.Properties;
 /// </remarks>
 public static class EffectSounds
 {
-    private static readonly ResourceManager _Manager = new("BadEcho.Omnified.Vision.Apocalypse.Properties.EffectSounds",
+    private static readonly ResourceManager _Manager = new("BadEcho.Vision.Apocalypse.Properties.EffectSounds",
                                                            typeof(EffectSounds).Assembly);
     /// <summary>
     /// Gets a stream for the lovely 'Chocobo' sound effect played during some critical hits.

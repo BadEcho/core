@@ -14,7 +14,7 @@
 using System.Collections.ObjectModel;
 using BadEcho.Extensions;
 
-namespace BadEcho.Omnified.Vision.Statistics;
+namespace BadEcho.Vision.Statistics;
 
 /// <summary>
 /// Provides a grouping of similar statistics exported from an Omnified game.

@@ -15,9 +15,9 @@ using System.Text.Json;
 using BadEcho.Presentation.ViewModels;
 using BadEcho.Extensions;
 using BadEcho.Logging;
-using BadEcho.Omnified.Vision.Extensibility.Properties;
+using BadEcho.Vision.Extensibility.Properties;
 
-namespace BadEcho.Omnified.Vision.Extensibility;
+namespace BadEcho.Vision.Extensibility;
 
 /// <summary>
 /// Provides a base snap-in module granting Vision to Omnified data.

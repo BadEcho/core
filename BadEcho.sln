@@ -21,19 +21,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Presentation.Tests"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Common.Tests.ExtensibilityPoint", "tests\Common.Tests.ExtensibilityPoint\BadEcho.Common.Tests.ExtensibilityPoint.csproj", "{96E47E47-4A73-42D3-B8A5-B43E061AE5EF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "omnified", "omnified", "{773B3EB9-0C39-4AED-892F-F1E2F7B7106B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "vision", "vision", "{773B3EB9-0C39-4AED-892F-F1E2F7B7106B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Omnified.Vision", "src\Vision\BadEcho.Omnified.Vision.csproj", "{41BF1AF7-1437-4548-A019-BB1985D08EA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Vision", "src\Vision\BadEcho.Vision.csproj", "{41BF1AF7-1437-4548-A019-BB1985D08EA1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Omnified.Vision.Extensibility", "src\Vision.Extensibility\BadEcho.Omnified.Vision.Extensibility.csproj", "{F50E33D1-9FEE-4A58-9401-A915C914A7C2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Vision.Extensibility", "src\Vision.Extensibility\BadEcho.Vision.Extensibility.csproj", "{F50E33D1-9FEE-4A58-9401-A915C914A7C2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Omnified.Vision.Statistics", "src\Vision.Statistics\BadEcho.Omnified.Vision.Statistics.csproj", "{8D19C413-8751-445E-BBB4-F20EA40E0691}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Vision.Statistics", "src\Vision.Statistics\BadEcho.Vision.Statistics.csproj", "{8D19C413-8751-445E-BBB4-F20EA40E0691}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "omnified", "omnified", "{D85B8374-DA6C-4A05-9814-D057B4CCE499}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "vision", "vision", "{D85B8374-DA6C-4A05-9814-D057B4CCE499}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Omnified.Vision.Tests", "tests\Vision.Tests\BadEcho.Omnified.Vision.Tests.csproj", "{E9635411-FF91-4E8F-9144-F00D909C968D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Vision.Tests", "tests\Vision.Tests\BadEcho.Vision.Tests.csproj", "{E9635411-FF91-4E8F-9144-F00D909C968D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Omnified.Vision.Apocalypse", "src\Vision.Apocalypse\BadEcho.Omnified.Vision.Apocalypse.csproj", "{0A387E81-5764-4967-ADE1-2B06400D7663}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Vision.Apocalypse", "src\Vision.Apocalypse\BadEcho.Vision.Apocalypse.csproj", "{0A387E81-5764-4967-ADE1-2B06400D7663}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

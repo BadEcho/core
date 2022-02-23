@@ -14,7 +14,7 @@
 using System.Windows;
 using BadEcho.Presentation.Markup;
 
-namespace BadEcho.Omnified.Vision.Extensibility.Themes;
+namespace BadEcho.Vision.Extensibility.Themes;
 
 /// <summary>
 /// Provides resource keys for font-related resources used by Vision and its modules.

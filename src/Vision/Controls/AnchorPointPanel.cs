@@ -19,9 +19,9 @@ using BadEcho.Presentation;
 using BadEcho.Presentation.Extensions;
 using BadEcho.Configuration;
 using BadEcho.Extensibility.Hosting;
-using BadEcho.Omnified.Vision.Extensibility;
+using BadEcho.Vision.Extensibility;
 
-namespace BadEcho.Omnified.Vision.Controls;
+namespace BadEcho.Vision.Controls;
 
 /// <summary>
 /// Provides an area where you can attach child elements to specific anchor points encompassing the area.

@@ -12,13 +12,13 @@
 -->
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:t="clr-namespace:BadEcho.Omnified.Vision.Extensibility.Themes">
+                    xmlns:t="clr-namespace:BadEcho.Vision.Extensibility.Themes">
 
     <FontFamily x:Key="{x:Static t:Fonts.FontFamilyKey}">
-        pack://application:,,,/BadEcho.Omnified.Vision.Extensibility;component/Themes/Resources/#Visionista, Consolas
+        pack://application:,,,/BadEcho.Vision.Extensibility;component/Themes/Resources/#Visionista, Consolas
     </FontFamily>
     <FontFamily x:Key="{x:Static t:Fonts.VisionTitleFontFamilyKey}">
-        pack://application:,,,/BadEcho.Omnified.Vision.Extensibility;component/Themes/Resources/#Dot Matrix
+        pack://application:,,,/BadEcho.Vision.Extensibility;component/Themes/Resources/#Dot Matrix
     </FontFamily>
 
 </ResourceDictionary>

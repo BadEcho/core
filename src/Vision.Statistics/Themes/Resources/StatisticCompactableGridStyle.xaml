@@ -13,7 +13,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:badEcho="http://schemas.badecho.com/presentation/2022/02/xaml"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:s="clr-namespace:BadEcho.Omnified.Vision.Statistics">
+                    xmlns:s="clr-namespace:BadEcho.Vision.Statistics">
 
     <Style x:Key="StatisticCompactableGridStyle" TargetType="{x:Type Grid}">
         <Style.Triggers>

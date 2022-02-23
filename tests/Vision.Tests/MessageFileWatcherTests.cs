@@ -12,10 +12,10 @@
 //-----------------------------------------------------------------------
 
 using BadEcho.Presentation.ViewModels;
-using BadEcho.Omnified.Vision.Extensibility;
+using BadEcho.Vision.Extensibility;
 using Xunit;
 
-namespace BadEcho.Omnified.Vision.Tests;
+namespace BadEcho.Vision.Tests;
 
 public class MessageFileWatcherTests : IDisposable
 {

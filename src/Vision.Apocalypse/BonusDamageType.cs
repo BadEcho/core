@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Omnified.Vision.Apocalypse;
+namespace BadEcho.Vision.Apocalypse;
 
 /// <summary>
 /// Specifies the type of bonus damage being applied to an Enemy Apocalypse event.

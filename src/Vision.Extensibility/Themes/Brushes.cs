@@ -15,7 +15,7 @@ using System.Windows;
 using System.Windows.Media;
 using BadEcho.Presentation.Markup;
 
-namespace BadEcho.Omnified.Vision.Extensibility.Themes;
+namespace BadEcho.Vision.Extensibility.Themes;
 
 /// <summary>
 /// Provides resource keys for <see cref="Brush"/> resources used by Vision and its modules.

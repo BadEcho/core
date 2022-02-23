@@ -13,7 +13,7 @@
 
 using System.Windows;
 
-namespace BadEcho.Omnified.Vision.Statistics.Views;
+namespace BadEcho.Vision.Statistics.Views;
 
 /// <summary>
 /// Provides a view for an individual fractional statistic exported from an Omnified game.

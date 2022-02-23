@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Omnified.Vision.Statistics.Views;
+namespace BadEcho.Vision.Statistics.Views;
 
 /// <summary>
 /// Provides a view for a collection of statistics exported from an Omnified game.

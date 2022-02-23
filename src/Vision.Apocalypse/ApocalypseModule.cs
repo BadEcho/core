@@ -15,11 +15,11 @@ using System.Composition;
 using System.Text.Json;
 using BadEcho.Extensibility.Hosting;
 using BadEcho.Extensions;
-using BadEcho.Omnified.Vision.Apocalypse.ViewModels;
-using BadEcho.Omnified.Vision.Extensibility;
-using BadEcho.Omnified.Vision.Extensibility.Properties;
+using BadEcho.Vision.Apocalypse.ViewModels;
+using BadEcho.Vision.Extensibility;
+using BadEcho.Vision.Extensibility.Properties;
 
-namespace BadEcho.Omnified.Vision.Apocalypse;
+namespace BadEcho.Vision.Apocalypse;
 
 /// <summary>
 /// Provides a snap-in module granting vision to the Omnified Apocalypse system.

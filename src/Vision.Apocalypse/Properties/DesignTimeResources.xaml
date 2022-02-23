@@ -12,7 +12,7 @@
 -->
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/BadEcho.Omnified.Vision.Apocalypse;component/Themes/Root.xaml"/>
-        <ResourceDictionary Source="/BadEcho.Omnified.Vision.Extensibility;component/Themes/Root.xaml"/>
+        <ResourceDictionary Source="/BadEcho.Vision.Apocalypse;component/Themes/Root.xaml"/>
+        <ResourceDictionary Source="/BadEcho.Vision.Extensibility;component/Themes/Root.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

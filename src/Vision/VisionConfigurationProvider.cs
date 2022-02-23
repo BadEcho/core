@@ -15,9 +15,9 @@ using System.Composition;
 using System.Composition.Convention;
 using BadEcho.Configuration;
 using BadEcho.Extensibility.Hosting;
-using BadEcho.Omnified.Vision.Extensibility;
+using BadEcho.Vision.Extensibility;
 
-namespace BadEcho.Omnified.Vision;
+namespace BadEcho.Vision;
 
 /// <summary>
 /// Provides a source for hot-pluggable, but otherwise cached, configuration data.

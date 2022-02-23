@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Omnified.Vision.Statistics.ViewModels;
+namespace BadEcho.Vision.Statistics.ViewModels;
 
 /// <summary>
 /// Provides a view model that facilitates the display of an individual coordinate triplet statistic exported from an

@@ -13,9 +13,9 @@
 
 using System.IO;
 using BadEcho.Extensions;
-using BadEcho.Omnified.Vision.Extensibility;
+using BadEcho.Vision.Extensibility;
 
-namespace BadEcho.Omnified.Vision;
+namespace BadEcho.Vision;
 
 /// <summary>
 /// Provides a watcher for a Vision module's message file that will notify listeners upon any changes being made to it.

@@ -14,7 +14,7 @@
 using System.Composition;
 using BadEcho.Presentation;
 
-namespace BadEcho.Omnified.Vision.Statistics.Themes;
+namespace BadEcho.Vision.Statistics.Themes;
 
 /// <summary>
 /// Provides access to resources belonging to the Statistics plugin for Vision.

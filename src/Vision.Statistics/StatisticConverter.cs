@@ -14,9 +14,9 @@
 using System.ComponentModel;
 using System.Text.Json;
 using BadEcho.Serialization;
-using BadEcho.Omnified.Vision.Statistics.Properties;
+using BadEcho.Vision.Statistics.Properties;
 
-namespace BadEcho.Omnified.Vision.Statistics;
+namespace BadEcho.Vision.Statistics;
 
 /// <summary>
 /// Provides a converter of <see cref="Statistic"/> objects to or from JSON.

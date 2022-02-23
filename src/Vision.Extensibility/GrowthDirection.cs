@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Omnified.Vision.Extensibility;
+namespace BadEcho.Vision.Extensibility;
 
 /// <summary>
 /// Specifies the direction a Vision module grows from its anchor point.

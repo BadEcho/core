@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Omnified.Vision.Statistics;
+namespace BadEcho.Vision.Statistics;
 
 /// <summary>
 /// Provides an individual statistic exported from an Omnified game concerning a coordinate

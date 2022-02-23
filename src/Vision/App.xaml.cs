@@ -18,9 +18,9 @@ using BadEcho.Presentation.Extensions;
 using BadEcho.Configuration;
 using BadEcho.Extensibility.Hosting;
 using BadEcho.Interop;
-using BadEcho.Omnified.Vision.Windows;
+using BadEcho.Vision.Windows;
 
-namespace BadEcho.Omnified.Vision;
+namespace BadEcho.Vision;
 
 /// <summary>
 /// Provides the Vision application.

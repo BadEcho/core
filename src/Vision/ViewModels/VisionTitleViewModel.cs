@@ -12,9 +12,9 @@
 //-----------------------------------------------------------------------
 
 using BadEcho.Presentation.ViewModels;
-using BadEcho.Omnified.Vision.Properties;
+using BadEcho.Vision.Properties;
 
-namespace BadEcho.Omnified.Vision.ViewModels;
+namespace BadEcho.Vision.ViewModels;
 
 /// <summary>
 /// Provides a view model that facilitates the display of Vision's application title.

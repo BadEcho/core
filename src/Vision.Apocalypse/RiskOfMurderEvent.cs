@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Omnified.Vision.Apocalypse;
+namespace BadEcho.Vision.Apocalypse;
 
 /// <summary>
 /// Provides a base description for a Player Apocalypse "risk of murder" event that occurred in an Omnified game.

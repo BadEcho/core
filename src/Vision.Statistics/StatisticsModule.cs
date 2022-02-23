@@ -14,10 +14,10 @@
 using System.Composition;
 using System.Text.Json;
 using BadEcho.Extensibility.Hosting;
-using BadEcho.Omnified.Vision.Extensibility;
-using BadEcho.Omnified.Vision.Statistics.ViewModels;
+using BadEcho.Vision.Extensibility;
+using BadEcho.Vision.Statistics.ViewModels;
 
-namespace BadEcho.Omnified.Vision.Statistics;
+namespace BadEcho.Vision.Statistics;
 
 /// <summary>
 /// Provides a snap-in module granting vision to Omnified game statistics data.

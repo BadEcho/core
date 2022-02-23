@@ -13,7 +13,7 @@
 <Style TargetType="{x:Type Window}"
        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-       xmlns:w="clr-namespace:BadEcho.Omnified.Vision.Windows;assembly=BadEcho.Omnified.Vision">
+       xmlns:w="clr-namespace:BadEcho.Vision.Windows;assembly=BadEcho.Vision">
     <Setter Property="AllowsTransparency" Value="True"/>
     <Setter Property="Background" Value="Transparent"/>
     <Setter Property="WindowState" Value="Maximized"/>

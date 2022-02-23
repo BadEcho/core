@@ -12,10 +12,10 @@
 //-----------------------------------------------------------------------
 
 using BadEcho.Presentation.ViewModels;
-using BadEcho.Omnified.Vision.Extensibility;
-using BadEcho.Omnified.Vision.ViewModels;
+using BadEcho.Vision.Extensibility;
+using BadEcho.Vision.ViewModels;
 
-namespace BadEcho.Omnified.Vision;
+namespace BadEcho.Vision;
 
 /// <summary>
 /// Provides a host container for a Vision module.

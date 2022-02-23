@@ -13,7 +13,7 @@
 
 using BadEcho.Presentation.ViewModels;
 
-namespace BadEcho.Omnified.Vision.Extensibility;
+namespace BadEcho.Vision.Extensibility;
 
 /// <summary>
 /// Defines a snap-in module granting vision to Omnified data.

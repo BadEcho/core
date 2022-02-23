@@ -11,8 +11,8 @@
     </copyright>
 -->
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Apocalypse.ViewModels"
-                    xmlns:v="clr-namespace:BadEcho.Omnified.Vision.Apocalypse.Views"
+                    xmlns:vm="clr-namespace:BadEcho.Vision.Apocalypse.ViewModels"
+                    xmlns:v="clr-namespace:BadEcho.Vision.Apocalypse.Views"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <DataTemplate DataType="{x:Type vm:ApocalypseViewModel}">

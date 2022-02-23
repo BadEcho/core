@@ -17,7 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Presentation\BadEcho.Presentation.csproj" />
     <ProjectReference Include="..\Common\BadEcho.Common.csproj" />
-    <ProjectReference Include="..\Vision.Extensibility\BadEcho.Omnified.Vision.Extensibility.csproj" />
+    <ProjectReference Include="..\Vision.Extensibility\BadEcho.Vision.Extensibility.csproj" />
   </ItemGroup>
 
   <ItemGroup>

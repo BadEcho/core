@@ -13,7 +13,7 @@
 
 using BadEcho.Extensions;
 
-namespace BadEcho.Omnified.Vision.Statistics;
+namespace BadEcho.Vision.Statistics;
 
 /// <summary>
 /// Provides an individual statistic exported from an Omnified game.

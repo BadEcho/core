@@ -10,14 +10,14 @@
 		http://creativecommons.org/licenses/by-nc/4.0/
     </copyright>
 -->
-<badEcho:View x:Class="BadEcho.Omnified.Vision.Apocalypse.Views.ApocalypseView"
+<badEcho:View x:Class="BadEcho.Vision.Apocalypse.Views.ApocalypseView"
               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
               xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-              xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Apocalypse.ViewModels"
-              xmlns:v="clr-namespace:BadEcho.Omnified.Vision.Apocalypse.Views"
-              xmlns:t="clr-namespace:BadEcho.Omnified.Vision.Extensibility.Themes;assembly=BadEcho.Omnified.Vision.Extensibility"
+              xmlns:vm="clr-namespace:BadEcho.Vision.Apocalypse.ViewModels"
+              xmlns:v="clr-namespace:BadEcho.Vision.Apocalypse.Views"
+              xmlns:t="clr-namespace:BadEcho.Vision.Extensibility.Themes;assembly=BadEcho.Vision.Extensibility"
               xmlns:badEcho="http://schemas.badecho.com/presentation/2022/02/xaml"                   
               mc:Ignorable="d"
               d:DesignWidth="650">

@@ -12,9 +12,9 @@
 //-----------------------------------------------------------------------
 
 using BadEcho.Presentation.ViewModels;
-using BadEcho.Omnified.Vision.Extensibility;
+using BadEcho.Vision.Extensibility;
 
-namespace BadEcho.Omnified.Vision.ViewModels;
+namespace BadEcho.Vision.ViewModels;
 
 /// <summary>
 /// Provides the root view model for the Vision application, which acts as a collection of hosted Vision modules.

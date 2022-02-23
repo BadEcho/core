@@ -14,7 +14,7 @@
 using System.Composition;
 using BadEcho.Presentation;
 
-namespace BadEcho.Omnified.Vision.Apocalypse.Themes;
+namespace BadEcho.Vision.Apocalypse.Themes;
 
 /// <summary>
 /// Provides access to resources belonging to the Apocalypse plugin for Vision.

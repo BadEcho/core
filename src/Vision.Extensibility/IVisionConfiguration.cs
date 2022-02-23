@@ -15,7 +15,7 @@ using System.Windows;
 using System.Windows.Threading;
 using BadEcho.Configuration;
 
-namespace BadEcho.Omnified.Vision.Extensibility;
+namespace BadEcho.Vision.Extensibility;
 
 /// <summary>
 /// Defines configuration settings for the Vision application.

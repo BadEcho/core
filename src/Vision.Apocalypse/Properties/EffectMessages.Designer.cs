@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace BadEcho.Omnified.Vision.Apocalypse.Properties {
+namespace BadEcho.Vision.Apocalypse.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace BadEcho.Omnified.Vision.Apocalypse.Properties {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("BadEcho.Omnified.Vision.Apocalypse.Properties.EffectMessages", typeof(EffectMessages).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("BadEcho.Vision.Apocalypse.Properties.EffectMessages", typeof(EffectMessages).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
