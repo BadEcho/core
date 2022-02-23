@@ -104,11 +104,11 @@
   <data name="ResourceUriNotResourceDictionary" xml:space="preserve">
     <value>The imported resource URI '{0}' is not a ResourceDictionary.</value>
   </data>
-  <data name="FenestraDispatcherError" xml:space="preserve">
-    <value>The Fenestra dispatcher must be shut down due to an unhandled error caused by one of its components.</value>
+  <data name="BadEchoDispatcherError" xml:space="preserve">
+    <value>The Bad Echo Presentation framework dispatcher must be shut down due to an unhandled error caused by one of its components.</value>
   </data>
-  <data name="FenestraDispatcherManuallyShutdown" xml:space="preserve">
-    <value>The Fenestra dispatcher has been manually shutdown.</value>
+  <data name="BadEchoDispatcherManuallyShutdown" xml:space="preserve">
+    <value>The Bad Echo Presentation framework dispatcher has been manually shutdown.</value>
   </data>
   <data name="CannotAddNonBindingToMultiBinding" xml:space="preserve">
     <value>Cannot add non-binding related data to multi-binding collection.</value>
@@ -128,17 +128,17 @@
   <data name="BehaviorUnsupportedTargetObject" xml:space="preserve">
     <value>This behavior only supports attachment to target objects of type '{0}'.</value>
   </data>
-  <data name="CanOnlyConvertFenestraKeys" xml:space="preserve">
-    <value>Can only convert Fenestra specific resource key types.</value>
+  <data name="CanOnlyConvertBadEchoKeys" xml:space="preserve">
+    <value>Can only convert Bad Echo Presentation framework specific resource key types.</value>
   </data>
-  <data name="FenestraKeyIsInvalid" xml:space="preserve">
-    <value>Fenestra resource key descriptor is invalid.</value>
+  <data name="BadEchoKeyIsInvalid" xml:space="preserve">
+    <value>Bad Echo Presentation framework resource key descriptor is invalid.</value>
   </data>
-  <data name="FenestraKeyCannotFindType" xml:space="preserve">
-    <value>Fenestra resource key descriptor does not describe a locatable provider type.</value>
+  <data name="BadEchoKeyCannotFindType" xml:space="preserve">
+    <value>Bad Echo Presentation framework resource key descriptor does not describe a locatable provider type.</value>
   </data>
-  <data name="FenestraKeyCannotFindField" xml:space="preserve">
-    <value>Fenestra resource key descriptor does not describe a locatable field on a key provider.</value>
+  <data name="BadEchoKeyCannotFindField" xml:space="preserve">
+    <value>Bad Echo Presentation framework resource key descriptor does not describe a locatable field on a key provider.</value>
   </data>
   <data name="CommandCannotExecute" xml:space="preserve">
     <value>Either an invalid parameter was provided to a command, or the command was not in a state where execution was permitted.</value>
@@ -156,7 +156,7 @@
     <value>Removal of a view model from a child view model collection whose model data is still bound to the collection view model can only be done while the child view model still has valid model data bound to it.</value>
   </data>
   <data name="IncompatibleDataContextType" xml:space="preserve">
-    <value>An attempt to bind a data context of an incompatible type to a context-specific Fenestra window was made.</value>
+    <value>An attempt to bind a data context of an incompatible type to a context-specific Bad Echo Presentation framework window was made.</value>
   </data>
   <data name="WrongXamlRootType" xml:space="preserve">
     <value>The type of object found at the root of the XAML's corresponding object tree does not match the specified generic type parameter.</value>

@@ -23,7 +23,7 @@ namespace BadEcho.Presentation.Extensions;
 public static class ApplicationExtensions
 {
     /// <summary>
-    /// Imports and loads all Fenestra-based resources into this <see cref="Application"/> instance.
+    /// Imports and loads all Bad Echo Presentation framework resources into this <see cref="Application"/> instance.
     /// </summary>
     /// <param name="application">The current WPF application object to import resources into.</param>
     /// <remarks>
@@ -33,9 +33,9 @@ public static class ApplicationExtensions
     /// resources available to all controls present within the assembly for linking to as static resources.
     /// </para>
     /// <para>
-    /// Naturally, this becomes difficult when operating within the context of a library (as the Fenestra framework itself does),
-    /// as no notion of an <see cref="Application"/> definition exists within a library. The difficulty increases doubly so when
-    /// considering plugins that export graphical elements to the WPF application. Not only do these plugins lack an
+    /// Naturally, this becomes difficult when operating within the context of a library (as the Bad Echo Presentation framework
+    /// itself does), as no notion of an <see cref="Application"/> definition exists within a library. The difficulty increases
+    /// doubly so when considering plugins that export graphical elements to the WPF application. Not only do these plugins lack an
     /// <see cref="Application"/> definition, but they typically also lack an reference from the application hosting them. This
     /// means the host application has no way of accessing the resources if it wanted to explicitly merge them into its own
     /// application-scope resource dictionary itself (which is a rather onerous and ridiculous requirement anyway that would only

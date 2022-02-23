@@ -70,6 +70,51 @@ namespace BadEcho.Presentation.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Bad Echo Presentation framework dispatcher must be shut down due to an unhandled error caused by one of its components..
+        /// </summary>
+        internal static string BadEchoDispatcherError {
+            get {
+                return ResourceManager.GetString("BadEchoDispatcherError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Bad Echo Presentation framework dispatcher has been manually shutdown..
+        /// </summary>
+        internal static string BadEchoDispatcherManuallyShutdown {
+            get {
+                return ResourceManager.GetString("BadEchoDispatcherManuallyShutdown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bad Echo Presentation framework resource key descriptor does not describe a locatable field on a key provider..
+        /// </summary>
+        internal static string BadEchoKeyCannotFindField {
+            get {
+                return ResourceManager.GetString("BadEchoKeyCannotFindField", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bad Echo Presentation framework resource key descriptor does not describe a locatable provider type..
+        /// </summary>
+        internal static string BadEchoKeyCannotFindType {
+            get {
+                return ResourceManager.GetString("BadEchoKeyCannotFindType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bad Echo Presentation framework resource key descriptor is invalid..
+        /// </summary>
+        internal static string BadEchoKeyIsInvalid {
+            get {
+                return ResourceManager.GetString("BadEchoKeyIsInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Behavior is already attached to the target dependency object..
         /// </summary>
         internal static string BehaviorAlreadyAttachedToTarget {
@@ -115,11 +160,11 @@ namespace BadEcho.Presentation.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Can only convert Fenestra specific resource key types..
+        ///   Looks up a localized string similar to Can only convert Bad Echo Presentation framework specific resource key types..
         /// </summary>
-        internal static string CanOnlyConvertFenestraKeys {
+        internal static string CanOnlyConvertBadEchoKeys {
             get {
-                return ResourceManager.GetString("CanOnlyConvertFenestraKeys", resourceCulture);
+                return ResourceManager.GetString("CanOnlyConvertBadEchoKeys", resourceCulture);
             }
         }
         
@@ -169,52 +214,7 @@ namespace BadEcho.Presentation.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Fenestra dispatcher must be shut down due to an unhandled error caused by one of its components..
-        /// </summary>
-        internal static string FenestraDispatcherError {
-            get {
-                return ResourceManager.GetString("FenestraDispatcherError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The Fenestra dispatcher has been manually shutdown..
-        /// </summary>
-        internal static string FenestraDispatcherManuallyShutdown {
-            get {
-                return ResourceManager.GetString("FenestraDispatcherManuallyShutdown", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Fenestra resource key descriptor does not describe a locatable field on a key provider..
-        /// </summary>
-        internal static string FenestraKeyCannotFindField {
-            get {
-                return ResourceManager.GetString("FenestraKeyCannotFindField", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Fenestra resource key descriptor does not describe a locatable provider type..
-        /// </summary>
-        internal static string FenestraKeyCannotFindType {
-            get {
-                return ResourceManager.GetString("FenestraKeyCannotFindType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Fenestra resource key descriptor is invalid..
-        /// </summary>
-        internal static string FenestraKeyIsInvalid {
-            get {
-                return ResourceManager.GetString("FenestraKeyIsInvalid", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to An attempt to bind a data context of an incompatible type to a context-specific Fenestra window was made..
+        ///   Looks up a localized string similar to An attempt to bind a data context of an incompatible type to a context-specific Bad Echo Presentation framework window was made..
         /// </summary>
         internal static string IncompatibleDataContextType {
             get {

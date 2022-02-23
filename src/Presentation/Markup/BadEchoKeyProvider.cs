@@ -16,22 +16,22 @@ using System.Windows;
 namespace BadEcho.Presentation.Markup;
 
 /// <summary>
-/// Provides a generator of Fenestra <see cref="ResourceKey"/> and <see cref="DataTemplateKey"/> instances originating from
-/// a specific assembly.
+/// Provides a generator of Bad Echo Presentation framework <see cref="ResourceKey"/> and <see cref="DataTemplateKey"/> instances
+/// originating from a specific assembly.
 /// </summary>
 /// <remarks>
-/// This type exists to simplify the process of generating <see cref="FenestraKey"/> instances, as some static collections may
+/// This type exists to simplify the process of generating <see cref="BadEchoKey"/> instances, as some static collections may
 /// be composed of a fair number of different resources.
 /// </remarks>
-public sealed class FenestraKeyProvider
+public sealed class BadEchoKeyProvider
 {
     private readonly Type _providerType;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="FenestraKeyProvider"/> class.
+    /// Initializes a new instance of the <see cref="BadEchoKeyProvider"/> class.
     /// </summary>
     /// <param name="providerType">The type that will be registering the resources.</param>
-    public FenestraKeyProvider(Type providerType)
+    public BadEchoKeyProvider(Type providerType)
     {
         Require.NotNull(providerType, nameof(providerType));
 
@@ -44,5 +44,5 @@ public sealed class FenestraKeyProvider
     /// <param name="name">The uniquely identifying name of the resource.</param>
     /// <returns>A <see cref="ResourceKey"/> instance pointing to the resource identified by <c>name</c>.</returns>
     public ResourceKey CreateKey(string name)
-        => new FenestraKey(_providerType, name);
+        => new BadEchoKey(_providerType, name);
 }

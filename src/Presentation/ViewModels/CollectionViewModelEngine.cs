@@ -453,7 +453,7 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
         if (failedBinding.Exception != null)
             rootException = failedBinding.Exception.FindInnermostException();
 
-        Dispatcher.BeginInvoke(() => throw new EngineException(Strings.FenestraDispatcherError, rootException),
+        Dispatcher.BeginInvoke(() => throw new EngineException(Strings.BadEchoDispatcherError, rootException),
                                DispatcherPriority.Send);
     }
 

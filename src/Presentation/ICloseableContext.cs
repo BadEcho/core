@@ -16,7 +16,7 @@ using System.Windows.Input;
 namespace BadEcho.Presentation;
 
 /// <summary>
-/// Defines a data context or other entity able to influence the state of a Fenestra window.
+/// Defines a data context or other entity able to influence the state of a Bad Echo Presentation framework window.
 /// </summary>
 public interface ICloseableContext
 {

@@ -19,7 +19,7 @@ using BadEcho.Presentation.Properties;
 namespace BadEcho.Presentation.Markup;
 
 /// <summary>
-/// Provides a type converter for Fenestra resource keys.
+/// Provides a type converter for Bad Echo Presentation framework resource keys.
 /// </summary>
 /// <remarks>
 /// <para>
@@ -30,16 +30,17 @@ namespace BadEcho.Presentation.Markup;
 /// <para>
 /// In order to be able to convert from resource keys to markup and vice versa, the markup this converter outputs differs from
 /// the usual format. Resource keys should normally be referenced using static markup extensions, however efforts made to produce
-/// static extension conversion outputs for Fenestra key instances for the tools requiring said conversion have not been successful.
-/// In order to achieve success, strings containing type information is output int he following format: <c>FullTypeName!KeyName</c>.
+/// static extension conversion outputs for Bad Echo Presentation framework key instances for the tools requiring said conversion
+/// have not been successful. In order to achieve success, strings containing type information is output in the following format:
+/// <c>FullTypeName!KeyName</c>.
 /// </para>
 /// <para>
-/// This special format only comes into play in instances where XAML containing Fenestra keys is exported from an external assembly
-/// with a tool such as Blend. For all other uses, like during the normal runtime of an application, a normal static markup extension
-/// will be used instead and this converter will never be called.
+/// This special format only comes into play in instances where XAML containing Bad Echo Presentation framework keys is exported from
+/// an external assembly with a tool such as Blend. For all other uses, like during the normal runtime of an application, a normal
+/// static markup extension will be used instead and this converter will never be called.
 /// </para>
 /// </remarks>
-internal sealed class FenestraKeyConverter : TypeConverter
+internal sealed class BadEchoKeyConverter : TypeConverter
 {
     private const char KEY_DELIMITER = '!';
 
@@ -48,8 +49,8 @@ internal sealed class FenestraKeyConverter : TypeConverter
     {
         if (CanConvertTo(context, destinationType))
         {
-            if (value is not FenestraKey key)
-                throw new ArgumentException(Strings.CanOnlyConvertFenestraKeys, nameof(value));
+            if (value is not BadEchoKey key)
+                throw new ArgumentException(Strings.CanOnlyConvertBadEchoKeys, nameof(value));
 
             return $"{key.ProviderType.FullName}{KEY_DELIMITER}{key.Name}";
         }
@@ -67,7 +68,7 @@ internal sealed class FenestraKeyConverter : TypeConverter
         string[] descriptorParts = stringValue.Split(KEY_DELIMITER);
 
         if (descriptorParts.Length != 2)
-            throw new ArgumentException(Strings.FenestraKeyIsInvalid, nameof(value));
+            throw new ArgumentException(Strings.BadEchoKeyIsInvalid, nameof(value));
 
         string providerTypeName = descriptorParts[0];
         string keyName = descriptorParts[1];
@@ -75,12 +76,12 @@ internal sealed class FenestraKeyConverter : TypeConverter
         Type? providerType = Type.GetType(providerTypeName);
 
         if (null == providerType)
-            throw new ArgumentException(Strings.FenestraKeyCannotFindType, nameof(value));
+            throw new ArgumentException(Strings.BadEchoKeyCannotFindType, nameof(value));
 
         FieldInfo? providerField = providerType.GetField(keyName);
 
         if (null == providerField)
-            throw new ArgumentException(Strings.FenestraKeyCannotFindField, nameof(value));
+            throw new ArgumentException(Strings.BadEchoKeyCannotFindField, nameof(value));
 
         return providerField.GetValue(null);
     }

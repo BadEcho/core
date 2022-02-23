@@ -22,7 +22,7 @@ namespace BadEcho.Omnified.Vision.Extensibility.Themes;
 /// </summary>
 public static class Colors
 {
-    private static readonly FenestraKeyProvider _Provider = new(typeof(Colors));
+    private static readonly BadEchoKeyProvider _Provider = new(typeof(Colors));
 
     /// <summary>
     /// The standard color for standard text appearing in Vision.

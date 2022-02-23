@@ -25,7 +25,7 @@ internal static class Constants
         = 0x3FFFFFFE / (28800.0 / 96);
 
     /// <summary>
-    /// The namespace used for all Fenestra framework XML namespace declarations.
+    /// The namespace used for all Bad Echo Presentation framework XML namespace declarations.
     /// </summary>
     internal const string Namespace = "http://schemas.badecho.com/presentation/2022/02/xaml";
 }

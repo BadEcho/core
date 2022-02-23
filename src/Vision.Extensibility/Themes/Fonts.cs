@@ -21,7 +21,7 @@ namespace BadEcho.Omnified.Vision.Extensibility.Themes;
 /// </summary>
 public static class Fonts
 {
-    private static readonly FenestraKeyProvider _Provider = new(typeof(Fonts));
+    private static readonly BadEchoKeyProvider _Provider = new(typeof(Fonts));
 
     /// <summary>
     /// The standard font family for text appearing in Vision.

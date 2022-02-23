@@ -85,8 +85,8 @@ public static class WindowExtensions
             // We will want to set the state back to maximized after we're done changing the size, unless the window is meant
             // to allow for transparency. In that case, WPF happens to handle the Maximized state poorly, often assigning an
             // incorrect size and position for the window, causing it to overflow onto the next monitor.
-            // Fenestra corrects any inaccuracies Microsoft's resizing method may introduce to transparent windows, and properly
-            // size it to the reference area.
+            // The Bad Echo presentation framework corrects any inaccuracies Microsoft's resizing method may introduce to transparent
+            // windows, and properly size it to the reference area.
             if (!window.AllowsTransparency)
             {   // We must wait for the state to completely change to normal before switching it back to Maximized, as switching it
                 // back to Maximized after changing the position and size will result in our changes being canceled.

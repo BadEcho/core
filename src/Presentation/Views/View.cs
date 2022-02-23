@@ -18,7 +18,7 @@ using System.Windows.Controls;
 namespace BadEcho.Presentation.Views;
 
 /// <summary>
-/// Provides the root presentational logic for all views used in a Fenestra-based application.
+/// Provides the root presentational logic for all views used in a Bad Echo Presentation framework application.
 /// </summary>
 public class View : UserControl
 {

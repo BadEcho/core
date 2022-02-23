@@ -22,7 +22,7 @@ namespace BadEcho.Omnified.Vision.Extensibility.Themes;
 /// </summary>
 public static class Brushes
 {
-    private static readonly FenestraKeyProvider _Provider = new(typeof(Brushes));
+    private static readonly BadEchoKeyProvider _Provider = new(typeof(Brushes));
 
     /// <summary>
     /// The foreground brush used for standard text appearing in Vision.

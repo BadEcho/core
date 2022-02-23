@@ -16,7 +16,7 @@ using System.Runtime.Serialization;
 namespace BadEcho.Presentation;
 
 /// <summary>
-/// Provides an exception used to report severe errors resulting in the termination of a Fenestra-based application.
+/// Provides an exception used to report severe errors resulting in the termination of a Bad Echo Presentation framework application.
 /// </summary>
 public sealed class EngineException : Exception
 {

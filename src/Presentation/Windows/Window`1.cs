@@ -20,7 +20,7 @@ using BadEcho.Presentation.Properties;
 namespace BadEcho.Presentation.Windows;
 
 /// <summary>
-/// Provides a basic window for the Fenestra framework that additionally offers support for a specific type of data
+/// Provides a basic window for the Bad Echo Presentation framework that additionally offers support for a specific type of data
 /// context.
 /// </summary>
 /// <typeparam name="T">The type of data context used by the window.</typeparam>
@@ -32,9 +32,9 @@ namespace BadEcho.Presentation.Windows;
 /// <c>x:TypeArguments</c> directive.
 /// </para>
 /// <para>
-/// Fenestra <see cref="Window{T}"/> types support the use of loose XAML as opposed to markup-compiled XAML when defining their
-/// interfaces. Instead of requiring XAML that defines the window document in its entirety, all that is required is XAML for the
-/// window's <see cref="ContentControl.Content"/> property and optionally the <see cref="FrameworkElement.Style"/> property.
+/// Bad Echo Presentation framework <see cref="Window{T}"/> types support the use of loose XAML as opposed to markup-compiled XAML
+/// when defining their interfaces. Instead of requiring XAML that defines the window document in its entirety, all that is required
+/// is XAML for the window's <see cref="ContentControl.Content"/> property and optionally the <see cref="FrameworkElement.Style"/> property.
 /// </para>
 /// </remarks>
 public class Window<T> : Window, IComponentConnector

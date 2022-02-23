@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>    
-    <Product>Fenestra UI Framework</Product>
+    <Product>Bad Echo Presentation Framework</Product>
     <Version>0.1.0</Version>
-    <Description>Bad Echo user interface framework for WPF.</Description>
+    <Description>Bad Echo user interface framework for Windows Presentation Foundation.</Description>
 	  <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
   </PropertyGroup>

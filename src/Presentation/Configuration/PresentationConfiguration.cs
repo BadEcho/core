@@ -14,13 +14,13 @@
 namespace BadEcho.Presentation.Configuration;
 
 /// <summary>
-/// Provides configuration settings for a Fenestra application.
+/// Provides configuration settings for a Bad Echo Presentation framework application.
 /// </summary>
-public sealed class FenestraConfiguration
+public sealed class PresentationConfiguration
 {
     /// <summary>
-    /// Get or sets the index of the monitor that the main window of the Fenestra application should be initially
-    /// launched on.
+    /// Get or sets the index of the monitor that the main window of the Bad Echo Presentation framework application should be
+    /// initially launched on.
     /// </summary>
     /// <remarks>
     /// A monitor's index corresponds to where the monitor is in the arrangement defined in the user's display settings, with

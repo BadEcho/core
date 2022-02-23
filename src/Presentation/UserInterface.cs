@@ -24,9 +24,9 @@ using ThreadExceptionEventArgs = BadEcho.Threading.ThreadExceptionEventArgs;
 namespace BadEcho.Presentation;
 
 /// <summary>
-/// Provides a management interface and entry point for a Fenestra-powered application (whether hosted or standalone) which
-/// will ensure that the current application context is in a state such that it becomes appropriate for using Fenestra-based
-/// objects.
+/// Provides a management interface and entry point for a Bad Echo Presentation framework application (whether hosted or
+/// standalone) which will ensure that the current application context is in a state such that it becomes appropriate for
+/// using Bad Echo Presentation framework objects.
 /// </summary>
 public static class UserInterface
 {
@@ -36,7 +36,7 @@ public static class UserInterface
     private static readonly ResourceKey _Footprint = new FootprintKey();
 
     /// <summary>
-    /// Occurs when an exception is thrown by the Fenestra-based application and not handled.
+    /// Occurs when an exception is thrown by the Bad Echo Presentation framework application and not handled.
     /// </summary>
     public static event EventHandler<ThreadExceptionEventArgs>? UnhandledException;
 
@@ -80,12 +80,12 @@ public static class UserInterface
                 if (invalidEx.HResult != HRESULT_DISPATCHER_SHUTDOWN)
                     throw;
                     
-                Logger.Debug(Strings.FenestraDispatcherManuallyShutdown);
+                Logger.Debug(Strings.BadEchoDispatcherManuallyShutdown);
             }
             catch (EngineException engineEx)
             {
                 if (!engineEx.IsProcessed)
-                    Logger.Critical(Strings.FenestraDispatcherError, engineEx.InnerException ?? engineEx);
+                    Logger.Critical(Strings.BadEchoDispatcherError, engineEx.InnerException ?? engineEx);
             }
         }
     }
@@ -108,19 +108,19 @@ public static class UserInterface
         => RunUIFunction(uiFunction, false);
 
     /// <summary>
-    /// Ensures that an environment suitable for a Fenestra-powered application has been built by making sure that a properly
-    /// configured <see cref="Application"/> session is loaded into the current process.
+    /// Ensures that an environment suitable for a Bad Echo Presentation framework application has been built by making sure that
+    /// a properly configured <see cref="Application"/> session is loaded into the current process.
     /// </summary>
     /// <remarks>
     /// <para>
     /// If the current application context lacks a live <see cref="Application"/> instance, one will be made. This current instance
-    /// is then checked for the presence of a footprint left by Fenestra upon building up a suitable environment. If this footprint
-    /// is not there, then all Fenestra-based and plugin-based resources are loaded into the current application, with a number
-    /// of additional configuration steps following.
+    /// is then checked for the presence of a footprint left by Bad Echo Presentation framework upon building up a suitable environment.
+    /// If this footprint is not there, then all Bad Echo Presentation framework and plugin-based resources are loaded into the current
+    /// application, with a number of additional configuration steps following.
     /// </para>
     /// <para>
-    /// This method should be invoked by all Fenestra-based controls at the time of their initialization. There is no performance
-    /// penalty to calling this method multiple times; initialization of the environment only occurs once.
+    /// This method should be invoked by all Bad Echo Presentation framework controls at the time of their initialization. There is no
+    /// performance penalty to calling this method multiple times; initialization of the environment only occurs once.
     /// </para>
     /// </remarks>
     internal static void BuildEnvironment()
@@ -130,8 +130,9 @@ public static class UserInterface
                                      {   // If no application has been initialized, then we're being hosted in a non-WPF process.
                                          // The lifetime of the process is tied to the underlying process itself, not to the closing
                                          // of one or more WPF windows. It makes sense, then, to keep the configured session running
-                                         // to avoid having to rebuild the Fenestra environment every time new windows are required.
-                                         ShutdownMode = ShutdownMode.OnExplicitShutdown
+                                         // to avoid having to rebuild the Bad Echo Presentation framework environment every time new
+                                         // windows are required.
+                ShutdownMode = ShutdownMode.OnExplicitShutdown
                                      };
 
         if (application.Resources.Contains(_Footprint))
@@ -151,7 +152,7 @@ public static class UserInterface
 
     /// <summary>
     /// Registers global event handlers for various routed events for the purpose of bringing the behavior of built-in UI elements in
-    /// line with Fenestra framework requirements.
+    /// line with Bad Echo Presentation framework requirements.
     /// </summary>
     /// <remarks>
     /// Application-wide changes to native WPF controls are effectuated here. Currently, several routed events belonging to the
@@ -231,14 +232,14 @@ public static class UserInterface
                                           isProcessed);
             }
 
-            throw new EngineException(Strings.FenestraDispatcherError, e.Exception, isProcessed);
+            throw new EngineException(Strings.BadEchoDispatcherError, e.Exception, isProcessed);
         }
 
         e.Handled = true;
     }
 
     /// <summary>
-    /// Provides a resource key used to make a Fenestra processed application-scope resource dictionary.
+    /// Provides a resource key used to make a Bad Echo Presentation framework processed application-scope resource dictionary.
     /// </summary>
     private sealed class FootprintKey : ResourceKey
     {

@@ -16,7 +16,7 @@ using System.Composition;
 namespace BadEcho.Presentation.Themes;
 
 /// <summary>
-/// Provides Fenestra framework resource access to a WPF application.
+/// Provides Bad Echo Presentation framework resource access to a WPF application.
 /// </summary>
 [Export(typeof(IResourceProvider))]
 internal sealed class DefaultResourceProvider : IResourceProvider

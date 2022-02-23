@@ -29,8 +29,8 @@ public partial class App
 {
     private static void ApplyConfiguration(Window window, IConfigurationProvider configurationProvider)
     {
-        FenestraConfiguration configuration
-            = configurationProvider.GetConfiguration<FenestraConfiguration>();
+        PresentationConfiguration configuration
+            = configurationProvider.GetConfiguration<PresentationConfiguration>();
 
         var launchDisplay = Display.Devices.Skip(configuration.LaunchDisplay)
                                    .First();

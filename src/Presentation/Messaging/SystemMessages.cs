@@ -14,8 +14,8 @@
 namespace BadEcho.Presentation.Messaging;
 
 /// <summary>
-/// Provides messages sent or received through a mediator that expose general-purpose functionality across Fenestra
-/// components.
+/// Provides messages sent or received through a mediator that expose general-purpose functionality across Bad Echo Presentation
+/// framework components.
 /// </summary>
 public static class SystemMessages
 {

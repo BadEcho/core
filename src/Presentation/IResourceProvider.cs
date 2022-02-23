@@ -14,7 +14,7 @@
 namespace BadEcho.Presentation;
 
 /// <summary>
-/// Defines a provider of Fenestra-based resource information.
+/// Defines a provider of Bad Echo Presentation framework resource information.
 /// </summary>
 /// <remarks>
 /// Exporting an implementation of this interface allows for resources defined in a library to be imported into the
