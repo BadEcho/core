@@ -19,7 +19,7 @@ namespace BadEcho.Extensibility;
 
 /// <summary>
 /// Provides an attribute that specifies that a type, property, field, or method provides a particular filterable
-/// export to Bad Echo's Extensibility framework.
+/// export to the Bad Echo Extensibility framework.
 /// </summary>
 [MetadataAttribute]
 [AttributeUsage(

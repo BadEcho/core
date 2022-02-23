@@ -14,7 +14,7 @@
 namespace BadEcho.Extensibility;
 
 /// <summary>
-/// Defines metadata that describes a filterable export to Bad Echo's Extensibility framework.
+/// Defines metadata that describes a filterable export to the Bad Echo Extensibility framework.
 /// </summary>
 public interface IFilterableMetadata
 {

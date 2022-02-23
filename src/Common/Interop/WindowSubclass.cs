@@ -58,8 +58,8 @@ internal sealed class WindowSubclass : IDisposable
     /// </summary>
     static WindowSubclass()
     {
-        // We ensure we're listening to the particular load context responsible for loading Fenestra code; we can't assume we're always a static
-        // dependency.
+        // We ensure we're listening to the particular load context responsible for loading Bad Echo framework code;
+        // we can't assume we're always a static dependency.
         _LoadContext = AssemblyLoadContext.GetLoadContext(Assembly.GetExecutingAssembly())
             ?? AssemblyLoadContext.Default;
 

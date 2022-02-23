@@ -14,7 +14,7 @@
 namespace BadEcho.Extensibility;
 
 /// <summary>
-/// Defines metadata that describes a filterable family of plugins used by Bad Echo's Extensibility framework to
+/// Defines metadata that describes a filterable family of plugins used by the Bad Echo Extensibility framework to
 /// isolate plugins from each other.
 /// </summary>
 public interface IFilterableFamilyMetadata

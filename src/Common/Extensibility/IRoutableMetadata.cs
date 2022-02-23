@@ -14,7 +14,7 @@
 namespace BadEcho.Extensibility;
 
 /// <summary>
-/// Defines metadata that describes a call-routable plugin to Bad Echo's Extensibility framework.
+/// Defines metadata that describes a call-routable plugin to the Bad Echo Extensibility framework.
 /// </summary>
 public interface IRoutableMetadata
 {

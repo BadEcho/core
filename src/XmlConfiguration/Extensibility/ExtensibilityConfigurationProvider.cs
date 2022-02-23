@@ -21,7 +21,7 @@ namespace BadEcho.XmlConfiguration.Extensibility;
 public static class ExtensibilityConfigurationProvider
 {
     /// <summary>
-    /// Loads configuration settings for Bad Echo's Extensibility framework.
+    /// Loads configuration settings for the Bad Echo Extensibility framework.
     /// </summary>
     /// <returns>
     /// An <see cref="IExtensibilityConfiguration"/> object containing settings for the Extensibility framework.

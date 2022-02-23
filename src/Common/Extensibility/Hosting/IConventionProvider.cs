@@ -16,7 +16,7 @@ using System.Composition.Convention;
 namespace BadEcho.Extensibility.Hosting;
 
 /// <summary>
-/// Defines a provider of rule configurations used to define objects as parts belonging to Bad Echo's Extensibility framework.
+/// Defines a provider of rule configurations used to define objects as parts belonging to the Bad Echo Extensibility framework.
 /// </summary>
 public interface IConventionProvider
 {

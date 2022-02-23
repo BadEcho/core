@@ -17,7 +17,7 @@ using BadEcho.Extensibility.Configuration;
 namespace BadEcho.XmlConfiguration.Extensibility;
 
 /// <summary>
-/// Provides a configuration element for settings options on all instances of Bad Echo's Extensibility framework's
+/// Provides a configuration element for settings options on all instances of the Bad Echo Extensibility framework's
 /// plugin host.
 /// </summary>
 internal sealed class HostElement : ConfigurationElement

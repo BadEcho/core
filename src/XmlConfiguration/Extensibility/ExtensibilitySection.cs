@@ -17,7 +17,7 @@ using BadEcho.Extensibility.Configuration;
 namespace BadEcho.XmlConfiguration.Extensibility;
 
 /// <summary>
-/// Provides a configuration section for Bad Echo's Extensibility framework.
+/// Provides a configuration section for the Bad Echo Extensibility framework.
 /// </summary>
 /// <suppresions>
 /// ReSharper disable ConstantNullCoalescingCondition
@@ -43,13 +43,13 @@ internal sealed class ExtensibilitySection : BindableConfigurationSection, IExte
         => (NamedElementCollection<ContractElement>) base[SEGMENTED_CONTRACTS_CHILD_SCHEMA];
 
     /// <summary>
-    /// Gets the schema name for Bad Echo's Extensibility framework's configuration section.
+    /// Gets the schema name for the Bad Echo Extensibility framework's configuration section.
     /// </summary>
     internal static string Schema
         => "extensibility";
 
     /// <summary>
-    /// Gets the full path to Bad Echo's Extensibility framework's configuration section.
+    /// Gets the full path to the Bad Echo Extensibility framework's configuration section.
     /// </summary>
     internal static string SectionPath
         => $"{BadEchoSectionGroup.Schema}/{Schema}";
