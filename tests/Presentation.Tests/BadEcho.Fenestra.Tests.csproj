@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Fenestra\BadEcho.Fenestra.csproj" />
+    <ProjectReference Include="..\..\src\Presentation\BadEcho.Fenestra.csproj" />
   </ItemGroup>
 
 </Project>
