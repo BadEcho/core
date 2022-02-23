@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Fenestra", "src\Fenestra\BadEcho.Fenestra.csproj", "{7E3F9A38-18A4-4F12-8CAA-298C004E4095}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Fenestra", "src\Presentation\BadEcho.Fenestra.csproj", "{7E3F9A38-18A4-4F12-8CAA-298C004E4095}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Common", "src\Common\BadEcho.Common.csproj", "{64BF491A-E05D-4623-BCA9-86F07AA9F9A1}"
 EndProject
@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Common.Tests.Plugin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.XmlConfiguration", "src\XmlConfiguration\BadEcho.XmlConfiguration.csproj", "{4634C157-58CB-4788-9513-DD9A003FF2AA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Fenestra.Tests", "tests\Fenestra.Tests\BadEcho.Fenestra.Tests.csproj", "{EF172EF6-B2B7-4944-8863-DEEACB2C7199}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Fenestra.Tests", "tests\Presentation.Tests\BadEcho.Fenestra.Tests.csproj", "{EF172EF6-B2B7-4944-8863-DEEACB2C7199}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Common.Tests.ExtensibilityPoint", "tests\Common.Tests.ExtensibilityPoint\BadEcho.Common.Tests.ExtensibilityPoint.csproj", "{96E47E47-4A73-42D3-B8A5-B43E061AE5EF}"
 EndProject
