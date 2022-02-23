@@ -19,8 +19,7 @@
               xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Statistics.ViewModels"
               xmlns:v="clr-namespace:BadEcho.Omnified.Vision.Statistics.Views"
               xmlns:s="clr-namespace:BadEcho.Omnified.Vision.Statistics"
-              mc:Ignorable="d" 
-              >
+              mc:Ignorable="d">
     <d:DesignProperties.DataContext>
         <vm:StatisticGroupViewModel Name="Damage Taken">
             <vm:StatisticGroupViewModel.Statistics>
