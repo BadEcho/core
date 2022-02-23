@@ -10,17 +10,17 @@
 		http://creativecommons.org/licenses/by-nc/4.0/
     </copyright>
 -->
-<fenestra:View x:Class="BadEcho.Omnified.Vision.Statistics.Views.StatisticGroupView"
-                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-                 xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"      
-                 xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Statistics.ViewModels"
-                 xmlns:v="clr-namespace:BadEcho.Omnified.Vision.Statistics.Views"
-                 xmlns:s="clr-namespace:BadEcho.Omnified.Vision.Statistics"
-                 mc:Ignorable="d" 
-                 >
+<badEcho:View x:Class="BadEcho.Omnified.Vision.Statistics.Views.StatisticGroupView"
+              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+              xmlns:badEcho="http://schemas.badecho.com/presentation/2022/02/xaml"      
+              xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Statistics.ViewModels"
+              xmlns:v="clr-namespace:BadEcho.Omnified.Vision.Statistics.Views"
+              xmlns:s="clr-namespace:BadEcho.Omnified.Vision.Statistics"
+              mc:Ignorable="d" 
+              >
     <d:DesignProperties.DataContext>
         <vm:StatisticGroupViewModel Name="Damage Taken">
             <vm:StatisticGroupViewModel.Statistics>
@@ -38,14 +38,14 @@
             <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
-                                      Text="{Binding Name}"
-                                      Grid.Row="0"
-                                      />
+        <badEcho:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
+                                     Text="{Binding Name}"
+                                     Grid.Row="0"
+                                     />
         <v:StatisticsView s:StatisticLayout.IsCompact="True"
                           DataContext="{Binding Statistics}"
                           Margin="10,0,0,0"
                           Grid.Row="1"
                           />
     </Grid>
-</fenestra:View>
+</badEcho:View>

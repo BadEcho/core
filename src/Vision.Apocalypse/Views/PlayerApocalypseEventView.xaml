@@ -10,15 +10,15 @@
 		http://creativecommons.org/licenses/by-nc/4.0/
     </copyright>
 -->
-<fenestra:View x:Class="BadEcho.Omnified.Vision.Apocalypse.Views.PlayerApocalypseEventView"
-               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-               xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-               xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Apocalypse.ViewModels"
-               xmlns:v="clr-namespace:BadEcho.Omnified.Vision.Apocalypse.Views"
-               xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"                   
-               mc:Ignorable="d">
+<badEcho:View x:Class="BadEcho.Omnified.Vision.Apocalypse.Views.PlayerApocalypseEventView"
+              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+              xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Apocalypse.ViewModels"
+              xmlns:v="clr-namespace:BadEcho.Omnified.Vision.Apocalypse.Views"
+              xmlns:badEcho="http://schemas.badecho.com/presentation/2022/02/xaml"                   
+              mc:Ignorable="d">
     <d:DesignProperties.DataContext>
         <vm:RiskOfMurderEventViewModel EffectMessage="Extra damage (2x) causing 806 damage, leaving the player with 82 health."
                                        Timestamp="09/02/2021 14:31"
@@ -27,30 +27,30 @@
                                        />
     </d:DesignProperties.DataContext>
     <Grid>
-        <fenestra:LoadedEventBehavior.Actions>
-            <fenestra:PlaySoundAction Sound="{Binding EffectSound}"
-                                      IsUninterruptible="{Binding IsEffectSoundUninterruptible}"
-                                      />
-        </fenestra:LoadedEventBehavior.Actions>
+        <badEcho:LoadedEventBehavior.Actions>
+            <badEcho:PlaySoundAction Sound="{Binding EffectSound}"
+                                     IsUninterruptible="{Binding IsEffectSoundUninterruptible}"
+                                     />
+        </badEcho:LoadedEventBehavior.Actions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" SharedSizeGroup="TimestampColumn"/>
             <ColumnDefinition Width="Auto" SharedSizeGroup="DieColumn"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <fenestra:OutlinedTextElement Style="{StaticResource TimestampTextStyle}"
-                                      Text="{Binding Timestamp}"
-                                      Grid.Column="0"
-                                      />
+        <badEcho:OutlinedTextElement Style="{StaticResource TimestampTextStyle}"
+                                     Text="{Binding Timestamp}"
+                                     Grid.Column="0"
+                                     />
 
         <v:DieView Style="{StaticResource DieRollStyle}" 
                    Grid.Column="1"
                    />
 
-        <fenestra:OutlinedTextElement Style="{StaticResource EventTextStyle}"
-                                      Text="{Binding EffectMessage}"
-                                      MaxWidth="{Binding EffectMessageMaxWidth}"
-                                      Grid.Column="2"
-                                      />
+        <badEcho:OutlinedTextElement Style="{StaticResource EventTextStyle}"
+                                     Text="{Binding EffectMessage}"
+                                     MaxWidth="{Binding EffectMessageMaxWidth}"
+                                     Grid.Column="2"
+                                     />
     </Grid>
-</fenestra:View>
+</badEcho:View>

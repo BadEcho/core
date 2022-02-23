@@ -27,5 +27,5 @@ internal static class Constants
     /// <summary>
     /// The namespace used for all Fenestra framework XML namespace declarations.
     /// </summary>
-    internal const string Namespace = "http://schemas.badecho.com/fenestra/2021/02/xaml";
+    internal const string Namespace = "http://schemas.badecho.com/presentation/2022/02/xaml";
 }

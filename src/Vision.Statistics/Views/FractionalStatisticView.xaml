@@ -10,14 +10,14 @@
 		http://creativecommons.org/licenses/by-nc/4.0/
     </copyright>
 -->
-<fenestra:View x:Class="BadEcho.Omnified.Vision.Statistics.Views.FractionalStatisticView"
-               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-               xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-               xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"                   
-               xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Statistics.ViewModels"
-               mc:Ignorable="d">
+<badEcho:View x:Class="BadEcho.Omnified.Vision.Statistics.Views.FractionalStatisticView"
+              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+              xmlns:badEcho="http://schemas.badecho.com/presentation/2022/02/xaml"                   
+              xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Statistics.ViewModels"
+              mc:Ignorable="d">
     <d:DesignProperties.DataContext>
         <vm:FractionalStatisticViewModel Name="Player Health"
                                          CurrentValue="800"
@@ -28,22 +28,22 @@
                                          Format="{}{0:N0}"
                                          />
     </d:DesignProperties.DataContext>
-    <fenestra:View.Resources>
-        <fenestra:HexadecimalToColorConverter x:Key="HexadecimalColorConverter" />
+    <badEcho:View.Resources>
+        <badEcho:HexadecimalToColorConverter x:Key="HexadecimalColorConverter" />
         <!--
             Since we're shifting the gradient horizontally, we zero out the y-axis so we have
             straight vertical lines.
         -->
-        <fenestra:PercentageToPointConverter x:Key="PercentagePointConverter"
-                                             FractionalCascadeAmount="0.5"
-                                             PercentageToXRatio="1.0"
-                                             PercentageToYRatio="0"
-                                             />
+        <badEcho:PercentageToPointConverter x:Key="PercentagePointConverter"
+                                            FractionalCascadeAmount="0.5"
+                                            PercentageToXRatio="1.0"
+                                            PercentageToYRatio="0"
+                                            />
         <LinearGradientBrush x:Key="GaugeBackground" 
-                             EndPoint="{fenestra:SteppedBinding PercentageValue,
-                                               SteppingDuration=00:00:01,
-                                               StepAmount=0.001,                                               
-                                               Converter={StaticResource PercentagePointConverter}}">
+                             EndPoint="{badEcho:SteppedBinding PercentageValue,
+                                                SteppingDuration=00:00:01,
+                                                StepAmount=0.001,                                               
+                                                Converter={StaticResource PercentagePointConverter}}">
             <GradientStop Color="{Binding PrimaryBarColor, 
                                           Converter={StaticResource HexadecimalColorConverter}}" 
                           Offset="0"
@@ -56,7 +56,7 @@
                           Color="#00000000"
                           />
         </LinearGradientBrush>
-    </fenestra:View.Resources>
+    </badEcho:View.Resources>
     <Border Background="{StaticResource GaugeBackground}"
             Padding="0,0,5,0" 
             Margin="0,0,0,1">
@@ -65,30 +65,30 @@
             of each other. We want a tiny bit of separating space in that case.
         -->
         <Grid Style="{StaticResource StatisticCompactableGridStyle}">
-            <fenestra:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
-                                          Text="{Binding Name}"
-                                          Grid.Column="0"    
-                                          Grid.Row="0"
-                                          />
+            <badEcho:OutlinedTextElement Style="{StaticResource StatisticNameTextStyle}"
+                                         Text="{Binding Name}"
+                                         Grid.Column="0"    
+                                         Grid.Row="0"
+                                         />
             <StackPanel Orientation="Horizontal"
                         Grid.Column="1"
                         Grid.Row="1">
-                <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
-                                              Text="{fenestra:SteppedBinding CurrentValue, 
-                                                              SteppingDuration=00:00:01, 
-                                                              MinimumSteps=10,
-                                                              IsInteger=True}"
-                                              />
-                <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
-                                              Text="/"
-                                              />
-                <fenestra:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
-                                              Text="{fenestra:SteppedBinding MaximumValue, 
-                                                              SteppingDuration=00:00:01, 
-                                                              MinimumSteps=10,
-                                                              IsInteger=True}"
-                                              />
+                <badEcho:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
+                                             Text="{badEcho:SteppedBinding CurrentValue,
+                                                            SteppingDuration=00:00:01, 
+                                                            MinimumSteps=10,
+                                                            IsInteger=True}"
+                                             />
+                <badEcho:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
+                                             Text="/"
+                                             />
+                <badEcho:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
+                                             Text="{badEcho:SteppedBinding MaximumValue,
+                                                            SteppingDuration=00:00:01, 
+                                                            MinimumSteps=10,
+                                                            IsInteger=True}"
+                                             />
             </StackPanel>
         </Grid>
     </Border>
-</fenestra:View>
+</badEcho:View>

@@ -10,14 +10,14 @@
 		http://creativecommons.org/licenses/by-nc/4.0/
     </copyright>
 -->
-<fenestra:View x:Class="BadEcho.Omnified.Vision.Apocalypse.Views.ApocalypseEventView"
-               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-               xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-               xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Apocalypse.ViewModels"
-               xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"                   
-               mc:Ignorable="d">
+<badEcho:View x:Class="BadEcho.Omnified.Vision.Apocalypse.Views.ApocalypseEventView"
+              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+              xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Apocalypse.ViewModels"
+              xmlns:badEcho="http://schemas.badecho.com/presentation/2022/02/xaml"                   
+              mc:Ignorable="d">
     <d:DesignProperties.DataContext>
         <vm:RiskOfMurderEventViewModel EffectMessage="The player, afflicted with Fatalis, dies immediately from the enemy attack, losing all 2309 points of health!"
                                        Timestamp="09/02/2021 18:11"
@@ -25,25 +25,25 @@
                                        />
     </d:DesignProperties.DataContext>
     <Grid>
-        <fenestra:LoadedEventBehavior.Actions>
-            <fenestra:PlaySoundAction Sound="{Binding EffectSound}"
-                                      IsUninterruptible="{Binding IsEffectSoundUninterruptible}"
-                                      />
-        </fenestra:LoadedEventBehavior.Actions>
+        <badEcho:LoadedEventBehavior.Actions>
+            <badEcho:PlaySoundAction Sound="{Binding EffectSound}"
+                                     IsUninterruptible="{Binding IsEffectSoundUninterruptible}"
+                                     />
+        </badEcho:LoadedEventBehavior.Actions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" SharedSizeGroup="TimestampColumn"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <fenestra:OutlinedTextElement Style="{StaticResource TimestampTextStyle}"
-                                      Text="{Binding Timestamp}"
-                                      Grid.Column="0"
-                                      />
+        <badEcho:OutlinedTextElement Style="{StaticResource TimestampTextStyle}"
+                                     Text="{Binding Timestamp}"
+                                     Grid.Column="0"
+                                     />
 
-        <fenestra:OutlinedTextElement Style="{StaticResource EventTextStyle}"
+        <badEcho:OutlinedTextElement Style="{StaticResource EventTextStyle}"
                                       Text="{Binding EffectMessage}"
                                       MaxWidth="{Binding EffectMessageMaxWidth}"
                                       Grid.Column="1"
                                       />
     </Grid>
-</fenestra:View>
+</badEcho:View>

@@ -13,7 +13,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:t="clr-namespace:BadEcho.Omnified.Vision.Extensibility.Themes;assembly=BadEcho.Omnified.Vision.Extensibility"
-                    xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"
+                    xmlns:badEcho="http://schemas.badecho.com/presentation/2022/02/xaml"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
 
     <system:String x:Key="StatisticNumberFormat">{0:N0}</system:String>
@@ -21,11 +21,11 @@
     <Storyboard x:Key="ExplodeTextAnimation">
         <!--Immediately reducing stroke thickness at start as it becomes too pronounced as text element's scale is increased.-->
         <DoubleAnimation Storyboard.TargetName="Value"
-                         Storyboard.TargetProperty="(fenestra:OutlinedTextElement.InnerStrokeThickness)"
+                         Storyboard.TargetProperty="(badEcho:OutlinedTextElement.InnerStrokeThickness)"
                          To="0.5"
         />
         <DoubleAnimation Storyboard.TargetName="Value"
-                         Storyboard.TargetProperty="(fenestra:OutlinedTextElement.InnerStrokeThickness)"
+                         Storyboard.TargetProperty="(badEcho:OutlinedTextElement.InnerStrokeThickness)"
                          To="3"
                          BeginTime="00:00:01.7"
                          Duration="00:00:00.3"
@@ -109,7 +109,7 @@
         </DoubleAnimation>
         <!--Finally, we gotta switch on over to that red (or whatever the critical color resource is set to) alert tone baby!-->
         <ColorAnimation Storyboard.TargetName="Value" 
-                        Storyboard.TargetProperty="(fenestra:OutlinedTextElement.Fill).(SolidColorBrush.Color)"
+                        Storyboard.TargetProperty="(badEcho:OutlinedTextElement.Fill).(SolidColorBrush.Color)"
                         From="{StaticResource {x:Static t:Colors.TextColorKey}}"
                         To="{StaticResource {x:Static t:Colors.CriticalTextColorKey}}"
                         AutoReverse="True"
@@ -119,7 +119,7 @@
                         />
     </Storyboard>
 
-    <Style x:Key="StatisticTextStyle" TargetType="{x:Type fenestra:OutlinedTextElement}">
+    <Style x:Key="StatisticTextStyle" TargetType="{x:Type badEcho:OutlinedTextElement}">
         <Setter Property="TextFormatString" Value="{Binding Format}"/>
         <Setter Property="Fill" Value="{DynamicResource {x:Static t:Brushes.TextForegroundKey}}"/>
         <Setter Property="InnerStroke" Value="{DynamicResource {x:Static t:Brushes.OutlinedTextStrokeKey}}"/>

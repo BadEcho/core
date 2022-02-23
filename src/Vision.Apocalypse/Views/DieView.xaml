@@ -10,15 +10,15 @@
 		http://creativecommons.org/licenses/by-nc/4.0/
     </copyright>
 -->
-<fenestra:View x:Class="BadEcho.Omnified.Vision.Apocalypse.Views.DieView"
-               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-               xmlns:t="clr-namespace:BadEcho.Omnified.Vision.Extensibility.Themes;assembly=BadEcho.Omnified.Vision.Extensibility"
-               xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Apocalypse.ViewModels"
-               xmlns:fenestra="http://schemas.badecho.com/fenestra/2021/02/xaml"                   
-               xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-               mc:Ignorable="d">
+<badEcho:View x:Class="BadEcho.Omnified.Vision.Apocalypse.Views.DieView"
+              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+              xmlns:t="clr-namespace:BadEcho.Omnified.Vision.Extensibility.Themes;assembly=BadEcho.Omnified.Vision.Extensibility"
+              xmlns:vm="clr-namespace:BadEcho.Omnified.Vision.Apocalypse.ViewModels"
+              xmlns:badEcho="http://schemas.badecho.com/presentation/2022/02/xaml"                   
+              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+              mc:Ignorable="d">
     <d:DesignProperties.DataContext>
         <vm:RiskOfMurderEventViewModel DieRoll="5"/>
     </d:DesignProperties.DataContext>
@@ -50,15 +50,15 @@
                     </ImageBrush.ImageSource>
                 </ImageBrush>
             </Grid.Background>
-            <fenestra:OutlinedTextElement Text="{Binding DieRoll}" 
-                                          Fill="{DynamicResource {x:Static t:Brushes.TextForegroundKey}}"
-                                          FontFamily="{StaticResource DieFontFamily}"
-                                          FontSize="18"
-                                          InnerStrokeThickness="2"
-                                          HorizontalAlignment="Center"
-                                          VerticalAlignment="Top"
-                                          Margin="0,16,0,16"
-                                          />
+            <badEcho:OutlinedTextElement Text="{Binding DieRoll}" 
+                                         Fill="{DynamicResource {x:Static t:Brushes.TextForegroundKey}}"
+                                         FontFamily="{StaticResource DieFontFamily}"
+                                         FontSize="18"
+                                         InnerStrokeThickness="2"
+                                         HorizontalAlignment="Center"
+                                         VerticalAlignment="Top"
+                                         Margin="0,16,0,16"
+                                         />
         </Grid>
     </Viewbox>
-</fenestra:View>
+</badEcho:View>
