@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------
 
 using System.Text.Json;
-using BadEcho.Fenestra.ViewModels;
+using BadEcho.Presentation.ViewModels;
 using BadEcho.Extensions;
 using BadEcho.Logging;
 using BadEcho.Omnified.Vision.Extensibility.Properties;

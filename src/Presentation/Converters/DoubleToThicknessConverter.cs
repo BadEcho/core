@@ -15,7 +15,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace BadEcho.Fenestra.Converters;
+namespace BadEcho.Presentation.Converters;
 
 /// <summary>
 /// Provides a value converter that converts provided <see cref="double"/> values to <see cref="Thickness"/> values which

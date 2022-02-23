@@ -12,10 +12,10 @@
 //-----------------------------------------------------------------------
 
 using System.Windows.Interop;
-using BadEcho.Fenestra.Properties;
+using BadEcho.Presentation.Properties;
 using BadEcho.Interop;
 
-namespace BadEcho.Fenestra.Windows;
+namespace BadEcho.Presentation.Windows;
 
 /// <summary>
 /// Provides a wrapper around an <c>HWND</c> of a window created by WPF.

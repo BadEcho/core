@@ -19,11 +19,11 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Markup;
 using System.Windows.Media;
-using BadEcho.Fenestra.Properties;
+using BadEcho.Presentation.Properties;
 using BadEcho.Extensions;
 using BadEcho.Logging;
 
-namespace BadEcho.Fenestra.Controls;
+namespace BadEcho.Presentation.Controls;
 
 /// <summary>
 /// Provides a text element that supports both a fill brush for the glyphs and a stroke brush surrounding the glyphs.

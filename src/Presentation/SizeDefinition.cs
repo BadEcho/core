@@ -13,7 +13,7 @@
 
 using System.Windows;
 
-namespace BadEcho.Fenestra;
+namespace BadEcho.Presentation;
 
 /// <summary>
 /// Provides a simple container of an element's size value and the identity of any shared-size group it belongs to.

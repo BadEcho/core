@@ -13,7 +13,7 @@
 
 using System.Windows;
 
-namespace BadEcho.Fenestra.Behaviors;
+namespace BadEcho.Presentation.Behaviors;
 
 /// <summary>
 /// Provides a base behavior that influences the state and functioning of a target dependency object by controlling an

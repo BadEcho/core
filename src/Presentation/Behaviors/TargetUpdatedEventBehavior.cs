@@ -14,7 +14,7 @@
 using System.Windows;
 using System.Windows.Data;
 
-namespace BadEcho.Fenestra.Behaviors;
+namespace BadEcho.Presentation.Behaviors;
 
 /// <summary>
 /// Provides a compound behavior that executes a sequence of actions attached to a target dependency object upon

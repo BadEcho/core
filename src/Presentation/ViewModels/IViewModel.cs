@@ -13,7 +13,7 @@
 
 using System.ComponentModel;
 
-namespace BadEcho.Fenestra.ViewModels;
+namespace BadEcho.Presentation.ViewModels;
 
 /// <summary>
 /// Defines a view abstraction that automates communication between a view and bound data.

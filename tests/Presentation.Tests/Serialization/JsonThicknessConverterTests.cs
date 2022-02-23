@@ -15,7 +15,7 @@ using System.Text.Json;
 using System.Windows;
 using Xunit;
 
-namespace BadEcho.Fenestra.Tests.Serialization;
+namespace BadEcho.Presentation.Tests.Serialization;
 
 public class JsonThicknessConverterTests
 {

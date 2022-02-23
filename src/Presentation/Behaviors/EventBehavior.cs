@@ -13,7 +13,7 @@
 
 using System.Windows;
 
-namespace BadEcho.Fenestra.Behaviors;
+namespace BadEcho.Presentation.Behaviors;
 
 /// <summary>
 /// Provides a base compound behavior that executes a sequence of actions attached to a target dependency object upon the firing

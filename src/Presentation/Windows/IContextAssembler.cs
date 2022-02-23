@@ -13,7 +13,7 @@
 
 using System.Windows.Threading;
 
-namespace BadEcho.Fenestra.Windows;
+namespace BadEcho.Presentation.Windows;
 
 /// <summary>
 /// Defines an assembler of a window's data context.

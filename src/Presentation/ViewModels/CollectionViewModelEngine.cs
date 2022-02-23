@@ -14,12 +14,12 @@
 using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Windows.Threading;
-using BadEcho.Fenestra.Properties;
+using BadEcho.Presentation.Properties;
 using BadEcho.Collections;
 using BadEcho.Extensions;
 using BadEcho.Logging;
 
-namespace BadEcho.Fenestra.ViewModels;
+namespace BadEcho.Presentation.ViewModels;
 
 /// <summary>
 /// Provides an engine used to power <see cref="ICollectionViewModel{TModel, TChildViewModel}"/> implementations through the

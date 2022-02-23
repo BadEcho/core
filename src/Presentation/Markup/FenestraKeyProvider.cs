@@ -13,7 +13,7 @@
 
 using System.Windows;
 
-namespace BadEcho.Fenestra.Markup;
+namespace BadEcho.Presentation.Markup;
 
 /// <summary>
 /// Provides a generator of Fenestra <see cref="ResourceKey"/> and <see cref="DataTemplateKey"/> instances originating from

@@ -13,8 +13,8 @@
 
 using System.Windows;
 using System.Windows.Threading;
-using BadEcho.Fenestra.Configuration;
-using BadEcho.Fenestra.Extensions;
+using BadEcho.Presentation.Configuration;
+using BadEcho.Presentation.Extensions;
 using BadEcho.Configuration;
 using BadEcho.Extensibility.Hosting;
 using BadEcho.Interop;

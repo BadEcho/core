@@ -15,7 +15,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace BadEcho.Fenestra.Views;
+namespace BadEcho.Presentation.Views;
 
 /// <summary>
 /// Provides the root presentational logic for all views used in a Fenestra-based application.

@@ -13,7 +13,7 @@
 
 using BadEcho.Extensions;
 
-namespace BadEcho.Fenestra.Messaging;
+namespace BadEcho.Presentation.Messaging;
 
 /// <summary>
 /// Provides a message that can be sent through a mediator to anything listening for it.

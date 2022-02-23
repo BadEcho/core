@@ -14,7 +14,7 @@
 using System.Globalization;
 using System.Windows;
 
-namespace BadEcho.Fenestra.Converters;
+namespace BadEcho.Presentation.Converters;
 
 /// <summary>
 /// Provides a value converter that converts provided percentage values to a corresponding

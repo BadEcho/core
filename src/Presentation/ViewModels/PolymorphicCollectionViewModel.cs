@@ -12,10 +12,10 @@
 //-----------------------------------------------------------------------
 
 using System.Diagnostics.CodeAnalysis;
-using BadEcho.Fenestra.Properties;
+using BadEcho.Presentation.Properties;
 using BadEcho.Extensions;
 
-namespace BadEcho.Fenestra.ViewModels;
+namespace BadEcho.Presentation.ViewModels;
 
 /// <summary>
 /// Provides a base view model that automates communication between a view and a collection of bound polymorphic data.

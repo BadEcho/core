@@ -15,7 +15,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace BadEcho.Fenestra.Converters;
+namespace BadEcho.Presentation.Converters;
 
 /// <summary>
 /// Provides a base <see cref="IValueConverter"/> implementation capable of being part of the visual tree which performs

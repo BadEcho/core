@@ -12,9 +12,9 @@
 //-----------------------------------------------------------------------
 
 using System.Windows.Input;
-using BadEcho.Fenestra.Properties;
+using BadEcho.Presentation.Properties;
 
-namespace BadEcho.Fenestra.Commands;
+namespace BadEcho.Presentation.Commands;
 
 /// <summary>
 /// Provides a command that executes a method encapsulated by a delegate.

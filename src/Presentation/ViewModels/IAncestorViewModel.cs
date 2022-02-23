@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Fenestra.ViewModels;
+namespace BadEcho.Presentation.ViewModels;
 
 /// <summary>
 /// Defines a view model which has the capability of having one or more children view models.

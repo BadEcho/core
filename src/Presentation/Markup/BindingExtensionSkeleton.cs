@@ -19,10 +19,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Markup;
-using BadEcho.Fenestra.Properties;
+using BadEcho.Presentation.Properties;
 using BadEcho.Logging;
 
-namespace BadEcho.Fenestra.Markup;
+namespace BadEcho.Presentation.Markup;
 
 /// <summary>
 /// Provides a skeletal implementation of a binding-related markup extension.

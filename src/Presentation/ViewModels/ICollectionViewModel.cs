@@ -13,7 +13,7 @@
 
 using System.Windows.Threading;
 
-namespace BadEcho.Fenestra.ViewModels;
+namespace BadEcho.Presentation.ViewModels;
 
 /// <summary>
 /// Defines a view model that automates communication between a view and a collection of bound data.

@@ -13,7 +13,7 @@
 
 using System.Windows;
 
-namespace BadEcho.Fenestra.Behaviors;
+namespace BadEcho.Presentation.Behaviors;
 
 /// <summary>
 /// Provides an action that, when executed, will prevent any and all subsequent actions from being executed based on the state

@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Presentation\BadEcho.Fenestra.csproj" />
+    <ProjectReference Include="..\Presentation\BadEcho.Presentation.csproj" />
   </ItemGroup>
 
   <ItemGroup>

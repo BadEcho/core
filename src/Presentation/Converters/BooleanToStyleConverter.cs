@@ -15,7 +15,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace BadEcho.Fenestra.Converters;
+namespace BadEcho.Presentation.Converters;
 
 /// <summary>
 /// Provides a value converter that produces <see cref="Style"/> objects equivalent to the Boolean values provided, and vice

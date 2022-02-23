@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Fenestra;
+namespace BadEcho.Presentation;
 
 /// <summary>
 /// Specifies edges of a frame around a rectangle.

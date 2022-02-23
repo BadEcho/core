@@ -12,11 +12,11 @@
 //-----------------------------------------------------------------------
 
 using System.Windows;
-using BadEcho.Fenestra.Behaviors;
-using BadEcho.Fenestra.Commands;
+using BadEcho.Presentation.Behaviors;
+using BadEcho.Presentation.Commands;
 using Xunit;
 
-namespace BadEcho.Fenestra.Tests.Behaviors;
+namespace BadEcho.Presentation.Tests.Behaviors;
 
 public class BehaviorActionTests
 {

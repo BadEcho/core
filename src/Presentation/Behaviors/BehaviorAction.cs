@@ -13,7 +13,7 @@
 
 using System.Windows;
 
-namespace BadEcho.Fenestra.Behaviors;
+namespace BadEcho.Presentation.Behaviors;
 
 /// <summary>
 /// Provides a base action executed as the result of a behavior's influence on the target object the behavior is attached to.

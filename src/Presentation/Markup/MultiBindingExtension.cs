@@ -17,9 +17,9 @@ using System.Globalization;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Markup;
-using BadEcho.Fenestra.Properties;
+using BadEcho.Presentation.Properties;
 
-namespace BadEcho.Fenestra.Markup;
+namespace BadEcho.Presentation.Markup;
 
 /// <summary>
 /// Provides a base class for a markup extension that defines a collection of binding objects attached to a single binding

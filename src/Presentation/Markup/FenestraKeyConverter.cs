@@ -14,9 +14,9 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.Reflection;
-using BadEcho.Fenestra.Properties;
+using BadEcho.Presentation.Properties;
 
-namespace BadEcho.Fenestra.Markup;
+namespace BadEcho.Presentation.Markup;
 
 /// <summary>
 /// Provides a type converter for Fenestra resource keys.

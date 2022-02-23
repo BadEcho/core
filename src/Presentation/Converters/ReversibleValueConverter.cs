@@ -14,7 +14,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace BadEcho.Fenestra.Converters;
+namespace BadEcho.Presentation.Converters;
 
 /// <summary>
 /// Provides a base <see cref="IValueConverter"/> implementation which offers the ability to reverse the direction of

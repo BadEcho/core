@@ -14,7 +14,7 @@
 using System.Windows;
 using System.Windows.Media.Animation;
 
-namespace BadEcho.Fenestra;
+namespace BadEcho.Presentation;
 
 /// <summary>
 /// Defines a component able to provide animation support as well as participate in a logical tree's inheritance context

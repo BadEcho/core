@@ -13,7 +13,7 @@
 
 using System.Composition;
 
-namespace BadEcho.Fenestra.Themes;
+namespace BadEcho.Presentation.Themes;
 
 /// <summary>
 /// Provides Fenestra framework resource access to a WPF application.

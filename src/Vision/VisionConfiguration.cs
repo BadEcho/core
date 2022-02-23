@@ -13,7 +13,7 @@
 using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Threading;
-using BadEcho.Fenestra.Serialization;
+using BadEcho.Presentation.Serialization;
 using BadEcho.Configuration;
 using BadEcho.Omnified.Vision.Extensibility;
 

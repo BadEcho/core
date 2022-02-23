@@ -14,7 +14,7 @@
 using System.Windows.Threading;
 using BadEcho.Collections;
 
-namespace BadEcho.Fenestra.ViewModels;
+namespace BadEcho.Presentation.ViewModels;
 
 /// <summary>
 /// Provides a base view model that automates communication between a view and a collection of bound data.

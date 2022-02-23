@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------
 
 using System.Windows.Threading;
-using BadEcho.Fenestra.Windows;
+using BadEcho.Presentation.Windows;
 using BadEcho.Configuration;
 using BadEcho.Extensibility.Hosting;
 using BadEcho.Omnified.Vision.Extensibility;

@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Fenestra;
+namespace BadEcho.Presentation;
 
 /// <summary>
 /// Provides a set of general UI-related constants.

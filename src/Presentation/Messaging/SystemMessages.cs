@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Fenestra.Messaging;
+namespace BadEcho.Presentation.Messaging;
 
 /// <summary>
 /// Provides messages sent or received through a mediator that expose general-purpose functionality across Fenestra

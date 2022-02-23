@@ -13,9 +13,9 @@
 
 using System.Windows;
 using System.Windows.Media.Animation;
-using BadEcho.Fenestra.Messaging;
+using BadEcho.Presentation.Messaging;
 
-namespace BadEcho.Fenestra.Behaviors;
+namespace BadEcho.Presentation.Behaviors;
 
 /// <summary>
 /// Provides attachable animation state data to a <see cref="CancelableAnimationBehavior"/> instance controlling it.

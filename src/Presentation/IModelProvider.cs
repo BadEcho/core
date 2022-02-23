@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Fenestra;
+namespace BadEcho.Presentation;
 
 /// <summary>
 /// Defines a provider of modeled data for display on a view.

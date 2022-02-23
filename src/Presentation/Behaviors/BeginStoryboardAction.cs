@@ -14,7 +14,7 @@
 using System.Windows;
 using System.Windows.Media.Animation;
 
-namespace BadEcho.Fenestra.Behaviors;
+namespace BadEcho.Presentation.Behaviors;
 
 /// <summary>
 /// Provides an action that, when executed, will apply animations found in a <see cref="Storyboard"/> instance bound to

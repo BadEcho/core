@@ -13,9 +13,9 @@
 
 using System.Text.Json.Serialization;
 using System.Windows;
-using BadEcho.Fenestra.Serialization;
+using BadEcho.Presentation.Serialization;
 
-namespace BadEcho.Fenestra.Tests.Serialization;
+namespace BadEcho.Presentation.Tests.Serialization;
 
 public sealed class FakeThicknessObject
 {

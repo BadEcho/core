@@ -11,10 +11,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Fenestra.Properties;
+using BadEcho.Presentation.Properties;
 using BadEcho.Extensions;
 
-namespace BadEcho.Fenestra.Messaging;
+namespace BadEcho.Presentation.Messaging;
 
 /// <summary>
 /// Provides a container for mappings between mediated messages and associated callbacks.

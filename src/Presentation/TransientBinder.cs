@@ -14,7 +14,7 @@
 using System.Windows;
 using System.Windows.Data;
 
-namespace BadEcho.Fenestra;
+namespace BadEcho.Presentation;
 
 /// <summary>
 /// Provides a base freezable object that facilitates the realization of the impermanent state shared between source and

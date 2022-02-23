@@ -13,10 +13,10 @@
 
 using System.IO;
 using System.Reflection;
-using BadEcho.Fenestra.Properties;
+using BadEcho.Presentation.Properties;
 using BadEcho.Extensions;
 
-namespace BadEcho.Fenestra;
+namespace BadEcho.Presentation;
 
 /// <summary>
 /// Provides an object representation of a uniform resource identifier (URI) using the pack URI scheme as defined by the Open

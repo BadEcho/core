@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Fenestra.ViewModels;
+using BadEcho.Presentation.ViewModels;
 
 namespace BadEcho.Omnified.Vision.Extensibility;
 

@@ -13,10 +13,10 @@
 
 using System.Collections.Specialized;
 using System.Windows.Threading;
-using BadEcho.Fenestra.Extensions;
+using BadEcho.Presentation.Extensions;
 using Xunit;
 
-namespace BadEcho.Fenestra.Tests;
+namespace BadEcho.Presentation.Tests;
 
 public class AtomicObservableCollectionTests
 {

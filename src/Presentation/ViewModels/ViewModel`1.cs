@@ -13,7 +13,7 @@
 
 using BadEcho.Extensions;
 
-namespace BadEcho.Fenestra.ViewModels;
+namespace BadEcho.Presentation.ViewModels;
 
 /// <summary>
 /// Provides a base view abstraction that automates communication between a view and bound

@@ -14,11 +14,11 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.Windows;
-using BadEcho.Fenestra.Properties;
+using BadEcho.Presentation.Properties;
 using BadEcho.Collections;
 using BadEcho.Extensions;
 
-namespace BadEcho.Fenestra;
+namespace BadEcho.Presentation;
 
 /// <summary>
 /// Provides a base collection able to participate in a logical tree's inheritance context by attaching to a target dependency

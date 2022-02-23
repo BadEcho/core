@@ -15,9 +15,9 @@ using System.IO;
 using System.Windows.Markup;
 using System.Windows.Threading;
 using System.Xml;
-using BadEcho.Fenestra.Properties;
+using BadEcho.Presentation.Properties;
 
-namespace BadEcho.Fenestra.Extensions;
+namespace BadEcho.Presentation.Extensions;
 
 /// <summary>
 /// Provides a set of static methods that aids in matters related to the parsing of XAML.

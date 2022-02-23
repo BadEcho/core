@@ -16,7 +16,7 @@ using System.Reflection;
 using System.Windows;
 using BadEcho.Extensions;
 
-namespace BadEcho.Fenestra.Markup;
+namespace BadEcho.Presentation.Markup;
 
 /// <summary>
 /// Provides a resource key used to define and statically locate Fenestra resources.

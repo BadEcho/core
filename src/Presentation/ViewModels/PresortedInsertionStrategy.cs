@@ -13,7 +13,7 @@
 
 using BadEcho.Extensions;
 
-namespace BadEcho.Fenestra.ViewModels;
+namespace BadEcho.Presentation.ViewModels;
 
 /// <summary>
 /// Provides a strategy that will individually insert both single view models as well as presorted batches of view models into a

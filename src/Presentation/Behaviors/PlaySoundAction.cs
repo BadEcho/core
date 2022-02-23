@@ -15,7 +15,7 @@ using System.IO;
 using System.Media;
 using System.Windows;
 
-namespace BadEcho.Fenestra.Behaviors;
+namespace BadEcho.Presentation.Behaviors;
 
 /// <summary>
 /// Provides an action that, when executed, will play a sound described by a <see cref="byte"/> array bound to

@@ -14,7 +14,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace BadEcho.Fenestra.Behaviors;
+namespace BadEcho.Presentation.Behaviors;
 
 /// <summary>
 /// Provides behaviors that target and augment <see cref="Grid"/> controls.

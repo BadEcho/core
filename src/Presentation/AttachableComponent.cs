@@ -13,10 +13,10 @@
 
 using System.Windows;
 using System.Windows.Media.Animation;
-using BadEcho.Fenestra.Properties;
+using BadEcho.Presentation.Properties;
 using BadEcho.Extensions;
 
-namespace BadEcho.Fenestra;
+namespace BadEcho.Presentation;
 
 /// <summary>
 /// Provides a base component able to provide animation support as well as participate in a logical tree's inheritance context

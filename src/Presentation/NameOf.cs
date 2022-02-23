@@ -13,7 +13,7 @@
 
 using System.Linq.Expressions;
 
-namespace BadEcho.Fenestra;
+namespace BadEcho.Presentation;
 
 /// <summary>
 /// Provides a reader for expressions involving XAML-related code elements, for instances where the built-in <c>nameof</c>

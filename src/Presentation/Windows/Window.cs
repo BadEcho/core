@@ -16,7 +16,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 
-namespace BadEcho.Fenestra.Windows;
+namespace BadEcho.Presentation.Windows;
 
 /// <summary>
 /// Provides the basic window for the Fenestra framework, offering several capabilities in addition to what's offered

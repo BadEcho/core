@@ -11,10 +11,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Fenestra.ViewModels;
+using BadEcho.Presentation.ViewModels;
 using Xunit;
 
-namespace BadEcho.Fenestra.Tests.ViewModels;
+namespace BadEcho.Presentation.Tests.ViewModels;
 
 public class CollectionViewModelTests
 {

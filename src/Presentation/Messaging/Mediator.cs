@@ -12,10 +12,10 @@
 //-----------------------------------------------------------------------
 
 using System.Windows.Threading;
-using BadEcho.Fenestra.Properties;
+using BadEcho.Presentation.Properties;
 using BadEcho.Extensions;
 
-namespace BadEcho.Fenestra.Messaging;
+namespace BadEcho.Presentation.Messaging;
 
 /// <summary>
 /// Provides loosely-coupled messaging between various colleagues with weakly referenced mapped action support.

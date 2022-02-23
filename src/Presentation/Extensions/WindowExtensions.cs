@@ -15,7 +15,7 @@ using System.Drawing;
 using System.Windows;
 using BadEcho.Interop;
 
-namespace BadEcho.Fenestra.Extensions;
+namespace BadEcho.Presentation.Extensions;
 
 /// <summary>
 /// Provides a set of static methods intended to simplify the use of windows and dialogs.

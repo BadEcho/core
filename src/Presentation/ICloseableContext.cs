@@ -13,7 +13,7 @@
 
 using System.Windows.Input;
 
-namespace BadEcho.Fenestra;
+namespace BadEcho.Presentation;
 
 /// <summary>
 /// Defines a data context or other entity able to influence the state of a Fenestra window.

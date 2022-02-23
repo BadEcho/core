@@ -13,7 +13,7 @@
 
 using System.Windows.Data;
 
-namespace BadEcho.Fenestra;
+namespace BadEcho.Presentation;
 
 /// <summary>
 /// Provides source and target state impermanence options.

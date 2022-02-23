@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Presentation\BadEcho.Fenestra.csproj" />
+    <ProjectReference Include="..\Presentation\BadEcho.Presentation.csproj" />
     <ProjectReference Include="..\Common\BadEcho.Common.csproj" />
     <ProjectReference Include="..\Vision.Extensibility\BadEcho.Omnified.Vision.Extensibility.csproj" />
   </ItemGroup>

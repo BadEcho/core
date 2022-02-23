@@ -15,9 +15,9 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Threading;
-using BadEcho.Fenestra.Extensions;
+using BadEcho.Presentation.Extensions;
 
-namespace BadEcho.Fenestra;
+namespace BadEcho.Presentation;
 
 /// <summary>
 /// Provides an observable collection that ensures all operations meant to change the collection are committed as single,

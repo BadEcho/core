@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------
 
 using System.Composition;
-using BadEcho.Fenestra;
+using BadEcho.Presentation;
 
 namespace BadEcho.Omnified.Vision.Statistics.Themes;
 

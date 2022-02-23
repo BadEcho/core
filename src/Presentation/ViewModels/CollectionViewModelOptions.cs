@@ -13,7 +13,7 @@
 
 using BadEcho.Collections;
 
-namespace BadEcho.Fenestra.ViewModels;
+namespace BadEcho.Presentation.ViewModels;
 
 /// <summary>
 /// Provides options that configure the behavior of <see cref="ICollectionViewModel{TModel, TChildViewModel}"/> related

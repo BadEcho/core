@@ -14,7 +14,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace BadEcho.Fenestra.Selectors;
+namespace BadEcho.Presentation.Selectors;
 
 /// <summary>
 /// Provides a data template selector which returns styles based on the items position in a collection.

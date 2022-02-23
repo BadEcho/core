@@ -13,7 +13,7 @@
 
 using System.Collections.ObjectModel;
 
-namespace BadEcho.Fenestra;
+namespace BadEcho.Presentation;
 
 /// <summary>
 /// Provides a collection of <see cref="SizeDefinition"/> objects.

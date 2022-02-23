@@ -12,10 +12,10 @@
 //-----------------------------------------------------------------------
 
 using System.Windows;
-using BadEcho.Fenestra.Properties;
+using BadEcho.Presentation.Properties;
 using BadEcho.Extensibility.Hosting;
 
-namespace BadEcho.Fenestra.Extensions;
+namespace BadEcho.Presentation.Extensions;
 
 /// <summary>
 /// Provides a set of static methods intended to aid in matters related to WPF <see cref="Application"/> objects.

@@ -11,8 +11,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Fenestra.Messaging;
-using BadEcho.Fenestra.ViewModels;
+using BadEcho.Presentation.Messaging;
+using BadEcho.Presentation.ViewModels;
 using BadEcho.Collections;
 using BadEcho.Omnified.Vision.Extensibility;
 

@@ -12,9 +12,9 @@
 //-----------------------------------------------------------------------
 
 using BadEcho.Extensions;
-using BadEcho.Fenestra.ViewModels;
+using BadEcho.Presentation.ViewModels;
 
-namespace BadEcho.Fenestra.Tests.ViewModels;
+namespace BadEcho.Presentation.Tests.ViewModels;
 
 public sealed class ViewModelStub : ViewModel<ModelStub>
 {

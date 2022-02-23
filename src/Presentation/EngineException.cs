@@ -13,7 +13,7 @@
 
 using System.Runtime.Serialization;
 
-namespace BadEcho.Fenestra;
+namespace BadEcho.Presentation;
 
 /// <summary>
 /// Provides an exception used to report severe errors resulting in the termination of a Fenestra-based application.

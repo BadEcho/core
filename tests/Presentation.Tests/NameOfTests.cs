@@ -13,7 +13,7 @@
 
 using Xunit;
 
-namespace BadEcho.Fenestra.Tests;
+namespace BadEcho.Presentation.Tests;
 
 public class NameOfTests
 {

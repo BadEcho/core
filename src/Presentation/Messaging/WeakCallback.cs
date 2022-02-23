@@ -14,7 +14,7 @@
 using System.Reflection;
 using BadEcho.Extensions;
 
-namespace BadEcho.Fenestra.Messaging;
+namespace BadEcho.Presentation.Messaging;
 
 /// <summary>
 /// Provides support for weakly referenced callbacks for use in messaging.

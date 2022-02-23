@@ -16,12 +16,12 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Controls;
 using System.Windows.Threading;
-using BadEcho.Fenestra.Extensions;
-using BadEcho.Fenestra.Properties;
+using BadEcho.Presentation.Extensions;
+using BadEcho.Presentation.Properties;
 using BadEcho.Logging;
 using ThreadExceptionEventArgs = BadEcho.Threading.ThreadExceptionEventArgs;
 
-namespace BadEcho.Fenestra;
+namespace BadEcho.Presentation;
 
 /// <summary>
 /// Provides a management interface and entry point for a Fenestra-powered application (whether hosted or standalone) which

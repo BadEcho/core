@@ -20,10 +20,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Threading;
-using BadEcho.Fenestra.Extensions;
+using BadEcho.Presentation.Extensions;
 using Xunit;
 
-namespace BadEcho.Fenestra.Tests;
+namespace BadEcho.Presentation.Tests;
 
 public class SteppedBinderTests
 {

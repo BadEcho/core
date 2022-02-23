@@ -14,10 +14,10 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup;
-using BadEcho.Fenestra.Extensions;
-using BadEcho.Fenestra.Properties;
+using BadEcho.Presentation.Extensions;
+using BadEcho.Presentation.Properties;
 
-namespace BadEcho.Fenestra.Windows;
+namespace BadEcho.Presentation.Windows;
 
 /// <summary>
 /// Provides a basic window for the Fenestra framework that additionally offers support for a specific type of data

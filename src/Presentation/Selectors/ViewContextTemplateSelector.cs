@@ -15,7 +15,7 @@ using System.Windows;
 using System.Windows.Controls;
 using BadEcho.Extensions;
 
-namespace BadEcho.Fenestra.Selectors;
+namespace BadEcho.Presentation.Selectors;
 
 /// <summary>
 /// Provides a data template selector that honors data templates for data contexts targeting particular views, defined in an

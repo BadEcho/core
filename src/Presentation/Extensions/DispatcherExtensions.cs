@@ -13,7 +13,7 @@
 
 using System.Windows.Threading;
 
-namespace BadEcho.Fenestra.Extensions;
+namespace BadEcho.Presentation.Extensions;
 
 /// <summary>
 /// Provides a set of static methods intended to simplify the use of <see cref="Dispatcher"/> related types.

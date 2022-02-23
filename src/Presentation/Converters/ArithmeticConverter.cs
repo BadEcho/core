@@ -14,10 +14,10 @@
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using BadEcho.Fenestra.Properties;
+using BadEcho.Presentation.Properties;
 using BadEcho.Extensions;
 
-namespace BadEcho.Fenestra.Converters;
+namespace BadEcho.Presentation.Converters;
 
 /// <summary>
 /// Provides a value converter that converts a provided <see cref="double"/> value by returning the result of an arithmetic

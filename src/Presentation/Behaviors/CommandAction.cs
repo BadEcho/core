@@ -14,7 +14,7 @@
 using System.Windows;
 using System.Windows.Input;
 
-namespace BadEcho.Fenestra.Behaviors;
+namespace BadEcho.Presentation.Behaviors;
 
 /// <summary>
 /// Provides an action that, when executed, will execute a bound <see cref="ICommand"/> instance if possible.

@@ -15,9 +15,9 @@ using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Windows;
-using BadEcho.Fenestra.Properties;
+using BadEcho.Presentation.Properties;
 
-namespace BadEcho.Fenestra.Serialization;
+namespace BadEcho.Presentation.Serialization;
 
 /// <summary>
 /// Provides a converter of <see cref="Thickness"/> objects to and from JSON.

@@ -13,10 +13,10 @@
 
 using System.Windows;
 using System.Windows.Media.Animation;
-using BadEcho.Fenestra.Properties;
+using BadEcho.Presentation.Properties;
 using BadEcho.Extensions;
 
-namespace BadEcho.Fenestra.Behaviors;
+namespace BadEcho.Presentation.Behaviors;
 
 /// <summary>
 /// Provides an infrastructure for attached properties that, when attached to a target dependency object, directly influence the

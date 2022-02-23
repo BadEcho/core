@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Fenestra.Configuration;
+namespace BadEcho.Presentation.Configuration;
 
 /// <summary>
 /// Provides configuration settings for a Fenestra application.

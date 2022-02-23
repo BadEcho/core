@@ -14,7 +14,7 @@
 using System.Windows;
 using System.Windows.Data;
 
-namespace BadEcho.Fenestra.Markup;
+namespace BadEcho.Presentation.Markup;
 
 /// <summary>
 /// Provides a binding markup extension that will connect the properties of target objects and any data source such that
