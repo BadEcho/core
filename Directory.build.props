@@ -5,7 +5,7 @@
     <Authors>Matt Weber</Authors>
     <Company>BadEcho LLC</Company>
     <Copyright>© Bad Echo LLC. All rights reserved.</Copyright>
-    <PackageLicenseExpression>CC-BY-NC-4.0</PackageLicenseExpression>
+    <PackageLicenseExpression>AGPL-3.0-only</PackageLicenseExpression>
     <NeutralLanguage>en-US</NeutralLanguage>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
     <AssemblyName>$(MSBuildProjectName)</AssemblyName>
