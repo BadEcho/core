@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <Product>Bad Echo Core Frameworks XML Configuration Provider</Product>
-    <Version>0.1.0</Version>
-    <Description>Provides support for classic .NET XML configuration to Bad Echo core frameworks.</Description>
+	  <Description>Provides support for classic .NET XML configuration to Bad Echo core frameworks.</Description>
+	  <Title>$(Product)</Title>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,6 +27,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+	  <None Include="README.md" Pack="true" PackagePath=""/>
   </ItemGroup>
 
 </Project>

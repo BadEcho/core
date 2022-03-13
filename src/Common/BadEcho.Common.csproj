@@ -2,8 +2,9 @@
 
   <PropertyGroup>
     <Product>Bad Echo Core Frameworks</Product>
-    <Version>0.1.0</Version>
-    <Description>Bad Echo core frameworks containing technologies applicable to many domains.</Description>
+	  <Description>Bad Echo core frameworks containing technologies applicable to many domains.</Description>
+    <Title>$(Product)</Title>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RootNamespace>BadEcho</RootNamespace>
   </PropertyGroup>
 
@@ -24,6 +25,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="README.md" Pack="true" PackagePath=""/>
   </ItemGroup>
   
 </Project>

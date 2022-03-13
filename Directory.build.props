@@ -2,12 +2,24 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <PackageId>$(MSBuildProjectName)</PackageId>
-    <Authors>Matt Weber</Authors>
+		<MajorVersion>1</MajorVersion>
+		<MinorVersion>0</MinorVersion>
+		<PatchVersion>4</PatchVersion>
+	  <Version>$(MajorVersion).$(MinorVersion).$(PatchVersion)</Version>
+		<AssemblyVersion>$(MajorVersion).0.0.0</AssemblyVersion>
+		<FileVersion>$(MajorVersion).$(MinorVersion).$(PatchVersion).0</FileVersion>
+		<InformationalVersion>$(Version)</InformationalVersion>
+	  <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/omniscientist/BadEcho</RepositoryUrl>
+	  <PackageProjectUrl>https://badecho.com</PackageProjectUrl>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+	  <Authors>Matt Weber</Authors>
     <Company>BadEcho LLC</Company>
     <Copyright>© Bad Echo LLC. All rights reserved.</Copyright>
     <PackageLicenseExpression>AGPL-3.0-only</PackageLicenseExpression>
-    <NeutralLanguage>en-US</NeutralLanguage>
-    <RootNamespace>$(MSBuildProjectName)</RootNamespace>
+		<PackageIcon>Icon.png</PackageIcon>
+	  <NeutralLanguage>en-US</NeutralLanguage>
+	  <RootNamespace>$(MSBuildProjectName)</RootNamespace>
     <AssemblyName>$(MSBuildProjectName)</AssemblyName>
     <Nullable>enable</Nullable>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -18,6 +30,12 @@
 		<IncludePackageReferencesDuringMarkupCompilation>false</IncludePackageReferencesDuringMarkupCompilation>
     <ImplicitUsings>true</ImplicitUsings>
   </PropertyGroup>
+
+	<ItemGroup>
+		<None Include="$(SolutionDir)media\Icon.png" Pack="true" PackagePath="">
+			<Link>Properties\Icon.png</Link>
+		</None>
+	</ItemGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>$(SolutionDir)\bin\dbg</OutputPath>
