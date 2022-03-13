@@ -4,7 +4,7 @@
     <PackageId>$(MSBuildProjectName)</PackageId>
 		<MajorVersion>1</MajorVersion>
 		<MinorVersion>0</MinorVersion>
-		<PatchVersion>4</PatchVersion>
+		<PatchVersion>5</PatchVersion>
 	  <Version>$(MajorVersion).$(MinorVersion).$(PatchVersion)</Version>
 		<AssemblyVersion>$(MajorVersion).0.0.0</AssemblyVersion>
 		<FileVersion>$(MajorVersion).$(MinorVersion).$(PatchVersion).0</FileVersion>

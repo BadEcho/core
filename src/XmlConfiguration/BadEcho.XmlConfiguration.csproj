@@ -4,6 +4,7 @@
     <Product>Bad Echo Core Frameworks XML Configuration Provider</Product>
 	  <Description>Provides support for classic .NET XML configuration to Bad Echo core frameworks.</Description>
 	  <Title>$(Product)</Title>
+	  <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
