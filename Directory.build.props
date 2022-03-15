@@ -5,8 +5,9 @@
 		<MajorVersion>1</MajorVersion>
 		<MinorVersion>0</MinorVersion>
 		<PatchVersion>5</PatchVersion>
-	  <Version>$(MajorVersion).$(MinorVersion).$(PatchVersion)</Version>
-		<AssemblyVersion>$(MajorVersion).0.0.0</AssemblyVersion>
+	  <VersionPrefix>$(MajorVersion).$(MinorVersion).$(PatchVersion)</VersionPrefix>
+		<PrereleaseIdentifier>alpha</PrereleaseIdentifier>
+	  <AssemblyVersion>$(MajorVersion).0.0.0</AssemblyVersion>
 		<FileVersion>$(MajorVersion).$(MinorVersion).$(PatchVersion).0</FileVersion>
 		<InformationalVersion>$(Version)</InformationalVersion>
 	  <RepositoryType>git</RepositoryType>
