@@ -205,6 +205,15 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot check if assembly &apos;{0}&apos; is an extensibility point because it is missing the following dependency: &apos;{1}&apos;.
+        /// </summary>
+        internal static string ExtensibilityPointMissingDependency {
+            get {
+                return ResourceManager.GetString("ExtensibilityPointMissingDependency", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; is not a registered filterable family identity value. Registration of a filterable family requires a FilterableFamily export action..
         /// </summary>
         internal static string FamilyIdNotRegistered {

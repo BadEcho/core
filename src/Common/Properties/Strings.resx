@@ -233,4 +233,7 @@
 	<data name="ExecutorProcessingDisabled" xml:space="preserve">
 		<value>The executor's ability to process operations is currently disabled.</value>
 	</data>
+	<data name="ExtensibilityPointMissingDependency" xml:space="preserve">
+		<value>Cannot check if assembly '{0}' is an extensibility point because it is missing the following dependency: '{1}'</value>
+	</data>
 </root>

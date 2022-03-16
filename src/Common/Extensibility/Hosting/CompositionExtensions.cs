@@ -94,11 +94,46 @@ public static class CompositionExtensions
 
         return assemblies;
     }
-        
+
+    /// <summary>
+    /// Discovers all assemblies that are marked as extensibility points.
+    /// </summary>
+    /// <returns>A collection of <see cref="Assembly"/> instances that are marked as extensibility points.</returns>
+    /// <remarks>
+    /// <para>
+    /// While we normally should be able to safely inspect assemblies loaded into the default assembly context,
+    /// some application hosts engage in probing behaviors that can easily result in unrelated assembly dependencies
+    /// being loaded into said context.
+    /// </para>
+    /// <para>
+    /// Attempting to inspect these unrelated assemblies may result in errors due to unreachable dependencies that stem 
+    /// from the assemblies targeting a framework SDK different from what the main application assembly targets.
+    /// </para>
+    /// <para>
+    /// An example of a host with this kind of behavior is Microsoft's default test runner "testhost.exe". It will load
+    /// all assemblies that exist in the testing directory into the default context, even if there is no connection between
+    /// them and the code actually being tested.
+    /// </para>
+    /// </remarks>
     private static IEnumerable<Assembly> CaptureExtensibilityPoints()
     {
         return AssemblyLoadContext.Default.Assemblies
-                                  .Where(assembly => assembly.GetCustomAttribute<ExtensibilityPointAttribute>() != null)
+                                  .Where(IsExtensible)
                                   .ToList();
+
+        static bool IsExtensible(Assembly assembly)
+        {
+            try
+            {
+                return assembly.GetCustomAttribute<ExtensibilityPointAttribute>() != null;
+            }
+            catch (FileNotFoundException ex)
+            {
+                Logger.Debug(
+                    Strings.ExtensibilityPointMissingDependency.InvariantFormat(assembly.FullName, ex.FileName));
+
+                return false;
+            }
+        }
     }
 }
