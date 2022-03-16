@@ -24,6 +24,8 @@ if ($BuildIdentifier) {
 	$prereleaseIdentifier = [string] $properties.Project.PropertyGroup.PrereleaseIdentifier
 	$prereleaseIdentifier = $prereleaseIdentifier.Trim()
 	$versionSuffix = "$prereleaseIdentifier.$BuildIdentifier"
+
+	Write-Output "Here is version: $versionSuffix"
 	
 	Execute { & dotnet build -c Release --version-suffix $versionSuffix }
 	Execute { & dotnet pack -c Release -o $artifacts --no-build --version-suffix $versionSuffix }
