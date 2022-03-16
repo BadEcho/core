@@ -6,7 +6,7 @@ $artifacts = ".\artifacts"
 if ([string]::IsNullOrEmpty($Env:PKG_API_KEY)) {
 	Write-Host "${scriptName}: PKG_API_KEY has not been set; no packages will be pushed."
 }
-else if ([string]::IsNullOrEmpty($Env:PKG_URL)) {
+elseif ([string]::IsNullOrEmpty($Env:PKG_URL)) {
 	Write-Hsot "${scriptName}: PKG_URL has not been set; no packages will be pushed."
 }
 else {
