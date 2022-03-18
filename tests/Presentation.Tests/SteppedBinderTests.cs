@@ -160,8 +160,8 @@ public class SteppedBinderTests
 
         UserInterface.RunUIFunction(() => elapsed = UpdateTarget(10, "10", "15", steppingDuration), true);
 
-        Assert.True(
-            Math.Abs(elapsed.Subtract(steppingDuration).TotalMilliseconds) < DRIFT_TOLERANCE,
+        Assert.True(    // Drift tolerance needs to be widened for zero-duration tests to account for WPF binding system spin-up time.
+            Math.Abs(elapsed.Subtract(steppingDuration).TotalMilliseconds) < DRIFT_TOLERANCE * 2,
             $"Expected Duration: {steppingDuration} Actual Duration: {elapsed}");
     }
 
