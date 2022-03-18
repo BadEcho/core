@@ -40,5 +40,6 @@
 
   <Target Name="BuildPlugin" AfterTargets="Build">
     <Copy SourceFiles="test.config" DestinationFiles="$(OutputPath)\ReSharperTestRunner.dll.config" />
+    <Copy SourceFiles="test.config" DestinationFiles="$(OutputPath)\testhost.dll.config" />
   </Target>
 </Project>

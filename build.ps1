@@ -11,24 +11,31 @@ function Execute([scriptblock]$command) {
 	}
 }
 
+function AppendCommand([string]$command, [string]$commandSuffix){
+	return [ScriptBlock]::Create($command + $commandSuffix)
+}
+
 $artifacts = ".\artifacts"
 
 if (Test-Path $artifacts) {
 	Remove-Item $artifacts -Force -Recurse
 }
 
-Execute { & dotnet clean -c Release }
+$buildCommand =  { & dotnet build -c Release }
+$packCommand = { & dotnet pack -c Release -o $artifacts --no-build }
 
-if ($BuildIdentifier) {
+if($BuildIdentifier) {
 	$properties = [Xml] (Get-Content .\Directory.build.props)
 	$prereleaseIdentifier = [string] $properties.Project.PropertyGroup.PrereleaseIdentifier
 	$prereleaseIdentifier = $prereleaseIdentifier.Trim()
-	$versionSuffix = "$prereleaseIdentifier.$BuildIdentifier"
+	
+	$versionCommand = "--version-suffix $prereleaseIdentifier.$BuildIdentifier"
 
-	Execute { & dotnet build -c Release --version-suffix $versionSuffix }
-	Execute { & dotnet pack -c Release -o $artifacts --no-build --version-suffix $versionSuffix }
+	$buildCommand = AppendCommand($buildCommand.ToString(), $versionCommand)
+	$packCommand = AppendCommand($packCommand.ToString(), $versionCommand)
 }
-else {
-	Execute { & dotnet build -c Release }
-	Execute { & dotnet pack -c Release -o $artifacts --no-build }
-}
+
+Execute { & dotnet clean -c Release }
+Execute $buildCommand 
+Execute { & dotnet test -c Release -r $artifacts --no-build -l trx --verbosity=normal }
+Execute $packCommand
