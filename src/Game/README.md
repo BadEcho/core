@@ -1,7 +1,11 @@
-# Bad Echo Technologies
+﻿# Bad Echo Game Framework
 [![Discord](https://img.shields.io/discord/348353194801364992?style=flat-square&label=Discord&logo=discord&logoColor=white&color=7289DA)](https://discord.gg/omni) 
 
-This repo contains the code for all Bad Echo technologies, from powerful .NET frameworks that extend across a variety of domains, to the Omnified ecosystem that I leverage to inject a bit of insanity into the games I play.
+The `BadEcho.Game` library is the [Bad Echo](https://badecho.com) framework for creating games powered by MonoGame. It provides a number of game-related systems using XNA types, which a wide variety of games should find useful for taking care of common concerns.
+
+Generalized mechanisms for handling concerns such as texture atlases, particle engines, and more is provided by this library.
+
+This package exists to be used by Bad Echo games, but is licensed under the GNU Affero General Public License so that others may enjoy it as well; see the accompanying [license](https://github.com/omniscientist/BadEcho/blob/master/LICENSE.md) for details.
 
 ## About Bad Echo
 Bad Echo is a collection of software technologies and [various writings](https://badecho.com) by Matt Weber: a software designer, partnered [Twitch](https://twitch.tv/omni) streamer, and game developer.
