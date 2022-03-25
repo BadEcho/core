@@ -33,7 +33,7 @@ $packCommand = { & dotnet pack -c Release -o $artifacts --no-build -p:MajorVersi
 if($CommitId -and $VersionDistance) {	
 	$prereleaseId = $versionSettings[0].prereleaseId
 	
-	$versionCommand = "--version-suffix $prereleaseId.$VersionDistance+$CommitId"
+	$versionCommand = "-p:BuildMetadata=$CommitId --version-suffix $prereleaseId.$VersionDistance"
 
 	$buildCommand = AppendCommand($buildCommand.ToString(), $versionCommand)
 	$packCommand = AppendCommand($packCommand.ToString(), $versionCommand)

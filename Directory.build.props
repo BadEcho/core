@@ -8,7 +8,7 @@
 	  <VersionPrefix>$(MajorVersion).$(MinorVersion).$(PatchVersion)</VersionPrefix>
 	  <AssemblyVersion>$(MajorVersion).0.0.0</AssemblyVersion>
 		<FileVersion>$(MajorVersion).$(MinorVersion).$(PatchVersion).0</FileVersion>
-		<InformationalVersion>$(Version)</InformationalVersion>
+	  <InformationalVersion Condition=" '$(BuildMetadata)' != '' ">$(VersionPrefix)-$(VersionSuffix)+$(BuildMetadata)</InformationalVersion>
 	  <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/omniscientist/BadEcho</RepositoryUrl>
 	  <PackageProjectUrl>https://badecho.com</PackageProjectUrl>
