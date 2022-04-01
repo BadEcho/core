@@ -74,9 +74,9 @@ public sealed class Particle
     }
 
     /// <summary>
-    /// Draws the sprite to the screen.
+    /// Draws the particle to the screen.
     /// </summary>
-    /// <param name="spriteBatch">The <see cref="SpriteBatch"/> instance to use to draw the sprite.</param>
+    /// <param name="spriteBatch">The <see cref="SpriteBatch"/> instance to use to draw the particle.</param>
     public void Draw(SpriteBatch spriteBatch)
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
