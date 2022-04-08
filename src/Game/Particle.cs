@@ -25,24 +25,24 @@ public sealed class Particle
     /// <summary>
     /// Initializes a new instance of the <see cref="Particle"/> class.
     /// </summary>
-    /// <param name="movingTexture">The moving texture of the particle.</param>
+    /// <param name="sprite">The sprite to be drawn for the particle.</param>
     /// <param name="color">The color mask to draw the particle with.</param>
     /// <param name="size">The size of the particle.</param>
-    /// <param name="timeToLive">The number of ticks the sprite has before expiring.</param>
-    public Particle(MovingTexture movingTexture, Color color, float size, int timeToLive)
+    /// <param name="timeToLive">The number of ticks the particle has before expiring.</param>
+    public Particle(Sprite sprite, Color color, float size, int timeToLive)
     {
-        Require.NotNull(movingTexture, nameof(movingTexture));
+        Require.NotNull(sprite, nameof(sprite));
 
-        MovingTexture = movingTexture;
+        Sprite = sprite;
         Color = color;
         Size = size;
         TimeToLive = timeToLive;
     }
-    
+
     /// <summary>
-    /// Gets the moving particle's texture.
+    /// Gets the sprite to be drawn for the particle.
     /// </summary>
-    public MovingTexture MovingTexture
+    public Sprite Sprite
     { get; }
 
     /// <summary>
@@ -58,19 +58,19 @@ public sealed class Particle
     { get; }
 
     /// <summary>
-    /// Gets the number of ticks remaining before the sprite expires.
+    /// Gets the number of ticks remaining before the particle expires.
     /// </summary>
     public int TimeToLive
     { get; private set; }
 
     /// <summary>
-    /// Advances the position and lifetime of the sprite.
+    /// Advances the position and lifetime of the particle.
     /// </summary>
     public void Update()
     {
         TimeToLive--;
 
-        MovingTexture.Update();
+        Sprite.Update();
     }
 
     /// <summary>
@@ -81,17 +81,19 @@ public sealed class Particle
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
 
-        int width = MovingTexture.Texture.Width;
-        int height = MovingTexture.Texture.Height;
-        
-        var sourceRectangle = new Rectangle(0, 0, width, height);
-        var origin = new Vector2((float) width / 2, (float) width / 2);
+        Texture2D texture = Sprite.Texture;
 
-        spriteBatch.Draw(MovingTexture.Texture,
-                         MovingTexture.Position,
+        int width = texture.Width;
+        int height = texture.Height;
+
+        var sourceRectangle = new Rectangle(0, 0, width, height);
+        var origin = new Vector2((float)width / 2, (float)width / 2);
+
+        spriteBatch.Draw(texture,
+                         Sprite.Position,
                          sourceRectangle,
                          Color,
-                         MovingTexture.Angle,
+                         Sprite.Angle,
                          origin,
                          Size,
                          SpriteEffects.None,

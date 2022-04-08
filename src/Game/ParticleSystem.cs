@@ -117,8 +117,8 @@ public sealed class ParticleSystem
 
         float angularVelocity = 0.1f * (_random.NextSingle() * 2 - 1);
 
-        var movingTexture
-            = new MovingTexture(texture, EmitterLocation, velocity, 0, angularVelocity);
+        var sprite
+            = new Sprite(texture, EmitterLocation, velocity, 0, angularVelocity);
 
         var color = new Color(_random.NextSingle(),
                               _random.NextSingle(),
@@ -127,6 +127,6 @@ public sealed class ParticleSystem
         float size = _random.NextSingle();
         int timeToLive = MinimumTimeToLive + _random.Next(MaximumTimeToLive);
 
-        return new Particle(movingTexture, color, size, timeToLive);
+        return new Particle(sprite, color, size, timeToLive);
     }
 }
