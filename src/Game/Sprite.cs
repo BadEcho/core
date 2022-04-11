@@ -19,7 +19,7 @@ namespace BadEcho.Game;
 /// <summary>
 /// Provides a canvas for a texture able to be positioned on the screen as a 2D entity.
 /// </summary>
-public sealed class Sprite
+public class Sprite
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Sprite"/> class.
@@ -51,7 +51,7 @@ public sealed class Sprite
     public Sprite(Texture2D texture, Vector2 initialPosition, Vector2 velocity, float initialAngle, float angularVelocity)
     {
         Require.NotNull(texture, nameof(texture));
-
+        
         Texture = texture;
         Position = initialPosition;
         Velocity = velocity;
@@ -92,9 +92,57 @@ public sealed class Sprite
     /// <summary>
     /// Advances the movement of the sprite by one tick.
     /// </summary>
-    public void Update()
+    public virtual void Update()
     {
         Position += Velocity;
         Angle += AngularVelocity;
     }
+
+    /// <summary>
+    /// Draws the sprite to the screen.
+    /// </summary>
+    /// <param name="spriteBatch">The <see cref="SpriteBatch"/> instance to use to draw the sprite with.</param>
+    public void Draw(SpriteBatch spriteBatch)
+    {
+        Require.NotNull(spriteBatch, nameof(spriteBatch));
+
+        spriteBatch.Draw(Texture, GetTargetRectangle(), GetSourceRectangle(), Color.White);
+    }
+
+    /// <summary>
+    /// Draws the sprite to the screen.
+    /// </summary>
+    /// <param name="spriteBatch">The <see cref="SpriteBatch"/> instance to use to draw the sprite with.</param>
+    /// <param name="color">The color mask the sprite is drawn with.</param>
+    /// <param name="size">The size of the sprite.</param>
+    public void Draw(SpriteBatch spriteBatch, Color color, float size)
+    {
+        Require.NotNull(spriteBatch, nameof(spriteBatch));
+
+        var origin = new Vector2((float)Texture.Width / 2, (float)Texture.Height / 2);
+
+        spriteBatch.Draw(Texture,
+                         Position,
+                         GetSourceRectangle(),
+                         color,
+                         Angle,
+                         origin,
+                         size,
+                         SpriteEffects.None,
+                         0f);
+    }
+
+    /// <summary>
+    /// Gets the region of the sprite's texture that will be rendered.
+    /// </summary>
+    /// <returns>The bounding rectangle of the region of <see cref="Texture"/> that will be rendered.</returns>
+    protected virtual Rectangle GetSourceRectangle()
+        => new(0, 0, Texture.Width, Texture.Height);
+
+    /// <summary>
+    /// Gets the region of the screen that the sprite's texture will be drawn on.
+    /// </summary>
+    /// <returns>The bounding rectangle of the region of the screen that <see cref="Texture"/> will be drawn on.</returns>
+    protected virtual Rectangle GetTargetRectangle()
+        => new((int) Position.X, (int) Position.Y, Texture.Width, Texture.Height);
 }

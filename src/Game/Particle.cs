@@ -20,8 +20,8 @@ namespace BadEcho.Game;
 /// Provides a minute sprite used by a particle system to reproduce the visuals exhibited by highly chaotic systems, natural phenomena,
 /// or processes caused by chemical reactions.
 /// </summary>
-public sealed class Particle
-{
+    public sealed class Particle
+    {
     /// <summary>
     /// Initializes a new instance of the <see cref="Particle"/> class.
     /// </summary>
@@ -38,7 +38,7 @@ public sealed class Particle
         Size = size;
         TimeToLive = timeToLive;
     }
-
+    
     /// <summary>
     /// Gets the sprite to be drawn for the particle.
     /// </summary>
@@ -81,22 +81,6 @@ public sealed class Particle
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
 
-        Texture2D texture = Sprite.Texture;
-
-        int width = texture.Width;
-        int height = texture.Height;
-
-        var sourceRectangle = new Rectangle(0, 0, width, height);
-        var origin = new Vector2((float)width / 2, (float)width / 2);
-
-        spriteBatch.Draw(texture,
-                         Sprite.Position,
-                         sourceRectangle,
-                         Color,
-                         Sprite.Angle,
-                         origin,
-                         Size,
-                         SpriteEffects.None,
-                         0f);
+        Sprite.Draw(spriteBatch, Color, Size);
     }
 }
