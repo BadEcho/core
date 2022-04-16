@@ -19,7 +19,7 @@ namespace BadEcho.Game;
 /// <summary>
 /// Provides a canvas for a texture able to be positioned on the screen as a 2D entity.
 /// </summary>
-public class Sprite
+public class Sprite : IPositionalEntity
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Sprite"/> class.
@@ -65,27 +65,19 @@ public class Sprite
     public Texture2D Texture
     { get; }
 
-    /// <summary>
-    /// Gets the current drawing location of the sprite.
-    /// </summary>
+    /// <inheritdoc/>
     public Vector2 Position
     { get; private set; }
 
-    /// <summary>
-    /// Gets the rate of change of the sprite's position.
-    /// </summary>
+    /// <inheritdoc/>
     public Vector2 Velocity
     { get; protected set; }
 
-    /// <summary>
-    /// Gets the amount that the sprite is currently being rotated about its point of rotation.
-    /// </summary>
+    /// <inheritdoc/>
     public float Angle
     { get; private set; }
 
-    /// <summary>
-    /// Gets the rate of change of the sprite's angle.
-    /// </summary>
+    /// <inheritdoc/>
     public float AngularVelocity
     { get; protected set; }
 
