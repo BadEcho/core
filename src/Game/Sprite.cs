@@ -75,7 +75,7 @@ public class Sprite
     /// Gets the rate of change of the sprite's position.
     /// </summary>
     public Vector2 Velocity
-    { get; }
+    { get; protected set; }
 
     /// <summary>
     /// Gets the amount that the sprite is currently being rotated about its point of rotation.
@@ -87,7 +87,7 @@ public class Sprite
     /// Gets the rate of change of the sprite's angle.
     /// </summary>
     public float AngularVelocity
-    { get; }
+    { get; protected set; }
 
     /// <summary>
     /// Advances the movement of the sprite by one tick.
@@ -105,7 +105,7 @@ public class Sprite
     public void Draw(SpriteBatch spriteBatch)
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
-
+        
         spriteBatch.Draw(Texture, GetTargetRectangle(), GetSourceRectangle(), Color.White);
     }
 
