@@ -20,8 +20,8 @@ namespace BadEcho.Game;
 /// Provides a minute sprite used by a particle system to reproduce the visuals exhibited by highly chaotic systems, natural phenomena,
 /// or processes caused by chemical reactions.
 /// </summary>
-    public sealed class Particle
-    {
+public sealed class Particle
+{
     /// <summary>
     /// Initializes a new instance of the <see cref="Particle"/> class.
     /// </summary>
