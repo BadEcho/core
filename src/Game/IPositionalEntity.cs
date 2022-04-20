@@ -27,10 +27,10 @@ public interface IPositionalEntity
     { get; }
 
     /// <summary>
-    /// Gets the rate of change of the entity's position.
+    /// Gets or sets the rate of change of the entity's position.
     /// </summary>
     public Vector2 Velocity
-    { get; }
+    { get; set; }
 
     /// <summary>
     /// Gets the amount that the entity is currently being rotated about its point of rotation.
@@ -39,8 +39,8 @@ public interface IPositionalEntity
     { get; }
 
     /// <summary>
-    /// Gets the rate of change of the entity's angle.
+    /// Gets or sets the rate of change of the entity's angle.
     /// </summary>
     public float AngularVelocity
-    { get; }
+    { get; set; }
 }

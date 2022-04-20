@@ -71,7 +71,7 @@ public class Sprite : IPositionalEntity
 
     /// <inheritdoc/>
     public Vector2 Velocity
-    { get; protected set; }
+    { get; set; }
 
     /// <inheritdoc/>
     public float Angle
@@ -79,7 +79,7 @@ public class Sprite : IPositionalEntity
 
     /// <inheritdoc/>
     public float AngularVelocity
-    { get; protected set; }
+    { get; set; }
 
     /// <summary>
     /// Advances the movement of the sprite by one tick.
