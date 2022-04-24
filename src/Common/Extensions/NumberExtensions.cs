@@ -18,7 +18,8 @@ namespace BadEcho.Extensions;
 /// </summary>
 public static class NumberExtensions
 {
-    private const double MACHINE_DOUBLE_EPSILON = 2.2204460492503131e-016;
+    private const double MACHINE_DOUBLE_EPSILON = 2.2204460492503131E-016;
+    private const float MACHINE_FLOAT_EPSILON = 1.192093E-07f;
 
     /// <summary>
     /// Determines if this floating-point number equals another floating-point number while taking into account the upper bound
@@ -34,7 +35,25 @@ public static class NumberExtensions
 
         if (double.IsNegativeInfinity(source))
             return double.IsNegativeInfinity(other);
-
+        
         return Math.Abs(source - other) / (Math.Abs(source) + Math.Abs(other) + 1) < MACHINE_DOUBLE_EPSILON;
+    }
+
+    /// <summary>
+    /// Determines if this floating-point number equals another floating-point number while taking into account the upper bound
+    /// on relative errors due to rounding (aka the machine epsilon).
+    /// </summary>
+    /// <param name="source">The current floating-point number.</param>
+    /// <param name="other">The floating-point number to compare with the current number.</param>
+    /// <returns>True if <c>source</c> and <c>other</c> are approximately equal; otherwise, false.</returns>
+    public static bool ApproximatelyEquals(this float source, float other)
+    {
+        if (float.IsPositiveInfinity(source))
+            return float.IsPositiveInfinity(other);
+
+        if (float.IsNegativeInfinity(source))
+            return float.IsNegativeInfinity(other);
+
+        return Math.Abs(source - other) / (Math.Abs(source) + Math.Abs(other) + 1) < MACHINE_FLOAT_EPSILON;
     }
 }
