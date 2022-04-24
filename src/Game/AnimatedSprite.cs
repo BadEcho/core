@@ -22,6 +22,7 @@ namespace BadEcho.Game;
 /// </summary>
 public sealed class AnimatedSprite : Sprite
 {
+    private readonly IMovementSystem _movementSystem;
     private readonly SpriteSheet _sheet;
     private int _currentFrame;
 
@@ -30,16 +31,25 @@ public sealed class AnimatedSprite : Sprite
     /// </summary>
     /// <param name="sheet">The sprite sheet containing the various animation frames of the sprite.</param>
     /// <param name="position">The drawing location of the animated sprite.</param>
-    public AnimatedSprite(SpriteSheet sheet, Vector2 position)
+    /// <param name="movementSystem"></param>
+    public AnimatedSprite(SpriteSheet sheet, Vector2 position, IMovementSystem movementSystem)
         : base(GetSheetTexture(sheet), position)
     {
+        Require.NotNull(movementSystem, nameof(movementSystem));
+        
         _sheet = sheet;
+        _movementSystem = movementSystem;
     }
      
     /// <inheritdoc/>
     public override void Update()
     {
         base.Update();
+
+        _movementSystem.UpdateMovement(this);
+
+        if (Velocity != Vector2.Zero)
+            _currentFrame++;
 
         if (_currentFrame == _sheet.TotalFrames)
             _currentFrame = 0;
