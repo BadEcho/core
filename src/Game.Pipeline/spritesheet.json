@@ -1,0 +1,37 @@
+{
+  "schema": "http://json-schema.org/draft-04/schema",
+  "title": "Bad Echo sprite sheet JSON schema",
+  "type": "object",
+  "properties": {
+    "textureFormat": {
+      "type": "string",
+      "description": "The image format of the texture containing the individual sprite sheet frames, identified here using the format's associated file extension."
+    },
+    "rows": {
+      "type": "integer",
+      "description": "The number of rows containing images in the sprite sheet."
+    },
+    "columns": {
+      "type": "integer",
+      "description": "The number of columns containing images in the sprite sheet."
+    },
+    "rowUp": {
+      "type": "integer",
+      "description": "The starting row index for upward movement."
+    },
+    "rowDown": {
+      "type": "integer",
+      "description": "The starting row index for downward movement."
+    },
+    "rowLeft": {
+      "type": "integer",
+      "description": "The starting row index for leftward movement."
+    },
+    "rowRight": {
+      "type": "integer",
+      "description": "The starting row index for rightward movement."
+    }
+  },
+  "required": ["rows", "columns", "rowUp", "rowDown", "rowLeft", "rowRight"],
+  "additionalProperties": false
+}
