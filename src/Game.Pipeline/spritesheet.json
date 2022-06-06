@@ -9,11 +9,11 @@
     },
     "rows": {
       "type": "integer",
-      "description": "The number of rows containing images in the sprite sheet."
+      "description": "The number of rows of frames in the sprite sheet."
     },
     "columns": {
       "type": "integer",
-      "description": "The number of columns containing images in the sprite sheet."
+      "description": "The number of columns of frames in the sprite sheet."
     },
     "rowUp": {
       "type": "integer",

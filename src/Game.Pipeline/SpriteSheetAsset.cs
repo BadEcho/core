@@ -26,13 +26,13 @@ public sealed class SpriteSheetAsset
     { get; init; } = string.Empty;
 
     /// <summary>
-    /// Gets the number of rows in the sprite sheet.
+    /// Gets the number of rows of frames in the sprite sheet.
     /// </summary>
     public int Rows 
     { get; init; }
 
     /// <summary>
-    /// Gets the number of columns in the sprite sheet.
+    /// Gets the number of columns of frames in the sprite sheet.
     /// </summary>
     public int Columns 
     { get; init; }
