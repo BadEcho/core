@@ -61,11 +61,38 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Requested frame exceeds the total number of frames found in this sprite sheet..
+        ///   Looks up a localized string similar to Sprite sheet already has frames registered for the specified direction of movement..
         /// </summary>
-        internal static string FrameExceedsSheetTotal {
+        internal static string SheetAlreadyHasDirection {
             get {
-                return ResourceManager.GetString("FrameExceedsSheetTotal", resourceCulture);
+                return ResourceManager.GetString("SheetAlreadyHasDirection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Movement direction&apos;s starting row exceeds the number of rows in the sprite sheet..
+        /// </summary>
+        internal static string SheetDirectionRowOutOfRange {
+            get {
+                return ResourceManager.GetString("SheetDirectionRowOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Requested frame exceeds the total number of frames found in this sprite sheet for the specified direction of movement..
+        /// </summary>
+        internal static string SheetFrameExceedsTotal {
+            get {
+                return ResourceManager.GetString("SheetFrameExceedsTotal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sprite sheet contains no frames for the specified direction of movement..
+        /// </summary>
+        internal static string SheetNoFramesForDirection {
+            get {
+                return ResourceManager.GetString("SheetNoFramesForDirection", resourceCulture);
             }
         }
     }

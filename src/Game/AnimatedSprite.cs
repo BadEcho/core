@@ -24,6 +24,9 @@ public sealed class AnimatedSprite : Sprite
 {
     private readonly IMovementSystem _movementSystem;
     private readonly SpriteSheet _sheet;
+    // TODO: Replace with configurable initial state, or better approach period.
+    private TimeSpan _frameLifetime = TimeSpan.FromSeconds(0.125);
+    private MovementDirection _direction;
     private int _currentFrame;
 
     /// <summary>
@@ -40,24 +43,41 @@ public sealed class AnimatedSprite : Sprite
         _sheet = sheet;
         _movementSystem = movementSystem;
     }
-     
+
     /// <inheritdoc/>
-    public override void Update()
+    /// TODO: Review for correctness.
+    public override void Update(GameTime gameTime)
     {
-        base.Update();
+        base.Update(gameTime);
 
         _movementSystem.UpdateMovement(this);
+        MovementDirection newDirection = Velocity.ToDirection();
+        
+        if (_direction != newDirection)
+        {
+            _currentFrame = 0;
 
-        if (Velocity != Vector2.Zero)
-            _currentFrame++;
+            // If no movement is occurring, then we want to preserve our current direction, reset back to its initial animation frame.
+            if (newDirection != MovementDirection.None)
+                _direction = newDirection;
+        }
+        else if(newDirection != MovementDirection.None)
+        {
+            _frameLifetime -= gameTime.ElapsedGameTime;
+            if (_frameLifetime <= TimeSpan.Zero)
+            {   // TODO: Replace with proper frame / distance system.
+                _currentFrame++;
+                _frameLifetime = TimeSpan.FromSeconds(0.25) / Math.Max(Math.Abs(Velocity.X), Math.Abs(Velocity.Y));
+            }
+        }
 
-        if (_currentFrame == _sheet.TotalFrames)
+        if (_currentFrame == _sheet.Columns)
             _currentFrame = 0;
     }
 
     /// <inheritdoc/>
     protected override Rectangle GetSourceRectangle() 
-        => _sheet.GetFrameRectangle(_currentFrame);
+        => _sheet.GetFrameRectangle(_direction, _currentFrame);
 
     /// <inheritdoc/>
     protected override Rectangle GetTargetRectangle()

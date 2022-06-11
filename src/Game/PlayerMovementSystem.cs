@@ -23,13 +23,13 @@ public sealed class PlayerMovementSystem : IMovementSystem
 {
     // TODO: These will be set via a hot pluggable config module in future.
     private const Keys MOVEMENT_LEFT = Keys.A;
-    private const Keys MOVEMENT_UP = Keys.S;
+    private const Keys MOVEMENT_UP = Keys.W;
     private const Keys MOVEMENT_RIGHT = Keys.D;
-    private const Keys MOVEMENT_DOWN = Keys.W;
+    private const Keys MOVEMENT_DOWN = Keys.S;
     // TODO: Will be configurable based on entity.
-    private const float VELOCITY_INCREMENT = 0.5f;
-    private const float VELOCITY_MAX = 3.0f;
-    private const float VELOCITY_MIN = -3.0f;
+    private const float VELOCITY_INCREMENT = .5f;
+    private const float VELOCITY_MAX = 2.0f;
+    private const float VELOCITY_MIN = -2.0f;
 
     /// <inheritdoc/>
     public void UpdateMovement(IPositionalEntity entity)
@@ -40,7 +40,7 @@ public sealed class PlayerMovementSystem : IMovementSystem
         float yVelocityOriginal = entity.Velocity.Y;
 
         float xVelocity = CalculateUpdatedVelocity(xVelocityOriginal, MOVEMENT_RIGHT, MOVEMENT_LEFT);
-        float yVelocity = CalculateUpdatedVelocity(yVelocityOriginal, MOVEMENT_UP, MOVEMENT_DOWN);
+        float yVelocity = CalculateUpdatedVelocity(yVelocityOriginal, MOVEMENT_DOWN, MOVEMENT_UP);
 
         entity.Velocity = new Vector2(xVelocity, yVelocity);
     }

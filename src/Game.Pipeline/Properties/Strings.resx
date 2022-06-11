@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="SpriteSheetNotFound" xml:space="preserve">
-    <value>The .spritesheet asset identified by {0} could not be found on local file system.</value>
+  <data name="SpriteSheetIsNull" xml:space="preserve">
+    <value>The .spritesheet asset identified by {0} consists of a single 'null' JSON token, which cannot be processed as sprite sheet. A JSON document conforming to the .spritesheet schema found at http://badecho.com/spritesheet.json must be provided.</value>
   </data>
 </root>

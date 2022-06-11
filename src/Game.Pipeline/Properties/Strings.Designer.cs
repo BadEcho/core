@@ -61,11 +61,11 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The .spritesheet asset identified by {0} could not be found on local file system..
+        ///   Looks up a localized string similar to The .spritesheet asset identified by {0} consists of a single &apos;null&apos; JSON token, which cannot be processed as sprite sheet. A JSON document conforming to the .spritesheet schema found at http://badecho.com/spritesheet.json must be provided..
         /// </summary>
-        internal static string SpriteSheetNotFound {
+        internal static string SpriteSheetIsNull {
             get {
-                return ResourceManager.GetString("SpriteSheetNotFound", resourceCulture);
+                return ResourceManager.GetString("SpriteSheetIsNull", resourceCulture);
             }
         }
     }
