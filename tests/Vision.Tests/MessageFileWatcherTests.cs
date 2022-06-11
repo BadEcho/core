@@ -62,6 +62,13 @@ public class MessageFileWatcherTests : IDisposable
             => false;
             
         public IViewModel EnableModule(IMessageFileProvider messageProvider) 
-            => throw new NotImplementedException();
+            => new FakeViewModel();
+    }
+
+    private sealed class FakeViewModel : ViewModel
+    {
+        /// <inheritdoc />
+        public override void Disconnect()
+        { }
     }
 }
