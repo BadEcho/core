@@ -66,11 +66,12 @@ public sealed class Particle
     /// <summary>
     /// Advances the position and lifetime of the particle.
     /// </summary>
-    public void Update()
+    /// <param name="gameTime">The elapsed time since the last call to <see cref="Update(GameTime)"/>.</param>
+    public void Update(GameTime gameTime)
     {
         TimeToLive--;
 
-        Sprite.Update();
+        Sprite.Update(gameTime);
     }
 
     /// <summary>

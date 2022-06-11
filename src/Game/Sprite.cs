@@ -84,7 +84,8 @@ public class Sprite : IPositionalEntity
     /// <summary>
     /// Advances the movement of the sprite by one tick.
     /// </summary>
-    public virtual void Update()
+    /// <param name="gameTime">The elapsed time since the last call to <see cref="Update(GameTime)"/>.</param>
+    public virtual void Update(GameTime gameTime)
     {
         Position += Velocity;
         Angle += AngularVelocity;
