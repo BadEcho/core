@@ -64,8 +64,6 @@ public abstract class JsonConfigurationProvider<TExtensionData> : JsonConfigurat
 
         /// <inheritdoc/>
         public override void Write(Utf8JsonWriter writer, ExtensionDataStore<TExtensionData> value, JsonSerializerOptions options)
-            // TODO: Uncomment when updating to .NET 6 adding support for writes.
-            //=> writer.WriteRawValue(value.ConfigurationText);
-            => throw new NotSupportedException();
+            => writer.WriteRawValue(value.ConfigurationText);
     }
 }
