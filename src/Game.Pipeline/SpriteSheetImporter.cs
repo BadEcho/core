@@ -23,7 +23,6 @@ namespace BadEcho.Game.Pipeline;
 /// <summary>
 /// Provides an importer of sprite sheet asset data for the content pipeline.
 /// </summary>
-/// TODO: Investigate if some of this should be done in a SpriteSheetProcessor instead.
 [ContentImporter(".spritesheet", DisplayName = "Sprite Sheet Importer", DefaultProcessor = nameof(TextureProcessor))]
 public sealed class SpriteSheetImporter : ContentImporter<SpriteSheetContent>
 {
