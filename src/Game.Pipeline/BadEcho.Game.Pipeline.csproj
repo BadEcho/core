@@ -25,6 +25,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Common\BadEcho.Common.csproj" />
+	  <ProjectReference Include="..\Game\BadEcho.Game.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -24,9 +24,8 @@ namespace BadEcho.Game.Pipeline;
 public class SpriteSheetWriter : ContentTypeWriter<SpriteSheetContent>
 {
     /// <inheritdoc />
-    /// TODO: Find a better, compile-safe way to specify this type name.
-    public override string GetRuntimeReader(TargetPlatform targetPlatform)      
-        => "BadEcho.Game.SpriteSheetReader, BadEcho.Game";
+    public override string GetRuntimeReader(TargetPlatform targetPlatform) 
+        => typeof(SpriteSheetReader).AssemblyQualifiedName ?? string.Empty;
 
     /// <inheritdoc />
     protected override void Write(ContentWriter output, SpriteSheetContent value)
