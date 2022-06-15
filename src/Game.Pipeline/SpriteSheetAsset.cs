@@ -38,25 +38,25 @@ public sealed class SpriteSheetAsset
     { get; init; }
 
     /// <summary>
-    /// Gets the starting row for upward movement.
+    /// Gets the row for upward movement.
     /// </summary>
     public int RowUp
     { get; init; }
 
     /// <summary>
-    /// Gets the starting row for downward movement.
+    /// Gets the row for downward movement.
     /// </summary>
     public int RowDown
     { get; init; }
 
     /// <summary>
-    /// Gets the starting row for leftward movement.
+    /// Gets the row for leftward movement.
     /// </summary>
     public int RowLeft
     { get; init; }
 
     /// <summary>
-    /// Gets the starting row for rightward movement.
+    /// Gets the row for rightward movement.
     /// </summary>
     public int RowRight
     { get; init; }

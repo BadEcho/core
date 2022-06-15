@@ -70,7 +70,7 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Movement direction&apos;s starting row exceeds the number of rows in the sprite sheet..
+        ///   Looks up a localized string similar to Movement direction&apos;s row exceeds the number of rows in the sprite sheet..
         /// </summary>
         internal static string SheetDirectionRowOutOfRange {
             get {

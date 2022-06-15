@@ -17,19 +17,19 @@
     },
     "rowUp": {
       "type": "integer",
-      "description": "The starting row for upward movement."
+      "description": "The row for upward movement."
     },
     "rowDown": {
       "type": "integer",
-      "description": "The starting row for downward movement."
+      "description": "The row for downward movement."
     },
     "rowLeft": {
       "type": "integer",
-      "description": "The starting row for leftward movement."
+      "description": "The row for leftward movement."
     },
     "rowRight": {
       "type": "integer",
-      "description": "The starting row for rightward movement."
+      "description": "The row for rightward movement."
     }
   },
   "required": ["rows", "columns", "rowUp", "rowDown", "rowLeft", "rowRight"],
