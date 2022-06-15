@@ -16,14 +16,13 @@ using BadEcho.Extensions;
 using Microsoft.Xna.Framework.Content.Pipeline;
 using BadEcho.Game.Pipeline.Properties;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
-using Microsoft.Xna.Framework.Content.Pipeline.Processors;
 
 namespace BadEcho.Game.Pipeline;
 
 /// <summary>
 /// Provides an importer of sprite sheet asset data for the content pipeline.
 /// </summary>
-[ContentImporter(".spritesheet", DisplayName = "Sprite Sheet Importer", DefaultProcessor = nameof(TextureProcessor))]
+[ContentImporter(".spritesheet", DisplayName = "Sprite Sheet Importer - Bad Echo", DefaultProcessor = nameof(SpriteSheetProcessor))]
 public sealed class SpriteSheetImporter : ContentImporter<SpriteSheetContent>
 {
     /// <inheritdoc/>
@@ -34,7 +33,7 @@ public sealed class SpriteSheetImporter : ContentImporter<SpriteSheetContent>
                                                                  new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         if (asset == null)
         {
-            throw new ArgumentException(Strings.SpriteSheetIsNull.InvariantFormat(filename),
+            throw new ArgumentException(Strings.SheetIsNull.InvariantFormat(filename),
                                         nameof(filename));
         }
 

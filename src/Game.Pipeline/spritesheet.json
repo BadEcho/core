@@ -30,6 +30,10 @@
     "rowRight": {
       "type": "integer",
       "description": "The row for rightward movement."
+    },
+    "rowInitial": {
+      "type": "integer",
+      "description": "The row containing initially drawn frames, prior to any movement occurring."
     }
   },
   "required": ["rows", "columns", "rowUp", "rowDown", "rowLeft", "rowRight"],

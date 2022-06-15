@@ -61,11 +61,83 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The sprite sheet processor can only process content of the SpriteSheetContent type..
+        /// </summary>
+        internal static string NotSpriteSheetContent {
+            get {
+                return ResourceManager.GetString("NotSpriteSheetContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Downward direction&apos;s row exceeds the number of rows in the sprite sheet..
+        /// </summary>
+        internal static string SheetDownwardRowOutOfRange {
+            get {
+                return ResourceManager.GetString("SheetDownwardRowOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The sprite sheet must be configured to have one or more columns in order to be considered valid..
+        /// </summary>
+        internal static string SheetHasNoColumns {
+            get {
+                return ResourceManager.GetString("SheetHasNoColumns", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The sprite sheet must be configured to have one or more rows in order to be considered valid..
+        /// </summary>
+        internal static string SheetHasNoRows {
+            get {
+                return ResourceManager.GetString("SheetHasNoRows", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Initial frame&apos;s row exceeds the number of rows in the sprite sheet..
+        /// </summary>
+        internal static string SheetInitialRowOutOfRange {
+            get {
+                return ResourceManager.GetString("SheetInitialRowOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The .spritesheet asset identified by {0} consists of a single &apos;null&apos; JSON token, which cannot be processed as sprite sheet. A JSON document conforming to the .spritesheet schema found at http://badecho.com/spritesheet.json must be provided..
         /// </summary>
-        internal static string SpriteSheetIsNull {
+        internal static string SheetIsNull {
             get {
-                return ResourceManager.GetString("SpriteSheetIsNull", resourceCulture);
+                return ResourceManager.GetString("SheetIsNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Leftward direction&apos;s row exceeds the number of rows in the sprite sheet..
+        /// </summary>
+        internal static string SheetLeftwardRowOutOfRange {
+            get {
+                return ResourceManager.GetString("SheetLeftwardRowOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rightward direction&apos;s row exceeds the number of rows in the sprite sheet..
+        /// </summary>
+        internal static string SheetRightwardRowOutOfRange {
+            get {
+                return ResourceManager.GetString("SheetRightwardRowOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upward direction&apos;s row exceeds the number of rows in the sprite sheet..
+        /// </summary>
+        internal static string SheetUpwardRowOutOfRange {
+            get {
+                return ResourceManager.GetString("SheetUpwardRowOutOfRange", resourceCulture);
             }
         }
     }

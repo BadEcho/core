@@ -40,5 +40,6 @@ public class SpriteSheetWriter : ContentTypeWriter<SpriteSheetContent>
         output.Write(value.Asset.RowDown);
         output.Write(value.Asset.RowLeft);
         output.Write(value.Asset.RowRight);
+        output.Write(value.Asset.RowInitial);
     }
 }

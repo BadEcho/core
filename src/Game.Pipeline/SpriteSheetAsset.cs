@@ -60,4 +60,10 @@ public sealed class SpriteSheetAsset
     /// </summary>
     public int RowRight
     { get; init; }
+
+    /// <summary>
+    /// Gets or sets the row containing initially drawn frames, prior to any movement occurring.
+    /// </summary>
+    public int RowInitial
+    { get; set; }
 }

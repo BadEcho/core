@@ -33,9 +33,11 @@ public sealed class SpriteSheetReader : ContentTypeReader<SpriteSheet>
         var rowDown = input.ReadInt32();
         var rowLeft = input.ReadInt32();
         var rowRight = input.ReadInt32();
+        var rowInitial = input.ReadInt32();
         
         var spriteSheet = new SpriteSheet(texture, columns, rows);
 
+        spriteSheet.AddDirection(MovementDirection.None, rowInitial);
         spriteSheet.AddDirection(MovementDirection.Up, rowUp);
         spriteSheet.AddDirection(MovementDirection.Down, rowDown);
         spriteSheet.AddDirection(MovementDirection.Left, rowLeft);

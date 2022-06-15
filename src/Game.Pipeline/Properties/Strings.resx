@@ -117,7 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="SpriteSheetIsNull" xml:space="preserve">
+  <data name="SheetIsNull" xml:space="preserve">
     <value>The .spritesheet asset identified by {0} consists of a single 'null' JSON token, which cannot be processed as sprite sheet. A JSON document conforming to the .spritesheet schema found at http://badecho.com/spritesheet.json must be provided.</value>
   </data>
+	<data name="NotSpriteSheetContent" xml:space="preserve">
+		<value>The sprite sheet processor can only process content of the SpriteSheetContent type.</value>
+	</data>
+	<data name="SheetHasNoRows" xml:space="preserve">
+		<value>The sprite sheet must be configured to have one or more rows in order to be considered valid.</value>
+	</data>
+	<data name="SheetHasNoColumns" xml:space="preserve">
+		<value>The sprite sheet must be configured to have one or more columns in order to be considered valid.</value>
+	</data>
+	<data name="SheetUpwardRowOutOfRange" xml:space="preserve">
+		<value>Upward direction's row exceeds the number of rows in the sprite sheet.</value>
+	</data>
+	<data name="SheetDownwardRowOutOfRange" xml:space="preserve">
+		<value>Downward direction's row exceeds the number of rows in the sprite sheet.</value>
+	</data>
+	<data name="SheetLeftwardRowOutOfRange" xml:space="preserve">
+		<value>Leftward direction's row exceeds the number of rows in the sprite sheet.</value>
+	</data>
+	<data name="SheetRightwardRowOutOfRange" xml:space="preserve">
+		<value>Rightward direction's row exceeds the number of rows in the sprite sheet.</value>
+	</data>
+	<data name="SheetInitialRowOutOfRange" xml:space="preserve">
+		<value>Initial frame's row exceeds the number of rows in the sprite sheet.</value>
+	</data>
 </root>
