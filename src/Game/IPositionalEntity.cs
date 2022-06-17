@@ -27,6 +27,12 @@ public interface IPositionalEntity
     { get; }
 
     /// <summary>
+    /// Gets the change to the entity's position that occurred from its last update.
+    /// </summary>
+    public Vector2 LastMovement
+    { get; }
+
+    /// <summary>
     /// Gets or sets the rate of change of the entity's position.
     /// </summary>
     public Vector2 Velocity

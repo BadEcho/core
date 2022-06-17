@@ -70,6 +70,10 @@ public class Sprite : IPositionalEntity
     { get; private set; }
 
     /// <inheritdoc/>
+    public Vector2 LastMovement
+    { get; private set; }
+
+    /// <inheritdoc/>
     public Vector2 Velocity
     { get; set; }
 
@@ -93,7 +97,11 @@ public class Sprite : IPositionalEntity
         float timeScale 
             = (float) (gameTime.ElapsedGameTime.TotalMilliseconds / targetElapsedTime.TotalMilliseconds);
 
+        Vector2 lastPosition = Position;
+
         Position += Vector2.Multiply(Velocity, timeScale);
+        LastMovement = Position - lastPosition;
+
         Angle += AngularVelocity * timeScale;
     }
 

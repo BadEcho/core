@@ -24,8 +24,8 @@ public sealed class AnimatedSprite : Sprite
 {
     private readonly IMovementSystem _movementSystem;
     private readonly SpriteSheet _sheet;
-    // TODO: Replace with configurable initial state, or better approach period.
-    private TimeSpan _frameLifetime = TimeSpan.FromSeconds(0.125);
+    // TODO: Replace with configurable initial value.
+    private float _remainingFrameDistance = 15.0f;    
     private MovementDirection _direction;
     private int _currentFrame;
 
@@ -45,7 +45,6 @@ public sealed class AnimatedSprite : Sprite
     }
 
     /// <inheritdoc/>
-    /// TODO: Review for correctness.
     public override void Update(GameTime gameTime, TimeSpan targetElapsedTime)
     {
         base.Update(gameTime, targetElapsedTime);
@@ -63,11 +62,16 @@ public sealed class AnimatedSprite : Sprite
         }
         else if(newDirection != MovementDirection.None)
         {
-            _frameLifetime -= gameTime.ElapsedGameTime;
-            if (_frameLifetime <= TimeSpan.Zero)
-            {   // TODO: Replace with proper frame / distance system.
+            float frameDistanceDelta = newDirection is MovementDirection.Up or MovementDirection.Down
+                ? Math.Abs(LastMovement.Y)
+                : Math.Abs(LastMovement.X);
+
+            _remainingFrameDistance -= frameDistanceDelta;
+
+            if (_remainingFrameDistance <= 0)
+            {   
                 _currentFrame++;
-                _frameLifetime = TimeSpan.FromSeconds(0.25) / Math.Max(Math.Abs(Velocity.X), Math.Abs(Velocity.Y));
+                _remainingFrameDistance = 15.0f;
             }
         }
 
