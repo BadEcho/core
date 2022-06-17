@@ -84,11 +84,17 @@ public class Sprite : IPositionalEntity
     /// <summary>
     /// Advances the movement of the sprite by one tick.
     /// </summary>
-    /// <param name="gameTime">The elapsed time since the last call to <see cref="Update(GameTime)"/>.</param>
-    public virtual void Update(GameTime gameTime)
+    /// <param name="gameTime">The elapsed time since the last call to <see cref="Update(GameTime,TimeSpan)"/>.</param>
+    /// <param name="targetElapsedTime">The targeted time between frames when running with a fixed time step.</param>
+    public virtual void Update(GameTime gameTime, TimeSpan targetElapsedTime)
     {
-        Position += Velocity;
-        Angle += AngularVelocity;
+        Require.NotNull(gameTime, nameof(gameTime));
+        
+        float timeScale 
+            = (float) (gameTime.ElapsedGameTime.TotalMilliseconds / targetElapsedTime.TotalMilliseconds);
+
+        Position += Vector2.Multiply(Velocity, timeScale);
+        Angle += AngularVelocity * timeScale;
     }
 
     /// <summary>
