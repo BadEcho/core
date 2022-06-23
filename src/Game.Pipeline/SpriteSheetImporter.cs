@@ -15,7 +15,6 @@ using System.Text.Json;
 using BadEcho.Extensions;
 using Microsoft.Xna.Framework.Content.Pipeline;
 using BadEcho.Game.Pipeline.Properties;
-using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 
 namespace BadEcho.Game.Pipeline;
 
@@ -28,6 +27,8 @@ public sealed class SpriteSheetImporter : ContentImporter<SpriteSheetContent>
     /// <inheritdoc/>
     public override SpriteSheetContent Import(string filename, ContentImporterContext context)
     {
+        Require.NotNull(context, nameof(context));
+
         var fileContents = File.ReadAllText(filename); 
         var asset = JsonSerializer.Deserialize<SpriteSheetAsset?>(fileContents,
                                                                  new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
@@ -37,13 +38,10 @@ public sealed class SpriteSheetImporter : ContentImporter<SpriteSheetContent>
                                         nameof(filename));
         }
 
-        var textureImporter =new TextureImporter();
-        string textureFilename = Path.ChangeExtension(filename, asset.TextureFormat);
-
-        Texture2DContent textureContent = (Texture2DContent) textureImporter.Import(textureFilename, context);
-
         var spriteSheetContent
-            = new SpriteSheetContent(textureContent, asset) { Identity = new ContentIdentity(filename) };
+            = new SpriteSheetContent(asset) { Identity = new ContentIdentity(filename) };
+
+        context.AddDependency(asset.TexturePath);
 
         return spriteSheetContent;
     }

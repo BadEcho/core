@@ -26,7 +26,7 @@ public sealed class SpriteSheetReader : ContentTypeReader<SpriteSheet>
     {
         Require.NotNull(input, nameof(input));
 
-        var texture = input.ReadRawObject<Texture2D>();
+        var texture = input.ReadExternalReference<Texture2D>();
         var rows = input.ReadInt32();
         var columns = input.ReadInt32();
         var rowUp = input.ReadInt32();

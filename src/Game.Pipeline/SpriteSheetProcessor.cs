@@ -14,7 +14,6 @@
 using BadEcho.Game.Pipeline.Properties;
 using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
-using Microsoft.Xna.Framework.Content.Pipeline.Processors;
 
 namespace BadEcho.Game.Pipeline;
 
@@ -22,24 +21,22 @@ namespace BadEcho.Game.Pipeline;
 /// Provides a processor of sprite sheet asset data for the content pipeline.
 /// </summary>
 [ContentProcessor(DisplayName = "Sprite Sheet Processor - Bad Echo")]
-public sealed class SpriteSheetProcessor : TextureProcessor
+public sealed class SpriteSheetProcessor : ContentProcessor<SpriteSheetContent, SpriteSheetContent>
 {
     /// <inheritdoc/>
-    public override TextureContent Process(TextureContent input, ContentProcessorContext context)
+    public override SpriteSheetContent Process(SpriteSheetContent input, ContentProcessorContext context)
     {   
         Require.NotNull(input, nameof(input));
-        
-        if (input is not SpriteSheetContent sheetInput)
-            throw new ArgumentException(Strings.NotSpriteSheetContent, nameof(input));
 
-        ValidateAsset(sheetInput.Asset);
+        ValidateAsset(input.Asset);
 
         // If no valid configuration was provided for the initial frame's row, we have it default to the first row.
-        if (sheetInput.Asset.RowInitial <= 0)
-            sheetInput.Asset.RowInitial = 1;
+        if (input.Asset.RowInitial <= 0)
+            input.Asset.RowInitial = 1;
 
-        // Let the texture processor handle all the texture-specific stuff before returning.
-        return base.Process(input, context);
+        input.AddReference<Texture2DContent>(context, input.Asset.TexturePath, new OpaqueDataDictionary());
+
+        return input;
     }
 
     private static void ValidateAsset(SpriteSheetAsset asset)

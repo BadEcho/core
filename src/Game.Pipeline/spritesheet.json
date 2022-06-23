@@ -3,9 +3,9 @@
   "title": "Bad Echo sprite sheet JSON schema",
   "type": "object",
   "properties": {
-    "textureFormat": {
+    "texturePath": {
       "type": "string",
-      "description": "The image format of the texture containing the individual sprite sheet frames, identified here using the format's associated file extension."
+      "description": "The path to the file containing the texture of the individual animation frames that compose the sprite sheet."
     },
     "rows": {
       "type": "integer",

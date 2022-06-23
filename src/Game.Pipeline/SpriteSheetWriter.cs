@@ -33,7 +33,10 @@ public class SpriteSheetWriter : ContentTypeWriter<SpriteSheetContent>
         Require.NotNull(output, nameof(output));
         Require.NotNull(value, nameof(value));
 
-        output.WriteRawObject<Texture2DContent>(value);
+        ExternalReference<Texture2DContent> externalReference 
+            = value.GetReference<Texture2DContent>(value.Asset.TexturePath);
+
+        output.WriteExternalReference(externalReference);
         output.Write(value.Asset.Rows);
         output.Write(value.Asset.Columns);
         output.Write(value.Asset.RowUp);

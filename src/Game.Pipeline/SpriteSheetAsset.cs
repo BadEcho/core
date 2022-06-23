@@ -19,10 +19,9 @@ namespace BadEcho.Game.Pipeline;
 public sealed class SpriteSheetAsset
 {
     /// <summary>
-    /// Gets the image format of the texture containing the individual sprite sheet frames, identified here using the format's associated
-    /// file extension.
+    /// Gets the path to the file containing the texture of the individual animation frames that compose the sprite sheet.
     /// </summary>
-    public string TextureFormat 
+    public string TexturePath 
     { get; init; } = string.Empty;
 
     /// <summary>

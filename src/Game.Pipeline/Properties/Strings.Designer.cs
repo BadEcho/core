@@ -61,11 +61,11 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The sprite sheet processor can only process content of the SpriteSheetContent type..
+        ///   Looks up a localized string similar to No reference to the asset &apos;{0}&apos; was found on this content item..
         /// </summary>
-        internal static string NotSpriteSheetContent {
+        internal static string NoReferenceInContentItem {
             get {
-                return ResourceManager.GetString("NotSpriteSheetContent", resourceCulture);
+                return ResourceManager.GetString("NoReferenceInContentItem", resourceCulture);
             }
         }
         

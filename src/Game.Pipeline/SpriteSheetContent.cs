@@ -11,33 +11,18 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
-
 namespace BadEcho.Game.Pipeline;
 
 /// <summary>
-/// Provides the raw data for sprite sheet content.
+/// Provides the raw data for a sprite sheet asset.
 /// </summary>
-public sealed class SpriteSheetContent : Texture2DContent
+public sealed class SpriteSheetContent : ContentItem<SpriteSheetAsset>
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="SpriteSheetContent"/> class.
     /// </summary>
-    /// <param name="content">The texture containing the individual frames that compose the sprite sheet.</param>
     /// <param name="asset">The configuration data for the sprite sheet.</param>
-    public SpriteSheetContent(Texture2DContent content, SpriteSheetAsset asset)
-    { 
-        Require.NotNull(asset, nameof(asset));
-        Require.NotNull(content, nameof(content));
-        // This copies over the primary texture data.
-        Faces[0] = content.Faces[0];
-
-        Asset = asset;
-    }
-
-    /// <summary>
-    /// Gets the configuration data for the sprite sheet.
-    /// </summary>
-    public SpriteSheetAsset Asset
-    { get; }
+    public SpriteSheetContent(SpriteSheetAsset asset)
+        : base(asset)
+    { }
 }
