@@ -24,17 +24,19 @@ public class PrimitiveModel : IDisposable
     private readonly IndexBuffer? _indexBuffer;
     private readonly GraphicsDevice _device;
     private readonly int _primitiveCount;
+    private readonly Texture2D? _texture;
 
     private bool _disposed;
-    
+
     /// <summary>
     /// Initializes a new instance of the <see cref="PrimitiveModel"/> class.
     /// </summary>
     /// <param name="device">The graphics device to use when rendering the model.</param>
+    /// <param name="texture">The texture to map onto the model.</param>
     /// <param name="vertices">The vertex buffer data for the model.</param>
     /// <param name="indices">The index buffer data for the model.</param>
-    public PrimitiveModel(GraphicsDevice device, VertexPositionTexture[] vertices, ushort[] indices)
-        : this(device, vertices)
+    public PrimitiveModel(GraphicsDevice device, Texture2D texture, VertexPositionTexture[] vertices, ushort[] indices)
+        : this(device, texture, vertices)
     {
         Require.NotNull(indices, nameof(indices));
         // We base the number of primitives on the index buffer data if present as opposed to the vertex buffer data.
@@ -50,13 +52,16 @@ public class PrimitiveModel : IDisposable
     /// Initializes a new instance of the <see cref="PrimitiveModel"/> class.
     /// </summary>
     /// <param name="device">The graphics device to use when rendering the model.</param>
+    /// <param name="texture">The texture to map onto the model.</param>
     /// <param name="vertices">The vertex buffer data for the model.</param>
-    public PrimitiveModel(GraphicsDevice device, VertexPositionTexture[] vertices)
+    public PrimitiveModel(GraphicsDevice device, Texture2D texture, VertexPositionTexture[] vertices)
     {
         Require.NotNull(device, nameof(device));
+        Require.NotNull(texture, nameof(texture));
         Require.NotNull(vertices, nameof(vertices));
         
         _device = device;
+        _texture = texture;
         _primitiveCount = vertices.Length / 3;
 
         _vertexBuffer 
@@ -73,16 +78,25 @@ public class PrimitiveModel : IDisposable
     {
         Require.NotNull(effect, nameof(effect));
 
-        ConfigureEffect(effect);
+        if (_texture != null)
+        {
+            effect.TextureEnabled = true;
+            effect.Texture = _texture;
+        }
 
         _device.SetVertexBuffer(_vertexBuffer);
-        _device.Indices = _indexBuffer;
+
+        if (_indexBuffer != null)
+            _device.Indices = _indexBuffer;
 
         foreach (var pass in effect.CurrentTechnique.Passes)
         {
             pass.Apply();
 
-            _device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, _primitiveCount);
+            if (_indexBuffer == null)
+                _device.DrawPrimitives(PrimitiveType.TriangleList, 0, _primitiveCount);
+            else
+                _device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, _primitiveCount);
         }
     }
 
@@ -92,13 +106,6 @@ public class PrimitiveModel : IDisposable
         Dispose(true);
         GC.SuppressFinalize(this);
     }
-
-    /// <summary>
-    /// Configures the provided shaders in preparation for drawing the model.
-    /// </summary>
-    /// <param name="effect">The shaders to be used during the rendering of this model.</param>
-    protected virtual void ConfigureEffect(BasicEffect effect)
-    { }
 
     /// <summary>
     /// Releases unmanaged and (optionally) managed resources.
