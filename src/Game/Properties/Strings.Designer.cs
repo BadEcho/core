@@ -61,6 +61,15 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No indices were provided for the vertex data..
+        /// </summary>
+        internal static string ModelNoVertexIndices {
+            get {
+                return ResourceManager.GetString("ModelNoVertexIndices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sprite sheet already has frames registered for the specified direction of movement..
         /// </summary>
         internal static string SheetAlreadyHasDirection {

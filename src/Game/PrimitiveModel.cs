@@ -16,59 +16,71 @@ using Microsoft.Xna.Framework.Graphics;
 namespace BadEcho.Game;
 
 /// <summary>
-/// Provides a generated model of 3D triangle primitives for rendering.
+/// Provides a base generated model of 3D triangle primitives for rendering.
 /// </summary>
-public class PrimitiveModel : IDisposable   
+/// <typeparam name="TVertexBuffer">
+/// The type of <see cref="VertexBuffer"/> that holds the vertex buffer data for the model.
+/// </typeparam>
+/// <typeparam name="TIndexBuffer">
+/// The type of <see cref="IndexBuffer"/> that holds the index buffer data for the model.
+/// </typeparam>
+public abstract class PrimitiveModel<TVertexBuffer, TIndexBuffer> : IDisposable
+    where TVertexBuffer : VertexBuffer
+    where TIndexBuffer : IndexBuffer
 {
-    private readonly VertexBuffer _vertexBuffer;
-    private readonly IndexBuffer? _indexBuffer;
-    private readonly GraphicsDevice _device;
+    private readonly Lazy<TVertexBuffer> _vertexBuffer;
+    private readonly Lazy<TIndexBuffer>? _indexBuffer;
     private readonly int _primitiveCount;
     private readonly Texture2D? _texture;
 
     private bool _disposed;
-
+    
     /// <summary>
-    /// Initializes a new instance of the <see cref="PrimitiveModel"/> class.
+    /// Initializes a new instance of the <see cref="PrimitiveModel{TVertexBuffer,TIndexBuffer}"/> class.
     /// </summary>
     /// <param name="device">The graphics device to use when rendering the model.</param>
     /// <param name="texture">The texture to map onto the model.</param>
-    /// <param name="vertices">The vertex buffer data for the model.</param>
-    /// <param name="indices">The index buffer data for the model.</param>
-    public PrimitiveModel(GraphicsDevice device, Texture2D texture, VertexPositionTexture[] vertices, ushort[] indices)
-        : this(device, texture, vertices)
-    {
-        Require.NotNull(indices, nameof(indices));
-        // We base the number of primitives on the index buffer data if present as opposed to the vertex buffer data.
-        _primitiveCount = indices.Length / 3;
-
-        _indexBuffer 
-            = new IndexBuffer(device, IndexElementSize.SixteenBits, indices.Length, BufferUsage.WriteOnly);
-
-        _indexBuffer.SetData(indices, 0, indices.Length);
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="PrimitiveModel"/> class.
-    /// </summary>
-    /// <param name="device">The graphics device to use when rendering the model.</param>
-    /// <param name="texture">The texture to map onto the model.</param>
-    /// <param name="vertices">The vertex buffer data for the model.</param>
-    public PrimitiveModel(GraphicsDevice device, Texture2D texture, VertexPositionTexture[] vertices)
+    /// <param name="modelData">The vertex data required to render the model.</param>
+    protected PrimitiveModel(GraphicsDevice device, Texture2D texture, ModelData<VertexPositionTexture> modelData)
     {
         Require.NotNull(device, nameof(device));
         Require.NotNull(texture, nameof(texture));
-        Require.NotNull(vertices, nameof(vertices));
+        Require.NotNull(modelData, nameof(modelData));
         
-        _device = device;
+        Device = device;
         _texture = texture;
-        _primitiveCount = vertices.Length / 3;
 
-        _vertexBuffer 
-            = new VertexBuffer(device, VertexPositionTexture.VertexDeclaration, vertices.Length, BufferUsage.WriteOnly);
+        if (modelData.IndexCount != 0)
+        {
+            _primitiveCount = modelData.IndexCount / 3;
+            
+            _indexBuffer = new Lazy<TIndexBuffer>(() => CreateIndexBuffer(modelData),
+                                                  LazyThreadSafetyMode.ExecutionAndPublication);
+        }
+        else
+            _primitiveCount = modelData.VertexCount / 3;
 
-        _vertexBuffer.SetData(vertices, 0, vertices.Length);
+        _vertexBuffer = new Lazy<TVertexBuffer>(() => CreateVertexBuffer(modelData),
+                                                LazyThreadSafetyMode.ExecutionAndPublication);
     }
+
+    /// <summary>
+    /// Gets the graphics device to use when rendering the model.
+    /// </summary>
+    protected GraphicsDevice Device 
+    { get; }
+
+    /// <summary>
+    /// Gets the loaded vertex buffer for the model.
+    /// </summary>
+    protected TVertexBuffer VertexBuffer
+        => _vertexBuffer.Value;
+
+    /// <summary>
+    /// Gets the loaded index buffer for the model if index buffer data was provided at initialization; otherwise, null.
+    /// </summary>
+    protected TIndexBuffer? IndexBuffer
+        => _indexBuffer?.Value;
 
     /// <summary>
     /// Draws the model to the screen.
@@ -83,20 +95,20 @@ public class PrimitiveModel : IDisposable
             effect.TextureEnabled = true;
             effect.Texture = _texture;
         }
+        
+        Device.SetVertexBuffer(VertexBuffer);
 
-        _device.SetVertexBuffer(_vertexBuffer);
-
-        if (_indexBuffer != null)
-            _device.Indices = _indexBuffer;
+        if (IndexBuffer != null)
+            Device.Indices = IndexBuffer;
 
         foreach (var pass in effect.CurrentTechnique.Passes)
         {
             pass.Apply();
 
-            if (_indexBuffer == null)
-                _device.DrawPrimitives(PrimitiveType.TriangleList, 0, _primitiveCount);
+            if (IndexBuffer == null)
+                Device.DrawPrimitives(PrimitiveType.TriangleList, 0, _primitiveCount);
             else
-                _device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, _primitiveCount);
+                Device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, _primitiveCount);
         }
     }
 
@@ -120,10 +132,35 @@ public class PrimitiveModel : IDisposable
 
         if (disposing)
         {
-            _vertexBuffer.Dispose();
-            _indexBuffer?.Dispose();
+            if (_vertexBuffer.IsValueCreated)
+                VertexBuffer.Dispose();
+
+            if (_indexBuffer is {IsValueCreated: true})
+                IndexBuffer?.Dispose();
         }
 
         _disposed = true;
     }
+
+    /// <summary>
+    /// Creates and loads the model's vertex buffer with vertices from the the provided model data.
+    /// </summary>
+    /// <typeparam name="TVertex">The type of vertices to load into the vertex buffer.</typeparam>
+    /// <param name="modelData">The model data to load into the created vertex buffer.</param>
+    /// <returns>
+    /// A <typeparamref name="TVertexBuffer"/> instance loaded with vertices from <c>modelData</c>.
+    /// </returns>
+    protected abstract TVertexBuffer CreateVertexBuffer<TVertex>(ModelData<TVertex> modelData)
+        where TVertex : struct, IVertexType;
+
+    /// <summary>
+    /// Creates and loads the model's index buffer with vertex indices from the provided model data.
+    /// </summary>
+    /// <typeparam name="TVertex">The type of vertices used by the provided model data.</typeparam>
+    /// <param name="modelData">The model data to load into the created index buffer.</param>
+    /// <returns>
+    /// A <typeparamref name="TIndexBuffer"/> instance loaded with vertex indices from <c>modelData</c>.
+    /// </returns>
+    protected abstract TIndexBuffer CreateIndexBuffer<TVertex>(ModelData<TVertex> modelData)
+        where TVertex : struct, IVertexType;
 }

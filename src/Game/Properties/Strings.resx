@@ -110,4 +110,7 @@
 	<data name="SheetNoFramesForDirection" xml:space="preserve">
 		<value>Sprite sheet contains no frames for the specified direction of movement.</value>
 	</data>
+	<data name="ModelNoVertexIndices" xml:space="preserve">
+		<value>No indices were provided for the vertex data.</value>
+	</data>
 </root>
