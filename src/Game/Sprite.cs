@@ -113,7 +113,7 @@ public class Sprite : IPositionalEntity
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
         
-        spriteBatch.Draw(Texture, GetTargetRectangle(), GetSourceRectangle(), Color.White);
+        spriteBatch.Draw(Texture, GetTargetArea(), GetSourceArea(), Color.White);
     }
 
     /// <summary>
@@ -130,7 +130,7 @@ public class Sprite : IPositionalEntity
 
         spriteBatch.Draw(Texture,
                          Position,
-                         GetSourceRectangle(),
+                         GetSourceArea(),
                          color,
                          Angle,
                          origin,
@@ -140,16 +140,16 @@ public class Sprite : IPositionalEntity
     }
 
     /// <summary>
-    /// Gets the region of the sprite's texture that will be rendered.
+    /// Gets the bounding rectangle of the region of the sprite's texture that will be rendered.
     /// </summary>
     /// <returns>The bounding rectangle of the region of <see cref="Texture"/> that will be rendered.</returns>
-    protected virtual Rectangle GetSourceRectangle()
+    protected virtual Rectangle GetSourceArea()
         => new(0, 0, Texture.Width, Texture.Height);
 
     /// <summary>
-    /// Gets the region of the screen that the sprite's texture will be drawn on.
+    /// Gets the bounding rectangle of the region of the screen that the sprite's texture will be drawn on.
     /// </summary>
     /// <returns>The bounding rectangle of the region of the screen that <see cref="Texture"/> will be drawn on.</returns>
-    protected virtual Rectangle GetTargetRectangle()
+    protected virtual Rectangle GetTargetArea()
         => new((int) Position.X, (int) Position.Y, Texture.Width, Texture.Height);
 }

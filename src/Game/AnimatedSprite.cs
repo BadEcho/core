@@ -80,11 +80,11 @@ public sealed class AnimatedSprite : Sprite
     }
 
     /// <inheritdoc/>
-    protected override Rectangle GetSourceRectangle() 
+    protected override Rectangle GetSourceArea() 
         => _sheet.GetFrameRectangle(_direction, _currentFrame);
 
     /// <inheritdoc/>
-    protected override Rectangle GetTargetRectangle()
+    protected override Rectangle GetTargetArea()
         => new(Position.ToPoint(), _sheet.FrameSize);
 
     private static Texture2D GetSheetTexture(SpriteSheet sheet)
