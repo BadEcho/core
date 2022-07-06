@@ -20,7 +20,12 @@ namespace BadEcho.Game;
 /// </summary>
 public sealed class StaticModel : PrimitiveModel<VertexBuffer, IndexBuffer>
 {
-    /// <inheritdoc />
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StaticModel"/> class.
+    /// </summary>
+    /// <param name="device">The graphics device to use when rendering the model.</param>
+    /// <param name="texture">The texture to map onto the model.</param>
+    /// <param name="modelData">The vertex data required to render the model.</param>
     public StaticModel(GraphicsDevice device, Texture2D texture, ModelData<VertexPositionTexture> modelData) 
         : base(device, texture, modelData)
     { }
