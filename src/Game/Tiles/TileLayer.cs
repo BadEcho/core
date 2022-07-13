@@ -31,7 +31,7 @@ public sealed class TileLayer : Layer
     /// <param name="opacity">The opacity of the layer and all of its contents.</param>
     /// <param name="offset">The offset, in terms of the layer's position, from the tile map's origin.</param>
     /// <param name="size">
-    /// The size of the tile layer, in units of tiles (i.e., a 4x4 size indicates four tiles wide by four tiles high, with a total area of 16 tiles).
+    /// The tile layer's size, measured in tiles (i.e., a 4x4 size indicates four tiles wide by four tiles high, with a total area of 16 tiles).
     /// </param>
     public TileLayer(string name, bool isVisible, float opacity, Vector2 offset, Point size)
         : base(name, isVisible, opacity, offset)
