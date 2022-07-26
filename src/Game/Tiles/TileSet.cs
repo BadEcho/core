@@ -33,38 +33,51 @@ public sealed class TileSet
     }
 
     /// <summary>
-    ///  Gets the texture containing the individual tiles that compose the tile set.
+    ///  Gets the texture containing the individual tiles that compose this tile set.
     /// </summary>
     public Texture2D Texture
     { get; } 
 
     /// <summary>
-    /// Gets size of an individual tile in the tile set.
+    /// Gets size of an individual tile in this tile set.
     /// </summary>
     public Point TileSize
     { get; }
 
     /// <summary>
-    /// Gets the number of tiles in the tile set.
+    /// Gets the number of tiles in this tile set.
     /// </summary>
     public int TileCount
     { get; }
 
     /// <summary>
-    /// Gets the number of columns of tiles in the tile set.
+    /// Gets the number of columns of tiles in this tile set.
     /// </summary>
     public int Columns
     { get; }
 
     /// <summary>
-    /// Gets the space between the perimeter of the tiles composing the tile set and the edge of the texture.
+    /// Gets the space between the perimeter of the tiles composing this tile set and the edge of the texture.
     /// </summary>
     public int Margin
     { get; init; }
 
     /// <summary>
-    /// Gets the space the individual tiles that compose the tile set.
+    /// Gets the spacing between the individual tiles that compose this tile set.
     /// </summary>
     public int Spacing
     { get; init; }
+
+    /// <summary>
+    /// Gets the bounding rectangle for the identified tile within this tile set's texture.
+    /// </summary>
+    /// <param name="localId">The tile identifier localized to the tile set.</param>
+    /// <returns>The bounding rectangle for the tile identified by <c>localId</c> within this tile set's texture.</returns>
+    public Rectangle GetTileSourceArea(int localId)
+    {
+        int x = localId % Columns * (TileSize.X + Spacing) + Margin;
+        int y = localId / Columns * (TileSize.Y + Spacing) + Margin;
+
+        return new Rectangle(x, y, TileSize.X, TileSize.Y);
+    }
 }

@@ -43,7 +43,7 @@ public sealed class TileLayer : Layer
     /// <summary>
     /// Gets a range of tiles found within this tile layer.
     /// </summary>
-    /// <param name="firstId">The identifier of the tile at which the range starts.</param>
+    /// <param name="firstId">The global identifier of the tile at which the range starts.</param>
     /// <param name="count">The number of elements in the range.</param>
     /// <returns>A range of <c>count</c> tiles starting at the tile identified by <c>firstId</c>.</returns>
     public IEnumerable<Tile> GetRange(int firstId, int count)
