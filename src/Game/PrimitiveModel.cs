@@ -24,7 +24,7 @@ namespace BadEcho.Game;
 /// <typeparam name="TIndexBuffer">
 /// The type of <see cref="IndexBuffer"/> that holds the index buffer data for the model.
 /// </typeparam>
-public abstract class PrimitiveModel<TVertexBuffer, TIndexBuffer> : IDisposable
+public abstract class PrimitiveModel<TVertexBuffer, TIndexBuffer> : IPrimitiveModel
     where TVertexBuffer : VertexBuffer
     where TIndexBuffer : IndexBuffer
 {
@@ -82,10 +82,7 @@ public abstract class PrimitiveModel<TVertexBuffer, TIndexBuffer> : IDisposable
     protected TIndexBuffer? IndexBuffer
         => _indexBuffer?.Value;
 
-    /// <summary>
-    /// Draws the model to the screen.
-    /// </summary>
-    /// <param name="effect">The shaders to be used during the rendering of this model.</param>
+    /// <inheritdoc/>
     public void Draw(BasicEffect effect)
     {
         Require.NotNull(effect, nameof(effect));
