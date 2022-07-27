@@ -147,4 +147,7 @@
   <data name="ImageLayerNoImage" xml:space="preserve">
 	  <value>Image layer contains no image data.</value>
   </data>
+  <data name="TileLayerNoData" xml:space="preserve">
+	  <value>Tile layer contains no tile data.</value>
+  </data>
 </root>

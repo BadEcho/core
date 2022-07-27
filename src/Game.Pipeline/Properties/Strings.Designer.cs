@@ -149,5 +149,14 @@ namespace BadEcho.Game.Pipeline.Properties {
                 return ResourceManager.GetString("SheetUpwardRowOutOfRange", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tile layer contains no tile data..
+        /// </summary>
+        internal static string TileLayerNoData {
+            get {
+                return ResourceManager.GetString("TileLayerNoData", resourceCulture);
+            }
+        }
     }
 }
