@@ -28,8 +28,8 @@ public sealed class ImageAsset
         Require.NotNull(root, nameof(root));
 
         Source = (string?) root.Attribute(XmlConstants.SourceAttribute) ?? string.Empty;
-        Width = (int?)root.Attribute(XmlConstants.WidthAttribute) ?? default;
-        Height = (int?)root.Attribute(XmlConstants.HeightAttribute) ?? default;
+        Width = (int?) root.Attribute(XmlConstants.WidthAttribute) ?? default;
+        Height = (int?) root.Attribute(XmlConstants.HeightAttribute) ?? default;
     }
 
     /// <summary>

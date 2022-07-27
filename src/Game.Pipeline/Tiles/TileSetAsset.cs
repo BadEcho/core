@@ -34,15 +34,15 @@ public sealed class TileSetAsset
     {
         Require.NotNull(root, nameof(root));
 
-        FirstId = (int?)root.Attribute(FIRST_ID_ATTRIBUTE) ?? default;
-        Source = (string?)root.Attribute(XmlConstants.SourceAttribute) ?? string.Empty;
+        FirstId = (int?) root.Attribute(FIRST_ID_ATTRIBUTE) ?? default;
+        Source = (string?) root.Attribute(XmlConstants.SourceAttribute) ?? string.Empty;
         Name = (string?) root.Attribute(XmlConstants.NameAttribute) ?? string.Empty;
-        TileWidth = (int?)root.Attribute(XmlConstants.TileWidthAttribute) ?? default;
-        TileHeight = (int?)root.Attribute(XmlConstants.TileHeightAttribute) ?? default;
-        TileCount = (int?)root.Attribute(TILE_COUNT_ATTRIBUTE) ?? default;
-        Columns = (int?)root.Attribute(COLUMNS_ATTRIBUTE) ?? default;
-        Spacing = (int?)root.Attribute(SPACING_ATTRIBUTE) ?? default;
-        Margin = (int?)root.Attribute(MARGIN_ATTRIBUTE) ?? default;
+        TileWidth = (int?) root.Attribute(XmlConstants.TileWidthAttribute) ?? default;
+        TileHeight = (int?) root.Attribute(XmlConstants.TileHeightAttribute) ?? default;
+        TileCount = (int?) root.Attribute(TILE_COUNT_ATTRIBUTE) ?? default;
+        Columns = (int?) root.Attribute(COLUMNS_ATTRIBUTE) ?? default;
+        Spacing = (int?) root.Attribute(SPACING_ATTRIBUTE) ?? default;
+        Margin = (int?) root.Attribute(MARGIN_ATTRIBUTE) ?? default;
 
         XElement? imageElement = root.Element(XmlConstants.ImageElement);
 
