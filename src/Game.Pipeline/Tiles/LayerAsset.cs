@@ -12,6 +12,7 @@
 //-----------------------------------------------------------------------
 
 using System.Xml.Linq;
+using BadEcho.Game.Tiles;
 
 namespace BadEcho.Game.Pipeline.Tiles;
 
@@ -24,7 +25,8 @@ public abstract class LayerAsset
     /// Initializes a new instance of the <see cref="LayerAsset"/> class.
     /// </summary>
     /// <param name="root">XML element for the layer's configuration.</param>
-    protected LayerAsset(XElement root)
+    /// <param name="type">An enumeration value that specifies the type of layer and the kind of content it contains.</param>
+    protected LayerAsset(XElement root, LayerType type)
     {
         Require.NotNull(root, nameof(root));
 
@@ -33,6 +35,7 @@ public abstract class LayerAsset
         Opacity = (float?) root.Attribute(XmlConstants.OpacityAttribute) ?? 1.0f;
         OffsetX = (float?) root.Attribute(XmlConstants.OffsetXAttribute) ?? default;
         OffsetY = (float?) root.Attribute(XmlConstants.OffsetYAttribute) ?? default;
+        Type = type;
     }
 
     /// <summary>
@@ -63,5 +66,11 @@ public abstract class LayerAsset
     /// Gets the vertical offset, in terms of this layer's position, from the tile map's origin.
     /// </summary>
     public float OffsetY
+    { get; }
+
+    /// <summary>
+    /// Gets a <see cref="LayerType"/> value that specifies this layer's type and the kind of content it contains.
+    /// </summary>
+    public LayerType Type
     { get; }
 }
