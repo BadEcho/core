@@ -158,5 +158,41 @@ namespace BadEcho.Game.Pipeline.Properties {
                 return ResourceManager.GetString("TileLayerNoData", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} does not specify the orientation of the map. This is a required setting..
+        /// </summary>
+        internal static string TileMapMissingOrientation {
+            get {
+                return ResourceManager.GetString("TileMapMissingOrientation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} does not specify the render order of its tiles. This is a required setting..
+        /// </summary>
+        internal static string TileMapMissingRenderOrder {
+            get {
+                return ResourceManager.GetString("TileMapMissingRenderOrder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} uses an unsupported &apos;{1}&apos; map orientation..
+        /// </summary>
+        internal static string TileMapUnsupportedOrientation {
+            get {
+                return ResourceManager.GetString("TileMapUnsupportedOrientation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} uses an unsupported &apos;{1}&apos; tile rendering order..
+        /// </summary>
+        internal static string TileMapUnsupportedRenderOrder {
+            get {
+                return ResourceManager.GetString("TileMapUnsupportedRenderOrder", resourceCulture);
+            }
+        }
     }
 }
