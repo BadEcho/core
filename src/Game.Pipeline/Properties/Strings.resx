@@ -162,4 +162,13 @@
   <data name="TileMapUnsupportedRenderOrder" xml:space="preserve">
 	  <value>{0} uses an unsupported '{1}' tile rendering order.</value>
   </data>
+	<data name="ImportingFinished" xml:space="preserve">
+		<value>Finished importing {0}</value>
+	</data>
+	<data name="ImportingDependency" xml:space="preserve">
+		<value>Adding dependency: {0}</value>
+	</data>
+  <data name="ImportingSpritesheet" xml:space="preserve">
+		<value>Importing {0} as a sprite sheet</value>
+	</data>
 </root>

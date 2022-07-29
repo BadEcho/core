@@ -70,6 +70,33 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Adding dependency: {0}.
+        /// </summary>
+        internal static string ImportingDependency {
+            get {
+                return ResourceManager.GetString("ImportingDependency", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Finished importing {0}.
+        /// </summary>
+        internal static string ImportingFinished {
+            get {
+                return ResourceManager.GetString("ImportingFinished", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Importing {0} as a sprite sheet.
+        /// </summary>
+        internal static string ImportingSpritesheet {
+            get {
+                return ResourceManager.GetString("ImportingSpritesheet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No reference to the asset &apos;{0}&apos; was found on this content item..
         /// </summary>
         internal static string NoReferenceInContentItem {

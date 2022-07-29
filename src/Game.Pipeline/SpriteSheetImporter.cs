@@ -28,6 +28,8 @@ public sealed class SpriteSheetImporter : ContentImporter<SpriteSheetContent>
     public override SpriteSheetContent Import(string filename, ContentImporterContext context)
     {
         Require.NotNull(context, nameof(context));
+         
+        context.Log(Strings.ImportingSpritesheet.InvariantFormat(filename));
 
         var fileContents = File.ReadAllText(filename); 
         var asset = JsonSerializer.Deserialize<SpriteSheetAsset?>(fileContents,
@@ -41,7 +43,10 @@ public sealed class SpriteSheetImporter : ContentImporter<SpriteSheetContent>
         var spriteSheetContent
             = new SpriteSheetContent(asset) { Identity = new ContentIdentity(filename) };
 
+        context.Log(Strings.ImportingDependency.InvariantFormat(asset.TexturePath));
         context.AddDependency(asset.TexturePath);
+
+        context.Log(Strings.ImportingFinished.InvariantFormat(filename));
 
         return spriteSheetContent;
     }
