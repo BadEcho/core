@@ -171,4 +171,7 @@
   <data name="ImportingSpriteSheet" xml:space="preserve">
 		<value>Importing {0} as a sprite sheet</value>
 	</data>
+	<data name="ImportingTileSet" xml:space="preserve">
+		<value>Importing {0} as a tile set</value>
+	</data>
 </root>

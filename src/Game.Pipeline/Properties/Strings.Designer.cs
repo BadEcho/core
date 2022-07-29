@@ -97,6 +97,15 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Importing {0} as a tile set.
+        /// </summary>
+        internal static string ImportingTileSet {
+            get {
+                return ResourceManager.GetString("ImportingTileSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No reference to the asset &apos;{0}&apos; was found on this content item..
         /// </summary>
         internal static string NoReferenceInContentItem {

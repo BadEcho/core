@@ -35,6 +35,11 @@ public sealed class ImageAsset
     /// <summary>
     /// Gets the path to an image file if the data is stored externally; otherwise, if the image is embedded, an empty string.
     /// </summary>
+    /// <remarks>
+    /// While the TMX map format supports images with embedded image data, the most important editors of TMX files (at least the ones
+    /// to be used making Bad Echo game products), do not support this. Until such a feature becomes more widely available, tile-related
+    /// image assets will only be considered valid if they have valid source paths set.
+    /// </remarks>
     public string Source
     { get; }
 
