@@ -27,6 +27,7 @@ public sealed class SpriteSheetImporter : ContentImporter<SpriteSheetContent>
     /// <inheritdoc/>
     public override SpriteSheetContent Import(string filename, ContentImporterContext context)
     {
+        Require.NotNull(filename, nameof(filename));
         Require.NotNull(context, nameof(context));
          
         context.Log(Strings.ImportingSpriteSheet.InvariantFormat(filename));
