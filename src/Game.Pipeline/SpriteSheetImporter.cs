@@ -29,7 +29,7 @@ public sealed class SpriteSheetImporter : ContentImporter<SpriteSheetContent>
     {
         Require.NotNull(context, nameof(context));
          
-        context.Log(Strings.ImportingSpritesheet.InvariantFormat(filename));
+        context.Log(Strings.ImportingSpriteSheet.InvariantFormat(filename));
 
         var fileContents = File.ReadAllText(filename); 
         var asset = JsonSerializer.Deserialize<SpriteSheetAsset?>(fileContents,

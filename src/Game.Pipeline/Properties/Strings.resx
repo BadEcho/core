@@ -168,7 +168,7 @@
 	<data name="ImportingDependency" xml:space="preserve">
 		<value>Adding dependency: {0}</value>
 	</data>
-  <data name="ImportingSpritesheet" xml:space="preserve">
+  <data name="ImportingSpriteSheet" xml:space="preserve">
 		<value>Importing {0} as a sprite sheet</value>
 	</data>
 </root>

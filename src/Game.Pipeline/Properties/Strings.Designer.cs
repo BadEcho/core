@@ -90,9 +90,9 @@ namespace BadEcho.Game.Pipeline.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Importing {0} as a sprite sheet.
         /// </summary>
-        internal static string ImportingSpritesheet {
+        internal static string ImportingSpriteSheet {
             get {
-                return ResourceManager.GetString("ImportingSpritesheet", resourceCulture);
+                return ResourceManager.GetString("ImportingSpriteSheet", resourceCulture);
             }
         }
         
