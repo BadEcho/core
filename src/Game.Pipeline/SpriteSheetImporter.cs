@@ -41,14 +41,11 @@ public sealed class SpriteSheetImporter : ContentImporter<SpriteSheetContent>
                                         nameof(filename));
         }
 
-        var spriteSheetContent
-            = new SpriteSheetContent(asset) { Identity = new ContentIdentity(filename) };
-
         context.Log(Strings.ImportingDependency.InvariantFormat(asset.TexturePath));
         context.AddDependency(asset.TexturePath);
 
         context.Log(Strings.ImportingFinished.InvariantFormat(filename));
 
-        return spriteSheetContent;
+        return new SpriteSheetContent(asset) { Identity = new ContentIdentity(filename) };
     }
 }

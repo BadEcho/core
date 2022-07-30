@@ -43,6 +43,6 @@ public sealed class TileSetImporter : ContentImporter<TileSetContent>
 
         context.Log(Strings.ImportingFinished.InvariantFormat(filename));
 
-        return new TileSetContent(asset);
+        return new TileSetContent(asset) { Identity = new ContentIdentity(filename) };
     }
 }
