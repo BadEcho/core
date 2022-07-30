@@ -178,6 +178,6 @@
 		<value>Finished processing {0}</value>
 	</data>
   <data name="ProcessingSpriteSheet" xml:space="preserve">
-		<value>Processing</value>
+		<value>Processing sprite sheet: {0}</value>
 	</data>
 </root>

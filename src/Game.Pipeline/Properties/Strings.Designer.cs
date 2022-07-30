@@ -124,7 +124,7 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Processing.
+        ///   Looks up a localized string similar to Processing sprite sheet: {0}.
         /// </summary>
         internal static string ProcessingSpriteSheet {
             get {
