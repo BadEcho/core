@@ -70,7 +70,7 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Adding dependency: {0}.
+        ///   Looks up a localized string similar to Adding {0} as a dependency.
         /// </summary>
         internal static string ImportingDependency {
             get {
