@@ -70,7 +70,7 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Adding {0} as a dependency.
+        ///   Looks up a localized string similar to Adding dependency: {0}.
         /// </summary>
         internal static string ImportingDependency {
             get {
@@ -88,7 +88,7 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Importing {0} as a sprite sheet.
+        ///   Looks up a localized string similar to Importing sprite sheet: {0}.
         /// </summary>
         internal static string ImportingSpriteSheet {
             get {
@@ -97,7 +97,7 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Importing {0} as a tile set.
+        ///   Looks up a localized string similar to Importing tile set: {0}.
         /// </summary>
         internal static string ImportingTileSet {
             get {
