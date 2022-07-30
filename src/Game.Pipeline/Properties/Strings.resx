@@ -174,4 +174,10 @@
 	<data name="ImportingTileSet" xml:space="preserve">
 		<value>Importing tile set: {0}</value>
 	</data>
+  <data name="ProcessingFinished" xml:space="preserve">
+		<value>Finished processing {0}</value>
+	</data>
+  <data name="ProcessingSpriteSheet" xml:space="preserve">
+		<value>Processing</value>
+	</data>
 </root>

@@ -115,6 +115,24 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Finished processing {0}.
+        /// </summary>
+        internal static string ProcessingFinished {
+            get {
+                return ResourceManager.GetString("ProcessingFinished", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Processing.
+        /// </summary>
+        internal static string ProcessingSpriteSheet {
+            get {
+                return ResourceManager.GetString("ProcessingSpriteSheet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Downward direction&apos;s row exceeds the number of rows in the sprite sheet..
         /// </summary>
         internal static string SheetDownwardRowOutOfRange {

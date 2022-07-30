@@ -11,6 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Extensions;
 using BadEcho.Game.Pipeline.Properties;
 using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
@@ -27,6 +28,9 @@ public sealed class SpriteSheetProcessor : ContentProcessor<SpriteSheetContent, 
     public override SpriteSheetContent Process(SpriteSheetContent input, ContentProcessorContext context)
     {   
         Require.NotNull(input, nameof(input));
+        Require.NotNull(context, nameof(context));
+
+        context.Log(Strings.ProcessingSpriteSheet.InvariantFormat(input.Identity.SourceFilename));
 
         ValidateAsset(input.Asset);
 
@@ -35,6 +39,8 @@ public sealed class SpriteSheetProcessor : ContentProcessor<SpriteSheetContent, 
             input.Asset.RowInitial = 1;
 
         input.AddReference<Texture2DContent>(context, input.Asset.TexturePath, new OpaqueDataDictionary());
+
+        context.Log(Strings.ProcessingFinished.InvariantFormat(input.Identity.SourceFilename));
 
         return input;
     }
