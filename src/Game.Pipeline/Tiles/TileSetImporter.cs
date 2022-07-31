@@ -21,7 +21,7 @@ namespace BadEcho.Game.Pipeline.Tiles;
 /// <summary>
 /// Provides an importer of tile set asset data for the content pipeline.
 /// </summary>
-[ContentImporter(".tsx", DisplayName = "Tile Set Importer - Bad Echo")]
+[ContentImporter(".tsx", DisplayName = "Tile Set Importer - Bad Echo", DefaultProcessor = nameof(TileSetProcessor))]
 public sealed class TileSetImporter : ContentImporter<TileSetContent>
 {
     /// <inheritdoc />

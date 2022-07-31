@@ -133,6 +133,15 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Processing tile set: {0}.
+        /// </summary>
+        internal static string ProcessingTileSet {
+            get {
+                return ResourceManager.GetString("ProcessingTileSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Downward direction&apos;s row exceeds the number of rows in the sprite sheet..
         /// </summary>
         internal static string SheetDownwardRowOutOfRange {

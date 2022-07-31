@@ -180,4 +180,7 @@
   <data name="ProcessingSpriteSheet" xml:space="preserve">
 		<value>Processing sprite sheet: {0}</value>
 	</data>
+	<data name="ProcessingTileSet" xml:space="preserve">
+		<value>Processing tile set: {0}</value>
+	</data>
 </root>
