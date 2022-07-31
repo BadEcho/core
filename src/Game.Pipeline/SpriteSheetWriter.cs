@@ -33,16 +33,18 @@ public sealed class SpriteSheetWriter : ContentTypeWriter<SpriteSheetContent>
         Require.NotNull(output, nameof(output));
         Require.NotNull(value, nameof(value));
 
+        SpriteSheetAsset asset = value.Asset;
+
         ExternalReference<Texture2DContent> textureReference 
-            = value.GetReference<Texture2DContent>(value.Asset.TexturePath);
+            = value.GetReference<Texture2DContent>(asset.TexturePath);
 
         output.WriteExternalReference(textureReference);
-        output.Write(value.Asset.Rows);
-        output.Write(value.Asset.Columns);
-        output.Write(value.Asset.RowUp);
-        output.Write(value.Asset.RowDown);
-        output.Write(value.Asset.RowLeft);
-        output.Write(value.Asset.RowRight);
-        output.Write(value.Asset.RowInitial);
+        output.Write(asset.Rows);
+        output.Write(asset.Columns);
+        output.Write(asset.RowUp);
+        output.Write(asset.RowDown);
+        output.Write(asset.RowLeft);
+        output.Write(asset.RowRight);
+        output.Write(asset.RowInitial);
     }
 }
