@@ -21,7 +21,7 @@ namespace BadEcho.Game.Pipeline;
 /// Provides a writer of raw sprite sheet content into the content pipeline.
 /// </summary>
 [ContentTypeWriter]
-public class SpriteSheetWriter : ContentTypeWriter<SpriteSheetContent>
+public sealed class SpriteSheetWriter : ContentTypeWriter<SpriteSheetContent>
 {
     /// <inheritdoc />
     public override string GetRuntimeReader(TargetPlatform targetPlatform) 
