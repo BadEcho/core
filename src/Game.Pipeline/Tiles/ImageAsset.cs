@@ -20,6 +20,8 @@ namespace BadEcho.Game.Pipeline.Tiles;
 /// </summary>
 public sealed class ImageAsset
 {
+    private const string COLOR_KEY_ATTRIBUTE = "trans";
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ImageAsset"/> class.
     /// </summary>
@@ -28,6 +30,7 @@ public sealed class ImageAsset
         Require.NotNull(root, nameof(root));
 
         Source = (string?) root.Attribute(XmlConstants.SourceAttribute) ?? string.Empty;
+        ColorKey = (string?) root.Attribute(COLOR_KEY_ATTRIBUTE) ?? string.Empty;
         Width = (int?) root.Attribute(XmlConstants.WidthAttribute) ?? default;
         Height = (int?) root.Attribute(XmlConstants.HeightAttribute) ?? default;
     }
@@ -41,6 +44,15 @@ public sealed class ImageAsset
     /// image assets will only be considered valid if they have valid source paths set.
     /// </remarks>
     public string Source
+    { get; }
+
+    /// <summary>
+    /// Gets the color to treat as transparent, for the purposes of layering images together.
+    /// </summary>
+    /// <remarks>
+    /// Think of it as a green screen for your tile maps! Well sort of...that's a chroma key. Green screens are overrated anyway.
+    /// </remarks>
+    public string ColorKey
     { get; }
 
     /// <summary>
