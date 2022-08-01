@@ -42,7 +42,11 @@ public sealed class SpriteSheetImporter : ContentImporter<SpriteSheetContent>
         }
 
         context.Log(Strings.ImportingDependency.InvariantFormat(asset.TexturePath));
-        context.AddDependency(asset.TexturePath);
+
+        string texturePath
+            = Path.Combine(Path.GetDirectoryName(filename) ?? string.Empty, asset.TexturePath);
+
+        context.AddDependency(texturePath);
 
         context.Log(Strings.ImportingFinished.InvariantFormat(filename));
 
