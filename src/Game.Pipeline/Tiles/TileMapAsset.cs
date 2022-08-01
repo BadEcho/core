@@ -38,12 +38,10 @@ public sealed class TileMapAsset
     /// Initializes a new instance of the <see cref="TileMapAsset"/> class.
     /// </summary>
     /// <param name="root">XML element for the tile map's configuration.</param>
-    /// <param name="name">The name of the tile map.</param>
-    public TileMapAsset(XElement root, string name)
+    public TileMapAsset(XElement root)
     {
         Require.NotNull(root, nameof(root));
 
-        Name = name;
         Version = (string?) root.Attribute(VERSION_ATTRIBUTE) ?? string.Empty;
         Width = (int?) root.Attribute(XmlConstants.WidthAttribute) ?? default;
         Height = (int?) root.Attribute(XmlConstants.HeightAttribute) ?? default;
@@ -69,12 +67,6 @@ public sealed class TileMapAsset
             _layers.Add(new ImageLayerAsset(imageLayer));
         }
     }
-
-    /// <summary>
-    /// Gets the name of this tile map.
-    /// </summary>
-    public string Name
-    { get; }
 
     /// <summary>
     /// Gets the TMX format version for this tile map.
@@ -136,7 +128,7 @@ public sealed class TileMapAsset
     public IEnumerable<LayerAsset> Layers
         => _layers;
 
-    private TileRenderOrder ReadRenderOrder(XElement root)
+    private static TileRenderOrder ReadRenderOrder(XElement root)
     {
         string? renderOrderValue = (string?)root.Attribute(RENDER_ORDER_ATTRIBUTE);
 
@@ -146,13 +138,13 @@ public sealed class TileMapAsset
         if (!Enum.TryParse(renderOrderValue, out TileRenderOrder renderOrder))
         {
             throw new NotSupportedException(
-                Strings.TileMapUnsupportedRenderOrder.InvariantFormat(Name, renderOrderValue));
+                Strings.TileMapUnsupportedRenderOrder.InvariantFormat(renderOrderValue));
         }
 
         return renderOrder;
     }
 
-    private MapOrientation ReadOrientation(XElement root)
+    private static MapOrientation ReadOrientation(XElement root)
     {
         string? orientationValue = (string?)root.Attribute(ORIENTATION_ATTRIBUTE);
 
@@ -162,7 +154,7 @@ public sealed class TileMapAsset
         if (!Enum.TryParse(orientationValue, out MapOrientation orientation))
         {
             throw new NotSupportedException(
-                Strings.TileMapUnsupportedOrientation.InvariantFormat(Name, orientationValue));
+                Strings.TileMapUnsupportedOrientation.InvariantFormat(orientationValue));
         }
 
         return orientation;

@@ -97,6 +97,15 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Importing tile map: {0}.
+        /// </summary>
+        internal static string ImportingTileMap {
+            get {
+                return ResourceManager.GetString("ImportingTileMap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Importing tile set: {0}.
         /// </summary>
         internal static string ImportingTileSet {
@@ -129,6 +138,15 @@ namespace BadEcho.Game.Pipeline.Properties {
         internal static string ProcessingSpriteSheet {
             get {
                 return ResourceManager.GetString("ProcessingSpriteSheet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Processing tile map: {0}.
+        /// </summary>
+        internal static string ProcessingTileMap {
+            get {
+                return ResourceManager.GetString("ProcessingTileMap", resourceCulture);
             }
         }
         
@@ -214,6 +232,15 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The &apos;{0}&apos; tile layer encoding is not supported..
+        /// </summary>
+        internal static string TileLayerEncodingUnsupported {
+            get {
+                return ResourceManager.GetString("TileLayerEncodingUnsupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tile layer contains no tile data..
         /// </summary>
         internal static string TileLayerNoData {
@@ -223,7 +250,7 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} does not specify the orientation of the map. This is a required setting..
+        ///   Looks up a localized string similar to The map does not specify its orientation. This is a required setting..
         /// </summary>
         internal static string TileMapMissingOrientation {
             get {
@@ -232,7 +259,7 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} does not specify the render order of its tiles. This is a required setting..
+        ///   Looks up a localized string similar to The map does not specify the render order of its tiles. This is a required setting..
         /// </summary>
         internal static string TileMapMissingRenderOrder {
             get {
@@ -241,7 +268,7 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} uses an unsupported &apos;{1}&apos; map orientation..
+        ///   Looks up a localized string similar to The map uses an unsupported &apos;{0}&apos; map orientation..
         /// </summary>
         internal static string TileMapUnsupportedOrientation {
             get {
@@ -250,7 +277,7 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} uses an unsupported &apos;{1}&apos; tile rendering order..
+        ///   Looks up a localized string similar to The map uses an unsupported &apos;{0}&apos; tile rendering order..
         /// </summary>
         internal static string TileMapUnsupportedRenderOrder {
             get {

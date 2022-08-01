@@ -1,0 +1,216 @@
+﻿//-----------------------------------------------------------------------
+// <copyright>
+//      Created by Matt Weber <matt@badecho.com>
+//      Copyright @ 2022 Bad Echo LLC. All rights reserved.
+//
+//		Bad Echo Technologies are licensed under a
+//		GNU Affero General Public License v3.0.
+//
+//		See accompanying file LICENSE.md or a copy at:
+//		https://www.gnu.org/licenses/agpl-3.0.html
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System.IO.Compression;
+using BadEcho.Extensions;
+using BadEcho.Game.Pipeline.Properties;
+using BadEcho.Game.Tiles;
+using Microsoft.Xna.Framework.Content.Pipeline;
+using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
+using Microsoft.Xna.Framework.Content.Pipeline.Processors;
+
+namespace BadEcho.Game.Pipeline.Tiles;
+
+/// <summary>
+/// Provides a processor of tile map asset data for the content pipeline.
+/// </summary>
+[ContentProcessor(DisplayName = "Tile Map Processor - Bad Echo")]
+public sealed class TileMapProcessor : ContentProcessor<TileMapContent, TileMapContent>
+{
+    private const string COMPRESSION_GZIP = "gzip";
+    private const string COMPRESSION_ZLIB = "zlib";
+    private const string ENCODING_BASE64 = "base64";
+
+    /// <inheritdoc />
+    public override TileMapContent Process(TileMapContent input, ContentProcessorContext context)
+    {
+        Require.NotNull(input, nameof(input));
+        Require.NotNull(context, nameof(context));
+
+        context.Log(Strings.ProcessingTileMap.InvariantFormat(input.Identity.SourceFilename));
+
+        ProcessTileSets(input, context);
+        ProcessLayers(input, context);
+
+        context.Log(Strings.ProcessingFinished.InvariantFormat(input.Identity.SourceFilename));
+
+        return input;
+    }
+
+    private static void ProcessTileSets(TileMapContent input, ContentProcessorContext context)
+    {
+        TileMapAsset asset = input.Asset;
+
+        foreach (TileSetAsset tileSet in asset.TileSets)
+        {
+            if (!string.IsNullOrEmpty(tileSet.Source))
+            {   // Leverage our tile set content loader to load this external tile set.
+                input.AddReference<TileSetContent>(context, tileSet.Source, new OpaqueDataDictionary());
+            }
+            else if (tileSet.Image != null)
+            {   // If the tile set is embedded in the map, then we have to perform the content loading work here.
+                var processorParameters = new OpaqueDataDictionary
+                                          {
+                                              { nameof(TextureProcessor.ColorKeyColor), tileSet.Image.ColorKey },
+                                              { nameof(TextureProcessor.ColorKeyEnabled), true }
+                                          };
+
+                input.AddReference<Texture2DContent>(context, tileSet.Image.Source, processorParameters);
+            }
+        }
+    }
+
+    private static void ProcessLayers(TileMapContent input, ContentProcessorContext context)
+    {
+        TileMapAsset asset = input.Asset;
+
+        foreach (LayerAsset layer in asset.Layers)
+        {
+            switch (layer)
+            {
+                case ImageLayerAsset imageLayer:
+                    var processorParameters = new OpaqueDataDictionary
+                                              {
+                                                  { nameof(TextureProcessor.ColorKeyColor), imageLayer.Image.ColorKey },
+                                                  { nameof(TextureProcessor.ColorKeyEnabled), true }
+                                              };
+
+                    input.AddReference<Texture2DContent>(context, imageLayer.Image.Source, processorParameters);
+                    break;
+
+                case TileLayerAsset tileLayer:
+                    IList<uint> tileData = DecodeTileData(tileLayer.Data);
+
+                    foreach (Tile tile in CreateTiles(asset.RenderOrder, asset.Width, asset.Height, tileData))
+                    {
+                        tileLayer.Tiles.Add(tile);
+                    }
+
+                    break;
+            }
+        }
+    }
+
+    private static IEnumerable<Tile> CreateTiles(TileRenderOrder renderOrder, int mapWidth, int mapHeight, IList<uint> tileData)
+        => renderOrder switch
+        {
+            TileRenderOrder.RightDown => CreateTilesRightDown(mapWidth, mapHeight, tileData),
+            TileRenderOrder.RightUp => CreateTilesRightUp(mapWidth, mapHeight, tileData),
+            TileRenderOrder.LeftDown => CreateTilesLeftDown(mapWidth, mapHeight, tileData),
+            _ => CreateTilesLeftUp(mapWidth, mapHeight, tileData)
+        };
+
+    private static IEnumerable<Tile> CreateTilesRightDown(int mapWidth, int mapHeight, IList<uint> tileData)
+    {
+        for (int rowIndex = 0; rowIndex < mapHeight; rowIndex++)
+        {
+            for (int columnIndex = 0; columnIndex < mapWidth; columnIndex++)
+            {
+                Tile? tile = CreateTile(columnIndex, rowIndex, mapWidth, tileData);
+
+                if (tile != null)
+                    yield return tile;
+            }
+        }
+    }
+
+    private static IEnumerable<Tile> CreateTilesRightUp(int mapWidth, int mapHeight, IList<uint> tileData)
+    {
+        for (int rowIndex = mapHeight - 1; rowIndex >= 0; rowIndex--)
+        {
+            for (int columnIndex = 0; columnIndex < mapWidth; columnIndex++)
+            {
+                Tile? tile = CreateTile(columnIndex, rowIndex, mapWidth, tileData);
+
+                if (tile != null)
+                    yield return tile;
+            }
+        }
+    }
+
+    private static IEnumerable<Tile> CreateTilesLeftDown(int mapWidth, int mapHeight, IList<uint> tileData)
+    {
+        for (int rowIndex = 0; rowIndex < mapHeight; rowIndex++)
+        {
+            for (int columnIndex = mapWidth - 1; columnIndex >= 0; columnIndex--)
+            {
+                Tile? tile = CreateTile(columnIndex, rowIndex, mapWidth, tileData);
+
+                if (tile != null)
+                    yield return tile;
+            }
+        }
+    }
+
+    private static IEnumerable<Tile> CreateTilesLeftUp(int mapWidth, int mapHeight, IList<uint> tileData)
+    {
+        for (int rowIndex = mapHeight - 1; rowIndex >= mapHeight; rowIndex--)
+        {
+            for (int columnIndex = mapWidth - 1; columnIndex >= 0; columnIndex--)
+            {
+                Tile? tile = CreateTile(columnIndex, rowIndex, mapWidth, tileData);
+
+                if (tile != null)
+                    yield return tile;
+            }
+        }
+    }
+
+    private static Tile? CreateTile(int columnIndex, int rowIndex, int mapWidth, IList<uint> tileData)
+    {
+        int tileIndex = columnIndex + rowIndex * mapWidth;
+        uint tileId = tileData[tileIndex];
+
+        return tileId == 0 ? null : new Tile(tileId, columnIndex, rowIndex);
+    }
+
+    private static IList<uint> DecodeTileData(DataAsset tileData)
+        => tileData.Encoding switch
+        {
+            ENCODING_BASE64 => DecodeBase64TileData(tileData),
+            _ => throw new NotSupportedException(Strings.TileLayerEncodingUnsupported.InvariantFormat(tileData.Encoding))
+        };
+
+    private static IList<uint> DecodeBase64TileData(DataAsset tileData)
+    {
+        var tiles = new List<uint>();
+        byte[] decodedData = Convert.FromBase64String(tileData.Payload.Trim());
+
+        using (var stream = GetDataStream(decodedData, tileData.Compression))
+        {
+            using (var reader = new BinaryReader(stream))
+            {
+                var length = reader.BaseStream.Length;
+
+                while (reader.BaseStream.Position < length)
+                {
+                    tiles.Add(reader.ReadUInt32());
+                }
+            }
+        }
+
+        return tiles;
+    }
+
+    private static Stream GetDataStream(byte[] decodedData, string compression)
+    {   // Will be disposed by an outer decompression stream, if one wraps it.
+        var memoryStream = new MemoryStream(decodedData, false);
+
+        return compression switch
+        {
+            COMPRESSION_GZIP => new GZipStream(memoryStream, CompressionMode.Decompress),
+            COMPRESSION_ZLIB => new ZLibStream(memoryStream, CompressionMode.Decompress),
+            _ => memoryStream
+        };
+    }
+}

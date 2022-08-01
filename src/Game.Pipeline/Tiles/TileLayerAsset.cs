@@ -59,4 +59,11 @@ public sealed class TileLayerAsset : LayerAsset
     /// </summary>
     public int Height
     { get; }
+
+    /// <summary>
+    /// Gets the collection of tiles composing this tile layer.
+    /// </summary>
+    /// <remarks>Meant to be populated during tile map processing.</remarks>
+    public ICollection<Tile> Tiles
+    { get; } = new List<Tile>();
 }

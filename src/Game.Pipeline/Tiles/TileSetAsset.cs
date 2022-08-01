@@ -57,11 +57,11 @@ public sealed class TileSetAsset
     { get; }
 
     /// <summary>
-    /// Gets the path to a TSX file if this tile set's data is stored externally; otherwise, if the data is defined inline,
-    /// an empty string.
+    /// Gets or sets the path to a TSX file if this tile set's data is stored externally; otherwise, if the data is defined
+    /// inline, an empty string.
     /// </summary>
     public string Source
-    { get; }
+    { get; set; }
 
     /// <summary>
     /// Gets the name of this tile set.

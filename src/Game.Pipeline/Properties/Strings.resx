@@ -150,19 +150,22 @@
   <data name="TileLayerNoData" xml:space="preserve">
 	  <value>Tile layer contains no tile data.</value>
   </data>
+	<data name="TileLayerEncodingUnsupported" xml:space="preserve">
+		<value>The '{0}' tile layer encoding is not supported.</value>
+	</data>
   <data name="TileMapMissingOrientation" xml:space="preserve">
-	  <value>{0} does not specify the orientation of the map. This is a required setting.</value>
+	  <value>The map does not specify its orientation. This is a required setting.</value>
   </data>
   <data name="TileMapUnsupportedOrientation" xml:space="preserve">
-	  <value>{0} uses an unsupported '{1}' map orientation.</value>
+	  <value>The map uses an unsupported '{0}' map orientation.</value>
   </data>
   <data name="TileMapMissingRenderOrder" xml:space="preserve">
-	  <value>{0} does not specify the render order of its tiles. This is a required setting.</value>
+	  <value>The map does not specify the render order of its tiles. This is a required setting.</value>
   </data>
   <data name="TileMapUnsupportedRenderOrder" xml:space="preserve">
-	  <value>{0} uses an unsupported '{1}' tile rendering order.</value>
+	  <value>The map uses an unsupported '{0}' tile rendering order.</value>
   </data>
-	<data name="ImportingFinished" xml:space="preserve">
+  <data name="ImportingFinished" xml:space="preserve">
 		<value>Finished importing {0}</value>
 	</data>
 	<data name="ImportingDependency" xml:space="preserve">
@@ -174,6 +177,9 @@
 	<data name="ImportingTileSet" xml:space="preserve">
 		<value>Importing tile set: {0}</value>
 	</data>
+	<data name="ImportingTileMap" xml:space="preserve">
+		<value>Importing tile map: {0}</value>
+	</data>
   <data name="ProcessingFinished" xml:space="preserve">
 		<value>Finished processing {0}</value>
 	</data>
@@ -182,5 +188,8 @@
 	</data>
 	<data name="ProcessingTileSet" xml:space="preserve">
 		<value>Processing tile set: {0}</value>
+	</data>
+	<data name="ProcessingTileMap" xml:space="preserve">
+		<value>Processing tile map: {0}</value>
 	</data>
 </root>

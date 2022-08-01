@@ -11,7 +11,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Globalization;
 using System.Xml.Linq;
+using Microsoft.Xna.Framework;
 
 namespace BadEcho.Game.Pipeline.Tiles;
 
@@ -30,7 +32,12 @@ public sealed class ImageAsset
         Require.NotNull(root, nameof(root));
 
         Source = (string?) root.Attribute(XmlConstants.SourceAttribute) ?? string.Empty;
-        ColorKey = (string?) root.Attribute(COLOR_KEY_ATTRIBUTE) ?? string.Empty;
+        string colorHex = (string?) root.Attribute(COLOR_KEY_ATTRIBUTE) ?? string.Empty;
+
+        ColorKey = string.IsNullOrEmpty(colorHex)
+            ? Color.Transparent
+            : ParseColorHex(colorHex);
+
         Width = (int?) root.Attribute(XmlConstants.WidthAttribute) ?? default;
         Height = (int?) root.Attribute(XmlConstants.HeightAttribute) ?? default;
     }
@@ -52,7 +59,7 @@ public sealed class ImageAsset
     /// <remarks>
     /// Think of it as a green screen for your tile maps! Well sort of...that's a chroma key. Green screens are overrated anyway.
     /// </remarks>
-    public string ColorKey
+    public Color ColorKey
     { get; }
 
     /// <summary>
@@ -66,4 +73,18 @@ public sealed class ImageAsset
     /// </summary>
     public int Height
     { get; }
+
+    private static Color ParseColorHex(string colorHex)
+    {
+        colorHex = colorHex.Trim('#');
+
+        int r = int.Parse(colorHex[..2], NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+        int g = int.Parse(colorHex[2..4], NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+        int b = int.Parse(colorHex[4..6], NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+        int a = colorHex.Length > 6
+            ? int.Parse(colorHex[6..8], NumberStyles.HexNumber, CultureInfo.InvariantCulture)
+            : 255;
+
+        return new Color(r, g, b, a);
+    }
 }
