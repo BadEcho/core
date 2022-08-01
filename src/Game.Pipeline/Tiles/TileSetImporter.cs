@@ -38,6 +38,10 @@ public sealed class TileSetImporter : ContentImporter<TileSetContent>
         if (asset.Image != null)
         {
             context.Log(Strings.ImportingDependency.InvariantFormat(asset.Image.Source));
+
+            asset.Image.Source
+                = Path.Combine(Path.GetDirectoryName(filename) ?? string.Empty, asset.Image.Source);
+
             context.AddDependency(asset.Image.Source);
         }
 

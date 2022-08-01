@@ -36,7 +36,7 @@ public sealed class ImageAsset
     }
 
     /// <summary>
-    /// Gets the path to an image file if the data is stored externally; otherwise, if the image is embedded, an empty string.
+    /// Gets or sets the path to an image file if the data is stored externally; otherwise, if the image is embedded, an empty string.
     /// </summary>
     /// <remarks>
     /// While the TMX map format supports images with embedded image data, the most important editors of TMX files (at least the ones
@@ -44,7 +44,7 @@ public sealed class ImageAsset
     /// image assets will only be considered valid if they have valid source paths set.
     /// </remarks>
     public string Source
-    { get; }
+    { get; set; }
 
     /// <summary>
     /// Gets the color to treat as transparent, for the purposes of layering images together.

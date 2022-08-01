@@ -19,10 +19,10 @@ namespace BadEcho.Game.Pipeline;
 public sealed class SpriteSheetAsset
 {
     /// <summary>
-    /// Gets the path to the file containing the texture of the individual animation frames that compose the sprite sheet.
+    /// Gets or sets the path to the file containing the texture of the individual animation frames that compose the sprite sheet.
     /// </summary>
     public string TexturePath 
-    { get; init; } = string.Empty;
+    { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets the number of rows of frames in the sprite sheet.
