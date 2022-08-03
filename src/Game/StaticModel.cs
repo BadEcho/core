@@ -34,7 +34,7 @@ public sealed class StaticModel : PrimitiveModel<VertexBuffer, IndexBuffer>
     protected override VertexBuffer CreateVertexBuffer<TVertex>(ModelData<TVertex> modelData)
     {
         var vertexBuffer
-            = new VertexBuffer(Device, VertexPosition.VertexDeclaration, modelData.VertexCount, BufferUsage.WriteOnly);
+            = new VertexBuffer(Device, VertexPositionTexture.VertexDeclaration, modelData.VertexCount, BufferUsage.WriteOnly);
 
         modelData.LoadVertices(vertexBuffer);
 
