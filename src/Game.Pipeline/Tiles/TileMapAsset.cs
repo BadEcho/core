@@ -15,6 +15,7 @@ using System.Xml.Linq;
 using BadEcho.Extensions;
 using BadEcho.Game.Pipeline.Properties;
 using BadEcho.Game.Tiles;
+using Microsoft.Xna.Framework;
 
 namespace BadEcho.Game.Pipeline.Tiles;
 
@@ -29,7 +30,7 @@ public sealed class TileMapAsset
     private const string BACKGROUND_COLOR_ATTRIBUTE = "backgroundcolor";
     private const string TILE_SET_ELEMENT = "tileset";
     private const string TILE_LAYER_ELEMENT = "layer";
-    private const string IMAGE_LAYER_ELEMENT = "imageLayer";
+    private const string IMAGE_LAYER_ELEMENT = "imagelayer";
 
     private readonly List<TileSetAsset> _tileSets = new();
     private readonly List<LayerAsset> _layers = new();
@@ -47,7 +48,11 @@ public sealed class TileMapAsset
         Height = (int?) root.Attribute(XmlConstants.HeightAttribute) ?? default;
         TileWidth = (int?) root.Attribute(XmlConstants.TileWidthAttribute) ?? default;
         TileHeight = (int?) root.Attribute(XmlConstants.TileHeightAttribute) ?? default;
-        BackgroundColor = (string?) root.Attribute(BACKGROUND_COLOR_ATTRIBUTE) ?? string.Empty;
+        string backgroundColorHex = (string?) root.Attribute(BACKGROUND_COLOR_ATTRIBUTE) ?? string.Empty;
+
+        BackgroundColor = string.IsNullOrEmpty(backgroundColorHex)
+            ? Color.Transparent
+            : backgroundColorHex.ToColor();
 
         Orientation = ReadOrientation(root);
         RenderOrder = ReadRenderOrder(root);
@@ -87,9 +92,9 @@ public sealed class TileMapAsset
     { get; }
 
     /// <summary>
-    /// Gets the background color, expressed as a hex color code, of the map.
+    /// Gets the background color of the map.
     /// </summary>
-    public string BackgroundColor
+    public Color BackgroundColor
     { get; }
 
     /// <summary>
@@ -119,23 +124,25 @@ public sealed class TileMapAsset
     /// <summary>
     /// Gets the collection of tile sets this map sources its tile images from.
     /// </summary>
-    public IEnumerable<TileSetAsset> TileSets
+    public IReadOnlyCollection<TileSetAsset> TileSets
         => _tileSets;
 
     /// <summary>
     /// Gets the collection of map layers that compose this tile map.
     /// </summary>
-    public IEnumerable<LayerAsset> Layers
+    public IReadOnlyCollection<LayerAsset> Layers
         => _layers;
 
     private static TileRenderOrder ReadRenderOrder(XElement root)
     {
-        string? renderOrderValue = (string?)root.Attribute(RENDER_ORDER_ATTRIBUTE);
+        string? renderOrderValue = (string?) root.Attribute(RENDER_ORDER_ATTRIBUTE);
 
         if (string.IsNullOrEmpty(renderOrderValue))
             throw new InvalidOperationException(Strings.TileMapMissingRenderOrder);
+        
+        renderOrderValue = renderOrderValue.Replace("-", string.Empty, StringComparison.Ordinal);
 
-        if (!Enum.TryParse(renderOrderValue, out TileRenderOrder renderOrder))
+        if (!Enum.TryParse(renderOrderValue, true, out TileRenderOrder renderOrder))
         {
             throw new NotSupportedException(
                 Strings.TileMapUnsupportedRenderOrder.InvariantFormat(renderOrderValue));
@@ -151,7 +158,7 @@ public sealed class TileMapAsset
         if (string.IsNullOrEmpty(orientationValue))
             throw new InvalidOperationException(Strings.TileMapMissingOrientation);
 
-        if (!Enum.TryParse(orientationValue, out MapOrientation orientation))
+        if (!Enum.TryParse(orientationValue, true, out MapOrientation orientation))
         {
             throw new NotSupportedException(
                 Strings.TileMapUnsupportedOrientation.InvariantFormat(orientationValue));

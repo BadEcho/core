@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.Globalization;
 using System.Xml.Linq;
 using Microsoft.Xna.Framework;
 
@@ -36,7 +35,7 @@ public sealed class ImageAsset
 
         ColorKey = string.IsNullOrEmpty(colorHex)
             ? Color.Transparent
-            : ParseColorHex(colorHex);
+            : colorHex.ToColor();
 
         Width = (int?) root.Attribute(XmlConstants.WidthAttribute) ?? default;
         Height = (int?) root.Attribute(XmlConstants.HeightAttribute) ?? default;
@@ -73,18 +72,4 @@ public sealed class ImageAsset
     /// </summary>
     public int Height
     { get; }
-
-    private static Color ParseColorHex(string colorHex)
-    {
-        colorHex = colorHex.Trim('#');
-
-        int r = int.Parse(colorHex[..2], NumberStyles.HexNumber, CultureInfo.InvariantCulture);
-        int g = int.Parse(colorHex[2..4], NumberStyles.HexNumber, CultureInfo.InvariantCulture);
-        int b = int.Parse(colorHex[4..6], NumberStyles.HexNumber, CultureInfo.InvariantCulture);
-        int a = colorHex.Length > 6
-            ? int.Parse(colorHex[6..8], NumberStyles.HexNumber, CultureInfo.InvariantCulture)
-            : 255;
-
-        return new Color(r, g, b, a);
-    }
 }
