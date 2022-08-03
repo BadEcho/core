@@ -32,6 +32,8 @@ public sealed class TileMap
     private readonly List<TileSet> _tileSets = new();
     private readonly List<Layer> _layers = new();
     private readonly GraphicsDevice _device;
+    
+    private Matrix _world = Matrix.Identity;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TileMap"/> class.
@@ -144,6 +146,35 @@ public sealed class TileMap
     }
 
     /// <summary>
+    /// Draws the tile map to the screen.
+    /// </summary>
+    /// <param name="view">The view matrix to use.</param>
+    public void Draw(Matrix view)
+    {
+        if (_layerModelMap.Count == 0)
+            CreateModels();
+
+        var projection = Matrix.CreateOrthographicOffCenter(0, _device.Viewport.Width, _device.Viewport.Height, 0, 0, -1);
+
+        foreach (var layer in Layers)
+        {
+            _world.Translation = new Vector3(layer.Offset, 0);
+
+            var effect = new BasicEffect(_device)
+                         {
+                             World = _world,
+                             View = view,
+                             Projection = projection
+                         };
+
+            foreach (var layerModel in _layerModelMap[layer])
+            {
+                layerModel.Draw(effect);
+            }
+        }
+    }
+
+    /// <summary>
     /// Generates all the models required to render this tile map when it is being submitted for drawing.
     /// </summary>
     public void CreateModels()
@@ -215,7 +246,8 @@ public sealed class TileMap
                 }
             }
 
-            layerModels.Add(new StaticModel(_device, texture, tileData));
+            if (tileData.VertexCount > 0)
+                layerModels.Add(new StaticModel(_device, texture, tileData));
         }
 
         _layerModelMap.Add(layer, layerModels);
