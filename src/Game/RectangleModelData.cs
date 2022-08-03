@@ -49,7 +49,7 @@ public sealed class RectangleModelData : ModelData<VertexPositionTexture>
         float texelLeft = (float) sourceArea.X / textureBounds.Width;
         float texelRight = (float) (sourceArea.X + sourceArea.Width) / textureBounds.Width;
         float texelTop = (float) sourceArea.Y / textureBounds.Height;
-        float texelBottom = (float) (sourceArea.Y = sourceArea.Height) / textureBounds.Height;
+        float texelBottom = (float) (sourceArea.Y + sourceArea.Height) / textureBounds.Height;
 
         var vertexTopLeft
             = new VertexPositionTexture(new Vector3(position, 0),
@@ -62,7 +62,7 @@ public sealed class RectangleModelData : ModelData<VertexPositionTexture>
                                         new Vector2(texelLeft, texelBottom));
         var vertexBottomRight
             = new VertexPositionTexture(new Vector3(position + new Vector2(sourceArea.Width, sourceArea.Height), 0),
-                                        new Vector2(texelTop, texelRight));
+                                        new Vector2(texelRight, texelBottom));
 
         AddIndices(VertexCount);
 
