@@ -28,8 +28,6 @@ namespace BadEcho.Game.Tiles;
 /// </remarks>  
 public sealed class Tile
 {
-    private readonly TileFlips _flips;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="Tile"/> class.
     /// </summary>
@@ -43,18 +41,28 @@ public sealed class Tile
     /// </remarks>
     public Tile(uint idWithFlags, int columnIndex, int rowIndex)
     {
-        _flips = (TileFlips) idWithFlags;
-        // Clear the most significant 4 bits (nibble).
-        Id = (int) (idWithFlags & 0xFFFFFFF);
+        IdWithFlags = idWithFlags;
         ColumnIndex = columnIndex;
         RowIndex = rowIndex;
     }
 
     /// <summary>
+    /// Gets the global identifier for this tile, along with its flip flags.
+    /// </summary>
+    /// <remarks>
+    /// Refer to the <see cref="Id"/> property, which has the flip flag data stripped from the value, for a useable identifier.
+    /// </remarks>
+    public uint IdWithFlags
+    { get; }
+
+    /// <summary>
     /// Gets the identifier of this tile, unique across all tiles found in the tile sets used by a tile map.
     /// </summary>
+    /// <remarks>
+    /// The identifier for a tile is based on <see cref="IdWithFlags"/> with the most significant 4 bits (nibble) cleared.
+    /// </remarks>
     public int Id
-    { get; }
+        => (int) (IdWithFlags & 0xFFFFFFF);
 
     /// <summary>
     /// Gets the index of this tile's column within the grid of tile data that contains it.
@@ -73,26 +81,32 @@ public sealed class Tile
     /// </summary>
     /// <seealso cref="TileFlips.TwiceRotatedHexagon"/>
     public bool IsTwiceRotatedHexagon
-        => _flips.HasFlag(TileFlips.TwiceRotatedHexagon);
+        => Flips.HasFlag(TileFlips.TwiceRotatedHexagon);
 
     /// <summary>
     /// Gets a value indicating whether this tile should be flipped anti-diagonally when rendered.
     /// </summary>
     /// <seealso cref="TileFlips.FlippedAntiDiagonally"/>
     public bool IsFlippedAntiDiagonally
-        => _flips.HasFlag(TileFlips.FlippedAntiDiagonally);
+        => Flips.HasFlag(TileFlips.FlippedAntiDiagonally);
 
     /// <summary>
     /// Gets a value indicating whether this tile should be flipped in the vertical direction when rendered.
     /// </summary>
     /// <seealso cref="TileFlips.FlippedVertically"/>
     public bool IsFlippedVertically
-        => _flips.HasFlag(TileFlips.FlippedVertically);
+        => Flips.HasFlag(TileFlips.FlippedVertically);
 
     /// <summary>
     /// Gets a value indicating whether this tile should be flipped in the horizontal direction when rendered.
     /// </summary>
     /// <seealso cref="TileFlips.FlippedHorizontally"/>.
     public bool IsFlippedHorizontally
-        => _flips.HasFlag(TileFlips.FlippedHorizontally);
+        => Flips.HasFlag(TileFlips.FlippedHorizontally);
+
+    /// <summary>
+    /// Gets the directions in which this tile is to be flipped and/or rotated when being rendered.
+    /// </summary>
+    private TileFlips Flips
+        => (TileFlips) IdWithFlags;
 }
