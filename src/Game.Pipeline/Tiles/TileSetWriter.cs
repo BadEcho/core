@@ -28,18 +28,22 @@ public sealed class TileSetWriter : ContentTypeWriter<TileSetContent>
     public override string GetRuntimeReader(TargetPlatform targetPlatform)
         => typeof(TileSetReader).AssemblyQualifiedName ?? string.Empty;
 
-    /// <inheritdoc />
-    protected override void Write(ContentWriter output, TileSetContent value)
+    /// <summary>
+    /// Writes the provided tile set asset into the content pipeline, using the provided content item as a reference source.
+    /// </summary>
+    /// <param name="output">The writer to the content pipeline.</param>
+    /// <param name="asset">The tile set asset to write into the content pipeline.</param>
+    /// <param name="referenceSource">A content item to use as a reference source.</param>
+    public static void Write(ContentWriter output, TileSetAsset asset, IContentItem referenceSource)
     {
         Require.NotNull(output, nameof(output));
-        Require.NotNull(value, nameof(value));
-
-        TileSetAsset asset = value.Asset;
+        Require.NotNull(asset, nameof(asset));
+        Require.NotNull(referenceSource, nameof(referenceSource));
 
         if (asset.Image != null)
         {
             ExternalReference<Texture2DContent> imageReference
-                = value.GetReference<Texture2DContent>(asset.Image.Source);
+                = referenceSource.GetReference<Texture2DContent>(asset.Image.Source);
 
             output.WriteExternalReference(imageReference);
         }
@@ -50,5 +54,13 @@ public sealed class TileSetWriter : ContentTypeWriter<TileSetContent>
         output.Write(asset.Columns);
         output.Write(asset.Spacing);
         output.Write(asset.Margin);
+    }
+
+    /// <inheritdoc />
+    protected override void Write(ContentWriter output, TileSetContent value)
+    {
+        Require.NotNull(value, nameof(value));
+
+        Write(output, value.Asset, value);
     }
 }

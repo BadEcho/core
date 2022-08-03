@@ -22,8 +22,12 @@ namespace BadEcho.Game.Tiles;
 /// </summary>
 public sealed class TileSetReader : ContentTypeReader<TileSet>
 {
-    /// <inheritdoc />
-    protected override TileSet Read(ContentReader input, TileSet existingInstance)
+    /// <summary>
+    /// Reads a tile set instance from the content pipeline.
+    /// </summary>
+    /// <param name="input">The content pipeline reader.</param>
+    /// <returns>A <see cref="TileSet"/> instance read from <c>input</c>.</returns>
+    public static TileSet Read(ContentReader input)
     {
         Require.NotNull(input, nameof(input));
 
@@ -41,4 +45,8 @@ public sealed class TileSetReader : ContentTypeReader<TileSet>
                    Margin = margin
                };
     }
+
+    /// <inheritdoc />
+    protected override TileSet Read(ContentReader input, TileSet existingInstance)
+        => Read(input);
 }
