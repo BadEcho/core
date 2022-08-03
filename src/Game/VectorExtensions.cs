@@ -16,7 +16,7 @@ using Microsoft.Xna.Framework;
 namespace BadEcho.Game;
 
 /// <summary>
-/// Provides a set of static methods that aids in matters related to vectors.
+/// Provides a set of static methods intended to aid in matters related to vectors.
 /// </summary>
 public static class VectorExtensions
 {
