@@ -89,14 +89,17 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent, TileMapC
                     break;
 
                 case TileLayerAsset tileLayer:
-                    IList<uint> tileData = DecodeTileData(tileLayer.Data);
+                    IList<uint> tileData = DecodeTileData(tileLayer.Data, tileLayer.Width * tileLayer.Height);
 
-                    foreach (Tile tile in CreateTiles(asset.RenderOrder, asset.Width, asset.Height, tileData))
+                    foreach (Tile tile in CreateTiles(asset.RenderOrder, tileLayer.Width, tileLayer.Height, tileData))
                     {
                         tileLayer.Tiles.Add(tile);
                     }
 
                     break;
+
+                default:
+                    throw new NotSupportedException(Strings.TileMapUnsupportedLayerType.InvariantFormat(layer.Type));
             }
         }
     }
@@ -174,14 +177,14 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent, TileMapC
         return tileId == 0 ? null : new Tile(tileId, columnIndex, rowIndex);
     }
 
-    private static IList<uint> DecodeTileData(DataAsset tileData)
+    private static IList<uint> DecodeTileData(DataAsset tileData, int tilesToDecode)
         => tileData.Encoding switch
         {
-            ENCODING_BASE64 => DecodeBase64TileData(tileData),
+            ENCODING_BASE64 => DecodeBase64TileData(tileData, tilesToDecode),
             _ => throw new NotSupportedException(Strings.TileLayerEncodingUnsupported.InvariantFormat(tileData.Encoding))
         };
 
-    private static IList<uint> DecodeBase64TileData(DataAsset tileData)
+    private static IList<uint> DecodeBase64TileData(DataAsset tileData, int tilesToDecode)
     {
         var tiles = new List<uint>();
         byte[] decodedData = Convert.FromBase64String(tileData.Payload.Trim());
@@ -190,11 +193,10 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent, TileMapC
         {
             using (var reader = new BinaryReader(stream))
             {
-                var length = reader.BaseStream.Length;
-
-                while (reader.BaseStream.Position < length)
+                while (tilesToDecode > 0)
                 {
                     tiles.Add(reader.ReadUInt32());
+                    tilesToDecode--;
                 }
             }
         }

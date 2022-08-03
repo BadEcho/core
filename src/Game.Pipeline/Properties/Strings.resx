@@ -165,6 +165,9 @@
   <data name="TileMapUnsupportedRenderOrder" xml:space="preserve">
 	  <value>The map uses an unsupported '{0}' tile rendering order.</value>
   </data>
+	<data name="TileMapUnsupportedLayerType" xml:space="preserve">
+		<value>The map contains a layer of type '{0}' which is not yet supported.</value>
+	</data>
   <data name="ImportingFinished" xml:space="preserve">
 		<value>Finished importing {0}</value>
 	</data>

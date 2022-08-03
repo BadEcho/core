@@ -268,6 +268,15 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The map contains a layer of type &apos;{0}&apos; which is not yet supported..
+        /// </summary>
+        internal static string TileMapUnsupportedLayerType {
+            get {
+                return ResourceManager.GetString("TileMapUnsupportedLayerType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The map uses an unsupported &apos;{0}&apos; map orientation..
         /// </summary>
         internal static string TileMapUnsupportedOrientation {
