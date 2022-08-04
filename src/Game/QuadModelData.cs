@@ -17,16 +17,16 @@ using Microsoft.Xna.Framework.Graphics;
 namespace BadEcho.Game;
 
 /// <summary>
-/// Provides the vertex data required to render a 3D model of flat rectangular shapes.
+/// Provides the vertex data required to render a 3D model of flat quadrilateral polygons.
 /// </summary>
 /// <remarks>
-/// Rectangular shapes defined by this type of model data are expressed and subsequently rendered as pairs of adjacent
+/// Quadrilateral polygons defined by this type of model data are expressed and subsequently rendered as pairs of adjacent
 /// 3D triangle primitives.
 /// </remarks>
-public sealed class RectangleModelData : ModelData<VertexPositionTexture>
+public sealed class QuadModelData : ModelData<VertexPositionTexture>
 {
     /// <summary>
-    /// Adds 3D modeling data for a rectangular surface that can be mapped to a particular region of a texture during rendering.
+    /// Adds 3D modeling data for a quadrilateral surface that can be mapped to a particular region of a texture during rendering.
     /// </summary>
     /// <param name="textureBounds">
     /// The dimensions of the texture the mapped region is being sourced from, required for purposes of texture coordinate normalization.
