@@ -39,15 +39,20 @@ public abstract class ContentItem<T> : ContentItem, IContentItem
     { get; }
 
     /// <inheritdoc/>
-    public void AddReference<TContent>(ContentProcessorContext context, string filename, OpaqueDataDictionary processorParameters)
+    public void AddReference<TContent>(ContentProcessorContext context, 
+                                       string filename, 
+                                       OpaqueDataDictionary processorParameters)
     {
         Require.NotNull(context, nameof(context));
 
         var sourceAsset = new ExternalReference<TContent>(filename);
-        
-        var reference =
-            context.BuildAsset<TContent, TContent>(sourceAsset, string.Empty, processorParameters, string.Empty, string.Empty);
 
+        var reference =
+            context.BuildAsset<TContent, TContent>(sourceAsset,
+                                                   string.Empty,
+                                                   processorParameters,
+                                                   string.Empty,
+                                                   string.Empty);
         _references.Add(filename, reference);
     }
 
