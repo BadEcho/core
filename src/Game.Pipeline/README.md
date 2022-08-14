@@ -1,7 +1,7 @@
-﻿# Bad Echo Game Content Pipeline
+﻿# Bad Echo Content Pipeline Extension
 [![Discord](https://img.shields.io/discord/348353194801364992?style=flat-square&label=Discord&logo=discord&logoColor=white&color=7289DA)](https://discord.gg/omni) 
 
-The `BadEcho.Game.Pipeline` library  provides [Bad Echo](https://badecho.com) extensions to MonoGame's content pipeline.
+The `BadEcho.Game.Pipeline` library provides [Bad Echo](https://badecho.com) extensions to MonoGame's content pipeline.
 
 This mainly revolves around the custom types of content baked into the **.xnb** files employed by Bad Echo gaming products.
 

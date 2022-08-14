@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-		<Product>Bad Echo Game Content Pipeline</Product>
+		<Product>Bad Echo Content Pipeline Extension</Product>
 		<Description>Provides extensions to MonoGame's content pipeline.</Description>
 		<Title>$(Product)</Title>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
