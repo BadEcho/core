@@ -16,7 +16,11 @@ require("apocalypseMessages")
 
 -- Reads the current death counter from a local death counter file.
 local function readDeathCounter()
-    local deathCounterFile = assert(io.open("deathCounter.txt", "r"))
+    local deathCounterFile = io.open("deathCounter.txt", "r")
+
+    if deathCounterFile == nil then
+        return
+    end
 
     local deathCounterFromFile = deathCounterFile:read("*n")
 
@@ -66,7 +70,11 @@ local function dumpStatistics()
     local playerCoordinates = readPlayerCoordinates()
         
     local playerDamageX = toInt(readFloat("playerDamageX") * 100)
-    local playerSpeedX = toInt(readFloat("playerSpeedX") * 100)
+    local playerSpeedX = readFloat("playerSpeedX")
+
+    if playerSpeedX ~= nil then
+        playerSpeedX = toInt(playerSpeedX * 100)
+    end
 
     local deathCounterFromFile = readDeathCounter()
     local deathCounter = toInt(readInteger("deathCounter"))
@@ -76,7 +84,9 @@ local function dumpStatistics()
         writeInteger("deathCounter", deathCounter)
     end
 
-    writeDeathCounter(deathCounter)
+    if deathCounter ~= nil then
+        writeDeathCounter(deathCounter)
+    end
 
     local statistics = {
         FractionalStatistic("Health", playerHealth, playerMaxHealth, "#AA43BC50", "#AA27D88D"),
