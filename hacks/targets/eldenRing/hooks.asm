@@ -66,7 +66,9 @@ incrementDeathCounter:
     cmp [rax],rcx
     pop rax
     jne incrementDeathCounterOriginalCode
-    cmp r8,0
+    cmp r8,0    
+    jne incrementDeathCounterOriginalCode
+    cmp rax,0
     jne incrementDeathCounterOriginalCode
     inc [deathCounter]    
 incrementDeathCounterOriginalCode:
@@ -82,6 +84,32 @@ incrementDeathCounterReturn:
 
 deathCounter:
     dd 0
+
+
+// Initiates the Apocalypse system.
+// rdi: Target entity's vitals structure.
+// ebx: Two's complemented damage value being added to the health.
+// Player is damage source when rax, rdx == 0
+// (rsi and rcx and r12 also observed to be zeroed).
+define(omnifyApocalypseHook,"start_protected_game.exe"+431D8F)
+
+assert(omnifyApocalypseHook,03 9F 38 01 00 00)
+alloc(initiateApocalypse,$1000,omnifyApocalypseHook)
+
+registersymbol(omnifyApocalypseHook)
+
+initiateApocalypse:
+    pushf
+
+initiateApocalypseOriginalCode:
+    popf
+    add ebx,[rdi+00000138]
+    jmp initiateApocalypseReturn
+
+omnifyApocalypseHook:
+    jmp initiateApocalypse
+    nop 
+initiateApocalypseReturn:
 
 
 [DISABLE]
@@ -110,3 +138,12 @@ unregistersymbol(deathCounter)
 
 dealloc(deathCounter)
 dealloc(incrementDeathCounter)
+
+
+// Cleanup of omnifyApocalypseHook
+omnifyApocalypseHook:
+    db 03 9F 38 01 00 00
+
+unregistersymbol(omnifyApocalypseHook)
+
+dealloc(initiateApocalypse)
