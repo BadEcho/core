@@ -39,6 +39,7 @@ internal sealed class VisionConfigurationProvider : JsonConfigurationProvider<Vi
     [Export(typeof(IConventionProvider))]
     private sealed class SharedConfigurationProvider : IConventionProvider
     {
+        /// <inheritdoc/>
         public void ConfigureRules(ConventionBuilder conventions)
         {
             conventions.ForTypesDerivedFrom<IConfigurationProvider>()
