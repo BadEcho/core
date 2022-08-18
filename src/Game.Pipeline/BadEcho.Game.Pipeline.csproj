@@ -10,7 +10,7 @@
   <ItemGroup>
     <Content Remove="\**\*\CppNet.dll" />
 		<Content Remove="\**\*\libmojoshader_64.dll" />
-		<Content Remove="\**\*\mgfxc.*" />
+		<Content Remove="\**\*\mgfxc*" />
 		<Content Remove="\**\*\SharpDX.*" />
   </ItemGroup>
 
@@ -19,8 +19,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="MonoGame.Framework.Content.Pipeline" Version="3.8.0.1641" />
-	  <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
+	  <PackageReference Include="MonoGame.Framework.Content.Pipeline" Version="3.8.1.303" />
+	  <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
 	</ItemGroup>
 
 	<ItemGroup>
