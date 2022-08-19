@@ -100,7 +100,73 @@ registersymbol(omnifyApocalypseHook)
 
 initiateApocalypse:
     pushf
-
+    // Ensure the required player data structres are initialized.
+    push rax
+    mov rax,player
+    cmp [rax],0
+    pop rax
+    je initiateApocalypseOriginalCode
+    // Need one SSE register to hold converted values
+    sub rsp,10
+    movdqu [rsp],xmm0
+    // ...and a few registers for holding stuff.
+    push rax     
+    push rcx       
+    // Back up rax so we can use it later to check if the player is the damage source.
+    mov rcx,rax
+    // Make the negative damage positive and load it.
+    neg ebx
+    cvtsi2ss xmm0,ebx    
+    sub rsp,8
+    movd [rsp],xmm0
+    // Then load the target's current health.
+    mov rax,[rdi+138]
+    cvtsi2ss xmm0,eax
+    sub rsp,8
+    movd [rsp],xmm0
+    // Let's now see if the affected entity is the player or an NPC.
+    mov rax,playerVitals
+    cmp [rax],rdi    
+    jne initiateEnemyApocalypse    
+initiatePlayerApocalypse:
+    // Load the player's maximum health as the next parameter.
+    mov rax,[rdi+13C]
+    cvtsi2ss xmm0,eax
+    sub rsp,8
+    movd [rsp],xmm0
+    // Finally, load a pointer to where our x-coordinate resides for the player.
+    mov rax,playerLocation
+    mov rbx,[rax]
+    lea rax,[rbx+70]
+    push rax
+    call executePlayerApocalypse
+    jmp initiateApocalypseUpdateDamage
+initiateEnemyApocalypse:
+    // We only care about damage done to enemies that the player is responsible for.
+    cmp rcx,0
+    jne abortEnemyApocalypse
+    cmp rdx,0
+    jne abortEnemyApocalypse
+    call executeEnemyApocalypse
+abortEnemyApocalypse:
+    // Adjust the stack to account for the two common parameters that we don't need
+    // to actually push.
+    add rsp,10
+    jmp initiateApocalypseCleanup  
+initiateApocalypseUpdateDamage:
+    // Convert the outputs, and set sail my friend! 
+    // We'll prime the working health first since ebx needs to hold the damage amount when we're done.
+    movd xmm0,ebx
+    cvtss2si eax,xmm0
+    mov [rdi+138],eax
+    movd xmm0,eax
+    cvtss2si ebx,xmm0
+    neg ebx
+initiateApocalypseCleanup:    
+    pop rcx
+    pop rax
+    movdqu xmm0,[rsp]
+    add rsp,10
 initiateApocalypseOriginalCode:
     popf
     add ebx,[rdi+00000138]
