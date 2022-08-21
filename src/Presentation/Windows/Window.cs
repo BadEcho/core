@@ -19,7 +19,7 @@ using System.Windows.Input;
 namespace BadEcho.Presentation.Windows;
 
 /// <summary>
-/// Provides the basic window for the Bad Echo Presentation framework, offering several capabilities in addition to what's offered
+/// Provides a basic window for the Bad Echo Presentation framework, offering several capabilities in addition to what's offered
 /// by WPF's own windows, as well as an entry point into the Bad Echo Presentation framework.
 /// </summary>
 public class Window : System.Windows.Window, ICloseableContext, IHandlerBypassable
