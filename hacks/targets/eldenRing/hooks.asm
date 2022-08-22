@@ -112,14 +112,14 @@ initiateApocalypse:
     // ...and a few registers for holding stuff.
     push rax     
     push rcx       
-    push rdx
+    push rsi
     // Back up rax so we can use it later to check if the player is the damage source.
     mov rcx,rax
     // Back up rbx so we can manipulate the value safely whether the Apocalypse system runs or not.
-    mov rdx,rbx
+    mov rsi,rbx
     // Make the negative damage positive and load it.
-    neg edx
-    cvtsi2ss xmm0,edx    
+    neg esi
+    cvtsi2ss xmm0,esi
     sub rsp,8
     movd [rsp],xmm0
     // Then load the target's current health.
@@ -139,8 +139,8 @@ initiatePlayerApocalypse:
     movd [rsp],xmm0
     // Finally, load a pointer to where our x-coordinate resides for the player.
     mov rax,playerLocation
-    mov rdx,[rax]
-    lea rax,[rdx+70]
+    mov rsi,[rax]
+    lea rax,[rsi+70]
     push rax
     call executePlayerApocalypse
     jmp initiateApocalypseUpdateDamage
@@ -166,7 +166,7 @@ initiateApocalypseUpdateDamage:
     cvtss2si ebx,xmm0    
     neg ebx
 initiateApocalypseCleanup:    
-    pop rdx
+    pop rsi
     pop rcx
     pop rax
     movdqu xmm0,[rsp]
