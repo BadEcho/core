@@ -183,6 +183,9 @@ omnifyApocalypseHook:
 initiateApocalypseReturn:
 
 
+teleportitisDisplacementX:
+    dd (float)4.0
+
 [DISABLE]
 
 // Cleanup of omniPlayerHook
