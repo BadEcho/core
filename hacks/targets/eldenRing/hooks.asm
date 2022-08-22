@@ -18,7 +18,9 @@ alloc(getPlayer,$1000,omniPlayerHook)
 alloc(player,8)
 alloc(playerLocation,8)
 alloc(playerVitals,8)
+alloc(playerGameData,8)
 
+registersymbol(playerGameData)
 registersymbol(player) 
 registersymbol(playerLocation)   
 registersymbol(playerVitals)
@@ -28,12 +30,16 @@ getPlayer:
     pushf
     push rax
     push rbx    
+    push rcx
     mov [playerVitals],rcx    
     mov rax,[rcx+8]
     mov [player],rax
     mov rbx,[rax+190]
-    mov rax,[rbx+68]
-    mov [playerLocation],rax
+    mov rcx,[rbx+68]
+    mov [playerLocation],rcx
+    mov rbx,[rax+570]
+    mov [playerGameData],rbx
+    pop rcx
     pop rbx
     pop rax
 getPlayerOriginalCode:
@@ -196,7 +202,9 @@ unregistersymbol(omniPlayerHook)
 unregistersymbol(playerVitals)
 unregistersymbol(playerLocation)
 unregistersymbol(player)
+unregistersymbol(playerGameData)
 
+dealloc(playerGameData)
 dealloc(player)
 dealloc(playerLocation)
 dealloc(playerVitals)
