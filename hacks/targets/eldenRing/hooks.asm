@@ -138,6 +138,9 @@ initiateApocalypse:
     cmp [rax],rdi    
     jne initiateEnemyApocalypse    
 initiatePlayerApocalypse:
+    // Check if we're already dead. Don't want the Apocalypse log polluted
+    cmp [rdi+138],0
+    jle abortApocalypse
     // Load the player's maximum health as the next parameter.
     mov rax,[rdi+13C]
     cvtsi2ss xmm0,eax
@@ -153,12 +156,12 @@ initiatePlayerApocalypse:
 initiateEnemyApocalypse:
     // We only care about damage done to enemies that the player is responsible for.
     cmp rcx,0
-    jne abortEnemyApocalypse
+    jne abortApocalypse
     cmp rdx,0
-    jne abortEnemyApocalypse
+    jne abortApocalypse
     call executeEnemyApocalypse
     jmp initiateApocalypseUpdateDamage
-abortEnemyApocalypse:
+abortApocalypse:
     // Adjust the stack to account for the two common parameters that we don't need
     // to actually push.
     add rsp,10
