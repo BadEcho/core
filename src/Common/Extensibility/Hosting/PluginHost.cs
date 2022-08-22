@@ -171,7 +171,7 @@ public static class PluginHost
 
     /// <summary>
     /// Retrieves a locally or globally available plugin-provided export fulfilling the specified generic contract that is required
-    /// by the caller in order to ensure its proper operation, with the expectation that the contract implementation can only
+    /// by the caller in order to ensure its own proper operation, with the expectation that the contract implementation can only
     /// be considered valid if there is one and only one export available.
     /// </summary>
     /// <typeparam name="TContract">The contract type whose export should be loaded.</typeparam>
