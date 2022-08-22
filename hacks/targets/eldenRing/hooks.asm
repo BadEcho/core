@@ -151,6 +151,7 @@ initiateEnemyApocalypse:
     cmp rdx,0
     jne abortEnemyApocalypse
     call executeEnemyApocalypse
+    jmp initiateApocalypseUpdateDamage
 abortEnemyApocalypse:
     // Adjust the stack to account for the two common parameters that we don't need
     // to actually push.
@@ -160,8 +161,8 @@ initiateApocalypseUpdateDamage:
     // Convert the outputs, and set sail my friend! 
     // We'll prime the working health first since ebx needs to hold the damage amount when we're done.
     movd xmm0,ebx
-    cvtss2si eax,xmm0
-    mov [rdi+138],eax
+    cvtss2si ecx,xmm0
+    mov [rdi+138],ecx
     movd xmm0,eax
     cvtss2si ebx,xmm0    
     neg ebx
