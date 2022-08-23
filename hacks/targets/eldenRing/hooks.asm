@@ -95,8 +95,7 @@ deathCounter:
 // Initiates the Apocalypse system.
 // rdi: Target entity's vitals structure.
 // ebx: Two's complemented damage value being added to the health.
-// Player is damage source when rax, rdx == 0
-// (rsi and rcx and r12 also observed to be zeroed).
+// [rsp+50] | {[rsp]+8A} Source of damage's instance struct .
 define(omnifyApocalypseHook,"start_protected_game.exe"+431D8F)
 
 assert(omnifyApocalypseHook,03 9F 38 01 00 00)
@@ -159,6 +158,10 @@ initiateEnemyApocalypse:
     jne abortApocalypse
     cmp rdx,0
     jne abortApocalypse
+    mov rax,[rsp+8A]
+    mov rcx,player
+    cmp rax,[rcx]
+    jne abortApocalypse    
     call executeEnemyApocalypse
     jmp initiateApocalypseUpdateDamage
 abortApocalypse:
