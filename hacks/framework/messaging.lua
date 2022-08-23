@@ -233,7 +233,7 @@ local function dumpEnemyApocalypseEvent()
         apocalypseEvent = EnemyApocalypseEvent(apocalypseEvent,
                                                lastEnemyDamageEventBonusAmount,
                                                lastEnemyDamageEventBonusX,
-                                               BonusDamageTpe.Kamehameha,
+                                               BonusDamageType.Kamehameha,
                                                false)
     end
     
