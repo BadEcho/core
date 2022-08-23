@@ -884,7 +884,7 @@ gokuResult:
     dd 0
   
 gokuResultUpper:
-    dd #1000
+    dd #10000
   
 gokuResultLower:
     dd 0
