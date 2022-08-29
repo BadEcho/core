@@ -28,6 +28,10 @@ registersymbol(omniPlayerHook)
 
 getPlayer:
     pushf
+    sub rsp,10
+    movdqu [rsp],xmm0
+    sub rsp,10
+    movdqu [rsp],xmm1
     push rax
     push rbx    
     push rcx
@@ -39,9 +43,39 @@ getPlayer:
     mov [playerLocation],rcx
     mov rbx,[rax+570]
     mov [playerGameData],rbx
+    mov rbx,teleport
+    cmp [rbx],1
+    jne getPlayerCleanup
+    mov [rbx],0
+    mov rbx,teleportX
+    movss xmm0,[rbx]
+    movss xmm1,[rax+6B0]
+    subss xmm0,xmm1
+    movss xmm1,[rcx+70]
+    addss xmm0,xmm1
+    movss [rcx+70],xmm0
+    mov rbx,teleportY
+    movss xmm0,[rbx]
+    movss xmm1,[rax+6B4]
+    subss xmm0,xmm1
+    movss xmm1,[rcx+74]
+    addss xmm0,xmm1
+    movss [rcx+74],xmm0
+    mov rbx,teleportZ
+    movss xmm0,[rbx]
+    movss xmm1,[rax+6B8]
+    subss xmm0,xmm1
+    movss xmm1,[rcx+78]
+    addss xmm0,xmm1
+    movss [rcx+78],xmm0  
+getPlayerCleanup:    
     pop rcx
     pop rbx
     pop rax
+    movdqu xmm1,[rsp]
+    add rsp,10
+    movdqu xmm0,[rsp]
+    add rsp,10
 getPlayerOriginalCode:
     popf
     movd xmm1,[rcx+00000138]
