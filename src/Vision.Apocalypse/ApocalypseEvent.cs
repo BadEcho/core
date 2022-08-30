@@ -34,6 +34,7 @@ namespace BadEcho.Vision.Apocalypse;
 public abstract class ApocalypseEvent
 {
     private readonly Lazy<WeightedRandom<Func<Stream>>> _soundMap;
+    private readonly DateTime _timestamp;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ApocalypseEvent"/> class.
@@ -61,8 +62,11 @@ public abstract class ApocalypseEvent
     /// <summary>
     /// Gets the date and time at which this Apocalypse event occurred.
     /// </summary>
-    public DateTime Timestamp  
-    { get; init; }
+    public DateTime Timestamp
+    {
+        get => _timestamp;
+        init => _timestamp = value.ToLocalTime();
+    }
 
     /// <summary>
     /// Gets the raw data for the sound effect to play, if one is to be played, announcing the event's occurrence.
