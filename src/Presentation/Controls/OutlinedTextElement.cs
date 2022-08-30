@@ -480,7 +480,7 @@ public sealed class OutlinedTextElement : FrameworkElement
                 return formatString.CulturedFormat(floatingPointText);
 
             // For standard date and time format strings, we'll need the text to be parsed as a DateTime prior to formatting.
-            return DateTime.TryParse(text, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out DateTime dateTimeText)
+            return DateTime.TryParse(text, CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime dateTimeText)
                 ? formatString.CulturedFormat(dateTimeText)
                 : formatString.CulturedFormat(text);
         }
