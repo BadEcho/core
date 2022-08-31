@@ -58,7 +58,6 @@
         </LinearGradientBrush>
     </badEcho:View.Resources>
     <Border Background="{StaticResource GaugeBackground}"
-            Padding="0,0,5,0" 
             Margin="0,0,0,1">
         <!--
             The tiny bit of margin is in case there are multiple fractional statistics stacked on top 
@@ -70,7 +69,19 @@
                                          Grid.Column="0"    
                                          Grid.Row="0"
                                          />
+            <!--    
+                We want a bit of a margin placed on the right between the content and its container (whose background is basically the
+                the fractional bar gauge) in order to add a bit of extra bar color after the end of the maximum number value.
+            
+                We also want to give ourselves a bit of space here to prevent the resizing of the root border upon a change occurring to 
+                another view's statistic value (as all statistic view grids use a shared size group). This can result in a constantly shifting
+                fractional bar if the changing statistic is doing so at a fast rate (a bit of an eye sore).
+            
+                We need to create this buffer here and not the root border as any margin and padding applied there has no bearing on the shared
+                group size of statistic grids.
+            -->
             <StackPanel Orientation="Horizontal"
+                        Margin="0,0,15,0"
                         Grid.Column="1"
                         Grid.Row="1">
                 <badEcho:OutlinedTextElement Style="{StaticResource StatisticTextStyle}"
