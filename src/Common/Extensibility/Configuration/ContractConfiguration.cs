@@ -24,7 +24,7 @@ public sealed class ContractConfiguration : IContractConfiguration
 
     /// <inheritdoc/>
     public string Name 
-    { get; set; } = string.Empty;
+    { get; init; } = string.Empty;
 
     /// <inheritdoc cref="IContractConfiguration.RoutablePlugins"/>
     /// <remarks>
@@ -34,5 +34,5 @@ public sealed class ContractConfiguration : IContractConfiguration
     /// non-nullability contract found on the <see cref="IContractConfiguration"/> interface.
     /// </remarks>
     public IEnumerable<RoutablePluginConfiguration>? RoutablePlugins 
-    { get; set; }
+    { get; init; }
 }

@@ -24,7 +24,7 @@ public sealed class ExtensibilityConfiguration : IExtensibilityConfiguration
 
     /// <inheritdoc/>
     public string? PluginDirectory 
-    { get; set; }
+    { get; init; }
 
     /// <inheritdoc cref="IExtensibilityConfiguration.SegmentedContracts"/>
     /// <remarks>
@@ -34,5 +34,5 @@ public sealed class ExtensibilityConfiguration : IExtensibilityConfiguration
     /// non-nullability contract found on the <see cref="IExtensibilityConfiguration"/> interface.
     /// </remarks>
     public IEnumerable<ContractConfiguration>? SegmentedContracts
-    { get; set; }
+    { get; init; }
 }

@@ -24,11 +24,11 @@ public sealed class RoutablePluginConfiguration : IRoutablePluginConfiguration
 
     /// <inheritdoc/>
     public Guid Id 
-    { get; set; }
+    { get; init; }
 
     /// <inheritdoc/>
     public bool Primary 
-    { get; set; }
+    { get; init; }
 
     /// <inheritdoc cref="IRoutablePluginConfiguration.MethodClaims"/>
     /// <remarks>
@@ -37,5 +37,5 @@ public sealed class RoutablePluginConfiguration : IRoutablePluginConfiguration
     /// contract found on the <see cref="IRoutablePluginConfiguration"/> interface.
     /// </remarks>
     public IEnumerable<string>? MethodClaims 
-    { get; set; }
+    { get; init; }
 }

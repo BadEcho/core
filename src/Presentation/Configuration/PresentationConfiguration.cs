@@ -27,5 +27,5 @@ public sealed class PresentationConfiguration
     /// the lowest index being the leftmost monitor and the highest index being the rightmost.
     /// </remarks>
     public int LaunchDisplay
-    { get; set; }
+    { get; init; }
 }
