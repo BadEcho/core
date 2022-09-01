@@ -47,7 +47,11 @@
                     <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)"
                                      To="1"
                                      Duration="00:00:01"
-                                     />
+                                     >
+                        <DoubleAnimation.EasingFunction>
+                            <BackEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
                 </Storyboard>
             </BeginStoryboard>
         </EventTrigger>
@@ -57,7 +61,11 @@
                     <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)"
                                      To="0"
                                      Duration="00:00:01"
-                                     />
+                                     >
+                        <DoubleAnimation.EasingFunction>
+                            <BackEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
                 </Storyboard>
             </BeginStoryboard>
         </EventTrigger>
