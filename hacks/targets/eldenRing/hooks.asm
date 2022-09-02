@@ -232,6 +232,35 @@ initiateApocalypseReturn:
 teleportitisDisplacementX:
     dd (float)4.0
 
+
+// Initiates the Predator system.
+// rdi: Target's Havok chracter proxy.
+// xmm6: Movement offsets being applied to current coordinates to form desired location coordinates.
+// xmm0: Current working location coordinates.
+// Player's Havok character proxy can be found by looking at offset 0x88 of the chracter's proxy which itself 
+// is found at [playerLocation+0x60]
+define(omnifyPredatorHook,"start_protected_game.exe"+180BD45)
+
+assert(omnifyPredatorHook,0F 58 C6 8B 44 24 48)
+alloc(initiatePredator,$1000,omnifyPredatorHook)
+
+registersymbol(omnifyPredatorHook)
+
+initiatePredator:
+    pushf
+
+initiatePredatorOriginalCode:
+    popf
+    addps xmm0,xmm6
+    mov eax,[rsp+48]
+    jmp initiatePredatorReturn
+
+omnifyPredatorHook:
+    jmp initiatePredator
+    nop 2
+initiatePredatorReturn:
+
+
 [DISABLE]
 
 // Cleanup of omniPlayerHook
@@ -269,3 +298,12 @@ omnifyApocalypseHook:
 unregistersymbol(omnifyApocalypseHook)
 
 dealloc(initiateApocalypse)
+
+
+// Cleanup of omnifyPredatorHook
+omnifyPredatorHook:
+    db 0F 58 C6 8B 44 24 48
+
+unregistersymbol(omnifyPredatorHook)
+
+dealloc(initiatePredator)
