@@ -322,11 +322,11 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Multiple exports for required contract type &apos;{0}&apos; were found. Only a single provider should ever be available for contract types loaded as unique requirements..
+        ///   Looks up a localized string similar to Multiple exports for the process-originating contract type &apos;{0}&apos; were found. Only a single provider should ever be available for contract types loaded from a hosting process context..
         /// </summary>
-        internal static string MultipleExportsFoundForRequiredContract {
+        internal static string MultipleExportsFoundForProcessContract {
             get {
-                return ResourceManager.GetString("MultipleExportsFoundForRequiredContract", resourceCulture);
+                return ResourceManager.GetString("MultipleExportsFoundForProcessContract", resourceCulture);
             }
         }
         
@@ -358,11 +358,11 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No export for required contract type &apos;{0}&apos; was found. Components must be designed so that it isn&apos;t possible for required contracts to not be present, such as by exporting the required contract within the component&apos;s own assembly..
+        ///   Looks up a localized string similar to No export for the process-originating contract type &apos;{0}&apos; was found. If this is an expected contract, then it should be exported within the executable component&apos;s own assembly. If expectancy is tenuous, check for support via the appropriate methods provided by the plugin host system first..
         /// </summary>
-        internal static string NoExportFoundForRequiredContract {
+        internal static string NoExportFoundForProcessContract {
             get {
-                return ResourceManager.GetString("NoExportFoundForRequiredContract", resourceCulture);
+                return ResourceManager.GetString("NoExportFoundForProcessContract", resourceCulture);
             }
         }
         
@@ -381,6 +381,15 @@ namespace BadEcho.Properties {
         internal static string PluginFileLoadException {
             get {
                 return ResourceManager.GetString("PluginFileLoadException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The executing process is unmanaged, therefore no contract implementation are able to be exported by it..
+        /// </summary>
+        internal static string ProcessCannotExportContracts {
+            get {
+                return ResourceManager.GetString("ProcessCannotExportContracts", resourceCulture);
             }
         }
         

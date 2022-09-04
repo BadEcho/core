@@ -12,7 +12,6 @@
 //-----------------------------------------------------------------------
 
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using BadEcho.Extensibility.Configuration;
 using BadEcho.Logging;
 using BadEcho.Extensions;
@@ -135,74 +134,77 @@ public static class PluginHost
     /// instantiation of any exported parts that are found.
     /// </remarks>
     public static bool IsSupported<TContract>()
+        => IsSupported<TContract>(false);
+
+    /// <summary>
+    /// Determines if the functionality provided by the specified generic contract is available in the current operating
+    /// environment.
+    /// </summary>
+    /// <typeparam name="TContract">The contract type to check for available exports.</typeparam>
+    /// <param name="fromProcess">Value indicating if the context to search in is the local to the executing process.</param>
+    /// <returns>True if <typeparamref name="TContract"/> has exports provided; otherwise, false.</returns>
+    /// <remarks>
+    /// This method allows you to check for the existence of exports for <typeparamref name="TContract"/> while avoiding the
+    /// instantiation of any exported parts that are found.
+    /// </remarks>
+    public static bool IsSupported<TContract>(bool fromProcess)
     {
-        var lazyParts = Store.GlobalContext.Load<Lazy<TContract>>();
+        PluginContext context;
+
+        if (fromProcess)
+        {
+            Assembly? entryAssembly = Assembly.GetEntryAssembly();
+
+            if (entryAssembly == null)
+                return false;
+
+            context = Store.LoadContext(entryAssembly);
+        }
+        else
+            context = Store.GlobalContext;
+
+        var lazyParts = context.Load<Lazy<TContract>>();
 
         return lazyParts.Any();
     }
 
     /// <summary>
-    /// Retrieves a globally available plugin-provided export fulfilling the specified generic contract that is required by 
-    /// the caller in order to ensure its proper operation, with the expectation that the contract implementation can only
-    /// be considered valid if there is one and only one export available.
+    /// Retrieves the export fulfilling the specified generic contract from the hosting process executable itself.
     /// </summary>
-    /// <typeparam name="TContract">The contract type whose export should be loaded.</typeparam>
-    /// <returns>The sole, exported <typeparamref name="TContract"/> value.</returns>
+    /// <typeparam name="TContract">The contract type whose exports should be loaded.</typeparam>
+    /// <returns>An exported <typeparamref name="TContract"/> value provided by the hosting process executable.</returns>
     /// <remarks>
     /// <para>
-    /// This method should only be used for contracts that have been designed such that their consumers depend on them for
-    /// correct operation, whether at a system-wide or feature level, and that only a single provider should ever exist in
-    /// a given operating environment. It is not intended to be used by a centralized host responsible for consuming numerous
-    /// external plugins, but rather by a one-off endpoint to load contracts that are specific to that endpoint.
+    /// This allows access to exports that an executing process or application wants to make available either to itself or the
+    /// plugins that target it. A common usage for this approach would be the configuration provider endpoint for the application.
     /// </para>
     /// <para>
-    /// An example usage for this method would be from within a plugin, targeting an extension to the plugin itself that provides
-    /// a type of service that is specific to the context in which the plugin is loaded, such as a desktop user interface
-    /// communication contract for interoperability with a desktop application.
+    /// Given that exports coming from this method originate from a single process host endpoint, it is expected that only a single
+    /// contract implementation be made available. A process attempting to export more than one implementation for a particular
+    /// contract will lead to an exception being thrown.
     /// </para>
     /// <para>
-    /// If the capabilities provided by <typeparamref name="TContract"/> is such that its availability is optional to the overall
-    /// operation, support for these capabilities can be determined ahead of time by querying <see cref="IsSupported{TContract}"/>
-    /// prior to calling this method.
+    /// This method can only be used if the process hosting the code stems from a managed executable. Managed code loaded by an
+    /// unmanaged application is an example of a context in which calling this would be an invalid operation.
+    /// </para>
+    /// <para>
+    /// Likewise, given that a single export can only ever be returned by this method, and given the fact that it is the process
+    /// itself providing the export, an assumption is made that <typeparamref name="TContract"/> is a required component for the
+    /// proper operation of the application and any and all pluggable parts. If no contract implementation can be found, an error
+    /// will be thrown. To check if a contract implementation exist beforehand, call the <see cref="IsSupported{TContract}(bool)"/>
+    /// method while passing <c>true</c> for the parameter to specify to check within the process's context.
     /// </para>
     /// </remarks>
-    public static TContract LoadRequirement<TContract>()
-        => LoadRequirement<TContract>(false);
-
-    /// <summary>
-    /// Retrieves a locally or globally available plugin-provided export fulfilling the specified generic contract that is required
-    /// by the caller in order to ensure its own proper operation, with the expectation that the contract implementation can only
-    /// be considered valid if there is one and only one export available.
-    /// </summary>
-    /// <typeparam name="TContract">The contract type whose export should be loaded.</typeparam>
-    /// <param name="isLocal">Value indicating if the context to search in is local to the caller.</param>
-    /// <returns>The sole, exported <typeparamref name="TContract"/> value.</returns>
-    /// <remarks>
-    /// <para>
-    /// This method should only be used for contracts that have been designed such that their consumers depend on them for
-    /// correct operation, whether at a system-wide or feature level, and that only a single provider should ever exist in
-    /// a given operating environment. It is not intended to be used by a centralized host responsible for consuming numerous
-    /// external plugins, but rather by a one-off endpoint to load contracts that are specific to that endpoint.
-    /// </para>
-    /// <para>
-    /// An example usage for this method would be from within a plugin, targeting an extension to the plugin itself that provides
-    /// a type of service that is specific to the context in which the plugin is loaded, such as a desktop user interface
-    /// communication contract for interoperability with a desktop application.
-    /// </para>
-    /// <para>
-    /// If the capabilities provided by <typeparamref name="TContract"/> is such that its availability is optional to the overall
-    /// operation, support for these capabilities can be determined ahead of time by querying <see cref="IsSupported{TContract}"/>
-    /// prior to calling this method.
-    /// </para>
-    /// </remarks>
-    [MethodImpl(MethodImplOptions.NoInlining)]
-    public static TContract LoadRequirement<TContract>(bool isLocal)
+    public static TContract LoadFromProcess<TContract>()
     {
-        PluginContext context = isLocal
-            ? Store.LoadContext(Assembly.GetCallingAssembly())
-            : Store.GlobalContext;
+        Assembly? entryAssembly = Assembly.GetEntryAssembly();
 
-        var parts = context.Load<TContract>();
+        if (entryAssembly == null)
+            throw new InvalidOperationException(Strings.ProcessCannotExportContracts);
+
+        var parts = Store.LoadContext(entryAssembly)
+                         .Load<TContract>();
+
         TContract? uniquePart = default;
 
         foreach (var part in parts)
@@ -210,7 +212,7 @@ public static class PluginHost
             if (uniquePart != null)
             {
                 throw new InvalidOperationException(
-                    Strings.MultipleExportsFoundForRequiredContract.InvariantFormat(typeof(TContract)));
+                    Strings.MultipleExportsFoundForProcessContract.InvariantFormat(typeof(TContract)));
             }
 
             uniquePart = part;
@@ -219,7 +221,7 @@ public static class PluginHost
         if (uniquePart == null)
         {
             throw new InvalidOperationException(
-                Strings.NoExportFoundForRequiredContract.InvariantFormat(typeof(TContract)));
+                Strings.NoExportFoundForProcessContract.InvariantFormat(typeof(TContract)));
         }
 
         return uniquePart;
