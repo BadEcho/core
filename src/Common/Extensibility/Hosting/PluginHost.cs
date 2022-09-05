@@ -182,27 +182,24 @@ public static class PluginHost
     /// This allows access to exports that an executing process or application wants to make available either to itself or the
     /// plugins that target it. A common usage for this approach would be the configuration provider endpoint for the application.
     /// </para>
-    /// <para>
-    /// Given that exports coming from this method originate from a single process host endpoint, it is expected that only a single
-    /// contract implementation be made available. A process attempting to export more than one implementation for a particular
-    /// contract will lead to an exception being thrown.
-    /// </para>
-    /// <para>
-    /// This method can only be used if the process hosting the code stems from a managed executable. Managed code loaded by an
-    /// unmanaged application is an example of a context in which calling this would be an invalid operation.
-    /// </para>
-    /// <para>
-    /// In addition, given that a single export can only ever be returned by this method, and given the fact that it is the process
-    /// itself providing the export, an assumption is made that <typeparamref name="TContract"/> is a required component for the
-    /// proper operation of the application and any and all pluggable parts. If no contract implementation can be found, an error
-    /// will be thrown. To check if a contract implementation exists beforehand, call the <see cref="IsSupportedByProcess{TContract}"/>
-    /// method first.
-    /// </para>
     /// </remarks>
+    /// <exception cref="InvalidOperationException"> 
+    /// The process hosting the code is an unmanaged executable; this method can only be used if the process stems from a managed
+    /// executable.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// Multiple exports were found for the <typeparamref name="TContract"/> contract. It is expected that only a single contract
+    /// implementation be made available within locally sourced contexts.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// No exports were found for the <typeparamref name="TContract"/> contract. Given that it is the process itself providing the export,
+    /// an assumption is made that <typeparamref name="TContract"/> is a requirement for the proper execution of the application.
+    /// To check if a contract implementation exists beforehand, call the <see cref="IsSupportedByProcess{TContract}"/> method first.
+    /// </exception>
     public static TContract LoadFromProcess<TContract>()
     {
         Assembly? entryAssembly = Assembly.GetEntryAssembly();
-
+        
         if (entryAssembly == null)
             throw new InvalidOperationException(Strings.ProcessCannotExportContracts);
 
@@ -220,19 +217,16 @@ public static class PluginHost
     /// to target it. This is an alternative way to access exports from non-plugin assemblies when a hosting process
     /// executable isn't available for such a task.
     /// </para>
-    /// <para>
-    /// Given that exports coming from this method originate from a single endpoint, it is expected that only a single
-    /// contract implementation be made available. A calling assembly attempting to export more than one implementation for a
-    /// particular contract will lead to an exception being thrown.
-    /// </para>
-    /// <para>
-    /// In addition, given that a single export can only ever be returned by this method, and given the fact that it is the caller
-    /// itself providing the export, an assumption is made that <typeparamref name="TContract"/> is a required component for the
-    /// proper operation of the component and any and all pluggable parts. If no contract implementation can be found, an error
-    /// will be thrown. To check if a contract implementation exists beforehand, call the <see cref="IsSupportedByCaller{TContract}"/>
-    /// method first.
-    /// </para>
     /// </remarks>
+    /// <exception cref="InvalidOperationException">
+    /// Multiple exports were found for the <typeparamref name="TContract"/> contract. It is expected that only a single contract
+    /// implementation be made available within locally sourced contexts.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// No exports were found for the <typeparamref name="TContract"/> contract. Given that it is the caller itself providing the export,
+    /// an assumption is made that <typeparamref name="TContract"/> is a requirement for the proper execution of the component.
+    /// To check if a contract implementation exists beforehand, call the <see cref="IsSupportedByCaller{TContract}"/> method first.
+    /// </exception>
     [MethodImpl(MethodImplOptions.NoInlining)]
     public static TContract LoadFromCaller<TContract>()
     {
