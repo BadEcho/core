@@ -19,7 +19,9 @@ alloc(player,8)
 alloc(playerLocation,8)
 alloc(playerVitals,8)
 alloc(playerGameData,8)
+alloc(playerHavokProxy,8)
 
+registersymbol(playerHavokProxy)
 registersymbol(playerGameData)
 registersymbol(player) 
 registersymbol(playerLocation)   
@@ -35,12 +37,22 @@ getPlayer:
     push rax
     push rbx    
     push rcx
+    // We start off working in the player's "vitals" structure, also known as the "player data module".
     mov [playerVitals],rcx    
+    // The root player instance structure is found at 0x8, from there we will be mapping everything else.
     mov rax,[rcx+8]
     mov [player],rax
+    // The collection of all modules for the player is found at 0x190 in the player root structure.
     mov rbx,[rax+190]
+    // The physics module, containing the character's location, is at 0x68 in the module collection.
     mov rcx,[rbx+68]
     mov [playerLocation],rcx
+    // In order to find the player's Havok character proxy, we must first find the character proxy in the
+    // physics module.
+    mov rbx,[rcx+60]
+    // The player's Havok character proxy can be found at 0x88 inside the character proxy.
+    mov rcx,[rbx+88]
+    mov [playerHavokProxy],rcx
     mov rbx,[rax+570]
     mov [playerGameData],rbx
     mov rbx,teleport
@@ -272,7 +284,9 @@ unregistersymbol(playerVitals)
 unregistersymbol(playerLocation)
 unregistersymbol(player)
 unregistersymbol(playerGameData)
+unregistersymbol(playerHavokProxy)
 
+dealloc(playerHavokProxy)
 dealloc(playerGameData)
 dealloc(player)
 dealloc(playerLocation)
