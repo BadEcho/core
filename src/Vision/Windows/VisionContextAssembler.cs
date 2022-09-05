@@ -39,7 +39,7 @@ internal sealed class VisionContextAssembler : IContextAssembler<VisionViewModel
         _dispatcher = dispatcher;
 
         IConfigurationProvider configurationProvider
-            = PluginHost.LoadRequirement<IConfigurationProvider>(true);
+            = PluginHost.LoadFromProcess<IConfigurationProvider>();
 
         configurationProvider.ConfigurationChanged += HandleConfigurationChanged;
 

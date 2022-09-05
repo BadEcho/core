@@ -52,7 +52,7 @@ public partial class App
         window.AssembleContext(contextAssembler);
 
         IConfigurationProvider configurationProvider
-            = PluginHost.LoadRequirement<IConfigurationProvider>(true);
+            = PluginHost.LoadFromProcess<IConfigurationProvider>();
 
         configurationProvider.ConfigurationChanged += HandleConfigurationChanged;
 

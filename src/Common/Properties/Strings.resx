@@ -170,11 +170,11 @@
 	<data name="ProcessCannotExportContracts" xml:space="preserve">
 		<value>The executing process is unmanaged, therefore no contract implementation are able to be exported by it.</value>
 	</data>
-  <data name="MultipleExportsFoundForProcessContract" xml:space="preserve">
-    <value>Multiple exports for the process-originating contract type '{0}' were found. Only a single provider should ever be available for contract types loaded from a hosting process context.</value>
+  <data name="MultipleExportsFoundForLocalContract" xml:space="preserve">
+    <value>Multiple exports for the locally exported contract type '{0}' were found. Only a single provider should ever be available for contract types meant to be loaded from a local context.</value>
   </data>
-  <data name="NoExportFoundForProcessContract" xml:space="preserve">
-    <value>No export for the process-originating contract type '{0}' was found. If this is an expected contract, then it should be exported within the executable component's own assembly. If expectancy is tenuous, check for support via the appropriate methods provided by the plugin host system first.</value>
+  <data name="NoExportFoundForLocalContract" xml:space="preserve">
+    <value>No local export for the contract type '{0}' was found. If this is an expected contract, then it should be exported within the consuming component's own assembly. If expectancy is tenuous, check for support via the appropriate methods provided by the plugin host system first.</value>
   </data>
   <data name="IncompatibleDependencyTypeForInjection" xml:space="preserve">
     <value>Injection of exported parts into an attributed pluggable part of type '{0}' within a self-armed context requires said part to be assignable to the specified dependency value of type '{1}'.</value>

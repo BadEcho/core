@@ -47,7 +47,7 @@ public sealed class AnchorPointPanel : Panel
     public AnchorPointPanel()
     {
         IConfigurationProvider configurationProvider
-            = PluginHost.LoadRequirement<IConfigurationProvider>(true);
+            = PluginHost.LoadFromProcess<IConfigurationProvider>();
 
         configurationProvider.ConfigurationChanged += HandleConfigurationChanged;
 

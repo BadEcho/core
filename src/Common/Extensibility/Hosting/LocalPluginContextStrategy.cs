@@ -18,42 +18,49 @@ using System.Reflection;
 namespace BadEcho.Extensibility.Hosting;
 
 /// <summary>
-/// Provides a strategy that directs a <see cref="PluginContext"/> to make available all plugins discoverable within a local
-/// caller's context through the Bad Echo Extensibility framework.
+/// Provides a strategy that directs a <see cref="PluginContext"/> to make available all plugins discoverable within a localized
+/// context through the Bad Echo Extensibility framework.
 /// </summary>
 /// <remarks>
 /// <para>
 /// Assemblies that are neither plugin assemblies nor extensibility points can take advantage of the Bad Echo Extensibility framework
-/// through this strategy. A local pluggable part is considered to be a built-in requirement of an assembly and, therefore,
-/// is loaded through a <see cref="PluginHost.LoadRequirement{TContract}(bool)"/> call.
+/// through this strategy.
 /// </para>
 /// <para>
-/// An example of a local requirement-styled pluggable part that should be universally understood to be useful is a non-trivial
-/// application configuration provider.
+/// There are several kinds of pluggable parts that are covered by this strategy: 
+/// <list type="bullet">
+/// <item>
+/// Parts local to an assembly making a call to the <see cref="PluginHost.LoadFromCaller{TContract}"/> method.
+/// </item>
+/// <item>
+/// Parts local to a hosting process executable that are being accessed with a call to the
+/// <see cref="PluginHost.LoadFromProcess{TContract}"/> method.
+/// </item>
+/// </list>
 /// </para>
 /// </remarks>
 internal sealed class LocalPluginContextStrategy : IPluginContextStrategy
 {
-    private readonly Assembly _callingAssembly;
+    private readonly Assembly _assembly;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LocalPluginContextStrategy"/> class.
     /// </summary>
-    /// <param name="callingAssembly">
-    /// The calling assembly that is to act as the local context from which pluggable parts are loaded.
+    /// <param name="assembly">
+    /// The assembly that is to act as the local context from which pluggable parts are loaded.
     /// </param>
-    public LocalPluginContextStrategy(Assembly callingAssembly)
+    public LocalPluginContextStrategy(Assembly assembly)
     {
-        Require.NotNull(callingAssembly, nameof(callingAssembly));
+        Require.NotNull(assembly, nameof(assembly));
 
-        _callingAssembly = callingAssembly;
+        _assembly = assembly;
     }
 
     /// <inheritdoc/>
     public CompositionHost CreateContainer()
     {
         var configuration = new ContainerConfiguration()
-            .WithAssembly(_callingAssembly);
+            .WithAssembly(_assembly);
 
         ConventionBuilder conventions = this.LoadConventions(configuration);
 

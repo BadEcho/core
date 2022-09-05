@@ -322,11 +322,11 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Multiple exports for the process-originating contract type &apos;{0}&apos; were found. Only a single provider should ever be available for contract types loaded from a hosting process context..
+        ///   Looks up a localized string similar to Multiple exports for the locally exported contract type &apos;{0}&apos; were found. Only a single provider should ever be available for contract types meant to be loaded from a local context..
         /// </summary>
-        internal static string MultipleExportsFoundForProcessContract {
+        internal static string MultipleExportsFoundForLocalContract {
             get {
-                return ResourceManager.GetString("MultipleExportsFoundForProcessContract", resourceCulture);
+                return ResourceManager.GetString("MultipleExportsFoundForLocalContract", resourceCulture);
             }
         }
         
@@ -358,11 +358,11 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No export for the process-originating contract type &apos;{0}&apos; was found. If this is an expected contract, then it should be exported within the executable component&apos;s own assembly. If expectancy is tenuous, check for support via the appropriate methods provided by the plugin host system first..
+        ///   Looks up a localized string similar to No local export for the contract type &apos;{0}&apos; was found. If this is an expected contract, then it should be exported within the consuming component&apos;s own assembly. If expectancy is tenuous, check for support via the appropriate methods provided by the plugin host system first..
         /// </summary>
-        internal static string NoExportFoundForProcessContract {
+        internal static string NoExportFoundForLocalContract {
             get {
-                return ResourceManager.GetString("NoExportFoundForProcessContract", resourceCulture);
+                return ResourceManager.GetString("NoExportFoundForLocalContract", resourceCulture);
             }
         }
         
