@@ -49,7 +49,7 @@ getPlayer:
     mov [playerLocation],rcx
     // In order to find the player's Havok character proxy, we must first find the character proxy in the
     // physics module.
-    mov rbx,[rcx+60]
+    mov rbx,[rcx+98]
     // The player's Havok character proxy can be found at 0x88 inside the character proxy.
     mov rcx,[rbx+88]
     mov [playerHavokProxy],rcx
@@ -59,6 +59,7 @@ getPlayer:
     cmp [rbx],1
     jne getPlayerCleanup
     mov [rbx],0
+    mov rcx,[playerLocation]
     mov rbx,teleportX
     movss xmm0,[rbx]
     movss xmm1,[rax+6B0]
@@ -250,10 +251,10 @@ teleportitisDisplacementX:
 // xmm6: Movement offsets being applied to current coordinates to form desired location coordinates.
 // xmm0: Current working location coordinates.
 // Player's Havok character proxy can be found by looking at offset 0x88 of the chracter's proxy which itself 
-// is found at [playerLocation+0x60]
-define(omnifyPredatorHook,"start_protected_game.exe"+180BD45)
+// is found at [playerLocation+0x98]
+define(omnifyPredatorHook,"start_protected_game.exe"+180BD40)
 
-assert(omnifyPredatorHook,0F 58 C6 8B 44 24 48)
+assert(omnifyPredatorHook,F3 45 0F 5C D3)
 alloc(initiatePredator,$1000,omnifyPredatorHook)
 
 registersymbol(omnifyPredatorHook)
@@ -263,13 +264,13 @@ initiatePredator:
 
 initiatePredatorOriginalCode:
     popf
-    addps xmm0,xmm6
-    mov eax,[rsp+48]
+    subss xmm10,xmm11
+    // Followed by the movement application code:
+    // addps xmm0,xmm6    
     jmp initiatePredatorReturn
 
 omnifyPredatorHook:
     jmp initiatePredator
-    nop 2
 initiatePredatorReturn:
 
 
@@ -316,7 +317,7 @@ dealloc(initiateApocalypse)
 
 // Cleanup of omnifyPredatorHook
 omnifyPredatorHook:
-    db 0F 58 C6 8B 44 24 48
+    db F3 45 0F 5C D3
 
 unregistersymbol(omnifyPredatorHook)
 
