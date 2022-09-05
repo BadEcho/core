@@ -127,14 +127,6 @@ public class PluginHostTests
     }
 
     [Fact]
-    public void LoadRequirement_IUniqueRequirement_ReturnsPart()
-    {
-        var part = PluginHost.LoadRequirement<IUniqueRequirement>();
-
-        Assert.NotNull(part);
-    }
-
-    [Fact]
     public void ArmedLoad_IFakePartWithComposedDependencies_ReturnsPart()
     {
         var dependency = new ComposedDependency();
