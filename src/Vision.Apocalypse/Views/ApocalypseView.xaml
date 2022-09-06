@@ -169,13 +169,13 @@
                                 <GradientStop Color="Transparent" 
                                               Offset="0"
                                               />
-                                <GradientStop Color="{DynamicResource {x:Static t:Colors.FadingOutlineColorKey}}" 
+                                <GradientStop Color="{StaticResource {x:Static t:Colors.FadingOutlineColorKey}}" 
                                               Offset="0.1"
                                               />
-                                <GradientStop Color="{DynamicResource {x:Static t:Colors.OutlineMidpointColorKey}}" 
+                                <GradientStop Color="{StaticResource {x:Static t:Colors.OutlineMidpointColorKey}}" 
                                               Offset="0.5"
                                               />
-                                <GradientStop Color="{DynamicResource {x:Static t:Colors.FadingOutlineColorKey}}" 
+                                <GradientStop Color="{StaticResource {x:Static t:Colors.FadingOutlineColorKey}}" 
                                               Offset="0.9"
                                               />
                                 <GradientStop Color="Transparent" 
