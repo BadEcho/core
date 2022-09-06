@@ -35,8 +35,12 @@ public static class NumberExtensions
 
         if (double.IsNegativeInfinity(source))
             return double.IsNegativeInfinity(other);
-        
-        return Math.Abs(source - other) / (Math.Abs(source) + Math.Abs(other) + 1) < MACHINE_DOUBLE_EPSILON;
+
+        // The values themselves influence the effective epsilon involved in order for comparisons to survive scalar multiplication.
+        // We add both values together (along with some padding for increased tolerance) and then multiply that by our base epsilon.
+        double epsilon = (Math.Abs(source) + Math.Abs(other) + 10) * MACHINE_DOUBLE_EPSILON;
+
+        return Math.Abs(source - other) < epsilon;
     }
 
     /// <summary>
@@ -54,6 +58,10 @@ public static class NumberExtensions
         if (float.IsNegativeInfinity(source))
             return float.IsNegativeInfinity(other);
 
-        return Math.Abs(source - other) / (Math.Abs(source) + Math.Abs(other) + 1) < MACHINE_FLOAT_EPSILON;
+        // The values themselves influence the effective epsilon involved in order for comparisons to survive scalar multiplication.
+        // We add both values together (along with some padding for increased tolerance) and then multiply that by our base epsilon.
+        float epsilon = (Math.Abs(source) + Math.Abs(other) + 10) * MACHINE_FLOAT_EPSILON;
+
+        return Math.Abs(source - other) < epsilon;
     }
 }
