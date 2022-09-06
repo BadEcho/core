@@ -102,7 +102,7 @@ getPlayerReturn:
 
 // Increments the death counter when we ded.
 // rcx: The target entity's vital structure.
-// r8: 0 if dead, 1 if not.
+// r8 is 0 and r11 is 1 when we're dead.
 define(omniDeathCounterHook,"start_protected_game.exe"+432702)
 
 assert(omniDeathCounterHook,89 81 38 01 00 00)
@@ -120,6 +120,8 @@ incrementDeathCounter:
     pop rax
     jne incrementDeathCounterOriginalCode
     cmp r8,0    
+    jne incrementDeathCounterOriginalCode
+    cmp r11,1
     jne incrementDeathCounterOriginalCode
     cmp rax,0
     jne incrementDeathCounterOriginalCode
