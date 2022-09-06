@@ -258,12 +258,41 @@ define(omnifyPredatorHook,"start_protected_game.exe"+180BD40)
 
 assert(omnifyPredatorHook,F3 45 0F 5C D3)
 alloc(initiatePredator,$1000,omnifyPredatorHook)
+alloc(playerSpeedX,8)
+alloc(playerVerticalX,8)
 
+registersymbol(playerVerticalX)
+registersymbol(playerSpeedX)
 registersymbol(omnifyPredatorHook)
 
 initiatePredator:
     pushf
-
+    // This runs more frequently than our player struct polling function.
+    push rax    
+    mov rax,playerHavokProxy
+    cmp rax,0
+    pop rax
+    je initiatePredatorOriginalCode
+    push rax
+    mov rax,playerHavokProxy
+    cmp [rax],rdi
+    pop rax
+    je applyPlayerSpeed
+    jmp initiatePredatorOriginalCode
+applyPlayerSpeed:
+    sub rsp,10
+    movdqu [rsp],xmm1
+    sub rsp,10
+    movdqu [rsp],xmm2
+    movss xmm1,[playerSpeedX]    
+    movss xmm2,[playerVerticalX]    
+    movlhps xmm1,xmm2    
+    shufps xmm1,xmm1,8
+    mulps xmm6,xmm1
+    movdqu xmm2,[rsp]
+    add rsp,10
+    movdqu xmm1,[rsp]
+    add rsp,10
 initiatePredatorOriginalCode:
     popf
     subss xmm10,xmm11
@@ -274,6 +303,13 @@ initiatePredatorOriginalCode:
 omnifyPredatorHook:
     jmp initiatePredator
 initiatePredatorReturn:
+
+
+playerSpeedX:
+    dd (float)1.0
+
+playerVerticalX:
+    dd (float)1.0
 
 
 [DISABLE]
@@ -322,5 +358,9 @@ omnifyPredatorHook:
     db F3 45 0F 5C D3
 
 unregistersymbol(omnifyPredatorHook)
+unregistersymbol(playerSpeedX)
+unregistersymbol(playerVerticalX)
 
+dealloc(playerVerticalX)
+dealloc(playerSpeedX)
 dealloc(initiatePredator)
