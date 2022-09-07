@@ -1,16 +1,18 @@
 {
-  "launchDisplay": 0,
-  "leftAnchorMargin":  "0,140,0,0",
+  "launchDisplay": 1,
+  "scaleX": 1.33,
+  "scaleY": 1.33, 
+  "leftAnchorMargin": "0,125,0,0",
   "titleLocation": "TopLeft",
-  "messageFilesDirectory": "..\\..\\hacks\\targets\\nioh2",
+  "messageFilesDirectory": "..\\..\\hacks\\targets\\eldenRing",
   "modules": {
     "BadEcho.Vision.Statistics": {
       "location": "TopLeft"
     },
     "BadEcho.Vision.Apocalypse": {
-      "location": "BottomCenter",
+      "location": "TopRight",
       "maxMessages": 3,
       "effectMessageMaxWidth": 650
-    } 
+    }
   }
-} 
+}
