@@ -14,8 +14,14 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
+using BadEcho.Configuration;
 using BadEcho.Extensibility.Hosting;
+using BadEcho.Extensions;
+using BadEcho.Interop;
+using BadEcho.Logging;
+using BadEcho.Presentation.Configuration;
 using BadEcho.Presentation.Extensions;
 using BadEcho.Presentation.Properties;
 using ThreadExceptionEventArgs = BadEcho.Threading.ThreadExceptionEventArgs;
@@ -39,6 +45,8 @@ internal sealed class App
 {
     private const string TEXT_BOX_VIEW_NAME = "TextBoxView";
 
+    private Transform? _defaultTransform;
+
     /// <summary>
     /// Occurs when an exception is thrown by the Bad Echo Presentation framework application and not handled.
     /// </summary>
@@ -59,6 +67,7 @@ internal sealed class App
         RegisterClassHandlers();
 
         application.DispatcherUnhandledException += HandleDispatcherUnhandledException;
+        application.Startup += HandleStartup;
     }
 
     /// <summary>
@@ -160,6 +169,99 @@ internal sealed class App
         TextBox textBox = (TextBox)e.OriginalSource;
 
         textBox.Invoke(textBox.SelectAll, DispatcherPriority.Input);
+    }
+
+    private static void ApplyDisplayConfiguration(PresentationConfiguration configuration, Window mainWindow)
+    {
+        Display launchDisplay = Display.Devices.Skip(configuration.LaunchDisplay)
+                                       .First();
+
+        mainWindow.MoveToDisplay(launchDisplay);
+    }
+
+    private static bool IsScaleApplicable(double scale)
+        => scale > 0 && !scale.ApproximatelyEquals(1.0);
+
+    private void ApplyConfiguration(IConfigurationProvider configurationProvider)
+    {
+        Window? mainWindow = Application.Current?.MainWindow;
+
+        if (mainWindow == null)
+            return;
+
+        PresentationConfiguration configuration
+            = configurationProvider.GetConfiguration<PresentationConfiguration>();
+
+        ApplyDisplayConfiguration(configuration, mainWindow);
+        ApplyScalingConfiguration(configuration, mainWindow);
+    }
+
+    private void ApplyScalingConfiguration(PresentationConfiguration configuration, Window mainWindow)
+    {
+        if (mainWindow.Content is not FrameworkElement content)
+        {
+            Logger.Debug(Strings.NoWindowContentToScale);
+            return;
+        }
+
+        if (_defaultTransform != null) 
+            content.LayoutTransform = _defaultTransform;
+
+        if (!IsScaleApplicable(configuration.ScaleX) && !IsScaleApplicable(configuration.ScaleY))
+            return;
+
+        _defaultTransform = content.LayoutTransform.Clone();
+        ScaleTransform scaleTransform = new();
+        
+        content.LayoutTransform = content.LayoutTransform switch
+        {   // An unset LayoutTransform defaults to a MatrixTransform with an identity matrix set. This can be safely replaced with our transform.
+            MatrixTransform matrixTransformation when matrixTransformation.Value == Matrix.Identity => scaleTransform,
+            // If the LayoutTransform is a group, we simply add our new scale transform to it.
+            TransformGroup transformGroup => AddToExistingGroup(transformGroup),
+            // Otherwise, We will preserve the current transform in a newly created group along with the scale transform we're constructing.
+            _ => new TransformGroup
+                 {
+                     Children = { content.LayoutTransform, scaleTransform }
+                 }
+        };
+
+        if (IsScaleApplicable(configuration.ScaleX))
+            scaleTransform.ScaleX = configuration.ScaleX;
+
+        if (IsScaleApplicable(configuration.ScaleY))
+            scaleTransform.ScaleY = configuration.ScaleY;
+
+        TransformGroup AddToExistingGroup(TransformGroup transformGroup)
+        {
+            transformGroup.Children.Add(scaleTransform);
+            return transformGroup;
+        }
+    }
+
+    private void HandleConfigurationChanged(object? sender, EventArgs e)
+    {
+        if (sender is not IConfigurationProvider configurationProvider)
+            return;
+
+        Application.Current?.Invoke(ReapplyConfiguration, DispatcherPriority.Background);
+
+        void ReapplyConfiguration()
+        {
+            ApplyConfiguration(configurationProvider);
+        }
+    }
+
+    private void HandleStartup(object sender, StartupEventArgs e)
+    {
+        if (!PluginHost.IsSupportedByProcess<IConfigurationProvider>())
+            return;
+
+        IConfigurationProvider configurationProvider
+            = PluginHost.LoadFromProcess<IConfigurationProvider>();
+
+        configurationProvider.ConfigurationChanged += HandleConfigurationChanged;
+
+        ApplyConfiguration(configurationProvider);
     }
 
     private void HandleDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)

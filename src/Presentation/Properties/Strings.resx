@@ -194,4 +194,7 @@
 	<data name="InvalidArithmeticConverterOperation" xml:space="preserve">
 		<value>Arithmetic converter had an unsupported arithmetic operation value set as its conversion operation.</value>
 	</data>
+	<data name="NoWindowContentToScale" xml:space="preserve">
+		<value>Main window lacks root content to apply scaling upon.</value>
+	</data>
 </root>

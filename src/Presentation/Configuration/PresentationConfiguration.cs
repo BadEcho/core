@@ -19,7 +19,7 @@ namespace BadEcho.Presentation.Configuration;
 public sealed class PresentationConfiguration
 {
     /// <summary>
-    /// Get or sets the index of the monitor that the main window of the Bad Echo Presentation framework application should be
+    /// Get the index of the monitor that the main window of the Bad Echo Presentation framework application should be
     /// initially launched on.
     /// </summary>
     /// <remarks>
@@ -27,5 +27,25 @@ public sealed class PresentationConfiguration
     /// the lowest index being the leftmost monitor and the highest index being the rightmost.
     /// </remarks>
     public int LaunchDisplay
+    { get; init; }
+
+    /// <summary>
+    /// Gets the x-axis scale factor applied to the overall application.
+    /// </summary>
+    /// <remarks>
+    /// Use this if there is a desire to immediately affect the size of all rendered elements on the x-axis in the Presentation
+    /// application. Leaving this setting unset (or setting it to exactly <c>1.0</c>) will result in no scaling being applied.
+    /// </remarks>
+    public double ScaleX
+    { get; init; }
+
+    /// <summary>
+    /// Gets the y-axis scale factor applied to the overall application.
+    /// </summary>
+    /// <remarks>
+    /// Use this if there is a desire to immediately affect the size of all rendered elements on the y-axis in the Presentation
+    /// application. Leaving this setting unset (or setting it to exactly <c>1.0</c>) will result in no scaling being applied.
+    /// </remarks>
+    public double ScaleY
     { get; init; }
 }

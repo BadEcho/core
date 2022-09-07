@@ -286,6 +286,15 @@ namespace BadEcho.Presentation.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Main window lacks root content to apply scaling upon..
+        /// </summary>
+        internal static string NoWindowContentToScale {
+            get {
+                return ResourceManager.GetString("NoWindowContentToScale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An outlined text element control was provided with an improper format string: {0}.
         /// </summary>
         internal static string OutlinedTextBadFormatString {
