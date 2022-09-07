@@ -11,6 +11,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Windows.Media;
+
 namespace BadEcho.Presentation.Configuration;
 
 /// <summary>
@@ -47,5 +49,16 @@ public sealed class PresentationConfiguration
     /// application. Leaving this setting unset (or setting it to exactly <c>1.0</c>) will result in no scaling being applied.
     /// </remarks>
     public double ScaleY
+    { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating if an attempt to force software rendering for the current process should be made.
+    /// </summary>
+    /// <remarks>
+    /// Setting this to true will take care of setting the <see cref="RenderOptions.ProcessRenderMode"/> property so that rendering
+    /// is not hardware accelerated. Bear in mind that this merely specifies our rendering preference, and that other parts of WPF
+    /// may override this preference and ultimately decide the actual rendering mode.
+    /// </remarks>
+    public bool ForceSoftwareRendering
     { get; init; }
 }

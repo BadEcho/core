@@ -1,7 +1,8 @@
 {
   "launchDisplay": 1,
   "scaleX": 1.33,
-  "scaleY": 1.33, 
+  "scaleY": 1.33,
+  "forceSoftwareRendering": true, 
   "leftAnchorMargin": "0,125,0,0",
   "titleLocation": "TopLeft",
   "messageFilesDirectory": "..\\..\\hacks\\targets\\eldenRing",

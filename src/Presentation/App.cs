@@ -14,6 +14,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
 using BadEcho.Configuration;
@@ -194,6 +195,9 @@ internal sealed class App
 
         ApplyDisplayConfiguration(configuration, mainWindow);
         ApplyScalingConfiguration(configuration, mainWindow);
+
+        RenderOptions.ProcessRenderMode 
+            = configuration.ForceSoftwareRendering ? RenderMode.SoftwareOnly : RenderMode.Default;
     }
 
     private void ApplyScalingConfiguration(PresentationConfiguration configuration, Window mainWindow)
