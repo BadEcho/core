@@ -81,6 +81,17 @@ public sealed class TileMapReader : ContentTypeReader<TileMap>
             var opacity = input.ReadSingle();
             var offsetX = input.ReadSingle();
             var offsetY = input.ReadSingle();
+            var customProperties = new Dictionary<string, string>();
+            var customPropertiesToRead = input.ReadInt32();
+
+            while (customPropertiesToRead > 0)
+            {
+                var propertyName = input.ReadString();
+                var propertyValue = input.ReadString();
+
+                customProperties.Add(propertyName, propertyValue);
+                customPropertiesToRead--;
+            }
 
             switch (layerType)
             {
@@ -92,7 +103,8 @@ public sealed class TileMapReader : ContentTypeReader<TileMap>
                                                     opacity,
                                                     new Vector2(offsetX, offsetY),
                                                     imageTexture,
-                                                    Vector2.Zero);
+                                                    Vector2.Zero,
+                                                    customProperties);
                     map.AddLayer(imageLayer);
                     break;
 
@@ -106,8 +118,8 @@ public sealed class TileMapReader : ContentTypeReader<TileMap>
                                                   isVisible,
                                                   opacity,
                                                   new Vector2(offsetX, offsetY),
-                                                  new Point(width, height));
-
+                                                  new Point(width, height),
+                                                  customProperties);
                     while (tilesToRead > 0)
                     {
                         var idWithFlags = input.ReadUInt32();

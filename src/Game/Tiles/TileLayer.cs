@@ -33,8 +33,14 @@ public sealed class TileLayer : Layer
     /// <param name="size">
     /// The tile layer's size, measured in tiles (i.e., a 4x4 size indicates four tiles wide by four tiles high, with a total area of 16 tiles).
     /// </param>
-    public TileLayer(string name, bool isVisible, float opacity, Vector2 offset, Point size)
-        : base(name, isVisible, opacity, offset)
+    /// <param name="customProperties">A mapping between the names of the layer's custom properties and their values.</param>
+    public TileLayer(string name,
+                     bool isVisible,
+                     float opacity,
+                     Vector2 offset,
+                     Point size,
+                     IReadOnlyDictionary<string, string> customProperties)
+        : base(name, isVisible, opacity, offset, customProperties)
     {
         _size = size;
         _tiles = new Tile[size.X * size.Y];

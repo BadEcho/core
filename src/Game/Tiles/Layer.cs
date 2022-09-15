@@ -27,12 +27,15 @@ public abstract class Layer
     /// <param name="isVisible">Value indicating if the layer data should actually be rendered.</param>
     /// <param name="opacity">The opacity of the layer and all of its contents.</param>
     /// <param name="offset">The offset, in terms of the layer's position, from the tile map's origin.</param>
-    protected Layer(string name, bool isVisible, float opacity, Vector2 offset)
+    /// <param name="customProperties">A mapping between the names of the layer's custom properties and their values.</param>
+    protected Layer(
+        string name, bool isVisible, float opacity, Vector2 offset, IReadOnlyDictionary<string,string> customProperties)
     {
         Name = name;
         IsVisible = isVisible;
         Opacity = opacity;
         Offset = offset;
+        CustomProperties = customProperties;
     }
 
     /// <summary>
@@ -57,5 +60,11 @@ public abstract class Layer
     /// Gets the offset, in terms of this layer's position, from the tile map's origin.
     /// </summary>
     public Vector2 Offset
+    { get; }
+
+    /// <summary>
+    /// Gets a mapping between the names of the layer's custom properties and their values.
+    /// </summary>
+    public IReadOnlyDictionary<string,string> CustomProperties
     { get; }
 }
