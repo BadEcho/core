@@ -22,7 +22,7 @@ namespace BadEcho.Game.Pipeline;
 internal static class ContentContextExtensions
 {
     /// <summary>
-    /// Logs a message during the importation of an asset into the content pipeline.
+    /// Logs a message during the importation of an asset to the content pipeline.
     /// </summary>
     /// <param name="context">The current game asset importer's context.</param>
     /// <param name="message">The message to log.</param>
@@ -34,7 +34,7 @@ internal static class ContentContextExtensions
     }
 
     /// <summary>
-    /// Logs a message during the processing of an asset into the content pipeline.
+    /// Logs a message during the processing of an asset to the content pipeline.
     /// </summary>
     /// <param name="context">The current game asset's processor's context.</param>
     /// <param name="message">The message to log.</param>

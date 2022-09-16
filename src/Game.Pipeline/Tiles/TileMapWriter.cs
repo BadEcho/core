@@ -19,7 +19,7 @@ using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler;
 namespace BadEcho.Game.Pipeline.Tiles;
 
 /// <summary>
-/// Provides a writer of raw tile map content into the content pipeline.
+/// Provides a writer of raw tile map content to the content pipeline.
 /// </summary>
 [ContentTypeWriter]
 public sealed class TileMapWriter : ContentTypeWriter<TileMapContent>

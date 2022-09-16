@@ -19,7 +19,7 @@ using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler;
 namespace BadEcho.Game.Pipeline.Tiles;
 
 /// <summary>
-/// Provides a writer of raw tile set content into the content pipeline.
+/// Provides a writer of raw tile set content to the content pipeline.
 /// </summary>
 [ContentTypeWriter]
 public sealed class TileSetWriter : ContentTypeWriter<TileSetContent>
@@ -29,10 +29,10 @@ public sealed class TileSetWriter : ContentTypeWriter<TileSetContent>
         => typeof(TileSetReader).AssemblyQualifiedName ?? string.Empty;
 
     /// <summary>
-    /// Writes the provided tile set asset into the content pipeline, using the provided content item as a reference source.
+    /// Writes the provided tile set asset to the content pipeline, using the provided content item as a reference source.
     /// </summary>
     /// <param name="output">The writer to the content pipeline.</param>
-    /// <param name="asset">The tile set asset to write into the content pipeline.</param>
+    /// <param name="asset">The tile set asset to write to the content pipeline.</param>
     /// <param name="referenceSource">A content item to use as a reference source.</param>
     public static void Write(ContentWriter output, TileSetAsset asset, IContentItem referenceSource)
     {
