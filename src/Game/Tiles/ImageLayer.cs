@@ -30,15 +30,13 @@ public sealed class ImageLayer : Layer
     /// <param name="offset">The offset, in terms of the layer's position, from the tile map's origin.</param>
     /// <param name="image">Gets the texture for the layer's image.</param>
     /// <param name="position">The drawing location of the image within the offset bounds of the layer.</param>
-    /// <param name="customProperties">A mapping between the names of the layer's custom properties and their values.</param>
     public ImageLayer(string name,
                       bool isVisible,
                       float opacity,
                       Vector2 offset,
                       Texture2D image,
-                      Vector2 position,
-                      IReadOnlyDictionary<string, string> customProperties)
-        : base(name, isVisible, opacity, offset, customProperties)
+                      Vector2 position)
+        : base(name, isVisible, opacity, offset)
     {
         Image = image;
         Position = position;

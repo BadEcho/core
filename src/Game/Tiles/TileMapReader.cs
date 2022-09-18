@@ -34,6 +34,7 @@ public sealed class TileMapReader : ContentTypeReader<TileMap>
         var height = input.ReadInt32();
         var tileWidth = input.ReadInt32();
         var tileHeight = input.ReadInt32();
+        var customProperties = input.ReadProperties();
 
         var size = new Point(width, height);
         var tileSize = new Point(tileWidth, tileHeight);
@@ -42,8 +43,7 @@ public sealed class TileMapReader : ContentTypeReader<TileMap>
                               size,
                               tileSize,
                               orientation,
-                              renderOrder,
-                              backgroundColor);
+                              renderOrder) { BackgroundColor = backgroundColor, CustomProperties = customProperties };
 
         ReadTileSets(input, map);
         ReadLayers(input, map);
@@ -81,17 +81,7 @@ public sealed class TileMapReader : ContentTypeReader<TileMap>
             var opacity = input.ReadSingle();
             var offsetX = input.ReadSingle();
             var offsetY = input.ReadSingle();
-            var customProperties = new Dictionary<string, string>();
-            var customPropertiesToRead = input.ReadInt32();
-
-            while (customPropertiesToRead > 0)
-            {
-                var propertyName = input.ReadString();
-                var propertyValue = input.ReadString();
-
-                customProperties.Add(propertyName, propertyValue);
-                customPropertiesToRead--;
-            }
+            var customProperties = input.ReadProperties();
 
             switch (layerType)
             {
@@ -103,8 +93,7 @@ public sealed class TileMapReader : ContentTypeReader<TileMap>
                                                     opacity,
                                                     new Vector2(offsetX, offsetY),
                                                     imageTexture,
-                                                    Vector2.Zero,
-                                                    customProperties);
+                                                    Vector2.Zero) { CustomProperties = customProperties };
                     map.AddLayer(imageLayer);
                     break;
 
@@ -118,8 +107,7 @@ public sealed class TileMapReader : ContentTypeReader<TileMap>
                                                   isVisible,
                                                   opacity,
                                                   new Vector2(offsetX, offsetY),
-                                                  new Point(width, height),
-                                                  customProperties);
+                                                  new Point(width, height)) { CustomProperties = customProperties };
                     while (tilesToRead > 0)
                     {
                         var idWithFlags = input.ReadUInt32();

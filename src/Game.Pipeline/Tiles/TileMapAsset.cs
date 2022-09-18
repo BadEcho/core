@@ -22,7 +22,7 @@ namespace BadEcho.Game.Pipeline.Tiles;
 /// <summary>
 /// Provides configuration data for a tile map asset.
 /// </summary>
-public sealed class TileMapAsset
+public sealed class TileMapAsset : ExtensibleAsset
 {
     private const string VERSION_ATTRIBUTE = "version";
     private const string ORIENTATION_ATTRIBUTE = "orientation";
@@ -40,6 +40,7 @@ public sealed class TileMapAsset
     /// </summary>
     /// <param name="root">XML element for the tile map's configuration.</param>
     public TileMapAsset(XElement root)
+        : base(root)
     {
         Require.NotNull(root, nameof(root));
 

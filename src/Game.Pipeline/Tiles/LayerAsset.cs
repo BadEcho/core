@@ -19,19 +19,15 @@ namespace BadEcho.Game.Pipeline.Tiles;
 /// <summary>
 /// Provides configuration data for a tile map layer asset.
 /// </summary>
-public abstract class LayerAsset
+public abstract class LayerAsset : ExtensibleAsset
 {
-    private const string PROPERTIES_ELEMENT = "properties";
-    private const string PROPERTY_ELEMENT = "property";
-
-    private readonly List<CustomPropertyAsset> _customProperties = new();
-
     /// <summary>
     /// Initializes a new instance of the <see cref="LayerAsset"/> class.
     /// </summary>
     /// <param name="root">XML element for the layer's configuration.</param>
     /// <param name="type">An enumeration value that specifies the type of layer and the kind of content it contains.</param>
     protected LayerAsset(XElement root, LayerType type)
+        : base(root)
     {
         Require.NotNull(root, nameof(root));
 
@@ -41,16 +37,6 @@ public abstract class LayerAsset
         OffsetX = (float?) root.Attribute(XmlConstants.OffsetXAttribute) ?? default;
         OffsetY = (float?) root.Attribute(XmlConstants.OffsetYAttribute) ?? default;
         Type = type;
-
-        XElement? propertiesElement = root.Element(PROPERTIES_ELEMENT);
-
-        if (propertiesElement != null)
-        {
-            foreach (XElement property in propertiesElement.Elements(PROPERTY_ELEMENT))
-            {
-                _customProperties.Add(new CustomPropertyAsset(property));
-            }
-        }
     }
 
     /// <summary>
@@ -88,10 +74,4 @@ public abstract class LayerAsset
     /// </summary>
     public LayerType Type
     { get; }
-
-    /// <summary>
-    /// Gets the collection of custom properties attributed to the layer.
-    /// </summary>
-    public IReadOnlyCollection<CustomPropertyAsset> CustomProperties
-        => _customProperties;
 }

@@ -54,6 +54,7 @@ public sealed class TileSetWriter : ContentTypeWriter<TileSetContent>
         output.Write(asset.Columns);
         output.Write(asset.Spacing);
         output.Write(asset.Margin);
+        output.WriteProperties(asset);
     }
 
     /// <inheritdoc />

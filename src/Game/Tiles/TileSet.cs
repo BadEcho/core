@@ -19,7 +19,7 @@ namespace BadEcho.Game.Tiles;
 /// <summary>
 /// Provides a source of rectangular images, or tiles, for use in a tile map.
 /// </summary>
-public sealed class TileSet
+public sealed class TileSet : Extensible
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="TileSet"/> class.

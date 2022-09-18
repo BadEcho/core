@@ -43,6 +43,7 @@ public sealed class TileMapWriter : ContentTypeWriter<TileMapContent>
         output.Write(asset.Height);
         output.Write(asset.TileWidth);
         output.Write(asset.TileHeight);
+        output.WriteProperties(asset);
 
         WriteTileSets(output, value);
         WriteLayers(output, value);
@@ -87,15 +88,7 @@ public sealed class TileMapWriter : ContentTypeWriter<TileMapContent>
             output.Write(layer.Opacity);
             output.Write(layer.OffsetX);
             output.Write(layer.OffsetY);
-
-            // Record the number of custom properties in order to properly direct the reader.
-            output.Write(layer.CustomProperties.Count);
-
-            foreach (CustomPropertyAsset customProperty in layer.CustomProperties)
-            {
-                output.Write(customProperty.Name);
-                output.Write(customProperty.Value);
-            }
+            output.WriteProperties(layer);
 
             switch (layer)
             {

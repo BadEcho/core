@@ -25,7 +25,7 @@ namespace BadEcho.Game.Tiles;
 /// Tile maps supported by the Bad Echo Game Framework are based on the TMX map format, used by various popular tile map editors such
 /// as Tiled.
 /// </remarks>
-public sealed class TileMap
+public sealed class TileMap : Extensible
 {
     private readonly Dictionary<Layer, IEnumerable<IPrimitiveModel>> _layerModelMap = new();
     private readonly Dictionary<TileSet, int> _tileSetFirstIdMap = new();
@@ -44,14 +44,12 @@ public sealed class TileMap
     /// <param name="tileSize">The size of the tiles used in the tile map.</param>
     /// <param name="orientation">The orientation of the tile map.</param>
     /// <param name="renderOrder">The order in which tiles on the map are rendered.</param>
-    /// <param name="backgroundColor">The background color of the tile map.</param>
     public TileMap(GraphicsDevice device, 
                    string name,
                    Point size,
                    Point tileSize,
                    MapOrientation orientation,
-                   TileRenderOrder renderOrder,
-                   Color backgroundColor)
+                   TileRenderOrder renderOrder)
     {
         _device = device;
 
@@ -60,7 +58,6 @@ public sealed class TileMap
         TileSize = tileSize;
         Orientation = orientation;
         RenderOrder = renderOrder;
-        BackgroundColor = backgroundColor;
     }
 
     /// <summary>
@@ -109,7 +106,7 @@ public sealed class TileMap
     /// Gets the background color of the tile map.
     /// </summary>
     public Color BackgroundColor
-    { get; }
+    { get; init; } = Color.Transparent;
 
     /// <summary>
     /// Gets the collection of tile sets this map sources its tile images from.

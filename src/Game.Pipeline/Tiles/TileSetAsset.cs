@@ -18,7 +18,7 @@ namespace BadEcho.Game.Pipeline.Tiles;
 /// <summary>
 /// Provides configuration data for a tile set asset.
 /// </summary>
-public sealed class TileSetAsset
+public sealed class TileSetAsset : ExtensibleAsset
 {
     private const string COLUMNS_ATTRIBUTE = "columns";
     private const string SPACING_ATTRIBUTE = "spacing";
@@ -31,9 +31,8 @@ public sealed class TileSetAsset
     /// </summary>
     /// <param name="root">XML element for the tile set's configuration.</param>
     public TileSetAsset(XElement root)
+        : base(root)
     {
-        Require.NotNull(root, nameof(root));
-
         FirstId = (int?) root.Attribute(FIRST_ID_ATTRIBUTE) ?? default;
         Source = (string?) root.Attribute(XmlConstants.SourceAttribute) ?? string.Empty;
         Name = (string?) root.Attribute(XmlConstants.NameAttribute) ?? string.Empty;
