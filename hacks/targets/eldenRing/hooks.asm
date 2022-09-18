@@ -260,7 +260,9 @@ assert(omnifyPredatorHook,F3 45 0F 5C D3)
 alloc(initiatePredator,$1000,omnifyPredatorHook)
 alloc(playerSpeedX,8)
 alloc(playerVerticalX,8)
+alloc(identityValue,8)
 
+registersymbol(identityValue)
 registersymbol(playerVerticalX)
 registersymbol(playerSpeedX)
 registersymbol(omnifyPredatorHook)
@@ -273,22 +275,58 @@ initiatePredator:
     cmp rax,0
     pop rax
     je initiatePredatorOriginalCode
-    push rax
-    mov rax,playerHavokProxy
-    cmp [rax],rdi
-    pop rax
-    je applyPlayerSpeed
-    jmp initiatePredatorOriginalCode
-applyPlayerSpeed:
     sub rsp,10
     movdqu [rsp],xmm1
     sub rsp,10
     movdqu [rsp],xmm2
+    push rax
+    push rbx
+    push rcx   
+    mov rax,playerHavokProxy
+    cmp [rax],rdi
+    je applyPlayerSpeed
+initiatePredatorExecute:
+    mov rax,playerLocation
+    mov rbx,[rax]
+    // Push the player's current coordinates.
+    push [rbx+70]
+    push [rbx+78]
+    // Push the enemy's current coordinates.
+    movhlps xmm1,xmm0
+    sub rsp,8
+    movq [rsp],xmm0
+    sub rsp,8
+    movq [rsp],xmm1
+    // Push an identity matrix for the scaling parameters.
+    movss xmm1,[identityValue]
+    shufps xmm1,xmm1,0
+    sub rsp,10
+    movdqu [rsp],xmm1
+    // Push the enemy's movement offsets.
+    movhlps xmm1,xmm6
+    sub rsp,8
+    movq [rsp],xmm6
+    sub rsp,8
+    movq [rsp],xmm1
+    call executePredator
+initiatePredatorUpdateOffsets:
+    sub rsp,10
+    mov [rsp],eax
+    mov [rsp+4],ebx
+    mov [rsp+8],ecx
+    movups xmm6,[rsp]
+    add rsp,10
+    jmp initiatePredatorCleanup
+applyPlayerSpeed:    
     movss xmm1,[playerSpeedX]    
     movss xmm2,[playerVerticalX]    
     movlhps xmm1,xmm2    
     shufps xmm1,xmm1,8
     mulps xmm6,xmm1
+initiatePredatorCleanup:
+    pop rcx
+    pop rbx
+    pop rax
     movdqu xmm2,[rsp]
     add rsp,10
     movdqu xmm1,[rsp]
@@ -310,6 +348,15 @@ playerSpeedX:
 
 playerVerticalX:
     dd (float)1.0
+
+identityValue:
+    dd (float)1.0
+
+aggroDistance:
+    dd (float)11.5
+
+threatDistance:
+    dd (float)3.5
 
 
 [DISABLE]
@@ -360,7 +407,9 @@ omnifyPredatorHook:
 unregistersymbol(omnifyPredatorHook)
 unregistersymbol(playerSpeedX)
 unregistersymbol(playerVerticalX)
+unregistersymbol(identityValue)
 
+dealloc(identityValue)
 dealloc(playerVerticalX)
 dealloc(playerSpeedX)
 dealloc(initiatePredator)
