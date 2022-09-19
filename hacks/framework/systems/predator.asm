@@ -281,6 +281,7 @@ alloc(positiveLimit,8)
 alloc(negativeLimit,8)
 alloc(positiveLimitCorrection,8)
 alloc(negativeLimitCorrection,8)
+alloc(disablePredator,8)
 
 registersymbol(executePredator)
 registersymbol(positiveLimit)
@@ -289,6 +290,7 @@ registersymbol(defaultSpeedX)
 registersymbol(aggressionSpeedX)
 registersymbol(positiveLimitCorrection)
 registersymbol(negativeLimitCorrection)
+registersymbol(disablePredator)
 
 executePredator:
     sub rsp,10
@@ -320,6 +322,10 @@ executePredator:
     movups xmm2,[rsp+A8]
     // Load the movement offsets into xmm3.
     movups xmm3,[rsp+98]
+    // If the Predator system is disabled, xmm8 has defaultSpeedX loaded into it, which will result
+    // in no buff to the enemy's speed.
+    cmp [disablePredator],1    
+    je executePredatorExit
     // Submit the scales as a parameter for calculating the scaled speed.
     sub rsp,10
     movdqu [rsp],xmm2
@@ -513,6 +519,9 @@ negativeLimitCorrection:
 aggressionSpeedX:
     dd (float)1.0
 
+disablePredator:
+    dd 0
+
 
 [DISABLE]
 
@@ -544,7 +553,9 @@ unregistersymbol(positiveLimitCorrection)
 unregistersymbol(negativeLimitCorrection)
 unregistersymbol(defaultSpeedX)
 unregistersymbol(aggressionSpeedX)
+unregistersymbol(disablePredator)
 
+dealloc(disablePredator)
 dealloc(enemySpeedX)
 dealloc(aggroDistance)
 dealloc(threatDistance)
