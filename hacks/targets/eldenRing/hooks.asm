@@ -353,7 +353,7 @@ identityValue:
     dd (float)1.0
 
 aggroDistance:
-    dd (float)11.5
+    dd (float)12.5
 
 threatDistance:
     dd (float)3.5
