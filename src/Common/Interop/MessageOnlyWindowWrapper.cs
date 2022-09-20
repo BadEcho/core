@@ -192,7 +192,7 @@ public sealed class MessageOnlyWindowWrapper : IWindowWrapper, IDisposable
         if (hNullBrush == IntPtr.Zero)
             throw new Win32Exception(Marshal.GetLastWin32Error());
 
-        IntPtr hInstance = User32.GetModuleHandle();
+        IntPtr hInstance = Kernel32.GetModuleHandle(null);
         
         windowClass.cbSize = Marshal.SizeOf(typeof(WNDCLASSEX));
         windowClass.style = 0;

@@ -39,7 +39,7 @@ internal static class Kernel32
     /// </remarks>
     [DllImport(LIBRARY_NAME, EntryPoint = "GetModuleHandleW", CharSet = CharSet.Unicode, SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    internal static extern IntPtr GetModuleHandle(string lpModuleName);
+    internal static extern IntPtr GetModuleHandle(string? lpModuleName);
 
     /// <summary>
     /// Retrieves the address of an exported function or variable from the specified dynamic-link library.

@@ -81,7 +81,7 @@ internal static class User32
     /// <suppressions>
     /// ReSharper disable InconsistentNaming
     /// </suppressions>
-    [DllImport(LIBRARY_NAME, CharSet = CharSet.Unicode)]
+    [DllImport(LIBRARY_NAME, CharSet = CharSet.Unicode, SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static extern ushort RegisterClassEx(ref WNDCLASSEX wc_d);
 
