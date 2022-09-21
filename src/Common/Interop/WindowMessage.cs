@@ -31,6 +31,10 @@ public enum WindowMessage
     /// </summary>
     Close = 0x10,
     /// <summary>
+    /// A window message corresponding to a nonclient area being created.
+    /// </summary>
+    CreateNonclientArea = 0x81,
+    /// <summary>
     /// A window message corresponding to a nonclient area being destroyed.
     /// </summary>
     DestroyNonclientArea = 0x82,

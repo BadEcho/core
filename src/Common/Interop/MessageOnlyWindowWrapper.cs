@@ -236,12 +236,16 @@ public sealed class MessageOnlyWindowWrapper : IWindowWrapper, IDisposable
         foreach (WindowProc hook in _hooks)
         {   // A value of zero indicates that the hook has handled the particular message being passed.
             result = hook(hWnd, msg, wParam, lParam);
-
+                    
             if (result == IntPtr.Zero)
                 break;
         }
 
-        if (WindowMessage.DestroyNonclientArea == message)
+        if (WindowMessage.CreateNonclientArea == message)
+        {
+            result = new IntPtr(1);
+        }
+        else if (WindowMessage.DestroyNonclientArea == message)
         {   // Time to cleanup, though the class unregistration needs to be delayed since the window is already being destroyed.
             _windowIsBeingDestroyed = true;
             Dispose();
