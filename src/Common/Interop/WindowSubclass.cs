@@ -131,7 +131,7 @@ internal sealed class WindowSubclass : IDisposable
         {
             case AttachmentState.Unattached:
                 var window = new WindowHandle(hWnd, false);
-                Attach(window, WndProc, Marshal.GetFunctionPointerForDelegate(_DefaultWindowProc));
+                Attach(window, WndProc, _DefaultWindowProc);
                 break;
 
             case AttachmentState.Detached:
