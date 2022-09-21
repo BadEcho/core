@@ -37,7 +37,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Vision.Apocalypse",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Game", "src\Game\BadEcho.Game.csproj", "{28C9FB6D-8E22-48AA-BC32-D4E999C370B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BadEcho.Game.Pipeline", "src\Game.Pipeline\BadEcho.Game.Pipeline.csproj", "{9BE628D9-FA6F-45CE-B11C-1101D2ADA451}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Game.Pipeline", "src\Game.Pipeline\BadEcho.Game.Pipeline.csproj", "{9BE628D9-FA6F-45CE-B11C-1101D2ADA451}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BadEcho.Game.Tests", "tests\Game.Tests\BadEcho.Game.Tests.csproj", "{56DD6D41-BF60-462F-AB2D-512098643EED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -101,6 +103,10 @@ Global
 		{9BE628D9-FA6F-45CE-B11C-1101D2ADA451}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9BE628D9-FA6F-45CE-B11C-1101D2ADA451}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9BE628D9-FA6F-45CE-B11C-1101D2ADA451}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56DD6D41-BF60-462F-AB2D-512098643EED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56DD6D41-BF60-462F-AB2D-512098643EED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56DD6D41-BF60-462F-AB2D-512098643EED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56DD6D41-BF60-462F-AB2D-512098643EED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -122,6 +128,7 @@ Global
 		{0A387E81-5764-4967-ADE1-2B06400D7663} = {773B3EB9-0C39-4AED-892F-F1E2F7B7106B}
 		{28C9FB6D-8E22-48AA-BC32-D4E999C370B9} = {A14098CE-C46F-4906-87ED-44DF6A81F3A7}
 		{9BE628D9-FA6F-45CE-B11C-1101D2ADA451} = {A14098CE-C46F-4906-87ED-44DF6A81F3A7}
+		{56DD6D41-BF60-462F-AB2D-512098643EED} = {FE49F12E-C479-4F72-A165-FE20F0A43C8D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AB57ED24-4142-4E4A-8847-3C6A0D38B54E}

@@ -1,0 +1,26 @@
+
+#----------------------------- Global Properties ----------------------------#
+
+/outputDir:bin/$(Platform)
+/intermediateDir:obj/$(Platform)
+/platform:DesktopGL
+/config:
+/profile:Reach
+/compress:False
+
+#-------------------------------- References --------------------------------#
+
+/reference:..\..\..\bin\dbg\BadEcho.Game.Pipeline.dll
+
+#---------------------------------- Content ---------------------------------#
+
+#begin Tiles/GrassFourTiles.tmx
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/build:Tiles/GrassFourTiles.tmx
+
+#begin Tiles/Grasslands.tsx
+/importer:TileSetImporter
+/processor:TileSetProcessor
+/build:Tiles/Grasslands.tsx
+
