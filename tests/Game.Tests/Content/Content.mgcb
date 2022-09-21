@@ -10,7 +10,13 @@
 
 #-------------------------------- References --------------------------------#
 
+$if IsRelease=No
 /reference:..\..\..\bin\dbg\BadEcho.Game.Pipeline.dll
+$endif
+
+$if IsRelease=Yes
+/reference:..\..\..\bin\rel\BadEcho.Game.Pipeline.dll
+$endif
 
 #---------------------------------- Content ---------------------------------#
 
