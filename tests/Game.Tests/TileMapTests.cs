@@ -11,33 +11,43 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.ComponentModel.Design;
 using BadEcho.Game.Tiles;
+using Microsoft.Xna.Framework.Graphics;
+
 using Xunit;
 
 namespace BadEcho.Game.Tests;
 
 public class TileMapTests
 {
+    private readonly Microsoft.Xna.Framework.Content.ContentManager _content;
+
     public TileMapTests()
     {
+        var services = new ServiceContainer();
+        var graphicsService = new GraphicsDeviceService();
+
+        services.AddService(typeof(IGraphicsDeviceService), graphicsService);
+
+        _content = new Microsoft.Xna.Framework.Content.ContentManager(services, "Content");
     }
 
     [Fact]
     public void Load_GrassFourTiles_NotNull()
-        => ContentTestRunner.Run(g =>
-                                 {
-                                     TileMap map = g.Content.Load<TileMap>("Tiles\\GrassFourTiles");
+    {
+        TileMap map = _content.Load<TileMap>("Tiles\\GrassFourTiles");
 
-                                     Assert.NotNull(map);
-                                 });
+        Assert.NotNull(map);
+    }
+
     [Fact]
     public void Load_GrassFourTiles_HasTileLayer()
-        => ContentTestRunner.Run(g =>
-                                 {
-                                     TileMap map = g.Content.Load<TileMap>("Tiles\\GrassFourTiles");
+    {
+        TileMap map = _content.Load<TileMap>("Tiles\\GrassFourTiles");
 
-                                     var tileLayer = map.Layers.OfType<TileLayer>().FirstOrDefault();
+        var tileLayer = map.Layers.OfType<TileLayer>().FirstOrDefault();
 
-                                     Assert.NotNull(tileLayer);
-                                 });
+        Assert.NotNull(tileLayer);
+    }
 }
