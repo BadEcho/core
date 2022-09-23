@@ -11,27 +11,17 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.ComponentModel.Design;
 using BadEcho.Game.Tiles;
-using Microsoft.Xna.Framework.Graphics;
-
 using Xunit;
 
 namespace BadEcho.Game.Tests;
 
-public class TileMapTests
+public class TileMapTests : IClassFixture<ContentManagerFixture>
 {
     private readonly Microsoft.Xna.Framework.Content.ContentManager _content;
 
-    public TileMapTests()
-    {
-        var services = new ServiceContainer();
-        var graphicsService = new GraphicsDeviceService();
-
-        services.AddService(typeof(IGraphicsDeviceService), graphicsService);
-
-        _content = new Microsoft.Xna.Framework.Content.ContentManager(services, "Content");
-    }
+    public TileMapTests(ContentManagerFixture contentFixture) 
+        => _content = contentFixture.Content;
 
     [Fact]
     public void Load_GrassFourTiles_NotNull()
@@ -49,5 +39,37 @@ public class TileMapTests
         var tileLayer = map.Layers.OfType<TileLayer>().FirstOrDefault();
 
         Assert.NotNull(tileLayer);
+    }
+
+    [Fact]
+    public void Load_GrassFourTiles_HasTileSet()
+    {
+        TileMap map = _content.Load<TileMap>("Tiles\\GrassFourTiles");
+
+        var tileSet = map.TileSets.FirstOrDefault();
+
+        Assert.NotNull(tileSet);
+    }
+
+    [Fact]
+    public void Load_GrassFourTiles_HasFourTiles()
+    {
+        TileMap map = _content.Load<TileMap>("Tiles\\GrassFourTiles");
+
+        var tileLayer = map.Layers.OfType<TileLayer>().First();
+
+        Assert.Equal(4, tileLayer.Tiles.Count);
+    }
+
+    [Fact]
+    public void Load_GrassFourTiles_UsesThreeUniqueTiles()
+    {
+        TileMap map = _content.Load<TileMap>("Tiles\\GrassFourTiles");
+
+        var tileLayer = map.Layers.OfType<TileLayer>().First();
+
+        IEnumerable<Tile> tiles = tileLayer.GetRange(0, 10);
+
+        Assert.Equal(3, tiles.GroupBy(t => t.Id).Count());
     }
 }
