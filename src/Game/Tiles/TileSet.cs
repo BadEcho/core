@@ -21,6 +21,8 @@ namespace BadEcho.Game.Tiles;
 /// </summary>
 public sealed class TileSet : Extensible
 {
+    private readonly int _columns;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TileSet"/> class.
     /// </summary>
@@ -29,7 +31,7 @@ public sealed class TileSet : Extensible
         Texture = texture;
         TileSize = tileSize;
         TileCount = tileCount;
-        Columns = columns;
+        _columns = columns;
     }
 
     /// <summary>
@@ -51,12 +53,6 @@ public sealed class TileSet : Extensible
     { get; }
 
     /// <summary>
-    /// Gets the number of columns of tiles in this tile set.
-    /// </summary>
-    public int Columns
-    { get; }
-
-    /// <summary>
     /// Gets the space between the perimeter of the tiles composing this tile set and the edge of the texture.
     /// </summary>
     public int Margin
@@ -75,8 +71,8 @@ public sealed class TileSet : Extensible
     /// <returns>The bounding rectangle for the tile identified by <c>localId</c> within this tile set's texture.</returns>
     public Rectangle GetTileSourceArea(int localId)
     {
-        int x = localId % Columns * (TileSize.X + Spacing) + Margin;
-        int y = localId / Columns * (TileSize.Y + Spacing) + Margin;
+        int x = localId % _columns * (TileSize.X + Spacing) + Margin;
+        int y = localId / _columns * (TileSize.Y + Spacing) + Margin;
 
         return new Rectangle(x, y, TileSize.X, TileSize.Y);
     }
