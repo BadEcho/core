@@ -45,6 +45,12 @@ public sealed class TileLayer : Layer
     }
 
     /// <summary>
+    /// Gets the tiles belonging to this tile layer.
+    /// </summary>
+    public IReadOnlyCollection<Tile> Tiles
+        => _tiles;
+
+    /// <summary>
     /// Gets a range of tiles found within this tile layer.
     /// </summary>
     /// <param name="firstId">The global identifier of the tile at which the range starts.</param>
@@ -53,7 +59,7 @@ public sealed class TileLayer : Layer
     public IEnumerable<Tile> GetRange(int firstId, int count)
     {
         int lastId = count + firstId - 1;
-
+        
         return _tiles.Where(t => t.Id >= firstId && t.Id <= lastId);
     }
 
