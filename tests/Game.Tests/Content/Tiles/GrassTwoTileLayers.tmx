@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.9" tiledversion="1.9.0" orientation="orthogonal" renderorder="right-down" width="6" height="6" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="1">
+ <tileset firstgid="1" source="Grasslands.tsx"/>
+ <layer id="2" name="Second" width="6" height="6">
+  <data encoding="base64" compression="zlib">
+   eJxNjNEKACAIAyUtzf//4BQu8OHYHG4mIllEsQrjblWyg7+g4GiQ29j4O93d5Dnw0Td8/zw6sADN
+  </data>
+ </layer>
+ <layer id="1" name="First" width="6" height="6">
+  <data encoding="base64" compression="zlib">
+   eJxjYMANmIGYE4jZgJgJTZwDiNnRxFmgmBlNHKYWJo8PAAAWsABN
+  </data>
+ </layer>
+</map>

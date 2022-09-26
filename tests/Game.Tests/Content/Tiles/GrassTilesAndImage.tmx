@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.9" tiledversion="1.9.0" orientation="orthogonal" renderorder="right-down" width="6" height="6" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="1">
+ <tileset firstgid="1" source="Grasslands.tsx"/>
+ <layer id="1" name="Tiles" width="6" height="6">
+  <data encoding="base64" compression="zlib">
+   eJxNjUEKADAIw2RzTv3/g9dDhB0CtS22zazFFlcE9xIlDr6ji+6hk2Tx/Qn8ycafjcsf/zYS/QBCLADl
+  </data>
+ </layer>
+ <imagelayer id="2" name="Shuttle" offsetx="20" offsety="6">
+  <image source="shuttle.png" width="58" height="90"/>
+ </imagelayer>
+</map>
