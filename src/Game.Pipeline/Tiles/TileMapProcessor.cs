@@ -30,6 +30,7 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent, TileMapC
     private const string COMPRESSION_GZIP = "gzip";
     private const string COMPRESSION_ZLIB = "zlib";
     private const string ENCODING_BASE64 = "base64";
+    private const string ENCODING_CSV = "csv";
 
     /// <inheritdoc />
     public override TileMapContent Process(TileMapContent input, ContentProcessorContext context)
@@ -181,8 +182,15 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent, TileMapC
         => tileData.Encoding switch
         {
             ENCODING_BASE64 => DecodeBase64TileData(tileData, tilesToDecode),
+            ENCODING_CSV => DecodeCsvTileData(tileData),
             _ => throw new NotSupportedException(Strings.TileLayerEncodingUnsupported.InvariantFormat(tileData.Encoding))
         };
+
+    private static IList<uint> DecodeCsvTileData(DataAsset tileData)
+        => tileData.Payload
+                   .Split(',')
+                   .Select(uint.Parse)
+                   .ToList();
 
     private static IList<uint> DecodeBase64TileData(DataAsset tileData, int tilesToDecode)
     {
