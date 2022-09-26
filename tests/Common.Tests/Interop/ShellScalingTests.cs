@@ -19,7 +19,7 @@ namespace BadEcho.Tests.Interop;
 public class ShellScalingTests
 {
     [Fact]
-    public void GetDpiForMonitor_DefaultDpiType_IsValid()
+    public void GetDpiForMonitor_DefaultDpiType_ReturnsValid()
     {
         var monitors = UnmanagedHelper.EnumerateMonitors();
 
