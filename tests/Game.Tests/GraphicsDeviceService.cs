@@ -27,16 +27,32 @@ internal sealed class GraphicsDeviceService : IGraphicsDeviceService
     }
 
     /// <inheritdoc />
-    public event EventHandler<EventArgs>? DeviceCreated;
+    public event EventHandler<EventArgs>? DeviceCreated
+    {
+        add { }
+        remove { }
+    }
 
     /// <inheritdoc />
-    public event EventHandler<EventArgs>? DeviceDisposing;
+    public event EventHandler<EventArgs>? DeviceDisposing
+    {
+        add { }
+        remove { }
+    }
 
     /// <inheritdoc />
-    public event EventHandler<EventArgs>? DeviceReset;
+    public event EventHandler<EventArgs>? DeviceReset
+    {
+        add { }
+        remove { }
+    }
 
     /// <inheritdoc />
-    public event EventHandler<EventArgs>? DeviceResetting;
+    public event EventHandler<EventArgs>? DeviceResetting
+    {
+        add { }
+        remove { }
+    }
 
     /// <inheritdoc />
     public GraphicsDevice GraphicsDevice 

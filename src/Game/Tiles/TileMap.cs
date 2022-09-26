@@ -252,13 +252,11 @@ public sealed class TileMap : Extensible
 
     private Vector2 GetTilePosition(Tile tile)
     {
-        switch (Orientation)
+        return Orientation switch
         {
-            case MapOrientation.Orthogonal:
-                return new Vector2(tile.ColumnIndex * TileSize.X, tile.RowIndex * TileSize.Y);
-            // TODO: Fill out.
-            default:
-                throw new NotSupportedException();
-        }
+            MapOrientation.Orthogonal => new Vector2(tile.ColumnIndex * TileSize.X, tile.RowIndex * TileSize.Y),
+            // TODO: Add support for other orientations.
+            _ => throw new NotSupportedException()
+        };
     }
 }
