@@ -40,9 +40,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Game.Pipeline", "src\Game.Pipeline\BadEcho.Game.Pipeline.csproj", "{9BE628D9-FA6F-45CE-B11C-1101D2ADA451}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Game.Tests", "tests\Game.Tests\BadEcho.Game.Tests.csproj", "{56DD6D41-BF60-462F-AB2D-512098643EED}"
-	ProjectSection(ProjectDependencies) = postProject
-		{9BE628D9-FA6F-45CE-B11C-1101D2ADA451} = {9BE628D9-FA6F-45CE-B11C-1101D2ADA451}
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

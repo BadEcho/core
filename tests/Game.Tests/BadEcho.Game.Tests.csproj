@@ -30,7 +30,23 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Common\BadEcho.Common.csproj" />
+    <ProjectReference Include="..\..\src\Game.Pipeline\BadEcho.Game.Pipeline.csproj" />
 		<ProjectReference Include="..\..\src\Game\BadEcho.Game.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Content\Tiles\GrassCsvFormat.tmx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Content\Tiles\GrassGzipFormat.tmx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Content\Tiles\GrassUncompressedBase64Format.tmx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Content\Tiles\GrassZlibFormat.tmx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 	<Target Name="RestoreDotnetTools" BeforeTargets="Restore">
 		<Message Text="Restoring dotnet tools" Importance="High" />

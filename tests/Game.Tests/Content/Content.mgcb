@@ -30,3 +30,22 @@ $endif
 /processor:TileSetProcessor
 /build:Tiles/Grasslands.tsx
 
+#begin Tiles/GrassLeftDownOrder.tmx
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/build:Tiles/GrassLeftDownOrder.tmx
+
+#begin Tiles/GrassLargeBlue.tmx
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/build:Tiles/GrassLargeBlue.tmx
+
+#begin Tiles/GrassTilesAndImage.tmx
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/build:Tiles/GrassTilesAndImage.tmx
+
+#begin Tiles/GrassTwoTileLayers.tmx
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/build:Tiles/GrassTwoTileLayers.tmx
