@@ -186,9 +186,22 @@ initiateApocalypse:
     cmp [rax],rdi    
     jne initiateEnemyApocalypse    
 initiatePlayerApocalypse:
-    // Check if we're already dead. Don't want the Apocalypse log polluted
+    // Check if we're already dead. Don't want the Apocalypse log polluted.
     cmp [rdi+138],0
     jle abortApocalypse
+    // We want to only execut the Apocalypse if the source of damage is an enemy.
+    // Let's filter out environmental effects and fall damage.
+    // First, see if a valid damage source pointer exists.
+    mov rsi,[rsp+8A]
+    cmp rsi,0
+    jle abortApocalypse
+    mov rax,[rsi]
+    // Lower 2 bytes of poison damage source is 0x7F20.
+    cmp ax,0x7F20
+    je abortApocalypse
+    // Fall damage is a "special effect", which has lower 2 bytes of 0xAAF8.    
+    cmp ax,0xAAF8 
+    je abortApocalypse
     // Load the player's maximum health as the next parameter.
     mov rax,[rdi+13C]
     cvtsi2ss xmm0,eax
