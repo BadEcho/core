@@ -64,7 +64,6 @@ internal sealed class App
 
         ImportResources(application);
 
-        application.ImportResources();
         RegisterClassHandlers();
 
         application.DispatcherUnhandledException += HandleDispatcherUnhandledException;
