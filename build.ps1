@@ -2,7 +2,8 @@
 
 param (
 	[string]$CommitId,
-	[string]$VersionDistance
+	[string]$VersionDistance,
+	[switch]$SkipTests
 )
 
 function Execute([scriptblock]$command) {
@@ -41,5 +42,9 @@ if($CommitId -and $VersionDistance) {
 
 Execute { & dotnet clean -c Release }
 Execute $buildCommand 
-Execute { & dotnet test -c Release -r $artifacts --no-build -l trx --verbosity=normal }
+
+if ($SkipTests -ne $true) {
+	Execute { & dotnet test -c Release -r $artifacts --no-build -l trx --verbosity=normal }
+}
+
 Execute $packCommand
