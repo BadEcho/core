@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+		<Product>Bad Echo Resource Creator</Product>
+		<Description>Generates .resources files from a directory containing assets.</Description>
+		<Title>$(Product)</Title>
+	  <OutputType>Exe</OutputType>
+		<PackAsTool>true</PackAsTool>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+	  <ToolCommandName>resource-creator</ToolCommandName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Common\BadEcho.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Strings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="README.md" Pack="true" PackagePath=""/>
+  </ItemGroup>
+
+</Project>
