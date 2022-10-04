@@ -34,11 +34,10 @@ namespace BadEcho.Vision.Apocalypse;
 public sealed class TeleportitisEvent : PlayerApocalypseEvent
 {
     /// <summary>
-    /// In order to give Tom the respect that's due, no other sound effect shall interrupt the Free Fallin' (which is
-    /// the only possible sound effect from this event).
+    /// In order to give Tom the respect that's due, no other sound effect shall interrupt the Free Fallin'.
     /// </summary>
     public override bool IsEffectSoundUninterruptible 
-        => true;
+        => IsFreeFalling;
 
     /// <summary>
     /// Gets the amount of displacement the x-coordinate was subjected to by the "teleportitis" random effect.
@@ -76,6 +75,8 @@ public sealed class TeleportitisEvent : PlayerApocalypseEvent
 
         if (IsFreeFalling)
             soundMap.AddWeight(() => EffectSounds.FreeFallin, 1);
+        else
+            soundMap.AddWeight(() => EffectSounds.Boing, 1);
 
         return soundMap;
     }

@@ -79,7 +79,13 @@ public static class EffectSounds
         => GetStream(nameof(FatalisDeathWilhelm));
 
     /// <summary>
-    /// Gets a stream for the awesome sound effect played when we're ported too high up.
+    /// Gets a stream for the very appropriate "boing" sound effect played when we're involuntarily teleported.
+    /// </summary>
+    public static Stream Boing
+        => GetStream(nameof(Boing));
+
+    /// <summary>
+    /// Gets a stream for the awesome sound effect played when we're teleported too high up.
     /// </summary>
     public static Stream FreeFallin
         => GetStream(nameof(FreeFallin));
