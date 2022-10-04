@@ -159,23 +159,25 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <badEcho:PositionalItemTemplateSelector x:Key="ChildrenTemplateSelector">
-            <badEcho:PositionalItemTemplateSelector.Template>
+    </badEcho:View.Resources>
+    <Grid>
+        <ItemsControl ItemsSource="{Binding Children}">
+            <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Border BorderThickness="0,0,0,1">
+                    <Border BorderThickness="0,1,0,0">
                         <Border.BorderBrush>
                             <LinearGradientBrush StartPoint="0,0.5" 
                                                  EndPoint="1,0.5">
                                 <GradientStop Color="Transparent" 
                                               Offset="0"
                                               />
-                                <GradientStop Color="{StaticResource {x:Static t:Colors.FadingOutlineColorKey}}" 
+                                <GradientStop Color="{DynamicResource {x:Static t:Colors.FadingOutlineColorKey}}" 
                                               Offset="0.1"
                                               />
-                                <GradientStop Color="{StaticResource {x:Static t:Colors.OutlineMidpointColorKey}}" 
+                                <GradientStop Color="{DynamicResource {x:Static t:Colors.OutlineMidpointColorKey}}" 
                                               Offset="0.5"
-                                              />
-                                <GradientStop Color="{StaticResource {x:Static t:Colors.FadingOutlineColorKey}}" 
+                                />
+                                <GradientStop Color="{DynamicResource {x:Static t:Colors.FadingOutlineColorKey}}" 
                                               Offset="0.9"
                                               />
                                 <GradientStop Color="Transparent" 
@@ -189,20 +191,7 @@
                                         />
                     </Border>
                 </DataTemplate>
-            </badEcho:PositionalItemTemplateSelector.Template>
-            <badEcho:PositionalItemTemplateSelector.EndingTemplate>
-                <DataTemplate>
-                    <ContentControl Content="{Binding}"
-                                    ContentTemplateSelector="{StaticResource ContextSelector}"
-                                    d:ContentTemplate="{StaticResource DesignTimeRiskEventTemplate}"
-                                    />
-                </DataTemplate>
-            </badEcho:PositionalItemTemplateSelector.EndingTemplate>
-        </badEcho:PositionalItemTemplateSelector>
-    </badEcho:View.Resources>
-    <Grid>
-        <ItemsControl ItemsSource="{Binding Children}"
-                      ItemTemplateSelector="{StaticResource ChildrenTemplateSelector}">
+            </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Grid.IsSharedSizeScope="True"/>
