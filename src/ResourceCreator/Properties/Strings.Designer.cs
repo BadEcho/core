@@ -70,6 +70,15 @@ namespace BadEcho.ResourceCreator.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The name of the outputted resources file..
+        /// </summary>
+        internal static string OutputDescription {
+            get {
+                return ResourceManager.GetString("OutputDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The specified resources directory path was not found..
         /// </summary>
         internal static string ResourcesDirectoryNotFound {
@@ -79,11 +88,20 @@ namespace BadEcho.ResourceCreator.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Usage: {0} [path-to-resources] [output-file].
+        ///   Looks up a localized string similar to The path to the directory containing the resources..
         /// </summary>
-        internal static string Usage {
+        internal static string ResourcesPathDescription {
             get {
-                return ResourceManager.GetString("Usage", resourceCulture);
+                return ResourceManager.GetString("ResourcesPathDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create a .resources file from a directory containing files we wish to bundle as resources for a program..
+        /// </summary>
+        internal static string RootDescription {
+            get {
+                return ResourceManager.GetString("RootDescription", resourceCulture);
             }
         }
     }

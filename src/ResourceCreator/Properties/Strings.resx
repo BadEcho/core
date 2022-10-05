@@ -123,7 +123,13 @@
   <data name="ResourcesDirectoryNotFound" xml:space="preserve">
     <value>The specified resources directory path was not found.</value>
   </data>
-  <data name="Usage" xml:space="preserve">
-    <value>Usage: {0} [path-to-resources] [output-file]</value>
+  <data name="RootDescription" xml:space="preserve">
+    <value>Create a .resources file from a directory containing files we wish to bundle as resources for a program.</value>
+  </data>
+  <data name="OutputDescription" xml:space="preserve">
+	  <value>The name of the outputted resources file.</value>
+  </data>
+  <data name="ResourcesPathDescription" xml:space="preserve">
+	  <value>The path to the directory containing the resources.</value>
   </data>
 </root>

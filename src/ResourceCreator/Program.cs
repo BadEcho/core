@@ -11,6 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.CommandLine;
 using System.Diagnostics;
 using System.Resources;
 using BadEcho.Extensions;
@@ -24,36 +25,43 @@ internal class Program
     /// Entry point for the resource creator application.
     /// </summary>
     /// <param name="args">An array of command line arguments passed to the application.</param>
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
-        if (args.Length < 2)
-        {
-            Console.WriteLine(Strings.Usage.CulturedFormat(Process.GetCurrentProcess().ProcessName));
-            return;
-        }
+        var resourceCreator = new RootCommand(Strings.RootDescription)
+                              {
+                                  Name = Process.GetCurrentProcess().ProcessName
+                              };
 
-        var resourcesDirectory = args[0];
+        var resourcesPath 
+            = new Argument<string>("RESOURCES_PATH", Strings.ResourcesPathDescription);
 
-        if (!Directory.Exists(resourcesDirectory))
+        resourceCreator.AddArgument(resourcesPath);
+        
+        var output 
+            = new Option<string>("--output", () => "Untitled.resources", Strings.OutputDescription);
+
+        output.AddAlias("-o");
+
+        resourceCreator.AddOption(output);
+
+        resourceCreator.SetHandler(CreateResources, resourcesPath, output);
+
+        await resourceCreator.InvokeAsync(args).ConfigureAwait(false);
+    }
+
+    private static void CreateResources(string resourcesPath, string outputFile)
+    {
+        if (!Directory.Exists(resourcesPath))
         {
             Console.WriteLine(Strings.ResourcesDirectoryNotFound);
             return;
         }
 
-        var outputFile = args[1];
-
-        CreateResources(resourcesDirectory, outputFile);
-
-        Console.WriteLine(Strings.CreatedResources.CulturedFormat(outputFile));
-    }
-
-    private static void CreateResources(string resourcesDirectory, string outputFile)
-    {
-        using (var resourceWriter = new ResourceWriter(Path.Combine(resourcesDirectory, outputFile)))
+        using (var resourceWriter = new ResourceWriter(Path.Combine(resourcesPath, outputFile)))
         {
-            foreach (string resourceFile in Directory.GetFiles(resourcesDirectory))
-            {
-                if (Path.GetFileName(resourceFile).Equals(outputFile, StringComparison.OrdinalIgnoreCase))
+            foreach (string resourceFile in Directory.GetFiles(resourcesPath))
+            {   // Ignore any existing .resources files in the directory.
+                if (Path.GetFileName(resourceFile).Contains(".resources", StringComparison.OrdinalIgnoreCase))
                     continue;
 
                 // We typically should initialize streams within a using block, however we need to write the asset as a stream,
@@ -67,5 +75,7 @@ internal class Program
 
             resourceWriter.Generate();
         }
+
+        Console.WriteLine(Strings.CreatedResources.CulturedFormat(outputFile));
     }
 }
