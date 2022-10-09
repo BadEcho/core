@@ -121,15 +121,18 @@
     <value>Done creating '{0}'.</value>
   </data>
   <data name="ResourcesDirectoryNotFound" xml:space="preserve">
-    <value>The specified resources directory path was not found.</value>
+    <value>The specified resources directory was not found.</value>
   </data>
   <data name="RootDescription" xml:space="preserve">
     <value>Create a .resources file from a directory containing files we wish to bundle as resources for a program.</value>
   </data>
   <data name="OutputDescription" xml:space="preserve">
-	  <value>The name of the outputted resources file.</value>
+	  <value>The path to the output resources file.</value>
   </data>
   <data name="ResourcesPathDescription" xml:space="preserve">
 	  <value>The path to the directory containing the resources.</value>
+  </data>
+  <data name="FilterDescription" xml:space="preserve">
+	  <value>A filter comprising one or more search patterns matched against the names of files to be included in the output resources file. Each pattern can contain a combination valid literal and wildcard characters, with each pattern separated by a comma.</value>
   </data>
 </root>

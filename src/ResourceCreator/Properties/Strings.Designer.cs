@@ -70,7 +70,16 @@ namespace BadEcho.ResourceCreator.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The name of the outputted resources file..
+        ///   Looks up a localized string similar to A filter comprising one or more search patterns matched against the names of files to be included in the output resources file. Each pattern can contain a combination valid literal and wildcard characters, with each pattern separated by a comma..
+        /// </summary>
+        internal static string FilterDescription {
+            get {
+                return ResourceManager.GetString("FilterDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The path to the output resources file..
         /// </summary>
         internal static string OutputDescription {
             get {
@@ -79,7 +88,7 @@ namespace BadEcho.ResourceCreator.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The specified resources directory path was not found..
+        ///   Looks up a localized string similar to The specified resources directory was not found..
         /// </summary>
         internal static string ResourcesDirectoryNotFound {
             get {
