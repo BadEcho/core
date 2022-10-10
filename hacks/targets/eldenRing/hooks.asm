@@ -10,7 +10,7 @@
 // http://creativecommons.org/licenses/by-nc/4.0/
 //----------------------------------------------------------------------
 
-// Gets the player's health.
+// Gets the player's information.
 define(omniPlayerHook,"start_protected_game.exe"+598262)
 
 assert(omniPlayerHook,66 0F 6E 89 38 01 00 00)
@@ -98,6 +98,48 @@ omniPlayerHook:
     jmp getPlayer
     nop 3
 getPlayerReturn:
+
+// Gets the horsey's information.
+define(omniHorseyHook,"start_protected_game.exe"+4710ED)
+
+assert(omniHorseyHook,8B 81 38 01 00 00)
+alloc(getHorsey,$1000,omniHorseyHook)
+alloc(horsey,8)
+alloc(horseyVitals,8)
+alloc(horseyHavokProxy,8)
+
+registersymbol(horseyHavokProxy)
+registersymbol(horseyVitals)
+registersymbol(horsey)
+registersymbol(omniHorseyHook)
+
+getHorsey:
+    pushf
+    push rax
+    push rbx
+    push rcx
+    // Horsey information retrieval is fairly identical to player information retrieval.
+    mov [horseyVitals],rcx
+    mov rax,[rcx+8]
+    mov [horsey],rax
+    // We take the same path to the horsey's havok proxy as we do with the player.
+    mov rbx,[rax+190]
+    mov rcx,[rbx+68]
+    mov rbx,[rcx+98]
+    mov rcx,[rbx+88]
+    mov [horseyHavokProxy],rcx
+    pop rcx
+    pop rbx
+    pop rax
+getHorseyOriginalCode:
+    popf
+    mov eax,[rcx+00000138]
+    jmp getHorseyReturn
+
+omniHorseyHook:
+    jmp getHorsey
+    nop 
+getHorseyReturn:
 
 
 // Increments the death counter when we ded.
@@ -189,7 +231,7 @@ initiatePlayerApocalypse:
     // Check if we're already dead. Don't want the Apocalypse log polluted.
     cmp [rdi+138],0
     jle abortApocalypse
-    // We want to only execut the Apocalypse if the source of damage is an enemy.
+    // We want to only execute the Apocalypse if the source of damage is an enemy.
     // Let's filter out environmental effects and fall damage.
     // First, see if a valid damage source pointer exists.
     mov rsi,[rsp+8A]
@@ -298,6 +340,9 @@ initiatePredator:
     mov rax,playerHavokProxy
     cmp [rax],rdi
     je applyPlayerSpeed
+    mov rax,horseyHavokProxy
+    cmp [rax],rdi
+    je applyPlayerSpeed
 initiatePredatorExecute:
     mov rax,playerLocation
     mov rbx,[rax]
@@ -402,6 +447,21 @@ unregistersymbol(deathCounter)
 
 dealloc(deathCounter)
 dealloc(incrementDeathCounter)
+
+
+// Cleanup of omniHorseyHook
+omniHorseyHook:
+    db 8B 81 38 01 00 00
+
+unregistersymbol(omniHorseyHook)
+unregistersymbol(horseyHavokProxy)
+unregistersymbol(horseyVitals)
+unregistersymbol(horsey)
+
+dealloc(horsey)
+dealloc(horseyVitals)
+dealloc(horseyHavokProxy)
+dealloc(getHorsey)
 
 
 // Cleanup of omnifyApocalypseHook
