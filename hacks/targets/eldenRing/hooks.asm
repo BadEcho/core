@@ -417,6 +417,172 @@ threatDistance:
     dd (float)3.5
 
 
+// Initiates the Abomnification system.
+// [rcx+8]: Player/EnemyIns, used as the identifying address.
+define(omnifyAbomnificationHook,"start_protected_game.exe"+433B0C)
+
+assert(omnifyAbomnificationHook,44 8B 81 38 01 00 00)
+alloc(initiateAbomnification,$1000,omnifyAbomnificationHook)
+
+registersymbol(omnifyAbomnificationHook)
+
+initiateAbomnification:
+    pushf
+    // Backing up registers used as outputs for the Abomnification system.
+    push rax
+    push rbx
+    push rcx    
+    push [rcx+8]
+    call executeAbomnification    
+    pop rcx
+    pop rbx
+    pop rax
+initiateAbomnificationOriginalCode:
+    popf
+    mov r8d,[rcx+00000138]
+    jmp initiateAbomnificationReturn
+
+omnifyAbomnificationHook:
+    jmp initiateAbomnification
+    nop 2
+initiateAbomnificationReturn:
+
+
+// Applies Abomnification generated scale multipliers on humanoid entities.
+// [rsp+10] | {rsp+4A}: [[CSFD4LocationBodyScaleModifier+78]-640] == PlayerIns that owns
+//                      the particular model transformation matrix being worked on here.
+// xmm7: Width
+// xmm4: Height
+// xmm3: Depth
+define(omnifyApplyHumanAbomnificationHook,"start_protected_game.exe"+ACF4FA)
+
+assert(omnifyApplyHumanAbomnificationHook,0F 29 3C 07 0F 29 64 07 10)
+alloc(applyHumanAbomnification,$1000,omnifyApplyHumanAbomnificationHook)
+
+registersymbol(omnifyApplyHumanAbomnificationHook)
+
+applyHumanAbomnification:
+    pushf
+    // Backing up registers needed to perform scale multiplication.
+    sub rsp,10
+    movdqu [rsp],xmm0
+    sub rsp,10
+    movdqu [rsp],xmm1
+    // Backing up registers used as outputs for the Abomnification system.
+    push rax
+    push rbx
+    push rcx
+    // Retrieving the entity's root structure.
+    mov rax,[rsp+4A]
+    mov rbx,[rax+78]
+    sub rbx,640
+    // Push the identifying address (the PlayerIns).    
+    push rbx
+    call getAbomnifiedScales
+    // Apply width scaling.
+    movd xmm0,eax
+    shufps xmm0,xmm0,1
+    mulps xmm7,xmm0
+    // Apply height scaling.
+    movd xmm0,ebx
+    shufps xmm0,xmm0,1
+    mulps xmm4,xmm0
+    // Apply depth scaling.
+    movd xmm0,ecx
+    shufps xmm0,xmm0,1
+    mulps xmm3,xmm0
+    pop rcx
+    pop rbx
+    pop rax
+    movdqu xmm1,[rsp]
+    add rsp,10
+    movdqu xmm0,[rsp]
+    add rsp,10
+applyHumanAbomnificationOriginalCode:
+    popf
+    movaps [rdi+rax],xmm7
+    movaps [rdi+rax+10],xmm4
+    jmp applyHumanAbomnificationReturn
+
+omnifyApplyHumanAbomnificationHook:
+    jmp applyHumanAbomnification
+    nop 4
+applyHumanAbomnificationReturn:
+
+
+// Applies Abomnification generated scale multipliers on non-humanoid entities.
+// [rsp+E0] | {rsp+11A}: [CSFD4LocationMtxx44ChrEntity+B0] = EnemyIns that owns the particular
+//                       model transformation matrix being worked on here.
+// xmm0: Width
+// xmm1: Height
+// xmm2: Depth
+define(omnifyApplyNonhumanAbomnificationHook,"start_protected_game.exe"+ACE473)
+
+assert(omnifyApplyNonhumanAbomnificationHook,0F 29 07 0F 29 4F 10)
+alloc(applyNonhumanAbomnification,$1000,omnifyApplyNonhumanAbomnificationHook)
+
+registersymbol(omnifyApplyNonhumanAbomnificationHook)
+
+applyNonhumanAbomnification:
+    pushf
+    // Backing up registers needed to perform scale multiplication.
+    sub rsp,10
+    movdqu [rsp],xmm3
+    sub rsp,10
+    movdqu [rsp],xmm4
+    // Backing up registers used as outputs for the Abomnification system.
+    push rax
+    push rbx
+    push rcx
+    // Retrieving the entity's root structure.
+    mov rbx,[rsp+11A]
+    cmp rbx,0
+    je applyNonhumanAbomnificationExit    
+    lea rcx,[rbx]
+    call checkBadPointer
+    cmp rcx,0
+    jne applyNonhumanAbomnificationExit 
+    mov rax,[rbx]
+    // Ensure that this is a 4x4 location matrix struct.
+    cmp ax,0xA4E8
+    jne applyNonhumanAbomnificationExit
+    mov rax,[rbx+B0]
+    // Push the identifying address (the EnemyIns).
+    push rax
+    call getAbomnifiedScales
+    // Apply width scaling.
+    movd xmm3,eax
+    shufps xmm3,xmm3,1
+    mulps xmm0,xmm3
+    // Apply height scaling.
+    movd xmm3,ebx
+    shufps xmm3,xmm3,1
+    mulps xmm1,xmm3
+    // Apply depth scaling.
+    movd xmm3,ecx
+    shufps xmm3,xmm3,1
+    mulps xmm2,xmm3
+    nop
+applyNonhumanAbomnificationExit:
+    pop rcx
+    pop rbx
+    pop rax
+    movdqu xmm4,[rsp]
+    add rsp,10
+    movdqu xmm3,[rsp]
+    add rsp,10
+applyNonhumanAbomnificationOriginalCode:
+    popf
+    movaps [rdi],xmm0
+    movaps [rdi+10],xmm1
+    jmp applyNonhumanAbomnificationReturn
+
+omnifyApplyNonhumanAbomnificationHook:
+    jmp applyNonhumanAbomnification
+    nop 2
+applyNonhumanAbomnificationReturn:
+
+
 [DISABLE]
 
 // Cleanup of omniPlayerHook
@@ -486,3 +652,30 @@ dealloc(identityValue)
 dealloc(playerVerticalX)
 dealloc(playerSpeedX)
 dealloc(initiatePredator)
+
+
+// Cleanup of omnifyAbomnificationHook
+omnifyAbomnificationHook:
+    db 44 8B 81 38 01 00 00
+
+unregistersymbol(omnifyAbomnificationHook)
+
+dealloc(initiateAbomnification)
+
+
+// Cleanup of omnifyApplyHumanAbomnificationHook
+omnifyApplyHumanAbomnificationHook:
+    db 0F 29 3C 07 0F 29 64 07 10
+
+unregistersymbol(omnifyApplyHumanAbomnificationHook)
+
+dealloc(applyHumanAbomnification)
+
+
+// Cleanup of omnifyApplyNonhumanAbomnificationHook
+omnifyApplyNonhumanAbomnificationHook:
+    db 0F 29 07 0F 29 4F 10
+
+unregistersymbol(omnifyApplyNonhumanAbomnificationHook)
+
+dealloc(applyNonhumanAbomnification)
