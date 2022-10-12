@@ -49,3 +49,13 @@ $endif
 /importer:TileMapImporter
 /processor:TileMapProcessor
 /build:Tiles/GrassTwoTileLayers.tmx
+
+#begin Tiles/GrassCustomProperties.tmx
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/build:Tiles/GrassCustomProperties.tmx
+
+#begin Tiles/GrasslandsCustomProperties.tsx
+/importer:TileSetImporter
+/processor:TileSetProcessor
+/build:Tiles/GrasslandsCustomProperties.tsx

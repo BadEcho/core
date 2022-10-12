@@ -30,6 +30,7 @@ public class TileMapTests : IClassFixture<ContentManagerFixture>
     [InlineData("GrassLargeBlue")]
     [InlineData("GrassTilesAndImage")]
     [InlineData("GrassTwoTileLayers")]
+    [InlineData("GrassCustomProperties")]
     public void Load_NotNull(string mapName)
     {
         TileMap map = _content.Load<TileMap>($"Tiles\\{mapName}");
@@ -65,10 +66,12 @@ public class TileMapTests : IClassFixture<ContentManagerFixture>
         Assert.Equal(backgroundColor.ToColor(), map.BackgroundColor);
     }
 
-    [Fact]
-    public void Load_GrassFourTiles_HasTileLayer()
+    [Theory]
+    [InlineData("GrassFourTiles")]
+    [InlineData("GrassCustomProperties")]
+    public void Load_HasTileLayer(string mapName)
     {
-        TileMap map = _content.Load<TileMap>("Tiles\\GrassFourTiles");
+        TileMap map = _content.Load<TileMap>($"Tiles\\{mapName}");
 
         var tileLayer = map.Layers.OfType<TileLayer>().FirstOrDefault();
 
@@ -123,5 +126,32 @@ public class TileMapTests : IClassFixture<ContentManagerFixture>
         var imageLayer = map.Layers.OfType<ImageLayer>().FirstOrDefault();
 
         Assert.NotNull(imageLayer);
+    }
+
+    [Fact]
+    public void Load_GrassCustomProperties_PropertiesValid()
+    {
+        TileMap map = _content.Load<TileMap>("Tiles\\GrassCustomProperties");
+
+        Assert.True(map.CustomProperties.ContainsKey("SomeBool"));
+        Assert.True(map.CustomProperties.ContainsKey("SomeFloat"));
+        Assert.True(map.CustomProperties.ContainsKey("SomeInt"));
+        Assert.True(map.CustomProperties.ContainsKey("Something"));
+
+        Assert.True(Convert.ToBoolean(map.CustomProperties["SomeBool"]));
+        Assert.Equal(5.44f, Convert.ToSingle(map.CustomProperties["SomeFloat"]));
+        Assert.Equal(1, Convert.ToInt32(map.CustomProperties["SomeInt"]));
+        Assert.Equal("In The Way", map.CustomProperties["Something"]);
+    }
+
+    [Fact]
+    public void Load_GrassCustomProperties_LayerPropertiesValid()
+    {
+        TileMap map = _content.Load<TileMap>("Tiles\\GrassCustomProperties");
+
+        var tileLayer = map.Layers.OfType<TileLayer>().First();
+
+        Assert.True(tileLayer.CustomProperties.ContainsKey("Something"));
+        Assert.Equal("Hello", tileLayer.CustomProperties["Something"]);
     }
 }

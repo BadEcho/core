@@ -16,7 +16,6 @@ using Xunit;
 
 namespace BadEcho.Game.Tests;
 
-
 public class TileSetTests : IClassFixture<ContentManagerFixture>
 {
     private readonly Microsoft.Xna.Framework.Content.ContentManager _content;
@@ -24,10 +23,12 @@ public class TileSetTests : IClassFixture<ContentManagerFixture>
     public TileSetTests(ContentManagerFixture contentFixture)
         => _content = contentFixture.Content;
 
-    [Fact]
-    public void Load_Grasslands_NotNull()
+    [Theory]
+    [InlineData("Grasslands")]
+    [InlineData("GrasslandsCustomProperties")]
+    public void Load_NotNull(string tileSetName)
     {
-        TileSet tileSet = _content.Load<TileSet>("Tiles\\Grasslands");
+        TileSet tileSet = _content.Load<TileSet>($"Tiles\\{tileSetName}");
         
         Assert.NotNull(tileSet);
     }
@@ -47,5 +48,14 @@ public class TileSetTests : IClassFixture<ContentManagerFixture>
         TileSet tileSet = _content.Load<TileSet>("Tiles\\Grasslands");
 
         Assert.Equal(10, tileSet.TileCount);
+    }
+
+    [Fact]
+    public void Load_GrasslandsCustomProperties_PropertiesValid()
+    {
+        TileSet tileSet = _content.Load<TileSet>("Tiles\\GrasslandsCustomProperties");
+
+        Assert.True(tileSet.CustomProperties.ContainsKey("Something"));
+        Assert.Equal("In The Way", tileSet.CustomProperties["Something"]);
     }
 }
