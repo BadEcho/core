@@ -11,7 +11,8 @@
 //----------------------------------------------------------------------
 
 // Gets the player's information.
-define(omniPlayerHook,"start_protected_game.exe"+598262)
+// UNIQUE AOB: 24 48 8B 08 66 0F 6E 89 38 01 00 00
+define(omniPlayerHook,"start_protected_game.exe"+5990E2)
 
 assert(omniPlayerHook,66 0F 6E 89 38 01 00 00)
 alloc(getPlayer,$1000,omniPlayerHook)
@@ -100,9 +101,10 @@ omniPlayerHook:
 getPlayerReturn:
 
 // Gets the horsey's information.
-define(omniHorseyHook,"start_protected_game.exe"+4710ED)
+// UNIQUE AOB: 8B 8A 38 01 00 00 89 4B
+define(omniHorseyHook,"start_protected_game.exe"+63F40E)
 
-assert(omniHorseyHook,8B 81 38 01 00 00)
+assert(omniHorseyHook,8B 8A 38 01 00 00)
 alloc(getHorsey,$1000,omniHorseyHook)
 alloc(horsey,8)
 alloc(horseyVitals,8)
@@ -119,8 +121,8 @@ getHorsey:
     push rbx
     push rcx
     // Horsey information retrieval is fairly identical to player information retrieval.
-    mov [horseyVitals],rcx
-    mov rax,[rcx+8]
+    mov [horseyVitals],rdx
+    mov rax,[rdx+8]
     mov [horsey],rax
     // We take the same path to the horsey's havok proxy as we do with the player.
     mov rbx,[rax+190]
@@ -133,7 +135,7 @@ getHorsey:
     pop rax
 getHorseyOriginalCode:
     popf
-    mov eax,[rcx+00000138]
+    mov ecx,[rdx+00000138]
     jmp getHorseyReturn
 
 omniHorseyHook:
@@ -145,7 +147,8 @@ getHorseyReturn:
 // Increments the death counter when we ded.
 // rcx: The target entity's vital structure.
 // r8 is 0 and r11 is 1 when we're dead.
-define(omniDeathCounterHook,"start_protected_game.exe"+432702)
+// UNIQUE AOB: 89 81 38 01 00 00 E8
+define(omniDeathCounterHook,"start_protected_game.exe"+432782)
 
 assert(omniDeathCounterHook,89 81 38 01 00 00)
 alloc(incrementDeathCounter,$1000,omniDeathCounterHook)
@@ -186,8 +189,9 @@ deathCounter:
 // Initiates the Apocalypse system.
 // rdi: Target entity's vitals structure.
 // ebx: Two's complemented damage value being added to the health.
-// [rsp+50] | {[rsp]+8A} Source of damage's instance struct .
-define(omnifyApocalypseHook,"start_protected_game.exe"+431D8F)
+// [rsp+50] | {[rsp]+8A} Source of damage's instance struct.
+// UNIQUE AOB: 03 9F 38 01 00 00 85
+define(omnifyApocalypseHook,"start_protected_game.exe"+431E0F)
 
 assert(omnifyApocalypseHook,03 9F 38 01 00 00)
 alloc(initiateApocalypse,$1000,omnifyApocalypseHook)
@@ -309,7 +313,8 @@ teleportitisDisplacementX:
 // xmm0: Current working location coordinates.
 // Player's Havok character proxy can be found by looking at offset 0x88 of the chracter's proxy which itself 
 // is found at [playerLocation+0x98]
-define(omnifyPredatorHook,"start_protected_game.exe"+180BD40)
+// UNIQUE AOB: F3 45 0F 5C D3 0F
+define(omnifyPredatorHook,"start_protected_game.exe"+180F4A0)
 
 assert(omnifyPredatorHook,F3 45 0F 5C D3)
 alloc(initiatePredator,$1000,omnifyPredatorHook)
@@ -419,7 +424,8 @@ threatDistance:
 
 // Initiates the Abomnification system.
 // [rcx+8]: Player/EnemyIns, used as the identifying address.
-define(omnifyAbomnificationHook,"start_protected_game.exe"+433B0C)
+// UNIQUE AOB: 44 8B 81 38 01 00 00 C7
+define(omnifyAbomnificationHook,"start_protected_game.exe"+433B8C)
 
 assert(omnifyAbomnificationHook,44 8B 81 38 01 00 00)
 alloc(initiateAbomnification,$1000,omnifyAbomnificationHook)
@@ -454,7 +460,8 @@ initiateAbomnificationReturn:
 // xmm7: Width
 // xmm4: Height
 // xmm3: Depth
-define(omnifyApplyHumanAbomnificationHook,"start_protected_game.exe"+ACF4FA)
+// UNIQUE AOB: 0F 29 3C 07 0F 29 64 07 10
+define(omnifyApplyHumanAbomnificationHook,"start_protected_game.exe"+AD0E3A)
 
 assert(omnifyApplyHumanAbomnificationHook,0F 29 3C 07 0F 29 64 07 10)
 alloc(applyHumanAbomnification,$1000,omnifyApplyHumanAbomnificationHook)
@@ -516,7 +523,8 @@ applyHumanAbomnificationReturn:
 // xmm0: Width
 // xmm1: Height
 // xmm2: Depth
-define(omnifyApplyNonhumanAbomnificationHook,"start_protected_game.exe"+ACE473)
+// UNIQUE AOB: 0F 29 07 0F 29 4F 10 0F 29 57 20 EB
+define(omnifyApplyNonhumanAbomnificationHook,"start_protected_game.exe"+ACFDB3)
 
 assert(omnifyApplyNonhumanAbomnificationHook,0F 29 07 0F 29 4F 10)
 alloc(applyNonhumanAbomnification,$1000,omnifyApplyNonhumanAbomnificationHook)
@@ -617,7 +625,7 @@ dealloc(incrementDeathCounter)
 
 // Cleanup of omniHorseyHook
 omniHorseyHook:
-    db 8B 81 38 01 00 00
+    db 8B 8A 38 01 00 00
 
 unregistersymbol(omniHorseyHook)
 unregistersymbol(horseyHavokProxy)
