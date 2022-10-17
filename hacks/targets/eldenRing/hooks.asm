@@ -242,11 +242,11 @@ initiatePlayerApocalypse:
     cmp rsi,0
     jle abortApocalypse
     mov rax,[rsi]
-    // Lower 2 bytes of poison damage source is 0x7F20.
-    cmp ax,0x7F20
+    // Lower 2 bytes of poison damage source is 0x6F70.
+    cmp ax,0x6F70
     je abortApocalypse
-    // Fall damage is a "special effect", which has lower 2 bytes of 0xAAF8.    
-    cmp ax,0xAAF8 
+    // Fall damage is a "special effect", which has lower 2 bytes of 0x9B68.    
+    cmp ax,0x9B68 
     je abortApocalypse
     // Load the player's maximum health as the next parameter.
     mov rax,[rdi+13C]
@@ -518,8 +518,12 @@ applyHumanAbomnificationReturn:
 
 
 // Applies Abomnification generated scale multipliers on non-humanoid entities.
-// [rsp+E0] | {rsp+11A}: [CSFD4LocationMtxx44ChrEntity+B0] = EnemyIns that owns the particular
-//                       model transformation matrix being worked on here.
+// [rsp+E0] | {rsp+11A}: Either a CSFD4LocationMtxx44ChrEntity or another data type.
+//                       EnemyIns that owns the particular model transformation matrix being worked
+//                       on here can be found at:
+//                       [CSFD4LocationMtxx44ChrEntity+B0] or
+//                       [[CSFD4LocationHkaPoseImporter+140]+20] or
+//                       [[r13+E0]+20].
 // xmm0: Width
 // xmm1: Height
 // xmm2: Depth
@@ -545,16 +549,33 @@ applyNonhumanAbomnification:
     // Retrieving the entity's root structure.
     mov rbx,[rsp+11A]
     cmp rbx,0
-    je applyNonhumanAbomnificationExit    
+    je applyNonhumanAbomnificationFail    
     lea rcx,[rbx]
     call checkBadPointer
     cmp rcx,0
-    jne applyNonhumanAbomnificationExit 
+    jne applyNonhumanAbomnificationFail 
     mov rax,[rbx]
-    // Ensure that this is a 4x4 location matrix struct.
-    cmp ax,0xA4E8
-    jne applyNonhumanAbomnificationExit
+    // Check if it is a 4x4 location matrix struct.
+    cmp ax,0x97C8
+    jne checkPoseImporter
     mov rax,[rbx+B0]
+    jmp applyNonHumanAbomnificationExecute
+checkPoseImporter:
+    // ...or a "pose importer".
+    cmp ax,0xAED0
+    jne checkRegisters
+    mov rcx,[rbx+140]
+    mov rax,[rcx+20]
+    jmp applyNonHumanAbomnificationExecute
+checkRegisters: 
+    // ...or if our entity data is on the r13 register.
+    mov rbx,[r13+E0]
+    lea rcx,[rbx+20]
+    call checkBadPointer
+    cmp rcx,0
+    jne applyNonhumanAbomnificationFail
+    mov rax,[rbx+20]    
+applyNonHumanAbomnificationExecute:
     // Push the identifying address (the EnemyIns).
     push rax
     call getAbomnifiedScales
@@ -570,6 +591,8 @@ applyNonhumanAbomnification:
     movd xmm3,ecx
     shufps xmm3,xmm3,0
     mulps xmm2,xmm3
+    jmp applyNonhumanAbomnificationExit
+applyNonhumanAbomnificationFail:
     nop
 applyNonhumanAbomnificationExit:
     pop rcx
