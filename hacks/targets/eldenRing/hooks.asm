@@ -488,15 +488,15 @@ applyHumanAbomnification:
     call getAbomnifiedScales
     // Apply width scaling.
     movd xmm0,eax
-    shufps xmm0,xmm0,1
+    shufps xmm0,xmm0,0
     mulps xmm7,xmm0
     // Apply height scaling.
     movd xmm0,ebx
-    shufps xmm0,xmm0,1
+    shufps xmm0,xmm0,0
     mulps xmm4,xmm0
     // Apply depth scaling.
     movd xmm0,ecx
-    shufps xmm0,xmm0,1
+    shufps xmm0,xmm0,0
     mulps xmm3,xmm0
     pop rcx
     pop rbx
@@ -560,15 +560,15 @@ applyNonhumanAbomnification:
     call getAbomnifiedScales
     // Apply width scaling.
     movd xmm3,eax
-    shufps xmm3,xmm3,1
+    shufps xmm3,xmm3,0
     mulps xmm0,xmm3
     // Apply height scaling.
     movd xmm3,ebx
-    shufps xmm3,xmm3,1
+    shufps xmm3,xmm3,0
     mulps xmm1,xmm3
     // Apply depth scaling.
     movd xmm3,ecx
-    shufps xmm3,xmm3,1
+    shufps xmm3,xmm3,0
     mulps xmm2,xmm3
     nop
 applyNonhumanAbomnificationExit:
