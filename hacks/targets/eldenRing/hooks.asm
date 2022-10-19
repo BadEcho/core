@@ -483,6 +483,11 @@ applyHumanAbomnification:
     mov rax,[rsp+4A]
     mov rbx,[rax+78]
     sub rbx,640
+    // Exclude the player from morphing.
+    mov rax,player
+    mov rcx,[rax]
+    cmp rbx,rcx
+    je applyHumanAbomnificationExit
     // Push the identifying address (the PlayerIns).    
     push rbx
     call getAbomnifiedScales
@@ -498,6 +503,7 @@ applyHumanAbomnification:
     movd xmm0,ecx
     shufps xmm0,xmm0,0
     mulps xmm3,xmm0
+applyHumanAbomnificationExit:
     pop rcx
     pop rbx
     pop rax
@@ -528,12 +534,15 @@ applyHumanAbomnificationReturn:
 // xmm1: Height
 // xmm2: Depth
 // UNIQUE AOB: 0F 29 07 0F 29 4F 10 0F 29 57 20 EB
+// check out [rsp+88] for an identifying address
 define(omnifyApplyNonhumanAbomnificationHook,"start_protected_game.exe"+ACFDB3)
 
 assert(omnifyApplyNonhumanAbomnificationHook,0F 29 07 0F 29 4F 10)
 alloc(applyNonhumanAbomnification,$1000,omnifyApplyNonhumanAbomnificationHook)
+alloc(targetId,8)
 
 registersymbol(omnifyApplyNonhumanAbomnificationHook)
+registersymbol(targetId)
 
 applyNonhumanAbomnification:
     pushf
@@ -549,11 +558,11 @@ applyNonhumanAbomnification:
     // Retrieving the entity's root structure.
     mov rbx,[rsp+11A]
     cmp rbx,0
-    je applyNonhumanAbomnificationFail    
+    je checkRegisters    
     lea rcx,[rbx]
     call checkBadPointer
     cmp rcx,0
-    jne applyNonhumanAbomnificationFail 
+    jne checkRegisters 
     mov rax,[rbx]
     // Check if it is a 4x4 location matrix struct.
     cmp ax,0x97C8
@@ -564,8 +573,13 @@ checkPoseImporter:
     // ...or a "pose importer".
     cmp ax,0xAED0
     jne checkRegisters
-    mov rcx,[rbx+140]
-    mov rax,[rcx+20]
+    mov rax,[rbx+140]
+    lea rcx,[rax+20]
+    call checkBadPointer
+    cmp rcx,0
+    jne checkRegisters
+    mov rbx,[rax+20]
+    mov rax,rbx
     jmp applyNonHumanAbomnificationExecute
 checkRegisters: 
     // ...or if our entity data is on the r13 register.
@@ -577,6 +591,10 @@ checkRegisters:
     mov rax,[rbx+20]    
 applyNonHumanAbomnificationExecute:
     // Push the identifying address (the EnemyIns).
+    cmp ax,[targetId]
+    jne executeNow
+    mov rbx,[rdi]
+executeNow:
     push rax
     call getAbomnifiedScales
     // Apply width scaling.
@@ -708,5 +726,7 @@ omnifyApplyNonhumanAbomnificationHook:
     db 0F 29 07 0F 29 4F 10
 
 unregistersymbol(omnifyApplyNonhumanAbomnificationHook)
+unregistersymbol(targetId)
 
+dealloc(targetId)
 dealloc(applyNonhumanAbomnification)
