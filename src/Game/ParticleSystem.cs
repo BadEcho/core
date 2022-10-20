@@ -71,9 +71,8 @@ public sealed class ParticleSystem
     /// <summary>
     /// Generates a new batch of particles and updates the lifetimes of those already existing.
     /// </summary>
-    /// <param name="gameTime">The elapsed time since the last call to <see cref="Update(GameTime,TimeSpan)"/>.</param>
-    /// <param name="targetElapsedTime">The targeted time between frames when running with a fixed time step.</param>
-    public void Update(GameTime gameTime, TimeSpan targetElapsedTime)
+    /// <param name="state">The state of the game at this given point in time.</param>
+    public void Update(GameState state)
     {
         for (int i = 0; i < BatchSize; i++)
         {
@@ -82,7 +81,7 @@ public sealed class ParticleSystem
 
         for (int i = 0; i < _particles.Count; i++)
         {
-            _particles[i].Update(gameTime, targetElapsedTime);
+            _particles[i].Update(state);
 
             if (_particles[i].TimeToLive <= 0)
             {
