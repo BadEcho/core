@@ -422,7 +422,9 @@ threatDistance:
     dd (float)3.5
 
 
-// Initiates the Abomnification system.
+// Initiates the Abomnification system for humanoids.
+// This essentially will establish morph sequences for non-humanoids as well, however the identify addresses
+// used here aren't actually retrievable at the point of matrix transformation, where we're applying the scales.
 // [rcx+8]: Player/EnemyIns, used as the identifying address.
 // UNIQUE AOB: 44 8B 81 38 01 00 00 C7
 define(omnifyAbomnificationHook,"start_protected_game.exe"+433B8C)
@@ -465,7 +467,9 @@ define(omnifyApplyHumanAbomnificationHook,"start_protected_game.exe"+AD0E3A)
 
 assert(omnifyApplyHumanAbomnificationHook,0F 29 3C 07 0F 29 64 07 10)
 alloc(applyHumanAbomnification,$1000,omnifyApplyHumanAbomnificationHook)
+alloc(abomnifyPlayer,8)
 
+registersymbol(abomnifyPlayer)
 registersymbol(omnifyApplyHumanAbomnificationHook)
 
 applyHumanAbomnification:
@@ -483,11 +487,15 @@ applyHumanAbomnification:
     mov rax,[rsp+4A]
     mov rbx,[rax+78]
     sub rbx,640
-    // Exclude the player from morphing.
+    // Morph everyone, except the player.
     mov rax,player
     mov rcx,[rax]
     cmp rbx,rcx
-    je applyHumanAbomnificationExit
+    jne applyHumanAbomnificationExecute
+    // ...unless player morphing is allowed.
+    cmp [abomnifyPlayer],1
+    jne applyHumanAbomnificationExit
+applyHumanAbomnificationExecute:
     // Push the identifying address (the PlayerIns).    
     push rbx
     call getAbomnifiedScales
@@ -523,13 +531,43 @@ omnifyApplyHumanAbomnificationHook:
 applyHumanAbomnificationReturn:
 
 
+// Initiates the Abomnification system for non-humanoids.
+// [rcx+18]: The entity-identifying model transformation matrix array, unique to each 
+// entity whose model is being rendered.
+define(omnifyNonhumanAbomnificationHook,"start_protected_game.exe"+15BE29C)
+
+assert(omnifyNonhumanAbomnificationHook,48 8B 41 18 41 0F 29 04 02)
+alloc(initiateNonhumanAbomnification,$1000,omnifyNonhumanAbomnificationHook)
+
+registersymbol(omnifyNonhumanAbomnificationHook)
+
+initiateNonhumanAbomnification:
+    pushf
+    // We're not applying the scale multiplier yet, but we still need to preserve our registers.
+    push rax
+    push rbx
+    push rcx
+    lea rax,[rcx+18]
+    push rax
+    call executeAbomnification
+    pop rcx
+    pop rbx
+    pop rax
+initiateNonhumanAbomnificationOriginalCode:
+    popf
+    mov rax,[rcx+18]
+    movaps [r10+rax],xmm0
+    jmp initiateNonhumanAbomnificationReturn
+
+omnifyNonhumanAbomnificationHook:
+    jmp initiateNonhumanAbomnification
+    nop 4
+initiateNonhumanAbomnificationReturn:
+
+
 // Applies Abomnification generated scale multipliers on non-humanoid entities.
-// [rsp+E0] | {rsp+11A}: Either a CSFD4LocationMtxx44ChrEntity or another data type.
-//                       EnemyIns that owns the particular model transformation matrix being worked
-//                       on here can be found at:
-//                       [CSFD4LocationMtxx44ChrEntity+B0] or
-//                       [[CSFD4LocationHkaPoseImporter+140]+20] or
-//                       [[r13+E0]+20].
+// r13: The entity-identifying model transformation matrix array.
+// r9: This points to a 4x3 location matrix structure ONLY for humanoids. Perfect for filtering them out.
 // xmm0: Width
 // xmm1: Height
 // xmm2: Depth
@@ -555,47 +593,11 @@ applyNonhumanAbomnification:
     push rax
     push rbx
     push rcx
-    // Retrieving the entity's root structure.
-    mov rbx,[rsp+11A]
-    cmp rbx,0
-    je checkRegisters    
-    lea rcx,[rbx]
-    call checkBadPointer
-    cmp rcx,0
-    jne checkRegisters 
-    mov rax,[rbx]
-    // Check if it is a 4x4 location matrix struct.
-    cmp ax,0x97C8
-    jne checkPoseImporter
-    mov rax,[rbx+B0]
-    jmp applyNonHumanAbomnificationExecute
-checkPoseImporter:
-    // ...or a "pose importer".
-    cmp ax,0xAED0
-    jne checkRegisters
-    mov rax,[rbx+140]
-    lea rcx,[rax+20]
-    call checkBadPointer
-    cmp rcx,0
-    jne checkRegisters
-    mov rbx,[rax+20]
-    mov rax,rbx
-    jmp applyNonHumanAbomnificationExecute
-checkRegisters: 
-    // ...or if our entity data is on the r13 register.
-    mov rbx,[r13+E0]
-    lea rcx,[rbx+20]
-    call checkBadPointer
-    cmp rcx,0
-    jne applyNonhumanAbomnificationFail
-    mov rax,[rbx+20]    
-applyNonHumanAbomnificationExecute:
-    // Push the identifying address (the EnemyIns).
-    cmp ax,[targetId]
-    jne executeNow
-    mov rbx,[rdi]
-executeNow:
-    push rax
+    // Separate out the humans. Eliminate them. Annihilate them (noo, just don't morph them sensei).
+    cmp r9,0
+    jne applyNonhumanAbomnificationExit
+    // Push the identifying address.
+    push r13    
     call getAbomnifiedScales
     // Apply width scaling.
     movd xmm3,eax
@@ -610,8 +612,6 @@ executeNow:
     shufps xmm3,xmm3,0
     mulps xmm2,xmm3
     jmp applyNonhumanAbomnificationExit
-applyNonhumanAbomnificationFail:
-    nop
 applyNonhumanAbomnificationExit:
     pop rcx
     pop rbx
@@ -717,7 +717,9 @@ omnifyApplyHumanAbomnificationHook:
     db 0F 29 3C 07 0F 29 64 07 10
 
 unregistersymbol(omnifyApplyHumanAbomnificationHook)
+unregistersymbol(abomnifyPlayer)
 
+dealloc(abomnifyPlayer)
 dealloc(applyHumanAbomnification)
 
 
@@ -730,3 +732,13 @@ unregistersymbol(targetId)
 
 dealloc(targetId)
 dealloc(applyNonhumanAbomnification)
+
+
+
+// Cleanup of omnifyNonhumanAbomnificationHook
+omnifyNonhumanAbomnificationHook:
+    db 48 8B 41 18 41 0F 29 04 02
+
+unregistersymbol(omnifyNonhumanAbomnificationHook)
+
+dealloc(initiateNonhumanAbomnification)
