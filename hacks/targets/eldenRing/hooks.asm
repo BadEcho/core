@@ -632,6 +632,39 @@ omnifyApplyNonhumanAbomnificationHook:
 applyNonhumanAbomnificationReturn:
 
 
+// Makes Omni's life a little easier (i.e., I learn things faster).
+define(omnifyFastLearner,"start_protected_game.exe"+637953)
+
+assert(omnifyFastLearner,F3 0F 59 C1 F3 0F 2C F8)
+alloc(learnFast,$1000,omnifyFastLearner)
+alloc(learningX,8)
+
+registersymbol(learningX)
+registersymbol(omnifyFastLearner)
+
+learnFast:
+    pushf
+    sub rsp,10
+    movdqu [rsp],xmm2
+    movss xmm2,[learningX]
+    mulss xmm0,xmm2    
+    movdqu xmm2,[rsp]
+    add rsp,10
+learnFastOriginalCode:
+    popf
+    mulss xmm0,xmm1
+    cvttss2si edi,xmm0
+    jmp learnFastReturn
+
+omnifyFastLearner:
+    jmp learnFast
+    nop 3
+learnFastReturn:
+
+
+learningX:
+    dd (float)2.0
+
 [DISABLE]
 
 // Cleanup of omniPlayerHook
@@ -742,3 +775,14 @@ omnifyNonhumanAbomnificationHook:
 unregistersymbol(omnifyNonhumanAbomnificationHook)
 
 dealloc(initiateNonhumanAbomnification)
+
+
+// Cleanup of omnifyFastLearner
+omnifyFastLearner:
+    db F3 0F 59 C1 F3 0F 2C F8
+
+unregistersymbol(omnifyFastLearner)
+unregistersymbol(learningX)
+
+dealloc(learningX)
+dealloc(learnFast)
