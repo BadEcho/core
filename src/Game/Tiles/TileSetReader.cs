@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -40,7 +39,7 @@ public sealed class TileSetReader : ContentTypeReader<TileSet>
         var margin = input.ReadInt32();
         var customProperties = input.ReadProperties();
 
-        return new TileSet(texture, new Point(tileWidth, tileHeight), tileCount, columns)
+        return new TileSet(texture, new Size(tileWidth, tileHeight), tileCount, columns)
                {
                    Spacing = spacing,
                    Margin = margin,

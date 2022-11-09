@@ -49,7 +49,7 @@ public sealed class SpriteSheet
     /// <summary>
     /// Gets the size of an individual frame in the sprite sheet.
     /// </summary>
-    public Point FrameSize 
+    public Size FrameSize
         => new(Texture.Width / Columns, Texture.Height / Rows);
 
     /// <summary>
@@ -100,7 +100,7 @@ public sealed class SpriteSheet
         if (frame > Columns)
             throw new ArgumentException(Strings.SheetFrameExceedsTotal, nameof(frame));
 
-        Point frameLocation = new(frame, _directionRows[direction] - 1);
+        Size frameLocation = new(frame, _directionRows[direction] - 1);
 
         return new Rectangle(frameLocation * FrameSize, FrameSize);
     }

@@ -11,6 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Extensions;
 using Microsoft.Xna.Framework;
 
 namespace BadEcho.Game.Tiles;
@@ -20,8 +21,8 @@ namespace BadEcho.Game.Tiles;
 /// </summary>
 public sealed class TileLayer : Layer
 {
-    private readonly Tile[] _tiles;
-    private readonly Point _size;
+    private readonly Tile?[] _tiles;
+    private readonly Size _size;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TileLayer"/> class.
@@ -37,30 +38,45 @@ public sealed class TileLayer : Layer
                      bool isVisible,
                      float opacity,
                      Vector2 offset,
-                     Point size)
+                     Size size)
         : base(name, isVisible, opacity, offset)
     {
         _size = size;
-        _tiles = new Tile[size.X * size.Y];
+        _tiles = new Tile[size.Width * size.Height];
     }
 
     /// <summary>
     /// Gets the tiles belonging to this tile layer.
     /// </summary>
-    public IReadOnlyCollection<Tile> Tiles
+    public IReadOnlyCollection<Tile?> Tiles
         => _tiles;
 
     /// <summary>
     /// Gets a range of tiles found within this tile layer.
     /// </summary>
     /// <param name="firstId">The global identifier of the tile at which the range starts.</param>
-    /// <param name="count">The number of elements in the range.</param>
-    /// <returns>A range of <c>count</c> tiles starting at the tile identified by <c>firstId</c>.</returns>
-    public IEnumerable<Tile> GetRange(int firstId, int count)
+    /// <param name="maxCount">The maximum number of elements in the range.</param>
+    /// <returns>A range of up to <c>maxCount</c> tiles starting at the tile identified by <c>firstId</c>.</returns>
+    public IEnumerable<Tile> GetRange(int firstId, int maxCount)
     {
-        int lastId = count + firstId - 1;
-        
-        return _tiles.Where(t => t.Id >= firstId && t.Id <= lastId);
+        int lastId = maxCount + firstId - 1;
+
+        return _tiles.WhereNotNull()
+                     .Where(t => t.Id >= firstId && t.Id <= lastId);
+    }
+
+    /// <summary>
+    /// Gets the tile, if any, found at the specified position in the layer.
+    /// </summary>
+    /// <param name="position">The drawing location of the tile to return.</param>
+    /// <returns>The tile being drawn at <c>position</c>, if one exists; otherwise, null.</returns>
+    public Tile? GetTile(Vector2 position)
+    {
+        int columnIndex = (int) position.X / _size.Width;
+        int rowIndex = (int) position.Y / _size.Height;
+        int index = CalculateTileIndex(columnIndex, rowIndex);
+
+        return _tiles[index];
     }
 
     /// <summary>
@@ -71,9 +87,12 @@ public sealed class TileLayer : Layer
     /// <param name="rowIndex">The index of the row within the tile layer to load the tile into.</param>
     public void LoadTile(uint idWithFlags, int columnIndex, int rowIndex)
     {
-        int index = columnIndex + rowIndex * _size.X;
+        int index = CalculateTileIndex(columnIndex, rowIndex);
         
         _tiles[index] = new Tile(idWithFlags, columnIndex, rowIndex);
     }
+
+    private int CalculateTileIndex(int columnIndex, int rowIndex)
+        => columnIndex + rowIndex * _size.Width;
 }   
   

@@ -36,8 +36,8 @@ public sealed class TileMapReader : ContentTypeReader<TileMap>
         var tileHeight = input.ReadInt32();
         var customProperties = input.ReadProperties();
 
-        var size = new Point(width, height);
-        var tileSize = new Point(tileWidth, tileHeight);
+        var size = new Size(width, height);
+        var tileSize = new Size(tileWidth, tileHeight);
         var map = new TileMap(input.GetGraphicsDevice(),
                               input.AssetName,
                               size,

@@ -46,8 +46,8 @@ public sealed class TileMap : Extensible
     /// <param name="renderOrder">The order in which tiles on the map are rendered.</param>
     public TileMap(GraphicsDevice device, 
                    string name,
-                   Point size,
-                   Point tileSize,
+                   Size size,
+                   Size tileSize,
                    MapOrientation orientation,
                    TileRenderOrder renderOrder)
     {
@@ -77,7 +77,7 @@ public sealed class TileMap : Extensible
     /// The dimensions of the tile map is determined using tiles (whose sizes are known) as opposed to simply pixels. A 64x64 size,
     /// for example, indicates a map that is a 64 tiles wide by 64 tiles hide, with a total area of 4,096 tiles.
     /// </remarks>
-    public Point Size
+    public Size Size
     { get; }
 
     /// <summary>
@@ -87,7 +87,7 @@ public sealed class TileMap : Extensible
     /// Maps defined using the TMX map format use a uniform size for all the tiles that they comprise. The tile size defined for the
     /// map essentially, then, defines the size of tiles used by all its constituent layers.
     /// </remarks>
-    public Point TileSize
+    public Size TileSize
     { get; }
 
     /// <summary>
@@ -150,7 +150,7 @@ public sealed class TileMap : Extensible
     {
         if (_layerModelMap.Count == 0)
             CreateModels();
-
+        
         var projection = Matrix.CreateOrthographicOffCenter(0, _device.Viewport.Width, _device.Viewport.Height, 0, 0, -1);
 
         foreach (var layer in Layers)
@@ -254,7 +254,7 @@ public sealed class TileMap : Extensible
     {
         return Orientation switch
         {
-            MapOrientation.Orthogonal => new Vector2(tile.ColumnIndex * TileSize.X, tile.RowIndex * TileSize.Y),
+            MapOrientation.Orthogonal => new Vector2(tile.ColumnIndex * TileSize.Width, tile.RowIndex * TileSize.Height),
             // TODO: Add support for other orientations.
             _ => throw new NotSupportedException()
         };

@@ -26,7 +26,7 @@ public sealed class TileSet : Extensible
     /// <summary>
     /// Initializes a new instance of the <see cref="TileSet"/> class.
     /// </summary>
-    public TileSet(Texture2D texture, Point tileSize, int tileCount, int columns)
+    public TileSet(Texture2D texture, Size tileSize, int tileCount, int columns)
     {
         Texture = texture;
         TileSize = tileSize;
@@ -43,7 +43,7 @@ public sealed class TileSet : Extensible
     /// <summary>
     /// Gets size of an individual tile in this tile set.
     /// </summary>
-    public Point TileSize
+    public Size TileSize
     { get; }
 
     /// <summary>
@@ -71,9 +71,9 @@ public sealed class TileSet : Extensible
     /// <returns>The bounding rectangle for the tile identified by <c>localId</c> within this tile set's texture.</returns>
     public Rectangle GetTileSourceArea(int localId)
     {
-        int x = localId % _columns * (TileSize.X + Spacing) + Margin;
-        int y = localId / _columns * (TileSize.Y + Spacing) + Margin;
+        int x = localId % _columns * (TileSize.Width + Spacing) + Margin;
+        int y = localId / _columns * (TileSize.Height + Spacing) + Margin;
 
-        return new Rectangle(x, y, TileSize.X, TileSize.Y);
+        return new Rectangle(x, y, TileSize.Width, TileSize.Height);
     }
 }
