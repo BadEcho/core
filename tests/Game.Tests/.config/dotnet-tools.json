@@ -2,14 +2,14 @@
   "version": 1,
   "isRoot": true,
   "tools": {
-    "dotnet-mgcb": {
-      "version": "3.8.1.303",
+    "bad-echo-mgcb": {
+      "version": "3.8.2.1-develop",
       "commands": [
         "mgcb"
       ]
     },
-    "dotnet-mgcb-editor": {
-      "version": "3.8.1.303",
+    "bad-echo-mgcb-editor": {
+      "version": "3.8.2.1-develop",
       "commands": [
         "mgcb-editor"
       ]
@@ -20,8 +20,8 @@
         "mgcb-editor-linux"
       ]
     },
-    "dotnet-mgcb-editor-windows": {
-      "version": "3.8.1.303",
+    "bad-echo-mgcb-editor-windows": {
+      "version": "3.8.2.1-develop",
       "commands": [
         "mgcb-editor-windows"
       ]

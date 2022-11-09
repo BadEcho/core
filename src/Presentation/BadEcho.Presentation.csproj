@@ -5,7 +5,7 @@
 	  <Description>Bad Echo user interface framework for Windows Presentation Foundation.</Description>
 	  <Title>$(Product)</Title>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
-	  <TargetFramework>net6.0-windows</TargetFramework>
+	  <TargetFramework>net7.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 

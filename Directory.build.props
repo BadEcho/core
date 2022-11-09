@@ -1,6 +1,6 @@
 <Project>
 	<PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <PackageId>$(MSBuildProjectName)</PackageId>
 		<RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/omniscientist/BadEcho</RepositoryUrl>
