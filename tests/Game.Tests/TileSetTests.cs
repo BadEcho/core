@@ -38,8 +38,8 @@ public class TileSetTests : IClassFixture<ContentManagerFixture>
     {
         TileSet tileSet = _content.Load<TileSet>("Tiles\\Grasslands");
 
-        Assert.Equal(16, tileSet.TileSize.X);
-        Assert.Equal(16, tileSet.TileSize.Y);
+        Assert.Equal(16, tileSet.TileSize.Width);
+        Assert.Equal(16, tileSet.TileSize.Height);
     }
 
     [Fact]
