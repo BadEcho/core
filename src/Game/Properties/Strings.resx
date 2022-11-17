@@ -113,4 +113,13 @@
 	<data name="ModelNoVertexIndices" xml:space="preserve">
 		<value>No indices were provided for the vertex data.</value>
 	</data>
+	<data name="ZoomSpeedCannotBeNegative" xml:space="preserve">
+		<value>Zoom speed cannot be negative.</value>
+	</data>
+	<data name="MinimumZoomCannotBeZeroOrLess" xml:space="preserve">
+		<value>Minimum amount of zoom must be greater than zero.</value>
+	</data>
+	<data name="MaximumZoomCannotBeZeroOrLess" xml:space="preserve">
+		<value>Maximum amount of zoom must be greater than zero.</value>
+	</data>
 </root>

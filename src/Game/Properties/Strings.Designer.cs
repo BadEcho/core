@@ -61,6 +61,24 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Maximum amount of zoom must be greater than zero..
+        /// </summary>
+        internal static string MaximumZoomCannotBeZeroOrLess {
+            get {
+                return ResourceManager.GetString("MaximumZoomCannotBeZeroOrLess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Minimum amount of zoom must be greater than zero..
+        /// </summary>
+        internal static string MinimumZoomCannotBeZeroOrLess {
+            get {
+                return ResourceManager.GetString("MinimumZoomCannotBeZeroOrLess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No indices were provided for the vertex data..
         /// </summary>
         internal static string ModelNoVertexIndices {
@@ -102,6 +120,15 @@ namespace BadEcho.Game.Properties {
         internal static string SheetNoFramesForDirection {
             get {
                 return ResourceManager.GetString("SheetNoFramesForDirection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zoom speed cannot be negative..
+        /// </summary>
+        internal static string ZoomSpeedCannotBeNegative {
+            get {
+                return ResourceManager.GetString("ZoomSpeedCannotBeNegative", resourceCulture);
             }
         }
     }

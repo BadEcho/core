@@ -137,7 +137,7 @@ public readonly struct Size : IEquatable<Size>
         => right.Multiply(left);
 
     /// <summary>
-    /// Multiplies two <see cref="Size"/>values together via multiplication of corresponding directional
+    /// Multiplies two <see cref="Size"/> values together via multiplication of corresponding directional
     /// components to compute their product.
     /// </summary>
     /// <param name="left">The size which <c>right</c> multiplies.</param>
@@ -151,8 +151,18 @@ public readonly struct Size : IEquatable<Size>
     /// </summary>
     /// <param name="left">The size which <c>right</c> divides.</param>
     /// <param name="right">The integer which divides <c>left</c>.</param>
-    /// <returns>The quotient of <c>left</c> divided by right.</returns>
+    /// <returns>The quotient of <c>left</c> divided by <c>right</c>.</returns>
     public static Size operator /(Size left, int right)
+        => left.Divide(right);
+
+    /// <summary>
+    /// Divides one <see cref="Size"/> value by another via division of corresponding directional components
+    /// to compute their quotient.
+    /// </summary>
+    /// <param name="left">The size which <c>right</c> divides.</param>
+    /// <param name="right">The size which divides <c>left</c>.</param>
+    /// <returns>The quotient of <c>left</c> divided by <c>right</c>.</returns>
+    public static Size operator /(Size left, Size right)
         => left.Divide(right);
 
     /// <summary>
@@ -239,4 +249,13 @@ public readonly struct Size : IEquatable<Size>
     /// <returns>The quotient of this size divided by <c>divisor</c>.</returns>
     public Size Divide(int divisor)
         => new(Width / divisor, Height / divisor);
+
+    /// <summary>
+    /// Divides this size by the specified <see cref="Size"/> value via division of corresponding directional components
+    /// to compute their quotient.
+    /// </summary>
+    /// <param name="other">The size to be divided by.</param>
+    /// <returns>The quotient of this size divided by <c>other</c>.</returns>
+    public Size Divide(Size other)
+        => new(Width / other.Width, Height / other.Height);
 }
