@@ -21,6 +21,8 @@ namespace BadEcho.Game.Tests;
 /// </summary>
 public sealed class ContentManagerFixture : IDisposable
 {
+    private bool _disposed;
+
     public ContentManagerFixture()
     {
         var services = new ServiceContainer();
@@ -37,6 +39,11 @@ public sealed class ContentManagerFixture : IDisposable
     /// <inheritdoc />
     public void Dispose()
     {
+        if (_disposed)
+            return;
+
         Content.Dispose();
+
+        _disposed = true;
     }
 }

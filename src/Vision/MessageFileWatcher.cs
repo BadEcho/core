@@ -24,7 +24,9 @@ internal sealed class MessageFileWatcher : IMessageFileProvider, IDisposable
 {
     private readonly FileSystemWatcher _watcher;
     private readonly bool _processNewMessagesOnly;
+    
     private long _lastReadPosition;
+    private bool _disposed;
 
     /// <inheritdoc/>
     public event EventHandler<EventArgs<string>>? NewMessages;
@@ -72,7 +74,14 @@ internal sealed class MessageFileWatcher : IMessageFileProvider, IDisposable
 
     /// <inheritdoc/>
     public void Dispose()
-        => _watcher.Dispose();
+    {
+        if (_disposed)
+            return;
+
+        _watcher.Dispose();
+
+        _disposed = true;
+    }
 
     private void HandleMessageFileChanged(object sender, FileSystemEventArgs e)
     {

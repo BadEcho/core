@@ -381,6 +381,7 @@ public class ThreadExecutorOperation
         private readonly Timer? _timer;
 
         private bool _isExited;
+        private bool _disposed;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ThreadExecutorOperationFrame"/> class.
@@ -428,10 +429,15 @@ public class ThreadExecutorOperation
         /// <inheritdoc/>
         public void Dispose()
         {
+            if (_disposed)
+                return;
+
             _timer?.Dispose();
 
             _operation.Canceled -= HandleOperationCanceledOrCompleted;
             _operation.Completed -= HandleOperationCanceledOrCompleted;
+
+            _disposed = true;
         }
 
         private void Exit()

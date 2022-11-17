@@ -53,6 +53,8 @@ internal sealed class WindowSubclass : IDisposable
     private readonly ThreadExecutorOperationCallback _executorOperationCallback;
     private readonly IThreadExecutor _executor;
 
+    private bool _disposed;
+
     /// <summary>
     /// Initializes the <see cref="WindowSubclass"/> class.
     /// </summary>
@@ -109,9 +111,14 @@ internal sealed class WindowSubclass : IDisposable
     /// <inheritdoc/>
     public void Dispose()
     {
+        if (_disposed)
+            return;
+
         _hook = null;
 
         Unhook(false);
+
+        _disposed = true;
     }
 
     /// <summary>

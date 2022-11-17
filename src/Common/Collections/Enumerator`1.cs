@@ -28,6 +28,8 @@ public sealed class Enumerator<T> : Enumerator, IEnumerator<T>
 {
     private readonly Func<object, T> _elementConverter = current => (T)current;
 
+    private bool _disposed;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Enumerator{T}"/> class.
     /// </summary>
@@ -82,8 +84,12 @@ public sealed class Enumerator<T> : Enumerator, IEnumerator<T>
     /// </remarks>
     public void Dispose()
     {
-        IDisposable? disposable = InnerEnumerator as IDisposable;
+        if (_disposed)
+            return;
 
+        IDisposable? disposable = InnerEnumerator as IDisposable;
         disposable?.Dispose();
+
+        _disposed = true;
     }
 }

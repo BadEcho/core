@@ -24,6 +24,8 @@ internal sealed class ModuleHost : IDisposable
 {
     private readonly MessageFileWatcher? _messageFileWatcher;
 
+    private bool _disposed;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ModuleHost"/> class.
     /// </summary>
@@ -78,6 +80,13 @@ internal sealed class ModuleHost : IDisposable
     }
 
     /// <inheritdoc/>
-    public void Dispose() 
-        => _messageFileWatcher?.Dispose();
+    public void Dispose()
+    {
+        if (_disposed)
+            return;
+
+        _messageFileWatcher?.Dispose();
+
+        _disposed = true;
+    }
 }

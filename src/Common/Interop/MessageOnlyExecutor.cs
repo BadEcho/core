@@ -46,6 +46,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
 
     private ExecutionContext? _shutdownContext;
     private int _framesRunning;
+    private bool _disposed;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MessageOnlyExecutor"/> class.
@@ -275,9 +276,13 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     /// <inheritdoc/>
     public void Dispose()
     {
-        Invoke(StartShutdown);
+        if (_disposed)
+            return;
 
+        Invoke(StartShutdown);
         _shutdownContext?.Dispose();
+
+        _disposed = true;
     }
 
     private static void LoopMessages(IThreadExecutorFrame frame)

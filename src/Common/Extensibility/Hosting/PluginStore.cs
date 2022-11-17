@@ -37,6 +37,8 @@ internal sealed class PluginStore : IDisposable
     private readonly Lazy<LazyConcurrentDictionary<Guid, PluginContext>> _filterableContexts;
     private readonly Lazy<IReadOnlyDictionary<Guid, IFilterableFamilyMetadata>> _filterableFamilies;
 
+    private bool _disposed;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="PluginStore"/> class.
     /// </summary>
@@ -122,6 +124,9 @@ internal sealed class PluginStore : IDisposable
     /// <inheritdoc/>
     public void Dispose()
     {
+        if (_disposed)
+            return;
+
         if (_globalContext.IsValueCreated)
             GlobalContext.Dispose();
 
@@ -137,6 +142,8 @@ internal sealed class PluginStore : IDisposable
                 lazyContext.Value.Dispose();
             }
         }
+
+        _disposed = true;
     }
         
     private Dictionary<Guid, IFilterableFamilyMetadata> InitializeFilterableFamilies()

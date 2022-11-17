@@ -22,6 +22,8 @@ public class MessageFileWatcherTests : IDisposable
     private readonly FakeVisionModule _module;
     private readonly MessageFileWatcher _watcher;
 
+    private bool _disposed;
+
     public MessageFileWatcherTests()
     {
         _module = new FakeVisionModule();
@@ -29,8 +31,15 @@ public class MessageFileWatcherTests : IDisposable
         _watcher = new MessageFileWatcher(_module, string.Empty);
     }
         
-    public void Dispose() 
-        => _watcher.Dispose();
+    public void Dispose()
+    {
+        if (_disposed)
+            return;
+
+        _watcher.Dispose();
+
+        _disposed = true;
+    }
 
     [Fact]
     public void Write_ChangeProcessed()

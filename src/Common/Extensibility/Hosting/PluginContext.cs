@@ -23,6 +23,8 @@ internal sealed class PluginContext : IDisposable
 {
     private readonly CompositionHost _container;
 
+    private bool _disposed;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="PluginContext"/> class.
     /// </summary>
@@ -55,6 +57,13 @@ internal sealed class PluginContext : IDisposable
         => _container.SatisfyImports(pluggablePart);
 
     /// <inheritdoc/>
-    public void Dispose() 
-        => _container.Dispose();
+    public void Dispose()
+    {
+        if (_disposed)
+            return;
+
+        _container.Dispose();
+
+        _disposed = true;
+    }
 }
