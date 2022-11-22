@@ -38,7 +38,7 @@ public sealed class NativeWindow
 
         windowWrapper.AddHook(WndProc);
 
-        if (!User32.GetWindowRect(handle, out RECT rect))
+        if (!User32.GetWindowRect(Handle, out RECT rect))
             throw ((ResultHandle) Marshal.GetHRForLastWin32Error()).GetException();
 
         Left = rect.Left;

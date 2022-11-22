@@ -11,6 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Runtime.InteropServices;
 using BadEcho.Interop;
 using Xunit;
 
@@ -43,8 +44,191 @@ public class User32Tests
     {
         var monitors = UnmanagedHelper.EnumerateMonitors();
 
-        var monitorInfo = MONITORINFOEX.CreateWritable();
-            
+        MONITORINFO monitorInfo = MONITORINFO.CreateWritable();
+
         Assert.True(User32.GetMonitorInfo(monitors.First(), ref monitorInfo));
     }
+
+    [Fact]
+    public void RegisterClassEx_ReturnsValid()
+    {
+        ushort atom = RegisterClass("RegisterClassEx_ReturnsValid");  
+
+        Assert.NotEqual(0, atom);
+    }
+
+    [Fact]
+    public void UnregisterClass_ReturnsValid()
+    {
+        ushort atom = RegisterClass("UnregisterClass_ReturnsValid");
+
+        IntPtr hModule = Kernel32.GetModuleHandle(null);
+        IntPtr pAtom = new (atom);
+
+        Assert.NotEqual(0, User32.UnregisterClass(pAtom, hModule));
+    }
+
+    [Fact]
+    public void CreateWindowEx_ReturnsValid()
+    {
+        WindowHandle handle = CreateWindow("CreateWindowEx_ReturnsValid");
+
+        Assert.False(handle.IsInvalid);
+    }
+
+    [Fact]
+    public void DestroyWindow_ReturnsValid()
+    {
+        WindowHandle handle = CreateWindow("DestroyWindow_ReturnsValid");
+
+        IntPtr pHandle = handle.DangerousGetHandle();
+
+        Assert.True(User32.DestroyWindow(pHandle));
+    }
+
+    [Fact]
+    public void GetWindowRect_ReturnsValid()
+    {
+        WindowHandle handle = CreateWindow("GetWindowRect_ReturnsValid");
+
+        Assert.True(User32.GetWindowRect(handle, out _));
+    }
+
+    [Fact]
+    public void GetSystemMetric_PrimaryScreenWidth_ReturnsValid()
+    {
+        Assert.NotEqual(0, User32.GetSystemMetrics(SystemMetric.PrimaryScreenWidth));
+    }
+
+    [Fact]
+    public void GetDC_ReturnsValid()
+    {
+        DeviceContextHandle handle = User32.GetDC(IntPtr.Zero);
+
+        Assert.False(handle.IsInvalid);
+    }
+
+    [Fact]
+    public void ReleaseDC_ReturnsValid()
+    {
+        DeviceContextHandle handle = User32.GetDC(IntPtr.Zero);
+
+        Assert.Equal(1, User32.ReleaseDC(IntPtr.Zero, handle.DangerousGetHandle()));
+    }
+
+    [Fact]
+    public void GetMessage_PostMessage_ReturnsTrue()
+    {
+        var msg = new MSG();
+
+        var getMessage = Task.Run(() =>
+                                  {
+                                      WindowHandle handle = CreateWindow("GetMessage_ReturnsTrue");
+
+                                      Assert.True(User32.GetMessage(ref msg, handle.DangerousGetHandle(), 0, 0));
+                                  });
+
+        User32.SendMessage(IntPtr.Zero, 1, IntPtr.Zero, IntPtr.Zero);
+
+        getMessage.Wait();
+    }
+
+    [Fact]
+    public void TranslateMessage_NoMessage_ReturnsFalse()
+    {
+        var msg = new MSG();
+
+        Assert.False(User32.TranslateMessage(ref msg));
+    }
+
+    [Fact]
+    public void DispatchMessage_NoMessage_ReturnsZero()
+    {
+        var msg = new MSG();
+
+        Assert.Equal(IntPtr.Zero, User32.DispatchMessage(ref msg));
+    }
+
+    [Fact]
+    public void CallWindowProc_ReturnsValid()
+    {
+        WindowHandle handle = CreateWindow("CallWindowProc_ReturnsValid");
+        WindowProc wndProc = WndProc;
+
+        Assert.NotEqual(IntPtr.Zero,
+                        User32.CallWindowProc(Marshal.GetFunctionPointerForDelegate(wndProc),
+                                              handle.DangerousGetHandle(),
+                                              WindowMessage.Null,
+                                              IntPtr.Zero,
+                                              IntPtr.Zero));
+    }
+
+    [Fact]
+    public void RegisterHotKey_CtrlZ_ReturnsTrue()
+    {
+        WindowHandle handle = CreateWindow("RegisterHotKey_CtrlA_ReturnsTrue");
+
+        Assert.True(User32.RegisterHotKey(handle, 1, ModifierKeys.Control, VirtualKey.Z));
+    }
+
+    [Fact]
+    public void UnregisterHotKey_NothingRegistered_ReturnsFalse()
+    {
+        WindowHandle handle = CreateWindow("UnregisterHotKey_NothingRegistered_ReturnsFalse");
+
+        Assert.False(User32.UnregisterHotKey(handle, 1));
+    }
+
+    [Fact]
+    public void RegisterWindowMessage_Hello_ReturnsValid()
+    {
+        WindowMessage message = User32.RegisterWindowMessage("Hello");
+
+        Assert.Equal(0xC2AC, (int) message);
+    }
+
+    private static WindowHandle CreateWindow(string className)
+    {
+        RegisterClass(className);
+        IntPtr hInstance = Kernel32.GetModuleHandle(null);
+
+        unsafe
+        {
+            return User32.CreateWindowEx(0,
+                                         className,
+                                         string.Empty,
+                                         0,
+                                         0,
+                                         0,
+                                         0,
+                                         0,
+                                         IntPtr.Zero,
+                                         IntPtr.Zero,
+                                         hInstance,
+                                         null);
+        }
+    }
+
+    private static ushort RegisterClass(string className)
+    {
+        var windowClass = new WindowClass(WndProc);
+
+        IntPtr hInstance = Kernel32.GetModuleHandle(null);
+        
+        windowClass.Style = 0;
+        windowClass.ClassExtraBytes = 0;
+        windowClass.WindowExtraBytes = 0;
+        windowClass.Instance = hInstance;
+        windowClass.Icon = IntPtr.Zero;
+        windowClass.Cursor = IntPtr.Zero;
+        windowClass.BackgroundBrush = IntPtr.Zero;
+        windowClass.MenuName = string.Empty;
+        windowClass.ClassName = className;
+        windowClass.SmallIcon = IntPtr.Zero;
+
+        return User32.RegisterClassEx(ref windowClass);
+    }
+
+    private static IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam) 
+        => new(1);
 }

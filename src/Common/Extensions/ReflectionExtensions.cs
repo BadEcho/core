@@ -85,8 +85,8 @@ public static class ReflectionExtensions
 
         lock (_ConstructorLock)
         {
-            if (_TypeConstructorMap.ContainsKey(type))
-                return _TypeConstructorMap[type];
+            if (_TypeConstructorMap.TryGetValue(type, out ConstructorInfo? cachedCtor))
+                return cachedCtor;
 
             ConstructorInfo? ctor = type.GetConstructor(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance,
                                                         Type.DefaultBinder,

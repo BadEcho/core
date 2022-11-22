@@ -317,13 +317,12 @@ internal sealed class WindowSubclass : IDisposable
         return true;
     }
 
-    private IntPtr ProcessDetachMessage(IntPtr wParam, IntPtr lParam)
+    private IntPtr ProcessDetachMessage(IntPtr wParam, nint lParam)
     {
         if (IntPtr.Zero != wParam && wParam != (IntPtr)_gcHandle)
             return IntPtr.Zero;
 
-        int param = (int) lParam;
-        bool forcibly = param > 0;
+        bool forcibly = lParam > 0;
 
         return Unhook(forcibly) ? IntPtr.Zero : new IntPtr(-1);
     }

@@ -26,7 +26,7 @@ namespace BadEcho.Interop;
 public sealed class Display
 {
     /// <summary>
-    /// Apparently the only defined flag that can be set in a <see cref="MONITORINFOEX"/> structure, which indicates that
+    /// Apparently the only defined flag that can be set in a <see cref="MONITORINFO"/> structure, which indicates that
     /// the monitor is the primary display.
     /// </summary>
     private const int MONITORINFOF_PRIMARY = 0x1;
@@ -45,19 +45,12 @@ public sealed class Display
     {
         _monitor = monitor;
 
-        var info = MONITORINFOEX.CreateWritable();
+        var info = MONITORINFO.CreateWritable();
             
         if (!User32.GetMonitorInfo(monitor, ref info))
             throw ((ResultHandle) Marshal.GetHRForLastWin32Error()).GetException();
 
         _isPrimary = (info.dwFlags & MONITORINFOF_PRIMARY) != 0;
-
-        int nameLength = info.szDevice.Length;
-        while (0 < nameLength && info.szDevice[nameLength - 1] == (char) 0)
-            nameLength--;
-
-        DeviceName = new string(info.szDevice);
-        DeviceName = DeviceName.TrimEnd((char) 0);
 
         MonitorDpi = LoadMonitorDpi();
         WorkingArea = LoadWorkingArea();
@@ -99,12 +92,6 @@ public sealed class Display
     /// </summary>
     public static int SystemDpi
     { get; } = LoadSystemDpi();
-
-    /// <summary>
-    /// Gets the name of this display device.
-    /// </summary>
-    public string DeviceName
-    { get; }
 
     /// <summary>
     /// Gets the DPI specific to this display device.
@@ -169,7 +156,7 @@ public sealed class Display
 
     private Rectangle LoadWorkingArea()
     {
-        var info = MONITORINFOEX.CreateWritable();
+        var info = MONITORINFO.CreateWritable();
 
         return User32.GetMonitorInfo(_monitor, ref info)
             ? Rectangle.FromLTRB(info.rcWork.Left, info.rcWork.Top, info.rcWork.Right, info.rcWork.Bottom)

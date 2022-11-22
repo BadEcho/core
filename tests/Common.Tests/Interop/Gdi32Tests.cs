@@ -3,7 +3,7 @@
 //      Created by Matt Weber <matt@badecho.com>
 //      Copyright @ 2022 Bad Echo LLC. All rights reserved.
 //
-//		Bad Echo Technologies are licensed under the
+//		Bad Echo Technologies are licensed under a
 //		GNU Affero General Public License v3.0.
 //
 //		See accompanying file LICENSE.md or a copy at:
@@ -20,14 +20,24 @@ namespace BadEcho.Tests.Interop;
 /// These methods are less for testing the unmanaged functions in question (which one should assume Microsoft themselves have tested),
 /// and more for testing my P/Invoke signatures.
 /// </summary>
-public class ShellScalingTests
+public class Gdi32Tests
 {
     [Fact]
-    public void GetDpiForMonitor_DefaultDpiType_ReturnsValid()
+    public void GetDeviceCaps_PpiHeight_ReturnsValid()
     {
-        var monitors = UnmanagedHelper.EnumerateMonitors();
+        using (DeviceContextHandle deviceContext = User32.GetDC(IntPtr.Zero))
+        {
+            Assert.False(deviceContext.IsInvalid);
 
-        Assert.Equal(ResultHandle.Success,
-                     ShellScaling.GetDpiForMonitor(monitors.First(), MonitorDpiType.Effective, out _, out _));
+            Assert.True(Gdi32.GetDeviceCaps(deviceContext, DeviceInformation.PpiHeight) > 0);
+        }
+    }
+
+    [Fact]
+    public void GetStockObject_NullBrush_ReturnsValid()
+    {
+        IntPtr hNullBrush = Gdi32.GetStockObject(Gdi32.StockObjectBrushNull);
+
+        Assert.NotEqual(IntPtr.Zero, hNullBrush);
     }
 }

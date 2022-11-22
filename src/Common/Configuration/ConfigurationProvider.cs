@@ -24,7 +24,7 @@ namespace BadEcho.Configuration;
 /// this type should be done so that said parts are <c>shared</c> singletons. This way, all unmanaged and disposable resources
 /// end up becoming tied directly with the application's lifecycle.
 /// </remarks>
-public abstract class ConfigurationProvider : IConfigurationProvider
+public abstract class ConfigurationProvider : IConfigurationProvider, IDisposable
 {
     private readonly FileSystemWatcher _watcher = new(AppContext.BaseDirectory)
                                                   {
@@ -35,6 +35,7 @@ public abstract class ConfigurationProvider : IConfigurationProvider
     private readonly object _isMonitoringLock = new();
 
     private bool _isMonitoring;
+    private bool _disposed;
 
     /// <inheritdoc/>
     public event EventHandler<EventArgs>? ConfigurationChanged;
@@ -73,8 +74,8 @@ public abstract class ConfigurationProvider : IConfigurationProvider
 
         Type sectionType = typeof(T);
 
-        if (_cachedSections.ContainsKey(sectionType))
-            return (T) _cachedSections[sectionType];
+        if (_cachedSections.TryGetValue(sectionType, out object? cachedSection))
+            return (T) cachedSection;
 
         T? section = default;
         var settingsFile = new FileInfo(SettingsFile);
@@ -87,6 +88,30 @@ public abstract class ConfigurationProvider : IConfigurationProvider
         }
 
         return section ?? new T();
+    }
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Releases unmanaged and (optionally) managed resources.
+    /// </summary>
+    /// <param name="disposing">
+    /// <c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only managed resources.
+    /// </param>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_disposed)
+            return;
+
+        if (disposing)
+            _watcher.Dispose();
+
+        _disposed = true;
     }
         
     /// <summary>

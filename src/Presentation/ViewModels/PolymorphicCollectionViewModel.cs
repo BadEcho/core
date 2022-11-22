@@ -135,9 +135,9 @@ public abstract class PolymorphicCollectionViewModel<TModel, TChildViewModel> : 
 
         while (modelType != null)
         {
-            if (_typeInitializerMap.ContainsKey(modelType))
+            if (_typeInitializerMap.TryGetValue(modelType, out Func<TModel, TChildViewModel>? typeInitializer))
             {
-                viewModel = _typeInitializerMap[modelType](model);
+                viewModel = typeInitializer(model);
                 break;
             }
 

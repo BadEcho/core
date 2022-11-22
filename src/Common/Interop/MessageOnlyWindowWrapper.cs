@@ -186,27 +186,27 @@ public sealed class MessageOnlyWindowWrapper : IWindowWrapper, IDisposable
 
     private static ushort RegisterClass(WindowProc initialCallback, string className)
     {
-        var windowClass = new WNDCLASSEX();
         IntPtr hNullBrush = Gdi32.GetStockObject(Gdi32.StockObjectBrushNull);
 
         if (hNullBrush == IntPtr.Zero)
             throw new Win32Exception(Marshal.GetLastWin32Error());
 
         IntPtr hInstance = Kernel32.GetModuleHandle(null);
-        
-        windowClass.cbSize = Marshal.SizeOf(typeof(WNDCLASSEX));
-        windowClass.style = 0;
-        windowClass.lpfnWndProc = initialCallback;
-        windowClass.cbClsExtra = 0;
-        windowClass.cbWndExtra = 0;
-        windowClass.hInstance = hInstance;
-        windowClass.hIcon = IntPtr.Zero;
-        windowClass.hCursor = IntPtr.Zero;
-        windowClass.hbrBackground = hNullBrush;
-        windowClass.lpszMenuName = string.Empty;
-        windowClass.lpszClassName = className;
-        windowClass.hIconSm = IntPtr.Zero;
 
+        var windowClass = new WindowClass(initialCallback)
+                          {
+                              BackgroundBrush = hNullBrush,
+                              ClassExtraBytes = 0,
+                              ClassName = className,
+                              Cursor = IntPtr.Zero,
+                              Icon = IntPtr.Zero,
+                              Instance = hInstance,
+                              MenuName = string.Empty,
+                              SmallIcon = IntPtr.Zero,
+                              Style = 0,
+                              WindowExtraBytes = 0
+                          };
+        
         return User32.RegisterClassEx(ref windowClass);
     }
 

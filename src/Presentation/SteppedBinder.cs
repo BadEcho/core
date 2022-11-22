@@ -44,7 +44,7 @@ namespace BadEcho.Presentation;
 /// the provided <see cref="SteppingOptions"/> instance must have <see cref="SteppingOptions.IsInteger"/> set to true.
 /// </para>
 /// </remarks>
-internal sealed class SteppedBinder : TransientBinder
+internal sealed class SteppedBinder : TransientBinder, IDisposable
 {
     private readonly System.Timers.Timer _targetStepTimer
         = new();
@@ -67,6 +67,7 @@ internal sealed class SteppedBinder : TransientBinder
     private bool _steppingEnabled;
     private double _endingStepValue;
     private double _startingStepValue;
+    private bool _disposed;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SteppedBinder"/> class.
@@ -99,6 +100,18 @@ internal sealed class SteppedBinder : TransientBinder
     /// </summary>
     private SteppedBinder()
     { }
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        if (_disposed)
+            return;
+
+        _targetStepTimer.Dispose();
+        _sourceStepTimer.Dispose();
+
+        _disposed = true;
+    }
 
     /// <inheritdoc/>
     protected override Freezable CreateBinder()

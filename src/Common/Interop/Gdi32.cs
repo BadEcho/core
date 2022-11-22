@@ -18,7 +18,7 @@ namespace BadEcho.Interop;
 /// <summary>
 /// Provides interoperability with the Graphics Device Interface functionality of Windows.
 /// </summary>
-internal static class Gdi32
+internal static partial class Gdi32
 {
     private const string LIBRARY_NAME = "gdi32";
 
@@ -33,16 +33,16 @@ internal static class Gdi32
     /// <param name="hdc">A handle to the device context.</param>
     /// <param name="nIndex">An enumeration value that specifies the item to be returned.</param>
     /// <returns>The value for the requested information type.</returns>
-    [DllImport(LIBRARY_NAME, ExactSpelling = true)]
+    [LibraryImport(LIBRARY_NAME)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    public static extern int GetDeviceCaps(DeviceContextHandle hdc, DeviceInformation nIndex);
+    public static partial int GetDeviceCaps(DeviceContextHandle hdc, DeviceInformation nIndex);
 
     /// <summary>
     /// Retrieves a handle to one of the stock pens, brushes, fonts, or palettes.
     /// </summary>
     /// <param name="stockObject">The type of stock object.</param>
     /// <returns>A handle to the requested logical object if successful; otherwise, null.</returns>
-    [DllImport(LIBRARY_NAME, CharSet = CharSet.Auto, SetLastError = true)]
+    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    public static extern IntPtr GetStockObject(int stockObject);
+    public static partial IntPtr GetStockObject(int stockObject);
 }

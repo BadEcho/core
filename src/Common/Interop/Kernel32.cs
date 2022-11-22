@@ -18,7 +18,7 @@ namespace BadEcho.Interop;
 /// <summary>
 /// Provides interoperability with the base APIs, such as memory management and input/output operations, exposed by Windows.
 /// </summary>
-internal static class Kernel32
+internal static partial class Kernel32
 {
     private const string LIBRARY_NAME = "kernel32";
 
@@ -37,9 +37,9 @@ internal static class Kernel32
     /// If <c>lpModuleName</c> is null, then this will return a handle to the file used to create the calling process.
     /// </para>
     /// </remarks>
-    [DllImport(LIBRARY_NAME, EntryPoint = "GetModuleHandleW", CharSet = CharSet.Unicode, SetLastError = true)]
+    [LibraryImport(LIBRARY_NAME, EntryPoint = "GetModuleHandleW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    internal static extern IntPtr GetModuleHandle(string? lpModuleName);
+    internal static partial IntPtr GetModuleHandle(string? lpModuleName);
 
     /// <summary>
     /// Retrieves the address of an exported function or variable from the specified dynamic-link library.
@@ -48,12 +48,14 @@ internal static class Kernel32
     /// <param name="lpProcName">The function name, variable name, or the function's ordinal value.</param>
     /// <returns>If successful, the return value is the address of the exported function; otherwise, a null pointer.</returns>
     /// <remarks>
-    /// Unlike many other unmanaged functions that accept string parameters, this function only comes in an ANSI flavor, so we
-    /// tell the runtime to always use ANSI, while also telling the runtime to not look for a non-existent <c>GetProcAddressA</c>.
+    /// Unlike many other unmanaged functions that accept string parameters, this function only comes in an ANSI flavor. The strings
+    /// need to marshalled using the UTF-8 marshaller because of this. Note that the new <see cref="LibraryImportAttribute"/> lacks
+    /// support for <see cref="DllImportAttribute.ThrowOnUnmappableChar"/>, which this function previously used, but hopefully that's
+    /// taken care of by the <see cref="StringMarshalling.Utf8"/> marshaller.
     /// </remarks>
-    [DllImport(LIBRARY_NAME, CharSet = CharSet.Ansi, ExactSpelling = true, BestFitMapping = false, ThrowOnUnmappableChar = true, SetLastError = true)]
+    [LibraryImport(LIBRARY_NAME, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    public static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
+    public static partial IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
 
     /// <summary>
     /// Waits until one or all of the specified objects are in the signaled state, an I/O completion routine or asynchronous
@@ -74,11 +76,11 @@ internal static class Kernel32
     /// Value indicating if the function returns when an I/O completion routine or APC is queued, and then executes the routine or APC.
     /// </param>
     /// <returns>If the function succeeds, the return value indicates the event that caused the function to return.</returns>
-    [DllImport(LIBRARY_NAME, CharSet = CharSet.Auto, SetLastError = true)]
+    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    public static extern int WaitForMultipleObjectsEx(int nCount,
-                                                      IntPtr[] lpHandles,
-                                                      [MarshalAs(UnmanagedType.Bool)] bool bWaitAll,
-                                                      uint dwMilliseconds,
-                                                      [MarshalAs(UnmanagedType.Bool)] bool bAlertable);
+    public static partial int WaitForMultipleObjectsEx(int nCount,
+                                                       IntPtr[] lpHandles,
+                                                       [MarshalAs(UnmanagedType.Bool)] bool bWaitAll,
+                                                       uint dwMilliseconds,
+                                                       [MarshalAs(UnmanagedType.Bool)] bool bAlertable);
 }
