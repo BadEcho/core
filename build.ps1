@@ -44,7 +44,7 @@ Execute { & dotnet clean -c Release }
 Execute $buildCommand 
 
 if ($SkipTests -ne $true) {
-	Execute { & dotnet test -c Release -r $artifacts --no-build -l trx --verbosity=normal }
+	Execute { & dotnet test -c Release --results-directory $artifacts --no-build -l trx --verbosity=normal }
 }
 
 Execute $packCommand
