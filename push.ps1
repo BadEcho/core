@@ -7,7 +7,7 @@ if ([string]::IsNullOrEmpty($Env:PKG_API_KEY)) {
 	Write-Host "${scriptName}: PKG_API_KEY has not been set; no packages will be pushed."
 }
 elseif ([string]::IsNullOrEmpty($Env:PKG_URL)) {
-	Write-Hsot "${scriptName}: PKG_URL has not been set; no packages will be pushed."
+	Write-Host "${scriptName}: PKG_URL has not been set; no packages will be pushed."
 }
 else {
 	Get-ChildItem $artifacts -Filter "*.nupkg" | ForEach-Object {
