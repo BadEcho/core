@@ -184,7 +184,7 @@ public class User32Tests
     {
         WindowMessage message = User32.RegisterWindowMessage("Hello");
 
-        Assert.Equal(0xC2AC, (int) message);
+        Assert.NotEqual(0, (int) message);
     }
 
     private static WindowHandle CreateWindow(string className)
