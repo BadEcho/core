@@ -2,8 +2,10 @@ name: CI on Push
  
 on:
   push:
-    branches: 
+    branches:  
       - master
+    paths-ignore:
+      - 'version.json'
   pull_request:
     branches:
       - master
