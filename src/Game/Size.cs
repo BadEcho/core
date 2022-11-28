@@ -19,12 +19,20 @@ namespace BadEcho.Game;
 /// <summary>
 /// Represents the size of a rectangular region by its width and height.
 /// </summary>
+/// <suppressions>
+/// ReSharper disable UnassignedReadonlyField
+/// </suppressions>
 public readonly struct Size : IEquatable<Size>
 {
     /// <summary>
+    /// Represents an empty <see cref="Size"/> with all member data left uninitialized.
+    /// </summary>
+    public static readonly Size Empty;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="Size"/> class.
     /// </summary>
-    /// <param name="point">A 2D-point value whose coordinates will be used as the width and height.</param>
+    /// <param name="point">A point whose coordinates will be used as the width and height.</param>
     public Size(Point point)
         : this(point.X, point.Y)
     { }
@@ -41,12 +49,6 @@ public readonly struct Size : IEquatable<Size>
     }
 
     /// <summary>
-    /// Gets a value that represents a static empty <see cref="Size"/>.
-    /// </summary>
-    public static Size Empty
-        => new ();
-
-    /// <summary>
     /// Gets the horizontal component of this size.
     /// </summary>
     public int Width
@@ -59,22 +61,27 @@ public readonly struct Size : IEquatable<Size>
     { get; }
 
     /// <summary>
-    /// Gets a value indicating whether this instance is <see cref="Empty"/>.
+    /// Gets a value indicating whether this size is <see cref="Empty"/>.
     /// </summary>
+    /// <remarks>
+    /// The .NET runtime employs an inconsistently followed convention as far as <c>IsEmpty</c>-like properties
+    /// for value types are concerned. Within Bad Echo frameworks, a value is considered empty if equal to one
+    /// with all of its member data left uninitialized.
+    /// </remarks>
     public bool IsEmpty
-        => Width == 0 && Height == 0;
+        => Equals(Empty);
 
     /// <summary>
     /// Defines an implicit conversion of a <see cref="Point"/> value to a <see cref="Size"/> value.
     /// </summary>
-    /// <param name="point">The 2D-point value to convert.</param>
+    /// <param name="point">The point to convert.</param>
     public static implicit operator Size(Point point)
         => FromPoint(point);
 
     /// <summary>
     /// Defines an implicit conversion of a <see cref="Size"/> value to a <see cref="Point"/> value.
     /// </summary>
-    /// <param name="size">The size value to convert.</param>
+    /// <param name="size">The size to convert.</param>
     public static implicit operator Point(Size size)
         => ToPoint(size);
 
@@ -168,7 +175,7 @@ public readonly struct Size : IEquatable<Size>
     /// <summary>
     /// Converts the specified <see cref="Point"/> value to an equivalent <see cref="Size"/> value.
     /// </summary>
-    /// <param name="point">The 2D-point value to convert.</param>
+    /// <param name="point">The point to convert.</param>
     /// <returns>A <see cref="Size"/> value equivalent to <c>point</c>.</returns>
     public static Size FromPoint(Point point)
         => new(point);
@@ -176,7 +183,7 @@ public readonly struct Size : IEquatable<Size>
     /// <summary>
     /// Converts the specified <see cref="Size"/> value to an equivalent <see cref="Point"/> value.
     /// </summary>
-    /// <param name="size">The size value to convert.</param>
+    /// <param name="size">The size to convert.</param>
     /// <returns>A <see cref="Point"/> value equivalent to <c>size</c>.</returns>
     public static Point ToPoint(Size size)
         => new(size.Width, size.Height);
@@ -192,11 +199,11 @@ public readonly struct Size : IEquatable<Size>
     public static bool Equals(Size first, Size second)
         => first.Equals(second);
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public override bool Equals(object? obj) 
         => obj is Size other && Equals(other);
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public override int GetHashCode()
         => this.GetHashCode(Width, Height);
 
@@ -204,7 +211,7 @@ public readonly struct Size : IEquatable<Size>
     public override string ToString()
         => $"Width: {Width}, Height: {Height}";
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public bool Equals(Size other)
         => Width == other.Width && Height == other.Height;
 
