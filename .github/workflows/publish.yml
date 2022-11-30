@@ -1,0 +1,42 @@
+# This workflow publishes Bad Echo packages to official NuGet feeds. This will run when updated version information has been pushed
+# to 'version.json', an  action that is interpreted to mean that development for the previously committed [Major].[Minor].[Patch] version 
+# is at and end. Therefore, a release can be made.
+
+name: Publish Release
+
+on:
+  push:
+    branches: 
+      - master
+    paths:
+      - 'version.json'
+  pull_request:
+    branches: 
+      - master
+jobs:
+  build:
+    runs-on: windows-2022    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x      
+    - name: Build
+      shell: pwsh
+      run: git checkout $(git rev-list --skip 1 HEAD version.json) version.json; .\build.ps1
+    - name: Push to NuGet
+      env:
+        PKG_URL: https://api.nuget.org/v3/index.json
+        PKG_API_KEY: ${{ secrets.NUGET_API_KEY }}
+      run: ./push.ps1
+      shell: pwsh
+    - name: Artifacts
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: artifacts
+        path: artifacts/**/*
