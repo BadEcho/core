@@ -6,7 +6,7 @@ on:
       - master
     paths-ignore:
       - '.github/workflows/**'
-      - '!.github/workflows/push.yaml'
+      - '!.github/workflows/push.yml'
   pull_request:
     branches:
       - master
