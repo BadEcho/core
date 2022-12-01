@@ -23,7 +23,7 @@ jobs:
     - run: git config --global user.name "Echo Chamber"
     - name: Create Echo Version
       run: |
-        git tag -a ${{ github.event.inputs.echo-version }} HEAD~1 -m "Bad Echo Technologies ${{ github.event.inputs.echo-version }}"
+        git tag -a ${{ github.event.inputs.echo-version }} HEAD -m "Bad Echo Technologies ${{ github.event.inputs.echo-version }}"
         git push origin ${{ github.event.inputs.echo-version }}
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
