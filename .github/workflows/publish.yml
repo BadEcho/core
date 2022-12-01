@@ -15,14 +15,14 @@ jobs:
     name: Publish
     runs-on: windows-2022              
     steps:
-    - name: Create Echo Version
-      run: |
-        git tag -a ${{ github.event.inputs.echo-version }} HEAD~1 -m "Bad Echo Technologies ${{ github.event.inputs.echo-version }}"
-        git push origin ${{ github.event.inputs.echo-version }}
     - name: Checkout
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
+    - name: Create Echo Version
+      run: |
+        git tag -a ${{ github.event.inputs.echo-version }} HEAD~1 -m "Bad Echo Technologies ${{ github.event.inputs.echo-version }}"
+        git push origin ${{ github.event.inputs.echo-version }}
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
