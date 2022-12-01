@@ -5,18 +5,20 @@
 name: Publish Release
 
 on:
-  push:
-    branches: 
-      - master
-    paths:
-      - 'version.json'
-  pull_request:
-    branches: 
-      - master
+  workflow_dispatch:
+    inputs:
+      echo-version:
+        description: Echo Version
+        required: true
 jobs:
-  build:
-    runs-on: windows-2022    
+  publish:
+    name: Publish
+    runs-on: windows-2022              
     steps:
+    - name: Create Echo Version
+      run: |
+        git tag -a ${{ github.event.inputs.echo-version }} HEAD~1 -m "Bad Echo Technologies ${{ github.event.inputs.echo-version }}"
+        git push origin ${{ github.event.inputs.echo-version }}
     - name: Checkout
       uses: actions/checkout@v3
       with:
@@ -27,7 +29,7 @@ jobs:
         dotnet-version: 7.0.x      
     - name: Build
       shell: pwsh
-      run: git checkout $(git rev-list --skip 1 HEAD version.json) version.json; .\build.ps1
+      run: .\build.ps1
     - name: Push to NuGet
       env:
         PKG_URL: https://api.nuget.org/v3/index.json
