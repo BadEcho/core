@@ -1,7 +1,6 @@
 {
-  "$schema": "https://badecho.com/version.schema.json",
   "majorVersion": 1,
   "minorVersion": 0,
   "patchVersion": 7,
-  "prereleaseId": "beta"
+  "prereleaseId": "alpha" 
 }
