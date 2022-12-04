@@ -78,6 +78,10 @@ public class AlphaFakePartWithComposedDependencies : IFilterableFakePartWithComp
             : base(DEPENDENCY_CONTRACT)
         { }
 
+        /// <inheritdoc />
+        public override IFilterableFakeDependency Dependency
+            => LoadDependency();
+
         public Guid FamilyId => new(AlphaFamily.FamilyIdValue);
     }
 }
@@ -111,7 +115,13 @@ public class AlphaFakePartWithNonFilterableDependencies : IFilterableFakePartWit
     {
         public LocalDependency()
             : base(DEPENDENCY_CONTRACT)
-        { }
+        {
+            Dependency = LoadDependency();
+        }
+
+        /// <inheritdoc />
+        public override IFakeDependency Dependency 
+        { get; }
 
         public Guid FamilyId => new(AlphaFamily.FamilyIdValue);
     }

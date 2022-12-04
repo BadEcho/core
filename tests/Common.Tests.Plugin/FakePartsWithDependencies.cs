@@ -52,5 +52,9 @@ public class FakePartWithComposedDependencies : IFakePartWithComposedDependencie
         public LocalDependency()
             : base(DEPENDENCY_CONTRACT)
         { }
+
+        /// <inheritdoc />
+        public override IFakeDependency Dependency
+            => LoadDependency();
     }
 }

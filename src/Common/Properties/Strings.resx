@@ -239,4 +239,7 @@
 	<data name="ExtensibilityPointMissingDependency" xml:space="preserve">
 		<value>Cannot check if assembly '{0}' is an extensibility point because it is missing the following dependency: '{1}'</value>
 	</data>
+	<data name="NoDependencyArmed" xml:space="preserve">
+		<value>Registry was not armed with an expected dependency.</value>
+	</data>
 </root>

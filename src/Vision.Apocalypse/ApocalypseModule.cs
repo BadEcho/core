@@ -105,5 +105,9 @@ internal sealed class ApocalypseModule : VisionModule<ApocalypseEvent, Apocalyps
         public LocalDependency()
             : base(DEPENDENCY_NAME)
         { }
+
+        /// <inheritdoc />
+        public override IVisionConfiguration Dependency
+            => LoadDependency();
     }
 }

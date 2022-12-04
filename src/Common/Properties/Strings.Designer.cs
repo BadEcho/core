@@ -340,6 +340,15 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Registry was not armed with an expected dependency..
+        /// </summary>
+        internal static string NoDependencyArmed {
+            get {
+                return ResourceManager.GetString("NoDependencyArmed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No comparable exception class can be mapped to the provided HRESULT as it does not represent a failed operation..
         /// </summary>
         internal static string NoExceptionFromSuccessfulResult {

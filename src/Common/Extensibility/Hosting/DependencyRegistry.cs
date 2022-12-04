@@ -12,6 +12,7 @@
 //-----------------------------------------------------------------------
 
 using System.Composition.Convention;
+using BadEcho.Properties;
 
 namespace BadEcho.Extensibility.Hosting;
 
@@ -34,14 +35,28 @@ public abstract class DependencyRegistry<T> : IConventionProvider
     protected DependencyRegistry(string contractName)
     {
         _contractName = contractName;
-
-        Dependency = _ArmedDependency;
     }
 
     /// <summary>
     /// Gets the loaded dependency object for injection into a pluggable part.
     /// </summary>
-    public T? Dependency
+    /// <remarks>
+    /// <para>
+    /// This property is abstract in order to ensure that types deriving from this have their own unique property
+    /// definition of <see cref="Dependency"/>, such that registries that provide the same dependency type
+    /// <typeparamref name="T"/> can be differentiated by MEF's export descriptors.
+    /// </para>
+    /// <para>
+    /// <see cref="DependencyRegistry{T}"/>-originating contracts are cached based on the hash code of the attributed part's
+    /// member info. This will result in collisions for all <see cref="DependencyRegistry{T}"/> derivations of the same type
+    /// <typeparamref name="T"/>. 
+    /// </para>
+    /// <para>
+    /// When authoring a new <see cref="DependencyRegistry{T}"/> type, the simplest way to implement this property is to
+    /// have it call <see cref="LoadDependency"/>, which will retrieve the dependency the registry has been armed with.
+    /// </para>
+    /// </remarks>
+    public abstract T Dependency
     { get; }
 
     /// <summary>
@@ -88,5 +103,17 @@ public abstract class DependencyRegistry<T> : IConventionProvider
         conventions.ForType(GetType())
                    .ExportProperties(p => p.Name == nameof(Dependency),
                                      (_, ex) => ex.AsContractName(_contractName));
+    }
+
+    /// <summary>
+    /// Retrieves the dependency this registry was armed with.
+    /// </summary>
+    /// <returns>The armed dependency for this registry.</returns>
+    protected T LoadDependency()
+    {
+        if (_ArmedDependency == null)
+            throw new InvalidOperationException(Strings.NoDependencyArmed);
+
+        return _ArmedDependency;
     }
 }

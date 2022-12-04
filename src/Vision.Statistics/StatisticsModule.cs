@@ -76,8 +76,12 @@ internal sealed class StatisticsModule : VisionModule<IStatistic, StatisticsView
     [Export(typeof(IConventionProvider))]
     private sealed class LocalDependency : DependencyRegistry<IVisionConfiguration>
     {
-        public LocalDependency() 
+        public LocalDependency()
             : base(DEPENDENCY_NAME)
         { }
+
+        /// <inheritdoc />
+        public override IVisionConfiguration Dependency
+            => LoadDependency();
     }
 }
