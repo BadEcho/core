@@ -423,7 +423,7 @@ threatDistance:
 
 
 // Initiates the Abomnification system for humanoids.
-// This essentially will establish morph sequences for non-humanoids as well, however the identify addresses
+// This essentially COULD establish morph sequences for non-humanoids as well, however the identity addresses
 // used here aren't actually retrievable at the point of matrix transformation, where we're applying the scales.
 // [rcx+8]: Player/EnemyIns, used as the identifying address.
 // UNIQUE AOB: 44 8B 81 38 01 00 00 C7
