@@ -115,13 +115,11 @@ public class AlphaFakePartWithNonFilterableDependencies : IFilterableFakePartWit
     {
         public LocalDependency()
             : base(DEPENDENCY_CONTRACT)
-        {
-            Dependency = LoadDependency();
-        }
+        { }
 
         /// <inheritdoc />
-        public override IFakeDependency Dependency 
-        { get; }
+        public override IFakeDependency Dependency
+            => LoadDependency();
 
         public Guid FamilyId => new(AlphaFamily.FamilyIdValue);
     }
