@@ -163,13 +163,22 @@ public readonly struct Size : IEquatable<Size>
         => left.Divide(right);
 
     /// <summary>
+    /// Divides the <see cref="Size"/> value the floating-point value via scalar division to compute their quotient.
+    /// </summary>
+    /// <param name="left">The size which <c>right</c> divides.</param>
+    /// <param name="right">The floating-point number which divides <c>left</c>.</param>
+    /// <returns>The quotient of <c>left</c> divided by <c>right</c>.</returns>
+    public static SizeF operator /(Size left, float right)
+        => left.Divide(right);
+
+    /// <summary>
     /// Divides one <see cref="Size"/> value by another via division of corresponding directional components
     /// to compute their quotient.
     /// </summary>
     /// <param name="left">The size which <c>right</c> divides.</param>
     /// <param name="right">The size which divides <c>left</c>.</param>
     /// <returns>The quotient of <c>left</c> divided by <c>right</c>.</returns>
-    public static Size operator /(Size left, Size right)
+    public static SizeF operator /(Size left, Size right)
         => left.Divide(right);
 
     /// <summary>
@@ -258,11 +267,19 @@ public readonly struct Size : IEquatable<Size>
         => new(Width / divisor, Height / divisor);
 
     /// <summary>
+    /// Divides this size by the specified floating-point value via scalar division to compute their quotient.
+    /// </summary>
+    /// <param name="divisor">The floating-point number to be divided by.</param>
+    /// <returns>The quotient of this size divided by <c>divisor</c>.</returns>
+    public SizeF Divide(float divisor)
+        => new(Width / divisor, Height / divisor);
+
+    /// <summary>
     /// Divides this size by the specified <see cref="Size"/> value via division of corresponding directional components
     /// to compute their quotient.
     /// </summary>
     /// <param name="other">The size to be divided by.</param>
     /// <returns>The quotient of this size divided by <c>other</c>.</returns>
-    public Size Divide(Size other)
-        => new(Width / other.Width, Height / other.Height);
+    public SizeF Divide(Size other)
+        => new((float) Width / other.Width, (float) Height / other.Height);
 }
