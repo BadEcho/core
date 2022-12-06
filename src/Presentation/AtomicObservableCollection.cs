@@ -239,7 +239,7 @@ public sealed class AtomicObservableCollection<T> : ObservableCollection<T>, IHa
         Action operation
             = !IsDispatcherRequired
                 ? () => BoundedInsertItem(index, item)
-                : () => _dispatcher.Invoke(() => BoundedInsertItem(index, item), DispatcherPriority.Background);
+                : () => _dispatcher.Invoke(() => BoundedInsertItem(index, item), DispatcherPriority.Send);
 
         SynchronizeOperation(operation);
     }
@@ -250,7 +250,7 @@ public sealed class AtomicObservableCollection<T> : ObservableCollection<T>, IHa
         Action operation
             = !IsDispatcherRequired
                 ? base.ClearItems
-                : () => _dispatcher.Invoke(base.ClearItems, DispatcherPriority.Background);
+                : () => _dispatcher.Invoke(base.ClearItems, DispatcherPriority.Send);
 
         SynchronizeOperation(operation);
     }
@@ -261,7 +261,7 @@ public sealed class AtomicObservableCollection<T> : ObservableCollection<T>, IHa
         Action operation
             = !IsDispatcherRequired
                 ? () => BoundedMoveItem(oldIndex, newIndex)
-                : () => _dispatcher.Invoke(() => BoundedMoveItem(oldIndex, newIndex), DispatcherPriority.Background);
+                : () => _dispatcher.Invoke(() => BoundedMoveItem(oldIndex, newIndex), DispatcherPriority.Send);
 
         SynchronizeOperation(operation);
     }
@@ -272,7 +272,7 @@ public sealed class AtomicObservableCollection<T> : ObservableCollection<T>, IHa
         Action operation
             = !IsDispatcherRequired
                 ? () => BoundedRemoveItem(index)
-                : () => _dispatcher.Invoke(() => BoundedRemoveItem(index), DispatcherPriority.Background);
+                : () => _dispatcher.Invoke(() => BoundedRemoveItem(index), DispatcherPriority.Send);
 
         SynchronizeOperation(operation);
     }
@@ -283,7 +283,7 @@ public sealed class AtomicObservableCollection<T> : ObservableCollection<T>, IHa
         Action operation
             = !IsDispatcherRequired
                 ? () => BoundedSetItem(index, item)
-                : () => _dispatcher.Invoke(() => BoundedSetItem(index, item), DispatcherPriority.Background);
+                : () => _dispatcher.Invoke(() => BoundedSetItem(index, item), DispatcherPriority.Send);
 
         SynchronizeOperation(operation);
     }
@@ -328,7 +328,7 @@ public sealed class AtomicObservableCollection<T> : ObservableCollection<T>, IHa
         if (!IsDispatcherRequired)
             OnCollectionReset();
         else
-            _dispatcher.Invoke(OnCollectionReset, DispatcherPriority.Background);
+            _dispatcher.Invoke(OnCollectionReset, DispatcherPriority.Send);
 
         void OnCollectionReset()
         {
