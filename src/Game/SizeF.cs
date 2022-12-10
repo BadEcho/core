@@ -48,6 +48,14 @@ public readonly struct SizeF : IEquatable<SizeF>
     /// <summary>
     /// Initializes a new instance of the <see cref="SizeF"/> class.
     /// </summary>
+    /// <param name="size">A size who width and height will be used.</param>
+    public SizeF(Size size)
+        : this(size.Width, size.Height)
+    { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SizeF"/> class.
+    /// </summary>
     /// <param name="width">The horizontal component of this size.</param>
     /// <param name="height">The vertical component of this size.</param>
     public SizeF(float width, float height)
@@ -92,6 +100,13 @@ public readonly struct SizeF : IEquatable<SizeF>
     /// <param name="vector">The vector to convert.</param>
     public static implicit operator SizeF(Vector2 vector)
         => FromVector2(vector);
+
+    /// <summary>
+    /// Defines an implicit conversion of a <see cref="Size"/> value to a <see cref="SizeF"/> value.
+    /// </summary>
+    /// <param name="size">The size to convert.</param>
+    public static implicit operator SizeF(Size size)
+        => FromSize(size);
 
     /// <summary>
     /// Defines an implicit conversion of a <see cref="SizeF"/> value to a <see cref="PointF"/> value.
@@ -189,6 +204,14 @@ public readonly struct SizeF : IEquatable<SizeF>
     /// <returns>A <see cref="SizeF"/> value equivalent to <c>vector</c>.</returns>
     public static SizeF FromVector2(Vector2 vector)
         => new(vector);
+
+    /// <summary>
+    /// Converts the specified <see cref="Size"/> value to an equivalent <see cref="SizeF"/> value.
+    /// </summary>
+    /// <param name="size">The size to convert.</param>
+    /// <returns>A <see cref="SizeF"/> value equivalent to <c>size</c>.</returns>
+    public static SizeF FromSize(Size size)
+        => new(size);
 
     /// <summary>
     /// Converts the specified <see cref="SizeF"/> value to an equivalent <see cref="PointF"/> value.

@@ -456,6 +456,15 @@ omnifyAbomnificationHook:
 initiateAbomnificationReturn:
 
 
+// Double the ceiling on # of morph steps to slow down the morph animations.
+abominifyMorphStepsResultUpper:
+    dd #800
+
+// Do the same with the floor to prevent unsightly super fast morphs.
+abominifyMorphStepsResultLower:
+    dd #50
+
+
 // Applies Abomnification generated scale multipliers on humanoid entities.
 // [rsp+10] | {rsp+4A}: [[CSFD4LocationBodyScaleModifier+78]-640] == PlayerIns that owns
 //                      the particular model transformation matrix being worked on here.
