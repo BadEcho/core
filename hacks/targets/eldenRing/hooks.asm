@@ -12,7 +12,7 @@
 
 // Gets the player's information.
 // UNIQUE AOB: 24 48 8B 08 66 0F 6E 89 38 01 00 00
-define(omniPlayerHook,"start_protected_game.exe"+5990E2)
+define(omniPlayerHook,"start_protected_game.exe"+5A4822)
 
 assert(omniPlayerHook,66 0F 6E 89 38 01 00 00)
 alloc(getPlayer,$1000,omniPlayerHook)
@@ -54,7 +54,7 @@ getPlayer:
     // The player's Havok character proxy can be found at 0x88 inside the character proxy.
     mov rcx,[rbx+88]
     mov [playerHavokProxy],rcx
-    mov rbx,[rax+570]
+    mov rbx,[rax+580]
     mov [playerGameData],rbx
     mov rbx,teleport
     cmp [rbx],1
@@ -63,21 +63,21 @@ getPlayer:
     mov rcx,[playerLocation]
     mov rbx,teleportX
     movss xmm0,[rbx]
-    movss xmm1,[rax+6B0]
+    movss xmm1,[rax+6C0]
     subss xmm0,xmm1
     movss xmm1,[rcx+70]
     addss xmm0,xmm1
     movss [rcx+70],xmm0
     mov rbx,teleportY
     movss xmm0,[rbx]
-    movss xmm1,[rax+6B4]
+    movss xmm1,[rax+6C4]
     subss xmm0,xmm1
     movss xmm1,[rcx+74]
     addss xmm0,xmm1
     movss [rcx+74],xmm0
     mov rbx,teleportZ
     movss xmm0,[rbx]
-    movss xmm1,[rax+6B8]
+    movss xmm1,[rax+6C8]
     subss xmm0,xmm1
     movss xmm1,[rcx+78]
     addss xmm0,xmm1
@@ -102,7 +102,7 @@ getPlayerReturn:
 
 // Gets the horsey's information.
 // UNIQUE AOB: 8B 8A 38 01 00 00 89 4B
-define(omniHorseyHook,"start_protected_game.exe"+63F40E)
+define(omniHorseyHook,"start_protected_game.exe"+64C1FE)
 
 assert(omniHorseyHook,8B 8A 38 01 00 00)
 alloc(getHorsey,$1000,omniHorseyHook)
@@ -148,7 +148,7 @@ getHorseyReturn:
 // rcx: The target entity's vital structure.
 // r8 is 0 and r11 is 1 when we're dead.
 // UNIQUE AOB: 89 81 38 01 00 00 E8
-define(omniDeathCounterHook,"start_protected_game.exe"+432782)
+define(omniDeathCounterHook,"start_protected_game.exe"+4340E2)
 
 assert(omniDeathCounterHook,89 81 38 01 00 00)
 alloc(incrementDeathCounter,$1000,omniDeathCounterHook)
@@ -191,7 +191,7 @@ deathCounter:
 // ebx: Two's complemented damage value being added to the health.
 // [rsp+50] | {[rsp]+8A} Source of damage's instance struct.
 // UNIQUE AOB: 03 9F 38 01 00 00 85
-define(omnifyApocalypseHook,"start_protected_game.exe"+431E0F)
+define(omnifyApocalypseHook,"start_protected_game.exe"+43376F)
 
 assert(omnifyApocalypseHook,03 9F 38 01 00 00)
 alloc(initiateApocalypse,$1000,omnifyApocalypseHook)
@@ -242,11 +242,11 @@ initiatePlayerApocalypse:
     cmp rsi,0
     jle abortApocalypse
     mov rax,[rsi]
-    // Lower 2 bytes of poison damage source is 0x6F70.
-    cmp ax,0x6F70
+    // Lower 2 bytes of damage over time status effect sources is 0x40C0.
+    cmp ax,0x40C0
     je abortApocalypse
-    // Fall damage is a "special effect", which has lower 2 bytes of 0x9B68.    
-    cmp ax,0x9B68 
+    // Fall damage is a "special effect", which has lower 2 bytes of 0x70F8.    
+    cmp ax,0x70F8 
     je abortApocalypse
     // Load the player's maximum health as the next parameter.
     mov rax,[rdi+13C]
@@ -314,7 +314,7 @@ teleportitisDisplacementX:
 // Player's Havok character proxy can be found by looking at offset 0x88 of the chracter's proxy which itself 
 // is found at [playerLocation+0x98]
 // UNIQUE AOB: F3 45 0F 5C D3 0F
-define(omnifyPredatorHook,"start_protected_game.exe"+180F4A0)
+define(omnifyPredatorHook,"start_protected_game.exe"+1856340)
 
 assert(omnifyPredatorHook,F3 45 0F 5C D3)
 alloc(initiatePredator,$1000,omnifyPredatorHook)
@@ -427,7 +427,7 @@ threatDistance:
 // used here aren't actually retrievable at the point of matrix transformation, where we're applying the scales.
 // [rcx+8]: Player/EnemyIns, used as the identifying address.
 // UNIQUE AOB: 44 8B 81 38 01 00 00 C7
-define(omnifyAbomnificationHook,"start_protected_game.exe"+433B8C)
+define(omnifyAbomnificationHook,"start_protected_game.exe"+4354EC)
 
 assert(omnifyAbomnificationHook,44 8B 81 38 01 00 00)
 alloc(initiateAbomnification,$1000,omnifyAbomnificationHook)
@@ -472,7 +472,7 @@ abominifyMorphStepsResultLower:
 // xmm4: Height
 // xmm3: Depth
 // UNIQUE AOB: 0F 29 3C 07 0F 29 64 07 10
-define(omnifyApplyHumanAbomnificationHook,"start_protected_game.exe"+AD0E3A)
+define(omnifyApplyHumanAbomnificationHook,"start_protected_game.exe"+B12E0A)
 
 assert(omnifyApplyHumanAbomnificationHook,0F 29 3C 07 0F 29 64 07 10)
 alloc(applyHumanAbomnification,$1000,omnifyApplyHumanAbomnificationHook)
@@ -495,7 +495,7 @@ applyHumanAbomnification:
     // Retrieving the entity's root structure.
     mov rax,[rsp+4A]
     mov rbx,[rax+78]
-    sub rbx,640
+    sub rbx,650
     // Morph everyone, except the player.
     mov rax,player
     mov rcx,[rax]
@@ -543,7 +543,8 @@ applyHumanAbomnificationReturn:
 // Initiates the Abomnification system for non-humanoids.
 // [rcx+18]: The entity-identifying model transformation matrix array, unique to each 
 // entity whose model is being rendered.
-define(omnifyNonhumanAbomnificationHook,"start_protected_game.exe"+15BE29C)
+// UNIQUE AOB: 48 8B 41 18 41 0F 29 04 02
+define(omnifyNonhumanAbomnificationHook,"start_protected_game.exe"+160513C)
 
 assert(omnifyNonhumanAbomnificationHook,48 8B 41 18 41 0F 29 04 02)
 alloc(initiateNonhumanAbomnification,$1000,omnifyNonhumanAbomnificationHook)
@@ -582,7 +583,7 @@ initiateNonhumanAbomnificationReturn:
 // xmm2: Depth
 // UNIQUE AOB: 0F 29 07 0F 29 4F 10 0F 29 57 20 EB
 // check out [rsp+88] for an identifying address
-define(omnifyApplyNonhumanAbomnificationHook,"start_protected_game.exe"+ACFDB3)
+define(omnifyApplyNonhumanAbomnificationHook,"start_protected_game.exe"+B11D83)
 
 assert(omnifyApplyNonhumanAbomnificationHook,0F 29 07 0F 29 4F 10)
 alloc(applyNonhumanAbomnification,$1000,omnifyApplyNonhumanAbomnificationHook)
@@ -642,7 +643,8 @@ applyNonhumanAbomnificationReturn:
 
 
 // Makes Omni's life a little easier (i.e., I learn things faster).
-define(omnifyFastLearner,"start_protected_game.exe"+637953)
+// UNIQUE AOB: F3 0F 59 C1 F3 0F 2C F8 48
+define(omnifyFastLearner,"start_protected_game.exe"+6444B3)
 
 assert(omnifyFastLearner,F3 0F 59 C1 F3 0F 2C F8)
 alloc(learnFast,$1000,omnifyFastLearner)
