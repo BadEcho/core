@@ -676,6 +676,51 @@ learnFastReturn:
 learningX:
     dd (float)2.0
 
+
+// Causes the loss of the player's Rune Arc status to be based on chance rather than guaranteed on death.
+// [playerGameData+0xFF]: Byte value that determines whether we're Rune Arced or not.
+// playerGameData+0x100]: If this is 0 after dying (and when this runs) then Rune Arc status won't be removed.
+// UNIQUE AOB: 80 B9 00 01 00 00 00 74 09
+define(omnifyRuneArcLossHook,"start_protected_game.exe"+25C750)
+
+assert(omnifyRuneArcLossHook,80 B9 00 01 00 00 00)
+alloc(runeArcDiceRoll,$1000,omnifyRuneArcLossHook)
+alloc(runeArcLossResultLower,8)
+alloc(runeArcLossResultUpper,8)
+
+registersymbol(runeArcLossResultUpper)
+registersymbol(runeArcLossResultLower)
+registersymbol(omnifyRuneArcLossHook)
+
+runeArcDiceRoll:
+    pushf
+    push rax
+    push [runeArcLossResultLower]
+    push [runeArcLossResultUpper]
+    call generateRandomNumber
+    // 1/4 chance; failure occurs if the result is 1.
+    cmp eax,1    
+    pop rax
+    je runeArcDiceRollOriginalCode
+    // Set to 0 to prevent Rune Arc from going bub-bye.
+    mov byte ptr [rcx+100],0
+runeArcDiceRollOriginalCode:
+    popf
+    cmp byte ptr [rcx+00000100],00
+    jmp runeArcDiceRollReturn
+
+omnifyRuneArcLossHook:
+    jmp runeArcDiceRoll
+    nop 2
+runeArcDiceRollReturn:
+
+
+runeArcLossResultLower:
+    dd #1
+
+runeArcLossResultUpper:
+    dd #4
+
 [DISABLE]
 
 // Cleanup of omniPlayerHook
@@ -797,3 +842,17 @@ unregistersymbol(learningX)
 
 dealloc(learningX)
 dealloc(learnFast)
+
+
+// Cleanup of omnifyRuneArcLossHook
+omnifyRuneArcLossHook:
+    db 80 B9 00 01 00 00 00
+
+unregistersymbol(omnifyRuneArcLossHook)
+unregistersymbol(runeArcLossResultUpper)
+unregistersymbol(runeArcLossResultLower)
+
+dealloc(runeArcLossResultLower)
+dealloc(runeArcLossResultUpper)
+dealloc(runeArcDiceRoll)
+
