@@ -10,7 +10,32 @@
 // https://www.gnu.org/licenses/agpl-3.0.html
 //----------------------------------------------------------------------
 
-// Abomnification Scale Data
+// Abomnification Data Footprint
+// 0x0: Remaining # of morph steps in current cycle - Integer
+// 0x4: Effective width scale - Float
+// 0x8: Effective height scale - Float
+// 0xC: Effective depth scale - Float
+// 0x10: Morph Mode - Integer
+//          Value indicates the type of morph mode, and is a result of an RNG roll.
+//          1: Static Unnatural (doesn't change shape; unnaturally large or small).
+//          2-5: Uniform Morphing (all dimensional scales change uniformly).
+//          6-13: Nonuniform Morphing (all dimensional scales change independently).
+// 0x14: Initial width scale for morph cycle - Float
+// 0x18: Initial height scale for morph cycle - Float
+// 0x1C: Initial depth scale for morph cycle - Float
+// 0x20: Number of morph steps for each cycle - Float (due to being used in several floating-point calculations)
+// 0x24: Target width scale for morph cycle - Float
+// 0x28: Target height scale for morph cycle - Float
+// 0x2C: Target depth scale for morph cycle - Float
+// 0x30: Current phase - Integer
+//          0: Pause phase; no actual morphing is occurring. Lasts for a normal morph cycle.
+//          1: Active phase; morphing is occurring.
+// 0x34: Status - Integer
+//          An entity's status determines whether or not it will be affected by the Abomnification system, and is
+//          generated prior to its first morphing cycle.
+//          0: Entity's status is undetermined.
+//          1: Entity is not Abomnified
+//          2: Entity is Abomnified
 alloc(morphScaleData,$33FFCC)
 alloc(morphScaleIndex,8)
   
@@ -87,7 +112,7 @@ continueAbomnification:
     cmp [forceScrub],1
     je scrubMorphData  
     cmp rbx,0
-    jne applyMorphScaleFromData  
+    jne checkMorphStatus  
 checkMorphDataIndexLimit:
     cmp [morphScaleIndex],#999
     jne incrementMorphDataIndex
@@ -115,6 +140,7 @@ nextMorphDataScrub:
     mov [rdx+28],0
     mov [rdx+2C],0
     mov [rdx+30],0
+    mov [rdx+34],0
     jmp nextMorphDataScrub
 exitMorphDataScrub:
     pop rax
@@ -122,7 +148,7 @@ incrementMorphDataIndex:
     inc [morphScaleIndex]
     mov rcx,[morphScaleIndex]
     mov [rbx],ecx
-applyMorphScaleFromData:  
+checkMorphStatus:
     mov rdx,morphScaleData
     push rax
     push rbx
@@ -132,7 +158,23 @@ applyMorphScaleFromData:
     mov rcx,rax
     pop rbx
     pop rax  
-    add rdx,rcx  
+    add rdx,rcx
+    cmp [rdx+34],0
+    jne evaluteMorphStatus
+    // 1/2 chance for Abomnification to be active.
+    push 1
+    push 2
+    call generateRandomNumber
+    mov [rdx+34],eax
+evaluteMorphStatus:
+    cmp [rdx+34],2
+    je applyMorphScaleFromData
+    // Morphing is disabled for entity.
+    mov eax,[defaultScaleX]
+    mov ebx,[defaultScaleX]
+    mov ecx,[defaultScaleX]
+    jmp executeAbomnificationCleanup
+applyMorphScaleFromData:
     cmp [rdx],0
     ja continuePhase
     // Current phase is located in [rdx+30].
@@ -202,21 +244,18 @@ generateMonsterMorphTargets:
     divss xmm0,[abominifyDivisor]
     movss [rdx+28],xmm0
     cmp [rdx+10],0 
-    jne skipGenerateMorphMode
+    jne applyMorphMode
     push [abominifyMorphModeResultLower]
     push [abominifyMorphModeResultUpper]
     call generateRandomNumber
-    jmp applyMorphMode
-skipGenerateMorphMode:
-    mov eax,[rdx+10]
+    mov [rdx+10],eax
 applyMorphMode:
-    cmp eax,1
+    cmp [rdx+10],1
     je staticUnnaturalMorphing
-    cmp eax,5
+    cmp [rdx+10],5
     jle uniformMorphing
     jmp nonUniformMorphing
 staticUnnaturalMorphing:
-    mov [rdx+10],1
     ucomiss xmm0,[unnaturalBigThreshold]
     ja unnaturalBiggify
     mulss xmm0,[unnaturalSmallX]
@@ -229,12 +268,10 @@ unnaturalizeIt:
     movss [rdx+C],xmm0
     jmp initializeMorphStepsExit
 uniformMorphing:
-    mov [rdx+10],5
     movss [rdx+24],xmm0
     movss [rdx+2C],xmm0
     jmp initializeMorphStepsExit
 nonUniformMorphing:
-    mov [rdx+10],8
     push [abominifyWidthResultLower]
     push [abominifyWidthResultUpper]
     call generateRandomNumber
@@ -426,6 +463,7 @@ unregistersymbol(morphScaleIndex)
 dealloc(morphScaleIndex)
 dealloc(morphScaleData)
 
+
 // Cleanup of Abomnification System Function
 unregistersymbol(executeAbomnification)
 unregistersymbol(abominifyMorphStepsResultUpper)
@@ -473,6 +511,7 @@ dealloc(overrideMorphSteps)
 dealloc(overrideMorphStepsValue)
 dealloc(disableAbomnification)
 dealloc(executeAbomnification)
+
 
 // Cleanup of getAbomnifiedScales
 unregistersymbol(getAbomnifiedScales)
