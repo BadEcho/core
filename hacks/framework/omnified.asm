@@ -158,10 +158,10 @@ generateRandomNumber:
 initializeSeed:
     mov byte ptr [rcx],1
     call kernel32.GetTickCount
-    // We don't want the same seed being generated for two different thread ID's, otherwise we'll see the unpleasant
+    // We don't want the same seed being generated for two different thread IDs, otherwise we'll see the unpleasant
     // unraveling of duplicate sequences, albeit in a staggered fashion most likely. We zero out the lower 16 bits of 
-    // the returned tick count, which consists mainly of millisecond data and can very easily end up not being different 
-    // between two calls on two separate threads, and replace this data with the thread ID.
+    // the returned tick count, which consists mainly of millisecond data (and can very easily end up not being different 
+    // between two calls on two separate threads), and replace this data with the thread ID.
     shr rax,0x10
     shl rax,0x10
     or rax,rbx
