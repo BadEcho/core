@@ -58,6 +58,7 @@ alloc(abomnifyDepthResultUpper,8)
 alloc(abomnifyDepthResultLower,8)
 alloc(abomnifyMorphModeResultUpper,8)
 alloc(abomnifyMorphModeResultLower,8)
+alloc(abomnifyPercentage,8)
 alloc(unnaturalBigThreshold,8)
 alloc(unnaturalBigX,8)
 alloc(unnaturalSmallX,8)
@@ -81,6 +82,7 @@ registersymbol(abomnifyWidthResultUpper)
 registersymbol(abomnifyWidthResultLower)
 registersymbol(abomnifyDepthResultUpper)
 registersymbol(abomnifyDepthResultLower)
+registersymbol(abomnifyPercentage)
 registersymbol(unnaturalBigThreshold)
 registersymbol(unnaturalBigX)
 registersymbol(speedMorphDivisor)
@@ -114,11 +116,18 @@ checkMorphStatus:
     add rdx,rcx
     cmp [rdx+34],0
     jne evaluteMorphStatus
-    // 1/2 chance for Abomnification to be active.
-    push 1
-    push 2
+    // Abomnification is active if the roll is less than or equal to the configured percentage.
+    // For example, the roll, which is out of 100, must land on 1-25 if the percentage is 25.    
+    push #1
+    push #100
     call generateRandomNumber
-    mov [rdx+34],eax
+    mov rcx,[abomnifyPercentage]
+    cmp eax,ecx
+    // This will set 'al' to 0 if the roll fell outside of the configured success percentage; 1 otherwise.
+    setge al
+    // Incrementing 'al' will bring the value inline with our defined status values (1 == failure, 2 == success).
+    inc al
+    mov byte ptr [rdx+34],al
 evaluteMorphStatus:
     cmp [rdx+34],2
     je applyMorphScaleFromData
@@ -329,6 +338,9 @@ abomnifyMorphModeResultUpper:
 abomnifyMorphModeResultLower:
     dd 1
 
+abomnifyPercentage:
+    dd #50
+
 abomnifyDivisor:
     dd (float)100.0
 
@@ -422,6 +434,7 @@ unregistersymbol(abomnifyWidthResultUpper)
 unregistersymbol(abomnifyWidthResultLower)
 unregistersymbol(abomnifyDepthResultUpper)
 unregistersymbol(abomnifyDepthResultLower)
+unregistersymbol(abomnifyPercentage)
 unregistersymbol(unnaturalBigThreshold)
 unregistersymbol(unnaturalBigX)
 unregistersymbol(unnaturalSmallX)
@@ -448,6 +461,7 @@ dealloc(abomnifyDepthResultUpper)
 dealloc(abomnifyDepthResultLower)
 dealloc(abomnifyMorphModeResultUpper)
 dealloc(abomnifyMorphModeResultLower)
+dealloc(abomnifyPercentage)
 dealloc(unnaturalBigThreshold)
 dealloc(unnaturalBigX)
 dealloc(unnaturalSmallX)
