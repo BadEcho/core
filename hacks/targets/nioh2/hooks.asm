@@ -743,16 +743,16 @@ omnifyAbomnificationHook:
 initiateAbomnificationReturn:
 
 
-abominifyMorphStepsResultUpper:
+abomnifyMorphStepsResultUpper:
     dd #550
 
-abominifyHeightResultUpper:
+abomnifyHeightResultUpper:
     dd #200
 
-abominifyDepthResultUpper:
+abomnifyDepthResultUpper:
     dd #180
 
-abominifyWidthResultUpper:
+abomnifyWidthResultUpper:
     dd #240
 
 unnaturalBigX:

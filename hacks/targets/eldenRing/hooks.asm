@@ -457,11 +457,11 @@ initiateAbomnificationReturn:
 
 
 // Double the ceiling on # of morph steps to slow down the morph animations.
-abominifyMorphStepsResultUpper:
+abomnifyMorphStepsResultUpper:
     dd #800
 
 // Do the same with the floor to prevent unsightly super fast morphs.
-abominifyMorphStepsResultLower:
+abomnifyMorphStepsResultLower:
     dd #50
 
 

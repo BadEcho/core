@@ -48,20 +48,20 @@ registersymbol(morphScaleData)
 // ebx: Updated height scale
 // ecx: Updated depth scale
 alloc(executeAbomnification,$1000)
-alloc(abominifyMorphStepsResultUpper,8)
-alloc(abominifyMorphStepsResultLower,8)
-alloc(abominifyHeightResultUpper,8)
-alloc(abominifyHeightResultLower,8)
-alloc(abominifyWidthResultUpper,8)
-alloc(abominifyWidthResultLower,8)
-alloc(abominifyDepthResultUpper,8)
-alloc(abominifyDepthResultLower,8)
-alloc(abominifyMorphModeResultUpper,8)
-alloc(abominifyMorphModeResultLower,8)
+alloc(abomnifyMorphStepsResultUpper,8)
+alloc(abomnifyMorphStepsResultLower,8)
+alloc(abomnifyHeightResultUpper,8)
+alloc(abomnifyHeightResultLower,8)
+alloc(abomnifyWidthResultUpper,8)
+alloc(abomnifyWidthResultLower,8)
+alloc(abomnifyDepthResultUpper,8)
+alloc(abomnifyDepthResultLower,8)
+alloc(abomnifyMorphModeResultUpper,8)
+alloc(abomnifyMorphModeResultLower,8)
 alloc(unnaturalBigThreshold,8)
 alloc(unnaturalBigX,8)
 alloc(unnaturalSmallX,8)
-alloc(abominifyDivisor,8)
+alloc(abomnifyDivisor,8)
 alloc(defaultScaleX,8)
 alloc(speedMorph,8)
 alloc(speedMorphDivisor,8)
@@ -73,14 +73,14 @@ alloc(disableAbomnification,8)
 alloc(defaultScaleX,8)
 
 registersymbol(executeAbomnification)
-registersymbol(abominifyMorphStepsResultUpper)
-registersymbol(abominifyMorphStepsResultLower)
-registersymbol(abominifyHeightResultUpper)
-registersymbol(abominifyHeightResultLower)
-registersymbol(abominifyWidthResultUpper)
-registersymbol(abominifyWidthResultLower)
-registersymbol(abominifyDepthResultUpper)
-registersymbol(abominifyDepthResultLower)
+registersymbol(abomnifyMorphStepsResultUpper)
+registersymbol(abomnifyMorphStepsResultLower)
+registersymbol(abomnifyHeightResultUpper)
+registersymbol(abomnifyHeightResultLower)
+registersymbol(abomnifyWidthResultUpper)
+registersymbol(abomnifyWidthResultLower)
+registersymbol(abomnifyDepthResultUpper)
+registersymbol(abomnifyDepthResultLower)
 registersymbol(unnaturalBigThreshold)
 registersymbol(unnaturalBigX)
 registersymbol(speedMorphDivisor)
@@ -171,8 +171,8 @@ skipInitializeDefaultScales:
     mov rax,zeroValue
     ucomiss xmm0,[rax]
     ja skipGenerateMorphSteps
-    push [abominifyMorphStepsResultLower]
-    push [abominifyMorphStepsResultUpper]
+    push [abomnifyMorphStepsResultLower]
+    push [abomnifyMorphStepsResultUpper]
     call generateRandomNumber
     cvtsi2ss xmm0,eax
     movss [rdx+20],xmm0
@@ -190,16 +190,16 @@ processMorphSteps:
 generateMonsterMorphTargets:  
     cvtss2si eax,xmm0
     mov [rdx],eax
-    push [abominifyHeightResultLower]
-    push [abominifyHeightResultUpper]
+    push [abomnifyHeightResultLower]
+    push [abomnifyHeightResultUpper]
     call generateRandomNumber
     cvtsi2ss xmm0,eax
-    divss xmm0,[abominifyDivisor]
+    divss xmm0,[abomnifyDivisor]
     movss [rdx+28],xmm0
     cmp [rdx+10],0 
     jne applyMorphMode
-    push [abominifyMorphModeResultLower]
-    push [abominifyMorphModeResultUpper]
+    push [abomnifyMorphModeResultLower]
+    push [abomnifyMorphModeResultUpper]
     call generateRandomNumber
     mov [rdx+10],eax
 applyMorphMode:
@@ -225,17 +225,17 @@ uniformMorphing:
     movss [rdx+2C],xmm0
     jmp initializeMorphStepsExit
 nonUniformMorphing:
-    push [abominifyWidthResultLower]
-    push [abominifyWidthResultUpper]
+    push [abomnifyWidthResultLower]
+    push [abomnifyWidthResultUpper]
     call generateRandomNumber
     cvtsi2ss xmm0,eax
-    divss xmm0,[abominifyDivisor]
+    divss xmm0,[abomnifyDivisor]
     movss [rdx+24],xmm0
-    push [abominifyDepthResultLower]
-    push [abominifyDepthResultUpper]
+    push [abomnifyDepthResultLower]
+    push [abomnifyDepthResultUpper]
     call generateRandomNumber
     cvtsi2ss xmm0,eax
-    divss xmm0,[abominifyDivisor]
+    divss xmm0,[abomnifyDivisor]
     movss [rdx+2C],xmm0
 initializeMorphStepsExit:
     pop rax
@@ -299,37 +299,37 @@ executeAbomnificationCleanup:
     ret 8  
 
 
-abominifyMorphStepsResultUpper:
+abomnifyMorphStepsResultUpper:
     dd #400
 
-abominifyMorphStepsResultLower:
+abomnifyMorphStepsResultLower:
     dd #25
 
-abominifyHeightResultUpper:
+abomnifyHeightResultUpper:
     dd #215
 
-abominifyHeightResultLower:
+abomnifyHeightResultLower:
     dd #25
 
-abominifyWidthResultUpper:
+abomnifyWidthResultUpper:
     dd #275
 
-abominifyWidthResultLower:
+abomnifyWidthResultLower:
     dd #25
 
-abominifyDepthResultUpper:
+abomnifyDepthResultUpper:
     dd #300
 
-abominifyDepthResultLower:
+abomnifyDepthResultLower:
     dd #25
 
-abominifyMorphModeResultUpper:
+abomnifyMorphModeResultUpper:
     dd #13
 
-abominifyMorphModeResultLower:
+abomnifyMorphModeResultLower:
     dd 1
 
-abominifyDivisor:
+abomnifyDivisor:
     dd (float)100.0
 
 unnaturalBigThreshold:
@@ -414,14 +414,14 @@ dealloc(morphScaleData)
 
 // Cleanup of Abomnification System Function
 unregistersymbol(executeAbomnification)
-unregistersymbol(abominifyMorphStepsResultUpper)
-unregistersymbol(abominifyMorphStepsResultLower)
-unregistersymbol(abominifyHeightResultUpper)
-unregistersymbol(abominifyHeightResultLower)
-unregistersymbol(abominifyWidthResultUpper)
-unregistersymbol(abominifyWidthResultLower)
-unregistersymbol(abominifyDepthResultUpper)
-unregistersymbol(abominifyDepthResultLower)
+unregistersymbol(abomnifyMorphStepsResultUpper)
+unregistersymbol(abomnifyMorphStepsResultLower)
+unregistersymbol(abomnifyHeightResultUpper)
+unregistersymbol(abomnifyHeightResultLower)
+unregistersymbol(abomnifyWidthResultUpper)
+unregistersymbol(abomnifyWidthResultLower)
+unregistersymbol(abomnifyDepthResultUpper)
+unregistersymbol(abomnifyDepthResultLower)
 unregistersymbol(unnaturalBigThreshold)
 unregistersymbol(unnaturalBigX)
 unregistersymbol(unnaturalSmallX)
@@ -438,20 +438,20 @@ dealloc(stopMorphs)
 dealloc(speedMorph)
 dealloc(speedMorphDivisor)
 dealloc(defaultScaleX)
-dealloc(abominifyMorphStepsResultUpper)
-dealloc(abominifyMorphStepsResultLower)
-dealloc(abominifyHeightResultUpper)
-dealloc(abominifyHeightResultLower)
-dealloc(abominifyWidthResultUpper)
-dealloc(abominifyWidthResultLower)
-dealloc(abominifyDepthResultUpper)
-dealloc(abominifyDepthResultLower)
-dealloc(abominifyMorphModeResultUpper)
-dealloc(abominifyMorphModeResultLower)
+dealloc(abomnifyMorphStepsResultUpper)
+dealloc(abomnifyMorphStepsResultLower)
+dealloc(abomnifyHeightResultUpper)
+dealloc(abomnifyHeightResultLower)
+dealloc(abomnifyWidthResultUpper)
+dealloc(abomnifyWidthResultLower)
+dealloc(abomnifyDepthResultUpper)
+dealloc(abomnifyDepthResultLower)
+dealloc(abomnifyMorphModeResultUpper)
+dealloc(abomnifyMorphModeResultLower)
 dealloc(unnaturalBigThreshold)
 dealloc(unnaturalBigX)
 dealloc(unnaturalSmallX)
-dealloc(abominifyDivisor)
+dealloc(abomnifyDivisor)
 dealloc(zeroValue)
 dealloc(overrideMorphSteps)
 dealloc(overrideMorphStepsValue)

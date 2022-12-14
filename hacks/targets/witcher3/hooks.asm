@@ -764,20 +764,20 @@ initiateAbomnificationReturn:
 
 
 // Morphing execution rate is a bit high; will increase the number of steps.
-abominifyMorphStepsResultUpper:
+abomnifyMorphStepsResultUpper:
     dd #600
 
 // Value change to actual height change is not 1:1, ~1.25x increase in value causes actual height to be ~2x.
-abominifyHeightResultUpper:
+abomnifyHeightResultUpper:
     dd #160
 
-abominifyHeightResultLower:
+abomnifyHeightResultLower:
     dd #30
 
-abominifyWidthResultUpper:
+abomnifyWidthResultUpper:
     dd #350
 
-abominifyDepthResultUpper:
+abomnifyDepthResultUpper:
     dd #350
 
 unnaturalSmallX:
