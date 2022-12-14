@@ -37,13 +37,8 @@
 //          1: Entity is not Abomnified
 //          2: Entity is Abomnified
 alloc(morphScaleData,$33FFCC)
-alloc(morphScaleIndex,8)
   
 registersymbol(morphScaleData)
-registersymbol(morphScaleIndex)
-
-morphScaleIndex:
-    dd 0    
 
 
 // Abomnification System Function
@@ -72,7 +67,6 @@ alloc(speedMorph,8)
 alloc(speedMorphDivisor,8)
 alloc(stopMorphs,8)
 alloc(zeroValue,8)
-alloc(forceScrub,8)
 alloc(overrideMorphSteps,8)
 alloc(overrideMorphStepsValue,8)
 alloc(disableAbomnification,8)
@@ -93,7 +87,6 @@ registersymbol(speedMorphDivisor)
 registersymbol(unnaturalSmallX)
 registersymbol(speedMorph)
 registersymbol(stopMorphs)
-registersymbol(forceScrub)
 registersymbol(overrideMorphSteps)
 registersymbol(overrideMorphStepsValue)
 registersymbol(disableAbomnification)
@@ -102,53 +95,13 @@ registersymbol(defaultScaleX)
 executeAbomnification:
     push rdx  
     cmp [disableAbomnification],1
-    jne continueAbomnification
+    jne checkMorphStatus
     mov eax,[defaultScaleX]
     mov ebx,[defaultScaleX]
     mov ecx,[defaultScaleX]
     jmp executeAbomnificationCleanup
-continueAbomnification:
-    mov rbx,[rsp+10]
-    cmp [forceScrub],1
-    je scrubMorphData  
-    cmp rbx,0
-    jne checkMorphStatus  
-checkMorphDataIndexLimit:
-    cmp [morphScaleIndex],#999
-    jne incrementMorphDataIndex
-scrubMorphData:
-    mov [forceScrub],0
-    mov [morphScaleIndex],0
-    push rax
-    mov rax,0
-nextMorphDataScrub:
-    add rax,#52
-    cmp rax,0x33FFCC
-    je exitMorphDataScrub
-    mov rdx,morphScaleData
-    add rdx,rax
-    mov [rdx],0    
-    mov [rdx+4],0
-    mov [rdx+8],0
-    mov [rdx+C],0
-    mov [rdx+10],0
-    mov [rdx+14],0
-    mov [rdx+18],0
-    mov [rdx+1C],0
-    mov [rdx+20],0
-    mov [rdx+24],0
-    mov [rdx+28],0
-    mov [rdx+2C],0
-    mov [rdx+30],0
-    mov [rdx+34],0
-    jmp nextMorphDataScrub
-exitMorphDataScrub:
-    pop rax
-incrementMorphDataIndex:
-    inc [morphScaleIndex]
-    mov rcx,[morphScaleIndex]
-    mov [rbx],ecx
 checkMorphStatus:
+    mov rbx,[rsp+10]
     mov rdx,morphScaleData
     push rax
     push rbx
@@ -403,9 +356,6 @@ defaultScaleX:
 zeroValue:
     dd 0	
   
-forceScrub:
-    dd 0
-  
 overrideMorphSteps:
     dd 0
   
@@ -458,9 +408,7 @@ getAbomnifiedScalesCleanup:
 
 // Cleanup of Abomnification Scale Data
 unregistersymbol(morphScaleData)
-unregistersymbol(morphScaleIndex)
 
-dealloc(morphScaleIndex)
 dealloc(morphScaleData)
 
 
@@ -480,7 +428,6 @@ unregistersymbol(unnaturalSmallX)
 unregistersymbol(speedMorphDivisor)
 unregistersymbol(speedMorph)
 unregistersymbol(stopMorphs)
-unregistersymbol(forceScrub)
 unregistersymbol(overrideMorphSteps)
 unregistersymbol(overrideMorphStepsValue)
 unregistersymbol(disableAbomnification)
@@ -506,7 +453,6 @@ dealloc(unnaturalBigX)
 dealloc(unnaturalSmallX)
 dealloc(abominifyDivisor)
 dealloc(zeroValue)
-dealloc(forceScrub)
 dealloc(overrideMorphSteps)
 dealloc(overrideMorphStepsValue)
 dealloc(disableAbomnification)
