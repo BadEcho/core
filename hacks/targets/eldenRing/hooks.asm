@@ -502,8 +502,11 @@ applyHumanAbomnification:
     cmp rbx,rcx
     jne applyHumanAbomnificationExecute
     // ...unless player morphing is allowed.
-    cmp [abomnifyPlayer],1
-    jne applyHumanAbomnificationExit
+    cmp [abomnifyPlayer],0
+    je applyHumanAbomnificationExit
+    // If player morphing is allowed, make sure Abomnification is enabled for them.
+    push rbx
+    call enableAbomnification
 applyHumanAbomnificationExecute:
     // Push the identifying address (the PlayerIns).    
     push rbx
