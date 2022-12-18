@@ -795,10 +795,10 @@ assert(omnifyApplyAbomnificationHook,41 8B 00 89 41 40)
 alloc(applyAbomnification,$1000,omnifyApplyAbomnificationHook)
 alloc(headHeightCoefficient,8)
 alloc(headHeightShifter,8)
-alloc(morphEverything,8)
+alloc(morphFriendlies,8)
 
 registersymbol(omnifyApplyAbomnificationHook)
-registersymbol(morphEverything)
+registersymbol(morphFriendlies)
 
 applyAbomnification:
     pushf
@@ -835,7 +835,7 @@ ensureGroup:
     mov rax,[rsi]
     cmp ax,0xBFE8
     jne applyAbomnificationExit  
-    cmp [morphEverything],1
+    cmp [morphFriendlies],1
     je allowMorphing
     // After gathering numerous experimental data, it appears that 0x2C will be zeroed for hostile entites.
     // Intewesting.
@@ -945,7 +945,7 @@ headHeightCoefficient:
 headHeightShifter:
     dd (float)2.12
 
-morphEverything:
+morphFriendlies:
     dd 0
 
 
@@ -1056,9 +1056,9 @@ omnifyApplyAbomnificationHook:
     db 41 8B 00 89 41 40
 
 unregistersymbol(omnifyApplyAbomnificationHook)
-unregistersymbol(morphEverything)
+unregistersymbol(morphFriendlies)
 
-dealloc(morphEverything)
+dealloc(morphFriendlies)
 dealloc(headHeightCoefficient)
 dealloc(headHeightShifter)
 dealloc(applyAbomnification)
