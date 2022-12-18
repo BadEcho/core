@@ -59,6 +59,7 @@ alloc(abomnifyDepthResultLower,8)
 alloc(abomnifyMorphModeResultUpper,8)
 alloc(abomnifyMorphModeResultLower,8)
 alloc(abomnifyPercentage,8)
+alloc(morphEverything,8)
 alloc(unnaturalBigThreshold,8)
 alloc(unnaturalBigX,8)
 alloc(unnaturalSmallX,8)
@@ -83,6 +84,7 @@ registersymbol(abomnifyWidthResultLower)
 registersymbol(abomnifyDepthResultUpper)
 registersymbol(abomnifyDepthResultLower)
 registersymbol(abomnifyPercentage)
+registersymbol(morphEverything)
 registersymbol(unnaturalBigThreshold)
 registersymbol(unnaturalBigX)
 registersymbol(speedMorphDivisor)
@@ -114,6 +116,9 @@ checkMorphStatus:
     pop rbx
     pop rax  
     add rdx,rcx
+    // Skip the status check if forced morphing is enabled.
+    cmp [morphEverything],0
+    jne applyMorphScaleFromData
     cmp [rdx+34],0
     jne evaluteMorphStatus
     // Abomnification is active if the roll is less than or equal to the configured percentage.
@@ -193,8 +198,8 @@ skipGenerateMorphSteps:
 loadGeneratedMorphSteps:
     movss xmm0,[rdx+20]
 processMorphSteps:
-    cmp [speedMorph],1
-    jne generateMonsterMorphTargets
+    cmp [speedMorph],0
+    je generateMonsterMorphTargets
     divss xmm0,[speedMorphDivisor]  
 generateMonsterMorphTargets:  
     cvtss2si eax,xmm0
@@ -267,8 +272,8 @@ stepMorph:
     movdqu [rsp],xmm1
     push rsi
     movss xmm0,[rdx+20]
-    cmp [speedMorph],1
-    jne generateMorphsForStep
+    cmp [speedMorph],0
+    je generateMorphsForStep
     divss xmm0,[speedMorphDivisor]  
 generateMorphsForStep:
     cvtss2si eax,xmm0
@@ -341,6 +346,9 @@ abomnifyMorphModeResultLower:
 abomnifyPercentage:
     dd #50
 
+morphEverything:
+    dd 0
+
 abomnifyDivisor:
     dd (float)100.0
 
@@ -381,8 +389,7 @@ defaultScaleX:
     dd (float)1.0
   
   
-// Retrieves the Abomnified scale multipliers for the specified
-// morph scale ID.
+// Retrieves the Abomnified scale multipliers for the entity identified.
 // [rsp+10]: The identifying address.
 alloc(getAbomnifiedScales,$1000)
 
@@ -414,7 +421,30 @@ getAbomnifiedScalesDefault:
 getAbomnifiedScalesCleanup:
     pop rdx
     ret 8
-  
+
+
+// Force enables Abomnification for the entity identified.
+// [rsp+20]: The identifying address. 
+alloc(enableAbomnification,$1000)
+
+registersymbol(enableAbomnification)
+
+enableAbomnification:
+    push rax
+    push rbx
+    push rcx
+    mov rax,[rsp+20]
+    mov rbx,#52
+    movzx rcx,ax
+    imul ebx,ecx
+    mov rax,morphScaleData
+    add rax,rbx
+    mov [rax+34],2
+    pop rcx
+    pop rbx
+    pop rax
+    ret 8
+
 
 [DISABLE]
 
@@ -435,6 +465,7 @@ unregistersymbol(abomnifyWidthResultLower)
 unregistersymbol(abomnifyDepthResultUpper)
 unregistersymbol(abomnifyDepthResultLower)
 unregistersymbol(abomnifyPercentage)
+unregistersymbol(morphEverything)
 unregistersymbol(unnaturalBigThreshold)
 unregistersymbol(unnaturalBigX)
 unregistersymbol(unnaturalSmallX)
@@ -462,6 +493,7 @@ dealloc(abomnifyDepthResultLower)
 dealloc(abomnifyMorphModeResultUpper)
 dealloc(abomnifyMorphModeResultLower)
 dealloc(abomnifyPercentage)
+dealloc(morphEverything)
 dealloc(unnaturalBigThreshold)
 dealloc(unnaturalBigX)
 dealloc(unnaturalSmallX)
@@ -477,3 +509,9 @@ dealloc(executeAbomnification)
 unregistersymbol(getAbomnifiedScales)
 
 dealloc(getAbomnifiedScales)
+
+
+// Cleanup of enableAbomnification
+unregistersymbol(enableAbomnification)
+
+dealloc(enableAbomnification)
