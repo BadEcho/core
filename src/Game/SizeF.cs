@@ -17,7 +17,7 @@ using BadEcho.Extensions;
 namespace BadEcho.Game;
 
 /// <summary>
-/// Represents the size of a rectangular region by its width and height using floating-point numbers.
+/// Represents the size of a rectangular region defined by an ordered pair of floating-point numbers for the width and height.
 /// </summary>
 /// <suppressions>
 /// ReSharper disable UnassignedReadonlyField

@@ -17,7 +17,7 @@ using Microsoft.Xna.Framework;
 namespace BadEcho.Game;
 
 /// <summary>
-/// Represents an ordered pair of floating-point x- and y-coordinates that defines a point in a two-dimensional plane.
+/// Represents a point in a two-dimensional plane defined by an ordered pair of floating-point x- and y-coordinates.
 /// </summary>
 /// <suppressions>
 /// ReSharper disable UnassignedReadonlyField
@@ -192,6 +192,18 @@ public readonly struct PointF : IEquatable<PointF>
     /// <inheritdoc/>
     public bool Equals(PointF other)
         => X.ApproximatelyEquals(other.X) && Y.ApproximatelyEquals(other.Y);
+
+    /// <summary>
+    /// Calculates the vector distance from this point to the specified <see cref="PointF"/> value.
+    /// </summary>
+    /// <param name="other">The point to calculate the vector distance to.</param>
+    /// <returns>The displacement vector from this point to <c>other</c>.</returns>
+    public Vector2 Displace(PointF other)
+    {
+        Vector2 otherVector = other;
+
+        return otherVector - this;
+    }
 
     /// <summary>
     /// Translates this point by the specified <see cref="Size"/> value.

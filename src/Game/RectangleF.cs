@@ -17,7 +17,7 @@ using Microsoft.Xna.Framework;
 namespace BadEcho.Game;
 
 /// <summary>
-/// Represents the location and size of a rectangle using four stored floating-point numbers.
+/// Represents a rectangle defined by a set of floating-point numbers for its upper-left point, width, and height.
 /// </summary>
 /// <remarks>
 /// <para>
@@ -33,7 +33,7 @@ namespace BadEcho.Game;
 /// <suppressions>
 /// ReSharper disable UnassignedReadonlyField
 /// </suppressions>
-public readonly struct RectangleF : IEquatable<RectangleF>
+public readonly struct RectangleF : IEquatable<RectangleF>, IShape
 {
     /// <summary>
     /// Represents an empty <see cref="RectangleF"/> with all member data left uninitialized.
@@ -53,7 +53,7 @@ public readonly struct RectangleF : IEquatable<RectangleF>
     /// Initializes a new instance of the <see cref="RectangleF"/> class.
     /// </summary>
     /// <param name="rectangle">A rectangle whose coordinates and dimensions will be used.</param>
-    public RectangleF(Rectangle rectangle)
+    public RectangleF(Rectangle rectangle) 
         : this(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height)
     { }
 
@@ -85,6 +85,18 @@ public readonly struct RectangleF : IEquatable<RectangleF>
     { get; }
 
     /// <summary>
+    /// Gets the width of this rectangle.
+    /// </summary>
+    public float Width
+    { get; }
+
+    /// <summary>
+    /// Gets the height of this rectangle.
+    /// </summary>
+    public float Height
+    { get; }
+
+    /// <summary>
     /// Gets the x-coordinate of the left edge of this rectangle.
     /// </summary>
     public float Left
@@ -108,17 +120,9 @@ public readonly struct RectangleF : IEquatable<RectangleF>
     public float Bottom
         => Y + Height;
 
-    /// <summary>
-    /// Gets the width of this rectangle.
-    /// </summary>
-    public float Width
-    { get; }
-
-    /// <summary>
-    /// Gets the height of this rectangle.
-    /// </summary>
-    public float Height
-    { get; }
+    /// <inheritdoc/>
+    public PointF Center
+        => new(X + Width / 2f, Y + Height / 2f);
 
     /// <summary>
     /// Gets the coordinates of the upper-left corner of this rectangle.
@@ -232,10 +236,33 @@ public readonly struct RectangleF : IEquatable<RectangleF>
     /// <summary>
     /// Determines if the specified rectangle is wholly contained within this rectangle.
     /// </summary>
-    /// <param name="rectangle">The rectangle to check.</param>
-    /// <returns>True if <c>rectangle</c> is wholly contained within this rectangle; otherwise, false.</returns>
-    public bool Contains(RectangleF rectangle)
-        => X <= rectangle.X && rectangle.Right <= Right && Y <= rectangle.Y && rectangle.Bottom <= Bottom;
+    /// <param name="other">The rectangle to check.</param>
+    /// <returns>True if <c>other</c> is wholly contained within this rectangle; otherwise, false.</returns>
+    public bool Contains(RectangleF other)
+        => X <= other.X && other.Right <= Right && Y <= other.Y && other.Bottom <= Bottom;
+
+    /// <inheritdoc/>
+    public PointF GetPointClosestTo(PointF point)
+    {
+        PointF upperLeft = Location;
+        PointF bottomRight = new(Right, Bottom);
+
+        float closestX = point.X;
+        float closestY = point.Y;
+        
+        // Since our rectangles are axis-aligned, we can just clamp to the nearest point in the rectangle.
+        if (closestX < upperLeft.X)
+            closestX = upperLeft.X;
+        else if (closestX > bottomRight.X)
+            closestX = bottomRight.X;
+        
+        if (closestY < upperLeft.Y)
+            closestY = upperLeft.Y;
+        else if (closestY > bottomRight.Y)
+            closestY = bottomRight.Y;
+        
+        return new PointF(closestX, closestY);
+    }
 
     /// <summary>
     /// Creates a copy of this rectangle enlarged by the specified amount.
@@ -248,27 +275,27 @@ public readonly struct RectangleF : IEquatable<RectangleF>
     /// <summary>
     /// Creates a rectangle representing the intersection of this and the specified rectangle.
     /// </summary>
-    /// <param name="rectangle">The rectangle to intersect.</param>
+    /// <param name="other">The rectangle to intersect.</param>
     /// <returns>
-    /// A <see cref="RectangleF"/> value which represents the overlapped area of this and <c>rectangle</c>.
+    /// A <see cref="RectangleF"/> value which represents the overlapped area of this and <c>other</c>.
     /// </returns>
-    public RectangleF Intersect(RectangleF rectangle)
+    public RectangleF Intersect(RectangleF other)
     {
-        var x = Math.Max(X, rectangle.X);
-        var y = Math.Max(Y, rectangle.Y);
-        var right = Math.Min(Right, rectangle.Right);
-        var bottom = Math.Min(Bottom, rectangle.Bottom);
-
+        var x = Math.Max(X, other.X);
+        var y = Math.Max(Y, other.Y);
+        var right = Math.Min(Right, other.Right);
+        var bottom = Math.Min(Bottom, other.Bottom);
+        
         return right >= x && bottom >= y ? new RectangleF(x, y, right - x, bottom - y) : Empty;
     }
 
     /// <summary>
     /// Determines if this rectangle intersects with the specified rectangle.
     /// </summary>
-    /// <param name="rectangle">The rectangle to check.</param>
-    /// <returns>True if <c>rectangle</c> intersects with this; otherwise, false.</returns>
-    public bool IntersectsWith(RectangleF rectangle)
-        => rectangle.X < Right && X < rectangle.Right && rectangle.Y < Bottom && Y < rectangle.Bottom;
+    /// <param name="other">The rectangle to check.</param>
+    /// <returns>True if <c>other</c> intersects with this; otherwise, false.</returns>
+    public bool Intersects(RectangleF other)
+        => other.X < Right && X < other.Right && other.Y < Bottom && Y < other.Bottom;
 
     /// <summary>
     /// Creates a copy of this rectangle with its position adjusted by the specified amount.
@@ -277,20 +304,20 @@ public readonly struct RectangleF : IEquatable<RectangleF>
     /// <returns>The location-adjusted<see cref="RectangleF"/> value.</returns>
     public RectangleF Offset(PointF position)
         => new(X + position.X, Y + position.Y, Width, Height);
-    
+
     /// <summary>
     /// Creates a rectangle representing the union between this and the specified rectangle.
     /// </summary>
-    /// <param name="rectangle">The rectangle to create a union with.</param>
+    /// <param name="other">The rectangle to create a union with.</param>
     /// <returns>
-    /// A <see cref="RectangleF"/> value representing the union between this and <c>rectangle</c>.
+    /// A <see cref="RectangleF"/> value representing the union between this and <c>other</c>.
     /// </returns>
-    public RectangleF Union(RectangleF rectangle)
+    public RectangleF Union(RectangleF other)
     {
-        var x = Math.Min(X, rectangle.X);
-        var y = Math.Min(Y, rectangle.Y);
-        var right = Math.Max(Right, rectangle.Right);
-        var bottom = Math.Max(Bottom, rectangle.Bottom);
+        var x = Math.Min(X, other.X);
+        var y = Math.Min(Y, other.Y);
+        var right = Math.Max(Right, other.Right);
+        var bottom = Math.Max(Bottom, other.Bottom);
 
         return new RectangleF(x, y, right - x, bottom - y);
     }
