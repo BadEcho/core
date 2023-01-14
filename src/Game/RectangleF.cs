@@ -225,9 +225,9 @@ public readonly struct RectangleF : IEquatable<RectangleF>, IShape
     /// outside of the rectangle.
     ///</para>
     /// <para>
-    /// For example, a rectangle whose left corner is at x:0 and has a width of four
-    /// will extend from the upper left corner of x:0 all the way to the upper right corner of x:3.
-    /// Therefore, even though the width is four, a coordinate point of x:4 is actually outside of the rectangle.
+    /// For example, a rectangle whose left corner is at x:0 and has a width of four will extend from the upper
+    /// left corner of x:0 all the way to the upper right corner of x:3. Therefore, even though the width is four,
+    /// a coordinate point of x:4 is actually outside of the rectangle.
     /// </para>
     /// </remarks>
     public bool Contains(PointF point)
@@ -240,6 +240,21 @@ public readonly struct RectangleF : IEquatable<RectangleF>, IShape
     /// <returns>True if <c>other</c> is wholly contained within this rectangle; otherwise, false.</returns>
     public bool Contains(RectangleF other)
         => X <= other.X && other.Right <= Right && Y <= other.Y && other.Bottom <= Bottom;
+
+    /// <summary>
+    /// Determines if the specified shape is wholly contained within this shape.
+    /// </summary>
+    /// <param name="other">The shape to check.</param>
+    /// <returns>True if <c>other</c> is wholly contained within this rectangle; otherwise, false.</returns>
+    public bool Contains(IShape other)
+    {
+        Require.NotNull(other, nameof(other));
+
+        return other.Center.X + other.Width / 2 <= Right
+            && other.Center.X - other.Width / 2 >= X
+            && other.Center.Y + other.Height / 2 <= Bottom
+            && other.Center.Y - other.Height / 2 >= Y;
+    }
 
     /// <inheritdoc/>
     public PointF GetPointClosestTo(PointF point)

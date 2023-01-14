@@ -73,6 +73,20 @@ public readonly struct Circle : IEquatable<Circle>, IShape
     public float Radius
     { get; }
 
+    /// <summary>
+    /// Gets the length of the line through the center that touches two points on the edge of this circle.
+    /// </summary>
+    public float Diameter
+        => Radius * 2;
+
+    /// <inheritdoc/>
+    public float Width
+        => Diameter;
+
+    /// <inheritdoc/>
+    public float Height
+        => Diameter;
+
     /// <inheritdoc/>
     public PointF Center
         => new(X, Y);

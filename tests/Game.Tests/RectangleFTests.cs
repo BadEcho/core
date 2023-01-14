@@ -45,9 +45,7 @@ public class RectangleFTests
     {
         var overlapping = new RectangleF(100, 100, 200, 400);
 
-        IShape shape = _rect;
-
-        Assert.True(shape.Intersects(overlapping));
+        Assert.True(ShapeIntersects(overlapping));
     }
 
     [Fact]
@@ -55,9 +53,7 @@ public class RectangleFTests
     {
         var nonoverlapping = new RectangleF(500, 800, 20, 30);
 
-        IShape shape = _rect;
-
-        Assert.False(shape.Intersects(nonoverlapping));
+        Assert.False(ShapeIntersects(nonoverlapping));
     }
     
     [Fact]
@@ -65,9 +61,7 @@ public class RectangleFTests
     {
         var overlapping = new Circle(new PointF(400, 700), 200);
 
-        IShape shape = _rect;
-
-        Assert.True(shape.Intersects(overlapping));
+        Assert.True(ShapeIntersects(overlapping));
     }
 
     [Fact]
@@ -75,8 +69,45 @@ public class RectangleFTests
     {
         var nonoverlapping = new Circle(new PointF(500, 800), 20);
 
+        Assert.False(ShapeIntersects(nonoverlapping));
+    }
+
+    [Fact]
+    public void ShapeContains_InnerCircle_ReturnsTrue()
+    {
+        IShape inner = new Circle(150, 300, 100);
+
+        Assert.True(_rect.Contains(inner));
+    }
+
+    [Fact]
+    public void ShapeContains_OuterCircle_ReturnsFalse()
+    {
+        IShape outer = new Circle(150, 300, 200);
+
+        Assert.False(_rect.Contains(outer));
+    }
+
+    [Fact]
+    public void ShapeContains_InnerRectangle_ReturnsTrue()
+    {
+        IShape inner = new RectangleF(50, 50, 200, 500);
+
+        Assert.True(_rect.Contains(inner));
+    }
+
+    [Fact]
+    public void ShapeContains_OuterRectangle_ReturnsFalse()
+    {
+        IShape outer = new RectangleF(50, 50, 400, 700);
+
+        Assert.False(_rect.Contains(outer));
+    }
+
+    private bool ShapeIntersects(IShape other)
+    {
         IShape shape = _rect;
 
-        Assert.False(shape.Intersects(nonoverlapping));
+        return shape.Intersects(other);
     }
-}
+}   

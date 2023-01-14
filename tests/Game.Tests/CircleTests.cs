@@ -77,9 +77,7 @@ public class CircleTests
     {
         var overlapping = new RectangleF(100, 100, 150, 150);
 
-        IShape shape = _circle;
-
-        Assert.True(shape.Intersects(overlapping));
+        Assert.True(ShapeIntersects(overlapping));
     }
 
     [Fact]
@@ -87,8 +85,13 @@ public class CircleTests
     {
         var nonoverlapping = new RectangleF(-50, -50, 20, 20);
 
+        Assert.False(ShapeIntersects(nonoverlapping));
+    }
+
+    private bool ShapeIntersects(IShape other)
+    {
         IShape shape = _circle;
 
-        Assert.False(shape.Intersects(nonoverlapping));
+        return shape.Intersects(other);
     }
 }

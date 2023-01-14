@@ -22,6 +22,16 @@ public interface IShape
     /// Gets the coordinates of the center of this shape.
     /// </summary>
     PointF Center { get; }
+    
+    /// <summary>
+    /// Gets the width of this shape.
+    /// </summary>
+    float Width { get; }
+
+    /// <summary>
+    /// Gets the height of this shape.
+    /// </summary>
+    float Height { get; }
 
     /// <summary>
     /// Determines if the specified point is contained within this shape.
