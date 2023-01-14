@@ -61,6 +61,15 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The specified element is outside this quadtree&apos;s boundaries..
+        /// </summary>
+        internal static string ElementOutsideQuadtreeBounds {
+            get {
+                return ResourceManager.GetString("ElementOutsideQuadtreeBounds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Maximum amount of zoom must be greater than zero..
         /// </summary>
         internal static string MaximumZoomCannotBeZeroOrLess {

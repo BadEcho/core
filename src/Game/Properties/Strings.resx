@@ -122,4 +122,7 @@
 	<data name="MaximumZoomCannotBeZeroOrLess" xml:space="preserve">
 		<value>Maximum amount of zoom must be greater than zero.</value>
 	</data>
+	<data name="ElementOutsideQuadtreeBounds" xml:space="preserve">
+		<value>The specified element is outside this quadtree's boundaries.</value>
+	</data>
 </root>
