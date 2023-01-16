@@ -1,8 +1,8 @@
 ﻿#pragma warning disable IDE0060
 //-----------------------------------------------------------------------
 // <copyright>
-//      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2022 Bad Echo LLC. All rights reserved.
+//		Created by Matt Weber <matt@badecho.com>
+//		Copyright @ 2023 Bad Echo LLC. All rights reserved.
 //
 //		Bad Echo Technologies are licensed under the
 //		GNU Affero General Public License v3.0.
