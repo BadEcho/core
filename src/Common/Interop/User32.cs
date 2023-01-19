@@ -32,7 +32,14 @@ internal static partial class User32
     /// <summary>
     /// The value to pass as the handle to the parent window when creating a message-only window.
     /// </summary>
-    public static IntPtr ParentWindowMessageOnly = new(-3);
+    public static IntPtr ParentWindowMessageOnly 
+        => new(-3);
+
+    /// <summary>
+    /// A hook code indicating that the hook procedure was provided with valid data and may process it.
+    /// </summary>
+    public static int HookCodeAction
+        => 0;
 
     /// <summary>
     /// Creates an overlapped, pop-up, or child window with an extended window style.
@@ -276,6 +283,21 @@ internal static partial class User32
     public static partial bool UnregisterHotKey(WindowHandle hWnd, int id);
 
     /// <summary>
+    /// Retrieves the status of the specified virtual key.
+    /// </summary>
+    /// <param name="key">The virtual key to get the state for.</param>
+    /// <returns>
+    /// A value specifying the status of <c>key</c> as follows:
+    ///     <list type="bullet">
+    ///         <item>If the high-order bit is 1, <c>key</c> is down; otherwise, it is up.</item>
+    ///         <item>If the low-order bit is 1, <c>key</c> is toggled on; otherwise, it is toggled off.</item>
+    ///     </list>
+    /// </returns>
+    [LibraryImport(LIBRARY_NAME)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial short GetKeyState(VirtualKey key);
+
+    /// <summary>
     /// Defines a new window message that is guaranteed to be unique throughout the system.
     /// </summary>
     /// <param name="msg">The message to be registered.</param>
@@ -315,6 +337,43 @@ internal static partial class User32
     [LibraryImport(LIBRARY_NAME, EntryPoint = "CallWindowProcW")]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial IntPtr CallWindowProc(IntPtr wndProc, IntPtr hWnd, WindowMessage msg, IntPtr wParam, IntPtr lParam);
+
+    /// <summary>
+    /// Installs an application-defined hook procedure into a hook chain, used to monitor the system for certain
+    /// types of events.
+    /// </summary>
+    /// <param name="hookId">The type of hook procedure to be installed.</param>
+    /// <param name="lpfn">The hook procedure to install in the chain.</param>
+    /// <param name="hMod">A handle to the DLL containing the hook procedure.</param>
+    /// <param name="dwThreadId">
+    /// The identifier of the thread with which the hook procedure is to be associated. For desktop apps, this should be zero.
+    /// </param>
+    /// <returns>The handle to the hook procedure if successful; otherwise, zero.</returns>
+    [LibraryImport(LIBRARY_NAME, EntryPoint = "SetWindowsHookExW", SetLastError = true)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial IntPtr SetWindowsHookEx(WindowsHook hookId, HookProc lpfn, IntPtr hMod, uint dwThreadId);
+
+    /// <summary>
+    /// Removes a hook procedure installed in a hook chain.
+    /// </summary>
+    /// <param name="hhk">A handle to the hook to be removed.</param>
+    /// <returns>A nonzero value if the function succeeds; otherwise, zero.</returns>
+    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool UnhookWindowsHookEx(IntPtr hhk);  
+
+    /// <summary>
+    /// Passes the hook information to the next hook procedure in the current hook chain.
+    /// </summary>
+    /// <param name="hhk">This parameter is ignored.</param>
+    /// <param name="nCode">The hook code passed to the current hook procedure.</param>
+    /// <param name="wParam">The <paramref name="wParam"/> value passed to the current hook procedure.</param>
+    /// <param name="lParam">The <paramref name="lParam"/> value passed to the current hook procedure.</param>
+    /// <returns>The value returned by the next hook procedure in the chain.</returns>
+    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
 
     /// <summary>
     /// Retrieves information about the specified window.

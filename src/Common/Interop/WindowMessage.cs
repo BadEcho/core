@@ -39,6 +39,11 @@ public enum WindowMessage
     /// </summary>
     DestroyNonclientArea = 0x82,
     /// <summary>
+    /// A window message corresponding to a nonsystem key being pressed. A nonsystem key is a key that is pressed
+    /// when the ALT key is not pressed.
+    /// </summary>
+    KeyDown = 0x100,
+    /// <summary>
     /// A window message indicating a hot key has been pressed, corresponding to WM_HOTKEY.
     /// </summary>
     HotKey = 0x312
