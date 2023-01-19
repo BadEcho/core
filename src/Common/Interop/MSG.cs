@@ -16,7 +16,7 @@ using System.Runtime.InteropServices;
 namespace BadEcho.Interop;
 
 /// <summary>
-/// Provides message information from a thread's message queue.
+/// Represents a message from a thread's message queue.
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
 internal struct MSG

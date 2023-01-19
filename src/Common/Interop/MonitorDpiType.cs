@@ -14,7 +14,7 @@
 namespace BadEcho.Interop;
 
 /// <summary>
-/// Specifies the dot per inch (DPI) setting for a monitor.
+/// Specifies a dot per inch (DPI) setting for a monitor.
 /// </summary>
 /// <remarks>
 /// <para>

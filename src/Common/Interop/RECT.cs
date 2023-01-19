@@ -16,7 +16,7 @@ using System.Runtime.InteropServices;
 namespace BadEcho.Interop;
 
 /// <summary>
-/// Provides a definition for the coordinates of the upper-left and lower-right corners of a rectangle.
+/// Represents the coordinates of the upper-left and lower-right corners of a rectangle.
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
 internal struct RECT

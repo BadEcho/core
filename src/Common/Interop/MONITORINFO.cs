@@ -16,7 +16,7 @@ using System.Runtime.InteropServices;
 namespace BadEcho.Interop;
 
 /// <summary>
-/// Provides information about a display monitor.
+/// Represents a display monitor.
 /// </summary>
 /// <remarks>
 /// In order to create a <see cref="MONITORINFO"/> value that can be written to by unmanaged functions, one must make

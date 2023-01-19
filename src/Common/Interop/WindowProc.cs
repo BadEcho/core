@@ -14,7 +14,7 @@
 namespace BadEcho.Interop;
 
 /// <summary>
-/// Callback that processes messages sent to a window.
+/// Represents a callback that processes messages sent to a window.
 /// </summary>
 /// <param name="hWnd">A handle to the window.</param>
 /// <param name="msg">The message.</param>

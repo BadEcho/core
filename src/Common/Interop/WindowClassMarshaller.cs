@@ -77,7 +77,7 @@ internal static unsafe class WindowClassMarshaller
     }
 
     /// <summary>
-    /// Provides window class information.
+    /// Represents a window class.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     internal struct WNDCLASSEX
