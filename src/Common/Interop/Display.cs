@@ -26,7 +26,7 @@ namespace BadEcho.Interop;
 public sealed class Display
 {
     /// <summary>
-    /// Apparently the only defined flag that can be set in a <see cref="MONITORINFO"/> structure, which indicates that
+    /// Apparently the only defined flag that can be set in a <see cref="MONITORINFOEX"/> structure, which indicates that
     /// the monitor is the primary display.
     /// </summary>
     private const int MONITORINFOF_PRIMARY = 0x1;
@@ -45,15 +45,22 @@ public sealed class Display
     {
         _monitor = monitor;
 
-        var info = MONITORINFO.CreateWritable();
+        var info = MONITORINFOEX.CreateWritable();
             
         if (!User32.GetMonitorInfo(monitor, ref info))
             throw ((ResultHandle) Marshal.GetHRForLastWin32Error()).GetException();
 
         _isPrimary = (info.dwFlags & MONITORINFOF_PRIMARY) != 0;
 
+        unsafe
+        {
+            DeviceName = Marshal.PtrToStringUni((IntPtr) info.szDevice);
+        }
+
         MonitorDpi = LoadMonitorDpi();
-        WorkingArea = LoadWorkingArea();
+        
+        WorkingArea 
+            = Rectangle.FromLTRB(info.rcWork.Left, info.rcWork.Top, info.rcWork.Right, info.rcWork.Bottom);
     }
 
     /// <summary>
@@ -92,6 +99,12 @@ public sealed class Display
     /// </summary>
     public static int SystemDpi
     { get; } = LoadSystemDpi();
+
+    /// <summary>
+    /// Gets the name of this display device.
+    /// </summary>
+    public string? DeviceName
+    { get; }
 
     /// <summary>
     /// Gets the DPI specific to this display device.
@@ -153,16 +166,7 @@ public sealed class Display
 
         return (int) dpiX;
     }
-
-    private Rectangle LoadWorkingArea()
-    {
-        var info = MONITORINFO.CreateWritable();
-
-        return User32.GetMonitorInfo(_monitor, ref info)
-            ? Rectangle.FromLTRB(info.rcWork.Left, info.rcWork.Top, info.rcWork.Right, info.rcWork.Bottom)
-            : throw ((ResultHandle) Marshal.GetHRForLastWin32Error()).GetException();
-    }
-
+    
     /// <summary>
     /// Provides a referencing environment for a <see cref="MonitorEnumProc"/> callback.
     /// </summary>

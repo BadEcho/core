@@ -44,7 +44,7 @@ public class User32Tests
     {
         var monitors = UnmanagedHelper.EnumerateMonitors();
 
-        MONITORINFO monitorInfo = MONITORINFO.CreateWritable();
+        MONITORINFOEX monitorInfo = MONITORINFOEX.CreateWritable();
 
         Assert.True(User32.GetMonitorInfo(monitors.First(), ref monitorInfo));
     }

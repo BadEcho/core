@@ -123,13 +123,13 @@ internal static partial class User32
     /// </summary>
     /// <param name="hMonitor">A handle to the display monitor of interest.</param>
     /// <param name="lpmi">
-    /// A <see cref="MONITORINFO"/> value, which is written to by this function.
+    /// A <see cref="MONITORINFOEX"/> value, which is written to by this function.
     /// </param>
     /// <returns>True if successful; otherwise, false.</returns>
     [LibraryImport(LIBRARY_NAME, EntryPoint = "GetMonitorInfoW", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    public static partial bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
+    public static partial bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFOEX lpmi);
 
     /// <summary>
     /// Retrieves the specified system metric or configuration setting.

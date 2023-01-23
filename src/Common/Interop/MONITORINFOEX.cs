@@ -19,11 +19,11 @@ namespace BadEcho.Interop;
 /// Represents a display monitor.
 /// </summary>
 /// <remarks>
-/// In order to create a <see cref="MONITORINFO"/> value that can be written to by unmanaged functions, one must make
+/// In order to create a <see cref="MONITORINFOEX"/> value that can be written to by unmanaged functions, one must make
 /// use of the <see cref="CreateWritable"/> method.
 /// </remarks>
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto, Pack = 4)]
-internal struct MONITORINFO
+internal unsafe struct MONITORINFOEX
 {
     /// <summary>
     /// The size, in bytes, of the structure.
@@ -46,13 +46,18 @@ internal struct MONITORINFO
     public int dwFlags;
 
     /// <summary>
-    /// Creates a <see cref="MONITORINFO"/> value that can be written to by unmanaged functions.
+    /// The device name of the monitor.
     /// </summary>
-    /// <returns>A <see cref="MONITORINFO"/> value that can be written to by unmanaged functions.</returns>
-    public static MONITORINFO CreateWritable()
+    public fixed char szDevice[32];
+
+    /// <summary>
+    /// Creates a <see cref="MONITORINFOEX"/> value that can be written to by unmanaged functions.
+    /// </summary>
+    /// <returns>A <see cref="MONITORINFOEX"/> value that can be written to by unmanaged functions.</returns>
+    public static MONITORINFOEX CreateWritable()
         => new()
            {
-               cbSize = Marshal.SizeOf(typeof(MONITORINFO)),
+               cbSize = Marshal.SizeOf(typeof(MONITORINFOEX)),
                rcMonitor = new RECT(),
                rcWork = new RECT(),
                dwFlags = 0
