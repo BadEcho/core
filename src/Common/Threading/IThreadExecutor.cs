@@ -113,6 +113,11 @@ public interface IThreadExecutor
     void PushFrame(IThreadExecutorFrame frame);
 
     /// <summary>
+    /// Pushes the main execution frame onto the executor and starts processing requests.
+    /// </summary>
+    void Run();
+
+    /// <summary>
     /// Directly executes the provided method synchronously using the executor's context and thread.
     /// </summary>
     /// <param name="method">The method to directly execute using the executor's context.</param>

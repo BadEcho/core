@@ -273,6 +273,12 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
         }
     }
 
+    /// <inheritdoc />
+    public void Run()
+    {
+        PushFrame(CreateFrame());
+    }
+
     /// <inheritdoc/>
     public void Dispose()
     {
@@ -374,13 +380,17 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
         {
             if (!IsShutdownStarted && !IsShutdownComplete)
                 Shutdown();
-        } 
-        else if (_ProcessOperation == message)
-        {
-            ProcessOperation();
+
+            return IntPtr.Zero;
         }
 
-        return IntPtr.Zero;
+        if (_ProcessOperation == message)
+        {
+            ProcessOperation();
+            return IntPtr.Zero;
+        }
+
+        return new IntPtr(-1);
     }
 
     private void ProcessOperation()
