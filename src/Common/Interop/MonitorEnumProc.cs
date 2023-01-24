@@ -14,7 +14,7 @@
 namespace BadEcho.Interop;
 
 /// <summary>
-/// Callback invoked by the <see cref="User32.EnumDisplayMonitors"/> function.
+/// Represents a callback invoked by the <see cref="User32.EnumDisplayMonitors"/> function.
 /// </summary>
 /// <param name="hMonitor">A handle to the display monitor.</param>
 /// <param name="hdcMonitor">A handle to the device context.</param>

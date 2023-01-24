@@ -95,12 +95,6 @@ using BadEcho.Properties;
                            Target = "~M:BadEcho.Extensions.ObjectExtensions.GetHashCode``5(``0,``1,``2,``3,``4)~System.Int32",
                            Justification = "This is an extension method that provides code useful to all objects. Whether or not the parameter is used is moot, it is very much required to be here.")]
 
-[assembly: SuppressMessage("Design", 
-                           "CA1028:Enum Storage should be Int32", 
-                           Scope = "type", 
-                           Target = "~T:BadEcho.Interop.VirtualKey",
-                           Justification = "Native unmanaged functions expect a virtual key code in the form of an unsigned integer, and there's no way I'm going the WPF route and creating an int-based enum coupled with a static mapping class containing the largest switch statement ever seen by man.")]
-
 [assembly: SuppressMessage("Style", 
                            "IDE0021:Use expression body for constructors",
                            Scope = "member", 

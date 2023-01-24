@@ -16,7 +16,7 @@ namespace BadEcho.Interop;
 /// <summary>
 /// Specifies a virtual key, which may be anything from an actual keyboard key to a button on the mouse.
 /// </summary>
-public enum VirtualKey : uint
+public enum VirtualKey
 {
     /// <summary>
     /// A key that does not exist. The complete absence of a key. A key with no name, no purpose, and no hope.

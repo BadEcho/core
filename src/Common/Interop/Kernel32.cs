@@ -16,7 +16,7 @@ using System.Runtime.InteropServices;
 namespace BadEcho.Interop;
 
 /// <summary>
-/// Provides interoperability with the base APIs, such as memory management and input/output operations, exposed by Windows.
+/// Provides interoperability with the base kernel APIs, such as memory management and input/output operations, exposed by Windows.
 /// </summary>
 internal static partial class Kernel32
 {
