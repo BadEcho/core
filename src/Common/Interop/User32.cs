@@ -376,6 +376,28 @@ internal static partial class User32
     public static partial IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
 
     /// <summary>
+    /// Adds the specified window to the chain of clipboard viewers.
+    /// </summary>
+    /// <param name="hWndNewViewer">A handle to the window to be added to the clipboard chain.</param>
+    /// <returns>If successful, the handle to the next window in the clipboard viewer chain; otherwise zero.</returns>
+    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial IntPtr SetClipboardViewer(WindowHandle hWndNewViewer);
+
+    /// <summary>
+    /// Removes a specified window from the chain of clipboard viewers.
+    /// </summary>
+    /// <param name="hWndRemove">A handle to the window to be removed from the chain.</param>
+    /// <param name="hWndNewNext">A handle to the window that follows the window being removed in the clipboard viewer chain.</param>
+    /// <returns>
+    /// The result of passing <see cref="WindowMessage.ChangeClipboardChain"/> to the windows in the clipboard viewer chain.
+    /// </returns>
+    [LibraryImport(LIBRARY_NAME)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool ChangeClipboardChain(WindowHandle hWndRemove, IntPtr hWndNewNext);
+
+    /// <summary>
     /// Retrieves information about the specified window.
     /// </summary>
     /// <param name="hWnd">A handle to the window and, indirectly, the class to which the window belongs.</param>

@@ -16,7 +16,7 @@ namespace BadEcho.Interop;
 /// <summary>
 /// Specifies a type of standard message value used when sending or posting messages to windows.
 /// </summary>
-public enum WindowMessage
+internal enum WindowMessage
 {
     /// <summary>
     /// A window message corresponding to WM_NULL.
@@ -44,7 +44,17 @@ public enum WindowMessage
     /// </summary>
     KeyDown = 0x100,
     /// <summary>
-    /// A window message indicating a hot key has been pressed, corresponding to WM_HOTKEY.
+    /// A window message corresponding to WM_DRAWCLIPBOARD, sent to windows in the clipboard viewer chain when the content of
+    /// the clipboard changes.
+    /// </summary>
+    DrawClipboard = 0x308,
+    /// <summary>
+    /// A window message corresponding to WM_CHANGECBCHAIN, sent to windows in the clipboard viewer chain when a window is being
+    /// removed from the chain.
+    /// </summary>
+    ChangeClipboardChain = 0x30D,
+    /// <summary>
+    /// A window message corresponding to WM_HOTKEY, indicating a hot key has been pressed.
     /// </summary>
     HotKey = 0x312
 }
