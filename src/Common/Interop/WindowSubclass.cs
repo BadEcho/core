@@ -25,9 +25,15 @@ namespace BadEcho.Interop;
 /// Provides a way to subclass a window in a managed environment.
 /// </summary>
 /// <remarks>
+/// <para>
 /// This class gives managed objects the ability to subclass an unmanaged window or control. If you are unfamiliar with
 /// subclassing, it is a Microsoft term for how one can go about changing or adding additional features to an existing
 /// control or window.
+/// </para>
+/// <para>
+/// Put more succinctly, it allows us to replace the window's default window procedure with our own so that we may intercept
+/// and process messages sent to the window.
+/// </para>
 /// </remarks>
 internal sealed class WindowSubclass : IDisposable
 {
