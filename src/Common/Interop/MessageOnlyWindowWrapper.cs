@@ -243,7 +243,7 @@ public sealed class MessageOnlyWindowWrapper : IWindowWrapper, IDisposable
 
         if (WindowMessage.CreateNonclientArea == message)
         {
-            result = new IntPtr(1);
+            result = new IntPtr(-1);
         }
         else if (WindowMessage.DestroyNonclientArea == message)
         {   // Time to cleanup, though the class unregistration needs to be delayed since the window is already being destroyed.
