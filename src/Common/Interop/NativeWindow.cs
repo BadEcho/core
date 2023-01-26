@@ -141,7 +141,7 @@ public sealed class NativeWindow
             throw ((ResultHandle) Marshal.GetHRForLastWin32Error()).GetException();
     }
 
-    private IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+    private IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
         var message = (WindowMessage) msg;
 

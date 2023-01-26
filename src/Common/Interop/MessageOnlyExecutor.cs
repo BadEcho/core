@@ -42,7 +42,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     private readonly ThreadExecutorInvokeFilter _invokeFilter;
     // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
     // We need to keep a reference to this so it stays alive, as the window wrapper it is provided to stores it in a weak list.
-    private readonly WindowProc _hook;
+    private readonly WindowHookProc _hook;
 
     private ExecutionContext? _shutdownContext;
     private int _framesRunning;
@@ -369,7 +369,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
         return operation.Result;
     }
 
-    private IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+    private IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
         var message = (WindowMessage) msg;
 
@@ -380,17 +380,14 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
         {
             if (!IsShutdownStarted && !IsShutdownComplete)
                 Shutdown();
-
-            return IntPtr.Zero;
         }
 
-        if (_ProcessOperation == message)
+        else if (_ProcessOperation == message)
         {
             ProcessOperation();
-            return IntPtr.Zero;
         }
 
-        return new IntPtr(-1);
+        return new IntPtr(0);
     }
 
     private void ProcessOperation()

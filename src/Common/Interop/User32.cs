@@ -320,7 +320,7 @@ internal static partial class User32
     /// <param name="lParam">Specifies additional message-specific information.</param>
     /// <returns>Value indicating the success of the operation.</returns>
     /// <returns>If successful, true; otherwise, false.</returns>
-    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [LibraryImport(LIBRARY_NAME, EntryPoint = "PostMessageW", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)] 
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool PostMessage(WindowHandle hWnd, WindowMessage msg, IntPtr wParam, IntPtr lParam);

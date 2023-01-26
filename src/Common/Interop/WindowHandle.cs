@@ -28,7 +28,7 @@ public sealed class WindowHandle : SafeHandle
     /// </summary>
     /// <param name="handle">The handle to the window.</param>
     /// <param name="ownsHandle">Value indicating if this safe handle is responsible for releasing the provided handle.</param>
-    internal WindowHandle(IntPtr handle, bool ownsHandle)
+    public WindowHandle(IntPtr handle, bool ownsHandle)
         : this(ownsHandle)
     {
         SetHandle(handle);

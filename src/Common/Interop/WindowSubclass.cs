@@ -62,19 +62,6 @@ internal sealed class WindowSubclass : IDisposable
     private bool _disposed;
 
     /// <summary>
-    /// Initializes the <see cref="WindowSubclass"/> class.
-    /// </summary>
-    static WindowSubclass()
-    {
-        // We ensure we're listening to the particular load context responsible for loading Bad Echo framework code;
-        // we can't assume we're always a static dependency.
-        _LoadContext = AssemblyLoadContext.GetLoadContext(Assembly.GetExecutingAssembly())
-            ?? AssemblyLoadContext.Default;
-
-        _LoadContext.Unloading += HandleContextUnloading;
-    }
-
-    /// <summary>
     /// <para>
     /// A <see cref="GCHandle"/> is employed by this class so it won't get collected even in the event that all managed
     /// references to it get released. This is very important because the oh-so-relevant unmanaged component at hand (i.e., the
@@ -95,11 +82,24 @@ internal sealed class WindowSubclass : IDisposable
     private IntPtr _oldWndProc;
 
     /// <summary>
+    /// Initializes the <see cref="WindowSubclass"/> class.
+    /// </summary>
+    static WindowSubclass()
+    {
+        // We ensure we're listening to the particular load context responsible for loading Bad Echo framework code;
+        // we can't assume we're always a static dependency.
+        _LoadContext = AssemblyLoadContext.GetLoadContext(Assembly.GetExecutingAssembly())
+            ?? AssemblyLoadContext.Default;
+
+        _LoadContext.Unloading += HandleContextUnloading;
+    }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="WindowSubclass"/> class.
     /// </summary>
     /// <param name="hook">The delegate that will be executed to process messages that are sent or posted to the window.</param>
     /// <param name="executor">The executor that will power the subclass.</param>
-    public WindowSubclass(WindowProc hook, IThreadExecutor executor)
+    public WindowSubclass(WindowHookProc hook, IThreadExecutor executor)
     {
         Require.NotNull(hook, nameof(hook));
         Require.NotNull(executor, nameof(executor));
@@ -139,6 +139,7 @@ internal sealed class WindowSubclass : IDisposable
     {
         var result = IntPtr.Zero;
         var message = (WindowMessage)msg;
+        bool handled = false;
 
         switch (_state)
         {
@@ -154,22 +155,31 @@ internal sealed class WindowSubclass : IDisposable
         IntPtr oldWndProc = _oldWndProc;
 
         if (_DetachMessage == message)
-            result = ProcessDetachMessage(wParam, lParam);
+        {
+            if (IntPtr.Zero == wParam || wParam == (IntPtr) _gcHandle)
+            {
+                bool forcibly = (int) lParam > 0;
+
+                result = Detach(forcibly) ? new IntPtr(1) : IntPtr.Zero;
+
+                handled = !forcibly;
+            }
+        }
         else
         {
             if (!_executor.IsShutdownComplete)
-                result = SendOperation(hWnd, msg, wParam, lParam);
+                result = SendOperation(hWnd, msg, wParam, lParam, ref handled);
 
             if (WindowMessage.DestroyNonclientArea == message)
             {
                 Detach(true);
                 // WM_NCDESTROY should always be passed down the chain.
-                result = new IntPtr(-1);
+                handled = false;
             }
         }
 
         // If the message wasn't handled, pass it up the WndProc chain.
-        if (IntPtr.Zero != result)
+        if (!handled)
             result = User32.CallWindowProc(oldWndProc, hWnd, message, wParam, lParam);
 
         return result;
@@ -244,17 +254,17 @@ internal sealed class WindowSubclass : IDisposable
     /// <remarks>
     /// <para>
     /// The <c>forcibly</c> parameter exists because, due to how subclassing works, it is not always possible to safely remove
-    /// a particular window procedure from a <see cref="WindowProc"/> chain. "safely", used in this context, means in a way that
+    /// a particular window procedure from a <see cref="WindowProc"/> chain. "Safely", used in this context, means in a way that
     /// limits the amount of disruption caused to other subclasses that may have contributed to the WndProc chain.
     /// </para>
     /// <para>
-    /// If we are not in a position to unhook from the window's message chain, with <c>forcibly</c> set to false, then we essentially
-    /// leave everything untouched. If we are forcing a detachment, then it is guaranteed that <see cref="WndProc"/> and the hook supplied
-    /// at initialization will no longer be executed, however it can also be guaranteed that other entities subclassing this window will
-    /// experience disruption (bad).
+    /// If we are not in a position to unhook from the window's message chain with <c>forcibly</c> set to false, then we essentially
+    /// leave everything untouched. If instead we force the detachment, then it is guaranteed that <see cref="WndProc"/> and the hook supplied
+    /// at initialization will no longer be executed; unfortunately, this guarantee extends to all subclasses appearing before this one
+    /// on the <see cref="WindowProc"/> chain as well (bad).
     /// </para>
     /// </remarks>
-    private void Detach(bool forcibly)
+    private bool Detach(bool forcibly)
     {
         bool detached;
 
@@ -269,6 +279,8 @@ internal sealed class WindowSubclass : IDisposable
 
         if (!detached)
             Logger.Warning(forcibly ? Strings.SubclassForcibleDetachmentFailed : Strings.SubclassDetachmentFailed);
+
+        return detached;
     }
 
     /// <remarks>
@@ -323,36 +335,30 @@ internal sealed class WindowSubclass : IDisposable
         return true;
     }
 
-    private IntPtr ProcessDetachMessage(IntPtr wParam, nint lParam)
-    {
-        if (IntPtr.Zero != wParam && wParam != (IntPtr)_gcHandle)
-            return IntPtr.Zero;
-
-        bool forcibly = lParam > 0;
-
-        return Unhook(forcibly) ? IntPtr.Zero : new IntPtr(-1);
-    }
-
-    private IntPtr SendOperation(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+    private IntPtr SendOperation(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
         var result = IntPtr.Zero;
 
         // The parameters are cached locally, followed by setting the class member for the parameters to null for purposes of reentrancy.
         _ExecutorOperationCallbackParameters ??= new SubclassOperationParameters();
 
-        SubclassOperationParameters parameters = _ExecutorOperationCallbackParameters;
+        SubclassOperationParameters parameters
+            = _ExecutorOperationCallbackParameters with
+              {
+                  HWnd = hWnd,
+                  Msg = msg,
+                  WParam = wParam,
+                  LParam = lParam
+              };
 
         _ExecutorOperationCallbackParameters = null;
-
-        parameters.HWnd = hWnd;
-        parameters.Msg = msg;
-        parameters.WParam = wParam;
-        parameters.LParam = lParam;
-        
         object? executorResult = _executor.Invoke(_executorOperationCallback, true, parameters);
 
         if (executorResult != null)
+        {
             result = parameters.Result;
+            handled = parameters.Handled;
+        }
 
         _ExecutorOperationCallbackParameters = parameters;
 
@@ -366,12 +372,19 @@ internal sealed class WindowSubclass : IDisposable
 
         var parameters = (SubclassOperationParameters)argument;
 
-        parameters.Result = IntPtr.Zero;
-
         if (_state == AttachmentState.Attached)
         {   // Here we finalize the passing of a message received by our subclass to the registered hook.
-            if (_hook is { Target: WindowProc hook })
-                parameters.Result = hook(parameters.HWnd, parameters.Msg, parameters.WParam, parameters.LParam);
+            bool handled = false;
+
+            if (_hook is { Target: WindowHookProc hook })
+            {
+                parameters
+                    = parameters with
+                      {
+                          Result = hook(parameters.HWnd, parameters.Msg, parameters.WParam, parameters.LParam, ref handled),
+                          Handled = handled
+                      };
+            }
         }
 
         return parameters;
@@ -400,39 +413,10 @@ internal sealed class WindowSubclass : IDisposable
         Detached
     }
 
-    /// <summary>
-    /// Provides parameters for a subclass executor operation.
-    /// </summary>
-    private sealed class SubclassOperationParameters
-    {
-        /// <summary>
-        /// Gets or sets a handle to the window.
-        /// </summary>
-        public IntPtr HWnd
-        { get; set; }
-
-        /// <summary>
-        /// Gets or sets additional message information.
-        /// </summary>
-        public IntPtr WParam
-        { get; set; }
-
-        /// <summary>
-        /// Gets or sets additional message information.
-        /// </summary>
-        public IntPtr LParam 
-        { get; set; }
-
-        /// <summary>
-        /// Gets or sets the message.
-        /// </summary>
-        public uint Msg
-        { get; set; }
-
-        /// <summary>
-        /// Gets or sets the result of the message processing.
-        /// </summary>
-        public IntPtr Result
-        { get; set; }
-    }
+    private sealed record SubclassOperationParameters(IntPtr HWnd = default,
+                                                      IntPtr WParam = default,
+                                                      IntPtr LParam = default,
+                                                      uint Msg = default,
+                                                      IntPtr Result = default,
+                                                      bool Handled = false);
 }

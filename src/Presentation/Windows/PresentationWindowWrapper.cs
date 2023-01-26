@@ -22,7 +22,7 @@ namespace BadEcho.Presentation.Windows;
 /// </summary>
 public sealed class PresentationWindowWrapper : IWindowWrapper
 {
-    private readonly Dictionary<WindowProc, HwndSourceHook> _hookMapper = new();
+    private readonly Dictionary<WindowHookProc, HwndSourceHook> _hookMapper = new();
     private readonly HwndSource _source;
 
     /// <summary>
@@ -32,13 +32,19 @@ public sealed class PresentationWindowWrapper : IWindowWrapper
     public PresentationWindowWrapper(IntPtr handle)
     {
         var source = HwndSource.FromHwnd(handle);
-
+        
         _source = source
             ?? throw new ArgumentException(Strings.WindowNotPresentation, nameof(handle));
+        
+        Handle = new WindowHandle(handle, false);
     }
 
     /// <inheritdoc/>
-    public void AddHook(WindowProc hook)
+    public WindowHandle Handle
+    { get; }
+
+    /// <inheritdoc/>
+    public void AddHook(WindowHookProc hook)
     {
         Require.NotNull(hook, nameof(hook));
 
@@ -49,14 +55,14 @@ public sealed class PresentationWindowWrapper : IWindowWrapper
             
         _source.AddHook(SourceHook);
 
-        IntPtr SourceHook(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam, ref bool _)
+        IntPtr SourceHook(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            return hook.Invoke(hWnd, (uint)msg, wParam, lParam);
+            return hook(hWnd, (uint)msg, wParam, lParam, ref handled);
         }
     }
 
     /// <inheritdoc/>
-    public void RemoveHook(WindowProc hook)
+    public void RemoveHook(WindowHookProc hook)
     {
         Require.NotNull(hook, nameof(hook));
 

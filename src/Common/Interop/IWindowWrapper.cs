@@ -19,14 +19,19 @@ namespace BadEcho.Interop;
 public interface IWindowWrapper
 {
     /// <summary>
+    /// Gets the handle to the wrapped window.
+    /// </summary>
+    WindowHandle Handle { get; }
+
+    /// <summary>
     /// Adds a hook that will receive messages sent to the wrapped window.
     /// </summary>
     /// <param name="hook">The hook to invoke when messages are sent to the wrapped window.</param>
-    void AddHook(WindowProc hook);
+    void AddHook(WindowHookProc hook);
 
     /// <summary>
     /// Removes a hook previously receiving messages sent to the wrapped window.
     /// </summary>
     /// <param name="hook">The hook to remove.</param>
-    void RemoveHook(WindowProc hook);
+    void RemoveHook(WindowHookProc hook);
 }
