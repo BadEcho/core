@@ -56,5 +56,9 @@ internal enum WindowMessage
     /// <summary>
     /// A window message corresponding to WM_HOTKEY, indicating a hot key has been pressed.
     /// </summary>
-    HotKey = 0x312
+    HotKey = 0x312,
+    /// <summary>
+    /// A window message corresponding to WM_CLIPBOARDUPDATE, indicating the contents of the clipboard have changed.
+    /// </summary>
+    ClipboardUpdate = 0x31D
 }
