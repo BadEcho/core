@@ -385,6 +385,26 @@ internal static partial class User32
     public static partial IntPtr SetClipboardViewer(WindowHandle hWndNewViewer);
 
     /// <summary>
+    /// Places the given window in the system-maintained clipboard format listener list.
+    /// </summary>
+    /// <param name="hWnd">A handle to the window to be placed in the clipboard format list.</param>
+    /// <returns>True if successful; otherwise, false.</returns>
+    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool AddClipboardFormatListener(WindowHandle hWnd);
+
+    /// <summary>
+    /// Removes the given window from the system-maintained clipboard format listener list.
+    /// </summary>
+    /// <param name="hWnd">A handle to the window to remove from the clipboard format listener list.</param>
+    /// <returns>True if successful; otherwise, false.</returns>
+    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool RemoveClipboardFormatListener(WindowHandle hWnd);
+    
+    /// <summary>
     /// Removes a specified window from the chain of clipboard viewers.
     /// </summary>
     /// <param name="hWndRemove">A handle to the window to be removed from the chain.</param>
