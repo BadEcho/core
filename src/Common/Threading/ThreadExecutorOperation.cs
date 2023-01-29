@@ -28,9 +28,8 @@ public class ThreadExecutorOperation
     private EventHandler? _canceled;
     private EventHandler? _completed;
 
-    private readonly Delegate _method;
     private readonly object? _argument;
-    private readonly bool _filterExceptions;
+    private readonly bool _unknownDelegateType;
 
     private ExecutionContext? _context;
     private Exception? _exception;
@@ -41,12 +40,8 @@ public class ThreadExecutorOperation
     /// </summary>
     /// <param name="executor">The executor powering the operation.</param>
     /// <param name="method">An action, that takes no arguments, being executed.</param>
-    /// <param name="filterExceptions">
-    /// Value indicating if the method should be executed in a wrapped context, allowing the executor to catch and filter
-    /// any exceptions thrown, as opposed to simply executing the method and allowing for normal exception flow to occur.
-    /// </param>
-    internal ThreadExecutorOperation(IThreadExecutor executor, Action method, bool filterExceptions)
-        : this(executor, method, filterExceptions, null)
+    internal ThreadExecutorOperation(IThreadExecutor executor, Action method)
+        : this(executor, method, false, null)
     { }
 
     /// <summary>
@@ -54,16 +49,15 @@ public class ThreadExecutorOperation
     /// </summary>
     /// <param name="executor">The executor powering the operation.</param>
     /// <param name="method">The method being executed.</param>
-    /// <param name="filterExceptions">
-    /// Value indicating if the method should be executed in a wrapped context, allowing the executor to catch and filter
-    /// any exceptions thrown, as opposed to simply executing the method and allowing for normal exception flow to occur.
+    /// <param name="unknownDelegateType">
+    /// Value indicating if the specific type of delegate that this operation needs to invoke is unknown.
     /// </param>
     /// <param name="argument">The argument to provide to the method.</param>
     internal ThreadExecutorOperation(IThreadExecutor executor,
                                      Delegate method,
-                                     bool filterExceptions,
+                                     bool unknownDelegateType,
                                      object? argument)
-        : this(executor, method, filterExceptions, argument, new ThreadExecutorOperationTaskSource<object>())
+        : this(executor, method, unknownDelegateType, argument, new ThreadExecutorOperationTaskSource<object>())
     { }
 
     /// <summary>
@@ -71,26 +65,27 @@ public class ThreadExecutorOperation
     /// </summary>
     /// <param name="executor">The executor powering the operation.</param>
     /// <param name="method">The method being executed.</param>
-    /// <param name="filterExceptions">
-    /// Value indicating if the method should be executed in a wrapped context, allowing the executor to catch and filter
-    /// any exceptions thrown, as opposed to simply executing the method and allowing for normal exception flow to occur.
+    /// <param name="unknownDelegateType">
+    /// Value indicating if the specific type of delegate that this operation needs to invoke is unknown.
     /// </param>
     /// <param name="argument">The argument to provide to the method.</param>
     /// <param name="taskSource">The task completion source for the operation.</param>
     internal ThreadExecutorOperation(IThreadExecutor executor,
                                      Delegate method,
-                                     bool filterExceptions,
+                                     bool unknownDelegateType,
                                      object? argument,
                                      IThreadExecutorOperationTaskSource taskSource)
     {
         Executor = executor;
-        TaskSource = taskSource;
 
-        _method = method;
+        Method = method;
         _argument = argument;
-        _filterExceptions = filterExceptions;
+        _unknownDelegateType = unknownDelegateType;
 
         _context = ExecutionContext.Capture();
+
+        TaskSource = taskSource;
+        TaskSource.Initialize(this);
     }
 
     /// <summary>
@@ -154,13 +149,16 @@ public class ThreadExecutorOperation
     {
         get
         {
-            // We'll want to wait for the operation to complete, if necessary, before returning the result, to allow for the task to
+            // We'll want to wait for the operation to complete before returning the result, to allow for the task to
             // throw any captured exceptions.
-            // This is something we'll want to do if running in an async context, something which only can occur if we're not 
-            // filtering exceptions. Filtered exception invocation is functionality that not publicly available to external callers,
-            // rather it is something used only by legacy/internal APIs (such as SynchronizationContext's Send/Post and the message
-            // pump), which never run in an async context.
-            if (!_filterExceptions)
+            // This is only required if we're running in an async context, which only can occur if the specific type of
+            // delegate that represents the executing method is known at compile time.
+            // Executor operations created by external callers using the public API should almost always feature delegates of
+            // a known type; typically, we will only see unknown delegate types surface when the operations originate from
+            // some of the more "under the hood" processes (such as SynchronizationContext's Send/Post and the window message
+            // pump itself), which use asynchronous programming models themselves that differ from the more modern async/await
+            // approach.
+            if (!_unknownDelegateType)
             {
                 Wait();
 
@@ -177,6 +175,12 @@ public class ThreadExecutorOperation
     /// </summary>
     public Task Task
         => TaskSource.Task;
+
+    /// <summary>
+    /// Gets the method executed by the operation.
+    /// </summary>
+    protected Delegate Method
+    { get; }
 
     /// <summary>
     /// Gets the task completion source for the operation.
@@ -240,16 +244,21 @@ public class ThreadExecutorOperation
     /// on whether the current thread is the same as the native executor's owning thread.
     /// </para>
     /// <para>
-    /// If the current thread is the thread that the native executor was created on, then the operation must be pending. If the
-    /// operation is already running, then an exception is thrown in order to avoid a deadlock. That aside, the operation is
-    /// essentially jump started by this method by creating a <see cref="ThreadExecutorOperationFrame"/> for the operation and then
-    /// pushing it onto the executor via <see cref="IThreadExecutor.PushFrame"/>. This will have the effect of working the message
-    /// queue so that the queued operation is ultimately processed by the executor.
-    /// </para>
-    /// <para>
     /// If the current thread differs from the thread that the native executor was created on, then we are in the clear to simply
     /// block. This is done by creating a <see cref="ThreadExecutorOperationEvent"/>, which is essentially a decorated
     /// <see cref="ManualResetEvent"/>, and then waiting on that.
+    /// </para>
+    /// <para>
+    /// If the current thread is the executor's native thread, then the operation must be pending. If the operation is already
+    /// running, then an exception is thrown in order to avoid a deadlock (better to die than to deadlock :) ).
+    /// </para>
+    /// <para>
+    /// If the operation is still pending, then in order to avoid blocking the executor's thread, we create a
+    /// <see cref="ThreadExecutorOperationFrame"/>, configure it to disable itself after the timeout period elapses, and then
+    /// push it onto the executor. This will allow us to wait without blocking, but be aware that the wait handle won't be signaled
+    /// until the operation we're waiting on actually finishes -- even if said operation's execution time exceeds that of our timeout.
+    /// This is frankly a fine compromise for trying to wait on the same thread a previous operation was scheduled for execution on
+    /// (why would you be trying to do that anyway hah?).
     /// </para>
     /// </remarks>
     public ThreadExecutorOperationStatus Wait(TimeSpan timeout)
@@ -280,12 +289,25 @@ public class ThreadExecutorOperation
             }
         }
 
-        // This is to give the task a chance to throw any captured exceptions, something we only want to do if not filtering the exceptions
-        // and potentially running in an async context.
-        if (!_filterExceptions && Status is ThreadExecutorOperationStatus.Completed or ThreadExecutorOperationStatus.Canceled)
+        // This is to give the task a chance to throw any captured exceptions, something we only want to do if working with known
+        // delegate types as well as potentially running in an async context.
+        if (!_unknownDelegateType && Status is ThreadExecutorOperationStatus.Completed or ThreadExecutorOperationStatus.Canceled)
             Task.GetAwaiter().GetResult();
 
         return Status;
+    }
+
+    /// <summary>
+    /// Invokes the operation's method.
+    /// </summary>
+    /// <returns>The result of the method's execution.</returns>
+    protected virtual object? InvokeMethod()
+    {
+        Action action = (Action) Method;
+
+        action();
+
+        return null;
     }
 
     internal void Invoke()
@@ -293,7 +315,7 @@ public class ThreadExecutorOperation
         Status = ThreadExecutorOperationStatus.Running;
 
         if (_context != null)
-        {
+        {            
             ExecutionContext.Run(_context, _ContextCallback, this);
 
             _context.Dispose();
@@ -336,7 +358,7 @@ public class ThreadExecutorOperation
                 if (_exception != null)
                     TaskSource.SetException(_exception);
                 else
-                    TaskSource.SetResult(Result);
+                    TaskSource.SetResult(_result);
                 break;
             default:
                 throw new InvalidOperationException(Strings.ExecutorFinalizedBeforeDone);
@@ -352,22 +374,27 @@ public class ThreadExecutorOperation
 
     private void Execute()
     {
-        // If we're filtering exceptions, then we'll let the executor's invoke filter handle (or not handle) any thrown
-        // exception.
-        if (_filterExceptions)
+        // If we're working with an unknown delegate type, then we'll let the executor's invoke routine handle it.
+        if (_unknownDelegateType)
         {
-            _result = Executor.Invoke(_method, true, _argument);
+            _result = Executor.Invoke(Method, _argument);
+            return;
         }
-        else
+        
+        SynchronizationContext? oldContext = Executor.SwitchContext();
+
+        try
         {
-            try
-            {
-                _result = Executor.Invoke(_method, false, _argument);
-            }
-            catch (Exception ex)
-            {   // This will be reported through the task completion source.
-                _exception = ex;
-            }
+            _result = InvokeMethod();
+        }
+        catch (Exception ex)
+        {
+            // This will be reported through the task completion source.
+            _exception = ex;
+        }
+        finally
+        {
+            SynchronizationContext.SetSynchronizationContext(oldContext);
         }
     }
 
@@ -406,17 +433,8 @@ public class ThreadExecutorOperation
                                    TimeSpan.FromMilliseconds(-1));
             }
 
-            ExitUponRequest = false;
-
             if (ThreadExecutorOperationStatus.Pending != _operation.Status)
                 Exit();
-        }
-
-        /// <inheritdoc/>
-        public bool ExitUponRequest
-        {
-            get => _innerFrame.ExitUponRequest;
-            set => _innerFrame.ExitUponRequest = value;
         }
 
         /// <inheritdoc/>
@@ -445,6 +463,8 @@ public class ThreadExecutorOperation
             if (_isExited)
                 return;
 
+            _timer?.Dispose();
+
             ShouldContinue = false;
             _isExited = true;
         }
@@ -457,7 +477,7 @@ public class ThreadExecutorOperation
         private void HandleTimerTick(object? state)
         {
             Exit();
-        }
+         }
     }
 
     /// <summary>

@@ -19,11 +19,6 @@ namespace BadEcho.Threading;
 public interface IThreadExecutor
 {
     /// <summary>
-    /// Occurs when an executor operation throws an unhandled exception.
-    /// </summary>
-    event EventHandler<ThreadExceptionEventArgs>? UnhandledException;
-
-    /// <summary>
     /// Gets a value indicating if the process to shutdown the executor has started.
     /// </summary>
     bool IsShutdownStarted { get; }
@@ -118,34 +113,23 @@ public interface IThreadExecutor
     void Run();
 
     /// <summary>
-    /// Directly executes the provided method synchronously using the executor's context and thread.
+    /// Switches the current synchronization context to that executor's own.
     /// </summary>
-    /// <param name="method">The method to directly execute using the executor's context.</param>
-    /// <param name="filterExceptions">
-    /// Value indicating if the method should be executed in a wrapped context, allowing the executor to catch and filter
-    /// any exceptions thrown, as opposed to simply executing the method and allowing for normal exception flow to occur.
-    /// </param>
-    /// <param name="argument">Optional argument to pass to the given method.</param>
-    /// <returns>The result of the execution.</returns>
-    /// <remarks>
-    /// This is where the actual execution of any provided method occurs, meant to be called eventually by all invocation
-    /// routines exposed by the executor. If this is called on a thread other than the one associated with the executor, the
-    /// method will be queued for execution on said thread.
-    /// </remarks>
-    internal object? Invoke(Delegate method, bool filterExceptions, object? argument);
+    /// <returns>The <see cref="SynchronizationContext"/> instance previously set as the synchronization context.</returns>
+    SynchronizationContext? SwitchContext();
 
     /// <summary>
-    /// Directly executes the provided method asynchronously using the executor's context and thread.
+    /// Executes the provided delegate synchronously using the executor's context and thread.
     /// </summary>
     /// <param name="method">The method to directly execute using the executor's context.</param>
-    /// <param name="filterExceptions">
-    /// Value indicating if the method should be executed in a wrapped context, allowing the executor to catch and filter
-    /// any exceptions thrown, as opposed to simply executing the method and allowing for normal exception flow to occur.
-    /// </param>
     /// <param name="argument">Optional argument to pass to the given method.</param>
-    /// <remarks>
-    /// This is where provided methods are queued for posting to the executor's particular message pump in order for their
-    /// eventual execution on the thread associated with the executor.
-    /// </remarks>
-    internal void BeginInvoke(Delegate method, bool filterExceptions, object? argument);
+    /// <returns>The result of the execution.</returns>
+    internal object? Invoke(Delegate method, object? argument);
+
+    /// <summary>
+    /// Executes the provided method asynchronously using the executor's context and thread.
+    /// </summary>
+    /// <param name="method">The method to directly execute using the executor's context.</param>
+    /// <param name="argument">Optional argument to pass to the given method.</param>
+    internal void BeginInvoke(Delegate method, object? argument);
 }

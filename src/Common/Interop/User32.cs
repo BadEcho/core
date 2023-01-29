@@ -26,13 +26,13 @@ internal static partial class User32
     /// <summary>
     /// Gets the name for the exported <c>DefWindowProcW</c> function.
     /// </summary>
-    public static string ExportDefWindowProcW 
+    public static string ExportDefWindowProcW
         => "DefWindowProcW";
 
     /// <summary>
     /// The value to pass as the handle to the parent window when creating a message-only window.
     /// </summary>
-    public static IntPtr ParentWindowMessageOnly 
+    public static IntPtr ParentWindowMessageOnly
         => new(-3);
 
     /// <summary>
@@ -91,18 +91,18 @@ internal static partial class User32
     /// </suppressions>
     [LibraryImport(LIBRARY_NAME, EntryPoint = "RegisterClassExW", SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    public static partial ushort RegisterClassEx([MarshalUsing(typeof(WindowClassMarshaller))]ref WindowClass wc_d);
+    public static partial ushort RegisterClassEx([MarshalUsing(typeof(WindowClassMarshaller))] ref WindowClass wc_d);
 
     /// <summary>
     /// Unregisters a window class, freeing the memory required for the class.
     /// </summary>
-    /// <param name="atomString">The class atom.</param>
+    /// <param name="classAtom">The class atom.</param>
     /// <param name="hInstance">A handle to the instance of the module that created the class.</param>
     /// <returns>If successful, a nonzero value; otherwise, zero.</returns>
     /// <remarks>Before unregistering a window class, ensure all windows created with said class have been destroyed.</remarks>
-    [LibraryImport(LIBRARY_NAME, EntryPoint = "UnregisterClassW", SetLastError =true)]
+    [LibraryImport(LIBRARY_NAME, EntryPoint = "UnregisterClassW", SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    public static partial int UnregisterClass(IntPtr atomString, IntPtr hInstance);
+    public static partial int UnregisterClass(IntPtr classAtom, IntPtr hInstance);
 
     /// <summary>
     /// Enumerates display monitors (including invisible pseudo-monitors associated with the mirroring drivers) that intersect
@@ -205,7 +205,7 @@ internal static partial class User32
     /// <returns>The result of the message processing, which depends on the message sent.</returns>
     [LibraryImport(LIBRARY_NAME, EntryPoint = "SendMessageW")]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    public static partial IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+    public static partial IntPtr SendMessage(WindowHandle hWnd, WindowMessage msg, IntPtr wParam, IntPtr lParam);
 
     /// <summary>
     /// Translates virtual-key messages into character messages.
@@ -321,7 +321,7 @@ internal static partial class User32
     /// <returns>Value indicating the success of the operation.</returns>
     /// <returns>If successful, true; otherwise, false.</returns>
     [LibraryImport(LIBRARY_NAME, EntryPoint = "PostMessageW", SetLastError = true)]
-    [return: MarshalAs(UnmanagedType.Bool)] 
+    [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool PostMessage(WindowHandle hWnd, WindowMessage msg, IntPtr wParam, IntPtr lParam);
 
@@ -361,7 +361,7 @@ internal static partial class User32
     [LibraryImport(LIBRARY_NAME, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    public static partial bool UnhookWindowsHookEx(IntPtr hhk);  
+    public static partial bool UnhookWindowsHookEx(IntPtr hhk);
 
     /// <summary>
     /// Passes the hook information to the next hook procedure in the current hook chain.
@@ -440,6 +440,6 @@ internal static partial class User32
     /// <returns>The previous value of the specified offset if successful; otherwise, zero.</returns>
     /// <remarks>This should only ever be called from a 64-bit machine.</remarks>
     [LibraryImport(LIBRARY_NAME, EntryPoint = "SetWindowLongPtrW")]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)] 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static partial IntPtr SetWindowLongPtr64(WindowHandle hWnd, int nIndex, IntPtr dwNewLong);
 }

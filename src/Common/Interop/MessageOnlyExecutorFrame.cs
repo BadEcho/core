@@ -21,21 +21,22 @@ namespace BadEcho.Interop;
 internal sealed class MessageOnlyExecutorFrame : IThreadExecutorFrame
 {
     private readonly IThreadExecutor _executor;
+    private readonly bool _exitUponRequest;
     private bool _shouldContinue;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MessageOnlyExecutorFrame"/> class.
     /// </summary>
     /// <param name="executor">The executor powering the frame.</param>
-    public MessageOnlyExecutorFrame(IThreadExecutor executor)
+    /// <param name="exitUponRequest">
+    /// A value indicating if this frame will exit when all frames are requested to exit.
+    /// </param>
+    public MessageOnlyExecutorFrame(IThreadExecutor executor, bool exitUponRequest)
     {
-        _shouldContinue = true;
         _executor = executor;
+        _exitUponRequest = exitUponRequest;
+        _shouldContinue = true;
     }
-
-    /// <inheritdoc/>
-    public bool ExitUponRequest 
-    { get; set; }
 
     /// <inheritdoc/>
     public bool ShouldContinue
@@ -44,7 +45,7 @@ internal sealed class MessageOnlyExecutorFrame : IThreadExecutorFrame
         {
             bool shouldContinue = _shouldContinue;
 
-            if (shouldContinue && ExitUponRequest && _executor.IsShutdownStarted) 
+            if (shouldContinue && _exitUponRequest && _executor.IsShutdownStarted) 
                 shouldContinue = false;
 
             return shouldContinue;
@@ -53,7 +54,7 @@ internal sealed class MessageOnlyExecutorFrame : IThreadExecutorFrame
         {
             _shouldContinue = value;
             // An empty message is posted so the message pump will wake up if needed to it can check the state of the frame.
-            _executor.BeginInvoke(() => { }, false, null);
+            _executor.BeginInvoke(() => { }, null);
         }
     }
 }

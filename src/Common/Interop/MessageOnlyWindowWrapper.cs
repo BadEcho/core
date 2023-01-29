@@ -152,14 +152,14 @@ public sealed class MessageOnlyWindowWrapper : IWindowWrapper, IDisposable
         if (_windowIsBeingDestroyed)
         {   // Since the window is in the process of being destroyed, we can't call UnregisterClass yet. So, we basically
             // post it to the executor for it to happen later, once the window is closed.
-            _executor.BeginInvoke(() => UnregisterClass(_classAtom), true, null);
+            _executor.BeginInvoke(() => UnregisterClass(_classAtom), null);
         }
         else if (!Handle.IsInvalid)
         {   // Actions such as destroying the window and unregistering its class should only be done on the window's own thread.
             if (Environment.CurrentManagedThreadId == _ownerThreadId)
                 DestroyWindow(Handle, _classAtom);
             else
-                _executor.BeginInvoke(() => DestroyWindow(Handle, _classAtom), true, null);
+                _executor.BeginInvoke(() => DestroyWindow(Handle, _classAtom), null);
         }
 
         _classAtom = 0;
@@ -220,7 +220,7 @@ public sealed class MessageOnlyWindowWrapper : IWindowWrapper, IDisposable
         if (classAtom == 0)
             return;
 
-        IntPtr hInstance = User32.GetModuleHandle();
+        IntPtr hInstance = Kernel32.GetModuleHandle(null);
 
         if (User32.UnregisterClass(new IntPtr(classAtom), hInstance) == 0)
             throw new Win32Exception(Marshal.GetLastWin32Error());

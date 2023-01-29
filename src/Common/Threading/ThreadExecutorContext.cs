@@ -44,13 +44,13 @@ internal sealed class ThreadExecutorContext : SynchronizationContext
     /// <inheritdoc/>
     public override void Send(SendOrPostCallback d, object? state)
     {
-        _executor.Invoke(d, true, state);
+        _executor.Invoke(d, state);
     }
 
     /// <inheritdoc/>
     public override void Post(SendOrPostCallback d, object? state)
     {
-        _executor.BeginInvoke(d, true, state);
+        _executor.BeginInvoke(d, state);
     }
 
     /// <inheritdoc/>

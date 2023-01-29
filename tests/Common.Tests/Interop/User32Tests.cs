@@ -62,10 +62,10 @@ public class User32Tests
     {
         ushort atom = RegisterClass("UnregisterClass_ReturnsValid");
 
-        IntPtr hModule = Kernel32.GetModuleHandle(null);
+        IntPtr hInstance = Kernel32.GetModuleHandle(null);
         IntPtr pAtom = new (atom);
 
-        Assert.NotEqual(0, User32.UnregisterClass(pAtom, hModule));
+        Assert.NotEqual(0, User32.UnregisterClass(pAtom, hInstance));
     }
 
     [Fact]
@@ -128,7 +128,7 @@ public class User32Tests
                                       Assert.True(User32.GetMessage(ref msg, handle.DangerousGetHandle(), 0, 0));
                                   });
 
-        User32.SendMessage(IntPtr.Zero, 1, IntPtr.Zero, IntPtr.Zero);
+        User32.SendMessage(WindowHandle.InvalidHandle, (WindowMessage) 1, IntPtr.Zero, IntPtr.Zero);
 
         getMessage.Wait();
     }

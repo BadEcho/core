@@ -38,7 +38,7 @@ internal class ThreadExecutorOperationTaskSource<TResult> : IThreadExecutorOpera
     /// <inheritdoc/>
     public void Initialize(ThreadExecutorOperation operation)
     {
-        if (_source == null)
+        if (_source != null)
             throw new InvalidOperationException(Strings.ThreadExecutorSourceAlreadyInitialized);
 
         _source = new TaskCompletionSource<TResult?>(operation);

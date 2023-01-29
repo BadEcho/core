@@ -3,7 +3,7 @@
 //		Created by Matt Weber <matt@badecho.com>
 //		Copyright @ 2023 Bad Echo LLC. All rights reserved.
 //
-//		Bad Echo Technologies are licensed under the
+//		Bad Echo Technologies are licensed under a
 //		GNU Affero General Public License v3.0.
 //
 //		See accompanying file LICENSE.md or a copy at:
@@ -11,15 +11,17 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Threading;
+namespace BadEcho.Interop;
 
 /// <summary>
-/// Defines a representation of a thread executor frame.
+/// Specifies styling configurations for windows that (for the most part) cannot be modified after the window has
+/// been created.
 /// </summary>
-public interface IThreadExecutorFrame
+[Flags]
+public enum WindowStyles
 {
     /// <summary>
-    /// Gets or sets a value indicating if this frame should continue processing.
+    /// The window is a child window.
     /// </summary>
-    bool ShouldContinue { get; set; }
+    Child = 0x40000000
 }

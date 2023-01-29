@@ -28,9 +28,6 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     private static readonly List<WeakReference<IThreadExecutor>> _Executors 
         = new();
 
-    private static readonly object _ExceptionProcessedKey 
-        = new();
-
     private static readonly object _ExecutorsLock
         = new();
 
@@ -39,7 +36,6 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     private readonly List<ThreadExecutorOperation> _operationQueue
         = new();
 
-    private readonly ThreadExecutorInvokeFilter _invokeFilter;
     // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
     // We need to keep a reference to this so it stays alive, as the window wrapper it is provided to stores it in a weak list.
     private readonly WindowHookProc _hook;
@@ -58,18 +54,12 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
             _Executors.Add(new WeakReference<IThreadExecutor>(this));
         }
 
-        _invokeFilter = new ThreadExecutorInvokeFilter(this);
-        _invokeFilter.Filter += HandleExceptionFilter;
-
         Thread = Thread.CurrentThread;
         Window = new MessageOnlyWindowWrapper(this);
 
         _hook = WndProc;
         Window.AddStartingHook(_hook);
     }
-
-    /// <inheritdoc/>
-    public event EventHandler<Threading.ThreadExceptionEventArgs>? UnhandledException;
 
     /// <inheritdoc/>
     public bool IsShutdownStarted 
@@ -97,13 +87,46 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     public MessageOnlyWindowWrapper? Window
     { get; private set; }
 
-    object? IThreadExecutor.Invoke(Delegate method, bool filterExceptions, object? argument)
-        => DirectlyInvoke(method, filterExceptions, argument);
+    object? IThreadExecutor.Invoke(Delegate method, object? argument)
+    {
+        if (Thread == Thread.CurrentThread)
+        {
+            return InvokeContext(ExecuteDelegate);
 
-    void IThreadExecutor.BeginInvoke(Delegate method, bool filterExceptions, object? argument)
+            object? ExecuteDelegate()
+            {
+                switch (method)
+                {
+                    case Action action:
+                        action();
+                        return null;
+
+                    case Func<object> function:
+                        return function();
+
+                    case ThreadExecutorOperationCallback function:
+                        return function(argument);
+
+                    case SendOrPostCallback callback:
+                        callback(argument);
+                        return null;
+
+                    default:
+                        return method.DynamicInvoke(argument);
+                }
+            }
+        }
+
+        var operation = new ThreadExecutorOperation(this, method, true, argument);
+        operation.Wait();
+
+        return operation.Result;
+    }
+
+    void IThreadExecutor.BeginInvoke(Delegate method, object? argument)
     {
         var operation 
-            = new ThreadExecutorOperation(this, method, filterExceptions, argument);
+            = new ThreadExecutorOperation(this, method, true, argument);
 
         InvokeAsync(operation);
     }
@@ -155,7 +178,24 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     {
         Require.NotNull(method, nameof(method));
 
-        DirectlyInvoke(method, false, null);
+        if (Thread == Thread.CurrentThread)
+        {
+            InvokeContext(ExecuteAction);
+
+            object? ExecuteAction()
+            {
+                method();
+
+                return null;
+            }
+        }
+        else
+        {
+            var operation = new ThreadExecutorOperation(this, method);
+
+            InvokeAsync(operation);
+            operation.Wait();
+        }
     }
 
     /// <inheritdoc/>
@@ -163,7 +203,16 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     {
         Require.NotNull(method, nameof(method));
 
-        return (TResult?) DirectlyInvoke(method, false, null);
+        if (Thread == Thread.CurrentThread)
+            return (TResult?) InvokeContext(() => method());
+
+        var operation
+            = new ThreadExecutorOperation<TResult>(this, method);
+
+        InvokeAsync(operation);
+        operation.Wait();
+
+        return operation.Result;
     }
 
     /// <inheritdoc/>
@@ -172,7 +221,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
         Require.NotNull(method, nameof(method));
 
         var operation
-            = new ThreadExecutorOperation(this, method, false, null);
+            = new ThreadExecutorOperation(this, method);
 
         InvokeAsync(operation);
 
@@ -184,8 +233,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     {
         Require.NotNull(method, nameof(method));
 
-        var operation
-            = new ThreadExecutorOperation<TResult?>(this, method, false);
+        var operation = new ThreadExecutorOperation<TResult?>(this, method);
 
         InvokeAsync(operation);
 
@@ -233,7 +281,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
 
     /// <inheritdoc/>
     public IThreadExecutorFrame CreateFrame()
-        => new MessageOnlyExecutorFrame(this);
+        => CreateFrame(false);
 
     /// <inheritdoc/>
     public void PushFrame(IThreadExecutorFrame frame)
@@ -250,15 +298,12 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
 
         try
         {
-            SynchronizationContext? oldContext = SynchronizationContext.Current;
-            var newContext = new ThreadExecutorContext(this);
-
-            SynchronizationContext.SetSynchronizationContext(newContext);
+            SynchronizationContext? oldContext = SwitchContext();
 
             try
             {
                 LoopMessages(frame);
-
+                // If this is the last frame to exit following a shutdown request, then it is time to do the shutdown.
                 if (_framesRunning == 1 && IsShutdownStarted)
                     Shutdown();
             }
@@ -276,7 +321,18 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     /// <inheritdoc />
     public void Run()
     {
-        PushFrame(CreateFrame());
+        PushFrame(CreateFrame(true));
+    }
+     
+    /// <inheritdoc/>
+    public SynchronizationContext? SwitchContext()
+    {
+        var oldContext = SynchronizationContext.Current;
+        var newContext = new ThreadExecutorContext(this);
+
+        SynchronizationContext.SetSynchronizationContext(newContext);
+
+        return oldContext;
     }
 
     /// <inheritdoc/>
@@ -305,15 +361,22 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
         }
     }
     
-    private static void HandleExceptionFilter(object? sender, Threading.ThreadExceptionEventArgs e)
+    private object? InvokeContext(Func<object?> method)
     {
-        if (sender == null)
-            return;
+        SynchronizationContext? oldContext = SwitchContext();
 
-        var executor = (MessageOnlyExecutor)sender;
-
-        e.Handled = executor.FilterException(e.Data);
+        try
+        {
+            return method();
+        }
+        finally
+        {
+            SynchronizationContext.SetSynchronizationContext(oldContext);
+        }
     }
+
+    private IThreadExecutorFrame CreateFrame(bool exitUponRequest)
+        => new MessageOnlyExecutorFrame(this, exitUponRequest);
 
     private void InvokeAsync(ThreadExecutorOperation operation)
     {
@@ -338,35 +401,6 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
             operation.Status = ThreadExecutorOperationStatus.Canceled;
             operation.TaskSource.SetCanceled();
         }
-    }
-
-    private object? DirectlyInvoke(Delegate method, bool filterExceptions, object? argument)
-    {
-        if (Thread == Thread.CurrentThread)
-        {
-            SynchronizationContext? oldContext = SynchronizationContext.Current;
-
-            try
-            {
-                var newContext = new ThreadExecutorContext(this);
-
-                SynchronizationContext.SetSynchronizationContext(newContext);
-
-                return _invokeFilter.Execute(method, filterExceptions, argument);
-            }
-            finally
-            {
-                SynchronizationContext.SetSynchronizationContext(oldContext);
-            }
-        }
-
-        var operation
-            = new ThreadExecutorOperation(this, method, filterExceptions, argument);
-
-        InvokeAsync(operation);
-        operation.Wait();
-
-        return operation.Result;
     }
 
     private IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -430,26 +464,6 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
         _operationQueue.Remove(operation);
 
         return operation;
-    }
-
-    private bool FilterException(Exception exception)
-    {   // There's a chance this is hit multiple times for the same exception, especially if we get reentered after the fact.
-        // So we just make sure this is our first time seeing.
-        if (exception.Data.Contains(_ExceptionProcessedKey))
-            return false;
-
-        exception.Data.Add(_ExceptionProcessedKey, null);
-
-        EventHandler<Threading.ThreadExceptionEventArgs>? unhandledException = UnhandledException;
-
-        if (unhandledException == null)
-            return false;
-
-        var eventArgs = new Threading.ThreadExceptionEventArgs(exception);
-
-        unhandledException(this, eventArgs);
-
-        return eventArgs.Handled;
     }
 
     private void StartShutdown()

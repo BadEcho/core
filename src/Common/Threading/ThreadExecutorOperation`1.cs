@@ -40,12 +40,8 @@ public class ThreadExecutorOperation<TResult> : ThreadExecutorOperation
     /// </summary>
     /// <param name="executor">The executor powering the operation.</param>
     /// <param name="method">The method being executed.</param>
-    /// <param name="filterExceptions">
-    /// Value indicating if the method should be executed in a wrapped context, allowing the executor to catch and filter
-    /// any exceptions thrown, as opposed to simply executing the method and allowing for normal exception flow to occur.
-    /// </param>
-    internal ThreadExecutorOperation(IThreadExecutor executor, Func<TResult> method, bool filterExceptions)
-        : base(executor, method, filterExceptions, null, new ThreadExecutorOperationTaskSource<TResult>())
+    internal ThreadExecutorOperation(IThreadExecutor executor, Func<TResult> method)
+        : base(executor, method, false, null, new ThreadExecutorOperationTaskSource<TResult>())
     { }
 
     /// <summary>
@@ -69,4 +65,12 @@ public class ThreadExecutorOperation<TResult> : ThreadExecutorOperation
     [EditorBrowsable(EditorBrowsableState.Never)]
     public new TaskAwaiter<TResult> GetAwaiter()
         => Task.GetAwaiter();
+
+    /// <inheritdoc/>
+    protected override object? InvokeMethod()
+    {
+        Func<TResult> function = (Func<TResult>) Method;
+
+        return function();
+    }
 }

@@ -135,7 +135,7 @@ internal sealed class WindowSubclass : IDisposable
     /// <param name="wParam">Additional message-specific information.</param>
     /// <param name="lParam">Additional message-specific information.</param>
     /// <returns>Value indicating the success of the operation.</returns>
-    internal IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+    internal IntPtr WndProc(IntPtr hWnd, uint msg, nint wParam, nint lParam)
     {
         var result = IntPtr.Zero;
         var message = (WindowMessage)msg;
@@ -158,7 +158,7 @@ internal sealed class WindowSubclass : IDisposable
         {
             if (IntPtr.Zero == wParam || wParam == (IntPtr) _gcHandle)
             {
-                bool forcibly = (int) lParam > 0;
+                bool forcibly = lParam > 0;
 
                 result = Detach(forcibly) ? new IntPtr(1) : IntPtr.Zero;
 
@@ -352,7 +352,7 @@ internal sealed class WindowSubclass : IDisposable
               };
 
         _ExecutorOperationCallbackParameters = null;
-        object? executorResult = _executor.Invoke(_executorOperationCallback, true, parameters);
+        object? executorResult = _executor.Invoke(_executorOperationCallback, parameters);
 
         if (executorResult != null)
         {
