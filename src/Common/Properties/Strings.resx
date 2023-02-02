@@ -242,4 +242,10 @@
 	<data name="NoDependencyArmed" xml:space="preserve">
 		<value>Registry was not armed with an expected dependency.</value>
 	</data>
+	<data name="ExecutorAlreadyRunning" xml:space="preserve">
+		<value>The executor is already running on a thread.</value>
+	</data>
+	<data name="ExecutorIsDispoed" xml:space="preserve">
+		<value>Executor is disposed and cannot be ran again.</value>
+	</data>
 </root>

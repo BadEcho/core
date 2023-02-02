@@ -30,6 +30,14 @@ public class MessageOnlyExecutorTests
     }
 
     [Fact]
+    public void Initialize_DisposeAfterRun()
+    {
+        var executor = CreateExecutor();
+
+        executor.Dispose();
+    }
+
+    [Fact]
     public void InvokeAction_FromCallingThread_RunsOnExecutorThread()
     {
         using var executor = CreateExecutor();
@@ -172,20 +180,9 @@ public class MessageOnlyExecutorTests
 
     private static MessageOnlyExecutor CreateExecutor()
     {
-        var mre = new ManualResetEvent(false);
+        var executor = new MessageOnlyExecutor();
 
-        MessageOnlyExecutor? executor = null;
-
-        Task.Run(() =>
-                 {
-                     executor = new MessageOnlyExecutor();
-                     mre.Set();
-                     executor.Run();
-                 });
-
-        mre.WaitOne();
-
-        Assert.NotNull(executor);
+        Task.Run(executor.Run);
 
         return executor;
     }

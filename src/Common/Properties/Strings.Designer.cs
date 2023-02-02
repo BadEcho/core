@@ -133,6 +133,15 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The executor is already running on a thread..
+        /// </summary>
+        internal static string ExecutorAlreadyRunning {
+            get {
+                return ResourceManager.GetString("ExecutorAlreadyRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An executor can only be disabled on the thread which the executor was created on..
         /// </summary>
         internal static string ExecutorCannotDisableOnOtherThread {
@@ -165,6 +174,15 @@ namespace BadEcho.Properties {
         internal static string ExecutorFinalizedBeforeDone {
             get {
                 return ResourceManager.GetString("ExecutorFinalizedBeforeDone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Executor is disposed and cannot be ran again..
+        /// </summary>
+        internal static string ExecutorIsDispoed {
+            get {
+                return ResourceManager.GetString("ExecutorIsDispoed", resourceCulture);
             }
         }
         

@@ -36,13 +36,18 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     private readonly List<ThreadExecutorOperation> _operationQueue
         = new();
 
+    private readonly ManualResetEventSlim _running
+        = new();
+    
     // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
     // We need to keep a reference to this so it stays alive, as the window wrapper it is provided to stores it in a weak list.
     private readonly WindowHookProc _hook;
+    private readonly WeakReference<IThreadExecutor> _thisExecutor;
 
     private ExecutionContext? _shutdownContext;
     private int _framesRunning;
     private bool _disposed;
+    private bool _disposeQueued;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MessageOnlyExecutor"/> class.
@@ -51,14 +56,12 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     {
         lock (_ExecutorsLock)
         {
-            _Executors.Add(new WeakReference<IThreadExecutor>(this));
+            _thisExecutor = new WeakReference<IThreadExecutor>(this);
+            _Executors.Add(_thisExecutor);
         }
 
         Thread = Thread.CurrentThread;
-        Window = new MessageOnlyWindowWrapper(this);
-
         _hook = WndProc;
-        Window.AddStartingHook(_hook);
     }
 
     /// <inheritdoc/>
@@ -79,7 +82,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
 
     /// <inheritdoc/>
     public Thread Thread 
-    { get; }
+    { get; private set; }
 
     /// <summary>
     /// Gets a wrapper around the message-only window being used by this executor to send and receive messages.
@@ -89,7 +92,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
 
     object? IThreadExecutor.Invoke(Delegate method, object? argument)
     {
-        if (Thread == Thread.CurrentThread)
+        if (Thread == Thread.CurrentThread) 
         {
             return InvokeContext(ExecuteDelegate);
 
@@ -178,7 +181,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     {
         Require.NotNull(method, nameof(method));
 
-        if (Thread == Thread.CurrentThread)
+        if (OnExecutorThread())
         {
             InvokeContext(ExecuteAction);
 
@@ -192,7 +195,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
         else
         {
             var operation = new ThreadExecutorOperation(this, method);
-
+            
             InvokeAsync(operation);
             operation.Wait();
         }
@@ -203,7 +206,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     {
         Require.NotNull(method, nameof(method));
 
-        if (Thread == Thread.CurrentThread)
+        if (OnExecutorThread())
             return (TResult?) InvokeContext(() => method());
 
         var operation
@@ -321,9 +324,30 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     /// <inheritdoc />
     public void Run()
     {
+        if (_disposed)
+            throw new ObjectDisposedException(GetType().FullName, Strings.ExecutorIsDispoed);
+
+        if (Window != null)
+            throw new InvalidOperationException(Strings.ExecutorAlreadyRunning);
+
+        lock (Lock)
+        {
+            Thread = Thread.CurrentThread;
+            Window = new MessageOnlyWindowWrapper(this);
+
+            Window.AddStartingHook(_hook);
+
+            _running.Set();
+            // A call to Dispose() may have been made (either deliberately or due to a using statement/declaration) before
+            // or during this initialization method. If that's the case, we queue the disposal so that it'll happen as soon
+            // as this executor begins running.
+            if (_disposeQueued)
+                InvokeAsync(Dispose);
+        }
+
         PushFrame(CreateFrame(true));
     }
-     
+
     /// <inheritdoc/>
     public SynchronizationContext? SwitchContext()
     {
@@ -340,9 +364,26 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     {
         if (_disposed)
             return;
+        
+        lock (Lock)
+        {
+            if (!_running.IsSet)
+            {   // The executor isn't running yet. Setting this flag here will ensure that disposal will happen even if Run() is
+                // executing concurrent to this.
+                _disposeQueued = true;
+                return;
+            }
+        }
 
         Invoke(StartShutdown);
+
         _shutdownContext?.Dispose();
+        _running.Dispose();
+
+        lock (_ExecutorsLock)
+        {
+            _Executors.Remove(_thisExecutor);
+        }
 
         _disposed = true;
     }
@@ -360,7 +401,14 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
             User32.DispatchMessage(ref msg);
         }
     }
-    
+
+    private bool OnExecutorThread()
+    {   // The executor's thread isn't finalized until it is up and running, so here we wait.
+        _running.Wait();
+
+        return Thread == Thread.CurrentThread;
+    }
+
     private object? InvokeContext(Func<object?> method)
     {
         SynchronizationContext? oldContext = SwitchContext();
@@ -381,6 +429,8 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     private void InvokeAsync(ThreadExecutorOperation operation)
     {
         bool succeeded = false;
+
+        _running.Wait();
 
         lock (Lock)
         {
@@ -488,7 +538,6 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
             ExecutionContext.Run(_shutdownContext, ShutdownContextCallback, null);
         else
             ShutdownContextCallback(null);
-
         
         _shutdownContext = null;
     }
