@@ -250,11 +250,74 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Changing a SafeHandle&apos;s underlying handle value during marshalling is not supported..
+        /// </summary>
+        internal static string HandleCannotChangeDuringMarshalling {
+            get {
+                return ResourceManager.GetString("HandleCannotChangeDuringMarshalling", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No routable plugin has been registered to handle calls made to &apos;{0}&apos;..
         /// </summary>
         internal static string HostAdapterUnregisteredMethod {
             get {
                 return ResourceManager.GetString("HostAdapterUnregisteredMethod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Attempting to create a pointer pointed at the best-fitting image resulted in a pointer overflow due to the icon file itself containing too much data..
+        /// </summary>
+        internal static string IconFileTooLarge {
+            get {
+                return ResourceManager.GetString("IconFileTooLarge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The best-fitting image&apos;s specified amount of data exceeds the total length of the icon file..
+        /// </summary>
+        internal static string IconImageExceedsFile {
+            get {
+                return ResourceManager.GetString("IconImageExceedsFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Calculating the ending offset for the best-fitting image described by the icon file resulted in an overflow..
+        /// </summary>
+        internal static string IconImageOffsetOverflow {
+            get {
+                return ResourceManager.GetString("IconImageOffsetOverflow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The best-fitting image described by the icon file is too large for realignment and loading..
+        /// </summary>
+        internal static string IconImageTooLarge {
+            get {
+                return ResourceManager.GetString("IconImageTooLarge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The icon file has no image entries..
+        /// </summary>
+        internal static string IconNoEntries {
+            get {
+                return ResourceManager.GetString("IconNoEntries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The size of the icon file isn&apos;t large enough to describe the number of images it says it contains..
+        /// </summary>
+        internal static string IconTooSmallForEntries {
+            get {
+                return ResourceManager.GetString("IconTooSmallForEntries", resourceCulture);
             }
         }
         

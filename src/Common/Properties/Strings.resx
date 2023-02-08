@@ -248,4 +248,25 @@
 	<data name="ExecutorIsDispoed" xml:space="preserve">
 		<value>Executor is disposed and cannot be ran again.</value>
 	</data>
+	<data name="IconNoEntries" xml:space="preserve">
+		<value>The icon file has no image entries.</value>
+	</data>
+	<data name="IconTooSmallForEntries" xml:space="preserve">
+		<value>The size of the icon file isn't large enough to describe the number of images it says it contains.</value>
+	</data>
+	<data name="IconImageOffsetOverflow" xml:space="preserve">
+		<value>Calculating the ending offset for the best-fitting image described by the icon file resulted in an overflow.</value>
+	</data>
+	<data name="IconImageExceedsFile" xml:space="preserve">
+		<value>The best-fitting image's specified amount of data exceeds the total length of the icon file.</value>
+	</data>
+	<data name="IconImageTooLarge" xml:space="preserve">
+		<value>The best-fitting image described by the icon file is too large for realignment and loading.</value>
+	</data>
+	<data name="IconFileTooLarge" xml:space="preserve">
+		<value>Attempting to create a pointer pointed at the best-fitting image resulted in a pointer overflow due to the icon file itself containing too much data.</value>
+	</data>
+	<data name="HandleCannotChangeDuringMarshalling" xml:space="preserve">
+		<value>Changing a SafeHandle's underlying handle value during marshalling is not supported.</value>
+	</data>
 </root>
