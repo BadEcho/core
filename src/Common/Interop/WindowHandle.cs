@@ -37,16 +37,16 @@ public sealed class WindowHandle : SafeHandle
     /// <summary>
     /// Initializes a new instance of the <see cref="WindowHandle"/> class.
     /// </summary>
-    /// <param name="ownsHandle">Value indicating if this safe handle is responsible for releasing the provided handle.</param>
-    private WindowHandle(bool ownsHandle)
-        : base(IntPtr.Zero, ownsHandle)
+    public WindowHandle()
+        : base(IntPtr.Zero, true)
     { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WindowHandle"/> class.
     /// </summary>
-    private WindowHandle()
-        : base (IntPtr.Zero, true)
+    /// <param name="ownsHandle">Value indicating if this safe handle is responsible for releasing the provided handle.</param>
+    private WindowHandle(bool ownsHandle)
+        : base(IntPtr.Zero, ownsHandle)
     { }
 
     /// <inheritdoc/>

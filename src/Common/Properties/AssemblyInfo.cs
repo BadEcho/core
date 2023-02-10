@@ -113,18 +113,6 @@ using BadEcho.Properties;
                            Target = "~M:BadEcho.Threading.ThreadExecutorOperation.Execute",
                            Justification = "The exception grabbed here is essentially 'rethrown' when it is propagated to the operation's underlying Task via its TaskCompletionSource -- nothing is being suppressed here.")]
 
-[assembly: SuppressMessage("Interoperability", 
-                           "CA1419:Provide a parameterless constructor that is as visible as the containing type for concrete types derived from 'System.Runtime.InteropServices.SafeHandle'",
-                           Scope = "member", 
-                           Target = "~M:BadEcho.Interop.DeviceContextHandle.#ctor",
-                           Justification = "Providing a public parameterless constructor for a SafeHandle is something you do NOT do.")]
-
-[assembly: SuppressMessage("Interoperability", 
-                           "CA1419:Provide a parameterless constructor that is as visible as the containing type for concrete types derived from 'System.Runtime.InteropServices.SafeHandle'",
-                           Scope = "member", 
-                           Target = "~M:BadEcho.Interop.WindowHandle.#ctor",
-                           Justification = "Providing a public parameterless constructor for a SafeHandle is something you do NOT do.")]
-
 [assembly: SuppressMessage("Maintainability", 
                            "CA1508:Avoid dead conditional code", 
                            Scope = "member", 
