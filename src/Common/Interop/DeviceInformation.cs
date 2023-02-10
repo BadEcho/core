@@ -23,6 +23,15 @@ public enum DeviceInformation
     /// </summary>
     DriverVersion = 0,
     /// <summary>
+    /// Technically the number of adjacent color bits for each pixel; however, since <see cref="ColorPlanes"/> seems to typically
+    /// always be 1, this is essentially the bits per pixel (or bit-depth, found by multiplying this by the number of planes).
+    /// </summary>
+    BitsPixel = 12,
+    /// <summary>
+    /// The number of color planes.
+    /// </summary>
+    ColorPlanes = 14,
+    /// <summary>
     /// Number of pixels per logical inch along the screen width.
     /// </summary>
     PpiWidth = 88,
