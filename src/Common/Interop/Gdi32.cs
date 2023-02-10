@@ -34,7 +34,6 @@ internal static partial class Gdi32
     /// <param name="nIndex">An enumeration value that specifies the item to be returned.</param>
     /// <returns>The value for the requested information type.</returns>
     [LibraryImport(LIBRARY_NAME)]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial int GetDeviceCaps(DeviceContextHandle hdc, DeviceInformation nIndex);
 
     /// <summary>
@@ -43,6 +42,5 @@ internal static partial class Gdi32
     /// <param name="stockObject">The type of stock object.</param>
     /// <returns>A handle to the requested logical object if successful; otherwise, null.</returns>
     [LibraryImport(LIBRARY_NAME, SetLastError = true)]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial IntPtr GetStockObject(int stockObject);
 }

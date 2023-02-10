@@ -38,7 +38,6 @@ internal static partial class Kernel32
     /// </para>
     /// </remarks>
     [LibraryImport(LIBRARY_NAME, EntryPoint = "GetModuleHandleW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     internal static partial IntPtr GetModuleHandle(string? lpModuleName);
 
     /// <summary>
@@ -54,7 +53,6 @@ internal static partial class Kernel32
     /// taken care of by the <see cref="StringMarshalling.Utf8"/> marshaller.
     /// </remarks>
     [LibraryImport(LIBRARY_NAME, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
 
     /// <summary>
@@ -77,7 +75,6 @@ internal static partial class Kernel32
     /// </param>
     /// <returns>If the function succeeds, the return value indicates the event that caused the function to return.</returns>
     [LibraryImport(LIBRARY_NAME, SetLastError = true)]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial int WaitForMultipleObjectsEx(int nCount,
                                                        IntPtr[] lpHandles,
                                                        [MarshalAs(UnmanagedType.Bool)] bool bWaitAll,
