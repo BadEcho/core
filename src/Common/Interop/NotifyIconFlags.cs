@@ -20,24 +20,24 @@ namespace BadEcho.Interop;
 internal enum NotifyIconFlags
 {
     /// <summary>
-    /// The <see cref="NOTIFYICONDATAW.uCallbackMessage"/> member is valid.
+    /// The <see cref="NotifyIconData.CallbackMessage"/> member is valid.
     /// </summary>
     Message = 0x1,
     /// <summary>
-    /// The <see cref="NOTIFYICONDATAW.hIcon"/> member is valid.
+    /// The <see cref="NotifyIconData.Icon"/> member is valid.
     /// </summary>
     Icon = 0x2,
     /// <summary>
-    /// The <see cref="NOTIFYICONDATAW.Tip"/> member is valid.
+    /// The <see cref="NotifyIconData.Tip"/> member is valid.
     /// </summary>
     Tip = 0x4,
     /// <summary>
-    /// The <see cref="NOTIFYICONDATAW.dwState"/> and <see cref="NOTIFYICONDATAW.dwStateMask"/> members are valid.
+    /// The <see cref="NotifyIconData.State"/> and <see cref="NotifyIconData.StateMask"/> members are valid.
     /// </summary>
     State = 0x8,
     /// <summary>
-    /// The <see cref="NOTIFYICONDATAW.SzInfo"/>, <see cref="NOTIFYICONDATAW.SzInfoTitle"/>,
-    /// <see cref="NOTIFYICONDATAW.dwInfoFlags"/>, and <see cref="NOTIFYICONDATAW.uTimeoutOrVersion"/> members are valid.
+    /// The <see cref="NotifyIconData.Info"/>, <see cref="NotifyIconData.InfoTitle"/>,
+    /// <see cref="NotifyIconData.InfoFlags"/>, and <see cref="NotifyIconData.TimeoutOrVersion"/> members are valid.
     /// </summary>
     Info = 0x10,
     /// <summary>
