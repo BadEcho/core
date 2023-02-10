@@ -23,6 +23,28 @@ internal enum SystemMetric
     /// </summary>
     PrimaryScreenWidth = 0,
     /// <summary>
+    /// The default width of an icon, in pixels.
+    /// </summary>
+    IconWidth = 11,
+    /// <summary>
+    /// The default height of an icon, in pixels.
+    /// </summary>
+    IconHeight = 12,
+    /// <summary>
+    /// The recommended width of a small icon, in pixels.
+    /// </summary>
+    /// <remarks>
+    /// Small icons will typically appear in window captions, small icon views, and the taskbar's notification area.
+    /// </remarks>
+    SmallIconWidth = 49,
+    /// <summary>
+    /// The recommended height of a small icon, in pixels.
+    /// </summary>
+    /// <remarks>
+    /// Small icons will typically appear in window captions, small icon views, and the taskbar's notification area.
+    /// </remarks>
+    SmallIconHeight = 50,
+    /// <summary>
     /// The number of display monitors on the desktop.
     /// </summary>
     NumberOfMonitors = 80
