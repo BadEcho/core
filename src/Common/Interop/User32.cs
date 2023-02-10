@@ -75,7 +75,7 @@ internal static partial class User32
     /// Destroys the specified window.
     /// </summary>
     /// <param name="hWnd">A handle to the window to be destroyed.</param>
-    /// <returns>If success, true; otherwise, false.</returns>
+    /// <returns>If successful, true; otherwise, false.</returns>
     [LibraryImport(LIBRARY_NAME, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
@@ -149,7 +149,6 @@ internal static partial class User32
     /// the window.
     /// </param>
     /// <returns>True if the function succeeds; otherwise, false.</returns>
-    //[DllImport(LIBRARY_NAME, ExactSpelling = true, SetLastError = true)]
     [LibraryImport(LIBRARY_NAME, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
@@ -416,6 +415,39 @@ internal static partial class User32
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool ChangeClipboardChain(WindowHandle hWndRemove, IntPtr hWndNewNext);
+
+    /// <summary>
+    /// Creates an icon or cursor from resource bits describing the icon.
+    /// </summary>
+    /// <param name="pResBits">The icon or cursor resource bits.</param>
+    /// <param name="dwResSize">The size, in bytes, of the set of bits pointed to by the <paramref name="pResBits"/> parameter.</param>
+    /// <param name="fIcon">Indicates whether an icon or a cursor is to be created (true for icon, false for cursor).</param>
+    /// <param name="dwVer">
+    /// The version number of the icon or cursor format for the resource bits pointed to by the <paramref name="pResBits"/>.
+    /// This is generally set to <c>0x30000</c>.
+    /// </param>
+    /// <param name="cxDesired">The desired width, in pixels, of the icon or cursor.</param>
+    /// <param name="cyDesired">The desired height, in pixels, of the icon or cursor.</param>
+    /// <param name="flags">Additional information for the resource loader.</param>
+    /// <returns>A handle to the icon or cursor.</returns>
+    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static unsafe partial IconHandle CreateIconFromResourceEx(byte* pResBits,
+                                                                     uint dwResSize,
+                                                                     [MarshalAs(UnmanagedType.Bool)] bool fIcon,
+                                                                     int dwVer,
+                                                                     int cxDesired,
+                                                                     int cyDesired,
+                                                                     int flags);
+    /// <summary>
+    /// Destroys an icon and frees any memory the icon occupied.
+    /// </summary>
+    /// <param name="hIcon">A handle to the icon to be destroyed. The icon must not be in use.</param>
+    /// <returns>If successful, true; otherwise, false.</returns>
+    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool DestroyIcon(IntPtr hIcon);
 
     /// <summary>
     /// Retrieves information about the specified window.
