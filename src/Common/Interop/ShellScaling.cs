@@ -31,5 +31,6 @@ internal static partial class ShellScaling
     /// <param name="dpiY">The value of the DPI along the y-axis.</param>
     /// <returns>The result of the operation.</returns>
     [LibraryImport(LIBRARY_NAME, SetLastError =true)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial ResultHandle GetDpiForMonitor(IntPtr hMonitor, MonitorDpiType dpiType, out uint dpiX, out uint dpiY);
 }

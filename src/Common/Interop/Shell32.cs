@@ -32,5 +32,6 @@ internal static partial class Shell32
     /// <returns>True if successful; otherwise, false.</returns>
     [LibraryImport(LIBRARY_NAME, EntryPoint = "Shell_NotifyIconW")]
     [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool Shell_NotifyIcon(NotifyIconMessage dwMessage, ref NotifyIconData lpData);
 }

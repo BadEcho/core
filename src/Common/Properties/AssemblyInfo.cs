@@ -118,27 +118,3 @@ using BadEcho.Properties;
                            Scope = "member", 
                            Target = "~M:BadEcho.Interop.MessageOnlyWindowWrapper.#ctor(BadEcho.Threading.IThreadExecutor)",
                            Justification = "This is a false positive, with several issues open that seem related to it on the dotnet GitHub. Even though the CreateWindowEx function returns a non-null reference type, the Handle property will of course still be null if an exception was thrown in the try block.")]
-
-[assembly: SuppressMessage("Security", 
-                           "CA5392:Use DefaultDllImportSearchPaths attribute for P/Invokes", 
-                           Scope = "member", 
-                           Target = "~M:BadEcho.Interop.User32.ReleaseDC(System.IntPtr,System.IntPtr)~System.Int32",
-                           Justification = "False positive. DllImport is no longer even being used.")]
-
-[assembly: SuppressMessage("Security", 
-                           "CA5392:Use DefaultDllImportSearchPaths attribute for P/Invokes", 
-                           Scope = "member", 
-                           Target = "~M:BadEcho.Interop.User32.GetSystemMetrics(BadEcho.Interop.SystemMetric)~System.Int32",
-                           Justification = "False positive. DllImport is no longer even being used.")]
-
-[assembly: SuppressMessage("Security", 
-                           "CA5392:Use DefaultDllImportSearchPaths attribute for P/Invokes", 
-                           Scope = "member", 
-                           Target = "~M:BadEcho.Interop.User32.GetKeyState(BadEcho.Interop.VirtualKey)~System.Int16",
-                           Justification = "False positive. DllImport is no longer even being used.")]
-
-[assembly: SuppressMessage("Security", 
-                           "CA5392:Use DefaultDllImportSearchPaths attribute for P/Invokes", 
-                           Scope = "member", 
-                           Target = "~M:BadEcho.Interop.User32.CallWindowProc(System.IntPtr,System.IntPtr,BadEcho.Interop.WindowMessage,System.IntPtr,System.IntPtr)~System.IntPtr",
-                           Justification = "False positive. DllImport is no longer even being used.")]
