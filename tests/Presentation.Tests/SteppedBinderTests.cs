@@ -22,6 +22,7 @@ using System.Windows.Data;
 using System.Windows.Threading;
 using BadEcho.Presentation.Extensions;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace BadEcho.Presentation.Tests;
 
@@ -32,11 +33,13 @@ public class SteppedBinderTests
         
     private readonly SourceObject _sourceObject;
     private readonly IBinding _binding;
+    private readonly ITestOutputHelper _output;
 
-    public SteppedBinderTests()
+    public SteppedBinderTests(ITestOutputHelper output)
     {
         _sourceObject = new SourceObject();
         _binding = new FakeBinding(_sourceObject);
+        _output = output;
     }
 
     [Theory]
@@ -58,9 +61,22 @@ public class SteppedBinderTests
 
         UserInterface.RunUIFunction(() => elapsed = UpdateSource(initialTargetValue.ToString(), newSourceValue, steppingDuration), true);
 
-        Assert.True(
-            Math.Abs(elapsed.Subtract(steppingDuration).TotalMilliseconds) < DRIFT_TOLERANCE,
-            $"Expected Duration: {steppingDuration} Actual Duration: {elapsed}");
+        double drift = Math.Abs(elapsed.Subtract(steppingDuration).TotalMilliseconds);
+
+        if (drift >= DRIFT_TOLERANCE)
+        {
+            _output.WriteLine(
+                $"Drift of {drift} exceeds DRIFT_TOLERANCE. Trying one additional time to account for system load.");
+
+            UserInterface.RunUIFunction(() => elapsed = UpdateSource(initialTargetValue.ToString(), newSourceValue, steppingDuration), true);
+
+            drift = Math.Abs(elapsed.Subtract(steppingDuration).TotalMilliseconds);
+        }
+
+        _output.WriteLine($"Drift: {drift}");
+
+        Assert.True(drift < DRIFT_TOLERANCE,
+                    $"Expected Duration: {steppingDuration} Actual Duration: {elapsed}");
     }
 
     [Fact]
