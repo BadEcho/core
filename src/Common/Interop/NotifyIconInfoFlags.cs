@@ -36,7 +36,7 @@ internal enum NotifyIconInfoFlags
     /// </summary>
     Error = 0x3,
     /// <summary>
-    /// Use the icon identified in <see cref="NOTIFYICONDATAW.hBalloonIcon"/> as the notification balloon's title icon.
+    /// Use the icon identified in <see cref="NotifyIconData.BalloonIcon"/> as the notification balloon's title icon.
     /// </summary>
     User = 0x4,
     /// <summary>
