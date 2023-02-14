@@ -23,18 +23,110 @@ namespace BadEcho.Tests.Interop;
 public class MessageOnlyExecutorTests
 {
     [Fact]
-    public void Initialize_Dispose()
+    public void Dispose_NotRunning_NoException()
     {
         using (var _ = new MessageOnlyExecutor())
         { }
     }
 
     [Fact]
-    public void Initialize_DisposeAfterRun()
+    public void Dispose_Running_NoException()
     {
         var executor = CreateExecutor();
 
         executor.Dispose();
+    }
+
+    [Fact]
+    public void InvokeDispose_Running_NoException()
+    {
+        var executor = CreateExecutor();
+
+        executor.Invoke(executor.Dispose);
+    }
+
+    [Fact]
+    public async void Await_RunningAsync_WindowInitialized()
+    {
+        using var executor = new MessageOnlyExecutor();
+
+        Assert.Null(executor.Window);
+
+        await executor.RunAsync();
+
+        Assert.NotNull(executor.Window);
+    }
+
+    [Fact]
+    public void OperationStatus_RunningAsync_IsPending()
+    {
+        using var executor = new MessageOnlyExecutor();
+
+        var operation = executor.RunAsync();
+
+        Assert.Equal(ThreadExecutorOperationStatus.Pending, operation.Status);
+    }
+
+    [Fact]
+    public void Run_Running_ThrowsException()
+    {
+        using var executor = CreateExecutor();
+
+        while (executor.Window == null) { }
+
+        Assert.Throws<InvalidOperationException>(executor.Run);
+    }
+
+    [Fact]
+    public void RunAsync_Running_ThrowsException()
+    {
+        using var executor = CreateExecutor();
+
+        Assert.ThrowsAsync<InvalidOperationException>(async () => await executor.RunAsync());
+    }
+
+    [Fact]
+    public async void RunAsync_RequestsDisabled_ThrowsCatchableExecutorException()
+    {
+        using var executor = new MessageOnlyExecutor();
+        bool caughtException = false;
+
+        try
+        {
+            executor.Disable();
+
+            await executor.RunAsync();
+        }
+        catch (InvalidOperationException)
+        {   // This is thrown by the offloaded Run task. We need to see if it is still catchable in the current context.
+            caughtException = true;
+        }
+
+        Assert.True(caughtException);
+    }
+
+    [Fact]
+    public void Run_RunningThenDisposed_ThrowsException()
+    {
+        var executor = CreateExecutor();
+
+        executor.Dispose();
+
+        while (!executor.IsShutdownComplete) { }
+
+        Assert.Throws<ObjectDisposedException>(executor.Run);
+    }
+
+    [Fact]
+    public void RunAsync_RunningThenDisposed_ThrowsException()
+    {
+        var executor = CreateExecutor();
+
+        executor.Dispose();
+
+        while (!executor.IsShutdownComplete) { }
+
+        Assert.ThrowsAsync<ObjectDisposedException>(async () => await executor.RunAsync());
     }
 
     [Fact]
@@ -43,6 +135,20 @@ public class MessageOnlyExecutorTests
         using var executor = CreateExecutor();
 
         executor.Invoke(() => Assert.Equal(executor.Thread.ManagedThreadId, Environment.CurrentManagedThreadId));
+    }
+
+    [Fact]
+    public async void InvokeAction_RunningAsyncFromCallingThread_RunsOnExecutorThread()
+    {
+        using var executor = new MessageOnlyExecutor();
+
+        await executor.RunAsync();
+
+        int currentThreadId = 0;
+
+        executor.Invoke(() => currentThreadId = Environment.CurrentManagedThreadId);
+
+        Assert.Equal(executor.Thread.ManagedThreadId, currentThreadId);
     }
 
     [Fact]

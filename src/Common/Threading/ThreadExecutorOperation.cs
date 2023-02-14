@@ -263,7 +263,8 @@ public class ThreadExecutorOperation
     /// </remarks>
     public ThreadExecutorOperationStatus Wait(TimeSpan timeout)
     {
-        bool operationExecuting = Status is ThreadExecutorOperationStatus.Running or ThreadExecutorOperationStatus.Pending
+        bool operationExecuting =
+            Status is ThreadExecutorOperationStatus.Running or ThreadExecutorOperationStatus.Pending
             && !timeout.TotalMilliseconds.ApproximatelyEquals(0.0);
 
         if (operationExecuting)

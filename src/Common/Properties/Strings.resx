@@ -245,7 +245,7 @@
 	<data name="ExecutorAlreadyRunning" xml:space="preserve">
 		<value>The executor is already running on a thread.</value>
 	</data>
-	<data name="ExecutorIsDispoed" xml:space="preserve">
+	<data name="ExecutorIsDisposed" xml:space="preserve">
 		<value>Executor is disposed and cannot be ran again.</value>
 	</data>
 	<data name="IconNoEntries" xml:space="preserve">
@@ -268,5 +268,8 @@
 	</data>
 	<data name="HandleCannotChangeDuringMarshalling" xml:space="preserve">
 		<value>Changing a SafeHandle's underlying handle value during marshalling is not supported.</value>
+	</data>
+	<data name="ExecutorFramesRequireRun" xml:space="preserve">
+		<value>The executor needs to be running before frames can be pushed to it.</value>
 	</data>
 </root>

@@ -178,11 +178,20 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The executor needs to be running before frames can be pushed to it..
+        /// </summary>
+        internal static string ExecutorFramesRequireRun {
+            get {
+                return ResourceManager.GetString("ExecutorFramesRequireRun", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Executor is disposed and cannot be ran again..
         /// </summary>
-        internal static string ExecutorIsDispoed {
+        internal static string ExecutorIsDisposed {
             get {
-                return ResourceManager.GetString("ExecutorIsDispoed", resourceCulture);
+                return ResourceManager.GetString("ExecutorIsDisposed", resourceCulture);
             }
         }
         

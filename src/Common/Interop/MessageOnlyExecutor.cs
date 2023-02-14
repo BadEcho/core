@@ -297,6 +297,9 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
         if (DisableRequests > 0)
             throw new InvalidOperationException(Strings.ExecutorProcessingDisabled);
 
+        if (Window == null)
+            throw new InvalidOperationException(Strings.ExecutorFramesRequireRun);
+
         _framesRunning++;
 
         try
@@ -325,13 +328,13 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     public void Run()
     {
         if (_disposed)
-            throw new ObjectDisposedException(GetType().FullName, Strings.ExecutorIsDispoed);
-
-        if (Window != null)
-            throw new InvalidOperationException(Strings.ExecutorAlreadyRunning);
+            throw new ObjectDisposedException(GetType().FullName, Strings.ExecutorIsDisposed);
 
         lock (Lock)
         {
+            if (Window != null)
+                throw new InvalidOperationException(Strings.ExecutorAlreadyRunning);
+
             Thread = Thread.CurrentThread;
             Window = new MessageOnlyWindowWrapper(this);
 
@@ -346,6 +349,34 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
         }
 
         PushFrame(CreateFrame(true));
+    }
+
+    /// <inheritdoc/>
+    public ThreadExecutorOperation RunAsync()
+    {   // Run() blocks the calling thread until the executor is shut down, so we must offload to another thread in order
+        // for this to return.
+        var runTask = Task.Run(Run);
+
+        // A no-op InvokeAsync will return an operation that will complete whenever the executor begins running and
+        // processes the request.
+        ThreadExecutorOperation operation = InvokeAsync(() => { });
+
+        // Because the initialization task never returns (until the executor is shut down), we cannot await it.
+        // If any exceptions occur during execution of this task, we'll need to send them through the no-op operation
+        // (which will be awaited) instead via its task source.
+        // Given that the no-op operation cannot execute until the offloaded task finishes initialization, the following
+        // continuation task (which will only run if an error occurs during initialization) is guaranteed to run before it.
+        runTask.ContinueWith(t =>
+                             {
+                                 // The 'await' keyword normally unwraps the AggregateException and throws the inner exception
+                                 // instead. We will do the same here, via the task source.
+                                 if (t.Exception != null)
+                                     operation.TaskSource.SetException(t.Exception.InnerExceptions[0]);
+                             },
+                             CancellationToken.None,
+                             TaskContinuationOptions.OnlyOnFaulted,
+                             TaskScheduler.Default);
+        return operation;
     }
 
     /// <inheritdoc/>
@@ -375,7 +406,10 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
             }
         }
 
-        Invoke(StartShutdown);
+        if (_framesRunning == 0)
+            StartShutdown();
+        else
+            Invoke(StartShutdown);
 
         _shutdownContext?.Dispose();
         _running.Dispose();
