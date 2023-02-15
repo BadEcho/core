@@ -29,7 +29,7 @@ $minorVersion = $versionSettings[0].minorVersion
 $patchVersion = $versionSettings[0].patchVersion
 
 $buildCommand =  { & dotnet build -c Release -p:MajorVersion=$majorVersion -p:MinorVersion=$minorVersion -p:PatchVersion=$patchVersion }
-$packCommand = { & dotnet pack -c Release -o $artifacts --no-build -p:MajorVersion=$majorVersion -p:MinorVersion=$minorVersion -p:PatchVersion=$patchVersion }
+$packCommand = { & dotnet pack -c Release -p:PublishDir=$artifacts --no-build -p:MajorVersion=$majorVersion -p:MinorVersion=$minorVersion -p:PatchVersion=$patchVersion }
 
 if($CommitId -and $VersionDistance) {	
 	$prereleaseId = $versionSettings[0].prereleaseId
