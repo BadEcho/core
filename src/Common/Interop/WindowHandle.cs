@@ -38,7 +38,7 @@ public sealed class WindowHandle : SafeHandle
     /// Initializes a new instance of the <see cref="WindowHandle"/> class.
     /// </summary>
     public WindowHandle()
-        : base(IntPtr.Zero, true)
+        : this(true)
     { }
 
     /// <summary>

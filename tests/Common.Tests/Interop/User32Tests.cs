@@ -28,7 +28,7 @@ public class User32Tests
     {
         var closure = new MonitorCallbackClosure();
 
-        Assert.True(User32.EnumDisplayMonitors(DeviceContextHandle.Null, IntPtr.Zero, closure.Callback, IntPtr.Zero));
+        Assert.True(User32.EnumDisplayMonitors(DeviceContextHandle.InvalidHandle, IntPtr.Zero, closure.Callback, IntPtr.Zero));
     }
 
     [Fact]

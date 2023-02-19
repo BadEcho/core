@@ -24,7 +24,7 @@ public class UnmanagedHelper
     {
         var closure = new MonitorCallbackClosure();
 
-        User32.EnumDisplayMonitors(DeviceContextHandle.Null, IntPtr.Zero, closure.Callback, IntPtr.Zero);
+        User32.EnumDisplayMonitors(DeviceContextHandle.InvalidHandle, IntPtr.Zero, closure.Callback, IntPtr.Zero);
 
         return closure.Monitors;
     }

@@ -27,14 +27,24 @@ internal sealed class DeviceContextHandle : SafeHandle
     /// Initializes a new instance of the <see cref="DeviceContextHandle"/> class.
     /// </summary>
     internal DeviceContextHandle()
-        : base(IntPtr.Zero, true)
+        : this(true)
     { }
 
     /// <summary>
-    /// Gets a null device context handle.
+    /// Initializes a new instance of the <see cref="DeviceContextHandle"/> class.
     /// </summary>
-    public static DeviceContextHandle Null
-        => new();
+    /// <param name="ownsHandle">
+    /// Value indicating if this safe handle is responsible for releasing the provided handle.
+    /// </param>
+    private DeviceContextHandle(bool ownsHandle)
+        : base(IntPtr.Zero, ownsHandle)
+    { }
+
+    /// <summary>
+    /// Gets a default invalid instance of the <see cref="DeviceContextHandle"/> class.
+    /// </summary>
+    public static DeviceContextHandle InvalidHandle
+        => new(false);
 
     /// <inheritdoc/>
     public override bool IsInvalid

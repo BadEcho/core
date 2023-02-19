@@ -129,7 +129,7 @@ public sealed class Display
         var closure = new CallbackClosure();
 
         // EnumDisplayMonitors doesn't support GetLastError, so there is unfortunately no way to get more information if this fails.
-        if (!User32.EnumDisplayMonitors(DeviceContextHandle.Null, IntPtr.Zero, closure.Callback, IntPtr.Zero))
+        if (!User32.EnumDisplayMonitors(DeviceContextHandle.InvalidHandle, IntPtr.Zero, closure.Callback, IntPtr.Zero))
             throw new Win32Exception(Strings.DisplayEnumDisplayMonitorsFailed);
 
         var displaysByArrangement = closure.RetrievedDisplays
