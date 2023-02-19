@@ -49,16 +49,16 @@ public sealed class WindowHandle : SafeHandle
         : base(IntPtr.Zero, ownsHandle)
     { }
 
-    /// <inheritdoc/>
-    public override bool IsInvalid
-        => handle == IntPtr.Zero;
-
     /// <summary>
     /// Gets a default invalid instance of the <see cref="WindowHandle"/> class.
     /// </summary>
-    internal static WindowHandle InvalidHandle 
-        => new(IntPtr.Zero, false);
+    public static WindowHandle InvalidHandle
+        => new(false);
 
+    /// <inheritdoc/>
+    public override bool IsInvalid
+        => handle == IntPtr.Zero;
+    
     /// <inheritdoc/>
     protected override bool ReleaseHandle()
         => User32.DestroyWindow(handle);
