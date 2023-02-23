@@ -44,6 +44,16 @@ internal enum WindowMessage
     /// </summary>
     KeyDown = 0x100,
     /// <summary>
+    /// A window message corresponding to WM_LBUTTONUP, posted when the user releases the left mouse button while the cursor
+    /// is in the client area of a window.
+    /// </summary>
+    LeftButtonUp = 0x202,
+    /// <summary>
+    /// A window message corresponding to WM_RBUTTONUP, posted when the user releases the right mouse button while the cursor
+    /// is in the client area of a window.
+    /// </summary>
+    RightButtonUp = 0x205,
+    /// <summary>
     /// A window message corresponding to WM_DRAWCLIPBOARD, sent to windows in the clipboard viewer chain when the content of
     /// the clipboard changes.
     /// </summary>

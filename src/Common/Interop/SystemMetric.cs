@@ -31,6 +31,10 @@ internal enum SystemMetric
     /// </summary>
     IconHeight = 12,
     /// <summary>
+    /// Nonzero if drop-down menus are right-aligned with the corresponding menu-bar item; zero if menus are left-aligned.
+    /// </summary>
+    MenuAlignment = 40,
+    /// <summary>
     /// The recommended width of a small icon, in pixels.
     /// </summary>
     /// <remarks>

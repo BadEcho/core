@@ -105,6 +105,63 @@ internal static partial class User32
     public static partial int UnregisterClass(IntPtr classAtom, IntPtr hInstance);
 
     /// <summary>
+    /// Creates an empty drop-down menu, submenu, or shortcut menu.
+    /// </summary>
+    /// <returns>A handle to the new menu if successful; otherwise, null.</returns>
+    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial MenuHandle CreatePopupMenu();
+
+    /// <summary>
+    /// Appends a new item to the end of the specified menu bar, drop-down menu, submenu, or shortcut menu.
+    /// </summary>
+    /// <param name="hMenu">A handle to the menu bar, drop-down menu, submenu, or shortcut menu to be changed.</param>
+    /// <param name="uFlags">Controls the appearance and behavior of the new menu item.</param>
+    /// <param name="uIdNewItem">The identifier of the new menu item.</param>
+    /// <param name="lpNewItem">The content of the new menu item.</param>
+    /// <returns>True if the function succeeds; otherwise, false.</returns>
+    [LibraryImport(LIBRARY_NAME, EntryPoint = "AppendMenuW", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool AppendMenu(MenuHandle hMenu,
+                                          MenuFlags uFlags,
+                                          uint uIdNewItem,
+                                          [MarshalUsing(typeof(Utf16StringMarshaller))] string lpNewItem);
+
+    /// <summary>
+    /// Displays a shortcut menu at the specified location and tracks the selection of items on the menu.
+    /// </summary>
+    /// <param name="hMenu">A handle to the shortcut menu to be displayed.</param>
+    /// <param name="uFlags">Controls the position, animation, and other behavior of the menu.</param>
+    /// <param name="x">The horizontal location of the shortcut menu, in screen coordinates.</param>
+    /// <param name="y">The vertical location of the shortcut menu, in screen coordinates.</param>
+    /// <param name="nReserved">Reserved; must be zero. Don't be naughty!</param>
+    /// <param name="hWnd">A handle to the window that owns the shortcut menu and will receive its messages.</param>
+    /// <param name="prcRect">Ignored. Poor rectangle.</param>
+    /// <returns>
+    /// The selected menu-item identifier if <see cref="TrackMenuFlags.ReturnCommand"/> is specified and a
+    /// selection made; otherwise, a nonzero value if successful or zero if unsuccessful.
+    /// </returns>
+    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial int TrackPopupMenu(MenuHandle hMenu,
+                                             TrackMenuFlags uFlags,
+                                             int x,
+                                             int y,
+                                             int nReserved,
+                                             IntPtr hWnd,
+                                             ref RECT prcRect);
+    /// <summary>
+    /// Destroys the specified menu and frees any memory that the menu occupies.
+    /// </summary>
+    /// <param name="hMenu">A handle to the menu being destroyed.</param>
+    /// <returns>True if successful; otherwise, false.</returns>
+    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool DestroyMenu(IntPtr hMenu);
+
+    /// <summary>
     /// Enumerates display monitors (including invisible pseudo-monitors associated with the mirroring drivers) that intersect
     /// a region formed by the intersection of a specified clipping rectangle and the visible region of a device context.
     /// </summary>
@@ -448,6 +505,18 @@ internal static partial class User32
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool DestroyIcon(IntPtr hIcon);
+
+    /// <summary>
+    /// Retrieves the position of the mouse cursor, in screen coordinates.
+    /// </summary>
+    /// <param name="lpPoint">
+    /// A pointer to a <see cref="POINT"/> structure that receives the screen coordinates of the cursor.
+    /// </param>
+    /// <returns>True if successful; otherwise, false.</returns>
+    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool GetCursorPos(out POINT lpPoint);
 
     /// <summary>
     /// Retrieves information about the specified window.

@@ -118,3 +118,9 @@ using BadEcho.Properties;
                            Scope = "member", 
                            Target = "~M:BadEcho.Interop.MessageOnlyWindowWrapper.#ctor(BadEcho.Threading.IThreadExecutor)",
                            Justification = "This is a false positive, with several issues open that seem related to it on the dotnet GitHub. Even though the CreateWindowEx function returns a non-null reference type, the Handle property will of course still be null if an exception was thrown in the try block.")]
+
+[assembly: SuppressMessage("Design", 
+                           "CA1028:Enum Storage should be Int32", 
+                           Scope = "type", 
+                           Target = "~T:BadEcho.Interop.WindowStyles",
+                           Justification = "Not possible, window style flags use values that exceed the maximum value of a signed integer.")]

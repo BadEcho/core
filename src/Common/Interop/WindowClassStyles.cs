@@ -14,22 +14,17 @@
 namespace BadEcho.Interop;
 
 /// <summary>
-/// Specifies styling configurations for windows that (for the most part) cannot be modified after the window has
-/// been created.
+/// Specifies styling configurations for window classes that are assigned during window class registration.
 /// </summary>
 [Flags]
-public enum WindowStyles : uint
+public enum WindowClassStyles 
 {
     /// <summary>
-    /// The window excludes the area occupied by child windows when drawing occurs within it.
+    /// Saves, as a bitmap, the portion of the screen image obscured by a window this class, for fast restoration later.
     /// </summary>
-    ClipChildren = 0x02000000,
+    SaveBits = 0x800,
     /// <summary>
-    /// The window is a child window.
+    /// Enables the drop shadow effect on a window.
     /// </summary>
-    Child = 0x40000000,
-    /// <summary>
-    /// The window is a pop-up window.
-    /// </summary>
-    Popup = 0x80000000
+    DropShadow = 0x20000
 }

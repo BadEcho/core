@@ -23,5 +23,9 @@ public enum ExtendedWindowStyles
     /// <summary>
     /// The window should not be painted until siblings beneath the window created by the same thread have been painted.
     /// </summary>
-    Transparent = 0x00000020
+    Transparent = 0x00000020,
+    /// <summary>
+    /// The window itself contains child windows that should take part in dialog box navigation.
+    /// </summary>
+    ControlParent = 0x00010000
 }

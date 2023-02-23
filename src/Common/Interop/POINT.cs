@@ -11,25 +11,22 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Runtime.InteropServices;
+
 namespace BadEcho.Interop;
 
 /// <summary>
-/// Specifies styling configurations for windows that (for the most part) cannot be modified after the window has
-/// been created.
+/// Represents the x- and y-coordinates of a point.
 /// </summary>
-[Flags]
-public enum WindowStyles : uint
+[StructLayout(LayoutKind.Sequential)]
+internal struct POINT
 {
     /// <summary>
-    /// The window excludes the area occupied by child windows when drawing occurs within it.
+    /// Specifies the x-coordinate of the point.
     /// </summary>
-    ClipChildren = 0x02000000,
+    public int x;
     /// <summary>
-    /// The window is a child window.
+    /// Specifies the y-coordinate of the point.
     /// </summary>
-    Child = 0x40000000,
-    /// <summary>
-    /// The window is a pop-up window.
-    /// </summary>
-    Popup = 0x80000000
+    public int y;
 }
