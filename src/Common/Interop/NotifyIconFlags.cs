@@ -41,7 +41,7 @@ internal enum NotifyIconFlags
     /// </summary>
     Info = 0x10,
     /// <summary>
-    /// Reserved.
+    /// The <see cref="NotifyIconData.Id"/> member is valid.
     /// </summary>
     Guid = 0x20,
     /// <summary>

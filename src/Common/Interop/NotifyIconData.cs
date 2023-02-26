@@ -29,18 +29,20 @@ internal sealed class NotifyIconData
     /// A handle to the window that receives notifications associated with an icon in the
     /// notification area.
     /// </param>
-    /// <param name="id">The application-defined identifier of the taskbar icon.</param>
+    /// <param name="id">The unique identifier of the taskbar icon.</param>
     /// <param name="flags">
     /// Flags that either indicate which of the other members of the structure contain valid
     /// data or provide additional information to the tooltip as to how it should display.
     /// </param>
-    public NotifyIconData(WindowHandle window, uint id, NotifyIconFlags flags)
+    public NotifyIconData(WindowHandle window, Guid id, NotifyIconFlags flags)
     {
         Require.NotNull(window, nameof(window));
 
         Window = window;
         Id = id;
-        Flags = flags;
+        // It is implied that the Guid identifier member is valid given our constructor's
+        // parameters.
+        Flags = flags | NotifyIconFlags.Guid;
     }
 
     /// <summary>
@@ -51,9 +53,9 @@ internal sealed class NotifyIconData
     { get; }
 
     /// <summary>
-    /// Gets the application-defined identifier of the taskbar icon.
+    /// Gets the unique identifier of the taskbar icon.
     /// </summary>
-    public uint Id
+    public Guid Id
     { get; }
 
     /// <summary>

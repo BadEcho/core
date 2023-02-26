@@ -56,11 +56,11 @@ internal static unsafe class NotifyIconDataMarshaller
             _windowHandle = iconData.Window;
             _iconHandle = iconData.Icon;
             _balloonIconHandle = iconData.BalloonIcon;
-            
+
             _unmanaged.cbSize = (uint) sizeof(NOTIFYICONDATAW);
             _windowHandle.DangerousAddRef(ref _windowHandleAddRefd);
             _unmanaged.hWnd = _originalWindowHandleValue = _windowHandle.DangerousGetHandle();
-            _unmanaged.uID = iconData.Id;
+            _unmanaged.guidItem = GuidMarshaller.ConvertToUnmanaged(iconData.Id);
             _unmanaged.uFlags = iconData.Flags;
             _unmanaged.uCallbackMessage = iconData.CallbackMessage;
 
@@ -118,7 +118,9 @@ internal static unsafe class NotifyIconDataMarshaller
             if (_unmanaged.hBalloonIcon != _originalBalloonIconHandleValue)
                 throw new NotSupportedException(Strings.HandleCannotChangeDuringMarshalling);
 
-            return new NotifyIconData(_windowHandle, _unmanaged.uID, _unmanaged.uFlags)
+            Guid managedId = GuidMarshaller.ConvertToManaged(_unmanaged.guidItem);
+            
+            return new NotifyIconData(_windowHandle, managedId, _unmanaged.uFlags)
                    {
                        CallbackMessage = _unmanaged.uCallbackMessage,
                        Icon = _iconHandle,
@@ -159,7 +161,8 @@ internal static unsafe class NotifyIconDataMarshaller
             /// </summary>
             public uint cbSize;
             /// <summary>
-            /// A handle to the window that receives notifications associated with an icon in the notification area.
+            /// A handle to the window that receives notifications associated with an icon in
+            /// the notification area.
             /// </summary>
             public IntPtr hWnd;
             /// <summary>
@@ -167,8 +170,8 @@ internal static unsafe class NotifyIconDataMarshaller
             /// </summary>
             public uint uID;
             /// <summary>
-            /// Flags that either indicate which of the other members of the structure contain valid data or provide
-            /// additional information to the tooltip as to how it should display.
+            /// Flags that either indicate which of the other members of the structure contain valid data
+            /// or provide additional information to the tooltip as to how it should display.
             /// </summary>
             public NotifyIconFlags uFlags;
             /// <summary>
@@ -180,30 +183,45 @@ internal static unsafe class NotifyIconDataMarshaller
             /// </summary>
             public IntPtr hIcon;
             /// <summary>
+            /// A null-terminated string that specifies the text for a standard tooltip.
+            /// </summary>
+            public fixed char szTip[128];
+            /// <summary>
             /// The state of the icon.
             /// </summary>
             public uint dwState;
             /// <summary>
-            /// A value that specifies which bits of the <see cref="dwState"/> member are retrieved or modified.
+            /// A value that specifies which bits of the <see cref="dwState"/> member are retrieved
+            /// or modified.
             /// </summary>
             public uint dwStateMask;
             /// <summary>
-            /// Either the timeout value, in milliseconds, for the notification, or a specification of which version of the Shell
-            /// notification icon interface should be used.
+            /// A null-terminated string that specifies the text to display in a balloon notification.
+            /// </summary>
+            public fixed char szInfo[256];
+            /// <summary>
+            /// Either the timeout value, in milliseconds, for the notification, or a specification of which
+            /// version of the Shell notification icon interface should be used.
             /// </summary>
             public uint uTimeoutOrVersion;
+            /// <summary>
+            /// A null-terminated string that specifies the title for a balloon notification.
+            /// </summary>
+            public fixed char szInfoTitle[64];
             /// <summary>
             /// Flags that can be set to modify the behavior and appearance of a balloon notification.
             /// </summary>
             public NotifyIconInfoFlags dwInfoFlags;
             /// <summary>
-            /// A handle to a customized notification icon that should be used independently of the notification area icon.
+            /// A registered <see cref="GUID"/> that identifies the icon. This is the preferred way to identify
+            /// an icon in modern OS versions.
+            /// </summary>
+            public GUID guidItem;
+            /// <summary>
+            /// A handle to a customized notification icon that should be used independently of the
+            /// notification area icon.
             /// </summary>
             public IntPtr hBalloonIcon;
-
-            private fixed char _szTip[128];
-            private fixed char _szInfo[256];
-            private fixed char _szInfoTitle[64];
 
             /// <summary>
             /// Gets or sets a string that specifies the text for a standard tooltip.
@@ -239,7 +257,7 @@ internal static unsafe class NotifyIconDataMarshaller
             {
                 get
                 {
-                    fixed (char* c = _szTip)
+                    fixed (char* c = szTip)
                     {
                         return new Span<char>(c, 128);
                     }
@@ -253,7 +271,7 @@ internal static unsafe class NotifyIconDataMarshaller
             {
                 get
                 {
-                    fixed (char* c = _szInfo)
+                    fixed (char* c = szInfo)
                     {
                         return new Span<char>(c, 256);
                     }
@@ -267,7 +285,7 @@ internal static unsafe class NotifyIconDataMarshaller
             {
                 get
                 {
-                    fixed (char* c = _szInfoTitle)
+                    fixed (char* c = szInfoTitle)
                     {
                         return new Span<char>(c, 64);
                     }
