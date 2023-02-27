@@ -30,7 +30,16 @@ internal static partial class ShellScaling
     /// <param name="dpiX">The value of the DPI along the x-axis.</param>
     /// <param name="dpiY">The value of the DPI along the y-axis.</param>
     /// <returns>The result of the operation.</returns>
-    [LibraryImport(LIBRARY_NAME, SetLastError =true)]
+    [LibraryImport(LIBRARY_NAME)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial ResultHandle GetDpiForMonitor(IntPtr hMonitor, MonitorDpiType dpiType, out uint dpiX, out uint dpiY);
+
+    /// <summary>
+    /// Gets the scale factor of a specific monitor.
+    /// </summary>
+    /// <param name="hMonitor">The monitor's handle.</param>
+    /// <param name="pScale">A scale factor value, specified as a percentage.</param>
+    /// <returns>The result of the operation.</returns>
+    [LibraryImport(LIBRARY_NAME)]
+    public static partial ResultHandle GetScaleFactorForMonitor(IntPtr hMonitor, out int pScale);
 }

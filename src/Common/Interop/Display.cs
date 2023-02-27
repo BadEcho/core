@@ -31,6 +31,11 @@ public sealed class Display
     /// </summary>
     private const int MONITORINFOF_PRIMARY = 0x1;
 
+    /// <summary>
+    /// The assumed screen DPI for displays that have a scale factor of 100 percent (WinUser.h).
+    /// </summary>
+    private const double USER_DEFAULT_SCREEN_DPI = 96.0;
+
     private static readonly Lazy<IEnumerable<Display>> _Displays
         = new(LoadDisplays, LazyThreadSafetyMode.ExecutionAndPublication);
 
@@ -57,26 +62,16 @@ public sealed class Display
             DeviceName = Marshal.PtrToStringUni((IntPtr) info.szDevice);
         }
 
-        MonitorDpi = LoadMonitorDpi();
-        
         WorkingArea 
             = Rectangle.FromLTRB(info.rcWork.Left, info.rcWork.Top, info.rcWork.Right, info.rcWork.Bottom);
     }
 
     /// <summary>
-    /// Gets a value indicating if the current operating system supports having a different DPI per monitor, as opposed to only
-    /// a single system-wide DPI being in effect.
+    /// Gets a value indicating if the current process is aware of each monitor's DPI and is notified of any changes to their DPI
+    /// settings.
     /// </summary>
-    /// <remarks>This feature was added with the release of Windows 8.1.</remarks>
     public static bool IsDpiPerMonitor
-    {
-        get
-        {
-            Version osVersion = Environment.OSVersion.Version;
-
-            return (osVersion.Major == 6 && osVersion.Minor >= 3) || osVersion.Major >= 7;
-        }
-    }
+        => GetDpiAwareness() == DpiAwareness.PerMonitorAware;
 
     /// <summary>
     /// Gets the display devices in use by the system.
@@ -97,8 +92,19 @@ public sealed class Display
     /// <summary>
     /// Gets the system-wide DPI.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// This is the effective DPI that all displays will be treated as having if the process's DPI awareness is
+    /// anything other than <see cref="DpiAwareness.PerMonitorAware"/>.
+    /// </para>
+    /// <para>
+    /// The value for this is never cached because, although <see cref="DpiAwareness.SystemAware"/> specifies that
+    /// the application does not receive changes made to the system DPI, the DPI awareness context for the process
+    /// itself can change at anytime, which can influence the effective DPI.
+    /// </para>
+    /// </remarks>
     public static int SystemDpi
-    { get; } = LoadSystemDpi();
+        => (int) User32.GetDpiForSystem();
 
     /// <summary>
     /// Gets the name of this display device.
@@ -110,11 +116,72 @@ public sealed class Display
     /// Gets the DPI specific to this display device.
     /// </summary>
     /// <remarks>
-    /// Unless the OS version for Windows is 8.1 or later (which is when per-monitor DPI support was added), the value returned
-    /// by this property will always be the same value returned by <see cref="SystemDpi"/>.
+    /// <para>
+    /// This will only return the individual monitor's DPI if the process is per-monitor DPI aware, indicated by
+    /// <see cref="IsDpiPerMonitor"/>. If the process is not per-monitor DPI aware, then the value returned will
+    /// always be the same value as <see cref="SystemDpi"/>.
+    /// </para>
+    /// <para>
+    /// This value is never cached, and is queried for each time this property is accessed. If the process is per-monitor
+    /// DPI aware, it must adhere to live changes made to a monitor's DPI; additionally, the DPI awareness context of a
+    /// thread or process can be changed at any time, which can influence the individual monitor's DPI.
+    /// </para>
     /// </remarks>
-    public int MonitorDpi 
-    { get; }
+    public int MonitorDpi
+    {
+        get
+        {
+            if (!IsDpiPerMonitor)
+                return SystemDpi;
+            
+            // GetDpiForMonitor only returns a valid DPI for the monitor if we are per-monitor DPI aware.
+            ResultHandle result = ShellScaling.GetDpiForMonitor(_monitor, MonitorDpiType.Effective, out uint dpiX, out _);
+
+            if (result != ResultHandle.Success)
+            {
+                Logger.Warning(Strings.DisplayGetDpiForMonitorFailed.InvariantFormat((int)result));
+
+                return SystemDpi;
+            }
+
+            return (int) dpiX;
+        }
+    }
+
+    /// <summary>
+    /// Gets the scale factor applied to the size of text, apps, and other items on the display.
+    /// </summary>
+    /// <remarks>
+    /// This value is not cached because the process's DPI awareness context can change at any time,
+    /// which influences the scale factor; additionally, if the process is <see cref="DpiAwareness.PerMonitorAware"/>,
+    /// then we need to reflect live changes to the monitor's DPI.
+    /// </remarks>
+    public double ScaleFactor
+    {
+        get
+        {
+            switch (GetDpiAwareness())
+            {
+                // If the process is DPI unaware, then we'll need to call GetScaleFactorForMonitor to get an accurate scale.
+                case DpiAwareness.Unaware:
+                    ResultHandle result = ShellScaling.GetScaleFactorForMonitor(_monitor, out int scalePercentage);
+
+                    if (result != ResultHandle.Success)
+                    {
+                        Logger.Warning(Strings.DisplayGetScaleFactorForMonitorFailed.InvariantFormat((int) result));
+
+                        return 1.0;
+                    }
+
+                    return scalePercentage / 100.0;
+                // The GetScaleFactorForMonitor will be inaccurate if we have any level of DPI awareness, so we calculate it ourselves.
+                default:
+                    int dpi = MonitorDpi;
+
+                    return dpi / USER_DEFAULT_SCREEN_DPI;
+            }
+        }
+    }
 
     /// <summary>
     /// Gets a representation of the working area (the area available for use by applications) of the display.
@@ -140,33 +207,23 @@ public sealed class Display
         return displays;
     }
 
-    private static int LoadSystemDpi()
+    /// <summary>
+    /// Gets the DPI awareness of the process.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="DpiAwareness"/> value that specifies the current DPI awareness of the process.
+    /// </returns>
+    /// <remarks>
+    /// The returned DPI awareness value should never be cached. This is because the DPI awareness context of a thread
+    /// or process can be changed at any time.
+    /// </remarks>
+    private static DpiAwareness GetDpiAwareness()
     {
-        using (DeviceContextHandle deviceContext = User32.GetDC(IntPtr.Zero))
-        {
-            return !deviceContext.IsInvalid
-                ? Gdi32.GetDeviceCaps(deviceContext, DeviceInformation.PpiHeight)
-                : throw ((ResultHandle) Marshal.GetHRForLastWin32Error()).GetException();
-        }
+        IntPtr awarenessContext = User32.GetThreadDpiAwarenessContext();
+
+        return User32.GetAwarenessFromDpiAwarenessContext(awarenessContext);
     }
 
-    private int LoadMonitorDpi()
-    {
-        if (!IsDpiPerMonitor)
-            return SystemDpi;
-
-        ResultHandle result = ShellScaling.GetDpiForMonitor(_monitor, MonitorDpiType.Effective, out uint dpiX, out _);
-
-        if (result != ResultHandle.Success)
-        {
-            Logger.Warning(Strings.DisplayGetDpiForMonitorFailed.InvariantFormat((int) result));
-
-            return SystemDpi;
-        }
-
-        return (int) dpiX;
-    }
-    
     /// <summary>
     /// Provides a referencing environment for a <see cref="MonitorEnumProc"/> callback.
     /// </summary>

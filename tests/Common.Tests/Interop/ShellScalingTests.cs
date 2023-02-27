@@ -30,4 +30,13 @@ public class ShellScalingTests
         Assert.Equal(ResultHandle.Success,
                      ShellScaling.GetDpiForMonitor(monitors.First(), MonitorDpiType.Effective, out _, out _));
     }
+
+    [Fact]
+    public void GetScaleFactorForMonitor_ReturnsValid()
+    {
+        var monitors = UnmanagedHelper.EnumerateMonitors();
+
+        Assert.Equal(ResultHandle.Success,
+                     ShellScaling.GetScaleFactorForMonitor(monitors.First(), out int _));
+    }
 }

@@ -106,6 +106,15 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to HRESULT of {0} returned when attempting to query for a monitor&apos;s scale factor. Because of this, display device will default to using a default scale factor of 100 percent..
+        /// </summary>
+        internal static string DisplayGetScaleFactorForMonitorFailed {
+            get {
+                return ResourceManager.GetString("DisplayGetScaleFactorForMonitorFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enumeration has already finished; no more objects exist in the sequence..
         /// </summary>
         internal static string EnumerationAtEnd {

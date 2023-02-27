@@ -162,6 +162,23 @@ internal static partial class User32
     public static partial bool DestroyMenu(IntPtr hMenu);
 
     /// <summary>
+    /// Gets the DPI awareness context for the current thread.
+    /// </summary>
+    /// <returns>The current DPI awareness context for the thread.</returns>
+    [LibraryImport(LIBRARY_NAME)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial IntPtr GetThreadDpiAwarenessContext();
+
+    /// <summary>
+    /// Retrieves the <see cref="DpiAwareness"/> value from a DPI awareness context.
+    /// </summary>
+    /// <param name="value">The DPI awareness context you want to examine.</param>
+    /// <returns>The <see cref="DpiAwareness"/> value from <c>value</c>.</returns>
+    [LibraryImport(LIBRARY_NAME)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial DpiAwareness GetAwarenessFromDpiAwarenessContext(IntPtr value);
+
+    /// <summary>
     /// Enumerates display monitors (including invisible pseudo-monitors associated with the mirroring drivers) that intersect
     /// a region formed by the intersection of a specified clipping rectangle and the visible region of a device context.
     /// </summary>
@@ -210,6 +227,14 @@ internal static partial class User32
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool GetWindowRect(WindowHandle hWnd, out RECT lpRect);
+
+    /// <summary>
+    /// Returns the system DPI.
+    /// </summary>
+    /// <returns>The system DPI value.</returns>
+    [LibraryImport(LIBRARY_NAME)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial uint GetDpiForSystem();
 
     /// <summary>
     /// Retrieves a handle to a device context (DC) for the client area of either a specified window or for the entire screen.

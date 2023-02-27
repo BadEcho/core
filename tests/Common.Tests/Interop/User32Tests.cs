@@ -101,6 +101,12 @@ public class User32Tests
     }
 
     [Fact]
+    public void GetDpiForSystem_ReturnsValid()
+    {
+        Assert.True(User32.GetDpiForSystem() > 0);
+    }
+
+    [Fact]
     public void GetDC_ReturnsValid()
     {
         DeviceContextHandle handle = User32.GetDC(IntPtr.Zero);
@@ -185,6 +191,13 @@ public class User32Tests
         WindowMessage message = User32.RegisterWindowMessage("Hello");
 
         Assert.NotEqual(0, (int) message);
+    }
+
+    [Fact]
+    public void GetThreadDpiAwarenessContext_Default_ReturnsValid()
+    {
+        var context = User32.GetThreadDpiAwarenessContext();
+        Assert.Equal(DpiAwareness.Unaware, User32.GetAwarenessFromDpiAwarenessContext(context));
     }
 
     private static WindowHandle CreateWindow(string className)
