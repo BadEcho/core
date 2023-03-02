@@ -475,6 +475,24 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to send a message adding or modifying an icon to the taskbar&apos;s notification area..
+        /// </summary>
+        internal static string NotifyIconAddModifyFailed {
+            get {
+                return ResourceManager.GetString("NotifyIconAddModifyFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to send a message deleting an icon from the taskbar&apos;s notification area..
+        /// </summary>
+        internal static string NotifyIconDeleteFailed {
+            get {
+                return ResourceManager.GetString("NotifyIconDeleteFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The file &apos;{0}&apos; being scanned for pluggable exports failed to load due to most likely not being a valid .NET assembly..
         /// </summary>
         internal static string PluginBadImageException {

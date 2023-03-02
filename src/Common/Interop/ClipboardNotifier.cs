@@ -26,7 +26,7 @@ public sealed class ClipboardNotifier
     /// <summary>
     /// Initializes a new instance of the <see cref="ClipboardNotifier"/> class.
     /// </summary>
-    /// <param name="windowWrapper">A wrapper able to receive messages being sent to the window.</param>
+    /// <param name="windowWrapper">A wrapper around the window that will receive clipboard-related messages.</param>
     public ClipboardNotifier(IWindowWrapper windowWrapper)
     {
         Require.NotNull(windowWrapper, nameof(windowWrapper));
@@ -42,11 +42,11 @@ public sealed class ClipboardNotifier
     /// <summary>
     /// Occurs when the contents of the clipboard have changed.
     /// </summary>
-    public event EventHandler<EventArgs>? ClipboardChanged; 
+    public event EventHandler? ClipboardChanged; 
 
     private IntPtr WndProc(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
-        var message = (WindowMessage)msg;
+        var message = (WindowMessage) msg;
 
         switch (message)
         {

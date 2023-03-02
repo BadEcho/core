@@ -272,6 +272,12 @@
 	<data name="HandleCannotChangeDuringMarshalling" xml:space="preserve">
 		<value>Changing a SafeHandle's underlying handle value during marshalling is not supported.</value>
 	</data>
+	<data name="NotifyIconAddModifyFailed" xml:space="preserve">
+		<value>Failed to send a message adding or modifying an icon to the taskbar's notification area.</value>
+	</data>
+	<data name="NotifyIconDeleteFailed" xml:space="preserve">
+		<value>Failed to send a message deleting an icon from the taskbar's notification area.</value>
+	</data>
 	<data name="ExecutorFramesRequireRun" xml:space="preserve">
 		<value>The executor needs to be running before frames can be pushed to it.</value>
 	</data>
