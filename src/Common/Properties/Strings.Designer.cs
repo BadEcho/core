@@ -484,11 +484,38 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to send a message requesting a balloon notification to the taskbar&apos;s notification area..
+        /// </summary>
+        internal static string NotifyIconBalloonFailed {
+            get {
+                return ResourceManager.GetString("NotifyIconBalloonFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot send a balloon notification until the icon has been added to the taskbar&apos;s notification area..
+        /// </summary>
+        internal static string NotifyIconBalloonRequiresTaskbar {
+            get {
+                return ResourceManager.GetString("NotifyIconBalloonRequiresTaskbar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to send a message deleting an icon from the taskbar&apos;s notification area..
         /// </summary>
         internal static string NotifyIconDeleteFailed {
             get {
                 return ResourceManager.GetString("NotifyIconDeleteFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot send a balloon notification using a custom icon without a custom balloon icon being loaded first..
+        /// </summary>
+        internal static string NotifyIconNoCustomBalloonIconLoaded {
+            get {
+                return ResourceManager.GetString("NotifyIconNoCustomBalloonIconLoaded", resourceCulture);
             }
         }
         

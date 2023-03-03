@@ -14,6 +14,7 @@
 using System.Buffers;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using BadEcho.Logging;
 using BadEcho.Properties;
 
 namespace BadEcho.Interop;
@@ -176,6 +177,50 @@ public sealed class NotifyIcon : IDisposable
         int iconSize = (int) primaryDisplay.ScaleFactor * 48;
 
         _balloonIconHandle = LoadIconHandle(data, iconSize, iconSize);
+    }
+
+    /// <summary>
+    /// Sends a "balloon" notification to the user's desktop. 
+    /// </summary>
+    /// <remarks>
+    /// In reality, the notification is much more akin to a Toast notification with newer versions of Windows, as opposed
+    /// to an old school balloon-shaped tooltip.
+    /// </remarks>
+    /// <param name="text">The text to display on the notification.</param>
+    /// <param name="title">The title to display on the notification.</param>
+    /// <param name="iconType">
+    /// An enumeration value specifying the type of balloon icon to display in the notification.
+    /// </param>
+    public void SendBalloonNotification(string text, string title, BalloonIconType iconType)
+    {
+        if (!_isAdded)
+        {
+            Logger.Warning(Strings.NotifyIconBalloonRequiresTaskbar);
+            return;
+        }
+
+        NotifyIconInfoFlags infoFlags;
+
+        if (iconType == BalloonIconType.Custom)
+        {
+            if (_balloonIconHandle == null)
+                throw new ArgumentException(Strings.NotifyIconNoCustomBalloonIconLoaded, nameof(iconType));
+
+            infoFlags = NotifyIconInfoFlags.User | NotifyIconInfoFlags.LargeIcon;
+        }
+        else
+            infoFlags = (NotifyIconInfoFlags) iconType;
+
+        var iconData = new NotifyIconData(_windowWrapper.Handle, _id, NotifyIconFlags.Info)
+                       {
+                           Info = text,
+                           InfoTitle = title,
+                           InfoFlags = infoFlags,
+                           BalloonIcon = _balloonIconHandle
+                       };
+
+        if (!Shell32.Shell_NotifyIcon(NotifyIconMessage.Modify, ref iconData))
+            throw new Win32Exception(Strings.NotifyIconBalloonFailed);
     }
 
     /// <inheritdoc/>

@@ -278,6 +278,15 @@
 	<data name="NotifyIconDeleteFailed" xml:space="preserve">
 		<value>Failed to send a message deleting an icon from the taskbar's notification area.</value>
 	</data>
+	<data name="NotifyIconBalloonFailed" xml:space="preserve">
+		<value>Failed to send a message requesting a balloon notification to the taskbar's notification area.</value>
+	</data>
+	<data name="NotifyIconNoCustomBalloonIconLoaded" xml:space="preserve">
+		<value>Cannot send a balloon notification using a custom icon without a custom balloon icon being loaded first.</value>
+	</data>
+	<data name="NotifyIconBalloonRequiresTaskbar" xml:space="preserve">
+		<value>Cannot send a balloon notification until the icon has been added to the taskbar's notification area.</value>
+	</data>
 	<data name="ExecutorFramesRequireRun" xml:space="preserve">
 		<value>The executor needs to be running before frames can be pushed to it.</value>
 	</data>
