@@ -287,6 +287,9 @@
 	<data name="NotifyIconBalloonRequiresTaskbar" xml:space="preserve">
 		<value>Cannot send a balloon notification until the icon has been added to the taskbar's notification area.</value>
 	</data>
+	<data name="PopupNotInForeground" xml:space="preserve">
+		<value>Unable to set popup as the foreground window. The menu will not disappear if the user clicks outside of it.</value>
+	</data>
 	<data name="ExecutorFramesRequireRun" xml:space="preserve">
 		<value>The executor needs to be running before frames can be pushed to it.</value>
 	</data>

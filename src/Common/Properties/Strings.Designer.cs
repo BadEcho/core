@@ -538,6 +538,15 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to set popup as the foreground window. The menu will not disappear if the user clicks outside of it..
+        /// </summary>
+        internal static string PopupNotInForeground {
+            get {
+                return ResourceManager.GetString("PopupNotInForeground", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The executing process is unmanaged, therefore no contract implementation are able to be exported by it..
         /// </summary>
         internal static string ProcessCannotExportContracts {

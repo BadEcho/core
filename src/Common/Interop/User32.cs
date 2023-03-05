@@ -127,6 +127,22 @@ internal static partial class User32
                                           MenuFlags uFlags,
                                           uint uIdNewItem,
                                           [MarshalUsing(typeof(Utf16StringMarshaller))] string lpNewItem);
+    /// <summary>
+    /// Deletes a menu item or detaches a submenu from the specified menu.
+    /// </summary>
+    /// <param name="hMenu">A handle to the menu to be changed.</param>
+    /// <param name="uPosition">The menu item to be deleted, as determined by the <paramref name="uFlags"/> parameter.</param>
+    /// <param name="uFlags">
+    /// Indicates how the <paramref name="uPosition"/> parameter is interpreted. Set to 0 to interpret it as the menu item
+    /// identifier, or 0x400 to interpret it as the zero-based relative position of the menu item.
+    /// </param>
+    /// <returns>True if the function succeeds; otherwise, false.</returns>
+    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool RemoveMenu(MenuHandle hMenu,
+                                          uint uPosition,
+                                          uint uFlags);
 
     /// <summary>
     /// Displays a shortcut menu at the specified location and tracks the selection of items on the menu.
@@ -149,7 +165,7 @@ internal static partial class User32
                                              int x,
                                              int y,
                                              int nReserved,
-                                             IntPtr hWnd,
+                                             WindowHandle hWnd,
                                              ref RECT prcRect);
     /// <summary>
     /// Destroys the specified menu and frees any memory that the menu occupies.
@@ -227,6 +243,16 @@ internal static partial class User32
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool GetWindowRect(WindowHandle hWnd, out RECT lpRect);
+
+    /// <summary>
+    /// Brings the thread that created the specified window into the foreground and activates the window.
+    /// </summary>
+    /// <param name="hWnd">A handle to the window that should be activated and brought to the foreground.</param>
+    /// <returns>True if the window was brought to the foreground; otherwise, false.</returns>
+    [LibraryImport(LIBRARY_NAME)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool SetForegroundWindow(WindowHandle hWnd);
 
     /// <summary>
     /// Returns the system DPI.
