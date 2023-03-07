@@ -61,6 +61,24 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not load manifest resource from the Bad Echo Core Framework&apos;s assembly..
+        /// </summary>
+        internal static string ActivationContextManifestResourceNotFound {
+            get {
+                return ResourceManager.GetString("ActivationContextManifestResourceNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A handle to the module containing an embedded manifest resource could not be loaded. If this is a single-file packaged, the resource name for the manifest file must be provided instead..
+        /// </summary>
+        internal static string ActivationContextModuleNotFound {
+            get {
+                return ResourceManager.GetString("ActivationContextModuleNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot retrieve a value from an export that isn&apos;t representing an object..
         /// </summary>
         internal static string ArgumentExportValueNoObject {

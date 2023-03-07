@@ -56,7 +56,7 @@ internal static partial class User32
     /// <param name="hMenu">A handle to a menu.</param>
     /// <param name="hInstance">A handle to the instance of the module to be associated with the window.</param>
     /// <param name="lpParam">Pointer to a value to be passed to the window.</param>
-    /// <returns>A handle to the new window if successful; otherwise, null.</returns>
+    /// <returns>A handle to the new window if successful; otherwise, an invalid handle.</returns>
     [LibraryImport(LIBRARY_NAME, EntryPoint = "CreateWindowExW", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static unsafe partial WindowHandle CreateWindowEx(int dwExStyle,

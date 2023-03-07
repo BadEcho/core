@@ -293,4 +293,10 @@
 	<data name="ExecutorFramesRequireRun" xml:space="preserve">
 		<value>The executor needs to be running before frames can be pushed to it.</value>
 	</data>
+	<data name="ActivationContextModuleNotFound" xml:space="preserve">
+		<value>A handle to the module containing an embedded manifest resource could not be loaded. If this is a single-file packaged, the resource name for the manifest file must be provided instead.</value>
+	</data>
+	<data name="ActivationContextManifestResourceNotFound" xml:space="preserve">
+		<value>Could not load manifest resource from the Bad Echo Core Framework's assembly.</value>
+	</data>
 </root>

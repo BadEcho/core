@@ -31,23 +31,21 @@ internal static unsafe class WindowClassMarshaller
     {
         Require.NotNull(managed, nameof(managed));
 
-        var unmanaged = new WNDCLASSEX
-                        {
-                            cbSize = Marshal.SizeOf(typeof(WNDCLASSEX)),
-                            style = managed.Style,
-                            lpfnWndProc = Marshal.GetFunctionPointerForDelegate(managed.WindowProc),
-                            cbClsExtra = managed.ClassExtraBytes,
-                            cbWndExtra = managed.WindowExtraBytes,
-                            hInstance = managed.Instance,
-                            hIcon = managed.Icon,
-                            hCursor = managed.Cursor,
-                            hbrBackground = managed.BackgroundBrush,
-                            lpszMenuName = Utf16StringMarshaller.ConvertToUnmanaged(managed.MenuName),
-                            lpszClassName = Utf16StringMarshaller.ConvertToUnmanaged(managed.ClassName),
-                            hIconSm = managed.SmallIcon
-                        };
-
-        return unmanaged;
+        return new WNDCLASSEX
+               {
+                   cbSize = Marshal.SizeOf(typeof(WNDCLASSEX)),
+                   style = managed.Style,
+                   lpfnWndProc = Marshal.GetFunctionPointerForDelegate(managed.WindowProc),
+                   cbClsExtra = managed.ClassExtraBytes,
+                   cbWndExtra = managed.WindowExtraBytes,
+                   hInstance = managed.Instance,
+                   hIcon = managed.Icon,
+                   hCursor = managed.Cursor,
+                   hbrBackground = managed.BackgroundBrush,
+                   lpszMenuName = Utf16StringMarshaller.ConvertToUnmanaged(managed.MenuName),
+                   lpszClassName = Utf16StringMarshaller.ConvertToUnmanaged(managed.ClassName),
+                   hIconSm = managed.SmallIcon
+               };
     }
 
     /// <summary>
@@ -59,21 +57,19 @@ internal static unsafe class WindowClassMarshaller
     {
         var windowProc = Marshal.GetDelegateForFunctionPointer<WindowProc>(unmanaged.lpfnWndProc);
 
-        var managed = new WindowClass(windowProc)
-                      {
-                          Style = unmanaged.style,
-                          ClassExtraBytes = unmanaged.cbClsExtra,
-                          WindowExtraBytes = unmanaged.cbWndExtra,
-                          Instance = unmanaged.hInstance,
-                          Icon = unmanaged.hIcon,
-                          Cursor = unmanaged.hCursor,
-                          BackgroundBrush = unmanaged.hbrBackground,
-                          MenuName = Utf16StringMarshaller.ConvertToManaged(unmanaged.lpszMenuName),
-                          ClassName = Utf16StringMarshaller.ConvertToManaged(unmanaged.lpszClassName),
-                          SmallIcon = unmanaged.hIconSm
-                      };
-
-        return managed;
+        return new WindowClass(windowProc)
+               {
+                   Style = unmanaged.style,
+                   ClassExtraBytes = unmanaged.cbClsExtra,
+                   WindowExtraBytes = unmanaged.cbWndExtra,
+                   Instance = unmanaged.hInstance,
+                   Icon = unmanaged.hIcon,
+                   Cursor = unmanaged.hCursor,
+                   BackgroundBrush = unmanaged.hbrBackground,
+                   MenuName = Utf16StringMarshaller.ConvertToManaged(unmanaged.lpszMenuName),
+                   ClassName = Utf16StringMarshaller.ConvertToManaged(unmanaged.lpszClassName),
+                   SmallIcon = unmanaged.hIconSm
+               };
     }
 
     /// <summary>

@@ -12,6 +12,7 @@
 //-----------------------------------------------------------------------
 
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.Marshalling;
 
 namespace BadEcho.Interop;
 
@@ -56,6 +57,58 @@ internal static partial class Kernel32
     [LibraryImport(LIBRARY_NAME, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
+
+    /// <summary>
+    /// Creates an activation context.
+    /// </summary>
+    /// <param name="pActCtx">
+    /// An <see cref="ActivationContext"/> instance that contains information about the activation context to be created.
+    /// </param>
+    /// <returns>A handle to the new activation context if successful; otherwise an invalid handle.</returns>
+    [LibraryImport(LIBRARY_NAME, EntryPoint = "CreateActCtxW", SetLastError = true)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial ActivationContextHandle CreateActCtx(
+        [MarshalUsing(typeof(ActivationContextMarshaller))] ref ActivationContext pActCtx);
+    
+    /// <summary>
+    /// Activates the specified activation context.
+    /// </summary>
+    /// <param name="hActCtx">
+    /// Handle to an activation context that contains information on the activation context to be made active.
+    /// </param>
+    /// <param name="lpCookie">
+    /// Pointer that functions as a cookie, uniquely identifying a specific, activated activation context.
+    /// </param>
+    /// <returns>True if successful; otherwise, false.</returns>
+    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool ActivateActCtx(ActivationContextHandle hActCtx, out ActivationContextCookieHandle lpCookie);
+
+    /// <summary>
+    /// Deactivates the activation context corresponding to the specified cookie.
+    /// </summary>
+    /// <param name="dwFlags">
+    /// Flags that indicate how the activation is to occur. Specify 0 if the context is at the top of the stack, or 1 if the context
+    /// is lower on the stack (will deactivate all preceding contexts as well).
+    /// </param>
+    /// <param name="lpCookie">Pointer to the cookie previously passed into the call to <see cref="ActivateActCtx"/>.</param>
+    /// <returns>True if the function succeeds; otherwise, false.</returns>
+    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool DeactivateActCtx(uint dwFlags, IntPtr lpCookie);
+    
+    /// <summary>
+    /// Decrements the reference count of the specified activation context.
+    /// </summary>
+    /// <param name="hActCtx">
+    /// Handle to the activation context structure that contains information on the activation context for which the reference
+    /// count is to be decremented.
+    /// </param>
+    [LibraryImport(LIBRARY_NAME)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial void ReleaseActCtx(IntPtr hActCtx);
 
     /// <summary>
     /// Waits until one or all of the specified objects are in the signaled state, an I/O completion routine or asynchronous

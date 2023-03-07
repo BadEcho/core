@@ -28,6 +28,8 @@ public sealed class PopupMenu : IDisposable
     private readonly IWindowWrapper _windowWrapper;
     private readonly MenuHandle _menu;
 
+    private bool _disposed;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="PopupMenu"/> class.
     /// </summary>
@@ -127,6 +129,11 @@ public sealed class PopupMenu : IDisposable
     /// <inheritdoc />
     public void Dispose()
     {
+        if (_disposed)
+            return;
+
         _menu.Dispose();
+
+        _disposed = true;
     }
 }

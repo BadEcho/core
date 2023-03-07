@@ -6,6 +6,7 @@
     <Title>$(Product)</Title>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RootNamespace>BadEcho</RootNamespace>
+		<ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,7 +26,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="README.md" Pack="true" PackagePath=""/>
+		<EmbeddedResource Include="Properties\app.manifest">
+			<LogicalName>BadEcho.Properties.app.manifest</LogicalName>
+		</EmbeddedResource>
+    <None Include="README.md" Pack="true" PackagePath="" />
   </ItemGroup>
   
 </Project>
