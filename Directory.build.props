@@ -3,7 +3,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <PackageId>$(MSBuildProjectName)</PackageId>
 		<RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/omniscientist/BadEcho</RepositoryUrl>
+    <RepositoryUrl>https://github.com/BadEcho/core</RepositoryUrl>
 	  <PackageProjectUrl>https://badecho.com</PackageProjectUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 	  <Authors>Matt Weber</Authors>
