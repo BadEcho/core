@@ -63,5 +63,12 @@
     <DocumentationFile>$(SolutionDir)\bin\rel\$(AssemblyName).xml</DocumentationFile>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)\build\strongNaming.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>  
+  </PropertyGroup>
+
+  <!--This is needed in order to prevent inaccurate errors from being displayed during design-time.-->
+  <Target Name="DisableDesignTimeCompileCheck" AfterTargets="_CheckCompileDesignTimePrerequisite">
+	  <PropertyGroup>
+		  <BuildingProject>false</BuildingProject>
+	  </PropertyGroup>
+  </Target>
 </Project>
