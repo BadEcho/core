@@ -30,8 +30,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Game.Tests", "tests
 		{9BE628D9-FA6F-45CE-B11C-1101D2ADA451} = {9BE628D9-FA6F-45CE-B11C-1101D2ADA451}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.ResourceCreator", "src\ResourceCreator\BadEcho.ResourceCreator.csproj", "{079DA42D-8426-4067-A9AC-A438A19C4991}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,10 +76,6 @@ Global
 		{56DD6D41-BF60-462F-AB2D-512098643EED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56DD6D41-BF60-462F-AB2D-512098643EED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56DD6D41-BF60-462F-AB2D-512098643EED}.Release|Any CPU.Build.0 = Release|Any CPU
-		{079DA42D-8426-4067-A9AC-A438A19C4991}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{079DA42D-8426-4067-A9AC-A438A19C4991}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{079DA42D-8426-4067-A9AC-A438A19C4991}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{079DA42D-8426-4067-A9AC-A438A19C4991}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,7 +91,6 @@ Global
 		{28C9FB6D-8E22-48AA-BC32-D4E999C370B9} = {A14098CE-C46F-4906-87ED-44DF6A81F3A7}
 		{9BE628D9-FA6F-45CE-B11C-1101D2ADA451} = {A14098CE-C46F-4906-87ED-44DF6A81F3A7}
 		{56DD6D41-BF60-462F-AB2D-512098643EED} = {FE49F12E-C479-4F72-A165-FE20F0A43C8D}
-		{079DA42D-8426-4067-A9AC-A438A19C4991} = {A14098CE-C46F-4906-87ED-44DF6A81F3A7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AB57ED24-4142-4E4A-8847-3C6A0D38B54E}
