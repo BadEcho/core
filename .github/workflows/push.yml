@@ -17,6 +17,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       with:
+        submodules: true
         fetch-depth: 0
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
@@ -24,12 +25,12 @@ jobs:
         dotnet-version: 7.0.x      
     - name: Build
       shell: pwsh      
-      run: ./build.ps1 $(git rev-parse --short HEAD) $(git rev-list --count "$(git log -1 --pretty=format:"%H" version.json)..HEAD")
+      run: .\build\build.ps1 $(git rev-parse --short HEAD) $(git rev-list --count "$(git log -1 --pretty=format:"%H" version.json)..HEAD")
     - name: Push to MyGet
       env:
         PKG_URL: https://www.myget.org/F/bad-echo/api/v3/index.json
         PKG_API_KEY: ${{ secrets.MYGET_API_KEY }}
-      run: ./push.ps1
+      run: .\build\push.ps1
       shell: pwsh
     - name: Artifacts
       if: always()

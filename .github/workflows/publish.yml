@@ -1,6 +1,5 @@
-# This workflow publishes Bad Echo packages to official NuGet feeds. This will run when updated version information has been pushed
-# to 'version.json', an  action that is interpreted to mean that development for the previously committed [Major].[Minor].[Patch] version 
-# is at and end. Therefore, a release can be made.
+# Publishes a new release of Bad Echo software to official NuGet feeds.
+# To configure this workflow, replace variables with their correct values in the "env" section below.
 
 name: Publish Release
 
@@ -13,17 +12,20 @@ on:
 jobs:
   publish:
     name: Publish
-    runs-on: windows-2022              
+    runs-on: windows-2022
+    env:
+      product-Name: Bad Echo Technologies
     steps:
     - name: Checkout
       uses: actions/checkout@v3
       with:
+        submodules: true
         fetch-depth: 0      
     - run: git config --global user.email "chamber@badecho.com"
     - run: git config --global user.name "Echo Chamber"
     - name: Create Echo Version
       run: |
-        git tag -a ${{ github.event.inputs.echo-version }} HEAD -m "Bad Echo Technologies ${{ github.event.inputs.echo-version }}"
+        git tag -a ${{ github.event.inputs.echo-version }} HEAD -m "${{ env.product-name }} ${{ github.event.inputs.echo-version }}"
         git push origin ${{ github.event.inputs.echo-version }}
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
@@ -31,12 +33,12 @@ jobs:
         dotnet-version: 7.0.x      
     - name: Build
       shell: pwsh
-      run: .\build.ps1
+      run: .\build\build.ps1
     - name: Push to NuGet
       env:
         PKG_URL: https://api.nuget.org/v3/index.json
         PKG_API_KEY: ${{ secrets.NUGET_API_KEY }}
-      run: ./push.ps1
+      run: .\build\push.ps1
       shell: pwsh
     - name: Artifacts
       if: always()
