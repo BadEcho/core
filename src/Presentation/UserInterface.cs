@@ -57,6 +57,10 @@ public static class UserInterface
     /// <param name="isBlocking">
     /// Value indicating whether the calling thread should be blocked until the action is complete.
     /// </param>
+    /// <param name="runDispatcher">
+    /// Value indicating if the <see cref="Dispatcher"/> needs to be explicitly run, typically because
+    /// <paramref name="uiFunction"/> does not do so itself.
+    /// </param>
     /// <remarks>
     /// <para>
     /// This function meets the concerns of many UI components by executing the function in a separate STA thread, optionally
@@ -67,9 +71,9 @@ public static class UserInterface
     /// <see cref="UnhandledException"/> event. The STA thread will then immediately terminate.
     /// </para>
     /// </remarks>
-    public static void RunUIFunction(Action uiFunction, bool isBlocking)
+    public static void RunUIFunction(Action uiFunction, bool isBlocking, bool runDispatcher)
     {
-        var staThread = new Thread(() => UIFunctionRunner(uiFunction));
+        var staThread = new Thread(() => UIFunctionRunner(uiFunction, runDispatcher));
 
         staThread.SetApartmentState(ApartmentState.STA);
         staThread.Start();
@@ -77,13 +81,14 @@ public static class UserInterface
         if (isBlocking)
             staThread.Join();
 
-        static void UIFunctionRunner(Action uiFunction)
+        static void UIFunctionRunner(Action uiFunction, bool runDispatcher)
         {
             try
             {
                 uiFunction();
 
-                Dispatcher.Run();
+                if (runDispatcher)
+                    Dispatcher.Run();
             }
             catch (InvalidOperationException invalidEx)
             {
@@ -115,7 +120,7 @@ public static class UserInterface
     /// </para>
     /// </remarks>
     public static void RunUIFunction(Action uiFunction)
-        => RunUIFunction(uiFunction, false);
+        => RunUIFunction(uiFunction, false, true);
 
     /// <summary>
     /// Ensures that an environment suitable for a Bad Echo Presentation framework application has been built by making sure that

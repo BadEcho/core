@@ -59,19 +59,9 @@ public class SteppedBinderTests
 
         TimeSpan elapsed = default;
 
-        UserInterface.RunUIFunction(() => elapsed = UpdateSource(initialTargetValue.ToString(), newSourceValue, steppingDuration), true);
+        UserInterface.RunUIFunction(() => elapsed = UpdateSource(initialTargetValue.ToString(), newSourceValue, steppingDuration), true, false);
 
         double drift = Math.Abs(elapsed.Subtract(steppingDuration).TotalMilliseconds);
-
-        if (drift >= DRIFT_TOLERANCE)
-        {
-            _output.WriteLine(
-                $"Drift of {drift} exceeds DRIFT_TOLERANCE. Trying one additional time to account for system load.");
-
-            UserInterface.RunUIFunction(() => elapsed = UpdateSource(initialTargetValue.ToString(), newSourceValue, steppingDuration), true);
-
-            drift = Math.Abs(elapsed.Subtract(steppingDuration).TotalMilliseconds);
-        }
 
         _output.WriteLine($"Drift: {drift}");
 
@@ -85,7 +75,7 @@ public class SteppedBinderTests
         TimeSpan steppingDuration = TimeSpan.FromSeconds(1);
         TimeSpan elapsed = default;
 
-        UserInterface.RunUIFunction(() => elapsed = UpdateSource(string.Empty, 10000, steppingDuration), true);
+        UserInterface.RunUIFunction(() => elapsed = UpdateSource(string.Empty, 10000, steppingDuration), true, false);
 
         Assert.True(elapsed < steppingDuration,
                     $"Actual duration of {elapsed} greater than expected duration of {steppingDuration} when no stepping should have occurred.");
@@ -97,7 +87,7 @@ public class SteppedBinderTests
         TimeSpan steppingDuration = TimeSpan.FromSeconds(1);
         TimeSpan elapsed = default;
 
-        UserInterface.RunUIFunction(() => elapsed = UpdateSource("10000", 10000, steppingDuration), true);
+        UserInterface.RunUIFunction(() => elapsed = UpdateSource("10000", 10000, steppingDuration), true, false);
 
         Assert.True(elapsed < steppingDuration,
                     $"Actual duration of {elapsed} greater than expected duration of {steppingDuration} when no stepping should have occurred.");
@@ -109,7 +99,7 @@ public class SteppedBinderTests
         TimeSpan steppingDuration = TimeSpan.Zero;
         TimeSpan elapsed = default;
 
-        UserInterface.RunUIFunction(() => elapsed = UpdateSource("10", 15, steppingDuration), true);
+        UserInterface.RunUIFunction(() => elapsed = UpdateSource("10", 15, steppingDuration), true, false);
 
         Assert.True(
             Math.Abs(elapsed.Subtract(steppingDuration).TotalMilliseconds) < DRIFT_TOLERANCE,
@@ -137,7 +127,8 @@ public class SteppedBinderTests
                                                      initialSourceValue.ToString(),
                                                      newTargetValue.ToString(),
                                                      steppingDuration),
-                                    true);
+                                    true,
+                                    false);
         Assert.True(
             Math.Abs(elapsed.Subtract(steppingDuration).TotalMilliseconds) < DRIFT_TOLERANCE,
             $"Expected Duration: {steppingDuration} Actual Duration: {elapsed}");
@@ -149,7 +140,7 @@ public class SteppedBinderTests
         TimeSpan steppingDuration = TimeSpan.FromSeconds(1);
         TimeSpan elapsed = default;
 
-        UserInterface.RunUIFunction(() => elapsed = UpdateTarget(10, string.Empty, "1000", steppingDuration), true);
+        UserInterface.RunUIFunction(() => elapsed = UpdateTarget(10, string.Empty, "1000", steppingDuration), true, false);
 
         Assert.True(
             Math.Abs(elapsed.Subtract(steppingDuration).TotalMilliseconds) < DRIFT_TOLERANCE,
@@ -162,7 +153,7 @@ public class SteppedBinderTests
         TimeSpan steppingDuration = TimeSpan.FromSeconds(1);
         TimeSpan elapsed = default;
 
-        UserInterface.RunUIFunction(() => elapsed = UpdateTarget(10, string.Empty, "10", steppingDuration), true);
+        UserInterface.RunUIFunction(() => elapsed = UpdateTarget(10, string.Empty, "10", steppingDuration), true, false);
 
         Assert.True(elapsed < steppingDuration,
                     $"Actual duration of {elapsed} greater than expected duration of {steppingDuration} when no stepping should have occurred.");
@@ -174,7 +165,7 @@ public class SteppedBinderTests
         TimeSpan steppingDuration = TimeSpan.Zero;
         TimeSpan elapsed = default;
 
-        UserInterface.RunUIFunction(() => elapsed = UpdateTarget(10, "10", "15", steppingDuration), true);
+        UserInterface.RunUIFunction(() => elapsed = UpdateTarget(10, "10", "15", steppingDuration), true, false);
 
         Assert.True(    // Drift tolerance needs to be widened for zero-duration tests to account for WPF binding system spin-up time.
             Math.Abs(elapsed.Subtract(steppingDuration).TotalMilliseconds) < DRIFT_TOLERANCE * 2,
@@ -190,7 +181,8 @@ public class SteppedBinderTests
                 Assert.Throws<ArgumentException>(() => InitializeBinder(TimeSpan.FromSeconds(-2.0)));
                 Dispatcher.CurrentDispatcher.InvokeShutdown();
             },
-            true);
+            true,
+            false);
     }
 
     private SteppedBinder InitializeBinder(TimeSpan steppingDuration)
