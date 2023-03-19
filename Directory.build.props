@@ -22,7 +22,7 @@
     <UseCommonOutputDirectory>false</UseCommonOutputDirectory>
 		<IncludePackageReferencesDuringMarkupCompilation>false</IncludePackageReferencesDuringMarkupCompilation>
     <ImplicitUsings>true</ImplicitUsings>
-  </PropertyGroup>
+	</PropertyGroup>
 
   <!--Versioning.-->
 	<PropertyGroup>

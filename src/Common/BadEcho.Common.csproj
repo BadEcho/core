@@ -7,6 +7,7 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RootNamespace>BadEcho</RootNamespace>
 		<ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+		<IsPackable>$(CoreIsPackable)</IsPackable>  
   </PropertyGroup>
 
   <ItemGroup>

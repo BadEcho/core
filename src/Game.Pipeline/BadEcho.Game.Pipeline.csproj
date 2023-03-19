@@ -5,6 +5,7 @@
 		<Description>Provides extensions to MonoGame's content pipeline.</Description>
 		<Title>$(Product)</Title>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
+	  <IsPackable>$(CoreIsPackable)</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
