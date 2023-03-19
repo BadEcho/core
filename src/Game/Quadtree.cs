@@ -20,34 +20,32 @@ namespace BadEcho.Game;
 /// Provides a tree data structure in which each internal (non-leaf) node has exactly four children, useful
 /// for 2D spatial information queries.
 /// </summary>
-/// <typeparam name="T">The type of <see cref="ISpatialEntity"/> data in the quadtree.</typeparam>
-public sealed class Quadtree<T>
-    where T : ISpatialEntity
+public sealed class Quadtree
 {
-    private readonly List<T> _elements = new();
+    private readonly List<ISpatialEntity> _elements = new();
     
     private readonly int _bucketCapacity;
     private readonly int _maxDepth;
 
-    private Quadtree<T>? _upperLeft;
-    private Quadtree<T>? _upperRight;
-    private Quadtree<T>? _bottomLeft;
-    private Quadtree<T>? _bottomRight;
+    private Quadtree? _upperLeft;
+    private Quadtree? _upperRight;
+    private Quadtree? _bottomLeft;
+    private Quadtree? _bottomRight;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Quadtree{T}"/> class.
+    /// Initializes a new instance of the <see cref="Quadtree"/> class.
     /// </summary>
     /// <param name="bounds">The bounding rectangle of the region that this quadtree's contents occupy.</param>
     /// <remarks>
-    /// This initializes the <see cref="Quadtree{T}"/> instance with a default bucket capacity of <c>32</c> and a default maximum
+    /// This initializes the <see cref="Quadtree"/> instance with a default bucket capacity of <c>32</c> and a default maximum
     /// node depth of <c>5</c>, which are reasonable general-purpose values for these settings.
-    /// </remarks>wd
+    /// </remarks>
     public Quadtree(RectangleF bounds)
         : this(bounds, 32, 5)
     { }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Quadtree{T}"/> class.
+    /// Initializes a new instance of the <see cref="Quadtree"/> class.
     /// </summary>
     /// <param name="bounds">The bounding rectangle of the region that this quadtree's contents occupy.</param>
     /// <param name="bucketCapacity">The maximum number of items allowed in this node before it gets quartered.</param>
@@ -88,7 +86,7 @@ public sealed class Quadtree<T>
     /// Inserts the specified spatial element into the quadtree at the appropriate node.
     /// </summary>
     /// <param name="element">The spatial element to insert into the quadtree.</param>
-    public void Insert(T element)
+    public void Insert(ISpatialEntity element)
     {
         Require.NotNull(element, nameof(element));
 
@@ -99,7 +97,7 @@ public sealed class Quadtree<T>
         if (_elements.Count >= _bucketCapacity)
             Split();
 
-        Quadtree<T>? containingChild = GetContainingChild(element.Bounds);
+        Quadtree? containingChild = GetContainingChild(element.Bounds);
 
         if (containingChild != null)
         {
@@ -117,9 +115,11 @@ public sealed class Quadtree<T>
     /// </summary>
     /// <param name="element">The spatial element to remove from the quadtree.</param>
     /// <returns>True if <c>element</c> is successfully removed; otherwise, false.</returns>
-    public bool Remove(T element)
+    public bool Remove(ISpatialEntity element)
     {
-        Quadtree<T>? containingChild = GetContainingChild(element.Bounds);
+        Require.NotNull(element, nameof(element));
+
+        Quadtree? containingChild = GetContainingChild(element.Bounds);
 
         // If no child was returned, then this is the leaf node (or potentially non-leaf node, if the element's boundaries overlap
         // multiple children) containing the element.
@@ -138,12 +138,12 @@ public sealed class Quadtree<T>
     /// </summary>
     /// <param name="element">The spatial element to find collisions for.</param>
     /// <returns>All spatial elements that collide with <c>element</c>.</returns>
-    public IEnumerable<T> FindCollisions(T element)
+    public IEnumerable<ISpatialEntity> FindCollisions(ISpatialEntity element)
     {
         Require.NotNull(element, nameof(element));
 
-        var nodes = new Queue<Quadtree<T>>();
-        var collisions = new List<T>();
+        var nodes = new Queue<Quadtree>();
+        var collisions = new List<ISpatialEntity>();
 
         nodes.Enqueue(this);
 
@@ -198,10 +198,10 @@ public sealed class Quadtree<T>
     /// Retrieves the elements belonging to this and all descendant nodes.
     /// </summary>
     /// <returns>A sequence of the elements belonging to this and all descendant nodes.</returns>
-    public IEnumerable<T> GetElements()
+    public IEnumerable<ISpatialEntity> GetElements()
     {
-        var children = new List<T>();
-        var nodes = new Queue<Quadtree<T>>();
+        var children = new List<ISpatialEntity>();
+        var nodes = new Queue<Quadtree>();
 
         nodes.Enqueue(this);
 
@@ -241,7 +241,7 @@ public sealed class Quadtree<T>
 
         foreach (var element in elements)
         {
-            Quadtree<T>? containingChild = GetContainingChild(element.Bounds);
+            Quadtree? containingChild = GetContainingChild(element.Bounds);
             // An element is only moved if it completely fits into a child quadrant.
             if (containingChild != null)
             {   
@@ -252,7 +252,7 @@ public sealed class Quadtree<T>
         }
     }
 
-    private Quadtree<T> CreateChild(PointF location)
+    private Quadtree CreateChild(PointF location)
         => new(new RectangleF(location, Bounds.Size / 2), _bucketCapacity, _maxDepth)
            {
                Level = Level + 1
@@ -271,7 +271,7 @@ public sealed class Quadtree<T>
         _upperLeft = _upperRight = _bottomLeft = _bottomRight = null;
     }
 
-    private Quadtree<T>? GetContainingChild(IShape bounds)
+    private Quadtree? GetContainingChild(IShape bounds)
     {
         if (IsLeaf)
             return null;
