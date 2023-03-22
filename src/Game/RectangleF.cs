@@ -262,10 +262,12 @@ public readonly struct RectangleF : IEquatable<RectangleF>, IShape
         PointF upperLeft = Location;
         PointF bottomRight = new(Right, Bottom);
 
+        // If the given point is within our rectangle, then the closest point to it is the given point itself.
         float closestX = point.X;
         float closestY = point.Y;
         
-        // Since our rectangles are axis-aligned, we can just clamp to the nearest point in the rectangle.
+        // Otherwise, because our rectangles are axis-aligned, we can find the closest point simply by clamping
+        // the given point to one of the rectangle's edges.
         if (closestX < upperLeft.X)
             closestX = upperLeft.X;
         else if (closestX > bottomRight.X)
