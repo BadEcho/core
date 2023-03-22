@@ -202,7 +202,7 @@ public readonly struct PointF : IEquatable<PointF>
     {
         Vector2 otherVector = other;
 
-        return otherVector - this;
+        return this - otherVector;
     }
 
     /// <summary>
