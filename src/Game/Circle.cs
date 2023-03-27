@@ -20,8 +20,8 @@ namespace BadEcho.Game;
 /// Represents a circle defined by a set of floating-point numbers for its center point and radius.
 /// </summary>
 /// <remarks>
-/// The overly verbose mathematical documentation is present because...well, why not? But, it's here also for my own
-/// memory
+/// The overly verbose mathematical documentation is present because...well, why not? Also, it helps cement my own
+/// memory in regards to these matters.
 /// </remarks>
 /// <suppressions>
 /// ReSharper disable UnassignedReadonlyField
