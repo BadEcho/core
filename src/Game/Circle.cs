@@ -148,14 +148,20 @@ public readonly struct Circle : IEquatable<Circle>, IShape
     /// <param name="point">The point to check.</param>
     /// <returns>True if <c>point</c> is contained within this circle; otherwise, false.</returns>
     /// <remarks>
+    /// <para>
     /// A point is considered to be within this circle if the displacement vector from this circle's center to <c>point</c>
-    /// has a length that does not exceed this circle's radius.
+    /// has a length that is less than the circle's radius.
+    /// </para>
+    /// <para>
+    /// For consistency purposes, circles are also treated as endpoint exclusive, much like <see cref="RectangleF"/> values.
+    /// </para>
+    /// <seealso cref="RectangleF.Contains(PointF)"/>
     /// </remarks>
     public bool Contains(PointF point)
     {
         Vector2 distance = Center.Displace(point);
 
-        return distance.Length() <= Radius;
+        return distance.Length() < Radius;
     }
 
     /// <summary>
@@ -164,14 +170,20 @@ public readonly struct Circle : IEquatable<Circle>, IShape
     /// <param name="other">The circle to check.</param>
     /// <returns>True if <c>other</c> is wholly contained within this circle; otherwise, false.</returns>
     /// <remarks>
+    /// <para>
     /// A circle is considered to be within this circle if the displacement vector from this circle's center to the center of
     /// <c>other</c> has a length that doesn't exceed the sum of both circles' radii.
+    /// </para>
+    /// <para>
+    /// For consistency purposes, circles are also treated as endpoint exclusive, much like <see cref="RectangleF"/> values.
+    /// Two circles merely sharing common points and touching are not considered to be intersecting.
+    /// </para>
     /// </remarks>
     public bool Contains(Circle other)
     {
         Vector2 distance = Center.Displace(other.Center);
 
-        return distance.Length() <= Radius + other.Radius;
+        return distance.Length() < Radius + other.Radius;
     }
 
     /// <inheritdoc/>
@@ -183,11 +195,59 @@ public readonly struct Circle : IEquatable<Circle>, IShape
     /// </remarks>
     public PointF GetPointClosestTo(PointF point)
     {
-        Vector2 distance = Center.Displace(point);
+        Vector2 distance = point.Displace(Center);
 
         distance.Normalize();
 
         return Center + Radius * distance;
+    }
+
+    /// <inheritdoc />;
+    public Vector2 CalculatePenetration(RectangleF other)
+    {
+        PointF closestPoint = other.GetPointClosestTo(Center);
+        Vector2 distance = Center.Displace(closestPoint);
+        
+        if (distance == Vector2.Zero)
+        {   // If the circle's center is inside the rectangle, we need to find the axis where penetration is smallest
+            // and use that to calculate a displacement vector. We need to do this because we can't work with zero vectors.
+            distance = Center.Displace(other.Center);
+
+            if (distance == Vector2.Zero)
+            {   // This means the center of the rectangle is also the center of this circle. We simply displace along the y-axis
+                // at a magnitude of equal to both radii.
+                return Vector2.UnitY * (Radius + other.Height / 2);
+            }
+
+            var distanceX = new Vector2(distance.X, 0);
+            var distanceY = new Vector2(0, distance.Y);
+
+            float distanceXLength = distanceX.Length();
+            float distanceYLength = distanceY.Length();
+
+            return distanceXLength < distanceYLength
+                ? distanceX.ToUnit() * (Radius + other.Width / 2 - distanceXLength)
+                : distanceY.ToUnit() * (Radius + other.Height / 2 - distanceYLength);
+        }
+
+        return distance.ToUnit() * (Radius - distance.Length());
+    }
+
+    /// <inheritdoc />
+    public Vector2 CalculatePenetration(Circle other)
+    {
+        if (!Intersects(other))
+            return Vector2.Zero;
+
+        Vector2 distance = Center.Displace(other.Center);
+
+        if (distance == Vector2.Zero)
+            return Vector2.UnitY * (Radius + other.Radius);
+
+        float distanceLength = distance.Length();
+        float depth = Radius + other.Radius - distanceLength;
+
+        return distance.ToUnit() * depth;
     }
 
     /// <summary>

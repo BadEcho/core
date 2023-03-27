@@ -11,6 +11,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using Microsoft.Xna.Framework;
+
 namespace BadEcho.Game;
 
 /// <summary>
@@ -39,6 +41,30 @@ public interface IShape
     /// <param name="point">The point to check.</param>
     /// <returns>True if <c>point</c> is contained within this shape; otherwise, false.</returns>
     bool Contains(PointF point);
+
+    /// <summary>
+    /// Calculates the penetration vector formed by this shape overlapping with the specified rectangle.
+    /// </summary>
+    /// <param name="other">A rectangle overlapping with this shape.</param>
+    /// <returns>The penetrating vector formed by this shape overlapping with <c>other</c>.</returns>
+    /// <remarks>
+    /// The penetration vector describes the depth of penetration between the two shapes. Adding the vector
+    /// to the position of this shape will separate it from <c>other</c> such that they are only touching each
+    /// other rather than intersecting.
+    /// </remarks>
+    Vector2 CalculatePenetration(RectangleF other);
+
+    /// <summary>
+    /// Calculates the penetration vector formed by this shape overlapping with the specified circle.
+    /// </summary>
+    /// <param name="other">A circle overlapping with this shape.</param>
+    /// <returns>The penetrating vector formed by this shape overlapping with <c>other</c>.</returns>
+    /// <remarks>
+    /// The penetration vector describes the depth of penetration between the two shapes. Adding the vector
+    /// to the position of this shape will separate it from <c>other</c> such that they are only touching each
+    /// other rather than intersecting.
+    /// </remarks>
+    Vector2 CalculatePenetration(Circle other);
 
     /// <summary>
     /// Gets the coordinates for the location on this shape nearest to the specified point.

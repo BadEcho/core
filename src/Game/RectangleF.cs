@@ -84,15 +84,11 @@ public readonly struct RectangleF : IEquatable<RectangleF>, IShape
     public float Y
     { get; }
 
-    /// <summary>
-    /// Gets the width of this rectangle.
-    /// </summary>
+    /// <inheritdoc/>
     public float Width
     { get; }
 
-    /// <summary>
-    /// Gets the height of this rectangle.
-    /// </summary>
+    /// <inheritdoc/>
     public float Height
     { get; }
 
@@ -232,6 +228,29 @@ public readonly struct RectangleF : IEquatable<RectangleF>, IShape
     /// </remarks>
     public bool Contains(PointF point)
         => X <= point.X && point.X < Right && Y <= point.Y && point.Y < Bottom;
+
+    /// <inheritdoc />
+    public Vector2 CalculatePenetration(RectangleF other)
+    {
+        RectangleF intersection = Intersect(other);
+        
+        if (intersection.IsEmpty)
+            return Vector2.Zero;
+
+        if (Center == other.Center)
+            return new Vector2(0, Height / 2 + other.Height / 2);
+
+        // Finding the penetration vector for axis-aligned rectangles is simple. We just look at the
+        // intersecting rectangle and return a vector matching the direction and magnitude of its width
+        // or height, whichever is smaller (giving a more accurate and smoother correction).
+        return intersection.Width < intersection.Height
+            ? new Vector2(Center.X < other.Center.X ? -intersection.Width : intersection.Width, 0)
+            : new Vector2(0, Center.Y < other.Center.Y ? -intersection.Height : intersection.Height);
+    }
+
+    /// <inheritdoc />
+    public Vector2 CalculatePenetration(Circle other)
+        => -other.CalculatePenetration(this);
 
     /// <summary>
     /// Determines if the specified rectangle is wholly contained within this rectangle.

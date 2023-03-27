@@ -104,6 +104,24 @@ public class RectangleFTests
         Assert.False(_rect.Contains(outer));
     }
 
+    [Theory]
+    [InlineData(250, 50)]
+    [InlineData(-50, 50)]
+    [InlineData(100, 550)]
+    [InlineData(200, 500)]
+    [InlineData(100, 250)]
+    public void CalculatePenetration_OverlappingRectangle_CollisionRemoved(float otherX, float otherY)
+    {
+        var overlapping = new RectangleF(otherX, otherY, 100, 100);
+
+        Assert.True(_rect.Intersects(overlapping));
+
+        var penetration = _rect.CalculatePenetration(overlapping);
+        var adjustedRectangle = new RectangleF(_rect.Location + penetration, _rect.Size);
+
+        Assert.False(adjustedRectangle.Intersects(overlapping));
+    }
+
     private bool ShapeIntersects(IShape other)
     {
         IShape shape = _rect;

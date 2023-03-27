@@ -21,6 +21,22 @@ namespace BadEcho.Game;
 public static class VectorExtensions
 {
     /// <summary>
+    /// Converts this vector value into one with the same direction, but with a length of one.
+    /// </summary>
+    /// <param name="vector">The vector value to convert.</param>
+    /// <returns>A normalized value for <c>vector</c>, otherwise known as the unit vector.</returns>
+    /// <remarks>
+    /// This extension method exists because the built-in vector normalization method modifies the instance's
+    /// actual value. Using this method allows us to get the unit vector without modifying the value of <c>vector</c>.
+    /// </remarks>
+    public static Vector2 ToUnit(this Vector2 vector)
+    {
+        vector.Normalize();
+        
+        return vector;
+    }
+
+    /// <summary>
     /// Converts this vector value into a <see cref="MovementDirection"/> value specifying the vector's direction of movement.
     /// </summary>
     /// <param name="vector">The vector value to convert.</param>
