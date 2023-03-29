@@ -1,6 +1,7 @@
 {
   "schema": "http://json-schema.org/draft-04/schema",
   "title": "Bad Echo sprite sheet JSON schema",
+  "description": "Defines the layout of a sprite sheet's grid and provides context for individual frames.",
   "type": "object",
   "properties": {
     "texturePath": {
