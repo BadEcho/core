@@ -84,11 +84,15 @@ public readonly struct RectangleF : IEquatable<RectangleF>, IShape
     public float Y
     { get; }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets the width of this rectangle.
+    /// </summary>
     public float Width
     { get; }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets the height of this rectangle.
+    /// </summary>
     public float Height
     { get; }
 
@@ -126,9 +130,7 @@ public readonly struct RectangleF : IEquatable<RectangleF>, IShape
     public PointF Location
         => new(X, Y);
 
-    /// <summary>
-    /// Gets the size of this rectangle.
-    /// </summary>
+    /// <inheritdoc/>
     public SizeF Size
         => new(Width, Height);
 
@@ -269,10 +271,10 @@ public readonly struct RectangleF : IEquatable<RectangleF>, IShape
     {
         Require.NotNull(other, nameof(other));
 
-        return other.Center.X + other.Width / 2 <= Right
-            && other.Center.X - other.Width / 2 >= X
-            && other.Center.Y + other.Height / 2 <= Bottom
-            && other.Center.Y - other.Height / 2 >= Y;
+        return other.Center.X + other.Size.Width / 2 <= Right
+            && other.Center.X - other.Size.Width / 2 >= X
+            && other.Center.Y + other.Size.Height / 2 <= Bottom
+            && other.Center.Y - other.Size.Height / 2 >= Y;
     }
 
     /// <inheritdoc/>

@@ -17,7 +17,7 @@ using BadEcho.Extensions;
 namespace BadEcho.Game;
 
 /// <summary>
-/// Represents the size of a rectangular region by its width and height.
+/// Represents the size of a geometric region by its width and height.
 /// </summary>
 /// <suppressions>
 /// ReSharper disable UnassignedReadonlyField
@@ -66,7 +66,7 @@ public readonly struct Size : IEquatable<Size>
     /// <remarks>
     /// The .NET runtime employs an inconsistently followed convention as far as <c>IsEmpty</c>-like properties
     /// for value types are concerned. Within Bad Echo frameworks, a value is considered empty if equal to one
-    /// with all of its member data left uninitialized.
+    /// with all of its member data left uninitialized. 
     /// </remarks>
     public bool IsEmpty
         => Equals(Empty);
@@ -90,7 +90,7 @@ public readonly struct Size : IEquatable<Size>
     /// </summary>
     /// <param name="left">The first size to compare.</param>
     /// <param name="right">The second size to compare.</param>
-    /// <returns>True if <c>left</c> represents the same rectangular region size as <c>right</c>; otherwise, false.</returns>
+    /// <returns>True if <c>left</c> represents the same geometric region size as <c>right</c>; otherwise, false.</returns>
     public static bool operator ==(Size left, Size right)
         => left.Equals(right);
 
@@ -100,7 +100,7 @@ public readonly struct Size : IEquatable<Size>
     /// <param name="left">The first size to compare.</param>
     /// <param name="right">The second size to compare.</param>
     /// <returns>
-    /// True if <c>left</c> does not represent the same rectangular region size as <c>right</c>; otherwise, false.
+    /// True if <c>left</c> does not represent the same geometric region size as <c>right</c>; otherwise, false.
     /// </returns>
     public static bool operator !=(Size left, Size right)
         => !left.Equals(right);
@@ -203,7 +203,7 @@ public readonly struct Size : IEquatable<Size>
     /// <param name="first">The first size to compare.</param>
     /// <param name="second">The second size to compare.</param>
     /// <returns>
-    /// True if <c>first</c> represents the same rectangular region size as <c>second</c>; otherwise, false.
+    /// True if <c>first</c> represents the same geometric region size as <c>second</c>; otherwise, false.
     /// </returns>
     public static bool Equals(Size first, Size second)
         => first.Equals(second);

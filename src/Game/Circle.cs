@@ -79,17 +79,25 @@ public readonly struct Circle : IEquatable<Circle>, IShape
     public float Diameter
         => Radius * 2;
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets the width of the circle.
+    /// </summary>
     public float Width
         => Diameter;
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets the height of the circle.
+    /// </summary>
     public float Height
         => Diameter;
 
     /// <inheritdoc/>
     public PointF Center
         => new(X, Y);
+
+    /// <inheritdoc/>
+    public SizeF Size
+        => new(Diameter, Diameter);
 
     /// <summary>
     /// Gets a value indicating whether this circle is <see cref="Empty"/>.
