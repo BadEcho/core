@@ -48,24 +48,24 @@ public sealed class SpriteSheetProcessor : ContentProcessor<SpriteSheetContent, 
     private static void ValidateAsset(SpriteSheetAsset asset)
     {
         if (asset.Rows <= 0)
-            throw new InvalidOperationException(Strings.SheetHasNoRows);
+            throw new PipelineException(Strings.SheetHasNoRows);
 
         if (asset.Columns <= 0)
-            throw new InvalidOperationException(Strings.SheetHasNoColumns);
+            throw new PipelineException(Strings.SheetHasNoColumns);
 
         if (asset.RowUp > asset.Rows)
-            throw new InvalidOperationException(Strings.SheetUpwardRowOutOfRange);
+            throw new PipelineException(Strings.SheetUpwardRowOutOfRange);
 
         if (asset.RowDown > asset.Rows)
-            throw new InvalidOperationException(Strings.SheetDownwardRowOutOfRange);
+            throw new PipelineException(Strings.SheetDownwardRowOutOfRange);
 
         if (asset.RowLeft > asset.Rows)
-            throw new InvalidOperationException(Strings.SheetLeftwardRowOutOfRange);
+            throw new PipelineException(Strings.SheetLeftwardRowOutOfRange);
 
         if (asset.RowRight > asset.Rows)
-            throw new InvalidOperationException(Strings.SheetRightwardRowOutOfRange);
+            throw new PipelineException(Strings.SheetRightwardRowOutOfRange);
 
         if (asset.RowInitial > asset.Rows)
-            throw new InvalidOperationException(Strings.SheetInitialRowOutOfRange);
+            throw new PipelineException(Strings.SheetInitialRowOutOfRange);
     }
 }
