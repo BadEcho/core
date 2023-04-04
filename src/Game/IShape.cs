@@ -16,7 +16,7 @@ using Microsoft.Xna.Framework;
 namespace BadEcho.Game;
 
 /// <summary>
-/// Defines the external boundary of an entity.
+/// Defines the external spatial boundary of an entity.
 /// </summary>
 public interface IShape
 {
@@ -36,6 +36,18 @@ public interface IShape
     /// <param name="point">The point to check.</param>
     /// <returns>True if <c>point</c> is contained within this shape; otherwise, false.</returns>
     bool Contains(PointF point);
+
+    /// <summary>
+    /// Calculates the penetration vector formed by this shape overlapping with the specified shape.
+    /// </summary>
+    /// <param name="other">A shape overlapping with this shape.</param>
+    /// <returns>The penetrating vector formed by this shape overlapping with <c>other</c>.</returns>
+    /// <remarks>
+    /// The penetration vector describes the depth of penetration between the two shapes. Adding the vector
+    /// to the position of this shape will separate it from <c>other</c> such that they are only touching each
+    /// other rather than intersecting.
+    /// </remarks>
+    Vector2 CalculatePenetration(IShape other);
 
     /// <summary>
     /// Calculates the penetration vector formed by this shape overlapping with the specified rectangle.
@@ -69,14 +81,21 @@ public interface IShape
     PointF GetPointClosestTo(PointF point);
 
     /// <summary>
-    /// Determines if this shape intersects with the specified shape.
+    /// Creates a copy of this <see cref="IShape"/> instance centered at the specified coordinates.
+    /// </summary>
+    /// <param name="center">The coordinates of the center for the new shape.</param>
+    /// <returns>A shape with the same dimensions as this, centered at <paramref name="center"/>.</returns>
+    IShape CenterAt(PointF center);
+
+    /// <summary>
+    /// Determines if this shape intersects with the one specified.
     /// </summary>
     /// <param name="other">The other shape to check.</param>
-    /// <returns>True if <c>other</c> intersects with this; otherwise, false.</returns>
+    /// <returns>True if <c>other</c> intersects with this shape; otherwise, false.</returns>
     bool Intersects(IShape other)
     {
         Require.NotNull(other, nameof(other));
-
+        
         PointF closestPoint = other.GetPointClosestTo(Center);
 
         return Contains(closestPoint);

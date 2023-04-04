@@ -43,18 +43,18 @@ public readonly struct RectangleF : IEquatable<RectangleF>, IShape
     /// <summary>
     /// Initializes a new instance of the <see cref="RectangleF"/> class.
     /// </summary>
-    /// <param name="location">The coordinates of the upper-left corner of this rectangle.</param>
-    /// <param name="size">The size of this rectangle.</param>
-    public RectangleF(PointF location, SizeF size)
-        : this(location.X, location.Y, size.Width, size.Height)
+    /// <param name="rectangle">A rectangle whose coordinates and dimensions will be used.</param>
+    public RectangleF(Rectangle rectangle)
+        : this(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height)
     { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RectangleF"/> class.
     /// </summary>
-    /// <param name="rectangle">A rectangle whose coordinates and dimensions will be used.</param>
-    public RectangleF(Rectangle rectangle) 
-        : this(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height)
+    /// <param name="location">The coordinates of the upper-left corner of this rectangle.</param>
+    /// <param name="size">The size of this rectangle.</param>
+    public RectangleF(PointF location, SizeF size)
+        : this(location.X, location.Y, size.Width, size.Height)
     { }
 
     /// <summary>
@@ -153,6 +153,14 @@ public readonly struct RectangleF : IEquatable<RectangleF>, IShape
         => FromRectangle(rectangle);
 
     /// <summary>
+    /// Defines an explicit conversion of a <see cref="RectangleF"/> value to a <see cref="Rectangle"/> value.
+    /// </summary>
+    /// <param name="rectangle">The rectangle to convert.</param>
+    /// <remarks>There is a loss of precision when converting to <see cref="Rectangle"/>, so the conversion needs to be explicit.</remarks>
+    public static explicit operator Rectangle(RectangleF rectangle)
+        => ToRectangle(rectangle);
+
+    /// <summary>
     /// Determines whether two <see cref="RectangleF"/> values have the same location and size.
     /// </summary>
     /// <param name="left">The first rectangle to compare.</param>
@@ -181,6 +189,14 @@ public readonly struct RectangleF : IEquatable<RectangleF>, IShape
     /// <returns>A <see cref="RectangleF"/> value equivalent to <c>rectangle</c>.</returns>
     public static RectangleF FromRectangle(Rectangle rectangle)
         => new(rectangle);
+
+    /// <summary>
+    /// Converts the specified <see cref="RectangleF"/> value to an equivalent <see cref="Rectangle"/> value.
+    /// </summary>
+    /// <param name="rectangle">The rectangle to convert.</param>
+    /// <returns>A <see cref="Rectangle"/> value equivalent to <c>rectangle</c>.</returns>
+    public static Rectangle ToRectangle(RectangleF rectangle)
+        => new((int) rectangle.X, (int) rectangle.Y, (int) rectangle.Width, (int) rectangle.Height);
 
     /// <summary>
     /// Determines whether two <see cref="RectangleF"/> values have the same location and size. 
@@ -230,6 +246,15 @@ public readonly struct RectangleF : IEquatable<RectangleF>, IShape
     /// </remarks>
     public bool Contains(PointF point)
         => X <= point.X && point.X < Right && Y <= point.Y && point.Y < Bottom;
+
+    /// <inheritdoc />
+    public Vector2 CalculatePenetration(IShape other)
+    {
+        Require.NotNull(other, nameof(other));
+        // We don't know the shape's type, but we know ours. We'll calculate the penetration vector from the other shape's
+        // perspective, and then reverse the direction.
+        return -other.CalculatePenetration(this);
+    }
 
     /// <inheritdoc />
     public Vector2 CalculatePenetration(RectangleF other)
@@ -301,6 +326,10 @@ public readonly struct RectangleF : IEquatable<RectangleF>, IShape
         
         return new PointF(closestX, closestY);
     }
+
+    /// <inheritdoc />
+    public IShape CenterAt(PointF center)
+        => new RectangleF(center.X - Width / 2f, center.Y - Height / 2f, Width, Height);
 
     /// <summary>
     /// Creates a copy of this rectangle enlarged by the specified amount.

@@ -61,6 +61,33 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Shape Type: {0}, Width: {1}, Height: {2}.
+        /// </summary>
+        internal static string BoundedTextureCharacteristics {
+            get {
+                return ResourceManager.GetString("BoundedTextureCharacteristics", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The bounded texture uses a shape of type &apos;{0}&apos; which is not yet supported..
+        /// </summary>
+        internal static string BoundedTextureUnsupportedShapeType {
+            get {
+                return ResourceManager.GetString("BoundedTextureUnsupportedShapeType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All lines connecting two points on the edge of the circle through the center must have the same length; therefore, the circle must have the same width and height..
+        /// </summary>
+        internal static string CircleNeedsSameWidthHeight {
+            get {
+                return ResourceManager.GetString("CircleNeedsSameWidthHeight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Image layer contains no image data..
         /// </summary>
         internal static string ImageLayerNoImage {
@@ -120,6 +147,15 @@ namespace BadEcho.Game.Pipeline.Properties {
         internal static string NoReferenceInContentItem {
             get {
                 return ResourceManager.GetString("NoReferenceInContentItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Processing bounded texture: {0}.
+        /// </summary>
+        internal static string ProcessingBoundedTexture {
+            get {
+                return ResourceManager.GetString("ProcessingBoundedTexture", resourceCulture);
             }
         }
         

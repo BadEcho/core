@@ -21,10 +21,10 @@ namespace BadEcho.Game;
 public interface IPositionalEntity
 {
     /// <summary>
-    /// Gets the current drawing location of the entity.
+    /// Gets or sets the current drawing location of the entity.
     /// </summary>
     public Vector2 Position
-    { get; }
+    { get; set; }
 
     /// <summary>
     /// Gets the change to the entity's position that occurred from its last update.

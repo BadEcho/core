@@ -33,6 +33,14 @@ public readonly struct SizeF : IEquatable<SizeF>
     /// Initializes a new instance of the <see cref="SizeF"/> class.
     /// </summary>
     /// <param name="point">A point whose coordinates will be used as the width and height.</param>
+    public SizeF(Point point)
+        : this(point.X, point.Y)
+    { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SizeF"/> class.
+    /// </summary>
+    /// <param name="point">A point whose coordinates will be used as the width and height.</param>
     public SizeF(PointF point)
         : this(point.X, point.Y)
     { }
@@ -86,6 +94,13 @@ public readonly struct SizeF : IEquatable<SizeF>
     /// </remarks>
     public bool IsEmpty
         => Equals(Empty);
+
+    /// <summary>
+    /// Defines an implicit conversion of a <see cref="Point"/> value to a <see cref="SizeF"/> value.
+    /// </summary>
+    /// <param name="point">The point to convert.</param>
+    public static implicit operator SizeF(Point point)
+        => FromPoint(point);
 
     /// <summary>
     /// Defines an implicit conversion of a <see cref="PointF"/> value to a <see cref="SizeF"/> value.
@@ -188,6 +203,14 @@ public readonly struct SizeF : IEquatable<SizeF>
     /// <returns>The quotient of <c>left</c> divided by <c>right</c>.</returns>
     public static SizeF operator /(SizeF left, int right)
         => left.Divide(right);
+
+    /// <summary>
+    /// Converts the specified <see cref="Point"/> value to an equivalent <see cref="SizeF"/> value.
+    /// </summary>
+    /// <param name="point">The point to convert.</param>
+    /// <returns>A <see cref="SizeF"/> value equivalent to <c>point</c>.</returns>
+    public static SizeF FromPoint(Point point)
+        => new(point);
 
     /// <summary>
     /// Converts the specified <see cref="PointF"/> value to an equivalent <see cref="SizeF"/> value.

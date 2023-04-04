@@ -149,5 +149,11 @@ public class QuadtreeTests
         }
 
         public IShape Bounds { get; }
+
+        /// <inheritdoc />
+        public void ResolveCollision(IShape shape)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

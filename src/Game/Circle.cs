@@ -172,6 +172,15 @@ public readonly struct Circle : IEquatable<Circle>, IShape
         return distance.Length() < Radius;
     }
 
+    /// <inheritdoc />
+    public Vector2 CalculatePenetration(IShape other)
+    {
+        Require.NotNull(other, nameof(other));
+        // We don't know the shape's type, but we know ours. We'll calculate the penetration vector from the other shape's
+        // perspective, and then reverse the direction.
+        return -other.CalculatePenetration(this);
+    }
+
     /// <summary>
     /// Determines if the specified circle is wholly contained within this circle.
     /// </summary>
@@ -210,7 +219,11 @@ public readonly struct Circle : IEquatable<Circle>, IShape
         return Center + Radius * distance;
     }
 
-    /// <inheritdoc />;
+    /// <inheritdoc />
+    public IShape CenterAt(PointF center)
+        => new Circle(center, Radius);
+
+    /// <inheritdoc />
     public Vector2 CalculatePenetration(RectangleF other)
     {
         PointF closestPoint = other.GetPointClosestTo(Center);

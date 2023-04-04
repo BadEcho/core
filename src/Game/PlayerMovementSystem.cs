@@ -27,9 +27,9 @@ public sealed class PlayerMovementSystem : IMovementSystem
     private const Keys MOVEMENT_RIGHT = Keys.D;
     private const Keys MOVEMENT_DOWN = Keys.S;
     // TODO: Will be configurable based on entity.
-    private const float VELOCITY_INCREMENT = .5f;
-    private const float VELOCITY_MAX = 2.0f;
-    private const float VELOCITY_MIN = -2.0f;
+    private const float VELOCITY_INCREMENT = .3f;
+    private const float VELOCITY_MAX = 1.5f;
+    private const float VELOCITY_MIN = -1.5f;
 
     /// <inheritdoc/>
     public void UpdateMovement(IPositionalEntity entity)
@@ -43,6 +43,14 @@ public sealed class PlayerMovementSystem : IMovementSystem
         float yVelocity = CalculateUpdatedVelocity(yVelocityOriginal, MOVEMENT_DOWN, MOVEMENT_UP);
 
         entity.Velocity = new Vector2(xVelocity, yVelocity);
+    }
+
+    /// <inheritdoc />
+    public void ApplyPenetration(IPositionalEntity entity, Vector2 penetration)
+    {
+        Require.NotNull(entity, nameof(entity));
+
+        entity.Position += penetration;
     }
 
     private static float CalculateUpdatedVelocity(float currentVelocity, Keys positiveDirectionKey, Keys negativeDirectionKey)

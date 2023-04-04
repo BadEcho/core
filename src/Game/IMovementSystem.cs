@@ -11,6 +11,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using Microsoft.Xna.Framework;
+
 namespace BadEcho.Game;
 
 /// <summary>
@@ -23,4 +25,13 @@ public interface IMovementSystem
     /// </summary>
     /// <param name="entity">The positional entity whose movement is to be updated.</param>
     void UpdateMovement(IPositionalEntity entity);
+
+    /// <summary>
+    /// Applies a penetration vector to the provided entity.
+    /// </summary>
+    /// <param name="entity">
+    /// The positional entity that has formed a penetration vector by overlapping with another entity.
+    /// </param>
+    /// <param name="penetration">The penetration vector to apply.</param>
+    void ApplyPenetration(IPositionalEntity entity, Vector2 penetration);
 }

@@ -19,7 +19,17 @@ namespace BadEcho.Game;
 public interface ISpatialEntity
 {
     /// <summary>
-    /// Gets the shape of the entity.
+    /// Gets the spatial shape of the entity.
     /// </summary>
+    /// <remarks>
+    /// The spatial shape of the entity acts as its boundary that, if crossed by another entity, would
+    /// result in a collision between the two.
+    /// </remarks>
     IShape Bounds { get; }
+
+    /// <summary>
+    /// Resolves a collision that has occurred with the entity and the provided collision boundary.
+    /// </summary>
+    /// <param name="shape">The boundary of the colliding entity.</param>
+    void ResolveCollision(IShape shape);
 }

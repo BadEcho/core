@@ -12,7 +12,6 @@
 //-----------------------------------------------------------------------
 
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game;
 
@@ -22,8 +21,8 @@ namespace BadEcho.Game;
 /// </summary>
 public sealed class AnimatedSprite : Sprite
 {
-    private readonly IMovementSystem _movementSystem;
     private readonly SpriteSheet _sheet;
+
     // TODO: Replace with configurable initial value.
     private float _remainingFrameDistance = 15.0f;    
     private MovementDirection _direction;
@@ -33,23 +32,18 @@ public sealed class AnimatedSprite : Sprite
     /// Initializes a new instance of the <see cref="AnimatedSprite"/> class.
     /// </summary>
     /// <param name="sheet">The sprite sheet containing the various animation frames of the sprite.</param>
-    /// <param name="position">The drawing location of the animated sprite.</param>
-    /// <param name="movementSystem"></param>
-    public AnimatedSprite(SpriteSheet sheet, Vector2 position, IMovementSystem movementSystem)
-        : base(GetSheetTexture(sheet), position)
+    /// <param name="movementSystem">The movement system controlling the sprite's movement.</param>
+    public AnimatedSprite(SpriteSheet sheet, IMovementSystem movementSystem)
+        : base(GetSheetTexture(sheet), movementSystem)
     {
-        Require.NotNull(movementSystem, nameof(movementSystem));
-        
         _sheet = sheet;
-        _movementSystem = movementSystem;
     }
 
     /// <inheritdoc/>
     public override void Update(GameState state)
     {
         base.Update(state);
-
-        _movementSystem.UpdateMovement(this);
+        
         MovementDirection newDirection = Velocity.ToDirection();
         
         if (_direction != newDirection)
@@ -84,13 +78,13 @@ public sealed class AnimatedSprite : Sprite
         => _sheet.GetFrameRectangle(_direction, _currentFrame);
 
     /// <inheritdoc/>
-    protected override Rectangle GetTargetArea()
-        => new(Position.ToPoint(), _sheet.FrameSize);
+    protected override RectangleF GetTargetArea()
+        => new(Position, _sheet.FrameSize);
 
-    private static Texture2D GetSheetTexture(SpriteSheet sheet)
+    private static BoundedTexture GetSheetTexture(SpriteSheet sheet)
     {
         Require.NotNull(sheet, nameof(sheet));
 
-        return sheet.Texture;
+        return new BoundedTexture(new RectangleF(PointF.Empty, sheet.FrameSize), sheet.Texture);
     }
 }

@@ -11,8 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using Microsoft.Xna.Framework;
-using NuGet.Frameworks;
 using Xunit;
 
 namespace BadEcho.Game.Tests;

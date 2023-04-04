@@ -19,44 +19,51 @@ namespace BadEcho.Game;
 /// <summary>
 /// Provides a canvas for a texture able to be positioned on the screen as a 2D entity.
 /// </summary>
-public class Sprite : IPositionalEntity
+public class Sprite : IPositionalEntity, ISpatialEntity
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Sprite"/> class.
-    /// </summary>
-    /// <param name="texture">The texture of the sprite.</param>
-    /// <param name="position">The drawing location of the sprite.</param>
-    public Sprite(Texture2D texture, Vector2 position)
-        : this(texture, position, Vector2.Zero)
-    { }
+    private readonly IMovementSystem _movementSystem;
+    private readonly IShape _bounds;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Sprite"/> class.
-    /// </summary>/
-    /// <param name="texture">The texture of the sprite.</param>
-    /// <param name="initialPosition">The initial drawing location of the sprite.</param>
-    /// <param name="velocity">The rate of change of the sprite's position.</param>
-    public Sprite(Texture2D texture, Vector2 initialPosition, Vector2 velocity)
-        : this(texture, initialPosition, velocity, 0, 0)
+    /// </summary>
+    /// <param name="boundedTexture">The texture of the sprite, with spatial boundaries defined.</param>
+    public Sprite(BoundedTexture boundedTexture)
+        : this(boundedTexture, new NonMovementSystem())
     { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Sprite"/> class.
     /// </summary>
+    /// <param name="boundedTexture">The texture of the sprite, with spatial boundaries defined.</param>
+    /// <param name="movementSystem">The movement system controlling the sprite's movement.</param>
+    public Sprite(BoundedTexture boundedTexture, IMovementSystem movementSystem)
+        : this(GetBoundedTexture(boundedTexture), movementSystem)
+    {
+        _bounds = boundedTexture.Bounds;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Sprite"/> class.
+    /// </summary>
     /// <param name="texture">The texture of the sprite.</param>
-    /// <param name="initialPosition">The initial drawing location of the sprite.</param>
-    /// <param name="velocity">The rate of change of the sprite's position.</param>
-    /// <param name="initialAngle">The amount that the sprite is initially being rotated about its point of rotation.</param>
-    /// <param name="angularVelocity">The rate of change of the sprite's angle.</param>
-    public Sprite(Texture2D texture, Vector2 initialPosition, Vector2 velocity, float initialAngle, float angularVelocity)
+    public Sprite(Texture2D texture)
+        : this(texture, new NonMovementSystem())
+    { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Sprite"/> class.
+    /// </summary>
+    /// <param name="texture">The texture of the sprite.</param>
+    /// <param name="movementSystem">The movement system controlling the sprite's movement.</param>
+    public Sprite(Texture2D texture, IMovementSystem movementSystem)
     {
         Require.NotNull(texture, nameof(texture));
+        Require.NotNull(movementSystem, nameof(movementSystem));
         
         Texture = texture;
-        Position = initialPosition;
-        Velocity = velocity;
-        Angle = initialAngle;
-        AngularVelocity = angularVelocity;
+        _bounds = new RectangleF(PointF.Empty, Texture.Bounds.Size);
+        _movementSystem = movementSystem;
     }
 
     /// <summary>
@@ -67,7 +74,7 @@ public class Sprite : IPositionalEntity
 
     /// <inheritdoc/>
     public Vector2 Position
-    { get; private set; }
+    { get; set; }
 
     /// <inheritdoc/>
     public Vector2 LastMovement
@@ -79,11 +86,23 @@ public class Sprite : IPositionalEntity
 
     /// <inheritdoc/>
     public float Angle
-    { get; private set; }
+    { get; set; }
 
     /// <inheritdoc/>
     public float AngularVelocity
     { get; set; }
+
+    /// <inheritdoc />
+    public IShape Bounds 
+        => _bounds.CenterAt(GetTargetArea().Center);
+
+    /// <inheritdoc />
+    public void ResolveCollision(IShape shape)
+    {
+        Vector2 penetration = Bounds.CalculatePenetration(shape);
+
+        _movementSystem.ApplyPenetration(this, penetration);
+    }
 
     /// <summary>
     /// Advances the movement of the sprite by one tick.
@@ -92,7 +111,9 @@ public class Sprite : IPositionalEntity
     public virtual void Update(GameState state)
     {
         Require.NotNull(state, nameof(state));
-        
+
+        _movementSystem.UpdateMovement(this);
+
         float timeScale 
             = (float) (state.Time.ElapsedGameTime.TotalMilliseconds / state.TargetElapsedTime.TotalMilliseconds);
         
@@ -112,7 +133,7 @@ public class Sprite : IPositionalEntity
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
         
-        spriteBatch.Draw(Texture, GetTargetArea(), GetSourceArea(), Color.White);
+        spriteBatch.Draw(Texture, (Rectangle) GetTargetArea(), GetSourceArea(), Color.White);
     }
 
     /// <summary>
@@ -149,6 +170,13 @@ public class Sprite : IPositionalEntity
     /// Gets the bounding rectangle of the region of the screen that the sprite's texture will be drawn on.
     /// </summary>
     /// <returns>The bounding rectangle of the region of the screen that <see cref="Texture"/> will be drawn on.</returns>
-    protected virtual Rectangle GetTargetArea()
-        => new((int) Position.X, (int) Position.Y, Texture.Width, Texture.Height);
+    protected virtual RectangleF GetTargetArea()
+        => new(Position.X, Position.Y, Texture.Width, Texture.Height);
+
+    private static Texture2D GetBoundedTexture(BoundedTexture boundedTexture)
+    {
+        Require.NotNull(boundedTexture, nameof(boundedTexture));
+
+        return boundedTexture.Texture;
+    }
 }

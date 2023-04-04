@@ -195,4 +195,16 @@
 	<data name="ProcessingTileMap" xml:space="preserve">
 		<value>Processing tile map: {0}</value>
 	</data>
+	<data name="ProcessingBoundedTexture" xml:space="preserve">
+		<value>Processing bounded texture: {0}</value>
+	</data>
+	<data name="BoundedTextureCharacteristics" xml:space="preserve">
+		<value>Shape Type: {0}, Width: {1}, Height: {2}</value>
+	</data>
+	<data name="BoundedTextureUnsupportedShapeType" xml:space="preserve">
+		<value>The bounded texture uses a shape of type '{0}' which is not yet supported.</value>
+	</data>
+  <data name="CircleNeedsSameWidthHeight" xml:space="preserve">
+	  <value>All lines connecting two points on the edge of the circle through the center must have the same length; therefore, the circle must have the same width and height.</value>
+  </data>
 </root>

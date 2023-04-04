@@ -119,7 +119,12 @@ public sealed class ParticleSystem
         float angularVelocity = 0.1f * (_random.NextSingle() * 2 - 1);
 
         var sprite
-            = new Sprite(texture, EmitterLocation, velocity, 0, angularVelocity);
+            = new Sprite(texture)
+              {
+                  Position = EmitterLocation,
+                  Velocity = velocity,
+                  AngularVelocity = angularVelocity
+              };
 
         var color = new Color(_random.NextSingle(),
                               _random.NextSingle(),
