@@ -16,6 +16,10 @@ namespace BadEcho.Game.Tiles;
 /// <summary>
 /// Specifies the type of layer and the kind of content it contains.
 /// </summary>
+/// <remarks>
+/// This is used solely for the purpose of expressing type identity during pipeline serialization, as only simple values may
+/// be transmitted.
+/// </remarks>
 public enum LayerType
 {
     /// <summary>
