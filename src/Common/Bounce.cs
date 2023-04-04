@@ -58,7 +58,7 @@ public class Bounce
     /// </summary>
     /// <typeparam name="T">The type of result accepted and returned by the bouncing method.</typeparam>
     /// <param name="result">The result to pass to the final method in the call chain.</param>
-    /// <returns>THe <see cref="Bounce{T}"/> for the final method in the call chain.</returns>
+    /// <returns>The <see cref="Bounce{T}"/> for the final method in the call chain.</returns>
     public static Bounce<T> Finish<T>(T result)
         => new(result) {IsFinished = true};
 }
