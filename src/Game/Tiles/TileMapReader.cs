@@ -107,7 +107,8 @@ public sealed class TileMapReader : ContentTypeReader<TileMap>
                                                   isVisible,
                                                   opacity,
                                                   new Vector2(offsetX, offsetY),
-                                                  new Point(width, height)) { CustomProperties = customProperties };
+                                                  new Size(width, height),
+                                                  map.TileSize) { CustomProperties = customProperties };
                     while (tilesToRead > 0)
                     {
                         var idWithFlags = input.ReadUInt32();

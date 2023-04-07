@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.9" tiledversion="1.9.0" orientation="orthogonal" renderorder="right-down" width="7" height="6" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="1">
+ <tileset firstgid="1" source="Grasslands.tsx"/>
+ <tileset firstgid="11" source="Black.tsx"/>
+ <layer id="1" name="Tiles" width="7" height="6">
+  <data encoding="base64" compression="zlib">
+   eJxNjUkKADAIA6V20/8/uBGm4GEgmhjTzFK4OGIzF0OEWHgTneyduXIXP1qHoy8Eme/9nwcvWsdqN8UDX1ABHQ==
+  </data>
+ </layer>
+ <layer id="3" name="Collidables" class="BadEchoLayer" width="7" height="6">
+  <properties>
+   <property name="Collidable" type="bool" value="true"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYMAPuHGwCQF0taToxaYHABKIADg=
+  </data>
+ </layer>
+</map>

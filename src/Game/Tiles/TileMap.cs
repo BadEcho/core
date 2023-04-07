@@ -193,6 +193,24 @@ public sealed class TileMap : Extensible
         }
     }
 
+    /// <summary>
+    /// Converts this tile map into a sequence of space-occupying entities for every tile belonging to a tile layer
+    /// marked as collidable.
+    /// </summary>
+    /// <returns>
+    /// A sequence of <see cref="ISpatialEntity"/> instances for every tile in this map that belongs to a tile layer with
+    /// the <see cref="KnownProperties.Collidable"/> custom property set to <c>true</c>.
+    /// </returns>
+    public IEnumerable<ISpatialEntity> ToSpatialMap()
+    {
+        IEnumerable<TileLayer> collidableLayers
+            = Layers.OfType<TileLayer>()
+                    .Where(l => l.CustomProperties
+                                 .TryGetValue(KnownProperties.Collidable, out string? collidable) && bool.Parse(collidable));
+
+        return collidableLayers.SelectMany(l => l.ToSpatialLayer());
+    }
+
     private void ClearModels()
     {
         IEnumerable<IPrimitiveModel> models = _layerModelMap.SelectMany(lm => lm.Value);

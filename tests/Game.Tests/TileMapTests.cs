@@ -154,4 +154,17 @@ public class TileMapTests : IClassFixture<ContentManagerFixture>
         Assert.True(tileLayer.CustomProperties.ContainsKey("Something"));
         Assert.Equal("Hello", tileLayer.CustomProperties["Something"]);
     }
+
+    [Fact]
+    public void Load_GrassAndCollidable_SpatialBoundsValid()
+    {
+        TileMap map = _content.Load<TileMap>("Tiles\\GrassAndCollidable");
+
+        Assert.Collection(map.ToSpatialMap(),
+                          e => Assert.Equal(new PointF(24, 24), e.Bounds.Center),
+                          e => Assert.Equal(new PointF(72, 24), e.Bounds.Center),
+                          e => Assert.Equal(new PointF(24, 56), e.Bounds.Center),
+                          e => Assert.Equal(new PointF(88, 56), e.Bounds.Center),
+                          e => Assert.Equal(new PointF(72, 88), e.Bounds.Center));
+    }
 }

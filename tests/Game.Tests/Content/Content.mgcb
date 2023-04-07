@@ -25,6 +25,11 @@ $endif
 /processor:TileMapProcessor
 /build:Tiles/GrassFourTiles.tmx
 
+#begin Tiles/GrassAndCollidable.tmx
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/build:Tiles/GrassAndCollidable.tmx
+
 #begin Tiles/Grasslands.tsx
 /importer:TileSetImporter
 /processor:TileSetProcessor
