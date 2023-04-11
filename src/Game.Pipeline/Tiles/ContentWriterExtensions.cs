@@ -30,13 +30,25 @@ internal static class ContentWriterExtensions
         Require.NotNull(writer, nameof(writer));
         Require.NotNull(asset, nameof(asset));
 
-        // Need to record the number of custom properties in order to properly direct the reader.
-        writer.Write(asset.CustomProperties.Count);
+        WriteProperties(writer, asset.CustomStringProperties, (w, v) => w.Write(v));
+        WriteProperties(writer, asset.CustomBoolProperties, (w, v) => w.Write(v));
+        WriteProperties(writer, asset.CustomColorProperties, (w, v) => w.Write(v));
+        WriteProperties(writer, asset.CustomIntProperties, (w, v) => w.Write(v));
+        WriteProperties(writer, asset.CustomFloatProperties, (w, v) => w.Write(v));
+        WriteProperties(writer, asset.CustomFileProperties, (w, v) => w.Write(v));
+    }
 
-        foreach ((string name, string value) in asset.CustomProperties)
+    private static void WriteProperties<T>(ContentWriter writer,
+                                           IReadOnlyDictionary<string, T> customProperties,
+                                           Action<ContentWriter, T> valueWriter)
+    {
+        // Need to record the number of custom properties in order to properly direct the reader.
+        writer.Write(customProperties.Count);
+
+        foreach ((string name, T value) in customProperties)
         {
             writer.Write(name);
-            writer.Write(value);
+            valueWriter(writer, value);
         }
     }
 }

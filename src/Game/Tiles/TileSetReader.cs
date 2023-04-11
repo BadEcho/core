@@ -39,11 +39,14 @@ public sealed class TileSetReader : ContentTypeReader<TileSet>
         var margin = input.ReadInt32();
         var customProperties = input.ReadProperties();
 
-        return new TileSet(texture, new Size(tileWidth, tileHeight), tileCount, columns)
+        return new TileSet(texture,
+                           new Size(tileWidth, tileHeight),
+                           tileCount,
+                           columns,
+                           customProperties)
                {
                    Spacing = spacing,
-                   Margin = margin,
-                   CustomProperties = customProperties
+                   Margin = margin
                };
     }
 

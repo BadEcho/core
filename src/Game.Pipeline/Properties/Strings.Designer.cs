@@ -88,6 +88,42 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hex code string was not recognized as a valid Color..
+        /// </summary>
+        internal static string ColorBadHexString {
+            get {
+                return ResourceManager.GetString("ColorBadHexString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The custom property type &apos;{0}&apos; parser returned a null value despite a successful parse of the custom property &apos;{1}&apos; with value &apos;{2}&apos;..
+        /// </summary>
+        internal static string ExtensibleParsedNullPropertyValue {
+            get {
+                return ResourceManager.GetString("ExtensibleParsedNullPropertyValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The custom property &apos;{0}&apos; of type &apos;{1}&apos; with value &apos;{2}&apos; could not be parsed..
+        /// </summary>
+        internal static string ExtensibleUnparseablePropertyValue {
+            get {
+                return ResourceManager.GetString("ExtensibleUnparseablePropertyValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The asset contains a custom property of type &apos;{0}&apos; which is not supported..
+        /// </summary>
+        internal static string ExtensibleUnsupportedType {
+            get {
+                return ResourceManager.GetString("ExtensibleUnsupportedType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Image layer contains no image data..
         /// </summary>
         internal static string ImageLayerNoImage {
@@ -304,7 +340,7 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The map contains a layer of type &apos;{0}&apos; which is not yet supported..
+        ///   Looks up a localized string similar to The map contains a layer of type &apos;{0}&apos; which is not supported..
         /// </summary>
         internal static string TileMapUnsupportedLayerType {
             get {

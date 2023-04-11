@@ -55,7 +55,7 @@ public class TileSetTests : IClassFixture<ContentManagerFixture>
     {
         TileSet tileSet = _content.Load<TileSet>("Tiles\\GrasslandsCustomProperties");
 
-        Assert.True(tileSet.CustomProperties.ContainsKey("Something"));
-        Assert.Equal("In The Way", tileSet.CustomProperties["Something"]);
+        Assert.True(tileSet.CustomProperties.Strings.ContainsKey("Something"));
+        Assert.Equal("In The Way", tileSet.CustomProperties.Strings["Something"]);
     }
 }

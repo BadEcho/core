@@ -25,21 +25,12 @@ public sealed class ImageLayer : Layer
     /// Initializes a new instance of the <see cref="ImageLayer"/> class.  
     /// </summary>
     /// <param name="name">The name of the layer.</param>
-    /// <param name="isVisible">Value indicating if the layer data should actually be rendered.</param>
-    /// <param name="opacity">The opacity of the layer and all of its contents.</param>
-    /// <param name="offset">The offset, in terms of the layer's position, from the tile map's origin.</param>
     /// <param name="image">Gets the texture for the layer's image.</param>
-    /// <param name="position">The drawing location of the image within the offset bounds of the layer.</param>
-    public ImageLayer(string name,
-                      bool isVisible,
-                      float opacity,
-                      Vector2 offset,
-                      Texture2D image,
-                      Vector2 position)
-        : base(name, isVisible, opacity, offset)
+    /// <param name="customProperties">The image layer's custom properties.</param>
+    public ImageLayer(string name, Texture2D image, CustomProperties customProperties)
+        : base(name, customProperties)
     {
         Image = image;
-        Position = position;
     }
 
     /// <summary>
@@ -52,5 +43,5 @@ public sealed class ImageLayer : Layer
     /// Gets the drawing location of the image within the offset bounds of this layer.
     /// </summary>
     public Vector2 Position
-    { get; }
+    { get; init; }
 }

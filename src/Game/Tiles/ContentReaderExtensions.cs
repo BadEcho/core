@@ -24,18 +24,38 @@ internal static class ContentReaderExtensions
     /// Reads an extensible content's custom properties from the content pipeline.
     /// </summary>
     /// <param name="reader">The current game content reader.</param>
-    /// <returns>A mapping of the content's custom property names to their values, read from <c>reader</c>.</returns>
-    public static IReadOnlyDictionary<string, string> ReadProperties(this ContentReader reader)
+    /// <returns>The content's custom properties, read from <c>reader</c>.</returns>
+    public static CustomProperties ReadProperties(this ContentReader reader)
     {
         Require.NotNull(reader, nameof(reader));
 
-        var customProperties = new Dictionary<string, string>();
+        var stringProperties = ReadProperties(reader, r => r.ReadString());
+        var booleanProperties = ReadProperties(reader, r => r.ReadBoolean());
+        var colorProperties = ReadProperties(reader, r => r.ReadColor());
+        var integerProperties = ReadProperties(reader, r => r.ReadInt32());
+        var floatProperties = ReadProperties(reader, r => r.ReadSingle());
+        var fileProperties = ReadProperties(reader, r => new FileInfo(r.ReadString()));
+        
+        return new CustomProperties
+               {
+                   Booleans = booleanProperties,
+                   Colors = colorProperties,
+                   Files = fileProperties,
+                   Floats = floatProperties,
+                   Integers = integerProperties,
+                   Strings = stringProperties
+               };
+    }
+
+    private static IReadOnlyDictionary<string, T> ReadProperties<T>(ContentReader reader, Func<ContentReader, T> valueReader)
+    {
+        var customProperties = new Dictionary<string, T>();
         var customPropertiesToRead = reader.ReadInt32();
 
         while (customPropertiesToRead > 0)
         {
             var propertyName = reader.ReadString();
-            var propertyValue = reader.ReadString();
+            var propertyValue = valueReader(reader);
 
             customProperties.Add(propertyName, propertyValue);
             customPropertiesToRead--;

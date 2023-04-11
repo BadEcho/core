@@ -35,7 +35,7 @@ public sealed class ImageAsset
 
         ColorKey = string.IsNullOrEmpty(colorHex)
             ? Color.Transparent
-            : colorHex.ToColor();
+            : Coloring.Parse(colorHex);
 
         Width = (int?) root.Attribute(XmlConstants.WidthAttribute) ?? default;
         Height = (int?) root.Attribute(XmlConstants.HeightAttribute) ?? default;

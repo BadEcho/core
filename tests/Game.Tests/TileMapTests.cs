@@ -63,7 +63,7 @@ public class TileMapTests : IClassFixture<ContentManagerFixture>
     {
         TileMap map = _content.Load<TileMap>($"Tiles\\{mapName}");
 
-        Assert.Equal(backgroundColor.ToColor(), map.BackgroundColor);
+        Assert.Equal(Coloring.Parse(backgroundColor), map.BackgroundColor);
     }
 
     [Theory]
@@ -133,15 +133,15 @@ public class TileMapTests : IClassFixture<ContentManagerFixture>
     {
         TileMap map = _content.Load<TileMap>("Tiles\\GrassCustomProperties");
 
-        Assert.True(map.CustomProperties.ContainsKey("SomeBool"));
-        Assert.True(map.CustomProperties.ContainsKey("SomeFloat"));
-        Assert.True(map.CustomProperties.ContainsKey("SomeInt"));
-        Assert.True(map.CustomProperties.ContainsKey("Something"));
+        Assert.True(map.CustomProperties.Booleans.ContainsKey("SomeBool"));
+        Assert.True(map.CustomProperties.Floats.ContainsKey("SomeFloat"));
+        Assert.True(map.CustomProperties.Integers.ContainsKey("SomeInt"));
+        Assert.True(map.CustomProperties.Strings.ContainsKey("Something"));
 
-        Assert.True(Convert.ToBoolean(map.CustomProperties["SomeBool"]));
-        Assert.Equal(5.44f, Convert.ToSingle(map.CustomProperties["SomeFloat"]));
-        Assert.Equal(1, Convert.ToInt32(map.CustomProperties["SomeInt"]));
-        Assert.Equal("In The Way", map.CustomProperties["Something"]);
+        Assert.True(map.CustomProperties.Booleans["SomeBool"]);
+        Assert.Equal(5.44f, map.CustomProperties.Floats["SomeFloat"]);
+        Assert.Equal(1, map.CustomProperties.Integers["SomeInt"]);
+        Assert.Equal("In The Way", map.CustomProperties.Strings["Something"]);
     }
 
     [Fact]
@@ -151,8 +151,8 @@ public class TileMapTests : IClassFixture<ContentManagerFixture>
 
         var tileLayer = map.Layers.OfType<TileLayer>().First();
 
-        Assert.True(tileLayer.CustomProperties.ContainsKey("Something"));
-        Assert.Equal("Hello", tileLayer.CustomProperties["Something"]);
+        Assert.True(tileLayer.CustomProperties.Strings.ContainsKey("Something"));
+        Assert.Equal("Hello", tileLayer.CustomProperties.Strings["Something"]);
     }
 
     [Fact]

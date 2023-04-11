@@ -26,13 +26,23 @@ public sealed class TileSet : Extensible
     /// <summary>
     /// Initializes a new instance of the <see cref="TileSet"/> class.
     /// </summary>
-    public TileSet(Texture2D texture, Size tileSize, int tileCount, int columns)
+    /// <param name="texture">The texture containing the individual tiles that compose this tile set.</param>
+    /// <param name="tileSize">The size of an individual tile in this tile set.</param>
+    /// <param name="tileCount">The number of tiles in this tile set.</param>
+    /// <param name="columns">The number of columns of tiles in this tile set.</param>
+    /// <param name="customProperties">The tile set's custom properties.</param>
+    public TileSet(Texture2D texture,
+                   Size tileSize,
+                   int tileCount,
+                   int columns,
+                   CustomProperties customProperties)
+        : base(customProperties)
     {
         Texture = texture;
         TileSize = tileSize;
         TileCount = tileCount;
         _columns = columns;
-    }
+    }   
 
     /// <summary>
     ///  Gets the texture containing the individual tiles that compose this tile set.

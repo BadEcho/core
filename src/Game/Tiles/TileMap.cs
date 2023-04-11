@@ -42,22 +42,19 @@ public sealed class TileMap : Extensible
     /// <param name="name">The name of the tile map.</param>
     /// <param name="size">The tile map's size, measured in tiles.</param>
     /// <param name="tileSize">The size of the tiles used in the tile map.</param>
-    /// <param name="orientation">The orientation of the tile map.</param>
-    /// <param name="renderOrder">The order in which tiles on the map are rendered.</param>
-    public TileMap(GraphicsDevice device, 
+    /// <param name="customProperties">The tile map's custom properties.</param>
+    public TileMap(GraphicsDevice device,
                    string name,
                    Size size,
                    Size tileSize,
-                   MapOrientation orientation,
-                   TileRenderOrder renderOrder)
+                   CustomProperties customProperties)
+        : base(customProperties)
     {
         _device = device;
 
         Name = name;
         Size = size;
         TileSize = tileSize;
-        Orientation = orientation;
-        RenderOrder = renderOrder;
     }
 
     /// <summary>
@@ -94,13 +91,13 @@ public sealed class TileMap : Extensible
     /// Gets the orientation of this tile map.
     /// </summary>
     public MapOrientation Orientation
-    { get; }
+    { get; init; }
 
     /// <summary>
     /// Gets the order in which tiles on this map are rendered.
     /// </summary>
     public TileRenderOrder RenderOrder
-    { get; }
+    { get; init; }
 
     /// <summary>
     /// Gets the background color of the tile map.
@@ -202,14 +199,10 @@ public sealed class TileMap : Extensible
     /// the <see cref="KnownProperties.Collidable"/> custom property set to <c>true</c>.
     /// </returns>
     public IEnumerable<ISpatialEntity> ToSpatialMap()
-    {
-        IEnumerable<TileLayer> collidableLayers
-            = Layers.OfType<TileLayer>()
-                    .Where(l => l.CustomProperties
-                                 .TryGetValue(KnownProperties.Collidable, out string? collidable) && bool.Parse(collidable));
-
-        return collidableLayers.SelectMany(l => l.ToSpatialLayer());
-    }
+        => Layers.OfType<TileLayer>()
+                 .Where(l => l.CustomProperties.Booleans
+                              .TryGetValue(KnownProperties.Collidable, out bool collidable) && collidable)
+                 .SelectMany(l => l.ToSpatialLayer());
 
     private void ClearModels()
     {

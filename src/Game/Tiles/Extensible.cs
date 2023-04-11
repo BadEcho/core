@@ -19,8 +19,19 @@ namespace BadEcho.Game.Tiles;
 public abstract class Extensible
 {
     /// <summary>
-    /// Gets a mapping between the names of the content's custom properties and their values.
+    /// Initializes a new instance of the <see cref="Extensible"/> class.
     /// </summary>
-    public IReadOnlyDictionary<string,string> CustomProperties
-    { get; init; } = new Dictionary<string,string>();
+    /// <param name="customProperties">The content's custom properties.</param>
+    protected Extensible(CustomProperties customProperties)
+    {
+        Require.NotNull(customProperties, nameof(customProperties));
+
+        CustomProperties = customProperties;
+    }
+
+    /// <summary>
+    /// Gets the content's custom properties.
+    /// </summary>
+    public CustomProperties CustomProperties
+    { get; }
 }

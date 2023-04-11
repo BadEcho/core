@@ -29,21 +29,17 @@ public sealed class TileLayer : Layer
     /// Initializes a new instance of the <see cref="TileLayer"/> class.
     /// </summary>
     /// <param name="name">The name of the layer.</param>
-    /// <param name="isVisible">Value indicating if the layer data should actually be rendered.</param>
-    /// <param name="opacity">The opacity of the layer and all of its contents.</param>
-    /// <param name="offset">The offset, in terms of the layer's position, from the tile map's origin.</param>
     /// <param name="size">
     /// The tile layer's size, measured in tiles (i.e., a 4x4 size indicates four tiles wide by four tiles high, with a total
     /// area of 16 tiles).
     /// </param>
     /// <param name="tileSize">The size of the tiles used in this layer.</param>
+    /// <param name="customProperties">The tile layer's custom properties.</param>
     public TileLayer(string name,
-                     bool isVisible,
-                     float opacity,
-                     Vector2 offset,
                      Size size,
-                     Size tileSize)
-        : base(name, isVisible, opacity, offset)
+                     Size tileSize,
+                     CustomProperties customProperties)
+        : base(name, customProperties)
     {
         _size = size;
         _tileSize = tileSize;

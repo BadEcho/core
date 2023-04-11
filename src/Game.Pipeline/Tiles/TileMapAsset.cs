@@ -53,7 +53,7 @@ public sealed class TileMapAsset : ExtensibleAsset
 
         BackgroundColor = string.IsNullOrEmpty(backgroundColorHex)
             ? Color.Transparent
-            : backgroundColorHex.ToColor();
+            : Coloring.Parse(backgroundColorHex);
 
         Orientation = ReadOrientation(root);
         RenderOrder = ReadRenderOrder(root);
