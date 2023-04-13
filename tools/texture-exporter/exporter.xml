@@ -1,0 +1,26 @@
+<exporter version="1.0">
+	<name>badecho</name>
+	<displayName>Bad Echo</displayName>
+	<description>JSON format for Bad Echo</description>
+	<version>1.0</version>
+
+    <files>
+        <file>
+            <name>json</name>
+            <displayName>JSON file</displayName>
+            <fileExtension>json</fileExtension>
+            <description>JSON file for Bad Echo</description>
+            <template>badecho.json</template>
+            <hasSeparateMultiPackFiles>true</hasSeparateMultiPackFiles>
+        </file>
+    </files>
+
+    <supportsTrimming>true</supportsTrimming>
+    <supportsRotation>false</supportsRotation>
+    <rotationDirection>cw</rotationDirection>
+    <supportsNPOT>true</supportsNPOT>>
+    <supportsTextureSubPath>no</supportsTextureSubPath>
+    <supportsPivotPoint>false</supportsPivotPoint>
+    <supportsAnimations>false</supportsAnimations>
+    <supportsScale9>true</supportsScale9>
+</exporter>
