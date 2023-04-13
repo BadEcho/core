@@ -45,12 +45,13 @@ var exportRegions = function(sprites)
                  y: sprite.frameRect.y, 
                  width: sprite.frameRect.width, 
                  height: sprite.frameRect.height
-                 }
+                 },
+            isNineSliced: sprite.scale9Enabled
         };
         
         if (sprite.scale9Enabled) 
         {
-            exportNode.scaleNine = {
+            exportNode.nineSlice = {
                 x: sprite.scale9Borders.x,
                 y: sprite.scale9Borders.y,
                 width: sprite.scale9Borders.width,
