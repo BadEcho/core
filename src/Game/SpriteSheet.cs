@@ -29,10 +29,8 @@ namespace BadEcho.Game;
 /// not necessarily corresponding to a single entity (such as different elements on a HUD interface).
 /// </para>
 /// <para>
-/// Because a sprite sheet contains uniformly sized images arranged as a grid, an image can be loaded simply specifying a row and column
-/// indices, allowing for the simple advancement of frames its row and column
-/// index, moving between frames is as simple as advancing
-/// the current frame's position by 
+/// Because a sprite sheet contains uniformly sized images arranged as a grid, an image can be loaded simply by specifying a row
+/// and column, allowing for simple animation frame advancement.
 /// </para>
 /// </remarks>
 public sealed class SpriteSheet
