@@ -8,33 +8,33 @@
       "type": "string",
       "description": "The path to the file containing the texture of the individual animation frames that compose the sprite sheet."
     },
-    "rows": {
+    "rowCount": {
       "type": "integer",
       "description": "The number of rows of frames in the sprite sheet."
     },
-    "columns": {
+    "columnCount": {
       "type": "integer",
       "description": "The number of columns of frames in the sprite sheet."
     },
     "rowUp": {
       "type": "integer",
-      "description": "The row for upward movement."
+      "description": "The index of the row for upward movement."
     },
     "rowDown": {
       "type": "integer",
-      "description": "The row for downward movement."
+      "description": "The index of the row for downward movement."
     },
     "rowLeft": {
       "type": "integer",
-      "description": "The row for leftward movement."
+      "description": "The index of the row for leftward movement."
     },
     "rowRight": {
       "type": "integer",
-      "description": "The row for rightward movement."
+      "description": "The index of the row for rightward movement."
     },
     "rowInitial": {
       "type": "integer",
-      "description": "The row containing initially drawn frames, prior to any movement occurring."
+      "description": "The index of the row containing initially drawn frames, prior to any movement occurring."
     }
   },
   "required": ["texturePath", "rows", "columns", "rowUp", "rowDown", "rowLeft", "rowRight"],

@@ -32,18 +32,18 @@ public sealed class Tile
     /// Initializes a new instance of the <see cref="Tile"/> class.
     /// </summary>
     /// <param name="idWithFlags">The tile's global identifier along with its flip flags.</param>
-    /// <param name="columnIndex">The index of the tile's column within the grid of tile data that contains it.</param>
-    /// <param name="rowIndex">The index of the tile's row within the grid of tile data that contains it.</param>
+    /// <param name="column">The index of the tile's column within the grid of tile data that contains it.</param>
+    /// <param name="row">The index of the tile's row within the grid of tile data that contains it.</param>
     /// <remarks>
     /// The TMX map format encodes tile identifiers as unsigned integers with the highest four bits of the value representing
     /// the tile's "flip flags". This type stores these flags for future reference, and then clears the highest four bits, storing
     /// the resulting value as the actual identifier for the tile.
     /// </remarks>
-    public Tile(uint idWithFlags, int columnIndex, int rowIndex)
+    public Tile(uint idWithFlags, int column, int row)
     {
         IdWithFlags = idWithFlags;
-        ColumnIndex = columnIndex;
-        RowIndex = rowIndex;
+        Column = column;
+        Row = row;
     }
 
     /// <summary>
@@ -67,13 +67,13 @@ public sealed class Tile
     /// <summary>
     /// Gets the index of this tile's column within the grid of tile data that contains it.
     /// </summary>
-    public int ColumnIndex
+    public int Column
     { get; }
 
     /// <summary>
     /// Gets the index of this tile's row within the grid of tile data that contains it.
     /// </summary>
-    public int RowIndex
+    public int Row
     { get; }
 
     /// <summary>

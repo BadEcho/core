@@ -69,7 +69,7 @@ public sealed class AnimatedSprite : Sprite
             }
         }
 
-        if (_currentFrame == _sheet.Columns)
+        if (_currentFrame == _sheet.ColumnCount)
             _currentFrame = 0;
     }
 

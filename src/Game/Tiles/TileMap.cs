@@ -265,7 +265,7 @@ public sealed class TileMap : Extensible
     {
         return Orientation switch
         {
-            MapOrientation.Orthogonal => new Vector2(tile.ColumnIndex * TileSize.Width, tile.RowIndex * TileSize.Height),
+            MapOrientation.Orthogonal => new Vector2(tile.Column * TileSize.Width, tile.Row * TileSize.Height),
             // TODO: Add support for other orientations.
             _ => throw new NotSupportedException()
         };

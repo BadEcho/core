@@ -33,11 +33,7 @@ public sealed class SpriteSheetProcessor : ContentProcessor<SpriteSheetContent, 
         context.Log(Strings.ProcessingSpriteSheet.InvariantFormat(input.Identity.SourceFilename));
 
         ValidateAsset(input.Asset);
-
-        // If no valid configuration was provided for the initial frame's row, we have it default to the first row.
-        if (input.Asset.RowInitial <= 0)
-            input.Asset.RowInitial = 1;
-
+        
         input.AddReference<Texture2DContent>(context, input.Asset.TexturePath, new OpaqueDataDictionary());
 
         context.Log(Strings.ProcessingFinished.InvariantFormat(input.Identity.SourceFilename));
@@ -47,25 +43,25 @@ public sealed class SpriteSheetProcessor : ContentProcessor<SpriteSheetContent, 
 
     private static void ValidateAsset(SpriteSheetAsset asset)
     {
-        if (asset.Rows <= 0)
+        if (asset.RowCount <= 0)
             throw new PipelineException(Strings.SheetHasNoRows);
 
-        if (asset.Columns <= 0)
+        if (asset.ColumnCount <= 0)
             throw new PipelineException(Strings.SheetHasNoColumns);
 
-        if (asset.RowUp > asset.Rows)
+        if (asset.RowUp >= asset.RowCount)
             throw new PipelineException(Strings.SheetUpwardRowOutOfRange);
 
-        if (asset.RowDown > asset.Rows)
+        if (asset.RowDown >= asset.RowCount)
             throw new PipelineException(Strings.SheetDownwardRowOutOfRange);
 
-        if (asset.RowLeft > asset.Rows)
+        if (asset.RowLeft >= asset.RowCount)
             throw new PipelineException(Strings.SheetLeftwardRowOutOfRange);
 
-        if (asset.RowRight > asset.Rows)
+        if (asset.RowRight >= asset.RowCount)
             throw new PipelineException(Strings.SheetRightwardRowOutOfRange);
 
-        if (asset.RowInitial > asset.Rows)
+        if (asset.RowInitial >= asset.RowCount)
             throw new PipelineException(Strings.SheetInitialRowOutOfRange);
     }
 }

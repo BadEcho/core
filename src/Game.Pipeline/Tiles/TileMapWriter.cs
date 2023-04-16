@@ -122,8 +122,8 @@ public sealed class TileMapWriter : ContentTypeWriter<TileMapContent>
         foreach (Tile tile in tileLayer.Tiles)
         {
             output.Write(tile.IdWithFlags);
-            output.Write(tile.ColumnIndex);
-            output.Write(tile.RowIndex);
+            output.Write(tile.Column);
+            output.Write(tile.Row);
         }
     }
 }

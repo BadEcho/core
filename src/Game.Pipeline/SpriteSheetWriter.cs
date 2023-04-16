@@ -39,8 +39,8 @@ public sealed class SpriteSheetWriter : ContentTypeWriter<SpriteSheetContent>
             = value.GetReference<Texture2DContent>(asset.TexturePath);
 
         output.WriteExternalReference(textureReference);
-        output.Write(asset.Rows);
-        output.Write(asset.Columns);
+        output.Write(asset.RowCount);
+        output.Write(asset.ColumnCount);
         output.Write(asset.RowUp);
         output.Write(asset.RowDown);
         output.Write(asset.RowLeft);

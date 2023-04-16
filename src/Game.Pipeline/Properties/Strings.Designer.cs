@@ -232,7 +232,7 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Downward direction&apos;s row exceeds the number of rows in the sprite sheet..
+        ///   Looks up a localized string similar to Downward direction&apos;s row index is greater than or equal to the number of rows in the sprite sheet..
         /// </summary>
         internal static string SheetDownwardRowOutOfRange {
             get {
@@ -259,7 +259,7 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Initial frame&apos;s row exceeds the number of rows in the sprite sheet..
+        ///   Looks up a localized string similar to Initial frame&apos;s row index is greater than or equal to the number of rows in the sprite sheet..
         /// </summary>
         internal static string SheetInitialRowOutOfRange {
             get {
@@ -277,7 +277,7 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Leftward direction&apos;s row exceeds the number of rows in the sprite sheet..
+        ///   Looks up a localized string similar to Leftward direction&apos;s row index is greater than or equal to the number of rows in the sprite sheet..
         /// </summary>
         internal static string SheetLeftwardRowOutOfRange {
             get {
@@ -286,7 +286,7 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rightward direction&apos;s row exceeds the number of rows in the sprite sheet..
+        ///   Looks up a localized string similar to Rightward direction&apos;s row index is greater than or equal to the number of rows in the sprite sheet..
         /// </summary>
         internal static string SheetRightwardRowOutOfRange {
             get {
@@ -295,7 +295,7 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Upward direction&apos;s row exceeds the number of rows in the sprite sheet..
+        ///   Looks up a localized string similar to Upward direction&apos;s row index is greater than or equal to the number of rows in the sprite sheet..
         /// </summary>
         internal static string SheetUpwardRowOutOfRange {
             get {

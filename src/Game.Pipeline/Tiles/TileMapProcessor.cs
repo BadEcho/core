@@ -116,11 +116,11 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent, TileMapC
 
     private static IEnumerable<Tile> CreateTilesRightDown(int mapWidth, int mapHeight, IList<uint> tileData)
     {
-        for (int rowIndex = 0; rowIndex < mapHeight; rowIndex++)
+        for (int row = 0; row < mapHeight; row++)
         {
-            for (int columnIndex = 0; columnIndex < mapWidth; columnIndex++)
+            for (int column = 0; column < mapWidth; column++)
             {
-                Tile? tile = CreateTile(columnIndex, rowIndex, mapWidth, tileData);
+                Tile? tile = CreateTile(column, row, mapWidth, tileData);
 
                 if (tile != null)
                     yield return tile;
@@ -130,11 +130,11 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent, TileMapC
 
     private static IEnumerable<Tile> CreateTilesRightUp(int mapWidth, int mapHeight, IList<uint> tileData)
     {
-        for (int rowIndex = mapHeight - 1; rowIndex >= 0; rowIndex--)
+        for (int row = mapHeight - 1; row >= 0; row--)
         {
-            for (int columnIndex = 0; columnIndex < mapWidth; columnIndex++)
+            for (int column = 0; column < mapWidth; column++)
             {
-                Tile? tile = CreateTile(columnIndex, rowIndex, mapWidth, tileData);
+                Tile? tile = CreateTile(column, row, mapWidth, tileData);
 
                 if (tile != null)
                     yield return tile;
@@ -144,11 +144,11 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent, TileMapC
 
     private static IEnumerable<Tile> CreateTilesLeftDown(int mapWidth, int mapHeight, IList<uint> tileData)
     {
-        for (int rowIndex = 0; rowIndex < mapHeight; rowIndex++)
+        for (int row = 0; row < mapHeight; row++)
         {
-            for (int columnIndex = mapWidth - 1; columnIndex >= 0; columnIndex--)
+            for (int column = mapWidth - 1; column >= 0; column--)
             {
-                Tile? tile = CreateTile(columnIndex, rowIndex, mapWidth, tileData);
+                Tile? tile = CreateTile(column, row, mapWidth, tileData);
 
                 if (tile != null)
                     yield return tile;
@@ -158,11 +158,11 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent, TileMapC
 
     private static IEnumerable<Tile> CreateTilesLeftUp(int mapWidth, int mapHeight, IList<uint> tileData)
     {
-        for (int rowIndex = mapHeight - 1; rowIndex >= mapHeight; rowIndex--)
+        for (int row = mapHeight - 1; row >= mapHeight; row--)
         {
-            for (int columnIndex = mapWidth - 1; columnIndex >= 0; columnIndex--)
+            for (int column = mapWidth - 1; column >= 0; column--)
             {
-                Tile? tile = CreateTile(columnIndex, rowIndex, mapWidth, tileData);
+                Tile? tile = CreateTile(column, row, mapWidth, tileData);
 
                 if (tile != null)
                     yield return tile;
@@ -170,12 +170,12 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent, TileMapC
         }
     }
 
-    private static Tile? CreateTile(int columnIndex, int rowIndex, int mapWidth, IList<uint> tileData)
+    private static Tile? CreateTile(int column, int row, int mapWidth, IList<uint> tileData)
     {
-        int tileIndex = columnIndex + rowIndex * mapWidth;
+        int tileIndex = column + row * mapWidth;
         uint tileId = tileData[tileIndex];
 
-        return tileId == 0 ? null : new Tile(tileId, columnIndex, rowIndex);
+        return tileId == 0 ? null : new Tile(tileId, column, row);
     }
 
     private static IList<uint> DecodeTileData(DataAsset tileData, int tilesToDecode)

@@ -73,9 +73,9 @@ public sealed class TileLayer : Layer
     /// <returns>The tile being drawn at <c>position</c>, if one exists; otherwise, null.</returns>
     public Tile? GetTile(Vector2 position)
     {
-        int columnIndex = (int) position.X / _tileSize.Width;
-        int rowIndex = (int) position.Y / _tileSize.Height;
-        int index = CalculateTileIndex(columnIndex, rowIndex);
+        int column = (int) position.X / _tileSize.Width;
+        int row = (int) position.Y / _tileSize.Height;
+        int index = CalculateTileIndex(column, row);
 
         return _tiles[index];
     }
@@ -84,13 +84,13 @@ public sealed class TileLayer : Layer
     /// Loads the identified tile into the tile layer at the specified location.
     /// </summary>
     /// <param name="idWithFlags">The global identifier and flip flags of the tile to load into the layer.</param>w
-    /// <param name="columnIndex">The index of the column within the tile layer to load the tile into.</param>
-    /// <param name="rowIndex">The index of the row within the tile layer to load the tile into.</param>
-    public void LoadTile(uint idWithFlags, int columnIndex, int rowIndex)
+    /// <param name="column">The index of the column within the tile layer to load the tile into.</param>
+    /// <param name="row">The index of the row within the tile layer to load the tile into.</param>
+    public void LoadTile(uint idWithFlags, int column, int row)
     {
-        int index = CalculateTileIndex(columnIndex, rowIndex);
+        int index = CalculateTileIndex(column, row);
         
-        _tiles[index] = new Tile(idWithFlags, columnIndex, rowIndex);
+        _tiles[index] = new Tile(idWithFlags, column, row);
     }
 
     /// <summary>
@@ -104,15 +104,15 @@ public sealed class TileLayer : Layer
 
         foreach (var validTile in validTiles)
         {
-            int rowIndex = validTile.Index / _size.Width;
-            int columnIndex = rowIndex == 0 ? validTile.Index : validTile.Index % (rowIndex * _size.Width);
+            int row = validTile.Index / _size.Width;
+            int column = row == 0 ? validTile.Index : validTile.Index % (row * _size.Width);
 
-            yield return new TileSpatialEntity(columnIndex, rowIndex, _tileSize);
+            yield return new TileSpatialEntity(column, row, _tileSize);
         }
     }
 
-    private int CalculateTileIndex(int columnIndex, int rowIndex)
-        => columnIndex + rowIndex * _size.Width;
+    private int CalculateTileIndex(int column, int row)
+        => column + row * _size.Width;
 
     /// <summary>
     /// Provides spatial boundaries for a collidable tile.
@@ -122,13 +122,13 @@ public sealed class TileLayer : Layer
         /// <summary>
         /// Initializes a new instance of the <see cref="TileSpatialEntity"/> class.
         /// </summary>
-        /// <param name="columnIndex">The index of the column within the tile layer that the tile occupies.</param>
-        /// <param name="rowIndex">The index of the row within the tile layer that the tile occupies.</param>
+        /// <param name="column">The index of the column within the tile layer that the tile occupies.</param>
+        /// <param name="row">The index of the row within the tile layer that the tile occupies.</param>
         /// <param name="tileSize">The size of the tile.</param>
-        public TileSpatialEntity(int columnIndex, int rowIndex, Size tileSize)
+        public TileSpatialEntity(int column, int row, Size tileSize)
         {
-            float x = columnIndex * tileSize.Width;
-            float y = rowIndex * tileSize.Height;
+            float x = column * tileSize.Width;
+            float y = row * tileSize.Height;
 
             Bounds = new RectangleF(x, y, tileSize.Width, tileSize.Height);
         }

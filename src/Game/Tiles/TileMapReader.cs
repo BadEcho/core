@@ -122,10 +122,10 @@ public sealed class TileMapReader : ContentTypeReader<TileMap>
                     while (tilesToRead > 0)
                     {
                         var idWithFlags = input.ReadUInt32();
-                        var columnIndex = input.ReadInt32();
-                        var rowIndex = input.ReadInt32();
+                        var column = input.ReadInt32();
+                        var row = input.ReadInt32();
 
-                        tileLayer.LoadTile(idWithFlags, columnIndex, rowIndex);
+                        tileLayer.LoadTile(idWithFlags, column, row);
                         tilesToRead--;
                     }
 

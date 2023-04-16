@@ -127,19 +127,19 @@
 		<value>The sprite sheet must be configured to have one or more columns in order to be considered valid.</value>
 	</data>
 	<data name="SheetUpwardRowOutOfRange" xml:space="preserve">
-		<value>Upward direction's row exceeds the number of rows in the sprite sheet.</value>
+		<value>Upward direction's row index is greater than or equal to the number of rows in the sprite sheet.</value>
 	</data>
 	<data name="SheetDownwardRowOutOfRange" xml:space="preserve">
-		<value>Downward direction's row exceeds the number of rows in the sprite sheet.</value>
+		<value>Downward direction's row index is greater than or equal to the number of rows in the sprite sheet.</value>
 	</data>
 	<data name="SheetLeftwardRowOutOfRange" xml:space="preserve">
-		<value>Leftward direction's row exceeds the number of rows in the sprite sheet.</value>
+		<value>Leftward direction's row index is greater than or equal to the number of rows in the sprite sheet.</value>
 	</data>
 	<data name="SheetRightwardRowOutOfRange" xml:space="preserve">
-		<value>Rightward direction's row exceeds the number of rows in the sprite sheet.</value>
+		<value>Rightward direction's row index is greater than or equal to the number of rows in the sprite sheet.</value>
 	</data>
 	<data name="SheetInitialRowOutOfRange" xml:space="preserve">
-		<value>Initial frame's row exceeds the number of rows in the sprite sheet.</value>
+		<value>Initial frame's row index is greater than or equal to the number of rows in the sprite sheet.</value>
 	</data>
 	<data name="NoReferenceInContentItem" xml:space="preserve">
 		<value>No reference to the asset '{0}' was found on this content item.</value>

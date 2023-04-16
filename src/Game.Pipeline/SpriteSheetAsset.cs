@@ -27,41 +27,41 @@ public sealed class SpriteSheetAsset
     /// <summary>
     /// Gets the number of rows of frames in the sprite sheet.
     /// </summary>
-    public int Rows 
+    public int RowCount 
     { get; init; }
 
     /// <summary>
     /// Gets the number of columns of frames in the sprite sheet.
     /// </summary>
-    public int Columns 
+    public int ColumnCount 
     { get; init; }
 
     /// <summary>
-    /// Gets the row for upward movement.
+    /// Gets the index of the row for upward movement.
     /// </summary>
     public int RowUp
     { get; init; }
 
     /// <summary>
-    /// Gets the row for downward movement.
+    /// Gets the index of the row for downward movement.
     /// </summary>
     public int RowDown
     { get; init; }
 
     /// <summary>
-    /// Gets the row for leftward movement.
+    /// Gets the index of the row for leftward movement.
     /// </summary>
     public int RowLeft
     { get; init; }
 
     /// <summary>
-    /// Gets the row for rightward movement.
+    /// Gets the index of the row for rightward movement.
     /// </summary>
     public int RowRight
     { get; init; }
 
     /// <summary>
-    /// Gets or sets the row containing initially drawn frames, prior to any movement occurring.
+    /// Gets or sets the index of the row containing initially drawn frames, prior to any movement occurring.
     /// </summary>
     public int RowInitial
     { get; set; }
