@@ -104,9 +104,6 @@
 	<data name="SheetAlreadyHasDirection" xml:space="preserve">
 		<value>Sprite sheet already has frames registered for the specified direction of movement.</value>
 	</data>
-	<data name="SheetDirectionRowOutOfRange" xml:space="preserve">
-		<value>Movement direction's row index is greater than or equal to the number of rows in the sprite sheet.</value>
-	</data>
 	<data name="SheetNoFramesForDirection" xml:space="preserve">
 		<value>Sprite sheet contains no frames for the specified direction of movement.</value>
 	</data>

@@ -88,9 +88,6 @@ public sealed class SpriteSheet
         if (_directionRows.ContainsKey(direction))
             throw new ArgumentException(Strings.SheetAlreadyHasDirection, nameof(direction));
 
-        if (row >= RowCount)
-            throw new ArgumentException(Strings.SheetDirectionRowOutOfRange, nameof(row));
-
         _directionRows.Add(direction, row);
     }
 
