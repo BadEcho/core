@@ -23,7 +23,7 @@ internal static class ContentReaderExtensions
     /// <summary>
     /// Reads an extensible content's custom properties from the content pipeline.
     /// </summary>
-    /// <param name="reader">The current game content reader.</param>
+    /// <param name="reader">The current content reader.</param>
     /// <returns>The content's custom properties, read from <c>reader</c>.</returns>
     public static CustomProperties ReadProperties(this ContentReader reader)
     {

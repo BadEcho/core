@@ -12,6 +12,7 @@
 //-----------------------------------------------------------------------
 
 using BadEcho.Game.Pipeline.Tiles;
+using System.Runtime.CompilerServices;
 using Xunit;
 
 namespace BadEcho.Game.Tests;
@@ -46,7 +47,7 @@ public class TileMapPipelineTests
         Assert.NotNull(content);
         Assert.NotNull(content.Asset);
         Assert.NotEmpty(content.Asset.Layers);
-
+        
         content = _processor.Process(content, _processorContext);
 
         var tileLayer = content.Asset.Layers.First() as TileLayerAsset;
@@ -55,6 +56,6 @@ public class TileMapPipelineTests
         Assert.NotEmpty(tileLayer.Tiles);
     }
 
-    private static string GetAssetPath(string assetName)
-        => $"Content\\Tiles\\{assetName}";
+    private static string GetAssetPath(string assetName, [CallerFilePath] string rootPath = "")
+        => $"{Path.GetDirectoryName(rootPath)}\\Content\\Tiles\\{assetName}";
 }

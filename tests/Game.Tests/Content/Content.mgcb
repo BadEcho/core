@@ -64,3 +64,8 @@ $endif
 /importer:TileSetImporter
 /processor:TileSetProcessor
 /build:Tiles/GrasslandsCustomProperties.tsx
+
+#begin Atlases/BlackShuttleGrass.atlas
+/importer:TextureAtlasImporter
+/processor:TextureAtlasProcessor
+/build:Atlases/BlackShuttleGrass.atlas

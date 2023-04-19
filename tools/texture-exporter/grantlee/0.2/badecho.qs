@@ -1,35 +1,23 @@
-var exportData = function(root)
+var exportAtlas = function(root)
 {
-    var doc = {
-        atlas: exportAtlas(root),
+    var texture = root.texture;
+
+    var atlas = {
+        texturePath: texture.fullName,
+        normalMap: (texture.normalMapFileName === "") ? undefined : texture.normalMapFileName,
+        format: root.settings.outputFormat,
+        scale: root.variantParams.scale,
+        regions: exportRegions(texture.allSprites),        
         meta: {
             version: "1.0",
             smartupdate: root.smartUpdateKey
         },
     };
-    return JSON.stringify(doc, null, "\t");
-}
-exportData.filterName = "exportData";
-Library.addFilter("exportData");
 
-var exportAtlas = function(root)
-{
-    var texture = root.texture;
-
-    var exportNode = {
-        texturePath: texture.fullName,
-        normalMap: (texture.normalMapFileName === "") ? undefined : texture.normalMapFileName,
-        format: root.settings.outputFormat,
-        size: {
-            width: texture.size.width,
-            height: texture.size.height
-        },
-        scale: root.variantParams.scale,
-        regions: exportRegions(texture.allSprites)
-    };
-    
-    return exportNode;
+    return JSON.stringify(atlas, null, "\t");
 }
+exportAtlas.filterName = "exportAtlas";
+Library.addFilter("exportAtlas");
 
 var exportRegions = function(sprites)
 {
@@ -39,19 +27,18 @@ var exportRegions = function(sprites)
     {
         var sprite = sprites[i];
         var exportNode = {
-            id: sprite.trimmedName,
-            source: { 
+            name: sprite.trimmedName,
+            sourceArea: { 
                 x: sprite.frameRect.x,
-                 y: sprite.frameRect.y, 
-                 width: sprite.frameRect.width, 
-                 height: sprite.frameRect.height
-                 },
-            isNineSliced: sprite.scale9Enabled
+                y: sprite.frameRect.y, 
+                width: sprite.frameRect.width, 
+                height: sprite.frameRect.height
+            }            
         };
         
         if (sprite.scale9Enabled) 
         {
-            exportNode.nineSlice = {
+            exportNode.nineSliceArea = {
                 x: sprite.scale9Borders.x,
                 y: sprite.scale9Borders.y,
                 width: sprite.scale9Borders.width,

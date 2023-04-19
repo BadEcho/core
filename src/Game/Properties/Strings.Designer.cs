@@ -61,6 +61,15 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Texture atlas already has a region named &apos;{0}&apos;..
+        /// </summary>
+        internal static string AtlasAlreadyHasRegion {
+            get {
+                return ResourceManager.GetString("AtlasAlreadyHasRegion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The specified element is outside this quadtree&apos;s boundaries..
         /// </summary>
         internal static string ElementOutsideQuadtreeBounds {

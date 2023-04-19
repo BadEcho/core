@@ -27,10 +27,7 @@ public sealed class Quadtree
     private readonly int _bucketCapacity;
     private readonly int _maxDepth;
 
-    private Quadtree? _upperLeft;
-    private Quadtree? _upperRight;
-    private Quadtree? _bottomLeft;
-    private Quadtree? _bottomRight;
+    private Quadtree? _topLeft, _topRight, _bottomLeft, _bottomRight;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Quadtree"/> class.
@@ -78,9 +75,9 @@ public sealed class Quadtree
     /// The majority of spatial elements reside in leaf nodes, the only exceptions being elements whose bounds overlap multiple
     /// split node boundaries.
     /// </remarks>
-    [MemberNotNullWhen(false, nameof(_upperLeft), nameof(_upperRight), nameof(_bottomLeft), nameof(_bottomRight))]
+    [MemberNotNullWhen(false, nameof(_topLeft), nameof(_topRight), nameof(_bottomLeft), nameof(_bottomRight))]
     public bool IsLeaf
-        => _upperLeft == null || _upperRight == null || _bottomLeft == null || _bottomRight == null;
+        => _topLeft == null || _topRight == null || _bottomLeft == null || _bottomRight == null;
     
     /// <summary>
     /// Inserts the specified spatial element into the quadtree at the appropriate node.
@@ -158,11 +155,11 @@ public sealed class Quadtree
 
             if (!node.IsLeaf)
             {
-                if (element.Bounds.Intersects(node._upperLeft.Bounds))
-                    nodes.Enqueue(node._upperLeft);
+                if (element.Bounds.Intersects(node._topLeft.Bounds))
+                    nodes.Enqueue(node._topLeft);
 
-                if (element.Bounds.Intersects(node._upperRight.Bounds))
-                    nodes.Enqueue(node._upperRight);
+                if (element.Bounds.Intersects(node._topRight.Bounds))
+                    nodes.Enqueue(node._topRight);
 
                 if (element.Bounds.Intersects(node._bottomLeft.Bounds))
                     nodes.Enqueue(node._bottomLeft);
@@ -185,8 +182,8 @@ public sealed class Quadtree
 
         if (!IsLeaf)
         {
-            count += _upperLeft.CountElements();
-            count += _upperRight.CountElements();
+            count += _topLeft.CountElements();
+            count += _topRight.CountElements();
             count += _bottomLeft.CountElements();
             count += _bottomRight.CountElements();
         }
@@ -211,8 +208,8 @@ public sealed class Quadtree
 
             if (!node.IsLeaf)
             {
-                nodes.Enqueue(node._upperLeft);
-                nodes.Enqueue(node._upperRight);
+                nodes.Enqueue(node._topLeft);
+                nodes.Enqueue(node._topRight);
                 nodes.Enqueue(node._bottomLeft);
                 nodes.Enqueue(node._bottomRight);
             }
@@ -232,8 +229,8 @@ public sealed class Quadtree
         if (Level + 1 > _maxDepth)
             return;
 
-        _upperLeft = CreateChild(Bounds.Location);
-        _upperRight = CreateChild(new PointF(Bounds.Center.X, Bounds.Location.Y));
+        _topLeft = CreateChild(Bounds.Location);
+        _topRight = CreateChild(new PointF(Bounds.Center.X, Bounds.Location.Y));
         _bottomLeft = CreateChild(new PointF(Bounds.Location.X, Bounds.Center.Y));
         _bottomRight = CreateChild(new PointF(Bounds.Center.X, Bounds.Center.Y));
 
@@ -263,12 +260,12 @@ public sealed class Quadtree
         if (IsLeaf)
             return;
 
-        _elements.AddRange(_upperLeft._elements);
-        _elements.AddRange(_upperRight._elements);
+        _elements.AddRange(_topLeft._elements);
+        _elements.AddRange(_topRight._elements);
         _elements.AddRange(_bottomLeft._elements);
         _elements.AddRange(_bottomRight._elements);
 
-        _upperLeft = _upperRight = _bottomLeft = _bottomRight = null;
+        _topLeft = _topRight = _bottomLeft = _bottomRight = null;
     }
 
     private Quadtree? GetContainingChild(IShape bounds)
@@ -276,11 +273,11 @@ public sealed class Quadtree
         if (IsLeaf)
             return null;
 
-        if (_upperLeft.Bounds.Contains(bounds))
-            return _upperLeft;
+        if (_topLeft.Bounds.Contains(bounds))
+            return _topLeft;
         
-        if (_upperRight.Bounds.Contains(bounds))
-            return _upperRight;
+        if (_topRight.Bounds.Contains(bounds))
+            return _topRight;
         
         if (_bottomLeft.Bounds.Contains(bounds))
             return _bottomLeft;

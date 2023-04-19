@@ -117,6 +117,27 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AtlasIsNull" xml:space="preserve">
+		<value>The .atlas asset identified by {0} consists of a single 'null' JSON token, which cannot be processed as a texture atlas. Ensure there were no errors when performing the export with TexturePacker.</value>
+	</data>
+	<data name="AtlasRegionNoTopSlices" xml:space="preserve">
+		<value>The atlas region identified by {0} is configured to use 9-slice scaling but has no slices across its top side.</value>
+	</data>
+  <data name="AtlasRegionNoCenterHorizontalSlices" xml:space="preserve">
+		<value>The atlas region identified by {0} is configured to use 9-slice scaling but has no slices across its center.</value>
+	</data>
+  <data name="AtlasRegionNoBottomSlices" xml:space="preserve">
+		<value>The atlas region identified by {0} is configured to use 9-slice scaling but has no slices across its bottom side.</value>
+	</data>
+  <data name="AtlasRegionNoLeftSlices" xml:space="preserve">
+		<value>The atlas region identified by {0} is configured to use 9-slice scaling but has no slices down its left side.</value>
+	</data>
+  <data name="AtlasRegionNoCenterVerticalSlices" xml:space="preserve">
+		<value>The atlas region identified by {0} is configured to use 9-slice scaling but has no slices down its center.</value>
+	</data>
+  <data name="AtlasRegionNoRightSlices" xml:space="preserve">
+		<value>The atlas region identified by {0} is configured to use 9-slice scaling but has no slices down its right side.</value>
+	</data>
   <data name="SheetIsNull" xml:space="preserve">
     <value>The .spritesheet asset identified by {0} consists of a single 'null' JSON token, which cannot be processed as sprite sheet. A JSON document conforming to the .spritesheet schema found at http://badecho.com/spritesheet.json must be provided.</value>
   </data>
@@ -189,6 +210,9 @@
   <data name="ImportingSpriteSheet" xml:space="preserve">
 		<value>Importing sprite sheet: {0}</value>
 	</data>
+	<data name="ImportingTextureAtlas" xml:space="preserve">
+		<value>Importing texture atlas: {0}</value>
+	</data>
 	<data name="ImportingTileSet" xml:space="preserve">
 		<value>Importing tile set: {0}</value>
 	</data>
@@ -200,6 +224,9 @@
 	</data>
   <data name="ProcessingSpriteSheet" xml:space="preserve">
 		<value>Processing sprite sheet: {0}</value>
+	</data>
+	<data name="ProcessingTextureAtlas" xml:space="preserve">
+		<value>Processing texture atlas: {0}</value>
 	</data>
 	<data name="ProcessingTileSet" xml:space="preserve">
 		<value>Processing tile set: {0}</value>

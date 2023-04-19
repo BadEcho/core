@@ -1,0 +1,44 @@
+{
+	"texturePath": "BlackShuttleGrass.png",
+	"format": "RGBA8888",
+	"scale": 1,
+	"regions": [
+		{
+			"name": "shuttle",
+			"sourceArea": {
+				"x": 0,
+				"y": 0,
+				"width": 58,
+				"height": 90
+			}
+		},
+		{
+			"name": "Grasslands",
+			"sourceArea": {
+				"x": 0,
+				"y": 90,
+				"width": 80,
+				"height": 32
+			},
+			"nineSliceArea": {
+				"x": 20,
+				"y": 8,
+				"width": 30,
+				"height": 12
+			}
+		},
+		{
+			"name": "black",
+			"sourceArea": {
+				"x": 58,
+				"y": 0,
+				"width": 16,
+				"height": 16
+			}
+		}
+	],
+	"meta": {
+		"version": "1.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:e95c80fb096470729baad3972bfbc447:272e4c872a62410c51ec028b1e99adcc:198b17ce366caaf4b4fba33a3e099a53$"
+	}
+}

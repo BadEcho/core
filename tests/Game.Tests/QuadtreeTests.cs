@@ -75,7 +75,7 @@ public class QuadtreeTests
     }
 
     [Fact]
-    public void FindCollisions_UpperLeftColliderSmall_ReturnsUpperLeft()
+    public void FindCollisions_TopLeftColliderSmall_ReturnsUpperLeft()
     {
         var collider = new SpatialStub(10, 10, 20, 20);
 
@@ -85,7 +85,7 @@ public class QuadtreeTests
     }
 
     [Fact]
-    public void FindCollisions_UpperRightColliderSmall_ReturnsUpperRight()
+    public void FindCollisions_TopRightColliderSmall_ReturnsUpperRight()
     {
         var collider = new SpatialStub(70, 10, 20, 20);
 

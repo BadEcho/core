@@ -128,7 +128,7 @@ public class Sprite : IPositionalEntity, ISpatialEntity
     /// <summary>
     /// Draws the sprite to the screen.
     /// </summary>
-    /// <param name="spriteBatch">The <see cref="SpriteBatch"/> instance to use to draw the sprite with.</param>
+    /// <param name="spriteBatch">The <see cref="SpriteBatch"/> instance to use to draw the sprite.</param>
     public void Draw(SpriteBatch spriteBatch)
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
@@ -139,7 +139,7 @@ public class Sprite : IPositionalEntity, ISpatialEntity
     /// <summary>
     /// Draws the sprite to the screen.
     /// </summary>
-    /// <param name="spriteBatch">The <see cref="SpriteBatch"/> instance to use to draw the sprite with.</param>
+    /// <param name="spriteBatch">The <see cref="SpriteBatch"/> instance to use to draw the sprite.</param>
     /// <param name="color">The color mask the sprite is drawn with.</param>
     /// <param name="size">The size of the sprite.</param>
     public void Draw(SpriteBatch spriteBatch, Color color, float size)

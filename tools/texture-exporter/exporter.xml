@@ -1,16 +1,16 @@
 <exporter version="1.0">
 	<name>badecho</name>
 	<displayName>Bad Echo</displayName>
-	<description>JSON format for Bad Echo</description>
+	<description>Texture atlas format for Bad Echo</description>
 	<version>1.0</version>
 
     <files>
         <file>
-            <name>json</name>
-            <displayName>JSON file</displayName>
-            <fileExtension>json</fileExtension>
-            <description>JSON file for Bad Echo</description>
-            <template>badecho.json</template>
+            <name>badecho</name>
+            <displayName>Texture atlas file</displayName>
+            <fileExtension>atlas</fileExtension>
+            <description>Texture atlas file for Bad Echo</description>
+            <template>badecho.atlas</template>
             <hasSeparateMultiPackFiles>true</hasSeparateMultiPackFiles>
         </file>
     </files>

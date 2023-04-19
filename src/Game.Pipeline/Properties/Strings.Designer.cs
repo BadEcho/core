@@ -61,6 +61,69 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The .atlas asset identified by {0} consists of a single &apos;null&apos; JSON token, which cannot be processed as a texture atlas. Ensure there were no errors when performing the export with TexturePacker..
+        /// </summary>
+        internal static string AtlasIsNull {
+            get {
+                return ResourceManager.GetString("AtlasIsNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The atlas region identified by {0} is configured to use 9-slice scaling but has no slices across its bottom side..
+        /// </summary>
+        internal static string AtlasRegionNoBottomSlices {
+            get {
+                return ResourceManager.GetString("AtlasRegionNoBottomSlices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The atlas region identified by {0} is configured to use 9-slice scaling but has no slices across its center..
+        /// </summary>
+        internal static string AtlasRegionNoCenterHorizontalSlices {
+            get {
+                return ResourceManager.GetString("AtlasRegionNoCenterHorizontalSlices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The atlas region identified by {0} is configured to use 9-slice scaling but has no slices down its center..
+        /// </summary>
+        internal static string AtlasRegionNoCenterVerticalSlices {
+            get {
+                return ResourceManager.GetString("AtlasRegionNoCenterVerticalSlices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The atlas region identified by {0} is configured to use 9-slice scaling but has no slices down its left side..
+        /// </summary>
+        internal static string AtlasRegionNoLeftSlices {
+            get {
+                return ResourceManager.GetString("AtlasRegionNoLeftSlices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The atlas region identified by {0} is configured to use 9-slice scaling but has no slices down its right side..
+        /// </summary>
+        internal static string AtlasRegionNoRightSlices {
+            get {
+                return ResourceManager.GetString("AtlasRegionNoRightSlices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The atlas region identified by {0} is configured to use 9-slice scaling but has no slices across its top side..
+        /// </summary>
+        internal static string AtlasRegionNoTopSlices {
+            get {
+                return ResourceManager.GetString("AtlasRegionNoTopSlices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Shape Type: {0}, Width: {1}, Height: {2}.
         /// </summary>
         internal static string BoundedTextureCharacteristics {
@@ -160,6 +223,15 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Importing texture atlas: {0}.
+        /// </summary>
+        internal static string ImportingTextureAtlas {
+            get {
+                return ResourceManager.GetString("ImportingTextureAtlas", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Importing tile map: {0}.
         /// </summary>
         internal static string ImportingTileMap {
@@ -210,6 +282,15 @@ namespace BadEcho.Game.Pipeline.Properties {
         internal static string ProcessingSpriteSheet {
             get {
                 return ResourceManager.GetString("ProcessingSpriteSheet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Processing texture atlas: {0}.
+        /// </summary>
+        internal static string ProcessingTextureAtlas {
+            get {
+                return ResourceManager.GetString("ProcessingTextureAtlas", resourceCulture);
             }
         }
         
