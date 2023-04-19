@@ -26,7 +26,7 @@ internal abstract class ConfigurationElementCollection<TElement, TKey> : Configu
     where TKey : notnull
 {
     /// <summary>
-    /// Gets the configuration element matching the specified key.
+    /// Gets the configuration element associated with the specified key.
     /// </summary>
     /// <param name="key">The key of the element to return.</param>
     /// <returns>The <typeparamref name="TElement"/> identified by <c>key</c>; otherwise, null.</returns>
