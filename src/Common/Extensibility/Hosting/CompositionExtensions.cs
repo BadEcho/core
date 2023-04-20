@@ -26,15 +26,21 @@ namespace BadEcho.Extensibility.Hosting;
 /// </summary>
 public static class CompositionExtensions
 {
-    private static readonly Lazy<IEnumerable<Assembly>> _ExtensibilityPointSnapshot
-        = new(CaptureExtensibilityPoints, LazyThreadSafetyMode.PublicationOnly);
+    private static readonly ICollection<Assembly> _ExtensibilityPoints;
 
     /// <summary>
-    /// Gets all assemblies marked as extensibility points that were loaded at the time of the first Extensibility
-    /// operation.
+    /// Initializes the <see cref="CompositionExtensions"/> class.
     /// </summary>
-    internal static IEnumerable<Assembly> ExtensibilityPointSnapshot
-        => _ExtensibilityPointSnapshot.Value;
+    static CompositionExtensions()
+    {   // Check whether any of the currently loaded assemblies are Extensibility points.
+        _ExtensibilityPoints = AssemblyLoadContext.Default.Assemblies
+                                                  .Where(IsExtensible)
+                                                  .ToList();
+        
+        // There is no guarantee that all referenced assemblies have been loaded at this point, so we need to keep watch
+        // for any additional assemblies that are Extensibility points.
+        AppDomain.CurrentDomain.AssemblyLoad += HandleAssemblyLoad;
+    }
 
     /// <summary>
     /// Adds part types from the assemblies found in the specified directory to this container configuration.
@@ -58,7 +64,7 @@ public static class CompositionExtensions
     {
         Require.NotNull(configuration, nameof(configuration));
 
-        return configuration.WithAssemblies(ExtensibilityPointSnapshot);
+        return configuration.WithAssemblies(_ExtensibilityPoints);
     }
 
     /// <summary>
@@ -95,10 +101,17 @@ public static class CompositionExtensions
         return assemblies;
     }
 
+    private static void HandleAssemblyLoad(object? sender, AssemblyLoadEventArgs args)
+    {
+        if (IsExtensible(args.LoadedAssembly))
+            _ExtensibilityPoints.Add(args.LoadedAssembly);
+    }
+
     /// <summary>
-    /// Discovers all assemblies that are marked as extensibility points.
+    /// Determines if the assembly is an Extensibility point.
     /// </summary>
-    /// <returns>A collection of <see cref="Assembly"/> instances that are marked as extensibility points.</returns>
+    /// <param name="assembly">The assembly to check.</param>
+    /// <returns>True if <c>assembly</c> is an Extensibility point; otherwise, false.</returns>
     /// <remarks>
     /// <para>
     /// While we normally should be able to safely inspect assemblies loaded into the default assembly context,
@@ -115,25 +128,18 @@ public static class CompositionExtensions
     /// them and the code actually being tested.
     /// </para>
     /// </remarks>
-    private static IEnumerable<Assembly> CaptureExtensibilityPoints()
+    private static bool IsExtensible(Assembly assembly)
     {
-        return AssemblyLoadContext.Default.Assemblies
-                                  .Where(IsExtensible)
-                                  .ToList();
-
-        static bool IsExtensible(Assembly assembly)
+        try
         {
-            try
-            {
-                return assembly.GetCustomAttribute<ExtensibilityPointAttribute>() != null;
-            }
-            catch (FileNotFoundException ex)
-            {
-                Logger.Debug(
-                    Strings.ExtensibilityPointMissingDependency.InvariantFormat(assembly.FullName, ex.FileName));
+            return assembly.GetCustomAttribute<ExtensibilityPointAttribute>() != null;
+        }
+        catch (FileNotFoundException ex)
+        {
+            Logger.Debug(
+                Strings.ExtensibilityPointMissingDependency.InvariantFormat(assembly.FullName, ex.FileName));
 
-                return false;
-            }
+            return false;
         }
     }
 }

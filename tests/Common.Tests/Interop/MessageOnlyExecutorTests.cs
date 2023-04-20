@@ -78,11 +78,23 @@ public class MessageOnlyExecutorTests
     }
 
     [Fact]
-    public void RunAsync_Running_ThrowsException()
+    public async void RunAsync_Running_ThrowsException()
     {
-        using var executor = CreateExecutor();
+        using var executor = new MessageOnlyExecutor();
+        bool caughtException = false;
 
-        Assert.ThrowsAsync<InvalidOperationException>(async () => await executor.RunAsync());
+        await executor.RunAsync();
+
+        try
+        {
+            await executor.RunAsync();
+        }
+        catch (InvalidOperationException)
+        {
+            caughtException = true;
+        }
+
+        Assert.True(caughtException);
     }
 
     [Fact]
