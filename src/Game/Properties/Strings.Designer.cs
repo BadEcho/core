@@ -79,6 +79,15 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Label control requires a font to be set in order to draw text..
+        /// </summary>
+        internal static string LabelNoFont {
+            get {
+                return ResourceManager.GetString("LabelNoFont", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Maximum amount of zoom must be greater than zero..
         /// </summary>
         internal static string MaximumZoomCannotBeZeroOrLess {

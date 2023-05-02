@@ -69,3 +69,10 @@ $endif
 /importer:TextureAtlasImporter
 /processor:TextureAtlasProcessor
 /build:Atlases/BlackShuttleGrass.atlas
+
+#begin Fonts/Lato.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Lato.spritefont

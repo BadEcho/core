@@ -125,4 +125,7 @@
 	<data name="ElementOutsideQuadtreeBounds" xml:space="preserve">
 		<value>The specified element is outside this quadtree's boundaries.</value>
 	</data>
+	<data name="LabelNoFont" xml:space="preserve">
+		<value>Label control requires a font to be set in order to draw text.</value>
+	</data>
 </root>

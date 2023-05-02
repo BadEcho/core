@@ -22,8 +22,10 @@ internal sealed class GraphicsDeviceService : IGraphicsDeviceService
 {
     public GraphicsDeviceService()
     {
-        GraphicsDevice 
-            = new GraphicsDevice(GraphicsAdapter.DefaultAdapter, GraphicsProfile.Reach, new PresentationParameters());
+        GraphicsDevice
+            = new GraphicsDevice(GraphicsAdapter.DefaultAdapter,
+                                 GraphicsProfile.Reach,
+                                 new PresentationParameters() { BackBufferWidth = 1920, BackBufferHeight = 1080 });
     }
 
     /// <inheritdoc />

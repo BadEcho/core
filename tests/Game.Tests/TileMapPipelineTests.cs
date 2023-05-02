@@ -43,7 +43,7 @@ public class TileMapPipelineTests
     private void ValidateTileMap(string assetName)
     {
         TileMapContent content = _importer.Import(GetAssetPath(assetName), _importerContext);
-
+        
         Assert.NotNull(content);
         Assert.NotNull(content.Asset);
         Assert.NotEmpty(content.Asset.Layers);

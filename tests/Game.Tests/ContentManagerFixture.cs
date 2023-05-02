@@ -12,6 +12,7 @@
 //-----------------------------------------------------------------------
 
 using System.ComponentModel.Design;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.Tests;
@@ -30,10 +31,10 @@ public sealed class ContentManagerFixture : IDisposable
 
         services.AddService(typeof(IGraphicsDeviceService), graphicsService);
 
-        Content = new Microsoft.Xna.Framework.Content.ContentManager(services, "Content");
+        Content = new ContentManager(services, "Content");
     }
 
-    public Microsoft.Xna.Framework.Content.ContentManager Content
+    public ContentManager Content
     { get; }
 
     /// <inheritdoc />

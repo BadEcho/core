@@ -20,7 +20,7 @@ namespace BadEcho.Game.Atlases;
 /// Provides an image-bounding region of a texture atlas, able to be drawn independently from other images
 /// found in the atlas.
 /// </summary>
-public class TextureRegion
+public class TextureRegion : IVisual
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="TextureRegion"/> class.
@@ -53,7 +53,7 @@ public class TextureRegion
     /// Draws the texture region to the screen.
     /// </summary>
     /// <param name="spriteBatch">The <see cref="SpriteBatch"/> instance to use to draw the region.</param>
-    /// <param name="targetArea">The bounding rectangle of the region of the screen that this region will be drawn on.</param>
+    /// <param name="targetArea">The bounding rectangle of the region of the screen that this region will be drawn to.</param>
     /// <param name="color">The color mask the region is drawn with.</param>
     public virtual void Draw(SpriteBatch spriteBatch, Rectangle targetArea, Color color)
     {

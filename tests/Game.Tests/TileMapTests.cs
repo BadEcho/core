@@ -13,13 +13,14 @@
 
 using BadEcho.Game.Pipeline;
 using BadEcho.Game.Tiles;
+using Microsoft.Xna.Framework.Content;
 using Xunit;
 
 namespace BadEcho.Game.Tests;
 
 public class TileMapTests : IClassFixture<ContentManagerFixture>
 {
-    private readonly Microsoft.Xna.Framework.Content.ContentManager _content;
+    private readonly ContentManager _content;
 
     public TileMapTests(ContentManagerFixture contentFixture) 
         => _content = contentFixture.Content;

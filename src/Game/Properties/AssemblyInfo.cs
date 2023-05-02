@@ -14,4 +14,16 @@ using System.Runtime.InteropServices;
                            "CA1028:Enum Storage should be Int32", 
                            Scope = "type", 
                            Target = "~T:BadEcho.Game.Tiles.TileFlips",
-                           Justification = "The TMX map format is an external specification which defines its tile flip flags as unsigned integer bitmask values.")] 
+                           Justification = "The TMX map format is an external specification which defines its tile flip flags as unsigned integer bitmask values.")]
+
+[assembly: SuppressMessage("Design", 
+                           "CA1045:Do not pass types by reference", 
+                           Scope = "member", 
+                           Target = "~M:BadEcho.Game.UI.Control.RemeasureIfChanged``1(``0@,``0)",
+                           Justification = "The method is not public, and the immeasurable amount of convenience provided by this function vastly outweighs the inconvenience of passing an argument by reference. This is a proper use of ref parameters.")]
+
+[assembly: SuppressMessage("Design", 
+                           "CA1045:Do not pass types by reference", 
+                           Scope = "member", 
+                           Target = "~M:BadEcho.Game.UI.Control.RearrangeIfChanged``1(``0@,``0)",
+                           Justification = "The method is not public, and the immeasurable amount of convenience provided by this function vastly outweighs the inconvenience of passing an argument by reference. This is a proper use of ref parameters.")]
