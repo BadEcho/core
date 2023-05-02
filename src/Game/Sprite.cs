@@ -100,7 +100,7 @@ public class Sprite : IPositionalEntity, ISpatialEntity
     public void ResolveCollision(IShape shape)
     {
         Vector2 penetration = Bounds.CalculatePenetration(shape);
-
+        
         _movementSystem.ApplyPenetration(this, penetration);
     }
 
@@ -167,9 +167,9 @@ public class Sprite : IPositionalEntity, ISpatialEntity
         => new(0, 0, Texture.Width, Texture.Height);
 
     /// <summary>
-    /// Gets the bounding rectangle of the region of the screen that the sprite's texture will be drawn on.
+    /// Gets the bounding rectangle of the region of the screen that the sprite's texture will be drawn to.
     /// </summary>
-    /// <returns>The bounding rectangle of the region of the screen that <see cref="Texture"/> will be drawn on.</returns>
+    /// <returns>The bounding rectangle of the region of the screen that <see cref="Texture"/> will be drawn to.</returns>
     protected virtual RectangleF GetTargetArea()
         => new(Position.X, Position.Y, Texture.Width, Texture.Height);
 

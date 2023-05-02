@@ -283,7 +283,7 @@ public readonly struct SizeF : IEquatable<SizeF>
     /// Adds this size with the specified <see cref="SizeF"/> value via vector addition to compute their sum.
     /// </summary>
     /// <param name="other">The size to add.</param>
-    /// <returns></returns>
+    /// <returns>The vector sum of this size and <c>other</c>.</returns>
     public SizeF Add(SizeF other)
         => new(Width + other.Width, Height + other.Height);
 

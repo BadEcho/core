@@ -182,7 +182,7 @@ public sealed class Camera : IPositionalEntity
     {
         Require.NotNull(state, nameof(state));
 
-        Zoom = ZoomSpeed * (float) state.Time.ElapsedGameTime.TotalSeconds;
+        Zoom += ZoomSpeed * (float) state.Time.ElapsedGameTime.TotalSeconds;
     }
 
     /// <summary>
@@ -193,6 +193,6 @@ public sealed class Camera : IPositionalEntity
     {
         Require.NotNull(state, nameof(state));
 
-        Zoom = ZoomSpeed * (float) state.Time.ElapsedGameTime.TotalSeconds;
+        Zoom -= ZoomSpeed * (float) state.Time.ElapsedGameTime.TotalSeconds;
     }
 }

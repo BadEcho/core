@@ -149,7 +149,7 @@ public readonly struct Size : IEquatable<Size>
     /// </summary>
     /// <param name="left">The size which <c>right</c> multiplies.</param>
     /// <param name="right">The size which multiplies <c>left</c>.</param>
-    /// <returns>The product of this size multiplied by <c>size</c>.</returns>
+    /// <returns>The product of <c>left</c> multiplied by <c>right</c>.</returns>
     public static Size operator *(Size left, Size right)
         => left.Multiply(right);
 
@@ -254,7 +254,7 @@ public readonly struct Size : IEquatable<Size>
     /// components to compute their product.
     /// </summary>
     /// <param name="other">The size to be multiplied by.</param>
-    /// <returns>The product of this size multiplied by <c>size</c>.</returns>
+    /// <returns>The product of this size multiplied by <c>other</c>.</returns>
     public Size Multiply(Size other)
         => new(unchecked(Width * other.Width), unchecked(Height * other.Height));
 

@@ -36,7 +36,7 @@ using BadEcho.Properties;
                           "CA1045",
                           Scope = "member",
                           Target = "~M:BadEcho.Presentation.ViewModels.ViewModel.NotifyIfChanged``1(``0@,``0,System.String)~System.Boolean",
-                          Justification = "The method is protected, not fully public, and the immeasurable amount of convenience provided by this function vastly outweighs the inconvenience of passing an argument by reference. On top of all that, there is simply no way to provide automatic property notification without requiring the backing field to be passed by reference.")]
+                          Justification = "The method is not public, and the immeasurable amount of convenience provided by this function vastly outweighs the inconvenience of passing an argument by reference. On top of all that, there is simply no way to provide automatic property notification without requiring the backing field to be passed by reference.")]
 
 [assembly: SuppressMessage("Style", 
                            "IDE0021:Use expression body for constructors", 

@@ -50,6 +50,8 @@ public sealed class TileMap : Extensible
                    CustomProperties customProperties)
         : base(customProperties)
     {
+        Require.NotNull(device, nameof(device));
+
         _device = device;
 
         Name = name;

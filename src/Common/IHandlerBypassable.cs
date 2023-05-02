@@ -66,7 +66,7 @@ public static class HandlerBypassableExtensions
     /// <param name="source">An object that supports the bypassing of event handlers.</param>
     /// <returns>True if <c>source</c> is bypassing handlers; otherwise, false.</returns>
     /// <remarks>
-    /// This value returned by this method should be consulted by all implementations of <see cref="IHandlerBypassable"/>
+    /// The value returned by this method should be consulted by all implementations of <see cref="IHandlerBypassable"/>
     /// prior to the execution of any consequential code in an event handler.
     /// </remarks>
     public static bool IsHandlingBypassed(this IHandlerBypassable source)
