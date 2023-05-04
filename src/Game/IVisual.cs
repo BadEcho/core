@@ -26,6 +26,5 @@ public interface IVisual
     /// </summary>
     /// <param name="spriteBatch">The <see cref="SpriteBatch"/> instance to use to draw the component.</param>
     /// <param name="targetArea">The bounding rectangle of the region of the screen that this component will be drawn to.</param>
-    /// <param name="color">The color mask the component is drawn with.</param>
-    void Draw(SpriteBatch spriteBatch, Rectangle targetArea, Color color);
+    void Draw(SpriteBatch spriteBatch, Rectangle targetArea);
 }

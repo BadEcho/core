@@ -30,8 +30,8 @@ public class StackPanelTests : IClassFixture<ContentManagerFixture>
 
         _firstLabel = new Label
                       {
-                          Background = Color.Gray,
-                          Border = Color.Aqua,
+                          Background = new Brush(Color.Gray),
+                          Border = new Brush(Color.Aqua),
                           BorderThickness = new Thickness(1),
                           Font = font,
                           Text = "Hello there",
@@ -41,8 +41,8 @@ public class StackPanelTests : IClassFixture<ContentManagerFixture>
 
         _secondLabel = new Label
                        {
-                           Background = Color.SteelBlue,
-                           Border = Color.Yellow,
+                           Background = new Brush(Color.SteelBlue),
+                           Border = new Brush(Color.Yellow),
                            BorderThickness = new Thickness(1),
                            Font = font,
                            Text = "What's up?",
@@ -53,7 +53,7 @@ public class StackPanelTests : IClassFixture<ContentManagerFixture>
 
         _stackPanel = new StackPanel
                       {
-                          Background = Color.Black
+                          Background = new Brush(Color.Black)
                       };
 
         _stackPanel.AddChild(_firstLabel);

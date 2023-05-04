@@ -30,8 +30,8 @@ public class ControlTests : IClassFixture<ContentManagerFixture>
 
         _label = new Label
                  {
-                     Background = Color.Gray,
-                     Border = Color.Aqua,
+                     Background = new Brush(Color.Gray),
+                     Border = new Brush(Color.Aqua),
                      Font = font,
                      Text = "Hello there",
                      VerticalAlignment = VerticalAlignment.Top,

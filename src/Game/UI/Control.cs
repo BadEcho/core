@@ -36,7 +36,7 @@ namespace BadEcho.Game.UI;
 /// Other than that, the intention is to keep the foundational logic for controls powered by this framework as simple as practicable.
 /// </para>
 /// </remarks>
-public abstract class Control : IArrangeable, IDisposable
+public abstract class Control : IArrangeable
 {
     private bool _invalidArrange = true;
     private bool _invalidMeasure = true;
@@ -57,10 +57,6 @@ public abstract class Control : IArrangeable, IDisposable
 
     private Size _lastAvailableSize;
     private Rectangle _lastEffectiveArea;
-
-    private Brush? _brush;
-
-    private bool _disposed;
 
     /// <summary>
     /// Gets the parent of this control.
@@ -244,16 +240,16 @@ public abstract class Control : IArrangeable, IDisposable
     }
 
     /// <summary>
-    /// Gets or sets the background color of this control.
+    /// Gets or sets the background visual of this control.
     /// </summary>
-    public Color Background
-    { get; set; } = Color.Transparent;
+    public IVisual? Background
+    { get; set; }
 
     /// <summary>
-    /// Gets or sets the color of the control's border.
+    /// Gets or sets the visual of the control's border.
     /// </summary>
-    public Color Border
-    { get; set; } = Color.Transparent;
+    public IVisual? Border
+    { get; set; }
 
     /// <inheritdoc/>
     /// <remarks>
@@ -346,76 +342,40 @@ public abstract class Control : IArrangeable, IDisposable
         if (!IsVisible)
             return;
 
-        _brush ??= new Brush(spriteBatch.GraphicsDevice);
+        Background?.Draw(spriteBatch, BackgroundBounds);
 
-        if (Background != Color.Transparent)
-        {
-            _brush.Draw(spriteBatch, BackgroundBounds, Background);
-        }
-
-        if (Border != Color.Transparent)
+        if (Border != null)
         {
             if (BorderThickness.Left > 0)
             {
-                _brush.Draw(spriteBatch,
-                            new Rectangle(BorderBounds.X, BorderBounds.Y, BorderThickness.Left, BorderBounds.Height),
-                            Border);
+                Border.Draw(spriteBatch,
+                            new Rectangle(BorderBounds.X, BorderBounds.Y, BorderThickness.Left, BorderBounds.Height));
             }
 
             if (BorderThickness.Top > 0)
             {
-                _brush.Draw(spriteBatch,
-                            new Rectangle(BorderBounds.X, BorderBounds.Y, BorderBounds.Width, BorderThickness.Top),
-                            Border);
+                Border.Draw(spriteBatch,
+                            new Rectangle(BorderBounds.X, BorderBounds.Y, BorderBounds.Width, BorderThickness.Top));
             }
 
             if (BorderThickness.Right > 0)
             {
-                _brush.Draw(spriteBatch,
-                            new Rectangle(BorderBounds.Right - BorderThickness.Right, BorderBounds.Y, BorderThickness.Right, BorderBounds.Height),
-                            Border);
+                Border.Draw(spriteBatch,
+                            new Rectangle(BorderBounds.Right - BorderThickness.Right, BorderBounds.Y, BorderThickness.Right, BorderBounds.Height));
             }
 
             if (BorderThickness.Bottom > 0)
             {
-                _brush.Draw(spriteBatch,
-                            new Rectangle(BorderBounds.X,
-                                          BorderBounds.Bottom - BorderThickness.Bottom,
-                                          BorderBounds.Width,
-                                          BorderThickness.Bottom),
-                            Border);
+                Border.Draw(spriteBatch, new Rectangle(BorderBounds.X,
+                                                       BorderBounds.Bottom - BorderThickness.Bottom,
+                                                       BorderBounds.Width,
+                                                       BorderThickness.Bottom));
             }
         }
 
         DrawCore(spriteBatch);
     }
     
-    /// <inheritdoc />
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    /// <summary>
-    /// Releases unmanaged and (optionally) managed resources.
-    /// </summary>
-    /// <param name="disposing">
-    /// <c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.
-    /// </param>
-    protected virtual void Dispose(bool disposing)
-    {
-        if (_disposed)
-            return;
-
-        if (disposing)
-        {
-            _brush?.Dispose();
-        }
-
-        _disposed = true;
-    }
-
     /// <summary>
     /// Sets a property's backing field to the provided value, invalidating the measurement state if a change in value occurred.
     /// </summary>

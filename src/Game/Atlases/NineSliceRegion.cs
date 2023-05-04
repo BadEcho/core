@@ -74,7 +74,7 @@ public sealed class NineSliceRegion : TextureRegion
     { get; }
 
     /// <inheritdoc/>
-    public override void Draw(SpriteBatch spriteBatch, Rectangle targetArea, Color color)
+    public override void Draw(SpriteBatch spriteBatch, Rectangle targetArea)
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
 
@@ -90,21 +90,21 @@ public sealed class NineSliceRegion : TextureRegion
         int bottomY = centerY + centerHeight;
 
         // With 9-slice scaling, different slices are scaled differently. Corner slices will always maintain their height and width.
-        _topLeft.Draw(spriteBatch, new Rectangle(leftX, topY, targetPadding.Left, targetPadding.Top), color);
-        _topRight.Draw(spriteBatch, new Rectangle(rightX, topY, targetPadding.Right, targetPadding.Top), color);
-        _bottomLeft.Draw(spriteBatch, new Rectangle(leftX, bottomY, targetPadding.Left, targetPadding.Bottom), color);
-        _bottomRight.Draw(spriteBatch, new Rectangle(rightX, bottomY, targetPadding.Right, targetPadding.Bottom), color);
+        _topLeft.Draw(spriteBatch, new Rectangle(leftX, topY, targetPadding.Left, targetPadding.Top));
+        _topRight.Draw(spriteBatch, new Rectangle(rightX, topY, targetPadding.Right, targetPadding.Top));
+        _bottomLeft.Draw(spriteBatch, new Rectangle(leftX, bottomY, targetPadding.Left, targetPadding.Bottom));
+        _bottomRight.Draw(spriteBatch, new Rectangle(rightX, bottomY, targetPadding.Right, targetPadding.Bottom));
 
         // Vertical slices (which go from top to bottom) only scale vertically.
-        _centerLeft.Draw(spriteBatch, new Rectangle(leftX, centerY, targetPadding.Left, centerHeight), color);
-        _centerRight.Draw(spriteBatch, new Rectangle(rightX, centerY, targetPadding.Right, centerHeight), color);
+        _centerLeft.Draw(spriteBatch, new Rectangle(leftX, centerY, targetPadding.Left, centerHeight));
+        _centerRight.Draw(spriteBatch, new Rectangle(rightX, centerY, targetPadding.Right, centerHeight));
 
         // Horizontal slices (which go from left to right) only scale horizontally.
-        _topCenter.Draw(spriteBatch, new Rectangle(centerX, topY, centerWidth, targetPadding.Top), color);
-        _bottomCenter.Draw(spriteBatch, new Rectangle(centerX, bottomY, centerWidth, targetPadding.Bottom), color);
+        _topCenter.Draw(spriteBatch, new Rectangle(centerX, topY, centerWidth, targetPadding.Top));
+        _bottomCenter.Draw(spriteBatch, new Rectangle(centerX, bottomY, centerWidth, targetPadding.Bottom));
 
         // Only the center slice will have both of its dimensions scaled.
-        _center.Draw(spriteBatch, new Rectangle(centerX, centerY, centerWidth, centerHeight), color);
+        _center.Draw(spriteBatch, new Rectangle(centerX, centerY, centerWidth, centerHeight));
     }
 
     private Thickness CalculateTargetPadding(Rectangle targetArea)

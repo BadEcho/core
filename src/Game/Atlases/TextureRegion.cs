@@ -54,11 +54,10 @@ public class TextureRegion : IVisual
     /// </summary>
     /// <param name="spriteBatch">The <see cref="SpriteBatch"/> instance to use to draw the region.</param>
     /// <param name="targetArea">The bounding rectangle of the region of the screen that this region will be drawn to.</param>
-    /// <param name="color">The color mask the region is drawn with.</param>
-    public virtual void Draw(SpriteBatch spriteBatch, Rectangle targetArea, Color color)
+    public virtual void Draw(SpriteBatch spriteBatch, Rectangle targetArea)
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
 
-        spriteBatch.Draw(AtlasTexture, targetArea, SourceArea, color);
+        spriteBatch.Draw(AtlasTexture, targetArea, SourceArea, Color.White);
     }
 }

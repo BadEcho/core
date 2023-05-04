@@ -21,29 +21,33 @@ namespace BadEcho.Game.UI;
 /// </summary>
 public sealed class Brush : IVisual, IDisposable
 {
-    private readonly Texture2D _palette;
+    private readonly Color _color;
 
+    private Texture2D? _palette;
     private bool _disposed;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Brush"/> class.
     /// </summary>
-    /// <param name="device">The graphics device to use for generating the palette texture.</param>
-    public Brush(GraphicsDevice device)
+    /// <param name="color">The color of the brush.</param>
+    public Brush(Color color)
     {
-        Require.NotNull(device, nameof(device));
-
-        _palette = new Texture2D(device, 1, 1);
-
-        _palette.SetData(new[] { Color.White });
+        _color = color;
     }
 
     /// <inheritdoc />
-    public void Draw(SpriteBatch spriteBatch, Rectangle targetArea, Color color)
+    public void Draw(SpriteBatch spriteBatch, Rectangle targetArea)
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
+
+        if (_palette == null)
+        {
+            _palette = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
+
+            _palette.SetData(new[] { Color.White });
+        }
         
-        spriteBatch.Draw(_palette, targetArea, color);
+        spriteBatch.Draw(_palette, targetArea, _color);
     }
 
     /// <inheritdoc/>
@@ -52,7 +56,7 @@ public sealed class Brush : IVisual, IDisposable
         if (_disposed)
             return;
 
-        _palette.Dispose();
+        _palette?.Dispose();
 
         _disposed = true;
     }
