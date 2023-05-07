@@ -260,10 +260,14 @@ public abstract class BindingExtensionSkeleton<TBinding, TValueConverter> : Mark
         ValidationError? validationError = null;
         object? filteredException = null;
 
-        // Interestingly, WPF seems to ignore ValidatesOnExceptions and adds a validation error anyway if it has managed to retrieve
-        // a validation error from an exception filter. For ourselves, we'll only proceed with adding a validation error for a thrown
-        // exception if the ValidatesOnExceptions property is set to true, or if we're part of a binding group.
-        if (_bindingExpression == null || !ValidatesOnExceptions && string.IsNullOrEmpty(BindingGroupName))
+        // A valid binding must be established before we can take advantage of the WPF's binding validation system.
+        if (_bindingExpression == null)
+            return;
+
+        // Similar to WPF's own behavior, we proceed with generating a validation error regardless of what ValidatesOnException is set
+        // to if the binding belongs to a binding group. Behind the scenes, the validation error will be propagated to the binding group,
+        // which it will then act on based on its own configuration.
+        if (!ValidatesOnExceptions && string.IsNullOrEmpty(BindingGroupName))
             return;
 
         if (UpdateSourceExceptionFilter != null)

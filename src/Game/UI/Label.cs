@@ -23,7 +23,7 @@ namespace BadEcho.Game.UI;
 /// </summary>
 public sealed class Label : Control
 {
-    private string _text = String.Empty;
+    private string _text = string.Empty;
     private SpriteFont? _font;
 
     /// <summary>

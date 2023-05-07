@@ -198,9 +198,6 @@
 	<data name="ExtensibleParsedNullPropertyValue" xml:space="preserve">
 		<value>The custom property type '{0}' parser returned a null value despite a successful parse of the custom property '{1}' with value '{2}'.</value>
 	</data>
-	<data name="ColorBadHexString" xml:space="preserve">
-		<value>Hex code string was not recognized as a valid Color.</value>
-	</data>
   <data name="ImportingFinished" xml:space="preserve">
 		<value>Finished importing {0}</value>
 	</data>

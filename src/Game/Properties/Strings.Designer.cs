@@ -70,6 +70,15 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hex code string was not recognized as a valid Color..
+        /// </summary>
+        internal static string ColorBadHexString {
+            get {
+                return ResourceManager.GetString("ColorBadHexString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The specified element is outside this quadtree&apos;s boundaries..
         /// </summary>
         internal static string ElementOutsideQuadtreeBounds {

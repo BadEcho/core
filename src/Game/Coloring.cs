@@ -12,15 +12,15 @@
 //-----------------------------------------------------------------------
 
 using System.Globalization;
-using BadEcho.Game.Pipeline.Properties;
+using BadEcho.Game.Properties;
 using Microsoft.Xna.Framework;
 
-namespace BadEcho.Game.Pipeline;
+namespace BadEcho.Game;
 
 /// <summary>
 /// Provides parsing methods for converting various representations of a color into their <see cref="Color"/> equivalent.
 /// </summary>
-internal static class Coloring
+public static class Coloring
 {
     /// <summary>
     /// Converts a color hex code string into its equivalent <see cref="Color"/> representation.

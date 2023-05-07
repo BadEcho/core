@@ -151,15 +151,6 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hex code string was not recognized as a valid Color..
-        /// </summary>
-        internal static string ColorBadHexString {
-            get {
-                return ResourceManager.GetString("ColorBadHexString", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The custom property type &apos;{0}&apos; parser returned a null value despite a successful parse of the custom property &apos;{1}&apos; with value &apos;{2}&apos;..
         /// </summary>
         internal static string ExtensibleParsedNullPropertyValue {

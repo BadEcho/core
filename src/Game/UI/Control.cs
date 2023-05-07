@@ -97,19 +97,6 @@ public abstract class Control : IArrangeable
         => Padding.ApplyMargin(BackgroundBounds);
 
     /// <summary>
-    /// Gets a value indicating whether the mouse pointed is located over this control.
-    /// </summary>
-    public bool IsMouseOver
-    {
-        get
-        {
-            var mouseState = Mouse.GetState();
-
-            return BorderBounds.Contains(mouseState.Position);
-        }
-    }
-
-    /// <summary>
     /// Gets or sets a value indicating if this control is visible.
     /// </summary>
     public bool IsVisible
@@ -246,10 +233,41 @@ public abstract class Control : IArrangeable
     { get; set; }
 
     /// <summary>
+    /// Gets or sets the background visual of this control when the mouse is hovering over it.
+    /// </summary>
+    /// <remarks>
+    /// Not setting this property will result in no change to the control's background when the mouse is over it.
+    /// </remarks>
+    public IVisual? BackgroundMouseOver
+    { get; set; }
+
+    /// <summary>
     /// Gets or sets the visual of the control's border.
     /// </summary>
     public IVisual? Border
     { get; set; }
+
+    /// <summary>
+    /// Gets or sets the visual of the control's border when the mouse is hovering over it.
+    /// </summary>
+    /// <remarks>
+    /// Not setting this property will result in no change to the appearance of the button's border when the mouse is over it.
+    /// </remarks>
+    public IVisual? BorderMouseOver
+    { get; set; }
+
+    /// <summary>
+    /// Gets a value indicating whether the mouse pointed is located over this control.
+    /// </summary>
+    public bool IsMouseOver
+    {
+        get
+        {
+            var mouseState = Mouse.GetState();
+
+            return BorderBounds.Contains(mouseState.Position);
+        }
+    }
 
     /// <inheritdoc/>
     /// <remarks>
@@ -342,31 +360,35 @@ public abstract class Control : IArrangeable
         if (!IsVisible)
             return;
 
-        Background?.Draw(spriteBatch, BackgroundBounds);
+        IVisual? background = GetActiveBackground();
 
-        if (Border != null)
+        background?.Draw(spriteBatch, BackgroundBounds);
+
+        IVisual? border = GetActiveBorder();
+
+        if (border != null)
         {
             if (BorderThickness.Left > 0)
             {
-                Border.Draw(spriteBatch,
+                border.Draw(spriteBatch,
                             new Rectangle(BorderBounds.X, BorderBounds.Y, BorderThickness.Left, BorderBounds.Height));
             }
 
             if (BorderThickness.Top > 0)
             {
-                Border.Draw(spriteBatch,
+                border.Draw(spriteBatch,
                             new Rectangle(BorderBounds.X, BorderBounds.Y, BorderBounds.Width, BorderThickness.Top));
             }
 
             if (BorderThickness.Right > 0)
             {
-                Border.Draw(spriteBatch,
+                border.Draw(spriteBatch,
                             new Rectangle(BorderBounds.Right - BorderThickness.Right, BorderBounds.Y, BorderThickness.Right, BorderBounds.Height));
             }
 
             if (BorderThickness.Bottom > 0)
             {
-                Border.Draw(spriteBatch, new Rectangle(BorderBounds.X,
+                border.Draw(spriteBatch, new Rectangle(BorderBounds.X,
                                                        BorderBounds.Bottom - BorderThickness.Bottom,
                                                        BorderBounds.Width,
                                                        BorderThickness.Bottom));
@@ -459,11 +481,26 @@ public abstract class Control : IArrangeable
     { }
 
     /// <summary>
-    /// When overriden in a derived class, provides custom rendering logic for drawing this control.
+    /// When overridden in a derived class, provides custom rendering logic for drawing this control.
     /// </summary>
     /// <param name="spriteBatch">The <see cref="SpriteBatch"/> instance to use to draw the control.</param>
     /// <remarks>
     /// This is where the actually rendering logic for the content (something this base type knows nothing about) needs to occur.
     /// </remarks>
     protected abstract void DrawCore(SpriteBatch spriteBatch);
+
+    /// <summary>
+    /// When overridden in a derived class, provides custom logic for selecting the background visual of the control based on its
+    /// state.
+    /// </summary>
+    /// <returns>The background visual for the control.</returns>
+    protected virtual IVisual? GetActiveBackground() 
+        => IsMouseOver && BackgroundMouseOver != null ? BackgroundMouseOver : Background;
+
+    /// <summary>
+    /// When overridden in a derived class, provides custom logic for selecting the visual of the control's border.
+    /// </summary>
+    /// <returns>The visual for the control's border.</returns>
+    protected virtual IVisual? GetActiveBorder() 
+        => IsMouseOver && BorderMouseOver != null ? BorderMouseOver : Border;
 }

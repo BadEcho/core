@@ -128,4 +128,7 @@
 	<data name="LabelNoFont" xml:space="preserve">
 		<value>Label control requires a font to be set in order to draw text.</value>
 	</data>
+	<data name="ColorBadHexString" xml:space="preserve">
+		<value>Hex code string was not recognized as a valid Color.</value>
+	</data>
 </root>
