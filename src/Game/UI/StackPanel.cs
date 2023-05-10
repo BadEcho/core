@@ -77,7 +77,7 @@ public sealed class StackPanel : Panel
                 effectiveChildArea = new Rectangle(nextChildPosition,
                                                    ContentBounds.Y,
                                                    child.DesiredSize.Width,
-                                                   Math.Max(DesiredSize.Height, child.DesiredSize.Height));   
+                                                   Math.Max(ContentBounds.Height, child.DesiredSize.Height));   
 
                 nextChildPosition += child.DesiredSize.Width;
             }
@@ -85,7 +85,7 @@ public sealed class StackPanel : Panel
             {
                 effectiveChildArea = new Rectangle(ContentBounds.X,
                                                    nextChildPosition,
-                                                   Math.Max(DesiredSize.Width, child.DesiredSize.Width),
+                                                   Math.Max(ContentBounds.Width, child.DesiredSize.Width),
                                                    child.DesiredSize.Height);
 
                 nextChildPosition += child.DesiredSize.Height;
