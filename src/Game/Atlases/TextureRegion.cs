@@ -20,7 +20,7 @@ namespace BadEcho.Game.Atlases;
 /// Provides an image-bounding region of a texture atlas, able to be drawn independently from other images
 /// found in the atlas.
 /// </summary>
-public class TextureRegion : IVisual
+public class TextureRegion : IVisualRegion
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="TextureRegion"/> class.
@@ -48,7 +48,11 @@ public class TextureRegion : IVisual
     /// </summary>
     public Rectangle SourceArea
     { get; }
-    
+
+    /// <inheritdoc />
+    public Size Size
+        => SourceArea.Size;
+
     /// <summary>
     /// Draws the texture region to the screen.
     /// </summary>

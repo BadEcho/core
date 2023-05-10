@@ -20,9 +20,9 @@ namespace BadEcho.Game.Tests;
 
 public class ControlTests : IClassFixture<ContentManagerFixture>
 {
-    private readonly Label _label;
+    private readonly Rectangle _screenBounds = new(0, 0, 1920, 1080);
 
-    private readonly Rectangle _screenBounds = new (0, 0, 1920, 1080);
+    private readonly Label _label;
 
     public ControlTests(ContentManagerFixture contentFixture)
     {
