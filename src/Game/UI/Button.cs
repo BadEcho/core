@@ -10,7 +10,7 @@
 //      https://www.gnu.org/licenses/agpl-3.0.html
 // </copyright>
 //-----------------------------------------------------------------------
-
+    
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -22,6 +22,8 @@ namespace BadEcho.Game.UI;
 public sealed class Button : Control
 {
     private readonly Label _innerLabel;
+    private readonly Image _innerImage;
+    private readonly StackPanel _innerPanel;
 
     private bool _isPressed;
     private bool _isReleased;
@@ -37,6 +39,21 @@ public sealed class Button : Control
                           VerticalAlignment = VerticalAlignment.Center,
                           Parent = this
                       };
+
+        _innerImage = new Image
+                      {
+                          HorizontalAlignment = HorizontalAlignment.Center,
+                          VerticalAlignment = VerticalAlignment.Center,
+                          Parent = this
+                      };
+
+        _innerPanel = new StackPanel
+                      {
+                          Parent = this
+                      };
+
+        _innerPanel.AddChild(_innerImage);
+        _innerPanel.AddChild(_innerLabel);
     }
 
     /// <summary>
@@ -81,26 +98,55 @@ public sealed class Button : Control
     public IVisual? BorderPressed
     { get; set; }
 
+    /// <summary>
+    /// Gets or sets the visual component data for an optional image to display alongside the button's text.
+    /// </summary>
+    public IVisualRegion? Image
+    {
+        get => _innerImage.Visual;
+        set => _innerImage.Visual = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the specific width of the image displayed alongside the button's text.
+    /// </summary>
+    public int? ImageWidth
+    {
+        get => _innerImage.Width;
+        set => _innerImage.Width = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the specific height of the image displayed alongside the button's text.
+    /// </summary>
+    public int? ImageHeight
+    {
+        get => _innerImage.Height;
+        set => _innerImage.Height = value;
+    }
+
     /// <inheritdoc />
     protected override Size MeasureCore(Size availableSize)
     {
-        _innerLabel.Measure(availableSize);
+        _innerLabel.Margin = Image != null ? new Thickness(10, 0, 0, 0) : new Thickness(0);
 
-        return _innerLabel.DesiredSize;
+        _innerPanel.Measure(availableSize);
+
+        return _innerPanel.DesiredSize;
     }
 
     /// <inheritdoc/>
     protected override void ArrangeCore()
     {
-        base.ArrangeCore();
+        base.ArrangeCore(); 
 
-        _innerLabel.Arrange(ContentBounds);
+        _innerPanel.Arrange(ContentBounds);
     }
 
     /// <inheritdoc />
     protected override void DrawCore(SpriteBatch spriteBatch)
     {
-        _innerLabel.Draw(spriteBatch);
+        _innerPanel.Draw(spriteBatch);
 
         MouseState mouseState = Mouse.GetState();
 

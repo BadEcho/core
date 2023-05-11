@@ -395,7 +395,13 @@ public abstract class Control : IArrangeable
             }
         }
 
+        Rectangle clippingRectangle = spriteBatch.GraphicsDevice.ScissorRectangle;
+
+        spriteBatch.GraphicsDevice.ScissorRectangle = ContentBounds;
+
         DrawCore(spriteBatch);
+
+        spriteBatch.GraphicsDevice.ScissorRectangle = clippingRectangle;
     }
     
     /// <summary>
