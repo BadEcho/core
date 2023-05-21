@@ -62,6 +62,8 @@ public sealed class Label : Control
             return;
         }
 
-        spriteBatch.DrawString(Font, Text, ContentBounds.Location.ToVector2(), Color.White);
+        Vector2 contentPosition = ContentBounds.Location.ToVector2();
+
+        spriteBatch.DrawString(Font, Text, contentPosition, Color.White);
     }
 }
