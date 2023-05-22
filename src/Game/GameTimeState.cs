@@ -5,6 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BadEcho.Game;
-internal class GameTimeState
+
+/// <summary>
+/// Provides a standard snapshot of game timing state information along with additional timing-related
+/// configuration data.
+/// </summary>
+public sealed class GameTimeState
 {
 }
