@@ -177,22 +177,22 @@ public sealed class Camera : IPositionalEntity
     /// <summary>
     /// Increases the camera's amount of zoom.
     /// </summary>
-    /// <param name="state">The state of the game at this given point in time.</param>
-    public void ZoomIn(GameState state)
+    /// <param name="time">The game timing configuration and state for this update.</param>
+    public void ZoomIn(GameUpdateTime time)
     {
-        Require.NotNull(state, nameof(state));
+        Require.NotNull(time, nameof(time));
 
-        Zoom += ZoomSpeed * (float) state.Time.ElapsedGameTime.TotalSeconds;
+        Zoom += ZoomSpeed * (float) time.ElapsedGameTime.TotalSeconds;
     }
 
     /// <summary>
     /// Decreases the camera's amount of zoom.
     /// </summary>
-    /// <param name="state">The state of the game at this given point in time.</param>
-    public void ZoomOut(GameState state)
+    /// <param name="time">The game timing configuration and state for this update.</param>
+    public void ZoomOut(GameUpdateTime time)
     {
-        Require.NotNull(state, nameof(state));
+        Require.NotNull(time, nameof(time));
 
-        Zoom -= ZoomSpeed * (float) state.Time.ElapsedGameTime.TotalSeconds;
+        Zoom -= ZoomSpeed * (float) time.ElapsedGameTime.TotalSeconds;
     }
 }

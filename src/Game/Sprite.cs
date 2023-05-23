@@ -107,15 +107,15 @@ public class Sprite : IPositionalEntity, ISpatialEntity
     /// <summary>
     /// Advances the movement of the sprite by one tick.
     /// </summary>
-    /// <param name="state">The state of the game at this given point in time.</param>
-    public virtual void Update(GameState state)
+    /// <param name="time">The game timing configuration and state for this update.</param>
+    public virtual void Update(GameUpdateTime time)
     {
-        Require.NotNull(state, nameof(state));
+        Require.NotNull(time, nameof(time));
 
         _movementSystem.UpdateMovement(this);
 
         float timeScale 
-            = (float) (state.Time.ElapsedGameTime.TotalMilliseconds / state.TargetElapsedTime.TotalMilliseconds);
+            = (float) (time.ElapsedGameTime.TotalMilliseconds / time.TargetElapsedTime.TotalMilliseconds);
         
         Vector2 lastPosition = Position;
         

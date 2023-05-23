@@ -40,9 +40,9 @@ public sealed class AnimatedSprite : Sprite
     }
 
     /// <inheritdoc/>
-    public override void Update(GameState state)
+    public override void Update(GameUpdateTime time)
     {
-        base.Update(state);
+        base.Update(time);
         
         MovementDirection newDirection = Velocity.ToDirection();
         

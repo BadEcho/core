@@ -66,12 +66,12 @@ public sealed class Particle
     /// <summary>
     /// Advances the position and lifetime of the particle.
     /// </summary>
-    /// <param name="state">The state of the game at this given point in time.</param>
-    public void Update(GameState state)
+    /// <param name="time">The game timing configuration and state for this update.</param>
+    public void Update(GameUpdateTime time)
     {
         TimeToLive--;
 
-        Sprite.Update(state);
+        Sprite.Update(time);
     }
 
     /// <summary>
