@@ -156,12 +156,13 @@ public sealed class Camera : IPositionalEntity
     /// to change at the same rate as the position of the camera.
     /// </remarks>
     public Matrix GetViewMatrix(Vector2 parallaxFactor)
-        => Matrix.CreateTranslation(new Vector3(-Position * parallaxFactor, 0f)) 
-            * Matrix.CreateTranslation(new Vector3(-Origin, 0f))
-            * Matrix.CreateRotationZ(Angle)
-            * Matrix.CreateScale(Zoom, Zoom, 1f)
-            * Matrix.CreateTranslation(new Vector3(Origin, 0f))
-            * _viewportConnector.GetScaleMatrix();
+        // TODO: Document purpose of each operation
+        => Matrix.CreateTranslation(new Vector3(-Position * parallaxFactor, 0f))
+           * Matrix.CreateTranslation(new Vector3(-Origin, 0f))
+           * Matrix.CreateRotationZ(Angle)
+           * Matrix.CreateScale(Zoom, Zoom, 1f)
+           * Matrix.CreateTranslation(new Vector3(Origin, 0f))
+           * _viewportConnector.GetScaleMatrix();
 
     /// <summary>
     /// Directly moves the camera to the specified position.
