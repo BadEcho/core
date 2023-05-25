@@ -25,23 +25,55 @@ namespace BadEcho.Game.States;
 /// </summary>
 public abstract class GameState
 {
+    /// <summary>
+    /// Gets a value indicating if this state's scene is active and can receive input.
+    /// </summary>
+    public bool IsActive 
+    { get; internal set; }
+
+
+    /// <summary>
+    /// Gets a value indicating this state has the topmost scene in the z-order.
+    /// </summary>
+    public bool IsTopmost 
+    { get; internal set; }
+     
+    /// <summary>
+    /// Gets the manager orchestrating this and other game states.
+    /// </summary>
+    protected StateManager Manager
+    { get; }
+
+    /// <summary>
+    /// Loads resources needed by the state and prepares it to be drawn to the screen.
+    /// </summary>
     public void Load()
     {
 
     }
 
+    /// <summary>
+    /// Unloads resources previously loaded by the state, called when the state no longer needs to be drawn
+    /// to the screen.
+    /// </summary>
     public void Unload()
     {
 
     }
 
-    public void Update(GameUpdateTime time)
+    /// <summary>
+    /// Performs any necessary updates to the state, including its position, transitional state, and other state-specific
+    /// concerns.
+    /// </summary>
+    /// <param name="time">The game timing configuration and state for this update.</param>
+    public virtual void Update(GameUpdateTime time)
     {
-
+       
     }
 
-    public void Draw(SpriteBatch spriteBatch)
-    {
-
-    }
+    /// <summary>
+    /// Draws the scene associated with the state to the screen.
+    /// </summary>
+    /// <param name="spriteBatch">The <see cref="SpriteBatch"/> instance to use to draw the state.</param>
+    public abstract void Draw(SpriteBatch spriteBatch);
 }
