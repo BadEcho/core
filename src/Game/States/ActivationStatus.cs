@@ -14,24 +14,24 @@
 namespace BadEcho.Game.States;
 
 /// <summary>
-/// Specifies the visibility and appearance of a game state's scene.
+/// Specifies the activation phase of a game state's scene.
 /// </summary>
-public enum StateVisibility
+public enum ActivationStatus
 {
     /// <summary>
-    /// The game state is visible on the screen.
+    /// The game state has been fully activated and is visible on the screen.
     /// </summary>
-    Visible,
+    Activated,
     /// <summary>
-    /// The game state is in the process of transitioning onto the screen.
+    /// The game state is in the process of activating onto the screen.
     /// </summary>
     Activating,
     /// <summary>
-    /// The game state is in the process of transitioning off the screen.
+    /// The game state is in the process of deactivating off the screen.
     /// </summary>
     Deactivating,
     /// <summary>
-    /// The game state is not visible on the screen.
+    /// The game state has been deactivated and is not visible on the screen.
     /// </summary>
-    Hidden
+    Deactivated
 }
