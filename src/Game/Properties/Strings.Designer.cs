@@ -151,6 +151,15 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Graphics device has not been initialized yet..
+        /// </summary>
+        internal static string UninitializedGraphicsDevice {
+            get {
+                return ResourceManager.GetString("UninitializedGraphicsDevice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Zoom speed cannot be negative..
         /// </summary>
         internal static string ZoomSpeedCannotBeNegative {

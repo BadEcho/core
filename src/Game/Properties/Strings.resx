@@ -131,4 +131,7 @@
 	<data name="ColorBadHexString" xml:space="preserve">
 		<value>Hex code string was not recognized as a valid Color.</value>
 	</data>
+	<data name="UninitializedGraphicsDevice" xml:space="preserve">
+		<value>Graphics device has not been initialized yet.</value>
+	</data>
 </root>

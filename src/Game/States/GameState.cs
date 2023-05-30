@@ -23,24 +23,7 @@ public abstract class GameState
 {
     private ContentManager? _contentManager;
     private float _activationPercentage;
-    private bool _isUnloading;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="GameState"/> class.
-    /// </summary>
-    /// <param name="manager">The manager orchestrating </param>
-    protected GameState(StateManager manager)
-    {
-        Require.NotNull(manager, nameof(manager));
-
-        Manager = manager;
-    }
-
-    /// <summary>
-    /// Gets a value indicating if this state's scene can receive input.
-    /// </summary>
-    public bool IsReceivingInput 
-    { get; internal set; }
+    private bool _isExiting;
 
     /// <summary>
     /// Gets a value indicating this state has the topmost scene in the z-order.
@@ -61,36 +44,16 @@ public abstract class GameState
     { get; set; }
 
     /// <summary>
-    /// Gets the manager orchestrating this and other game states.
+    /// Gets a value indicating if the state has finished exiting from the screen and is ready for full removal.
     /// </summary>
-    protected StateManager Manager
-    { get; }
+    public bool HasExited
+    { get; private set; }
 
     /// <summary>
-    /// Loads resources needed by the state and prepares it to be drawn to the screen.
+    /// Gets a value indicating if the state acts like modal dialog on top of other states.
     /// </summary>
-    public void Load()
-    {
-        if (_contentManager != null)
-            return;
-
-        _contentManager = new ContentManager(Manager.Game.Services, "Content");
-
-        LoadContent(_contentManager);
-    }
-
-    /// <summary>
-    /// Unloads resources previously loaded by the state, called when the state no longer needs to be drawn
-    /// to the screen.
-    /// </summary>
-    public void Unload()
-    {
-        if (_contentManager == null)
-            return;
-
-        _contentManager.Unload();
-        _contentManager = null;
-    }
+    public virtual bool IsModal
+        => false;
 
     /// <summary>
     /// Performs any necessary updates to the state, including its position, activation status, and other state-specific
@@ -101,15 +64,19 @@ public abstract class GameState
     {
         Require.NotNull(time, nameof(time));
 
-        if (_isUnloading)
+        if (HasExited)
+            return;
+
+        if (_isExiting)
         {
             UpdateActivation(time, false);
 
             if (ActivationStatus == ActivationStatus.Deactivated)
-                Manager.RemoveState(this);
+                HasExited = true;
 
             return;
         }
+
         // If this game state is at the top of the z-order, we'll transition to a visible state.
         // Otherwise, we'll transition to hidden one.
         UpdateActivation(time, IsTopmost);
@@ -120,6 +87,50 @@ public abstract class GameState
     /// </summary>
     /// <param name="spriteBatch">The <see cref="SpriteBatch"/> instance to use to draw the state.</param>
     public abstract void Draw(SpriteBatch spriteBatch);
+
+    /// <summary>
+    /// Prepares the state for its eventual removal from an active state manager by first transitioning it to a deactivated status.
+    /// </summary>
+    public void Exit() 
+        => _isExiting = true;
+
+    /// <summary>
+    /// Handles the input being currently sent by the user.
+    /// </summary>
+    public virtual void ProcessInput()
+    { }
+
+    /// <summary>
+    /// Loads resources needed by the state and prepares it to be drawn to the screen.
+    /// </summary>
+    /// <param name="game">
+    /// The game the state is being loaded for, which can be used to acquire a <see cref="ContentManager"/> instance for
+    /// loading resources.
+    /// </param>
+    internal void Load(Microsoft.Xna.Framework.Game game)
+    {
+        Require.NotNull(game, nameof(game));
+
+        if (_contentManager != null)
+            return;
+
+        _contentManager = new ContentManager(game.Services, "Content");
+
+        LoadContent(_contentManager);
+    }
+
+    /// <summary>
+    /// Unloads resources previously loaded by the state, called when the state no longer needs to be drawn
+    /// to the screen.
+    /// </summary>
+    internal void Unload()
+    {
+        if (_contentManager == null)
+            return;
+
+        _contentManager.Unload();
+        _contentManager = null;
+    }
 
     /// <summary>
     /// Loads state-specific resources using the provided content manager.
