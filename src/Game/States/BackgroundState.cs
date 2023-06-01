@@ -1,26 +1,86 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿//-----------------------------------------------------------------------
+// <copyright>
+//      Created by Matt Weber <matt@badecho.com>
+//      Copyright @ 2023 Bad Echo LLC. All rights reserved.
+//
+//      Bad Echo Technologies are licensed under the
+//      GNU Affero General Public License v3.0.
+//
+//      See accompanying file LICENSE.md or a copy at:
+//      https://www.gnu.org/licenses/agpl-3.0.html
+// </copyright>
+//-----------------------------------------------------------------------
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.States;
 
 /// <summary>
-/// Provides a game state that acts as a backdrop behind all other states. Unlike other states,
-/// it will not begin to deactivate if it's not at the top of the z-order, as it is meant to be
+/// Provides a game state that acts as a backdrop behind any other active states. 
 /// </summary>
+/// <remarks>
+/// Unlike how other states behave, it will not begin to deactivate if not at the top of the z-order, as it is meant to serve
+/// as a background (something it cannot do if it deactivates and becomes hidden).
+/// </remarks>
 public sealed class BackgroundState : GameState
 {
-    public override void Draw(SpriteBatch spriteBatch)
+    private readonly string _backgroundAssetPath;
+
+    private Texture2D? _texture;
+    private bool _disposed;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BackgroundState"/> class.
+    /// </summary>
+    /// <param name="backgroundAssetPath">The relative content path to the asset that will be loaded as the background's texture.</param>
+    public BackgroundState(string backgroundAssetPath)
     {
-        throw new NotImplementedException();
+        _backgroundAssetPath = backgroundAssetPath;
+        ActivationTime = TimeSpan.FromSeconds(1.0);
     }
 
+    /// <inheritdoc/>
+    public override void Update(GameUpdateTime time)
+    {   // States deactivate unless they are the topmost -- forcing this to true will prevent the background from deactivating.
+        IsTopmost = true;
+
+        base.Update(time);
+    }
+
+    /// <inheritdoc/>
+    public override void Draw(SpriteBatch spriteBatch)
+    {
+        Require.NotNull(spriteBatch, nameof(spriteBatch));
+
+        Viewport viewport = spriteBatch.GraphicsDevice.Viewport;
+
+        spriteBatch.Begin();
+
+        spriteBatch.Draw(_texture,
+                         new Rectangle(0, 0, viewport.Width, viewport.Height),
+                         new Color(ActivationPercentage, ActivationPercentage, ActivationPercentage));
+
+        spriteBatch.End();
+    }
+
+    /// <inheritdoc/>
     protected override void LoadContent(ContentManager contentManager)
     {
-        throw new NotImplementedException();
+        _texture = contentManager.Load<Texture2D>(_backgroundAssetPath);
+    }
+
+    /// <inheritdoc/>
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing && !_disposed)
+        {
+            _texture?.Dispose();
+
+            _disposed = true;
+        }
+
+        base.Dispose(disposing);
     }
 }

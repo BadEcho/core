@@ -27,6 +27,7 @@ public sealed class StateManager : DrawableGameComponent
 
     private SpriteBatch? _spriteBatch;
     private bool _isLoaded;
+    private bool _disposed;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="StateManager"/> class.
@@ -147,5 +148,18 @@ public sealed class StateManager : DrawableGameComponent
         {
             state.Unload();
         }
+    }
+
+    /// <inheritdoc/>
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing && !_disposed)
+        {
+            _spriteBatch?.Dispose();
+
+            _disposed = true;
+        }
+
+        base.Dispose(disposing);
     }
 }

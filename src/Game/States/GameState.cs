@@ -19,11 +19,11 @@ namespace BadEcho.Game.States;
 /// <summary>
 /// Provides a scene for a game with independently managed content.
 /// </summary>
-public abstract class GameState
+public abstract class GameState : IDisposable
 {
     private ContentManager? _contentManager;
-    private float _activationPercentage;
     private bool _isExiting;
+    private bool _disposed;
 
     /// <summary>
     /// Gets a value indicating this state has the topmost scene in the z-order.
@@ -38,10 +38,17 @@ public abstract class GameState
     { get; private set; }
 
     /// <summary>
-    /// Gets or sets the amount of time required for the state's activation and deactivation.
+    /// Gets or sets the amount of time required for this state's activation and deactivation.
     /// </summary>
     public TimeSpan ActivationTime
     { get; set; }
+
+    /// <summary>
+    /// Gets a percentage value representing the activation progress, with a minimum value of 0 meaning fully deactivated and a maximum
+    /// value of 1 meaning fully activated.
+    /// </summary>
+    public float ActivationPercentage
+    { get; private set; }
 
     /// <summary>
     /// Gets a value indicating if the state has finished exiting from the screen and is ready for full removal.
@@ -87,6 +94,12 @@ public abstract class GameState
     /// </summary>
     /// <param name="spriteBatch">The <see cref="SpriteBatch"/> instance to use to draw the state.</param>
     public abstract void Draw(SpriteBatch spriteBatch);
+    
+    /// <summary>
+    /// Handles the input being currently sent by the user.
+    /// </summary>
+    public virtual void ProcessInput()
+    { }
 
     /// <summary>
     /// Prepares the state for its eventual removal from an active state manager by first transitioning it to a deactivated status.
@@ -94,11 +107,12 @@ public abstract class GameState
     public void Exit() 
         => _isExiting = true;
 
-    /// <summary>
-    /// Handles the input being currently sent by the user.
-    /// </summary>
-    public virtual void ProcessInput()
-    { }
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
 
     /// <summary>
     /// Loads resources needed by the state and prepares it to be drawn to the screen.
@@ -138,16 +152,35 @@ public abstract class GameState
     /// <param name="contentManager">The content manager to use to load the content.</param>
     protected abstract void LoadContent(ContentManager contentManager);
 
+    /// <summary>
+    /// Releases unmanaged and (optionally) managed resources.
+    /// </summary>
+    /// <param name="disposing">
+    /// <c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.
+    /// </param>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_disposed)
+            return;
+
+        if (disposing)
+        {
+            _contentManager?.Dispose();
+        }
+
+        _disposed = true;
+    }
+
     private void UpdateActivation(GameUpdateTime time, bool isActivating)
     {
         float activationScale
             = (float) (time.ElapsedGameTime.TotalMilliseconds / ActivationTime.TotalMilliseconds);
 
-        _activationPercentage += activationScale * (isActivating ? 1 : -1);
+        ActivationPercentage += activationScale * (isActivating ? 1 : -1);
 
-        if (!isActivating && _activationPercentage <= 0 || isActivating && _activationPercentage >= 1)
+        if (!isActivating && ActivationPercentage <= 0 || isActivating && ActivationPercentage >= 1)
         {   // Activation/deactivation of the game state has concluded.
-            _activationPercentage = Math.Clamp(_activationPercentage, 0, 1);
+            ActivationPercentage = Math.Clamp(ActivationPercentage, 0, 1);
 
             ActivationStatus = isActivating ? ActivationStatus.Activated : ActivationStatus.Deactivated;
         }
