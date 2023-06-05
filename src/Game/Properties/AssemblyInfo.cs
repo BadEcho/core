@@ -27,3 +27,15 @@ using System.Runtime.InteropServices;
                            Scope = "member", 
                            Target = "~M:BadEcho.Game.UI.Control.RearrangeIfChanged``1(``0@,``0)",
                            Justification = "The method is not public, and the immeasurable amount of convenience provided by this function vastly outweighs the inconvenience of passing an argument by reference. This is a proper use of ref parameters.")]
+
+[assembly: SuppressMessage("Performance", 
+                           "CA1814:Prefer jagged arrays over multidimensional", 
+                           Scope = "member", 
+                           Target = "~M:BadEcho.Game.UI.Grid.MeasureCore(BadEcho.Game.Size)~BadEcho.Game.Size",
+                           Justification = "A jagged array would not benefit us here, as this multidimensional array is meant to represent cell data in a grid. We want each row to have the same number of columns; in no situation would it ever make sense for this not to be the case.")]
+
+[assembly: SuppressMessage("Performance", 
+                           "CA1814:Prefer jagged arrays over multidimensional", 
+                           Scope = "member", 
+                           Target = "~F:BadEcho.Game.UI.Grid._cells",
+                           Justification = "A jagged array would not benefit us here, as this multidimensional array is meant to represent cell data in a grid. We want each row to have the same number of columns; in no situation would it ever make sense for this not to be the case.")]

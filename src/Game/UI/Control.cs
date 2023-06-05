@@ -49,6 +49,9 @@ public abstract class Control : IArrangeable
     private int? _minimumHeight;
     private int? _maximumHeight;
 
+    private int _column;
+    private int _row;
+
     private HorizontalAlignment _horizontalAlignment;
     private VerticalAlignment _verticalAlignment;
     private Thickness _borderThickness;
@@ -207,6 +210,30 @@ public abstract class Control : IArrangeable
     }
 
     /// <summary>
+    /// Gets or sets the index of the column within a parent <see cref="Grid"/> panel containing this control.
+    /// </summary>
+    /// <remarks>
+    /// This property is ignored if <see cref="Parent"/> is not set to a <see cref="Grid"/> instance.
+    /// </remarks>
+    public int Column
+    {
+        get => _column;
+        set => RemeasureIfChanged(ref _column, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the index of the row within a parent <see cref="Grid"/> panel containing this control.
+    /// </summary>
+    /// <remarks>
+    /// This property is ignored if <see cref="Parent"/> is not set to a <see cref="Grid"/> instance.
+    /// </remarks>
+    public int Row
+    {
+        get => _row;
+        set => RemeasureIfChanged(ref _row, value);
+    }
+
+    /// <summary>
     /// Gets or sets the horizontal alignment characteristics that are applied to this control when composed in a layout parent, such as a
     /// type of <see cref="Panel"/>.
     /// </summary>
@@ -225,7 +252,7 @@ public abstract class Control : IArrangeable
         get => _verticalAlignment;
         set => RearrangeIfChanged(ref _verticalAlignment, value);
     }
-
+    
     /// <summary>
     /// Gets or sets the background visual of this control.
     /// </summary>
