@@ -12,6 +12,7 @@
 //-----------------------------------------------------------------------
 
 using BadEcho.Extensions;
+using Microsoft.Xna.Framework;
 
 namespace BadEcho.Game.UI;
 
@@ -26,6 +27,8 @@ public sealed class Grid : Panel
     private readonly List<Control> _visibleChildren = new();
     private readonly List<int> _columnWidths = new();
     private readonly List<int> _rowHeights = new();
+    private readonly List<int> _cellsX = new();
+    private readonly List<int> _cellsY = new();
 
     private List<Control>?[,] _cells 
         = new List<Control>[0,0];
@@ -176,6 +179,81 @@ public sealed class Grid : Panel
         }
 
         // Do the same with rows...
+        float availableHeight = ContentBounds.Height;
+        totalProportions = 0.0f;
+
+        for (int row = 0; row < _rowHeights.Count; row++)
+        {
+            GridDimension dimension = GetRow(row);
+
+            if (dimension.Unit is GridDimensionUnit.Auto or GridDimensionUnit.Absolute)
+                availableHeight -= _rowHeights[row];
+            else
+                totalProportions += dimension.Value;
+        }
+
+        if (!totalProportions.ApproximatelyEquals(0.0f))
+        {
+            float allocatedProportions = 0.0f;
+
+            for (int row = 0; row < _rowHeights.Count; row++)
+            {
+                GridDimension dimension = GetRow(row);
+
+                if (dimension.Unit == GridDimensionUnit.Proportional)
+                {
+                    _rowHeights[row] = (int) (dimension.Value * availableHeight / totalProportions);
+                    allocatedProportions += _rowHeights[row];
+                }
+            }
+
+            availableHeight -= allocatedProportions;
+        }
+
+        _cellsX.Clear();
+
+        int nextChildPosition = 0;
+
+        foreach (int columnWidth in _columnWidths)
+        {
+            _cellsX.Add(nextChildPosition);
+            nextChildPosition += columnWidth;
+        }
+
+        _cellsY.Clear();
+
+        nextChildPosition = 0;
+
+        foreach (int rowHeight in _rowHeights)
+        {
+            _cellsY.Add(nextChildPosition);
+            nextChildPosition += rowHeight;
+        }
+
+        foreach (Control child in _visibleChildren)
+        {
+            int cellWidth = _columnWidths[child.Column];
+            int cellHeight = _rowHeights[child.Row];
+
+            var effectiveChildArea = new Rectangle(ContentBounds.X + _cellsX[child.Column],
+                                                   ContentBounds.Y + _cellsY[child.Row],
+                                                   cellWidth,
+                                                   cellHeight);
+
+            if (effectiveChildArea.Right > ContentBounds.Right)
+                effectiveChildArea.Width = ContentBounds.Right - effectiveChildArea.X;
+
+            if (effectiveChildArea.Width < 0)
+                effectiveChildArea.Width = 0;
+
+            if (effectiveChildArea.Bottom > ContentBounds.Bottom)
+                effectiveChildArea.Height = ContentBounds.Bottom - effectiveChildArea.Y;
+
+            if (effectiveChildArea.Height < 0)
+                effectiveChildArea.Height = 0;
+
+            child.Arrange(effectiveChildArea);
+        }
     }
 
     private GridDimension GetRow(int row) 
