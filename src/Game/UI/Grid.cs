@@ -51,8 +51,8 @@ public sealed class Grid : Panel
         _visibleChildren.Clear();
         _visibleChildren.AddRange(Children.Where(c => c.IsVisible));
 
-        int columns = _visibleChildren.Max(c => c.Column);
-        int rows = _visibleChildren.Max(c => c.Row);
+        int columns = _visibleChildren.Max(c => c.Column) + 1;
+        int rows = _visibleChildren.Max(c => c.Row) + 1;
 
         if (Columns.Count > columns)
             columns = Columns.Count;
@@ -115,12 +115,15 @@ public sealed class Grid : Panel
                            .Where(c => c.Dimension.Unit == GridDimensionUnit.Proportional)
                            .ToList();
 
-        int maxColumnWidth = proportionalColumns.Max(c => c.Width);
-
-        foreach (var proportionalColumn in proportionalColumns)
+        if (proportionalColumns.Any())
         {
-            _columnWidths[proportionalColumn.Index] 
-                = (int) (maxColumnWidth * proportionalColumn.Dimension.Value);
+            int maxColumnWidth = proportionalColumns.Max(c => c.Width);
+
+            foreach (var proportionalColumn in proportionalColumns)
+            {
+                _columnWidths[proportionalColumn.Index]
+                    = (int) (maxColumnWidth * proportionalColumn.Dimension.Value);
+            }
         }
 
         var proportionalRows
@@ -128,14 +131,17 @@ public sealed class Grid : Panel
                          .Where(r => r.Dimension.Unit == GridDimensionUnit.Proportional)
                          .ToList();
 
-        int maxRowHeight = proportionalRows.Max(r => r.Height);
-
-        foreach (var proportionalRow in proportionalRows)
+        if (proportionalRows.Any())
         {
-            _rowHeights[proportionalRow.Index]
-                = (int) (maxRowHeight * proportionalRow.Dimension.Value);
-        }
+            int maxRowHeight = proportionalRows.Max(r => r.Height);
 
+            foreach (var proportionalRow in proportionalRows)
+            {
+                _rowHeights[proportionalRow.Index]
+                    = (int) (maxRowHeight * proportionalRow.Dimension.Value);
+            }
+        }
+        
         int desiredWidth = _columnWidths.Sum();
         int desiredHeight = _rowHeights.Sum();
 
