@@ -85,7 +85,7 @@ public sealed class Button : Control
     /// <remarks>
     /// Not setting this property will result in no change to the button's background when clicked: a typically undesirable behavior.
     /// </remarks>
-    public IVisual? BackgroundPressed
+    public IVisual? PressedBackground
     {  get; set;  }
 
     /// <summary>
@@ -95,7 +95,7 @@ public sealed class Button : Control
     /// Not setting this property will result in no change to the appearance of the button's border when clicked.
     /// clicked.
     /// </remarks>
-    public IVisual? BorderPressed
+    public IVisual? PressedBorder
     { get; set; }
 
     /// <summary>
@@ -175,13 +175,13 @@ public sealed class Button : Control
     /// <inheritdoc/>
     protected override IVisual? GetActiveBackground()
     {
-        if (_isPressed && BackgroundPressed != null)
-            return BackgroundPressed;
+        if (_isPressed && PressedBackground != null)
+            return PressedBackground;
 
         // Check if the button has not been released since being pressed while the mouse was over the button -- we only show a pressed state if a button
         // is pressed while over the button, otherwise we take one step back to a "mouse-over" appearance.
-        if (!_isReleased && BackgroundMouseOver != null)
-            return BackgroundMouseOver;
+        if (!_isReleased && MouseOverBackground != null)
+            return MouseOverBackground;
 
         return base.GetActiveBackground();
     }
@@ -189,13 +189,13 @@ public sealed class Button : Control
     /// <inheritdoc/>
     protected override IVisual? GetActiveBorder()
     {
-        if (_isPressed && BorderPressed != null)
-            return BorderPressed;
+        if (_isPressed && PressedBorder != null)
+            return PressedBorder;
 
         // Like with the background, if the button hasn't been released, yet our mouse is no longer over the button, we revert from a "pressed" appearance
         // to a "mouse-over" appearance.
-        if (!_isReleased && BorderMouseOver != null)
-            return BorderMouseOver;
+        if (!_isReleased && MouseOverBorder != null)
+            return MouseOverBorder;
 
         return base.GetActiveBorder();
     }

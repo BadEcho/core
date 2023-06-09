@@ -265,7 +265,7 @@ public abstract class Control : IArrangeable
     /// <remarks>
     /// Not setting this property will result in no change to the control's background when the mouse is over it.
     /// </remarks>
-    public IVisual? BackgroundMouseOver
+    public IVisual? MouseOverBackground
     { get; set; }
 
     /// <summary>
@@ -280,7 +280,7 @@ public abstract class Control : IArrangeable
     /// <remarks>
     /// Not setting this property will result in no change to the appearance of the button's border when the mouse is over it.
     /// </remarks>
-    public IVisual? BorderMouseOver
+    public IVisual? MouseOverBorder
     { get; set; }
 
     /// <summary>
@@ -528,12 +528,12 @@ public abstract class Control : IArrangeable
     /// </summary>
     /// <returns>The background visual for the control.</returns>
     protected virtual IVisual? GetActiveBackground() 
-        => IsMouseOver && BackgroundMouseOver != null ? BackgroundMouseOver : Background;
+        => IsMouseOver && MouseOverBackground != null ? MouseOverBackground : Background;
 
     /// <summary>
     /// When overridden in a derived class, provides custom logic for selecting the visual of the control's border.
     /// </summary>
     /// <returns>The visual for the control's border.</returns>
     protected virtual IVisual? GetActiveBorder() 
-        => IsMouseOver && BorderMouseOver != null ? BorderMouseOver : Border;
+        => IsMouseOver && MouseOverBorder != null ? MouseOverBorder : Border;
 }
