@@ -13,6 +13,9 @@
 
 using BadEcho.Extensions;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BadEcho.Game.UI;
 
@@ -22,7 +25,7 @@ namespace BadEcho.Game.UI;
 public sealed class Grid : Panel
 {
     private static readonly GridDimension _DefaultDimension 
-        = new(1.0f, GridDimensionUnit.Proportional);
+        = new(1.0f, GridDimensionUnit.Auto);
 
     private readonly List<Control> _visibleChildren = new();
     private readonly List<int> _columnWidths = new();
@@ -32,6 +35,11 @@ public sealed class Grid : Panel
 
     private List<Control>?[,] _cells 
         = new List<Control>[0,0];
+
+    private int? _mouseOverColumn;
+    private int? _mouseOverRow;
+    private int? _selectedColumn;
+    private int? _selectedRow;
 
     /// <summary>
     /// Gets specified measurements for each column of this <see cref="Grid"/>.
@@ -44,6 +52,39 @@ public sealed class Grid : Panel
     /// </summary>
     public IList<GridDimension> Rows
     { get; } = new List<GridDimension>();
+
+    /// <summary>
+    /// Gets or sets the background visual of a cell when the mouse is hovering over it.
+    /// </summary>
+    public IVisual? MouseOverCellBackground
+    { get; set; }
+
+    /// <summary>
+    /// Gets or sets the background visual of a cell when it has been selected.
+    /// </summary>
+    public IVisual? SelectedCellBackground
+    { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating if the cells of this <see cref="Grid"/> can be selected by the user.
+    /// </summary>
+    public bool IsSelectable
+    { get; set; }
+
+    /// <summary>
+    /// Gets a value indicating if the mouse pointer is located over a non-selected cell.
+    /// </summary>
+    [MemberNotNullWhen(true, nameof(_mouseOverColumn), nameof(_mouseOverRow))]
+    public bool IsMouseOverCell
+        => _mouseOverColumn.HasValue && _mouseOverRow.HasValue
+            && (_mouseOverColumn != _selectedColumn || _mouseOverRow != _selectedRow);
+
+    /// <summary>
+    /// Gets a value indicating if a cell has been selected.
+    /// </summary>
+    [MemberNotNullWhen(true, nameof(_selectedColumn), nameof(_selectedRow))]
+    public bool IsCellSelected
+        => _selectedColumn != null && _selectedRow != null;
 
     /// <inheritdoc/>
     protected override Size MeasureCore(Size availableSize)
@@ -184,6 +225,17 @@ public sealed class Grid : Panel
             availableWidth -= allocatedProportions;
         }
 
+        for (int column = 0; column < _columnWidths.Count; column++)
+        {
+            GridDimension dimension = GetColumn(column);
+
+            if (dimension.Unit == GridDimensionUnit.Fill)
+            {
+                _columnWidths[column] = (int) availableWidth;
+                break;
+            }
+        }
+
         // Do the same with rows...
         float availableHeight = ContentBounds.Height;
         totalProportions = 0.0f;
@@ -216,13 +268,24 @@ public sealed class Grid : Panel
             availableHeight -= allocatedProportions;
         }
 
+        for (int row = 0; row < _rowHeights.Count; row++)
+        {
+            GridDimension dimension = GetRow(row);
+
+            if (dimension.Unit == GridDimensionUnit.Fill)
+            {
+                _rowHeights[row] = (int) availableHeight;
+                break;
+            }
+        }
+
         _cellsX.Clear();
 
         int nextChildPosition = 0;
 
         foreach (int columnWidth in _columnWidths)
         {
-            _cellsX.Add(nextChildPosition);
+            _cellsX.Add(nextChildPosition + ContentBounds.X);
             nextChildPosition += columnWidth;
         }
 
@@ -232,7 +295,7 @@ public sealed class Grid : Panel
 
         foreach (int rowHeight in _rowHeights)
         {
-            _cellsY.Add(nextChildPosition);
+            _cellsY.Add(nextChildPosition + ContentBounds.Y);
             nextChildPosition += rowHeight;
         }
 
@@ -241,8 +304,8 @@ public sealed class Grid : Panel
             int cellWidth = _columnWidths[child.Column];
             int cellHeight = _rowHeights[child.Row];
 
-            var effectiveChildArea = new Rectangle(ContentBounds.X + _cellsX[child.Column],
-                                                   ContentBounds.Y + _cellsY[child.Row],
+            var effectiveChildArea = new Rectangle(_cellsX[child.Column],
+                                                   _cellsY[child.Row],
                                                    cellWidth,
                                                    cellHeight);
 
@@ -259,6 +322,66 @@ public sealed class Grid : Panel
                 effectiveChildArea.Height = 0;
 
             child.Arrange(effectiveChildArea);
+        }
+    }
+
+    /// <inheritdoc/>
+    protected override void DrawCore(SpriteBatch spriteBatch)
+    {
+        if (IsSelectable && IsMouseOver)
+        {
+            UpdateSelection();
+        }
+        else if (!IsMouseOver)
+        {
+            _mouseOverColumn = _mouseOverRow = null;
+        }
+
+        if (MouseOverCellBackground != null && IsMouseOverCell)
+        {
+            int backgroundX = _cellsX[_mouseOverColumn.Value];
+            int backgroundY = _cellsY[_mouseOverRow.Value];
+
+            MouseOverCellBackground.Draw(spriteBatch,
+                                         new Rectangle(backgroundX,
+                                                       backgroundY,
+                                                       _columnWidths[_mouseOverColumn.Value],
+                                                       _rowHeights[_mouseOverRow.Value]));
+        }
+
+        if (SelectedCellBackground != null && IsCellSelected)
+        {
+            int backgroundX = _cellsX[_selectedColumn.Value];
+            int backgroundY = _cellsY[_selectedRow.Value];
+
+            SelectedCellBackground.Draw(spriteBatch,
+                                        new Rectangle(backgroundX,
+                                                      backgroundY,
+                                                      _columnWidths[_selectedColumn.Value],
+                                                      _rowHeights[_selectedRow.Value]));
+        }
+
+        base.DrawCore(spriteBatch);
+    }
+
+    private void UpdateSelection()
+    {
+        MouseState mouseState = Mouse.GetState();
+        int mouseX = mouseState.Position.X;
+        int mouseY = mouseState.Position.Y;
+
+        _mouseOverColumn = _cellsX.Select((x, i) => new { X = x, Index = i })
+                                  .FirstOrDefault(cell => mouseX >= cell.X && mouseX < cell.X + _columnWidths[cell.Index])
+                                  ?.Index;
+
+        _mouseOverRow = _cellsY.Select((y, i) => new { Y = y, Index = i })
+                               .FirstOrDefault(cell => mouseY >= cell.Y && mouseY < cell.Y + _rowHeights[cell.Index])
+                               ?.Index;
+
+        if (mouseState.LeftButton == ButtonState.Pressed)
+        {
+            _selectedColumn = _mouseOverColumn;
+            _selectedRow = _mouseOverRow;
         }
     }
 

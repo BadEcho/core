@@ -284,13 +284,13 @@ public abstract class Control : IArrangeable
     { get; set; }
 
     /// <summary>
-    /// Gets a value indicating whether the mouse pointed is located over this control.
+    /// Gets a value indicating whether the mouse pointer is located over this control.
     /// </summary>
     public bool IsMouseOver
     {
         get
         {
-            var mouseState = Mouse.GetState();
+            MouseState mouseState = Mouse.GetState();
 
             return BorderBounds.Contains(mouseState.Position);
         }
