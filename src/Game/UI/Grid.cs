@@ -209,8 +209,6 @@ public sealed class Grid : Panel
 
         if (!totalProportions.ApproximatelyEquals(0.0f))
         {
-            float allocatedProportions = 0.0f;
-
             for (int column = 0; column < _columnWidths.Count; column++)
             {
                 GridDimension dimension = GetColumn(column);
@@ -218,21 +216,7 @@ public sealed class Grid : Panel
                 if (dimension.Unit == GridDimensionUnit.Proportional)
                 {
                     _columnWidths[column] = (int) (dimension.Value * availableWidth / totalProportions);
-                    allocatedProportions += _columnWidths[column];
                 }
-            }
-
-            availableWidth -= allocatedProportions;
-        }
-
-        for (int column = 0; column < _columnWidths.Count; column++)
-        {
-            GridDimension dimension = GetColumn(column);
-
-            if (dimension.Unit == GridDimensionUnit.Fill)
-            {
-                _columnWidths[column] = (int) availableWidth;
-                break;
             }
         }
 
@@ -252,8 +236,6 @@ public sealed class Grid : Panel
 
         if (!totalProportions.ApproximatelyEquals(0.0f))
         {
-            float allocatedProportions = 0.0f;
-
             for (int row = 0; row < _rowHeights.Count; row++)
             {
                 GridDimension dimension = GetRow(row);
@@ -261,21 +243,7 @@ public sealed class Grid : Panel
                 if (dimension.Unit == GridDimensionUnit.Proportional)
                 {
                     _rowHeights[row] = (int) (dimension.Value * availableHeight / totalProportions);
-                    allocatedProportions += _rowHeights[row];
                 }
-            }
-
-            availableHeight -= allocatedProportions;
-        }
-
-        for (int row = 0; row < _rowHeights.Count; row++)
-        {
-            GridDimension dimension = GetRow(row);
-
-            if (dimension.Unit == GridDimensionUnit.Fill)
-            {
-                _rowHeights[row] = (int) availableHeight;
-                break;
             }
         }
 
