@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Extensions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -102,6 +101,7 @@ public sealed class Grid : Panel
             rows = Rows.Count;
 
         _columnWidths.Clear();
+        _rowHeights.Clear();
 
         _columnWidths.AddRange(Enumerable.Repeat(0, columns));
         _rowHeights.AddRange(Enumerable.Repeat(0, rows));
@@ -116,73 +116,9 @@ public sealed class Grid : Panel
             cell.Add(child);
         }
 
-        for (int row = 0; row < rows; row++)
-        {
-            for (int column = 0; column < columns; column++)
-            {
-                GridDimension rowDimension = GetRow(row);
-                GridDimension columnDimension = GetColumn(column);
+        MeasureDiscreteDimensions(availableSize);
+        MeasureProportionalDimensions();
 
-                if (rowDimension.Unit == GridDimensionUnit.Absolute)
-                    _rowHeights[row] = (int) rowDimension.Value;
-
-                if (columnDimension.Unit == GridDimensionUnit.Absolute)
-                    _columnWidths[column] = (int) columnDimension.Value;
-
-                List<Control> cellChildren = _cells[row, column] ??= new List<Control>();
-
-                foreach (Control cellChild in cellChildren)
-                {
-                    Size desiredSize = Size.Empty;
-
-                    if (rowDimension.Unit != GridDimensionUnit.Absolute || columnDimension.Unit != GridDimensionUnit.Absolute)
-                    {
-                        cellChild.Measure(availableSize);
-
-                        desiredSize = cellChild.DesiredSize;
-                    }
-
-                    if (desiredSize.Width > _columnWidths[column] && columnDimension.Unit != GridDimensionUnit.Absolute)
-                        _columnWidths[column] = desiredSize.Width;
-
-                    if (desiredSize.Height > _rowHeights[row] && rowDimension.Unit != GridDimensionUnit.Absolute)
-                        _rowHeights[row] = desiredSize.Height;
-                }
-            }
-        }
-
-        var proportionalColumns
-            = _columnWidths.Select((width, index) => new { Width = width, Index = index, Dimension = GetColumn(index) })
-                           .Where(c => c.Dimension.Unit == GridDimensionUnit.Proportional)
-                           .ToList();
-
-        if (proportionalColumns.Any())
-        {
-            int maxColumnWidth = proportionalColumns.Max(c => c.Width);
-
-            foreach (var proportionalColumn in proportionalColumns)
-            {
-                _columnWidths[proportionalColumn.Index]
-                    = (int) (maxColumnWidth * proportionalColumn.Dimension.Value);
-            }
-        }
-
-        var proportionalRows
-            = _rowHeights.Select((height, index) => new { Height = height, Index = index, Dimension = GetRow(index) })
-                         .Where(r => r.Dimension.Unit == GridDimensionUnit.Proportional)
-                         .ToList();
-
-        if (proportionalRows.Any())
-        {
-            int maxRowHeight = proportionalRows.Max(r => r.Height);
-
-            foreach (var proportionalRow in proportionalRows)
-            {
-                _rowHeights[proportionalRow.Index]
-                    = (int) (maxRowHeight * proportionalRow.Dimension.Value);
-            }
-        }
-        
         int desiredWidth = _columnWidths.Sum();
         int desiredHeight = _rowHeights.Sum();
 
@@ -194,58 +130,8 @@ public sealed class Grid : Panel
     {
         base.ArrangeCore();
 
-        float availableWidth = ContentBounds.Width;
-        float totalProportions = 0.0f;
-
-        for (int column = 0; column < _columnWidths.Count; column++)
-        {
-            GridDimension dimension = GetColumn(column);
-
-            if (dimension.Unit is GridDimensionUnit.Auto or GridDimensionUnit.Absolute)
-                availableWidth -= _columnWidths[column];
-            else
-                totalProportions += dimension.Value;
-        }
-
-        if (!totalProportions.ApproximatelyEquals(0.0f))
-        {
-            for (int column = 0; column < _columnWidths.Count; column++)
-            {
-                GridDimension dimension = GetColumn(column);
-
-                if (dimension.Unit == GridDimensionUnit.Proportional)
-                {
-                    _columnWidths[column] = (int) (dimension.Value * availableWidth / totalProportions);
-                }
-            }
-        }
-
-        // Do the same with rows...
-        float availableHeight = ContentBounds.Height;
-        totalProportions = 0.0f;
-
-        for (int row = 0; row < _rowHeights.Count; row++)
-        {
-            GridDimension dimension = GetRow(row);
-
-            if (dimension.Unit is GridDimensionUnit.Auto or GridDimensionUnit.Absolute)
-                availableHeight -= _rowHeights[row];
-            else
-                totalProportions += dimension.Value;
-        }
-
-        if (!totalProportions.ApproximatelyEquals(0.0f))
-        {
-            for (int row = 0; row < _rowHeights.Count; row++)
-            {
-                GridDimension dimension = GetRow(row);
-
-                if (dimension.Unit == GridDimensionUnit.Proportional)
-                {
-                    _rowHeights[row] = (int) (dimension.Value * availableHeight / totalProportions);
-                }
-            }
-        }
+        ArrangeDimension(ContentBounds.Width, _columnWidths, GetColumn);
+        ArrangeDimension(ContentBounds.Height, _rowHeights, GetRow);
 
         _cellsX.Clear();
 
@@ -269,27 +155,7 @@ public sealed class Grid : Panel
 
         foreach (Control child in _visibleChildren)
         {
-            int cellWidth = _columnWidths[child.Column];
-            int cellHeight = _rowHeights[child.Row];
-
-            var effectiveChildArea = new Rectangle(_cellsX[child.Column],
-                                                   _cellsY[child.Row],
-                                                   cellWidth,
-                                                   cellHeight);
-
-            if (effectiveChildArea.Right > ContentBounds.Right)
-                effectiveChildArea.Width = ContentBounds.Right - effectiveChildArea.X;
-
-            if (effectiveChildArea.Width < 0)
-                effectiveChildArea.Width = 0;
-
-            if (effectiveChildArea.Bottom > ContentBounds.Bottom)
-                effectiveChildArea.Height = ContentBounds.Bottom - effectiveChildArea.Y;
-
-            if (effectiveChildArea.Height < 0)
-                effectiveChildArea.Height = 0;
-
-            child.Arrange(effectiveChildArea);
+            ArrangeCell(child);
         }
     }
 
@@ -330,6 +196,139 @@ public sealed class Grid : Panel
         }
 
         base.DrawCore(spriteBatch);
+    }
+
+    private static void ArrangeDimension(int availableSpace, IList<int> measurements, Func<int, GridDimension> dimensionSelector)
+    {
+        float totalProportions = 0.0f;
+        var proportionalMeasurements = new List<(int Index, GridDimension Dimension)>();
+
+        for (int i = 0; i < measurements.Count; i++)
+        {
+            GridDimension dimension = dimensionSelector(i);
+
+            if (dimension.Unit is GridDimensionUnit.Auto or GridDimensionUnit.Absolute)
+                availableSpace -= measurements[i];
+            else
+            {
+                totalProportions += dimension.Value;
+                proportionalMeasurements.Add((i, dimension));
+            }
+        }
+
+        foreach (var (index, dimension) in proportionalMeasurements)
+        {
+            if (dimension.Unit == GridDimensionUnit.Proportional)
+            {
+                measurements[index] = (int)(dimension.Value * availableSpace / totalProportions);
+            }
+        }
+    }
+
+    private void ArrangeCell(Control child)
+    {
+        int cellWidth = _columnWidths[child.Column];
+        int cellHeight = _rowHeights[child.Row];
+
+        var effectiveChildArea = new Rectangle(_cellsX[child.Column],
+                                               _cellsY[child.Row],
+                                               cellWidth,
+                                               cellHeight);
+
+        // Ensure the cell's size is clamped to its allotted area.
+        if (effectiveChildArea.Right > ContentBounds.Right)
+            effectiveChildArea.Width = ContentBounds.Right - effectiveChildArea.X;
+
+        if (effectiveChildArea.Width < 0)
+            effectiveChildArea.Width = 0;
+
+        if (effectiveChildArea.Bottom > ContentBounds.Bottom)
+            effectiveChildArea.Height = ContentBounds.Bottom - effectiveChildArea.Y;
+
+        if (effectiveChildArea.Height < 0)
+            effectiveChildArea.Height = 0;
+
+        child.Arrange(effectiveChildArea);
+    }
+
+    private void MeasureDiscreteDimensions(Size availableSize)
+    {   // For our first measure pass, we make some initial discrete cell measurements using either a provided absolute
+        // dimensional value or the size properties of the cell's content, based on said cell's dimensional configuration.
+        for (int row = 0; row < _rowHeights.Count; row++)
+        {
+            GridDimension rowDimension = GetRow(row);
+
+            if (rowDimension.Unit == GridDimensionUnit.Absolute)
+                _rowHeights[row] = (int) rowDimension.Value;
+
+            for (int column = 0; column < _columnWidths.Count; column++)
+            {
+                GridDimension columnDimension = GetColumn(column);
+
+                if (columnDimension.Unit == GridDimensionUnit.Absolute)
+                    _columnWidths[column] = (int) columnDimension.Value;
+
+                List<Control> cellChildren = _cells[row, column] ??= new List<Control>();
+
+                // If both the row and column are using absolute values for their measurements, we're done measuring this column.
+                // The desired sizes of cell controls take a back seat to absolute value dimensional definitions.
+                if (rowDimension.Unit == GridDimensionUnit.Absolute && columnDimension.Unit == GridDimensionUnit.Absolute)
+                    continue;
+
+                foreach (Control cellChild in cellChildren)
+                {
+                    Size desiredSize = Size.Empty;
+
+                    if (rowDimension.Unit != GridDimensionUnit.Absolute || columnDimension.Unit != GridDimensionUnit.Absolute)
+                    {
+                        cellChild.Measure(availableSize);
+                        desiredSize = cellChild.DesiredSize;
+                    }
+
+                    if (desiredSize.Width > _columnWidths[column] && columnDimension.Unit != GridDimensionUnit.Absolute)
+                        _columnWidths[column] = desiredSize.Width;
+
+                    if (desiredSize.Height > _rowHeights[row] && rowDimension.Unit != GridDimensionUnit.Absolute)
+                        _rowHeights[row] = desiredSize.Height;
+                }
+            }
+        }
+    }
+
+    private void MeasureProportionalDimensions()
+    {   // After the initial measure pass, we'll need to do another one in order to apply specified multiplier
+        // values to the desired sizes of any proportionally dimensioned cell controls.
+        var proportionalColumns
+            = _columnWidths.Select((width, index) => new { Width = width, Index = index, Dimension = GetColumn(index) })
+                           .Where(c => c.Dimension.Unit == GridDimensionUnit.Proportional)
+                           .ToList();
+
+        if (proportionalColumns.Any())
+        {
+            int maxColumnWidth = proportionalColumns.Max(c => c.Width);
+
+            foreach (var proportionalColumn in proportionalColumns)
+            {
+                _columnWidths[proportionalColumn.Index]
+                    = (int)(maxColumnWidth * proportionalColumn.Dimension.Value);
+            }
+        }
+
+        var proportionalRows
+            = _rowHeights.Select((height, index) => new { Height = height, Index = index, Dimension = GetRow(index) })
+                         .Where(r => r.Dimension.Unit == GridDimensionUnit.Proportional)
+                         .ToList();
+
+        if (proportionalRows.Any())
+        {
+            int maxRowHeight = proportionalRows.Max(r => r.Height);
+
+            foreach (var proportionalRow in proportionalRows)
+            {
+                _rowHeights[proportionalRow.Index]
+                    = (int)(maxRowHeight * proportionalRow.Dimension.Value);
+            }
+        }
     }
 
     private void UpdateSelection()
