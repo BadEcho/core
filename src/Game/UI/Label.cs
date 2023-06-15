@@ -36,6 +36,12 @@ public sealed class Label : Control
     }
 
     /// <summary>
+    /// Gets or sets the color of the font used for this label's text.
+    /// </summary>
+    public Color FontColor
+    { get; set; }
+
+    /// <summary>
     /// Gets or sets the text contents of this label.
     /// </summary>
     public string Text
@@ -64,6 +70,6 @@ public sealed class Label : Control
 
         Vector2 contentPosition = ContentBounds.Location.ToVector2();
 
-        spriteBatch.DrawString(Font, Text, contentPosition, Color.White);
+        spriteBatch.DrawString(Font, Text, contentPosition, FontColor);
     }
 }
