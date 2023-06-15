@@ -41,13 +41,13 @@ public sealed class Grid : Panel
     private int? _selectedRow;
 
     /// <summary>
-    /// Gets specified measurements for each column of this <see cref="Grid"/>.
+    /// Gets specified measurements for each column of this grid.
     /// </summary>
     public IList<GridDimension> Columns
     { get; } = new List<GridDimension>();
 
     /// <summary>
-    /// Gets specified measurements for each row of this <see cref="Grid"/>.
+    /// Gets specified measurements for each row of this grid.
     /// </summary>
     public IList<GridDimension> Rows
     { get; } = new List<GridDimension>();
@@ -65,7 +65,7 @@ public sealed class Grid : Panel
     { get; set; }
 
     /// <summary>
-    /// Gets or sets a value indicating if the cells of this <see cref="Grid"/> can be selected by the user.
+    /// Gets or sets a value indicating if the cells of this grid can be selected by the user.
     /// </summary>
     public bool IsSelectable
     { get; set; }
