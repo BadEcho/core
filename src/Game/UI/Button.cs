@@ -149,15 +149,15 @@ public sealed class Button : Control
         _innerPanel.Draw(spriteBatch);
 
         MouseState mouseState = Mouse.GetState();
-
-        // We independently track whether the mouse button releases from presses.
-        // This is done for purposes of maintaining consistency with common Windows controls, which exhibit the behavior of
-        // reverting to a "mouse-over" appearance if the mouse pointer leaves the boundaries of a button with the left button depressed.
-        _isReleased
-            = mouseState.LeftButton == ButtonState.Released;
-
+        
         if (IsMouseOver)
         {
+            // We independently track whether the mouse button releases from presses.
+            // This is done for purposes of maintaining consistency with common Windows controls, which exhibit the behavior of
+            // reverting to a "mouse-over" appearance if the mouse pointer leaves the boundaries of a button with the left button depressed.
+            _isReleased
+                = mouseState.LeftButton == ButtonState.Released;
+
             if (_isReleased && _isPressed)
             {   // The button was pressed and has been released while the mouse pointer was over our button, thereby constituting a button click.
                 Clicked?.Invoke(this, EventArgs.Empty);
