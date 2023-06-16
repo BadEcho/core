@@ -53,15 +53,15 @@ public sealed class Grid : Panel, ISelectable
     { get; } = new List<GridDimension>();
 
     /// <inheritdoc/>
+    public bool IsSelectable
+    { get; set; }
+
+    /// <inheritdoc/>
     public IVisual? HoveredItemBackground
     { get; set; }
 
     /// <inheritdoc/>
     public IVisual? SelectedItemBackground
-    { get; set; }
-
-    /// <inheritdoc/>
-    public bool IsSelectable
     { get; set; }
 
     /// <summary>
