@@ -21,7 +21,7 @@ namespace BadEcho.Game.UI;
 /// <summary>
 /// Provides a panel that consists of columns and rows.
 /// </summary>
-public sealed class Grid : Panel
+public sealed class Grid : Panel, ISelectable
 {
     private static readonly GridDimension _DefaultDimension 
         = new(1.0f, GridDimensionUnit.Auto);
@@ -52,21 +52,15 @@ public sealed class Grid : Panel
     public IList<GridDimension> Rows
     { get; } = new List<GridDimension>();
 
-    /// <summary>
-    /// Gets or sets the background visual of a cell when the mouse is hovering over it.
-    /// </summary>
-    public IVisual? MouseOverCellBackground
+    /// <inheritdoc/>
+    public IVisual? MouseOverItemBackground
     { get; set; }
 
-    /// <summary>
-    /// Gets or sets the background visual of a cell when it has been selected.
-    /// </summary>
-    public IVisual? SelectedCellBackground
+    /// <inheritdoc/>
+    public IVisual? SelectedItemBackground
     { get; set; }
 
-    /// <summary>
-    /// Gets or sets a value indicating if the cells of this grid can be selected by the user.
-    /// </summary>
+    /// <inheritdoc/>
     public bool IsSelectable
     { get; set; }
 
@@ -171,24 +165,24 @@ public sealed class Grid : Panel
             _mouseOverColumn = _mouseOverRow = null;
         }
 
-        if (MouseOverCellBackground != null && IsMouseOverCell)
+        if (MouseOverItemBackground != null && IsMouseOverCell)
         {
             int backgroundX = _cellsX[_mouseOverColumn.Value];
             int backgroundY = _cellsY[_mouseOverRow.Value];
 
-            MouseOverCellBackground.Draw(spriteBatch,
+            MouseOverItemBackground.Draw(spriteBatch,
                                          new Rectangle(backgroundX,
                                                        backgroundY,
                                                        _columnWidths[_mouseOverColumn.Value],
                                                        _rowHeights[_mouseOverRow.Value]));
         }
 
-        if (SelectedCellBackground != null && IsCellSelected)
+        if (SelectedItemBackground != null && IsCellSelected)
         {
             int backgroundX = _cellsX[_selectedColumn.Value];
             int backgroundY = _cellsY[_selectedRow.Value];
 
-            SelectedCellBackground.Draw(spriteBatch,
+            SelectedItemBackground.Draw(spriteBatch,
                                         new Rectangle(backgroundX,
                                                       backgroundY,
                                                       _columnWidths[_selectedColumn.Value],
