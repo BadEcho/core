@@ -23,7 +23,7 @@ public sealed class Button : Control
 {
     private readonly Label _innerLabel;
     private readonly Image _innerImage;
-    private readonly StackPanel _innerPanel;
+    private readonly Grid _innerPanel;
 
     private bool _wasPressed;
     private bool _isPressed;
@@ -34,21 +34,23 @@ public sealed class Button : Control
     /// </summary>
     public Button()
     {
-        _innerLabel = new Label
-                      {
-                          HorizontalAlignment = HorizontalAlignment.Center,
-                          VerticalAlignment = VerticalAlignment.Center,
-                          Parent = this
-                      };
-
         _innerImage = new Image
                       {
                           HorizontalAlignment = HorizontalAlignment.Center,
                           VerticalAlignment = VerticalAlignment.Center,
+                          Column = 0,
                           Parent = this
                       };
 
-        _innerPanel = new StackPanel
+        _innerLabel = new Label
+                      {
+                          HorizontalAlignment = HorizontalAlignment.Center,
+                          VerticalAlignment = VerticalAlignment.Center,
+                          Column = 1,
+                          Parent = this
+                      };
+
+        _innerPanel = new Grid
                       {
                           Parent = this
                       };
