@@ -18,6 +18,34 @@ namespace BadEcho.Game.UI;
 /// </summary>
 public sealed class MenuItem
 {
-    public string Label
-    { get; set; }
+    private readonly Menu _parent;
+
+    private string? _label;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MenuItem"/> class.
+    /// </summary>
+    /// <param name="parent">The menu containing the menu item.</param>
+    public MenuItem(Menu parent)
+    {
+        Require.NotNull(parent, nameof(parent));
+
+        _parent = parent;
+    }
+
+    /// <summary>
+    /// Gets or sets the text of the menu item.
+    /// </summary>
+    public string? Label
+    {
+        get => _label;
+        set
+        {
+            if (_label == value)
+                return;
+
+            _label = value;
+            _parent.InvalidateMeasure();
+        }
+    }
 }

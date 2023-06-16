@@ -41,6 +41,16 @@ public sealed class Menu : Control
     /// </summary>
     public Color LabelFontColor
     {  get; set; }
+
+    /// <summary>
+    /// Creates
+    /// </summary>
+    /// <param name="label"></param>
+    /// <returns></returns>
+    public MenuItem AddItem(string label)
+    {
+
+    }
     
 
     protected override Size MeasureCore(Size availableSize)
