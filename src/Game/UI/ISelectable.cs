@@ -24,9 +24,9 @@ public interface ISelectable
     bool IsSelectable { get; }
 
     /// <summary>
-    /// Gets or sets the background visual of an item when the mouse is hovering over it.
+    /// Gets or sets the background visual of an item when the cursor is located over it.
     /// </summary>
-    IVisual? MouseOverItemBackground { get; set; }
+    IVisual? HoveredItemBackground { get; set; }
 
     /// <summary>
     /// Gets or sets the background visual of an item when it has been selected.

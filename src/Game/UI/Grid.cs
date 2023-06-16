@@ -53,7 +53,7 @@ public sealed class Grid : Panel, ISelectable
     { get; } = new List<GridDimension>();
 
     /// <inheritdoc/>
-    public IVisual? MouseOverItemBackground
+    public IVisual? HoveredItemBackground
     { get; set; }
 
     /// <inheritdoc/>
@@ -65,10 +65,10 @@ public sealed class Grid : Panel, ISelectable
     { get; set; }
 
     /// <summary>
-    /// Gets a value indicating if the mouse pointer is located over a non-selected cell.
+    /// Gets a value indicating if the cursor is located over a non-selected cell.
     /// </summary>
     [MemberNotNullWhen(true, nameof(_mouseOverColumn), nameof(_mouseOverRow))]
-    public bool IsMouseOverCell
+    public bool IsCellHovered
         => _mouseOverColumn.HasValue && _mouseOverRow.HasValue
             && (_mouseOverColumn != _selectedColumn || _mouseOverRow != _selectedRow);
 
@@ -165,12 +165,12 @@ public sealed class Grid : Panel, ISelectable
             _mouseOverColumn = _mouseOverRow = null;
         }
 
-        if (MouseOverItemBackground != null && IsMouseOverCell)
+        if (HoveredItemBackground != null && IsCellHovered)
         {
             int backgroundX = _cellsX[_mouseOverColumn.Value];
             int backgroundY = _cellsY[_mouseOverRow.Value];
 
-            MouseOverItemBackground.Draw(spriteBatch,
+            HoveredItemBackground.Draw(spriteBatch,
                                          new Rectangle(backgroundX,
                                                        backgroundY,
                                                        _columnWidths[_mouseOverColumn.Value],

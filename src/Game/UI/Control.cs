@@ -260,12 +260,12 @@ public abstract class Control : IArrangeable
     { get; set; }
 
     /// <summary>
-    /// Gets or sets the background visual of this control when the mouse is hovering over it.
+    /// Gets or sets the background visual of this control when the cursor is located over it.
     /// </summary>
     /// <remarks>
-    /// Not setting this property will result in no change to the control's background when the mouse is over it.
+    /// Not setting this property will result in no change to the control's background when the cursor is over it.
     /// </remarks>
-    public IVisual? MouseOverBackground
+    public IVisual? HoveredBackground
     { get; set; }
 
     /// <summary>
@@ -275,12 +275,12 @@ public abstract class Control : IArrangeable
     { get; set; }
 
     /// <summary>
-    /// Gets or sets the visual of the control's border when the mouse is hovering over it.
+    /// Gets or sets the visual of the control's border when the cursor is located over it.
     /// </summary>
     /// <remarks>
-    /// Not setting this property will result in no change to the appearance of the button's border when the mouse is over it.
+    /// Not setting this property will result in no change to the appearance of the button's border when the cursor is over it.
     /// </remarks>
-    public IVisual? MouseOverBorder
+    public IVisual? HoveredBorder
     { get; set; }
 
     /// <summary>
@@ -528,12 +528,12 @@ public abstract class Control : IArrangeable
     /// </summary>
     /// <returns>The background visual for the control.</returns>
     protected virtual IVisual? GetActiveBackground() 
-        => IsMouseOver && MouseOverBackground != null ? MouseOverBackground : Background;
+        => IsMouseOver && HoveredBackground != null ? HoveredBackground : Background;
 
     /// <summary>
     /// When overridden in a derived class, provides custom logic for selecting the visual of the control's border.
     /// </summary>
     /// <returns>The visual for the control's border.</returns>
     protected virtual IVisual? GetActiveBorder() 
-        => IsMouseOver && MouseOverBorder != null ? MouseOverBorder : Border;
+        => IsMouseOver && HoveredBorder != null ? HoveredBorder : Border;
 }

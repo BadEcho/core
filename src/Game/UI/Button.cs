@@ -180,8 +180,8 @@ public sealed class Button : Control
 
         // Check if the button has not been released since being pressed while the mouse was over the button -- we only show a pressed state if a button
         // is pressed while over the button, otherwise we take one step back to a "mouse-over" appearance.
-        if (!_isReleased && MouseOverBackground != null)
-            return MouseOverBackground;
+        if (!_isReleased && HoveredBackground != null)
+            return HoveredBackground;
 
         return base.GetActiveBackground();
     }
@@ -194,8 +194,8 @@ public sealed class Button : Control
 
         // Like with the background, if the button hasn't been released, yet our mouse is no longer over the button, we revert from a "pressed" appearance
         // to a "mouse-over" appearance.
-        if (!_isReleased && MouseOverBorder != null)
-            return MouseOverBorder;
+        if (!_isReleased && HoveredBorder != null)
+            return HoveredBorder;
 
         return base.GetActiveBorder();
     }
