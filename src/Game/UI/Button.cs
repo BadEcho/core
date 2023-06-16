@@ -25,6 +25,7 @@ public sealed class Button : Control
     private readonly Image _innerImage;
     private readonly StackPanel _innerPanel;
 
+    private bool _wasPressed;
     private bool _isPressed;
     private bool _isReleased;
     
@@ -149,39 +150,45 @@ public sealed class Button : Control
         _innerPanel.Draw(spriteBatch);
 
         MouseState mouseState = Mouse.GetState();
-        
+
+        // Tracking both pressed and released states is needed in order to determine if an actually button click has occurred.
+        _isReleased
+            = mouseState.LeftButton == ButtonState.Released;
+
         if (IsMouseOver)
         {
-            // We independently track whether the mouse button releases from presses.
-            // This is done for purposes of maintaining consistency with common Windows controls, which exhibit the behavior of
-            // reverting to a "mouse-over" appearance if the mouse pointer leaves the boundaries of a button with the left button depressed.
-            _isReleased
-                = mouseState.LeftButton == ButtonState.Released;
-
             if (_isReleased && _isPressed)
             {   // The button was pressed and has been released while the mouse pointer was over our button, thereby constituting a button click.
                 Clicked?.Invoke(this, EventArgs.Empty);
             }
 
-            _isPressed = mouseState.LeftButton == ButtonState.Pressed;
+            // We need to know if the mouse's button was pressed, in case the mouse moves away from it before its released.
+            _wasPressed = _isPressed = mouseState.LeftButton == ButtonState.Pressed;
         }
         else
-        {   // Reset the pressed state if the mouse is no longer over the control, the prevent a click occurring from releasing the button and then 
-            // moving the mouse back over the button.
+        {   // Reset the pressed state if the mouse is no longer over the control. The mouse must be over the button for it be considered "pressed",
+            // regardless of whether the mouse's own buttons are pressed.
             _isPressed = false;
+
+            if (_isReleased)
+                _wasPressed = false;
         }
     }
 
     /// <inheritdoc/>
     protected override IVisual? GetActiveBackground()
     {
+        if (IsMouseOver && !_isPressed && HoveredBackground != null)
+            return HoveredBackground;
+
+        // Check if the button has not been released since being pressed while the mouse was over it -- we only show a pressed state if the button
+        // is being pressed as the mouse is over it, otherwise we display a hovered state.
+        // This behavior is consistent with that of other common Windows controls.
+        if (!IsMouseOver && _wasPressed && !_isReleased && HoveredBackground != null)
+            return HoveredBackground;
+
         if (_isPressed && PressedBackground != null)
             return PressedBackground;
-
-        // Check if the button has not been released since being pressed while the mouse was over the button -- we only show a pressed state if a button
-        // is pressed while over the button, otherwise we take one step back to a "mouse-over" appearance.
-        if (!_isReleased && HoveredBackground != null)
-            return HoveredBackground;
 
         return base.GetActiveBackground();
     }
@@ -189,13 +196,15 @@ public sealed class Button : Control
     /// <inheritdoc/>
     protected override IVisual? GetActiveBorder()
     {
+        if (IsMouseOver && !_isPressed && HoveredBorder != null)
+            return HoveredBorder;
+
+        // The same logic applied to determining which background is active is also  applied here.
+        if (!IsMouseOver && _wasPressed && !_isReleased && HoveredBorder != null)
+            return HoveredBorder;
+
         if (_isPressed && PressedBorder != null)
             return PressedBorder;
-
-        // Like with the background, if the button hasn't been released, yet our mouse is no longer over the button, we revert from a "pressed" appearance
-        // to a "mouse-over" appearance.
-        if (!_isReleased && HoveredBorder != null)
-            return HoveredBorder;
 
         return base.GetActiveBorder();
     }
