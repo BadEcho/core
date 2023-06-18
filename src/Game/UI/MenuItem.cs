@@ -11,41 +11,121 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using Microsoft.Xna.Framework.Graphics;
+
 namespace BadEcho.Game.UI;
 
 /// <summary>
 /// Provides a selectable item inside a <see cref="Menu"/> control.
 /// </summary>
-public sealed class MenuItem
+public sealed class MenuItem : Control
 {
-    private readonly Menu _parent;
-
-    private string? _label;
+    private readonly Label _innerLabel;
+    private readonly Image _innerImage;
+    private readonly Grid _innerPanel;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MenuItem"/> class.
     /// </summary>
-    /// <param name="parent">The menu containing the menu item.</param>
-    public MenuItem(Menu parent)
+    public MenuItem()
     {
-        Require.NotNull(parent, nameof(parent));
+        _innerImage = new Image
+                      {
+                          HorizontalAlignment = HorizontalAlignment.Center,
+                          VerticalAlignment = VerticalAlignment.Center,
+                          Column = 0,
+                          Parent = this
+                      };
 
-        _parent = parent;
+        _innerLabel = new Label
+                      {
+                          HorizontalAlignment = HorizontalAlignment.Center,
+                          VerticalAlignment = VerticalAlignment.Center,
+                          Column = 1,
+                          Parent = this
+                      };
+
+        _innerPanel = new Grid
+                      {
+                          Parent = this
+                      };
+
+        _innerPanel.AddChild(_innerImage);
+        _innerPanel.AddChild(_innerLabel);
     }
+
+    /// <summary>
+    /// Gets a submenu that, when populated with menu items, will open upon this menu item being selected.
+    /// </summary>
+    public Menu Submenu { get; } 
+        = new();
 
     /// <summary>
     /// Gets or sets the text of the menu item.
     /// </summary>
-    public string? Label
+    public string Text
     {
-        get => _label;
-        set
-        {
-            if (_label == value)
-                return;
+        get => _innerLabel.Text;
+        set => _innerLabel.Text = value;
+    }
 
-            _label = value;
-            _parent.InvalidateMeasure();
-        }
+    /// <summary>
+    /// Gets or sets the font used for this menu item's text.
+    /// </summary>
+    public SpriteFont? Font
+    {
+        get => _innerLabel.Font;
+        set => _innerLabel.Font = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the visual component data for an optional image to display alongside the menu item's text.
+    /// </summary>
+    public IVisualRegion? Image
+    {
+        get => _innerImage.Visual;
+        set => _innerImage.Visual = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the specific width of the image displayed alongside the menu item's text.
+    /// </summary>
+    public int? ImageWidth
+    {
+        get => _innerImage.Width;
+        set => _innerImage.Width = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the specific height of the image displayed alongside the menu item's text.
+    /// </summary>
+    public int? ImageHeight
+    {
+        get => _innerImage.Height;
+        set => _innerImage.Height = value;
+    }
+
+    /// <inheritdoc />
+    protected override Size MeasureCore(Size availableSize)
+    {
+        _innerLabel.Margin = Image != null ? new Thickness(10, 0, 0, 0) : new Thickness(0);
+
+        _innerPanel.Measure(availableSize);
+
+        return _innerPanel.DesiredSize;
+    }
+
+    /// <inheritdoc/>
+    protected override void ArrangeCore()
+    {
+        base.ArrangeCore();
+
+        _innerPanel.Arrange(ContentBounds);
+    }
+
+    /// <inheritdoc />
+    protected override void DrawCore(SpriteBatch spriteBatch)
+    {
+        _innerPanel.Draw(spriteBatch);
     }
 }
