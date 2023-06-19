@@ -21,7 +21,7 @@ namespace BadEcho.Game.UI;
 /// </summary>
 public sealed class Menu : Control, ISelectable
 {
-    private readonly Grid _itemContainer = new();
+    private readonly Grid _itemContainer = new() { IsSelectable = true };
     private readonly List<MenuItem> _menuItems = new();
 
     private Orientation _orientation;
@@ -115,7 +115,13 @@ public sealed class Menu : Control, ISelectable
 
     /// <inheritdoc/>
     protected override Size MeasureCore(Size availableSize)
-        => throw new NotImplementedException();
+    {
+        UpdateItemContainer();
+
+        _itemContainer.Measure(availableSize);
+
+        return _itemContainer.DesiredSize;
+    }
 
     /// <inheritdoc />
     protected override void DrawCore(SpriteBatch spriteBatch) 
@@ -125,5 +131,24 @@ public sealed class Menu : Control, ISelectable
     {
         menuItem.Font = _itemFont;
         menuItem.FontColor = _itemFontColor;
+    }
+
+    private void UpdateItemContainer()
+    {
+        for (int i = 0; i < _menuItems.Count; i++)
+        {
+            MenuItem menuItem = _menuItems[i];
+
+            if (Orientation == Orientation.Horizontal)
+            {
+                menuItem.Column = i;
+                menuItem.Row = 0;
+            }
+            else
+            {
+                menuItem.Row = i;
+                menuItem.Column = 0;
+            }
+        }
     }
 }

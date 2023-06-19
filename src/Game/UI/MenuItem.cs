@@ -56,6 +56,11 @@ public sealed class MenuItem : Control
     }
 
     /// <summary>
+    /// Occurs when the user has selected this menu item.
+    /// </summary>
+    public event EventHandler? Selected;
+
+    /// <summary>
     /// Gets a submenu that, when populated with menu items, will open upon this menu item being selected.
     /// </summary>
     public Menu Submenu { get; } 
@@ -114,6 +119,12 @@ public sealed class MenuItem : Control
         get => _innerImage.Height;
         set => _innerImage.Height = value;
     }
+
+    /// <summary>
+    /// Selects the menu item.
+    /// </summary>
+    public void Select() 
+        => Selected?.Invoke(this, EventArgs.Empty);
 
     /// <inheritdoc />
     protected override Size MeasureCore(Size availableSize)
