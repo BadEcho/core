@@ -41,6 +41,11 @@ public sealed class Grid : Panel, ISelectable
     private int? _selectedRow;
 
     /// <summary>
+    /// Occurs when a new cell has been selected.
+    /// </summary>
+    public event EventHandler<EventArgs<IEnumerable<Control>>>? SelectionChanged;
+
+    /// <summary>
     /// Gets specified measurements for each column of this grid.
     /// </summary>
     public IList<GridDimension> Columns
@@ -341,8 +346,19 @@ public sealed class Grid : Panel, ISelectable
 
         if (mouseState.LeftButton == ButtonState.Pressed)
         {
+            int? previousSelectedColumn = _selectedColumn;
+            int? previousSelectedRow = _selectedRow;
+
             _selectedColumn = _mouseOverColumn;
             _selectedRow = _mouseOverRow;
+
+            if (IsCellSelected && (previousSelectedColumn != _selectedColumn || previousSelectedRow != _selectedRow))
+            {
+                IEnumerable<Control>? selectedControls = _cells[_selectedRow.Value, _selectedColumn.Value];
+
+                if (selectedControls != null)
+                    SelectionChanged?.Invoke(this, new EventArgs<IEnumerable<Control>>(selectedControls));
+            }
         }
     }
 
