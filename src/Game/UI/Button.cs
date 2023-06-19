@@ -10,7 +10,8 @@
 //      https://www.gnu.org/licenses/agpl-3.0.html
 // </copyright>
 //-----------------------------------------------------------------------
-    
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -80,6 +81,15 @@ public sealed class Button : Control
     {
         get => _innerLabel.Font;
         set => _innerLabel.Font = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the color of the font used for this button's text.
+    /// </summary>
+    public Color FontColor
+    {
+        get => _innerLabel.FontColor;
+        set => _innerLabel.FontColor = value;
     }
 
     /// <summary>
