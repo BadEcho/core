@@ -11,6 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.UI;
@@ -76,6 +77,15 @@ public sealed class MenuItem : Control
     {
         get => _innerLabel.Font;
         set => _innerLabel.Font = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the color of the font used for this menu item's text.
+    /// </summary>
+    public Color FontColor
+    {
+        get => _innerLabel.FontColor;
+        set => _innerLabel.FontColor = value;
     }
 
     /// <summary>

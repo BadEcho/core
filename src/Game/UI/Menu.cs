@@ -16,11 +16,21 @@ using Microsoft.Xna.Framework;
 
 namespace BadEcho.Game.UI;
 
-public sealed class Menu : Control
+/// <summary>
+/// Provides a menu control that organizes various menu items associated with commands.
+/// </summary>
+public sealed class Menu : Control, ISelectable
 {
-    private Orientation _orientation;
-    private SpriteFont? _labelFont;
+    private readonly Grid _itemContainer = new();
+    private readonly List<MenuItem> _menuItems = new();
 
+    private Orientation _orientation;
+    private SpriteFont? _itemFont;
+    private Color _itemFontColor;
+
+    /// <summary>
+    /// Gets or sets the dimension by which menu items are laid out.
+    /// </summary>
     public Orientation Orientation
     {
         get => _orientation;
@@ -28,12 +38,55 @@ public sealed class Menu : Control
     }
 
     /// <summary>
-    /// Gets or sets the font used fo r the text of selectable items inside this menu.
+    /// Gets or sets the font used for the text of selectable items inside this menu.
     /// </summary>
-    public SpriteFont? LabelFont
+    public SpriteFont? ItemFont
     {
-        get => _labelFont;
-        set => RemeasureIfChanged(ref _labelFont, value);
+        get => _itemFont;
+        set
+        {
+            if (_itemFont == value)
+                return;
+
+            _itemFont = value;
+
+            _menuItems.ForEach(UpdateItemAppearance);
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the color of the font used for the text of selectable items inside this menu.
+    /// </summary>
+    public Color ItemFontColor
+    {
+        get => _itemFontColor;
+        set
+        {
+            if (_itemFontColor == value)
+                return;
+
+            _itemFontColor = value;
+
+            _menuItems.ForEach(UpdateItemAppearance);
+        }
+    }
+
+    /// <inheritdoc />
+    public bool IsSelectable
+        => true;
+
+    /// <inheritdoc />
+    public IVisual? HoveredItemBackground
+    {
+        get => _itemContainer.HoveredItemBackground;
+        set => _itemContainer.HoveredItemBackground = value;
+    }
+
+    /// <inheritdoc />
+    public IVisual? SelectedItemBackground
+    {
+        get => _itemContainer.SelectedItemBackground;
+        set => _itemContainer.SelectedItemBackground = value;
     }
 
     /// <summary>
@@ -43,20 +96,34 @@ public sealed class Menu : Control
     {  get; set; }
 
     /// <summary>
-    /// Creates
+    /// Creates a item in a menu using the provided text as its label.
     /// </summary>
-    /// <param name="label"></param>
-    /// <returns></returns>
+    /// <param name="label">The text of the new menu item.</param>
+    /// <returns>A <see cref="MenuItem"/> instance representing the newly added menu item.</returns>
     public MenuItem AddItem(string label)
     {
+        var menuItem = new MenuItem
+                       {
+                           Text = label,
+                       };
 
+        _menuItems.Add(menuItem);
+        _itemContainer.AddChild(menuItem);
+
+        return menuItem;
     }
-    
 
+    /// <inheritdoc/>
     protected override Size MeasureCore(Size availableSize)
         => throw new NotImplementedException();
 
     /// <inheritdoc />
     protected override void DrawCore(SpriteBatch spriteBatch) 
         => throw new NotImplementedException();
+
+    private void UpdateItemAppearance(MenuItem menuItem)
+    {
+        menuItem.Font = _itemFont;
+        menuItem.FontColor = _itemFontColor;
+    }
 }
