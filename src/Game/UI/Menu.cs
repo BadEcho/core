@@ -123,9 +123,17 @@ public sealed class Menu : Control, ISelectable
         return _itemContainer.DesiredSize;
     }
 
+    /// <inheritdoc/>
+    protected override void ArrangeCore()
+    {
+        base.ArrangeCore();
+
+        _itemContainer.Arrange(ContentBounds);
+    }
+
     /// <inheritdoc />
-    protected override void DrawCore(SpriteBatch spriteBatch) 
-        => throw new NotImplementedException();
+    protected override void DrawCore(SpriteBatch spriteBatch)
+        => _itemContainer.Draw(spriteBatch);
 
     private void UpdateItemAppearance(MenuItem menuItem)
     {
