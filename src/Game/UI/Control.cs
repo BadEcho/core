@@ -24,8 +24,8 @@ namespace BadEcho.Game.UI;
 /// <remarks>
 /// <para>
 /// The goal here isn't to provide an incredibly rich and over-engineered user interface framework, but rather the minimum
-/// required in order to be able to comfortably create interface elements for a game. Still, we do embrace some of the approaches
-/// taken by some of the more fully fleshed out general-purpose user interface frameworks out there. 
+/// functionality required in order to be able to comfortably create interface elements for a game. Still, we do embrace some of
+/// the approaches taken by some of the more fully fleshed out general-purpose user interface frameworks out there. 
 /// </para>
 /// <para>
 /// Specifically, we adopt the notion of a two-part layout process consisting of <c>Measure</c> and <c>Arrange</c> passes that must
@@ -65,6 +65,12 @@ public abstract class Control : IArrangeable
     /// Gets the parent of this control.
     /// </summary>
     public IArrangeable? Parent
+    { get; internal set; }
+
+    /// <summary>
+    /// Gets the source of user input for this control.
+    /// </summary>
+    public virtual IInputHandler? InputHandler
     { get; internal set; }
 
     /// <summary>

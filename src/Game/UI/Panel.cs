@@ -23,6 +23,19 @@ public abstract class Panel : Control
 {
     private readonly List<Control> _children = new();
 
+    /// <inheritdoc/>
+    public override IInputHandler? InputHandler
+    {
+        get => base.InputHandler;
+        internal set
+        {
+            if (InputHandler != value) 
+                _children.ForEach(c => c.InputHandler = value);
+
+            base.InputHandler = value;
+        }
+    }
+
     /// <summary>
     /// Gets a collection of all child controls of this panel.
     /// </summary>

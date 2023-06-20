@@ -13,6 +13,7 @@
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace BadEcho.Game.UI;
 
@@ -30,10 +31,11 @@ namespace BadEcho.Game.UI;
 /// and <c>Draw</c> cycles.
 /// </para>
 /// </remarks>
-public sealed class Screen : IArrangeable
+public sealed class Screen : IArrangeable, IInputHandler
 {
     private readonly GraphicsDevice _device;
 
+    private MouseState _currentMouseState;
     private Rectangle _screenBounds;
     private Panel _content;
 
@@ -77,10 +79,16 @@ public sealed class Screen : IArrangeable
                 return;
             
             _content.Parent = null;
+            _content.InputHandler = null;
             _content = value;
             _content.Parent = this;
+            _content.InputHandler = this;
         }
     }
+
+    /// <inheritdoc/>
+    public Point MousePosition
+        => _currentMouseState.Position;
 
     /// <inheritdoc />
     public void InvalidateMeasure()
@@ -130,5 +138,12 @@ public sealed class Screen : IArrangeable
         Require.NotNull(spriteBatch, nameof(spriteBatch));
 
         Content.Draw(spriteBatch);
+    }
+
+    private void UpdateInput()
+    {
+        _currentMouseState = Mouse.GetState();
+
+
     }
 }
