@@ -15,7 +15,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using BadEcho.Extensions;
 using BadEcho.Game.Properties;
-using Microsoft.Xna.Framework.Input;
 
 namespace BadEcho.Game.UI;
 
