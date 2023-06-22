@@ -134,4 +134,7 @@
 	<data name="UninitializedGraphicsDevice" xml:space="preserve">
 		<value>Graphics device has not been initialized yet.</value>
 	</data>
+	<data name="NoInputHandler" xml:space="preserve">
+		<value>Control cannot process input without an input handler.</value>
+	</data>
 </root>

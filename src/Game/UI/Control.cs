@@ -14,6 +14,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using BadEcho.Extensions;
+using BadEcho.Game.Properties;
 using Microsoft.Xna.Framework.Input;
 
 namespace BadEcho.Game.UI;
@@ -104,6 +105,15 @@ public abstract class Control : IArrangeable
     /// </summary>
     public Rectangle ContentBounds
         => Padding.ApplyMargin(BackgroundBounds);
+
+    /// <summary>
+    /// Gets a value indicating if the control is active and receiving input.
+    /// </summary>
+    /// <remarks>
+    /// Controls will typically become deactivated if another user interface layer is receiving focus, such as a modal dialog.
+    /// </remarks>
+    public bool IsActive
+    { get; internal set; }
 
     /// <summary>
     /// Gets or sets a value indicating if this control is visible.
@@ -293,14 +303,7 @@ public abstract class Control : IArrangeable
     /// Gets a value indicating whether the mouse pointer is located over this control.
     /// </summary>
     public bool IsMouseOver
-    {
-        get
-        {
-            MouseState mouseState = Mouse.GetState();
-
-            return BorderBounds.Contains(mouseState.Position);
-        }
-    }
+    { get; private set; }
 
     /// <inheritdoc/>
     /// <remarks>
@@ -436,7 +439,19 @@ public abstract class Control : IArrangeable
 
         spriteBatch.GraphicsDevice.ScissorRectangle = clippingRectangle;
     }
-    
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <exception cref="InvalidOperationException"></exception>
+    public virtual void UpdateInput()
+    {
+        if (InputHandler == null)
+            throw new InvalidOperationException(Strings.NoInputHandler);
+
+        IsMouseOver = BorderBounds.Contains(InputHandler.MousePosition);
+    }
+
     /// <summary>
     /// Sets a property's backing field to the provided value, invalidating the measurement state if a change in value occurred.
     /// </summary>

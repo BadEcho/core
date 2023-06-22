@@ -124,6 +124,15 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Control cannot process input without an input handler..
+        /// </summary>
+        internal static string NoInputHandler {
+            get {
+                return ResourceManager.GetString("NoInputHandler", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sprite sheet already has frames registered for the specified direction of movement..
         /// </summary>
         internal static string SheetAlreadyHasDirection {
