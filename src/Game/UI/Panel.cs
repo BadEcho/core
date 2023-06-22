@@ -71,6 +71,18 @@ public abstract class Panel : Control
         }
     }
 
+    public override void UpdateInput()
+    {
+        base.UpdateInput();
+
+        IEnumerable<Control> activeChildren = Children.Where(c => c.IsActive);
+
+        foreach (var activeChild in activeChildren)
+        {
+            activeChild.UpdateInput();
+        }
+    }
+
     /// <inheritdoc/>
     protected override void DrawCore(SpriteBatch spriteBatch)
     {

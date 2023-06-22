@@ -144,6 +144,11 @@ public sealed class Screen : IArrangeable, IInputHandler
     {
         _currentMouseState = Mouse.GetState();
 
+        IEnumerable<Control> activeControls = Content.Children.Where(c => c.IsActive);
 
+        foreach (var activeControl in activeControls)
+        {
+            activeControl.UpdateInput();
+        }
     }
 }
