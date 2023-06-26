@@ -11,28 +11,31 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-
 namespace BadEcho.Game;
 
 /// <summary>
-/// Defines a single source and management point for input provided by the user.
+/// Specifies a button found on a mouse.
 /// </summary>
-public interface IInputHandler
+public enum MouseButton
 {
     /// <summary>
-    /// Gets the last captured position of the mouse by the handler.
+    /// The left mouse button.
     /// </summary>
-    Point MousePosition { get; }
-
+    Left,
     /// <summary>
-    /// Gets the mouse buttons currently being pressed by the user.
+    /// The middle mouse button.
     /// </summary>
-    IEnumerable<MouseButton> PressedButtons { get; }
-
+    Middle,
     /// <summary>
-    /// Gets the keyboard keys currently being pressed by the user.
+    /// The right mouse button.
     /// </summary>
-    IEnumerable<Keys> PressedKeys { get; }
+    Right,
+    /// <summary>
+    /// The first extended mouse button.
+    /// </summary>
+    ExtendedFirst,
+    /// <summary>
+    /// The second extended mouse button.
+    /// </summary>
+    ExtendedSecond
 }

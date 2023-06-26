@@ -15,6 +15,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using BadEcho.Extensions;
 using BadEcho.Game.Properties;
+using Microsoft.Xna.Framework.Input;
 
 namespace BadEcho.Game.UI;
 
@@ -38,6 +39,9 @@ namespace BadEcho.Game.UI;
 /// </remarks>
 public abstract class Control : IArrangeable
 {
+    private readonly List<MouseButton> _pressedButtons = new();
+    private readonly List<Keys> _pressedKeys = new();
+
     private bool _invalidArrange = true;
     private bool _invalidMeasure = true;
     private bool _isVisible = true;
@@ -106,13 +110,16 @@ public abstract class Control : IArrangeable
         => Padding.ApplyMargin(BackgroundBounds);
 
     /// <summary>
-    /// Gets a value indicating if the control is active and receiving input.
+    /// Gets or sets a value indicating if the control is enabled in the user interface and receiving input.
     /// </summary>
-    /// <remarks>
-    /// Controls will typically become deactivated if another user interface layer is receiving focus, such as a modal dialog.
-    /// </remarks>
-    public bool IsActive
+    public bool IsEnabled
     { get; internal set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public bool IsFocused
+    { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating if this control is visible.
@@ -275,6 +282,12 @@ public abstract class Control : IArrangeable
     { get; set; }
 
     /// <summary>
+    /// Gets or sets the background visual of this control when it has been disabled via the <see cref="IsEnabled"/> property.
+    /// </summary>
+    public IVisual? DisabledBackground
+    { get; set; }
+
+    /// <summary>
     /// Gets or sets the background visual of this control when the cursor is located over it.
     /// </summary>
     /// <remarks>
@@ -287,6 +300,12 @@ public abstract class Control : IArrangeable
     /// Gets or sets the visual of the control's border.
     /// </summary>
     public IVisual? Border
+    { get; set; }
+
+    /// <summary>
+    /// Gets or sets the visual of the control's border when it has been disabled via the <see cref="IsEnabled"/> property.
+    /// </summary>
+    public IVisual? DisabledBorder
     { get; set; }
 
     /// <summary>
@@ -303,6 +322,12 @@ public abstract class Control : IArrangeable
     /// </summary>
     public bool IsMouseOver
     { get; private set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating if this control is focusable, and therefore able to receive input from the keyboard.
+    /// </summary>
+    public bool IsFocusable
+    { get; set; }
 
     /// <inheritdoc/>
     /// <remarks>
@@ -440,16 +465,56 @@ public abstract class Control : IArrangeable
     }
 
     /// <summary>
-    /// 
+    /// Processes events related to user input.
     /// </summary>
-    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="InvalidOperationException">
+    /// Control does not have a valid <see cref="InputHandler"/> assigned.
+    /// </exception>
     public virtual void UpdateInput()
     {
         if (InputHandler == null)
             throw new InvalidOperationException(Strings.NoInputHandler);
 
         IsMouseOver = BorderBounds.Contains(InputHandler.MousePosition);
+
+        if (IsMouseOver)
+        {
+            foreach (MouseButton pressedButton in InputHandler.PressedButtons)
+            {
+                if (!_pressedButtons.Contains(pressedButton))
+                    _pressedButtons.Add(pressedButton);
+
+                OnMouseDown(pressedButton);
+            }
+        }
+        
+        IEnumerable<MouseButton> releasedButtons = _pressedButtons.Except(InputHandler.PressedButtons);
+
+        foreach (MouseButton releasedButton in releasedButtons)
+        {
+            _pressedButtons.Remove(releasedButton);
+
+            OnMouseUp(releasedButton);
+        }
     }
+
+    /// <summary>
+    /// Called when a mouse button has been pressed while the mouse is over this control.
+    /// </summary>
+    /// <param name="pressedButton">The button of the mouse that has been pressed.</param>
+    protected virtual void OnMouseDown(MouseButton pressedButton)
+    { }
+
+    /// <summary>
+    /// Called when a mouse button, previously pressed while the mouse was over this control, has been released.
+    /// </summary>
+    /// <param name="releasedButton"></param>
+    /// <remarks>
+    /// This will always be called when a button (previously pressed while the mouse was over this control) has been released,
+    /// regardless of whether or not the mouse is still over this control.
+    /// </remarks>
+    protected virtual void OnMouseUp(MouseButton releasedButton)
+    { }
 
     /// <summary>
     /// Sets a property's backing field to the provided value, invalidating the measurement state if a change in value occurred.
@@ -547,13 +612,27 @@ public abstract class Control : IArrangeable
     /// state.
     /// </summary>
     /// <returns>The background visual for the control.</returns>
-    protected virtual IVisual? GetActiveBackground() 
-        => IsMouseOver && HoveredBackground != null ? HoveredBackground : Background;
+    protected virtual IVisual? GetActiveBackground()
+    {
+        if (!IsEnabled)
+            return DisabledBackground ?? Background;
+
+        return IsMouseOver && HoveredBackground != null
+            ? HoveredBackground
+            : Background;
+    }
 
     /// <summary>
     /// When overridden in a derived class, provides custom logic for selecting the visual of the control's border.
     /// </summary>
     /// <returns>The visual for the control's border.</returns>
-    protected virtual IVisual? GetActiveBorder() 
-        => IsMouseOver && HoveredBorder != null ? HoveredBorder : Border;
+    protected virtual IVisual? GetActiveBorder()
+    {
+        if (!IsEnabled)
+            return DisabledBorder ?? Border;
+
+        return IsMouseOver && HoveredBorder != null
+            ? HoveredBorder
+            : Border;
+    }
 }

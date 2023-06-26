@@ -33,8 +33,12 @@ namespace BadEcho.Game.UI;
 /// </remarks>
 public sealed class Screen : IArrangeable, IInputHandler
 {
+    private readonly List<MouseButton> _pressedButtons = new();
+    private readonly List<Keys> _pressedKeys = new();
+
     private readonly GraphicsDevice _device;
 
+    private KeyboardState _currentKeyboardState;
     private MouseState _currentMouseState;
     private Rectangle _screenBounds;
     private Panel _content;
@@ -90,6 +94,14 @@ public sealed class Screen : IArrangeable, IInputHandler
     public Point MousePosition
         => _currentMouseState.Position;
 
+    /// <inheritdoc/>
+    public IEnumerable<MouseButton> PressedButtons
+        => _pressedButtons;
+
+    /// <inheritdoc />
+    public IEnumerable<Keys> PressedKeys
+        => _pressedKeys;
+
     /// <inheritdoc />
     public void InvalidateMeasure()
     {
@@ -142,9 +154,16 @@ public sealed class Screen : IArrangeable, IInputHandler
 
     private void UpdateInput()
     {
+        _currentKeyboardState = Keyboard.GetState();
         _currentMouseState = Mouse.GetState();
 
-        IEnumerable<Control> activeControls = Content.Children.Where(c => c.IsActive);
+        _pressedKeys.Clear();
+        _pressedKeys.AddRange(_currentKeyboardState.GetPressedKeys());
+
+        _pressedButtons.Clear();
+        _pressedButtons.AddRange(_currentMouseState.GetPressedButtons());
+
+        IEnumerable<Control> activeControls = Content.Children.Where(c => c.IsEnabled);
 
         foreach (var activeControl in activeControls)
         {

@@ -27,7 +27,7 @@ internal interface IThreadExecutorOperationTaskSource
     /// Initializes the underlying source to use the provided operation as its asynchronous state.
     /// </summary>
     /// <param name="operation">The operation to use as the underlying source's asynchronous state.</param>
-    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="InvalidOperationException">Task source is already initialized.</exception>
     void Initialize(ThreadExecutorOperation operation);
 
     /// <summary>

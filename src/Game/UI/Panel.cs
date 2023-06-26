@@ -75,7 +75,7 @@ public abstract class Panel : Control
     {
         base.UpdateInput();
 
-        IEnumerable<Control> activeChildren = Children.Where(c => c.IsActive);
+        IEnumerable<Control> activeChildren = Children.Where(c => c.IsEnabled);
 
         foreach (var activeChild in activeChildren)
         {
