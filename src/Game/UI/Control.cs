@@ -550,7 +550,6 @@ public abstract class Control : IArrangeable
 
     private Rectangle Align(Size effectiveSize, Size desiredSize)
     {
-        //int alignedX, alignedY;
         int alignedWidth = desiredSize.Width;
 
         // Explicitly set width values take precedence over stretch alignments, unless there's not enough room.

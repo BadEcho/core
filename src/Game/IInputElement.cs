@@ -19,9 +19,17 @@ using System.Threading.Tasks;
 
 namespace BadEcho.Game;
 
+/// <summary>
+/// Defines an element that supports basic input processing.
+/// </summary>
 public interface IInputElement
 {
+    /// <summary>
+    /// Gets a value indicating whether the mouse pointer is located over the element.
+    /// </summary>
     bool IsMouseOver { get; }
+
+
 
     // Move other input related properties here.
 }
