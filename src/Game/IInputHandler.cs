@@ -35,4 +35,22 @@ public interface IInputHandler
     /// Gets the keyboard keys currently being pressed by the user.
     /// </summary>
     IEnumerable<Keys> PressedKeys { get; }
+
+    /// <summary>
+    /// Gets the <see cref="IInputElement"/> instance that currently has keyboard focus.
+    /// </summary>
+    IInputElement? FocusedElement { get; }
+
+    /// <summary>
+    /// Clears the keyboard focus, preventing any keyboard input from being handled.
+    /// </summary>
+    void ClearFocus();
+
+    /// <summary>
+    /// Attempts to set the keyboard focus on the provided element.
+    /// </summary>
+    /// <param name="element">
+    /// The input element to set keyboard focus on and therefore send keyboard input to.
+    /// </param>
+    void Focus(IInputElement element);
 }

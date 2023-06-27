@@ -11,12 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace BadEcho.Game;
 
 /// <summary>
@@ -38,6 +32,4 @@ public interface IInputElement
     /// Gets a value indicating if the element has keyboard focus.
     /// </summary>
     bool IsFocused { get; }
-
-    // Move other input related properties here.
 }

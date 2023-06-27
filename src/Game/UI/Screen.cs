@@ -98,9 +98,28 @@ public sealed class Screen : IArrangeable, IInputHandler
     public IEnumerable<MouseButton> PressedButtons
         => _pressedButtons;
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public IEnumerable<Keys> PressedKeys
         => _pressedKeys;
+
+    /// <inheritdoc/>
+    public IInputElement? FocusedElement 
+    { get; private set; }
+
+    /// <inheritdoc/> 
+    public void ClearFocus()
+        => FocusedElement = null;
+
+    /// <inheritdoc/>
+    public void Focus(IInputElement element)
+    {
+        Require.NotNull(element, nameof(element));
+
+        if (!element.IsFocusable)
+            return;
+
+        FocusedElement = element;
+    }
 
     /// <inheritdoc />
     public void InvalidateMeasure()

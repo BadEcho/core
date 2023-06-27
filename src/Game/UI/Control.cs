@@ -37,7 +37,7 @@ namespace BadEcho.Game.UI;
 /// Other than that, the intention is to keep the foundational logic for controls powered by this framework as simple as practicable.
 /// </para>
 /// </remarks>
-public abstract class Control : IArrangeable
+public abstract class Control : IArrangeable, IInputElement
 {
     private readonly List<MouseButton> _pressedButtons = new();
     private readonly List<Keys> _pressedKeys = new();
@@ -311,21 +311,17 @@ public abstract class Control : IArrangeable
     public IVisual? HoveredBorder
     { get; set; }
 
-    /// <summary>
-    /// Gets a value indicating whether the mouse pointer is located over this control.
-    /// </summary>
+    /// <inheritdoc/>
     public bool IsMouseOver
     { get; private set; }
 
-    /// <summary>
-    /// Gets or sets a value indicating if this control is focusable, and therefore able to receive input from the keyboard.
-    /// </summary>
+    /// <inheritdoc/>
     public bool IsFocusable
     { get; set; }
 
     /// <inheritdoc/>
     public bool IsFocused
-    { get; set; }
+        => InputHandler != null && InputHandler.FocusedElement == this;
 
     /// <inheritdoc/>
     /// <remarks>
@@ -465,9 +461,7 @@ public abstract class Control : IArrangeable
     /// <summary>
     /// Processes events related to user input.
     /// </summary>
-    /// <exception cref="InvalidOperationException">
-    /// Control does not have a valid <see cref="InputHandler"/> assigned.
-    /// </exception>
+    /// <exception cref="InvalidOperationException">Control does not have a valid <see cref="InputHandler"/> assigned.</exception>
     public virtual void UpdateInput()
     {
         if (InputHandler == null)
@@ -494,6 +488,26 @@ public abstract class Control : IArrangeable
 
             OnMouseUp(releasedButton);
         }
+
+        if (IsFocused)
+        {
+            foreach (Keys pressedKey in InputHandler.PressedKeys)
+            {
+                if (!_pressedKeys.Contains(pressedKey))
+                    _pressedKeys.Add(pressedKey);
+
+                OnKeyDown(pressedKey);
+            }
+
+            IEnumerable<Keys> releasedKeys = _pressedKeys.Except(InputHandler.PressedKeys);
+
+            foreach (Keys releasedKey in releasedKeys)
+            {
+                _pressedKeys.Remove(releasedKey);
+
+                OnKeyUp(releasedKey);
+            }
+        }
     }
 
     /// <summary>
@@ -501,17 +515,34 @@ public abstract class Control : IArrangeable
     /// </summary>
     /// <param name="pressedButton">The button of the mouse that has been pressed.</param>
     protected virtual void OnMouseDown(MouseButton pressedButton)
-    { }
+    {
+        if (IsFocusable)
+            InputHandler?.Focus(this);
+    }
 
     /// <summary>
     /// Called when a mouse button, previously pressed while the mouse was over this control, has been released.
     /// </summary>
-    /// <param name="releasedButton"></param>
+    /// <param name="releasedButton">The button of the mouse that has been released.</param>
     /// <remarks>
     /// This will always be called when a button (previously pressed while the mouse was over this control) has been released,
     /// regardless of whether or not the mouse is still over this control.
     /// </remarks>
     protected virtual void OnMouseUp(MouseButton releasedButton)
+    { }
+
+    /// <summary>
+    /// Called when a keyboard key has been pressed while this control has keyboard focus.
+    /// </summary>
+    /// <param name="pressedKey">The key of the keyboard that has been pressed.</param>
+    protected virtual void OnKeyDown(Keys pressedKey)
+    { }
+
+    /// <summary>
+    /// Called when a keyboard key has been released.
+    /// </summary>
+    /// <param name="releasedKey">The key of the keyboard that has been released.</param>
+    protected virtual void OnKeyUp(Keys releasedKey)
     { }
 
     /// <summary>
