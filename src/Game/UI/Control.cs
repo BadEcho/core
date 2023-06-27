@@ -116,12 +116,6 @@ public abstract class Control : IArrangeable
     { get; internal set; }
 
     /// <summary>
-    /// 
-    /// </summary>
-    public bool IsFocused
-    { get; set; }
-
-    /// <summary>
     /// Gets or sets a value indicating if this control is visible.
     /// </summary>
     public bool IsVisible
@@ -327,6 +321,10 @@ public abstract class Control : IArrangeable
     /// Gets or sets a value indicating if this control is focusable, and therefore able to receive input from the keyboard.
     /// </summary>
     public bool IsFocusable
+    { get; set; }
+
+    /// <inheritdoc/>
+    public bool IsFocused
     { get; set; }
 
     /// <inheritdoc/>
