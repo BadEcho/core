@@ -13,8 +13,8 @@
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using System.Diagnostics.CodeAnalysis;
+using BadEcho.Game.Properties;
 
 namespace BadEcho.Game.UI;
 
@@ -161,11 +161,7 @@ public sealed class Grid : Panel, ISelectable
     /// <inheritdoc/>
     protected override void DrawCore(SpriteBatch spriteBatch)
     {
-        if (IsSelectable && IsMouseOver)
-        {
-            UpdateSelection();
-        }
-        else if (!IsMouseOver)
+        if (!IsMouseOver)
         {
             _mouseOverColumn = _mouseOverRow = null;
         }
@@ -195,6 +191,49 @@ public sealed class Grid : Panel, ISelectable
         }
 
         base.DrawCore(spriteBatch);
+    }
+
+    /// <inheritdoc/>
+    protected override void OnMouseMove()
+    {
+        base.OnMouseMove();
+
+        if (InputHandler == null)
+            throw new InvalidOperationException(Strings.NoInputHandler);
+
+        int mouseX = InputHandler.MousePosition.X;
+        int mouseY = InputHandler.MousePosition.Y;
+
+        _mouseOverColumn = _cellsX.Select((x, i) => new { X = x, Index = i })
+                                  .FirstOrDefault(cell => mouseX >= cell.X && mouseX < cell.X + _columnWidths[cell.Index])
+                                  ?.Index;
+
+        _mouseOverRow = _cellsY.Select((y, i) => new { Y = y, Index = i })
+                               .FirstOrDefault(cell => mouseY >= cell.Y && mouseY < cell.Y + _rowHeights[cell.Index])
+                               ?.Index;
+    }
+
+    /// <inheritdoc/>
+    protected override void OnMouseDown(MouseButton pressedButton)
+    {
+        base.OnMouseDown(pressedButton);
+
+        if (pressedButton == MouseButton.Left)
+        {
+            int? previousSelectedColumn = _selectedColumn;
+            int? previousSelectedRow = _selectedRow;
+
+            _selectedColumn = _mouseOverColumn;
+            _selectedRow = _mouseOverRow;
+
+            if (IsCellSelected && (previousSelectedColumn != _selectedColumn || previousSelectedRow != _selectedRow))
+            {
+                IEnumerable<Control>? selectedControls = _cells[_selectedRow.Value, _selectedColumn.Value];
+
+                if (selectedControls != null)
+                    SelectionChanged?.Invoke(this, new EventArgs<IEnumerable<Control>>(selectedControls));
+            }
+        }
     }
 
     private static void ArrangeDimension(int availableSpace, IList<int> measurements, Func<int, GridDimension> dimensionSelector)
@@ -326,38 +365,6 @@ public sealed class Grid : Panel, ISelectable
             {
                 _rowHeights[proportionalRow.Index]
                     = (int)(maxRowHeight * proportionalRow.Dimension.Value);
-            }
-        }
-    }
-
-    private void UpdateSelection()
-    {
-        MouseState mouseState = Mouse.GetState();
-        int mouseX = mouseState.Position.X;
-        int mouseY = mouseState.Position.Y;
-
-        _mouseOverColumn = _cellsX.Select((x, i) => new { X = x, Index = i })
-                                  .FirstOrDefault(cell => mouseX >= cell.X && mouseX < cell.X + _columnWidths[cell.Index])
-                                  ?.Index;
-
-        _mouseOverRow = _cellsY.Select((y, i) => new { Y = y, Index = i })
-                               .FirstOrDefault(cell => mouseY >= cell.Y && mouseY < cell.Y + _rowHeights[cell.Index])
-                               ?.Index;
-
-        if (mouseState.LeftButton == ButtonState.Pressed)
-        {
-            int? previousSelectedColumn = _selectedColumn;
-            int? previousSelectedRow = _selectedRow;
-
-            _selectedColumn = _mouseOverColumn;
-            _selectedRow = _mouseOverRow;
-
-            if (IsCellSelected && (previousSelectedColumn != _selectedColumn || previousSelectedRow != _selectedRow))
-            {
-                IEnumerable<Control>? selectedControls = _cells[_selectedRow.Value, _selectedColumn.Value];
-
-                if (selectedControls != null)
-                    SelectionChanged?.Invoke(this, new EventArgs<IEnumerable<Control>>(selectedControls));
             }
         }
     }
