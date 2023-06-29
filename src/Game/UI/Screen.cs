@@ -158,6 +158,8 @@ public sealed class Screen : IArrangeable, IInputHandler
         }
 
         _screenBounds = screenBounds;
+
+        UpdateInput();
     }
 
     /// <summary>
@@ -182,11 +184,6 @@ public sealed class Screen : IArrangeable, IInputHandler
         _pressedButtons.Clear();
         _pressedButtons.AddRange(_currentMouseState.GetPressedButtons());
 
-        IEnumerable<Control> activeControls = Content.Children.Where(c => c.IsEnabled);
-
-        foreach (var activeControl in activeControls)
-        {
-            activeControl.UpdateInput();
-        }
+        Content.UpdateInput();
     }
 }

@@ -71,6 +71,7 @@ public abstract class Panel : Control
         }
     }
 
+    /// <inheritdoc/>
     public override void UpdateInput()
     {
         base.UpdateInput();

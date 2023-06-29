@@ -113,7 +113,7 @@ public abstract class Control : IArrangeable, IInputElement
     /// Gets or sets a value indicating if the control is enabled in the user interface and receiving input.
     /// </summary>
     public bool IsEnabled
-    { get; internal set; }
+    { get; internal set; } = true;
 
     /// <summary>
     /// Gets or sets a value indicating if this control is visible.
@@ -480,8 +480,8 @@ public abstract class Control : IArrangeable, IInputElement
             }
         }
         
-        IEnumerable<MouseButton> releasedButtons = _pressedButtons.Except(InputHandler.PressedButtons);
-
+        IEnumerable<MouseButton> releasedButtons = _pressedButtons.Except(InputHandler.PressedButtons)
+                                                                  .ToList();
         foreach (MouseButton releasedButton in releasedButtons)
         {
             _pressedButtons.Remove(releasedButton);
@@ -499,8 +499,8 @@ public abstract class Control : IArrangeable, IInputElement
                 OnKeyDown(pressedKey);
             }
 
-            IEnumerable<Keys> releasedKeys = _pressedKeys.Except(InputHandler.PressedKeys);
-
+            IEnumerable<Keys> releasedKeys = _pressedKeys.Except(InputHandler.PressedKeys)
+                                                         .ToList();
             foreach (Keys releasedKey in releasedKeys)
             {
                 _pressedKeys.Remove(releasedKey);
