@@ -161,21 +161,16 @@ public sealed class Grid : Panel, ISelectable
     /// <inheritdoc/>
     protected override void DrawCore(SpriteBatch spriteBatch)
     {
-        if (!IsMouseOver)
-        {
-            _mouseOverColumn = _mouseOverRow = null;
-        }
-
         if (HoveredItemBackground != null && IsCellHovered)
         {
             int backgroundX = _cellsX[_mouseOverColumn.Value];
             int backgroundY = _cellsY[_mouseOverRow.Value];
 
             HoveredItemBackground.Draw(spriteBatch,
-                                         new Rectangle(backgroundX,
-                                                       backgroundY,
-                                                       _columnWidths[_mouseOverColumn.Value],
-                                                       _rowHeights[_mouseOverRow.Value]));
+                                       new Rectangle(backgroundX,
+                                                     backgroundY,
+                                                     _columnWidths[_mouseOverColumn.Value],
+                                                     _rowHeights[_mouseOverRow.Value]));
         }
 
         if (SelectedItemBackground != null && IsCellSelected)
@@ -211,6 +206,14 @@ public sealed class Grid : Panel, ISelectable
         _mouseOverRow = _cellsY.Select((y, i) => new { Y = y, Index = i })
                                .FirstOrDefault(cell => mouseY >= cell.Y && mouseY < cell.Y + _rowHeights[cell.Index])
                                ?.Index;
+    }
+
+    /// <inheritdoc/>
+    protected override void OnMouseLeave()
+    {
+        base.OnMouseLeave();
+
+        _mouseOverColumn = _mouseOverRow = null;
     }
 
     /// <inheritdoc/>

@@ -472,7 +472,10 @@ public abstract class Control : IArrangeable, IInputElement
 
         if (IsMouseOver)
         {
-            if (_lastMousePosition == null || _lastMousePosition != InputHandler.MousePosition)
+            if (_lastMousePosition == null)
+                OnMouseEnter();
+            
+            if (_lastMousePosition != InputHandler.MousePosition)
                 OnMouseMove();
 
             foreach (MouseButton pressedButton in InputHandler.PressedButtons)
@@ -486,8 +489,13 @@ public abstract class Control : IArrangeable, IInputElement
             _lastMousePosition = InputHandler.MousePosition;
         }
         else
+        {
+            if (_lastMousePosition != null)
+                OnMouseLeave();
+
             _lastMousePosition = null;
-        
+        }
+
         IEnumerable<MouseButton> releasedButtons = _pressedButtons.Except(InputHandler.PressedButtons)
                                                                   .ToList();
         foreach (MouseButton releasedButton in releasedButtons)
@@ -519,9 +527,21 @@ public abstract class Control : IArrangeable, IInputElement
     }
 
     /// <summary>
+    /// Called when the mouse pointer enters the boundaries of this control.
+    /// </summary>
+    protected virtual void OnMouseEnter()
+    { }
+
+    /// <summary>
     /// Called when the mouse pointer moves while over this control.
     /// </summary>
     protected virtual void OnMouseMove()
+    { }
+
+    /// <summary>
+    /// Called when the mouse pointer leaves the boundaries of this control.
+    /// </summary>
+    protected virtual void OnMouseLeave()
     { }
 
     /// <summary>
