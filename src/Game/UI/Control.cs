@@ -64,6 +64,7 @@ public abstract class Control : IArrangeable, IInputElement
 
     private Size _lastAvailableSize;
     private Rectangle _lastEffectiveArea;
+    private Point? _lastMousePosition;
 
     /// <summary>
     /// Gets the parent of this control.
@@ -471,6 +472,9 @@ public abstract class Control : IArrangeable, IInputElement
 
         if (IsMouseOver)
         {
+            if (_lastMousePosition == null || _lastMousePosition != InputHandler.MousePosition)
+                OnMouseMove();
+
             foreach (MouseButton pressedButton in InputHandler.PressedButtons)
             {
                 if (!_pressedButtons.Contains(pressedButton))
@@ -478,7 +482,11 @@ public abstract class Control : IArrangeable, IInputElement
 
                 OnMouseDown(pressedButton);
             }
+
+            _lastMousePosition = InputHandler.MousePosition;
         }
+        else
+            _lastMousePosition = null;
         
         IEnumerable<MouseButton> releasedButtons = _pressedButtons.Except(InputHandler.PressedButtons)
                                                                   .ToList();
@@ -509,6 +517,12 @@ public abstract class Control : IArrangeable, IInputElement
             }
         }
     }
+
+    /// <summary>
+    /// Called when the mouse pointer moves while over this control.
+    /// </summary>
+    protected virtual void OnMouseMove()
+    { }
 
     /// <summary>
     /// Called when a mouse button has been pressed while the mouse is over this control.
