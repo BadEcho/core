@@ -13,6 +13,7 @@
 
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace BadEcho.Game.UI;
 
@@ -27,6 +28,15 @@ public sealed class Menu : Control, ISelectable
     private Orientation _orientation;
     private SpriteFont? _itemFont;
     private Color _itemFontColor;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Menu"/> class.
+    /// </summary>
+    public Menu()
+    {
+        _itemContainer.SelectionChanged += HandleContainerSelectionChanged;
+        IsFocusable = true;
+    }
 
     /// <summary>
     /// Gets or sets the dimension by which menu items are laid out.
@@ -135,6 +145,14 @@ public sealed class Menu : Control, ISelectable
     protected override void DrawCore(SpriteBatch spriteBatch)
         => _itemContainer.Draw(spriteBatch);
 
+    /// <inheritdoc/>
+    protected override void OnKeyDown(Keys pressedKey)
+    {
+        base.OnKeyDown(pressedKey);
+
+        _itemContainer.on
+    }
+
     private void UpdateItemAppearance(MenuItem menuItem)
     {
         menuItem.Font = _itemFont;
@@ -158,5 +176,14 @@ public sealed class Menu : Control, ISelectable
                 menuItem.Column = 0;
             }
         }
+    }
+    
+    private void HandleContainerSelectionChanged(object? sender, EventArgs<IEnumerable<Control>> e)
+    {
+        var selectedMenuItem = e.Data.OfType<MenuItem>()
+                                .First();
+
+        selectedMenuItem.Select();
+        _itemContainer.Unselect();
     }
 }

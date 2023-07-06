@@ -317,12 +317,24 @@ public abstract class Control : IArrangeable, IInputElement
     { get; private set; }
 
     /// <inheritdoc/>
-    public bool IsFocusable
-    { get; set; }
+    public bool NotifyKeyRepeats
+    { get; protected set; }
 
     /// <inheritdoc/>
     public bool IsFocused
         => InputHandler != null && InputHandler.FocusedElement == this;
+
+    /// <inheritdoc/>
+    public void ClearFocus()
+    {
+
+    }
+
+    /// <inheritdoc/>
+    public virtual bool Focus()
+    {
+
+    }
 
     /// <inheritdoc/>
     /// <remarks>
@@ -468,62 +480,8 @@ public abstract class Control : IArrangeable, IInputElement
         if (InputHandler == null)
             throw new InvalidOperationException(Strings.NoInputHandler);
 
-        IsMouseOver = BorderBounds.Contains(InputHandler.MousePosition);
-
-        if (IsMouseOver)
-        {
-            if (_lastMousePosition == null)
-                OnMouseEnter();
-            
-            if (_lastMousePosition != InputHandler.MousePosition)
-                OnMouseMove();
-
-            foreach (MouseButton pressedButton in InputHandler.PressedButtons)
-            {
-                if (!_pressedButtons.Contains(pressedButton))
-                    _pressedButtons.Add(pressedButton);
-
-                OnMouseDown(pressedButton);
-            }
-
-            _lastMousePosition = InputHandler.MousePosition;
-        }
-        else
-        {
-            if (_lastMousePosition != null)
-                OnMouseLeave();
-
-            _lastMousePosition = null;
-        }
-
-        IEnumerable<MouseButton> releasedButtons = _pressedButtons.Except(InputHandler.PressedButtons)
-                                                                  .ToList();
-        foreach (MouseButton releasedButton in releasedButtons)
-        {
-            _pressedButtons.Remove(releasedButton);
-
-            OnMouseUp(releasedButton);
-        }
-
-        if (IsFocused)
-        {
-            foreach (Keys pressedKey in InputHandler.PressedKeys)
-            {
-                if (!_pressedKeys.Contains(pressedKey))
-                    _pressedKeys.Add(pressedKey);
-
-                OnKeyDown(pressedKey);
-            }
-
-            IEnumerable<Keys> releasedKeys = _pressedKeys.Except(InputHandler.PressedKeys)
-                                                         .ToList();
-            foreach (Keys releasedKey in releasedKeys)
-            {
-                _pressedKeys.Remove(releasedKey);
-
-                OnKeyUp(releasedKey);
-            }
-        }
+        UpdateMouseInput(InputHandler.MousePosition, InputHandler.PressedButtons.ToList());
+        UpdateKeyboardInput(InputHandler.PressedKeys.ToList());
     }
 
     /// <summary>
@@ -696,5 +654,73 @@ public abstract class Control : IArrangeable, IInputElement
         return IsMouseOver && HoveredBorder != null
             ? HoveredBorder
             : Border;
+    }
+
+    private void UpdateMouseInput(Point mousePosition, IReadOnlyCollection<MouseButton> pressedButtons)
+    {
+        IsMouseOver = BorderBounds.Contains(mousePosition);
+
+        if (IsMouseOver)
+        {
+            if (_lastMousePosition == null)
+                OnMouseEnter();
+
+            if (_lastMousePosition != mousePosition)
+                OnMouseMove();
+
+            foreach (MouseButton pressedButton in pressedButtons)
+            {
+                if (!_pressedButtons.Contains(pressedButton))
+                    _pressedButtons.Add(pressedButton);
+
+                OnMouseDown(pressedButton);
+            }
+
+            _lastMousePosition = mousePosition;
+        }
+        else
+        {
+            if (_lastMousePosition != null)
+                OnMouseLeave();
+
+            _lastMousePosition = null;
+        }
+
+        IEnumerable<MouseButton> releasedButtons = _pressedButtons.Except(pressedButtons)
+                                                                  .ToList();
+        foreach (MouseButton releasedButton in releasedButtons)
+        {
+            _pressedButtons.Remove(releasedButton);
+
+            OnMouseUp(releasedButton);
+        }
+    }
+
+    private void UpdateKeyboardInput(IReadOnlyCollection<Keys> pressedKeys)
+    {
+        if (!IsFocused)
+            return;
+
+        foreach (Keys pressedKey in pressedKeys)
+        {
+            bool isRepeat = _pressedKeys.Contains(pressedKey);
+
+            if (!isRepeat)
+            {
+                _pressedKeys.Add(pressedKey);
+                OnKeyDown(pressedKey);
+            }
+            else if (NotifyKeyRepeats)
+                OnKeyDown(pressedKey);
+        }
+
+        IEnumerable<Keys> releasedKeys = _pressedKeys.Except(pressedKeys)
+                                                     .ToList();
+        foreach (Keys releasedKey in releasedKeys)
+        {
+            _pressedKeys.Remove(releasedKey);
+
+            OnKeyUp(releasedKey);
+        }
     }
 }

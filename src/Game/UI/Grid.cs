@@ -15,6 +15,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics.CodeAnalysis;
 using BadEcho.Game.Properties;
+using Microsoft.Xna.Framework.Input;
 
 namespace BadEcho.Game.UI;
 
@@ -84,10 +85,22 @@ public sealed class Grid : Panel, ISelectable
     public bool IsCellSelected
         => _selectedColumn != null && _selectedRow != null;
 
+    /// <summary>
+    /// Cancels the selection of any previously selected item in the grid.
+    /// </summary>
+    public void Unselect()
+        => _selectedColumn = _selectedRow = null;
+
     /// <inheritdoc/>
     protected override Size MeasureCore(Size availableSize)
     {
         _visibleChildren.Clear();
+        _columnWidths.Clear();
+        _rowHeights.Clear();
+
+        if (Children.Count == 0)
+            return Size.Empty;
+
         _visibleChildren.AddRange(Children.Where(c => c.IsVisible));
 
         int columns = _visibleChildren.Max(c => c.Column) + 1;
@@ -98,9 +111,6 @@ public sealed class Grid : Panel, ISelectable
 
         if (Rows.Count > rows)
             rows = Rows.Count;
-
-        _columnWidths.Clear();
-        _rowHeights.Clear();
 
         _columnWidths.AddRange(Enumerable.Repeat(0, columns));
         _rowHeights.AddRange(Enumerable.Repeat(0, rows));
@@ -221,22 +231,53 @@ public sealed class Grid : Panel, ISelectable
     {
         base.OnMouseDown(pressedButton);
 
-        if (pressedButton == MouseButton.Left)
+        if (pressedButton == MouseButton.Left) 
+            SelectHoveredItem();
+    }
+
+    /// <inheritdoc/>
+    protected override void OnKeyDown(Keys pressedKey)
+    {
+        base.OnKeyDown(pressedKey);
+
+        if (!IsSelectable || Children.Count == 0)
+            return;
+
+        switch (pressedKey)
         {
-            int? previousSelectedColumn = _selectedColumn;
-            int? previousSelectedRow = _selectedRow;
+            case Keys.Enter:
+            case Keys.Space:
+                if (_mouseOverColumn != null && _mouseOverRow != null)
+                    SelectHoveredItem();
+                break;
 
-            _selectedColumn = _mouseOverColumn;
-            _selectedRow = _mouseOverRow;
+            case Keys.Left:
+                _mouseOverRow ??= 0;
+                _mouseOverColumn = WrapToGrid((_mouseOverColumn ?? 0) - 1, _cellsX.Count);
+                break;
 
-            if (IsCellSelected && (previousSelectedColumn != _selectedColumn || previousSelectedRow != _selectedRow))
-            {
-                IEnumerable<Control>? selectedControls = _cells[_selectedRow.Value, _selectedColumn.Value];
+            case Keys.Right:
+                _mouseOverRow ??= 0;
+                _mouseOverColumn = WrapToGrid((_mouseOverColumn ?? 0) + 1, _cellsX.Count);
+                break;
 
-                if (selectedControls != null)
-                    SelectionChanged?.Invoke(this, new EventArgs<IEnumerable<Control>>(selectedControls));
-            }
+            case Keys.Up:
+                _mouseOverColumn ??= 0;
+                _mouseOverRow = WrapToGrid((_mouseOverRow ?? 0) - 1, _cellsY.Count);
+                break;
+
+            case Keys.Down:
+                _mouseOverColumn ??= 0;
+                _mouseOverRow = WrapToGrid((_mouseOverRow ?? 0) + 1, _cellsY.Count);
+                break;
         }
+    }
+    
+    private static int WrapToGrid(int index, int dimensionalMax)
+    {
+        int remainder = (index % dimensionalMax);
+
+        return remainder < 0 ? dimensionalMax - 1 : remainder;
     }
 
     private static void ArrangeDimension(int availableSpace, IList<int> measurements, Func<int, GridDimension> dimensionSelector)
@@ -369,6 +410,23 @@ public sealed class Grid : Panel, ISelectable
                 _rowHeights[proportionalRow.Index]
                     = (int)(maxRowHeight * proportionalRow.Dimension.Value);
             }
+        }
+    }
+
+    private void SelectHoveredItem()
+    {
+        int? previousSelectedColumn = _selectedColumn;
+        int? previousSelectedRow = _selectedRow;
+
+        _selectedColumn = _mouseOverColumn;
+        _selectedRow = _mouseOverRow;
+
+        if (IsCellSelected && (previousSelectedColumn != _selectedColumn || previousSelectedRow != _selectedRow))
+        {
+            IEnumerable<Control>? selectedControls = _cells[_selectedRow.Value, _selectedColumn.Value];
+
+            if (selectedControls != null)
+                SelectionChanged?.Invoke(this, new EventArgs<IEnumerable<Control>>(selectedControls));
         }
     }
 
