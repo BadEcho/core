@@ -16,6 +16,7 @@ using Microsoft.Xna.Framework.Graphics;
 using BadEcho.Extensions;
 using BadEcho.Game.Properties;
 using Microsoft.Xna.Framework.Input;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BadEcho.Game.UI;
 
@@ -321,19 +322,30 @@ public abstract class Control : IArrangeable, IInputElement
     { get; protected set; }
 
     /// <inheritdoc/>
+    public bool IsFocusable
+    { get; set; }
+
+    /// <inheritdoc/>
+    [MemberNotNullWhen(true, nameof(InputHandler))]
     public bool IsFocused
         => InputHandler != null && InputHandler.FocusedElement == this;
 
     /// <inheritdoc/>
     public void ClearFocus()
     {
-
+        if (IsFocused)
+            InputHandler.FocusedElement = null;
     }
 
     /// <inheritdoc/>
     public virtual bool Focus()
     {
+        if (!IsFocusable || InputHandler == null)
+            return false;
 
+        InputHandler.FocusedElement = this;
+
+        return true;
     }
 
     /// <inheritdoc/>
@@ -507,10 +519,7 @@ public abstract class Control : IArrangeable, IInputElement
     /// </summary>
     /// <param name="pressedButton">The button of the mouse that has been pressed.</param>
     protected virtual void OnMouseDown(MouseButton pressedButton)
-    {
-        if (IsFocusable)
-            InputHandler?.Focus(this);
-    }
+    { }
 
     /// <summary>
     /// Called when a mouse button, previously pressed while the mouse was over this control, has been released.
@@ -583,7 +592,6 @@ public abstract class Control : IArrangeable, IInputElement
         if (VerticalAlignment == VerticalAlignment.Stretch)
             alignedHeight = Height.HasValue ? Math.Min(Height.Value, effectiveSize.Height) : effectiveSize.Height;
             
-
         int alignedX = HorizontalAlignment switch
         {
             HorizontalAlignment.Center => (effectiveSize.Width - desiredSize.Width) / 2,
@@ -605,7 +613,7 @@ public abstract class Control : IArrangeable, IInputElement
     /// When overridden in a derived class, provides custom measurement logic for sizing this control.
     /// </summary>
     /// <param name="availableSize">The available space a parent control is allocating for this control.</param>
-    /// <returns>The desire size of this control.</returns>
+    /// <returns>The desired size of this control.</returns>
     protected abstract Size MeasureCore(Size availableSize);
 
     /// <summary>

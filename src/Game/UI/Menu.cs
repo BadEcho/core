@@ -13,7 +13,6 @@
 
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 
 namespace BadEcho.Game.UI;
 
@@ -33,9 +32,17 @@ public sealed class Menu : Control, ISelectable
     /// Initializes a new instance of the <see cref="Menu"/> class.
     /// </summary>
     public Menu()
-    {
-        _itemContainer.SelectionChanged += HandleContainerSelectionChanged;
+    {   // TODO: refactor into WrappedControl type or some such, lot of boilerplate here. For bonus points, have it share an ancestor with Panel.
         IsFocusable = true;
+
+        _itemContainer.SelectionChanged += HandleContainerSelectionChanged;
+    }
+
+    /// <inheritdoc/>
+    public override IInputHandler? InputHandler 
+    { 
+        get => base.InputHandler;
+        internal set => base.InputHandler = _itemContainer.InputHandler = value;
     }
 
     /// <summary>
@@ -100,12 +107,6 @@ public sealed class Menu : Control, ISelectable
     }
 
     /// <summary>
-    /// Gets or sets the color of the font used for the text of selectable items inside this menu.
-    /// </summary>
-    public Color LabelFontColor
-    {  get; set; }
-
-    /// <summary>
     /// Creates a item in a menu using the provided text as its label.
     /// </summary>
     /// <param name="label">The text of the new menu item.</param>
@@ -117,10 +118,28 @@ public sealed class Menu : Control, ISelectable
                            Text = label,
                        };
 
+        UpdateItemAppearance(menuItem);
+
         _menuItems.Add(menuItem);
         _itemContainer.AddChild(menuItem);
 
         return menuItem;
+    }
+
+    /// <inheritdoc/>
+    public override bool Focus()
+    {
+        _itemContainer.Focus();
+
+        return true;
+    }
+
+    /// <inheritdoc/>
+    public override void UpdateInput()
+    {
+        base.UpdateInput();
+
+        _itemContainer.UpdateInput();
     }
 
     /// <inheritdoc/>
@@ -144,14 +163,6 @@ public sealed class Menu : Control, ISelectable
     /// <inheritdoc />
     protected override void DrawCore(SpriteBatch spriteBatch)
         => _itemContainer.Draw(spriteBatch);
-
-    /// <inheritdoc/>
-    protected override void OnKeyDown(Keys pressedKey)
-    {
-        base.OnKeyDown(pressedKey);
-
-        _itemContainer.on
-    }
 
     private void UpdateItemAppearance(MenuItem menuItem)
     {

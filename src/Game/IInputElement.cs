@@ -24,6 +24,11 @@ public interface IInputElement
     bool IsMouseOver { get; }
 
     /// <summary>
+    /// Gets a value indicating if the element is focusable, and therefore able to receive input from the keyboard.
+    /// </summary>
+    bool IsFocusable { get; }
+
+    /// <summary>
     /// Gets a value indicating if the element has keyboard focus.
     /// </summary>
     bool IsFocused { get; }

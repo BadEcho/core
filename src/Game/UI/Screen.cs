@@ -104,22 +104,11 @@ public sealed class Screen : IArrangeable, IInputHandler
 
     /// <inheritdoc/>
     public IInputElement? FocusedElement 
-    { get; private set; }
+    { get; set; }
 
     /// <inheritdoc/> 
     public void ClearFocus()
         => FocusedElement = null;
-
-    /// <inheritdoc/>
-    public void Focus(IInputElement element)
-    {
-        Require.NotNull(element, nameof(element));
-
-        if (!element.IsFocusable)
-            return;
-
-        FocusedElement = element;
-    }
 
     /// <inheritdoc />
     public void InvalidateMeasure()

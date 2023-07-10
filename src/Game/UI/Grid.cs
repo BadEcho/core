@@ -42,6 +42,14 @@ public sealed class Grid : Panel, ISelectable
     private int? _selectedRow;
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="Grid"/> class.
+    /// </summary>
+    public Grid()
+    {
+        IsFocusable = true;
+    }
+
+    /// <summary>
     /// Occurs when a new cell has been selected.
     /// </summary>
     public event EventHandler<EventArgs<IEnumerable<Control>>>? SelectionChanged;
@@ -85,11 +93,23 @@ public sealed class Grid : Panel, ISelectable
     public bool IsCellSelected
         => _selectedColumn != null && _selectedRow != null;
 
+    /// <inheritdoc/>
+    public override bool Focus()
+    {
+        if (!base.Focus())
+            return false;
+
+        if (Children.Count != 0) 
+            _mouseOverColumn = _mouseOverRow = 0;
+
+        return true;
+    }
+
     /// <summary>
     /// Cancels the selection of any previously selected item in the grid.
     /// </summary>
     public void Unselect()
-        => _selectedColumn = _selectedRow = null;
+        => _mouseOverColumn = _mouseOverRow = _selectedColumn = _selectedRow = null;
 
     /// <inheritdoc/>
     protected override Size MeasureCore(Size availableSize)
@@ -230,8 +250,8 @@ public sealed class Grid : Panel, ISelectable
     protected override void OnMouseDown(MouseButton pressedButton)
     {
         base.OnMouseDown(pressedButton);
-
-        if (pressedButton == MouseButton.Left) 
+        // TODO: change selection behavior so event fires when mouse is released, or something equivalent.
+        if (pressedButton == MouseButton.Left)
             SelectHoveredItem();
     }
 
@@ -258,7 +278,7 @@ public sealed class Grid : Panel, ISelectable
 
             case Keys.Right:
                 _mouseOverRow ??= 0;
-                _mouseOverColumn = WrapToGrid((_mouseOverColumn ?? 0) + 1, _cellsX.Count);
+                _mouseOverColumn = WrapToGrid((_mouseOverColumn ?? -1) + 1, _cellsX.Count);
                 break;
 
             case Keys.Up:
@@ -268,7 +288,7 @@ public sealed class Grid : Panel, ISelectable
 
             case Keys.Down:
                 _mouseOverColumn ??= 0;
-                _mouseOverRow = WrapToGrid((_mouseOverRow ?? 0) + 1, _cellsY.Count);
+                _mouseOverRow = WrapToGrid((_mouseOverRow ?? -1) + 1, _cellsY.Count);
                 break;
         }
     }
