@@ -19,9 +19,8 @@ namespace BadEcho.Game.UI;
 /// <summary>
 /// Provides a menu control that organizes various menu items associated with commands.
 /// </summary>
-public sealed class Menu : Control, ISelectable
+public sealed class Menu : ContentControl<Grid>, ISelectable
 {
-    private readonly Grid _itemContainer = new() { IsSelectable = true };
     private readonly List<MenuItem> _menuItems = new();
 
     private Orientation _orientation;
@@ -32,17 +31,11 @@ public sealed class Menu : Control, ISelectable
     /// Initializes a new instance of the <see cref="Menu"/> class.
     /// </summary>
     public Menu()
-    {   // TODO: refactor into WrappedControl type or some such, lot of boilerplate here. For bonus points, have it share an ancestor with Panel.
+    {   
         IsFocusable = true;
-
-        _itemContainer.SelectionChanged += HandleContainerSelectionChanged;
-    }
-
-    /// <inheritdoc/>
-    public override IInputHandler? InputHandler 
-    { 
-        get => base.InputHandler;
-        internal set => base.InputHandler = _itemContainer.InputHandler = value;
+        Content.IsSelectable = true;
+        Content.SelectionChanged += HandleContainerSelectionChanged;
+        Content.DefaultDimension = new GridDimension(1.0f, GridDimensionUnit.Proportional);
     }
 
     /// <summary>
@@ -95,15 +88,15 @@ public sealed class Menu : Control, ISelectable
     /// <inheritdoc />
     public IVisual? HoveredItemBackground
     {
-        get => _itemContainer.HoveredItemBackground;
-        set => _itemContainer.HoveredItemBackground = value;
+        get => Content.HoveredItemBackground;
+        set => Content.HoveredItemBackground = value;
     }
 
     /// <inheritdoc />
     public IVisual? SelectedItemBackground
     {
-        get => _itemContainer.SelectedItemBackground;
-        set => _itemContainer.SelectedItemBackground = value;
+        get => Content.SelectedItemBackground;
+        set => Content.SelectedItemBackground = value;
     }
 
     /// <summary>
@@ -116,30 +109,16 @@ public sealed class Menu : Control, ISelectable
         var menuItem = new MenuItem
                        {
                            Text = label,
+                           HorizontalAlignment = HorizontalAlignment.Center,
+                           VerticalAlignment = VerticalAlignment.Center
                        };
 
         UpdateItemAppearance(menuItem);
 
         _menuItems.Add(menuItem);
-        _itemContainer.AddChild(menuItem);
+        Content.AddChild(menuItem);
 
         return menuItem;
-    }
-
-    /// <inheritdoc/>
-    public override bool Focus()
-    {
-        _itemContainer.Focus();
-
-        return true;
-    }
-
-    /// <inheritdoc/>
-    public override void UpdateInput()
-    {
-        base.UpdateInput();
-
-        _itemContainer.UpdateInput();
     }
 
     /// <inheritdoc/>
@@ -147,22 +126,8 @@ public sealed class Menu : Control, ISelectable
     {
         UpdateItemContainer();
 
-        _itemContainer.Measure(availableSize);
-
-        return _itemContainer.DesiredSize;
+        return base.MeasureCore(availableSize);
     }
-
-    /// <inheritdoc/>
-    protected override void ArrangeCore()
-    {
-        base.ArrangeCore();
-
-        _itemContainer.Arrange(ContentBounds);
-    }
-
-    /// <inheritdoc />
-    protected override void DrawCore(SpriteBatch spriteBatch)
-        => _itemContainer.Draw(spriteBatch);
 
     private void UpdateItemAppearance(MenuItem menuItem)
     {
@@ -195,6 +160,6 @@ public sealed class Menu : Control, ISelectable
                                 .First();
 
         selectedMenuItem.Select();
-        _itemContainer.Unselect();
+        Content.Unselect();
     }
 }

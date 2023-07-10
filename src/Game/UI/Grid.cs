@@ -66,6 +66,13 @@ public sealed class Grid : Panel, ISelectable
     public IList<GridDimension> Rows
     { get; } = new List<GridDimension>();
 
+    /// <summary>
+    /// Gets or sets the default measurement value used for rows and columns that lack specified measurements during
+    /// this control's measure and arrange passes.
+    /// </summary>
+    public GridDimension? DefaultDimension
+    { get; set; }
+
     /// <inheritdoc/>
     public bool IsSelectable
     { get; set; }
@@ -451,8 +458,8 @@ public sealed class Grid : Panel, ISelectable
     }
 
     private GridDimension GetRow(int row) 
-        => row >= Rows.Count ? _DefaultDimension : Rows[row];
+        => row >= Rows.Count ? DefaultDimension ?? _DefaultDimension : Rows[row];
 
     private GridDimension GetColumn(int column)
-        => column >= Columns.Count ? _DefaultDimension : Columns[column];
+        => column >= Columns.Count ? DefaultDimension ?? _DefaultDimension : Columns[column];
 }
