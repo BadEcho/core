@@ -36,12 +36,9 @@ public abstract class ContentControl<T> : Control
     { get; } = new();
 
     /// <inheritdoc/>
-    public override bool Focus()
-    {
-        Content.Focus();
-
-        return base.Focus();
-    }
+    public override bool Focus() 
+        // Content is giving focus, but we abort if this control cannot receive focus (i.e., due to not being focusable, etc.).
+        => base.Focus() && Content.Focus();
 
     /// <inheritdoc/>
     public override void UpdateInput()
