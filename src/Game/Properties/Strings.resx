@@ -137,4 +137,10 @@
 	<data name="NoInputHandler" xml:space="preserve">
 		<value>Control cannot process input without an input handler.</value>
 	</data>
+	<data name="GridColumnOutOfRange" xml:space="preserve">
+		<value>Specified column is outside the range of this grid's columns.</value>
+	</data>
+	<data name="GridRowOutOfRange" xml:space="preserve">
+		<value>Specified row is outside the range of this grid's rows.</value>
+	</data>
 </root>

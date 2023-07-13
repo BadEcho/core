@@ -81,6 +81,12 @@ public sealed class Menu : ContentControl<Grid>, ISelectable
             _menuItems.ForEach(UpdateItemAppearance);
         }
     }
+    
+    /// <summary>
+    /// Gets a value indicating if the menu has had any items added to it.
+    /// </summary>
+    public bool HasItems
+        => _menuItems.Count > 0;
 
     /// <inheritdoc />
     public bool IsSelectable
@@ -161,6 +167,11 @@ public sealed class Menu : ContentControl<Grid>, ISelectable
             }
         }
     }
+
+    private void OpenSubmenu(MenuItem menuItem)
+    {
+        var contentBounds = Content.LayoutBounds;
+    }
     
     private void HandleContainerSelectionChanged(object? sender, EventArgs<IEnumerable<Control>> e)
     {
@@ -168,6 +179,12 @@ public sealed class Menu : ContentControl<Grid>, ISelectable
                                 .First();
 
         selectedMenuItem.Select();
+
+        if (selectedMenuItem.Submenu is { HasItems: true })
+        {
+
+        }
+
         Content.Unselect();
     }
 }

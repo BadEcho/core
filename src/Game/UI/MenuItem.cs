@@ -61,10 +61,10 @@ public sealed class MenuItem : Control
     public event EventHandler? Selected;
 
     /// <summary>
-    /// Gets a submenu that, when populated with menu items, will open upon this menu item being selected.
+    /// Gets a submenu that will open upon this menu item being selected.
     /// </summary>
-    public Menu Submenu { get; } 
-        = new();
+    public Menu? Submenu 
+    { get; set; }
 
     /// <summary>
     /// Gets or sets the text of the menu item.
