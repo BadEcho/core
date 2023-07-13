@@ -24,6 +24,11 @@ public interface ISelectable
     bool IsSelectable { get; }
 
     /// <summary>
+    /// Gets or sets a value indicating if the hovered effect persists after the cursor is no longer over the control.
+    /// </summary>
+    bool IsHoverPersistent { get; set; }
+
+    /// <summary>
     /// Gets or sets the background visual of an item when the cursor is located over it.
     /// </summary>
     IVisual? HoveredItemBackground { get; set; }

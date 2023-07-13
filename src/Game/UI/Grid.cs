@@ -41,6 +41,8 @@ public sealed class Grid : Panel, ISelectable
     private int? _selectedColumn;
     private int? _selectedRow;
 
+    private bool _selectionBeingMade;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Grid"/> class.
     /// </summary>
@@ -78,6 +80,10 @@ public sealed class Grid : Panel, ISelectable
     { get; set; }
 
     /// <inheritdoc/>
+    public bool IsHoverPersistent
+    { get; set; }
+
+    /// <inheritdoc/>
     public IVisual? HoveredItemBackground
     { get; set; }
 
@@ -89,7 +95,7 @@ public sealed class Grid : Panel, ISelectable
     /// Gets a value indicating if the cursor is located over a non-selected cell.
     /// </summary>
     [MemberNotNullWhen(true, nameof(_mouseOverColumn), nameof(_mouseOverRow))]
-    public bool IsCellHovered
+    private bool IsCellHovered
         => _mouseOverColumn.HasValue && _mouseOverRow.HasValue
             && (_mouseOverColumn != _selectedColumn || _mouseOverRow != _selectedRow);
 
@@ -97,8 +103,19 @@ public sealed class Grid : Panel, ISelectable
     /// Gets a value indicating if a cell has been selected.
     /// </summary>
     [MemberNotNullWhen(true, nameof(_selectedColumn), nameof(_selectedRow))]
-    public bool IsCellSelected
+    private bool IsCellSelected
         => _selectedColumn != null && _selectedRow != null;
+
+    /// <summary>
+    /// Gets a value indicating if a selection being made is currently invalid.
+    /// </summary>
+    /// <remarks>
+    /// A selection, started via the depressing of the mouse button while the cursor is over an item, is no longer considered valid
+    /// if the cursor moves away from said item while the button is still pressed. Releasing the button in this state will result in
+    /// no selection.
+    /// </remarks>
+    private bool IsSelectionInvalid
+        => _selectionBeingMade && (_selectedColumn != _mouseOverColumn && _selectedRow != _mouseOverRow);
 
     /// <inheritdoc/>
     public override bool Focus()
@@ -212,14 +229,17 @@ public sealed class Grid : Panel, ISelectable
 
         if (SelectedItemBackground != null && IsCellSelected)
         {
-            int backgroundX = _cellsX[_selectedColumn.Value];
-            int backgroundY = _cellsY[_selectedRow.Value];
+            if (!IsSelectionInvalid)
+            {
+                int backgroundX = _cellsX[_selectedColumn.Value];
+                int backgroundY = _cellsY[_selectedRow.Value];
 
-            SelectedItemBackground.Draw(spriteBatch,
-                                        new Rectangle(backgroundX,
-                                                      backgroundY,
-                                                      _columnWidths[_selectedColumn.Value],
-                                                      _rowHeights[_selectedRow.Value]));
+                SelectedItemBackground.Draw(spriteBatch,
+                                            new Rectangle(backgroundX,
+                                                          backgroundY,
+                                                          _columnWidths[_selectedColumn.Value],
+                                                          _rowHeights[_selectedRow.Value]));
+            }
         }
 
         base.DrawCore(spriteBatch);
@@ -250,16 +270,43 @@ public sealed class Grid : Panel, ISelectable
     {
         base.OnMouseLeave();
 
-        _mouseOverColumn = _mouseOverRow = null;
+        if (!IsHoverPersistent)
+            _mouseOverColumn = _mouseOverRow = null;
     }
 
     /// <inheritdoc/>
     protected override void OnMouseDown(MouseButton pressedButton)
     {
         base.OnMouseDown(pressedButton);
-        // TODO: change selection behavior so event fires when mouse is released, or something equivalent.
+        
         if (pressedButton == MouseButton.Left)
-            SelectHoveredItem();
+        {
+            _selectionBeingMade = true;
+            SelectHoveredItem(false);
+        }
+    }
+
+    /// <inheritdoc/>
+    protected override void OnMouseUp(MouseButton releasedButton)
+    {
+        base.OnMouseUp(releasedButton);
+
+        if (releasedButton == MouseButton.Left)
+        {
+            if (IsSelectionInvalid)
+            {
+                _selectedColumn = _selectedRow = null;
+            }
+            else if (_selectionBeingMade && IsCellSelected)
+            {
+                IEnumerable<Control>? selectedControls = _cells[_selectedRow.Value, _selectedColumn.Value];
+
+                if (selectedControls != null)
+                    SelectionChanged?.Invoke(this, new EventArgs<IEnumerable<Control>>(selectedControls));
+            }
+
+            _selectionBeingMade = false;
+        }
     }
 
     /// <inheritdoc/>
@@ -275,7 +322,7 @@ public sealed class Grid : Panel, ISelectable
             case Keys.Enter:
             case Keys.Space:
                 if (_mouseOverColumn != null && _mouseOverRow != null)
-                    SelectHoveredItem();
+                    SelectHoveredItem(true);
                 break;
 
             case Keys.Left:
@@ -440,7 +487,7 @@ public sealed class Grid : Panel, ISelectable
         }
     }
 
-    private void SelectHoveredItem()
+    private void SelectHoveredItem(bool notify)
     {
         int? previousSelectedColumn = _selectedColumn;
         int? previousSelectedRow = _selectedRow;
@@ -452,7 +499,7 @@ public sealed class Grid : Panel, ISelectable
         {
             IEnumerable<Control>? selectedControls = _cells[_selectedRow.Value, _selectedColumn.Value];
 
-            if (selectedControls != null)
+            if (notify && selectedControls != null)
                 SelectionChanged?.Invoke(this, new EventArgs<IEnumerable<Control>>(selectedControls));
         }
     }

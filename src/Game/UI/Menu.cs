@@ -36,6 +36,7 @@ public sealed class Menu : ContentControl<Grid>, ISelectable
         Content.IsSelectable = true;
         Content.SelectionChanged += HandleContainerSelectionChanged;
         Content.DefaultDimension = new GridDimension(1.0f, GridDimensionUnit.Proportional);
+        Content.IsHoverPersistent = true;
     }
 
     /// <summary>
@@ -84,6 +85,13 @@ public sealed class Menu : ContentControl<Grid>, ISelectable
     /// <inheritdoc />
     public bool IsSelectable
         => true;
+
+    /// <inheritdoc/>
+    public bool IsHoverPersistent
+    {
+        get => Content.IsHoverPersistent;
+        set => Content.IsHoverPersistent = value;
+    }
 
     /// <inheritdoc />
     public IVisual? HoveredItemBackground
