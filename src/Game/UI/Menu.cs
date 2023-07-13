@@ -170,7 +170,10 @@ public sealed class Menu : ContentControl<Grid>, ISelectable
 
     private void OpenSubmenu(MenuItem menuItem)
     {
-        var contentBounds = Content.LayoutBounds;
+        Rectangle contentBounds = Content.LayoutBounds;
+        Point itemLocation = Content.GetCellLocation(menuItem.Column, menuItem.Row);
+
+
     }
     
     private void HandleContainerSelectionChanged(object? sender, EventArgs<IEnumerable<Control>> e)
