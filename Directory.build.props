@@ -1,27 +1,27 @@
 <Project>
 	<PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <PackageId>$(MSBuildProjectName)</PackageId>
+		<TargetFramework>net7.0</TargetFramework>
+		<PackageId>$(MSBuildProjectName)</PackageId>
 		<RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/BadEcho/core</RepositoryUrl>
-	  <PackageProjectUrl>https://badecho.com</PackageProjectUrl>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-	  <Authors>Matt Weber</Authors>
-    <Company>BadEcho LLC</Company>
-    <Copyright>© Bad Echo LLC. All rights reserved.</Copyright>
-    <PackageLicenseExpression>AGPL-3.0-only</PackageLicenseExpression>
+		<RepositoryUrl>https://github.com/BadEcho/core</RepositoryUrl>
+		<PackageProjectUrl>https://badecho.com</PackageProjectUrl>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<Authors>Matt Weber</Authors>
+		<Company>BadEcho LLC</Company>
+		<Copyright>© Bad Echo LLC. All rights reserved.</Copyright>
+		<PackageLicenseExpression>AGPL-3.0-only</PackageLicenseExpression>
 		<PackageIcon>Icon.png</PackageIcon>
-	  <NeutralLanguage>en-US</NeutralLanguage>
-	  <RootNamespace>$(MSBuildProjectName)</RootNamespace>
-    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
-    <Nullable>enable</Nullable>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <CLSCompliant>true</CLSCompliant>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <WarningsAsErrors>CS8600;CS8601;CS8602;CS8603;CS8604;CS8605;CS8613;CS8625;CS8629;CS8614;CS8618;CS8619;CS8633</WarningsAsErrors>
-    <UseCommonOutputDirectory>false</UseCommonOutputDirectory>
+		<NeutralLanguage>en-US</NeutralLanguage>
+		<RootNamespace>$(MSBuildProjectName)</RootNamespace>
+		<AssemblyName>$(MSBuildProjectName)</AssemblyName>
+		<Nullable>enable</Nullable>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<CLSCompliant>true</CLSCompliant>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<WarningsAsErrors>CS8600;CS8601;CS8602;CS8603;CS8604;CS8605;CS8613;CS8625;CS8629;CS8614;CS8618;CS8619;CS8633</WarningsAsErrors>
+		<UseCommonOutputDirectory>false</UseCommonOutputDirectory>
 		<IncludePackageReferencesDuringMarkupCompilation>false</IncludePackageReferencesDuringMarkupCompilation>
-    <ImplicitUsings>true</ImplicitUsings>
+		<ImplicitUsings>true</ImplicitUsings>
 	</PropertyGroup>
 
   <!--Versioning.-->
