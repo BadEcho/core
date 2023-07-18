@@ -130,6 +130,36 @@ public sealed class Grid : Panel, ISelectable
     }
 
     /// <summary>
+    /// Gets the coordinates to the cell whose column and row match the specified values.
+    /// </summary>
+    /// <param name="column">The index of the column that the cell occupies.</param>
+    /// <param name="row">The index of the row that the cell occupies.</param>
+    /// <returns>
+    /// The <see cref="Point"/> value representing the location of the cell found at <c>column</c> and <c>row</c>.
+    /// </returns>
+    public Point GetCellLocation(int column, int row)
+    {
+        ValidateDimensions(column, row);
+
+        return new Point(_cellsX[column], _cellsY[row]);
+    }
+
+    /// <summary>
+    /// Gets the size of the cell whose column and row match the specified values.
+    /// </summary>
+    /// <param name="column">The index of the column that the cell occupies.</param>
+    /// <param name="row">The index of the row that the cell occupies.</param>
+    /// <returns>
+    /// The <see cref="Size"/> value representing the size of the cell found at <c>column</c> and <c>row</c>.
+    /// </returns>
+    public Size GetCellSize(int column, int row)
+    {
+        ValidateDimensions(column, row);
+
+        return new Size(_columnWidths[column], _rowHeights[row]);
+    }
+
+    /// <summary>
     /// Cancels the selection of any previously selected item in the grid.
     /// </summary>
     public void Unselect()
@@ -509,4 +539,13 @@ public sealed class Grid : Panel, ISelectable
 
     private GridDimension GetColumn(int column)
         => column >= Columns.Count ? DefaultDimension ?? _DefaultDimension : Columns[column];
+
+    private void ValidateDimensions(int column, int row)
+    {
+        if (column < 0 || column >= _cellsX.Count)
+            throw new ArgumentOutOfRangeException(nameof(column), Strings.GridColumnOutOfRange);
+        
+        if (row < 0 || row >= _cellsY.Count)
+            throw new ArgumentOutOfRangeException(nameof(row), Strings.GridRowOutOfRange);
+    }
 }

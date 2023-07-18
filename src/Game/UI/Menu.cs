@@ -81,7 +81,7 @@ public sealed class Menu : ContentControl<Grid>, ISelectable
             _menuItems.ForEach(UpdateItemAppearance);
         }
     }
-
+    
     /// <inheritdoc />
     public bool IsSelectable
         => true;
@@ -161,7 +161,7 @@ public sealed class Menu : ContentControl<Grid>, ISelectable
             }
         }
     }
-    
+
     private void HandleContainerSelectionChanged(object? sender, EventArgs<IEnumerable<Control>> e)
     {
         var selectedMenuItem = e.Data.OfType<MenuItem>()

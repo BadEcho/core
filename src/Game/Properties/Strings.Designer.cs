@@ -88,6 +88,24 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Specified column is outside the range of this grid&apos;s columns..
+        /// </summary>
+        internal static string GridColumnOutOfRange {
+            get {
+                return ResourceManager.GetString("GridColumnOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Specified row is outside the range of this grid&apos;s rows..
+        /// </summary>
+        internal static string GridRowOutOfRange {
+            get {
+                return ResourceManager.GetString("GridRowOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Label control requires a font to be set in order to draw text..
         /// </summary>
         internal static string LabelNoFont {
