@@ -118,7 +118,7 @@ public abstract class GameState : IDisposable
     /// Loads resources needed by the state and prepares it to be drawn to the screen.
     /// </summary>
     /// <param name="game">
-    /// The game the state is being loaded for, which can be used to acquire a <see cref="ContentManager"/> instance for
+    /// The game the state is being loaded for, which is used to acquire a <see cref="ContentManager"/> instance for
     /// loading resources.
     /// </param>
     internal void Load(Microsoft.Xna.Framework.Game game)
