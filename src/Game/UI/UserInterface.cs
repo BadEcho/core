@@ -33,6 +33,8 @@ public abstract class UserInterface
         LoadContent(contentManager);
 
         screen.Content = LoadControls();
+
+        OnAttached();
     }
 
     /// <summary>
