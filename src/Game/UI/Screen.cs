@@ -90,6 +90,12 @@ public sealed class Screen : IArrangeable, IInputHandler
         }
     }
 
+    /// <summary>
+    /// Gets the coordinates to the upper-left corner of this surface.
+    /// </summary>
+    public Point Origin
+    { get; set; }
+
     /// <inheritdoc/>
     public Point MousePosition
         => _currentMouseState.Position;
@@ -129,7 +135,7 @@ public sealed class Screen : IArrangeable, IInputHandler
     /// </summary>
     public void Update()
     {
-        var screenBounds = new Rectangle(0, 0, _device.Viewport.Width, _device.Viewport.Height);
+        var screenBounds = new Rectangle(Origin.X, Origin.Y, _device.Viewport.Width, _device.Viewport.Height);
 
         if (screenBounds != _screenBounds)
             InvalidateMeasure();

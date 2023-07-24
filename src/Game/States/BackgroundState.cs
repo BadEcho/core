@@ -30,7 +30,7 @@ public sealed class BackgroundState : GameState
 
     private Texture2D? _texture;
     private bool _disposed;
-
+      
     /// <summary>
     /// Initializes a new instance of the <see cref="BackgroundState"/> class.
     /// </summary>

@@ -11,6 +11,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Game.UI;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -22,17 +24,53 @@ namespace BadEcho.Game.States;
 /// </summary>
 public sealed class UserInterfaceState : GameState
 {
+    private readonly UserInterface _userInterface;
+    private readonly GraphicsDevice _device;
+    private readonly Screen _screen;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UserInterfaceState"/> class.
+    /// </summary>
+    /// <param name="userInterface">The user interface the state will display.</param>
+    /// <param name="device">The graphics device that will power the rendering surface.</param>
+    public UserInterfaceState(UserInterface userInterface, GraphicsDevice device)
+    {
+        Require.NotNull(userInterface, nameof(userInterface));
+        Require.NotNull(device, nameof(device));
+
+        _userInterface = userInterface;
+        _device = device;
+        _screen = new Screen(device);
+        ActivationTime = TimeSpan.FromSeconds(2.0);
+    }
+
+    /// <inheritdoc/>
+    public override void Update(GameUpdateTime time)
+    {
+        _screen.Update();
+
+        int originX = _device.Viewport.Width - (int) (ActivationPercentage * _device.Viewport.Width);
+        _screen.Origin = new Point(originX, 0);
+
+        base.Update(time);
+    }
 
     /// <inheritdoc />
     public override void Draw(SpriteBatch spriteBatch)
     {
-        throw new NotImplementedException();
+        spriteBatch.Begin(SpriteSortMode.Immediate,
+                          blendState: BlendState.AlphaBlend,
+                          samplerState: SamplerState.PointClamp,
+                          rasterizerState: new RasterizerState { ScissorTestEnable = true });
+
+        _screen.Draw(spriteBatch);
+
+        spriteBatch.End();
     }
 
     /// <inheritdoc />
     protected override void LoadContent(ContentManager contentManager)
     {
-        throw new NotImplementedException();
+        _userInterface.Attach(_screen, contentManager);
     }
 }
