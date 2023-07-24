@@ -20,7 +20,7 @@ namespace BadEcho.Game.UI;
 /// </summary>
 public abstract class UserInterface
 {
-    /// <summary>w
+    /// <summary>
     /// Attaches this user interface onto the provided screen.
     /// </summary>
     /// <param name="screen">The screen to display this user interface on.</param>
