@@ -47,8 +47,8 @@ public sealed class ScreenState : GameState
     public override void Update(GameUpdateTime time)
     {
         _screen.Update();
-
-        int originX = _device.Viewport.Width - (int) (ActivationPercentage * _device.Viewport.Width);
+        
+        int originX = _device.Viewport.Width / 2 - (int) (Math.Pow(ActivationPercentage, 2) * _device.Viewport.Width) / 2;
         _screen.Origin = new Point(originX, 0);
 
         base.Update(time);
