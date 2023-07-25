@@ -19,21 +19,20 @@ using Microsoft.Xna.Framework.Graphics;
 namespace BadEcho.Game.States;
 
 /// <summary>
-/// Provides a game state that hosts a graphical user interface for the purpose of either displaying information, receiving
-/// input from the user, or both.
+/// Provides a game state that hosts a rendering surface for drawing user interface elements.
 /// </summary>
-public sealed class UserInterfaceState : GameState
+public sealed class ScreenState : GameState
 {
     private readonly UserInterface _userInterface;
     private readonly GraphicsDevice _device;
     private readonly Screen _screen;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="UserInterfaceState"/> class.
+    /// Initializes a new instance of the <see cref="ScreenState"/> class.
     /// </summary>
     /// <param name="userInterface">The user interface the state will display.</param>
     /// <param name="device">The graphics device that will power the rendering surface.</param>
-    public UserInterfaceState(UserInterface userInterface, GraphicsDevice device)
+    public ScreenState(UserInterface userInterface, GraphicsDevice device)
     {
         Require.NotNull(userInterface, nameof(userInterface));
         Require.NotNull(device, nameof(device));
