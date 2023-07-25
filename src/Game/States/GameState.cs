@@ -85,7 +85,7 @@ public abstract class GameState : IDisposable
         }
 
         // If this game state is at the top of the z-order, we'll transition to a visible state.
-        // Otherwise, we'll transition to hidden one.
+        // Otherwise, we'll transition to a hidden one.
         UpdateActivation(time, IsTopmost);
     }
 
