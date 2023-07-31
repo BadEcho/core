@@ -11,6 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Game.Effects;
 using BadEcho.Game.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -40,15 +41,17 @@ public sealed class ScreenState : GameState
         _userInterface = userInterface;
         _device = device;
         _screen = new Screen(device);
-        ActivationTime = TimeSpan.FromSeconds(2.0);
+        ActivationTime = TimeSpan.FromSeconds(1.0);
     }
 
     /// <inheritdoc/>
     public override void Update(GameUpdateTime time)
     {
         _screen.Update();
-        
-        int originX = _device.Viewport.Width / 2 - (int) (Math.Pow(ActivationPercentage, 2) * _device.Viewport.Width) / 2;
+
+        int contentX = _device.Viewport.Width - _screen.Content.LayoutBounds.X + _screen.Origin.X;
+        int originX = contentX - (int) (Math.Pow(ActivationPercentage, 3) * contentX);
+
         _screen.Origin = new Point(originX, 0);
 
         base.Update(time);
@@ -57,10 +60,17 @@ public sealed class ScreenState : GameState
     /// <inheritdoc />
     public override void Draw(SpriteBatch spriteBatch)
     {
+        var alphaEffect = new AlphaSpriteEffect(_device)
+                               {
+                                   Alpha = (float) Math.Pow(ActivationPercentage,3)
+                               };
+
         spriteBatch.Begin(SpriteSortMode.Immediate,
                           blendState: BlendState.AlphaBlend,
                           samplerState: SamplerState.PointClamp,
-                          rasterizerState: new RasterizerState { ScissorTestEnable = true });
+                          rasterizerState: new RasterizerState { ScissorTestEnable = true },
+                          effect: alphaEffect
+                          );
 
         _screen.Draw(spriteBatch);
 

@@ -23,6 +23,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Properties\Effects.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Effects.resx</DependentUpon>
+	  </Compile>
 	  <Compile Update="Properties\Strings.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
@@ -31,6 +36,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <EmbeddedResource Update="Properties\Effects.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Effects.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	  <EmbeddedResource Update="Properties\Strings.resx">
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>Strings.Designer.cs</LastGenOutput>
