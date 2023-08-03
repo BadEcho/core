@@ -18,8 +18,8 @@ using Microsoft.Xna.Framework.Graphics;
 namespace BadEcho.Game.Effects;
 
 /// <summary>
-/// Provides a <see cref="SpriteBatch"/> effect that allows control over the alpha channel of all sprites drawn
-/// in a batch.
+/// Provides a <see cref="SpriteBatch"/> effect that allows control over the alpha channel of all
+/// sprites drawn in a batch.
 /// </summary>
 public sealed class AlphaSpriteEffect : Effect
 {
@@ -82,8 +82,12 @@ public sealed class AlphaSpriteEffect : Effect
         Viewport viewport = GraphicsDevice.Viewport;
 
         if (viewport.Width != _lastViewport.Width || viewport.Height != _lastViewport.Height)
-        {
-            Matrix.CreateOrthographicOffCenter(0, viewport.Width, viewport.Height, 0, 0, -1, out _projection);
+        {   // 3D cameras look into the -z direction (z = 1 is in front of z = 0).
+            // Sprite batch layers are ordered in the opposite (z  = 0 is in front of z = 1).
+            // We correct this by passing 0 for zNearPlane and -1 for zFarPlane; essentially a
+            // reverse mapping of the two.
+            Matrix.CreateOrthographicOffCenter(
+                0, viewport.Width, viewport.Height, 0, 0, -1, out _projection);
 
             if (GraphicsDevice.UseHalfPixelOffset)
             {

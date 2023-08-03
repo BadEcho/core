@@ -11,15 +11,40 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-#define _vs(r)  : register(vs, r)
-#define _ps(r)  : register(ps, r)
-#define _cb(r)
+#if OPENGL
+    #define _vs(r)  : register(vs, r)
+    #define _ps(r)  : register(ps, r)
+    #define _cb(r)
+    #define VS_MODEL vs_3_0
+    #define PS_MODEL ps_3_0
 
-sampler2D Texture : register(s0);
+    #define BEGIN_PARAMETERS
+    #define END_PARAMETERS
 
-float4x4 MatrixTransform _vs(c0) _cb(c0);
-float Alpha _vs(c4) _cb(c4);
+    #define SAMPLE(texture, texCoord) tex2D(texture, texCoord) 
 
+    sampler2D Texture : register(s0);
+#else
+    #define _vs(r)
+    #define _ps(r)
+    #define _cb(r)
+    #define VS_MODEL vs_4_0_level_9_1
+    #define PS_MODEL ps_4_0_level_9_1
+
+    #define BEGIN_PARAMETERS    cbuffer Parameters : register(b0) {
+    #define END_PARAMETERS      };
+
+    #define SAMPLE(texture, texCoord) texture.Sample(texture##Sampler, texCoord)
+
+    Texture2D<float4> Texture : register(t0);
+    sampler TextureSampler : register(s0);
+#endif
+
+BEGIN_PARAMETERS
+    float4x4 MatrixTransform _vs(c0) _cb(c0);
+    float Alpha _vs(c4) _cb(c4);
+END_PARAMETERS
+    
 struct VSOutput
 {
     float4 position : SV_Position;
@@ -27,9 +52,12 @@ struct VSOutput
     float2 texCoord : TEXCOORD0;
 };
 
-VSOutput SpriteVertexShader(float4 position : POSITION0, float4 color : COLOR0, float2 texCoord : TEXCOORD0)
+VSOutput SpriteVertexShader(    float4 position : POSITION0, 
+                                float4 color : COLOR0, 
+                                float2 texCoord : TEXCOORD0)
 {
     VSOutput output;
+    
     output.position = mul(position, MatrixTransform);
     output.color = color;
     output.color.a = Alpha;
@@ -41,14 +69,14 @@ VSOutput SpriteVertexShader(float4 position : POSITION0, float4 color : COLOR0, 
 
 float4 SpritePixelShader(VSOutput input) : SV_Target0
 {
-    return tex2D(Texture, input.texCoord) * input.color;
+    return SAMPLE(Texture, input.texCoord) * input.color;
 }
 
 technique SpriteBatch
 {
     pass
     {
-        VertexShader = compile vs_2_0 SpriteVertexShader();
-        PixelShader = compile ps_2_0 SpritePixelShader();
+        VertexShader = compile VS_MODEL SpriteVertexShader();
+        PixelShader = compile PS_MODEL SpritePixelShader();
     }
 };
