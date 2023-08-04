@@ -57,24 +57,24 @@ public sealed class ScreenState : GameState
         base.Update(time);
     }
 
-/// <inheritdoc />
-public override void Draw(SpriteBatch spriteBatch)
-{
-    var alphaEffect = new AlphaSpriteEffect(_device)
-                      {   // Using a power curve for a less boring animation.
-                          Alpha = (float) Math.Pow(ActivationPercentage, 3)
-                      };
+    /// <inheritdoc />
+    public override void Draw(SpriteBatch spriteBatch)
+    {
+        var alphaEffect = new AlphaSpriteEffect(_device)
+                          {   // Using a power curve for a less boring animation.
+                              Alpha = (float) Math.Pow(ActivationPercentage, 3)
+                          };
 
-    spriteBatch.Begin(SpriteSortMode.Immediate,
-                      blendState: BlendState.AlphaBlend,
-                      samplerState: SamplerState.PointClamp,
-                      rasterizerState: new RasterizerState { ScissorTestEnable = true },
-                      effect: alphaEffect);
+        spriteBatch.Begin(SpriteSortMode.Immediate,
+                          blendState: BlendState.AlphaBlend,
+                          samplerState: SamplerState.PointClamp,
+                          rasterizerState: new RasterizerState { ScissorTestEnable = true },
+                          effect: alphaEffect);
 
-    _screen.Draw(spriteBatch);
+        _screen.Draw(spriteBatch);
 
-    spriteBatch.End();
-}
+        spriteBatch.End();
+    }
 
     /// <inheritdoc />
     protected override void LoadContent(ContentManager contentManager)
