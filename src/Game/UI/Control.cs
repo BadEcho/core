@@ -627,7 +627,7 @@ public abstract class Control : IArrangeable, IInputElement
     { }
 
     /// <summary>
-    /// When overridden in a derived class, provides custom rendering logic for drawing this control.
+    /// Executes the custom rendering logic required to draw the control to the screen.
     /// </summary>
     /// <param name="spriteBatch">The <see cref="SpriteBatch"/> instance to use to draw the control.</param>
     /// <remarks>
