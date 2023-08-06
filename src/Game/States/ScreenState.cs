@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Game.Effects;
 using BadEcho.Game.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -58,23 +57,9 @@ public sealed class ScreenState : GameState
     }
 
     /// <inheritdoc />
-    public override void Draw(SpriteBatch spriteBatch)
-    {
-        var alphaEffect = new AlphaSpriteEffect(_device)
-                          {   // Using a power curve for a less boring animation.
-                              Alpha = (float) Math.Pow(ActivationPercentage, 3)
-                          };
-
-        spriteBatch.Begin(SpriteSortMode.Immediate,
-                          blendState: BlendState.AlphaBlend,
-                          samplerState: SamplerState.PointClamp,
-                          rasterizerState: new RasterizerState { ScissorTestEnable = true },
-                          effect: alphaEffect);
-
-        _screen.Draw(spriteBatch);
-
-        spriteBatch.End();
-    }
+    protected override void DrawCore(SpriteBatch spriteBatch) 
+        
+        => _screen.Draw(spriteBatch);
 
     /// <inheritdoc />
     protected override void LoadContent(ContentManager contentManager)

@@ -11,6 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Game.Effects;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -93,7 +94,24 @@ public abstract class GameState : IDisposable
     /// Draws the scene associated with the state to the screen.
     /// </summary>
     /// <param name="spriteBatch">The <see cref="SpriteBatch"/> instance to use to draw the state.</param>
-    public abstract void Draw(SpriteBatch spriteBatch);
+    public void Draw(SpriteBatch spriteBatch)
+    {
+        Require.NotNull(spriteBatch, nameof(spriteBatch));
+
+        var alphaEffect = new AlphaSpriteEffect(spriteBatch.GraphicsDevice)
+                          {   // Using a power curve for a less boring animation.
+                              Alpha = (float)Math.Pow(ActivationPercentage, 3)
+                          };
+
+        spriteBatch.Begin(SpriteSortMode.Immediate,
+                          blendState: BlendState.AlphaBlend,
+                          samplerState: SamplerState.PointClamp,
+                          rasterizerState: new RasterizerState { ScissorTestEnable = true },
+                          effect: alphaEffect);
+        DrawCore(spriteBatch);
+
+        spriteBatch.End();
+    }
     
     /// <summary>
     /// Handles the input being currently sent by the user.
@@ -145,6 +163,12 @@ public abstract class GameState : IDisposable
         _contentManager.Unload();
         _contentManager = null;
     }
+
+    /// <summary>
+    /// Executes the custom rendering logic required to draw the state to the screen.
+    /// </summary>
+    /// <param name="spriteBatch">A <see cref="SpriteBatch"/> instance with an active batch operation to draw this state to.</param>
+    protected abstract void DrawCore(SpriteBatch spriteBatch);
 
     /// <summary>
     /// Loads state-specific resources using the provided content manager.

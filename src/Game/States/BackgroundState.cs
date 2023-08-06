@@ -50,19 +50,15 @@ public sealed class BackgroundState : GameState
     }
 
     /// <inheritdoc/>
-    public override void Draw(SpriteBatch spriteBatch)
+    protected override void DrawCore(SpriteBatch spriteBatch)
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
 
         Viewport viewport = spriteBatch.GraphicsDevice.Viewport;
 
-        spriteBatch.Begin();
-
         spriteBatch.Draw(_texture,
                          new Rectangle(0, 0, viewport.Width, viewport.Height),
-                         new Color(ActivationPercentage, ActivationPercentage, ActivationPercentage));
-
-        spriteBatch.End();
+                         Color.White);
     }
 
     /// <inheritdoc/>
