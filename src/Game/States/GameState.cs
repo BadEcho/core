@@ -21,7 +21,7 @@ namespace BadEcho.Game.States;
 /// Provides a scene for a game with independently managed content.
 /// </summary>
 public abstract class GameState : IDisposable
-{
+{   // TODO: add transition flags for: move, zoom (maybe...or just a transform matrix), fade in/out
     private ContentManager? _contentManager;
     private bool _isExiting;
     private bool _disposed;
@@ -108,6 +108,7 @@ public abstract class GameState : IDisposable
                           samplerState: SamplerState.PointClamp,
                           rasterizerState: new RasterizerState { ScissorTestEnable = true },
                           effect: alphaEffect);
+
         DrawCore(spriteBatch);
 
         spriteBatch.End();

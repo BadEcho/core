@@ -62,10 +62,8 @@ public sealed class BackgroundState : GameState
     }
 
     /// <inheritdoc/>
-    protected override void LoadContent(ContentManager contentManager)
-    {
-        _texture = contentManager.Load<Texture2D>(_backgroundAssetPath);
-    }
+    protected override void LoadContent(ContentManager contentManager) 
+        => _texture = contentManager.Load<Texture2D>(_backgroundAssetPath);
 
     /// <inheritdoc/>
     protected override void Dispose(bool disposing)

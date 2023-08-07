@@ -57,8 +57,7 @@ public sealed class ScreenState : GameState
     }
 
     /// <inheritdoc />
-    protected override void DrawCore(SpriteBatch spriteBatch) 
-        
+    protected override void DrawCore(SpriteBatch spriteBatch)
         => _screen.Draw(spriteBatch);
 
     /// <inheritdoc />
