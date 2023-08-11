@@ -12,6 +12,7 @@
 //-----------------------------------------------------------------------
 
 using BadEcho.Game.Effects;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -21,7 +22,7 @@ namespace BadEcho.Game.States;
 /// Provides a scene for a game with independently managed content.
 /// </summary>
 public abstract class GameState : IDisposable
-{   // TODO: add transition flags for: move, zoom (maybe...or just a transform matrix), fade in/out
+{
     private ContentManager? _contentManager;
     private bool _isExiting;
     private bool _disposed;
@@ -56,6 +57,18 @@ public abstract class GameState : IDisposable
     /// </summary>
     public bool HasExited
     { get; private set; }
+
+    /// <summary>
+    /// Gets or sets the transitions this state undergoes when activating and deactivating.
+    /// </summary>
+    public StateTransitions Transitions
+    { get; set; }
+
+    /// <summary>
+    /// Gets or sets the direction this state moves when undergoing a <see cref="StateTransitions.Move"/> transition.
+    /// </summary>
+    public MovementDirection TransitionDirection
+    { get; set; }
 
     /// <summary>
     /// Gets a value indicating if the state acts like modal dialog on top of other states.
@@ -98,9 +111,26 @@ public abstract class GameState : IDisposable
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
 
+        var viewport = spriteBatch.GraphicsDevice.Viewport;
+        var transform = Matrix.Identity;
+
+        if (Transitions.HasFlag(StateTransitions.Move))
+            transform *= CreateMoveTransform(viewport);
+
+        if (Transitions.HasFlag(StateTransitions.Zoom))
+            transform *= CreateZoomTransform(viewport);
+
+        if (Transitions.HasFlag(StateTransitions.Rotate))
+            transform *= Matrix.CreateRotationZ(MathHelper.ToRadians(ActivationPercentage * 360));
+
+        var alpha = Transitions.HasFlag(StateTransitions.Fade)
+            ? (float) Math.Pow(ActivationPercentage, 3)
+            : 1f;
+
         var alphaEffect = new AlphaSpriteEffect(spriteBatch.GraphicsDevice)
-                          {   // Using a power curve for a less boring animation.
-                              Alpha = (float)Math.Pow(ActivationPercentage, 3)
+                          {   
+                              Alpha = alpha,
+                              MatrixTransform = transform
                           };
 
         spriteBatch.Begin(SpriteSortMode.Immediate,
@@ -212,5 +242,29 @@ public abstract class GameState : IDisposable
 
         // We're still in the process of activating/deactivating the game state.
         ActivationStatus = isActivating ? ActivationStatus.Activating : ActivationStatus.Deactivating;
+    }
+
+    private Matrix CreateMoveTransform(Viewport viewport)
+    {
+        var position = TransitionDirection switch
+        {
+            MovementDirection.Left => new Vector3(viewport.Width - viewport.Width * ActivationPercentage, 0f, 0f),
+            MovementDirection.Right => new Vector3(-viewport.Width + viewport.Width * ActivationPercentage, 0f, 0f),
+            MovementDirection.Up => new Vector3(0f, viewport.Height - viewport.Height * ActivationPercentage, 0f),
+            MovementDirection.Down => new Vector3(0f, -viewport.Height + viewport.Height * ActivationPercentage, 0f),
+            _ => Vector3.Zero
+        };
+
+        return Matrix.CreateTranslation(position);
+    }
+
+    private Matrix CreateZoomTransform(Viewport viewport)
+    {
+        var origin = new Vector2(viewport.Width / 2f, viewport.Height / 2f);
+
+        return
+            Matrix.CreateTranslation(new Vector3(-origin, 0f))
+            * Matrix.CreateScale(ActivationPercentage, ActivationPercentage, 1f)
+            * Matrix.CreateTranslation(new Vector3(origin, 0f));
     }
 }
