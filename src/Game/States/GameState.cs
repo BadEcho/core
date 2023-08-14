@@ -71,10 +71,37 @@ public abstract class GameState : IDisposable
     { get; set; }
 
     /// <summary>
+    /// Gets or sets the exponential power of the transitional animation interpolation.
+    /// </summary>
+    public double PowerCurve
+    { get; set; } = 3.0;
+
+    /// <summary>
     /// Gets a value indicating if the state acts like modal dialog on top of other states.
     /// </summary>
     public virtual bool IsModal
         => false;
+
+    /// <summary>
+    /// Gets or sets the coordinates to the upper-left corner of the state's content.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Used when performing <see cref="StateTransitions.Move"/> transitions in order to begin the transition at a position
+    /// bordering visible content. Often a state's content does not encompass the entire screen.
+    /// </para>
+    /// <para>
+    /// Leave this at the default to move content end-to-end across the entire viewport.
+    /// </para>
+    /// </remarks>
+    protected Point ContentOrigin
+    { get; set; }
+
+    /// <summary>
+    /// Gets a value indicating if the clipping regions will be honored while a state is activating and deactivating.
+    /// </summary>
+    protected virtual bool ClipDuringTransitions
+        => true;
 
     /// <summary>
     /// Performs any necessary updates to the state, including its position, activation status, and other state-specific
@@ -124,8 +151,11 @@ public abstract class GameState : IDisposable
             transform *= Matrix.CreateRotationZ(MathHelper.ToRadians(ActivationPercentage * 360));
 
         var alpha = Transitions.HasFlag(StateTransitions.Fade)
-            ? (float) Math.Pow(ActivationPercentage, 3)
+            ? (float) Math.Pow(ActivationPercentage, PowerCurve)
             : 1f;
+
+        bool clippingEnabled
+            = ActivationStatus is ActivationStatus.Activated or ActivationStatus.Deactivated || ClipDuringTransitions;
 
         var alphaEffect = new AlphaSpriteEffect(spriteBatch.GraphicsDevice)
                           {   
@@ -136,7 +166,7 @@ public abstract class GameState : IDisposable
         spriteBatch.Begin(SpriteSortMode.Immediate,
                           blendState: BlendState.AlphaBlend,
                           samplerState: SamplerState.PointClamp,
-                          rasterizerState: new RasterizerState { ScissorTestEnable = true },
+                          rasterizerState: new RasterizerState { ScissorTestEnable = clippingEnabled },
                           effect: alphaEffect);
 
         DrawCore(spriteBatch);
@@ -248,15 +278,28 @@ public abstract class GameState : IDisposable
     {
         var position = TransitionDirection switch
         {
-            MovementDirection.Left => new Vector3(viewport.Width - viewport.Width * ActivationPercentage, 0f, 0f),
-            MovementDirection.Right => new Vector3(-viewport.Width + viewport.Width * ActivationPercentage, 0f, 0f),
-            MovementDirection.Up => new Vector3(0f, viewport.Height - viewport.Height * ActivationPercentage, 0f),
-            MovementDirection.Down => new Vector3(0f, -viewport.Height + viewport.Height * ActivationPercentage, 0f),
+            MovementDirection.Left => new Vector3(CalculateDisplacement(viewport, true, true), 0f, 0f),
+            MovementDirection.Right => new Vector3(CalculateDisplacement(viewport, true, false), 0f, 0f),
+            MovementDirection.Up => new Vector3(0f, CalculateDisplacement(viewport, false, true), 0f),
+            MovementDirection.Down => new Vector3(0f, CalculateDisplacement(viewport, false, false), 0f),
             _ => Vector3.Zero
         };
 
         return Matrix.CreateTranslation(position);
     }
+
+    private float CalculateDisplacement(Viewport viewport, bool horizontal, bool positiveDirection)
+    {
+        // The directional multiplier.
+        float dX = positiveDirection ? 1f : -1f;
+
+        return horizontal
+            ? dX * (viewport.Width - ContentOrigin.X) - dX * (viewport.Width - ContentOrigin.X) * CalculateAnimationCurve()
+            : dX * (viewport.Height - ContentOrigin.Y) - dX * (viewport.Height - ContentOrigin.Y) * CalculateAnimationCurve();
+    }
+
+    private float CalculateAnimationCurve()
+        => (float) Math.Pow(ActivationPercentage, PowerCurve);
 
     private Matrix CreateZoomTransform(Viewport viewport)
     {

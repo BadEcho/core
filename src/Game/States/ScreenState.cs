@@ -12,7 +12,6 @@
 //-----------------------------------------------------------------------
 
 using BadEcho.Game.UI;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -24,7 +23,6 @@ namespace BadEcho.Game.States;
 public sealed class ScreenState : GameState
 {
     private readonly UserInterface _userInterface;
-    private readonly GraphicsDevice _device;
     private readonly Screen _screen;
 
     /// <summary>
@@ -38,20 +36,20 @@ public sealed class ScreenState : GameState
         Require.NotNull(device, nameof(device));
 
         _userInterface = userInterface;
-        _device = device;
         _screen = new Screen(device);
         ActivationTime = TimeSpan.FromSeconds(1.5);
     }
+
+    /// <inheritdoc/>
+    protected override bool ClipDuringTransitions 
+        => false;
 
     /// <inheritdoc/>
     public override void Update(GameUpdateTime time)
     {
         _screen.Update();
 
-        int contentX = _device.Viewport.Width - _screen.Content.LayoutBounds.X + _screen.Origin.X;
-        int originX = contentX - (int) (Math.Pow(ActivationPercentage, 3) * contentX);
-
-        _screen.Origin = new Point(originX, 0);
+        ContentOrigin = _screen.Content.LayoutBounds.Location;
 
         base.Update(time);
     }
@@ -61,8 +59,6 @@ public sealed class ScreenState : GameState
         => _screen.Draw(spriteBatch);
 
     /// <inheritdoc />
-    protected override void LoadContent(ContentManager contentManager)
-    {
-        _userInterface.Attach(_screen, contentManager);
-    }
+    protected override void LoadContent(ContentManager contentManager) 
+        => _userInterface.Attach(_screen, contentManager);
 }
