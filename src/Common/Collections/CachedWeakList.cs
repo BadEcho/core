@@ -214,13 +214,13 @@ internal sealed class CachedWeakList : CopyUponWriteList, IEnumerable
             _strongReference = null;
         }
 
-        object IEnumerator.Current
+        readonly object IEnumerator.Current
             => Current;
 
         /// <summary>
         /// Gets the current element in the collection.
         /// </summary>
-        private object Current
+        private readonly object Current
         {
             get
             {

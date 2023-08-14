@@ -90,7 +90,7 @@ internal static unsafe class NotifyIconDataMarshaller
         /// Provides the unmanaged notification area information currently loaded into the marshaller.
         /// </summary>
         /// <returns>The converted <see cref="NOTIFYICONDATAW"/> value.</returns>
-        public NOTIFYICONDATAW ToUnmanaged()
+        public readonly NOTIFYICONDATAW ToUnmanaged()
             => _unmanaged;
 
         /// <summary>
@@ -138,7 +138,7 @@ internal static unsafe class NotifyIconDataMarshaller
         /// <summary>
         /// Releases all resources in use by the marshaller.
         /// </summary>
-        public void Free()
+        public readonly void Free()
         {
             if (_windowHandleAddRefd)
                 _windowHandle.DangerousRelease();
@@ -253,7 +253,7 @@ internal static unsafe class NotifyIconDataMarshaller
             /// <summary>
             /// Gets a null-terminated string that specifies the text for a standard tooltip.
             /// </summary>
-            private Span<char> SzTip
+            private readonly Span<char> SzTip
             {
                 get
                 {

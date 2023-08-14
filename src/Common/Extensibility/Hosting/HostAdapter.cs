@@ -81,13 +81,9 @@ public sealed class HostAdapter<T> : IHostAdapter
             = configuration.SegmentedContracts
                            .FirstOrDefault(c => c.Name == contractName);
 
-        if (contractConfiguration == null)
-        {
-            throw new ArgumentException(Strings.NoContractInConfiguration.InvariantFormat(contractName),
-                                        nameof(configuration));
-        }
-
-        return contractConfiguration;
+        return contractConfiguration
+            ?? throw new ArgumentException(Strings.NoContractInConfiguration.InvariantFormat(contractName),
+                                           nameof(configuration));
     }
 
     private static IDictionary<string, IPluginAdapter<T>> CreateRoutingTable(
