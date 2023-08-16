@@ -119,10 +119,9 @@ public abstract class PolymorphicCollectionViewModel<TModel, TChildViewModel> : 
                             baseModel =>
                             {
                                 var model = (TModelImpl)baseModel;
-                                var childViewModel = FindChild<TChildViewModelImpl>(model);
-
-                                if (childViewModel == null)
-                                    throw new ArgumentException(Strings.CannotUpdateUnboundData, nameof(baseModel));
+                                
+                                var childViewModel = FindChild<TChildViewModelImpl>(model)
+                                    ?? throw new ArgumentException(Strings.CannotUpdateUnboundData, nameof(baseModel));
 
                                 childViewModel.Bind(model);
                             });

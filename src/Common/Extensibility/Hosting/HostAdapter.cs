@@ -75,15 +75,13 @@ public sealed class HostAdapter<T> : IHostAdapter
 
     private static IContractConfiguration FindContractConfiguration(IExtensibilityConfiguration configuration)
     {
-        string contractName = typeof(T).Name;
+        string name = typeof(T).Name;
 
         IContractConfiguration? contractConfiguration
-            = configuration.SegmentedContracts
-                           .FirstOrDefault(c => c.Name == contractName);
+            = configuration.SegmentedContracts.FirstOrDefault(c => c.Name == name);
 
         return contractConfiguration
-            ?? throw new ArgumentException(Strings.NoContractInConfiguration.InvariantFormat(contractName),
-                                           nameof(configuration));
+            ?? throw new ArgumentException(Strings.NoContractInConfiguration.InvariantFormat(name), nameof(configuration));
     }
 
     private static IDictionary<string, IPluginAdapter<T>> CreateRoutingTable(

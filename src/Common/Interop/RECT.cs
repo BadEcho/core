@@ -44,12 +44,12 @@ internal struct RECT
     /// <summary>
     /// Gets the height of the rectangle.
     /// </summary>
-    public int Height
+    public readonly int Height
         => Bottom - Top;
 
     /// <summary>
     /// Gets the width of the rectangle.
     /// </summary>
-    public int Width
+    public readonly int Width
         => Right - Left;
 }

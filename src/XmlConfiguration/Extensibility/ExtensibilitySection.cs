@@ -21,6 +21,8 @@ namespace BadEcho.XmlConfiguration.Extensibility;
 /// </summary>
 /// <suppresions>
 /// ReSharper disable ConstantNullCoalescingCondition
+/// ReSharper disable NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
+/// A number of the API contracts (i.e., ConfigurationManager.GetSection never returning null) are wrong.
 /// </suppresions>
 internal sealed class ExtensibilitySection : BindableConfigurationSection, IExtensibilityConfiguration
 {
@@ -62,7 +64,7 @@ internal sealed class ExtensibilitySection : BindableConfigurationSection, IExte
     /// Gets an instance of this configuration section from the current application's default configuration.
     /// </summary>
     /// <returns>This section as it is declared in the current application's default configuration.</returns>
-    internal static ExtensibilitySection GetSection() 
+    internal static ExtensibilitySection GetSection()
         => (ExtensibilitySection) ConfigurationManager.GetSection(SectionPath) ?? new ExtensibilitySection();
 
     /// <summary>

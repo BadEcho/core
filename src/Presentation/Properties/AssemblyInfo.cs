@@ -90,3 +90,9 @@ using BadEcho.Properties;
                            Scope = "member", 
                            Target = "~M:BadEcho.Presentation.Markup.BindingExtensionSkeleton`2.DoBindingAction(System.Action)",
                            Justification = "It is important for us to adopt the same approach that Microsoft uses in their own data binding logic when dealing with user input; specifically: all exceptions must be caught. There is no application code on the stack when this code is ran, so any exceptions thrown are not actionable by the application.")]
+
+[assembly: SuppressMessage("Style", 
+                           "IDE0270:Use coalesce expression", 
+                           Scope = "member", 
+                           Target = "~M:BadEcho.Presentation.PackUri.MakePackUri(System.Reflection.Assembly,System.String,System.Boolean)~System.String",
+                           Justification = "Simplifying this null check makes the code harder to read (nested ternary operators).")]

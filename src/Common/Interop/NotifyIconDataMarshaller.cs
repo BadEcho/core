@@ -106,7 +106,7 @@ internal static unsafe class NotifyIconDataMarshaller
         /// </summary>
         /// <returns>The converted <see cref="NotifyIconData"/> instance.</returns>
         /// <exception cref="NotSupportedException">A handle originating from a <see cref="SafeHandle"/> was changed.</exception>
-        public NotifyIconData ToManaged()
+        public readonly NotifyIconData ToManaged()
         {
             // SafeHandle fields must match the underlying handle value during marshalling. They cannot change.
             if (_unmanaged.hWnd != _originalWindowHandleValue)
@@ -228,7 +228,7 @@ internal static unsafe class NotifyIconDataMarshaller
             /// </summary>
             public ReadOnlySpan<char> Tip
             {
-                get => SzTip.SliceAtFirstNull();
+                readonly get => SzTip.SliceAtFirstNull();
                 set => value.CopyToAndTerminate(SzTip);
             }
 
@@ -237,7 +237,7 @@ internal static unsafe class NotifyIconDataMarshaller
             /// </summary>
             public ReadOnlySpan<char> Info
             {
-                get => SzInfo.SliceAtFirstNull();
+                readonly get => SzInfo.SliceAtFirstNull();
                 set => value.CopyToAndTerminate(SzInfo);
             }
 
@@ -246,7 +246,7 @@ internal static unsafe class NotifyIconDataMarshaller
             /// </summary>
             public ReadOnlySpan<char> InfoTitle
             {
-                get => SzInfoTitle.SliceAtFirstNull();
+                readonly get => SzInfoTitle.SliceAtFirstNull();
                 set => value.CopyToAndTerminate(SzInfoTitle);
             }
 
@@ -267,7 +267,7 @@ internal static unsafe class NotifyIconDataMarshaller
             /// <summary>
             /// Gets a null-terminated string that specifies the text to display in a balloon notification.
             /// </summary>
-            private Span<char> SzInfo
+            private readonly Span<char> SzInfo
             {
                 get
                 {
@@ -281,7 +281,7 @@ internal static unsafe class NotifyIconDataMarshaller
             /// <summary>
             /// Gets a null-terminated string that specifies a title for a balloon notification.
             /// </summary>
-            private Span<char> SzInfoTitle
+            private readonly Span<char> SzInfoTitle
             {
                 get
                 {

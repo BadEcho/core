@@ -44,12 +44,6 @@ public static class ResultHandleExtensions
     /// <param name="hResult">A failed result handle.</param>
     /// <returns>An exception object representing the converted <c>hResult</c>.</returns>
     public static Exception GetException(this ResultHandle hResult)
-    {
-        var exception = Marshal.GetExceptionForHR((int) hResult);
-
-        if (exception == null)
-            throw new ArgumentException(Strings.NoExceptionFromSuccessfulResult, nameof(hResult));
-
-        return exception;
-    }
+        => Marshal.GetExceptionForHR((int) hResult)
+            ?? throw new ArgumentException(Strings.NoExceptionFromSuccessfulResult, nameof(hResult));
 }

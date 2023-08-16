@@ -124,3 +124,21 @@ using BadEcho.Properties;
                            Scope = "type", 
                            Target = "~T:BadEcho.Interop.WindowStyles",
                            Justification = "Not possible, window style flags use values that exceed the maximum value of a signed integer.")]
+
+[assembly: SuppressMessage("Style", 
+                           "IDE0251:Make member 'readonly'", 
+                           Scope = "member", 
+                           Target = "~P:BadEcho.Interop.NotifyIconDataMarshaller.ManagedToUnmanagedRef.NOTIFYICONDATAW.Tip",
+                           Justification = "This is technically an incorrect recommendation. Although, at the time of writing, a readonly modifier here would compile fine, this setter is in fact modifying the state of this struct. The state is being modified through the copying of the input value's contents into a fixed buffer, whose location in memory is being pointed to by the Span<T> returned by the SzTip property.")]
+
+[assembly: SuppressMessage("Style", 
+                           "IDE0251:Make member 'readonly'", 
+                           Scope = "member", 
+                           Target = "~P:BadEcho.Interop.NotifyIconDataMarshaller.ManagedToUnmanagedRef.NOTIFYICONDATAW.Info",
+                           Justification = "This is technically an incorrect recommendation. Although, at the time of writing, a readonly modifier here would compile fine, this setter is in fact modifying the state of this struct. The state is being modified through the copying of the input value's contents into a fixed buffer, whose location in memory is being pointed to by the Span<T> returned by the SzInfo property.")]
+
+[assembly: SuppressMessage("Style",
+                           "IDE0251:Make member 'readonly'",
+                           Scope = "member",
+                           Target = "~P:BadEcho.Interop.NotifyIconDataMarshaller.ManagedToUnmanagedRef.NOTIFYICONDATAW.InfoTitle",
+                           Justification = "This is technically an incorrect recommendation. Although, at the time of writing, a readonly modifier here would compile fine, this setter is in fact modifying the state of this struct. The state is being modified through the copying of the input value's contents into a fixed buffer, whose location in memory is being pointed to by the Span<T> returned by the SzInfoTitle property.")]

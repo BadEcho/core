@@ -36,10 +36,7 @@ public sealed class SpriteSheetImporter : ContentImporter<SpriteSheetContent>
         var asset = JsonSerializer.Deserialize<SpriteSheetAsset?>(fileContents,
                                                                  new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         if (asset == null)
-        {
-            throw new ArgumentException(Strings.SheetIsNull.InvariantFormat(filename),
-                                        nameof(filename));
-        }
+            throw new ArgumentException(Strings.SheetIsNull.InvariantFormat(filename), nameof(filename));
 
         context.Log(Strings.ImportingDependency.InvariantFormat(asset.TexturePath));
 

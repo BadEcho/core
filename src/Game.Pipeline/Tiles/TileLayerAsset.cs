@@ -31,10 +31,8 @@ public sealed class TileLayerAsset : LayerAsset
     public TileLayerAsset(XElement root) 
         : base(root, LayerType.Tile)
     {
-        XElement? dataElement = root.Element(DATA_ELEMENT);
-
-        if (dataElement == null)
-            throw new InvalidOperationException(Strings.TileLayerNoData);
+        XElement dataElement = root.Element(DATA_ELEMENT)
+            ?? throw new InvalidOperationException(Strings.TileLayerNoData);
 
         Data = new DataAsset(dataElement);
 

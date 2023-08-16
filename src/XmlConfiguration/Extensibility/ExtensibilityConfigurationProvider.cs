@@ -27,12 +27,5 @@ public static class ExtensibilityConfigurationProvider
     /// An <see cref="IExtensibilityConfiguration"/> object containing settings for the Extensibility framework.
     /// </returns>
     public static IExtensibilityConfiguration LoadConfiguration()
-    {
-        ExtensibilitySection section = ExtensibilitySection.GetSection();
-
-        if (section == null)
-            throw new ConfigurationMissingException(MissingConfigurationType.Section, ExtensibilitySection.Schema);
-
-        return section;
-    }
+        => ExtensibilitySection.GetSection();
 }

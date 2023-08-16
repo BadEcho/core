@@ -40,10 +40,7 @@ public sealed class TextureAtlasImporter : ContentImporter<TextureAtlasContent>
                                                                        IncludeFields = true
                                                                    });
         if (asset == null)
-        {
-            throw new ArgumentException(Strings.AtlasIsNull.InvariantFormat(filename),
-                                        nameof(filename));
-        }
+            throw new ArgumentException(Strings.AtlasIsNull.InvariantFormat(filename), nameof(filename));
 
         context.Log(Strings.ImportingDependency.InvariantFormat(asset.TexturePath));
 

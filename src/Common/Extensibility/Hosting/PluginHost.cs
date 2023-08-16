@@ -198,11 +198,10 @@ public static class PluginHost
     /// </exception>
     public static TContract LoadFromProcess<TContract>()
     {
-        Assembly? entryAssembly = Assembly.GetEntryAssembly();
+        Assembly entryAssembly = Assembly.GetEntryAssembly()
+            ?? throw new InvalidOperationException(Strings.ProcessCannotExportContracts);
 
-        return entryAssembly != null
-            ? LoadLocally<TContract>(entryAssembly)
-            : throw new InvalidOperationException(Strings.ProcessCannotExportContracts);
+        return LoadLocally<TContract>(entryAssembly);
     }
 
     /// <summary>

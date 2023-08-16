@@ -29,10 +29,8 @@ public sealed class ImageLayerAsset : LayerAsset
     public ImageLayerAsset(XElement root) 
         : base(root, LayerType.Image)
     {
-        XElement? imageElement = root.Element(XmlConstants.ImageElement);
-
-        if (imageElement == null)
-            throw new InvalidOperationException(Strings.ImageLayerNoImage);
+        XElement imageElement = root.Element(XmlConstants.ImageElement)
+            ?? throw new InvalidOperationException(Strings.ImageLayerNoImage);
 
         Image = new ImageAsset(imageElement);
     }
