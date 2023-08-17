@@ -2,6 +2,7 @@
 BadEcho.Omnified.Sandbox.sln
 BadEcho.Omnified.Sandbox.sln.DotSettings
 sandbox/
+**/vcpkg_installed/
 hacks/targets/witcher3/cedebug.txt
 tests.lua
 Visionista.otf
