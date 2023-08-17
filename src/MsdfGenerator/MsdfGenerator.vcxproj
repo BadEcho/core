@@ -152,12 +152,11 @@
   <ItemGroup>
     <Image Include="app.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="vcpkg.C.ProgramFiles.MicrosoftVisualStudio.2022.Professional.VC.vcpkg">
-      <Version>1.0.0</Version>
-    </PackageReference>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Target Name="PrepareForBuild">
+    <Exec Command="call $(MSBuildThisFileDirectory)\..\..\vcpkg\bootstrap-vcpkg.bat" Condition="!Exists('$(MSBuildThisFileDirectory)\..\..\vcpkg\vcpkg.exe')"/>
+  </Target>
+  <Import Project="$(MSBuildThisFileDirectory)\..\..\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets" Condition="Exists('$(MSBuildThisFileDirectory)\..\..\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets')" />  
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
 </Project>
