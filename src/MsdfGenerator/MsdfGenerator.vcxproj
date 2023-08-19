@@ -75,17 +75,30 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  
   <PropertyGroup Label="Vcpkg">
-    <VcpkgEnabled>true</VcpkgEnabled>
+		<LockPath>$([System.IO.Path]::GetFullPath($(MSBuildProjectDirectory)\..\..\..))</LockPath>
+	  <VcpkgEnabled>true</VcpkgEnabled>
     <VcpkgEnableManifest>true</VcpkgEnableManifest>
     <VcpkgManifestInstall>true</VcpkgManifestInstall>
     <VcpkgAutoLink>true</VcpkgAutoLink>
+	  <VcpkgUseStatic>true</VcpkgUseStatic>
+	  <VcpkgConfiguration>$(Configuration)</VcpkgConfiguration>
   </PropertyGroup>
-  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <VcpkgUseStatic>true</VcpkgUseStatic>
-    <VcpkgConfiguration>$(Configuration)</VcpkgConfiguration>
-  </PropertyGroup>
+
+  <Choose>
+		<When Condition="'$(SolutionDir)' != '' and Exists('$(LockPath)\universal.lock')">
+			<PropertyGroup>
+				<VcpkgRoot>$(LockPath)\universal\src\$([System.IO.Path]::GetFileName($(SolutionDir.TrimEnd('\'))))\vcpkg</VcpkgRoot>
+			</PropertyGroup>
+		</When>
+		<Otherwise> 
+			<PropertyGroup>
+				<VcpkgRoot>..\vcpkg</VcpkgRoot>
+			</PropertyGroup>
+		</Otherwise>
+	</Choose>
+
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -154,7 +167,11 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Target Name="PrepareForBuild">
-    <Exec Command="call $(MSBuildThisFileDirectory)\..\..\vcpkg\bootstrap-vcpkg.bat" Condition="!Exists('$(MSBuildThisFileDirectory)\..\..\vcpkg\vcpkg.exe')"/>
+		<Error Condition="!Exists('$(MSBuildThisFileDirectory)\..\..\vcpkg\bootstrap-vcpkg.bat')"
+		       Text='The vcpkg submodule is missing. Please clone missing submodules by executing "git submodule update --init" in this repository.'
+		       />
+		<Exec Command="call $(MSBuildThisFileDirectory)\..\..\vcpkg\bootstrap-vcpkg.bat" 
+		      />
   </Target>
   <Import Project="$(MSBuildThisFileDirectory)\..\..\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets" Condition="Exists('$(MSBuildThisFileDirectory)\..\..\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets')" />  
   <ImportGroup Label="ExtensionTargets">

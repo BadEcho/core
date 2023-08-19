@@ -1,11 +1,11 @@
 {
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
   "name": "badecho-msdf-gen",
-  "version": "1.3.0",
+  "version": "1.0.0",
   "description": "Managed wrapper for msdf-atlas-gen.",
   "homepage": "https://BadEcho.com",
   "builtin-baseline": "57fee154cc4068542740b4b5775343d9fd83413e",
   "dependencies": [
-    "msdfgen"
+    "msdf-atlas-gen"
   ]
 }
