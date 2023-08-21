@@ -98,7 +98,7 @@
     </When>
     <Otherwise>
       <PropertyGroup>
-        <VcpkgRoot>..\vcpkg</VcpkgRoot>
+        <VcpkgRoot>$(MSBuildThisFileDirectory)\..\..\vcpkg</VcpkgRoot>
       </PropertyGroup>
     </Otherwise>
   </Choose>
