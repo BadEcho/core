@@ -4,12 +4,13 @@
 	  <TargetFramework>net7.0-windows</TargetFramework>
 	  <Nullable>enable</Nullable>
 	  <IsPackable>false</IsPackable>
+	  <Platforms>x64;x86</Platforms>
   </PropertyGroup>
 
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+	<PropertyGroup Condition=" '$(Configuration)' == 'Debug'">
 		<MonoGameMGCBAdditionalArguments>/define:IsRelease=No</MonoGameMGCBAdditionalArguments>
 	</PropertyGroup>
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+	<PropertyGroup Condition=" '$(Configuration)' == 'Release'">
 		<MonoGameMGCBAdditionalArguments>/define:IsRelease=Yes</MonoGameMGCBAdditionalArguments>
 	</PropertyGroup>
 
@@ -32,6 +33,7 @@
     <ProjectReference Include="..\..\src\Common\BadEcho.Common.csproj" />
     <ProjectReference Include="..\..\src\Game.Pipeline\BadEcho.Game.Pipeline.csproj" />
 		<ProjectReference Include="..\..\src\Game\BadEcho.Game.csproj" />
+		<ProjectReference Include="..\..\src\MsdfGenerator\BadEcho.MsdfGenerator.vcxproj" />
   </ItemGroup>
 
   <ItemGroup>
