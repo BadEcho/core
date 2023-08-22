@@ -65,7 +65,7 @@ void FontAtlas::Generate(FontHandle* font, const Charset& charset, FontConfigura
 	if (!fontGeometry.loadCharset(font, 1, charset, true, true))
 		return;
 
-	int glyphCount = glyphs.size();
+	int glyphCount = static_cast<int>(glyphs.size());
 
 	for (GlyphGeometry &glyph : glyphs)
 	{
