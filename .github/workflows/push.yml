@@ -25,7 +25,7 @@ jobs:
         dotnet-version: 7.0.x      
     - name: Build
       shell: pwsh      
-      run: .\build\build.ps1 $(git rev-parse --short HEAD) $(git rev-list --count "$(git log -1 --pretty=format:"%H" version.json)..HEAD")
+      run: .\build\build.ps1 $(git rev-parse --short HEAD) $(git rev-list --count "$(git log -1 --pretty=format:"%H" version.json)..HEAD") Package
     - name: Push to MyGet
       env:
         PKG_URL: https://www.myget.org/F/bad-echo/api/v3/index.json

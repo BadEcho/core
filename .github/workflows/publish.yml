@@ -33,7 +33,7 @@ jobs:
         dotnet-version: 7.0.x      
     - name: Build
       shell: pwsh
-      run: .\build\build.ps1
+      run: .\build\build.ps1 -PackageConfiguration Package -SkipTests
     - name: Push to NuGet
       env:
         PKG_URL: https://api.nuget.org/v3/index.json
