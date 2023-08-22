@@ -24,7 +24,7 @@ jobs:
       with:
         dotnet-version: 7.0.x
     - name: Add MSBuild to PATH
-      uses: actions/setup-msbuild@v1.1      
+      uses: microsoft/setup-msbuild@v1.1      
     - name: Build
       shell: pwsh      
       run: .\build\build.ps1 $(git rev-parse --short HEAD) $(git rev-list --count "$(git log -1 --pretty=format:"%H" version.json)..HEAD") Package
