@@ -34,9 +34,15 @@ jobs:
         PKG_API_KEY: ${{ secrets.MYGET_API_KEY }}
       run: .\build\push.ps1
       shell: pwsh
-    - name: Artifacts
+    - name: Build Artifacts
       if: always()
       uses: actions/upload-artifact@v2
       with:
         name: artifacts
         path: artifacts/**/*
+    - name: vcpkg Artifacts
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: vcpkg-artifacts
+        path: vcpkg/**/*
