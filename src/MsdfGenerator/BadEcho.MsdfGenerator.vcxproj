@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
-    <EnableManagedPackageReferenceSupport>true</EnableManagedPackageReferenceSupport>
+    <EnableManagedPackageReferenceSupport>false</EnableManagedPackageReferenceSupport>
     <ProjectGuid>{9A554C9B-B87F-44B3-8F6C-BFD8A7AC24E9}</ProjectGuid>
     <Keyword>NetCoreCProj</Keyword>
     <RootNamespace>BadEcho.MsdfGenerator</RootNamespace>
