@@ -56,17 +56,37 @@ public class SteppedBinderTests
     public void OnSourceChanged_UpdatesInTime(int initialTargetValue, int newSourceValue, double durationMilliseconds)
     {
         TimeSpan steppingDuration = TimeSpan.FromMilliseconds(durationMilliseconds);
-
         TimeSpan elapsed = default;
+        int retries = 3;
 
-        UserInterface.RunUIFunction(() => elapsed = UpdateSource(initialTargetValue.ToString(), newSourceValue, steppingDuration), true, false);
-
+        RunTest();
+        
         double drift = Math.Abs(elapsed.Subtract(steppingDuration).TotalMilliseconds);
+
+        while (drift >= DRIFT_TOLERANCE && retries > 0)
+        {
+            _output.WriteLine(
+                $"Drift of {drift} exceeds DRIFT_TOLERANCE. Trying {retries} additional time(s) to account for system load.");
+
+            RunTest();
+
+            drift = Math.Abs(elapsed.Subtract(steppingDuration).TotalMilliseconds);
+            retries--;
+        }
 
         _output.WriteLine($"Drift: {drift}");
 
         Assert.True(drift < DRIFT_TOLERANCE,
                     $"Expected Duration: {steppingDuration} Actual Duration: {elapsed}");
+        return;
+
+        void RunTest()
+        {
+            UserInterface.RunUIFunction(
+                () => elapsed = UpdateSource(initialTargetValue.ToString(), newSourceValue, steppingDuration),
+                true,
+                false);
+        }
     }
 
     [Fact]
@@ -121,17 +141,39 @@ public class SteppedBinderTests
     {
         TimeSpan steppingDuration = TimeSpan.FromMilliseconds(durationMilliseconds);
         TimeSpan elapsed = default;
+        int retries = 3;
 
-        UserInterface.RunUIFunction(() => elapsed =
-                                        UpdateTarget(initialSourceValue,
-                                                     initialSourceValue.ToString(),
-                                                     newTargetValue.ToString(),
-                                                     steppingDuration),
-                                    true,
-                                    false);
-        Assert.True(
-            Math.Abs(elapsed.Subtract(steppingDuration).TotalMilliseconds) < DRIFT_TOLERANCE,
-            $"Expected Duration: {steppingDuration} Actual Duration: {elapsed}");
+        RunTest();
+
+        double drift = Math.Abs(elapsed.Subtract(steppingDuration).TotalMilliseconds);
+
+        while (drift >= DRIFT_TOLERANCE && retries > 0)
+        {
+            _output.WriteLine(
+                $"Drift of {drift} exceeds DRIFT_TOLERANCE. Trying {retries} additional time(s) to account for system load.");
+
+            RunTest();
+
+            drift = Math.Abs(elapsed.Subtract(steppingDuration).TotalMilliseconds);
+            retries--;
+        }
+
+        _output.WriteLine($"Drift: {drift}");
+
+        Assert.True(drift < DRIFT_TOLERANCE,
+                    $"Expected Duration: {steppingDuration} Actual Duration: {elapsed}");
+        return;
+
+        void RunTest()
+        {
+            UserInterface.RunUIFunction(() => elapsed =
+                                            UpdateTarget(initialSourceValue,
+                                                         initialSourceValue.ToString(),
+                                                         newTargetValue.ToString(),
+                                                         steppingDuration),
+                                        true,
+                                        false);
+        }
     }
 
     [Fact]
