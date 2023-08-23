@@ -26,7 +26,13 @@ jobs:
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.1
     - name: Add VSTest to PATH
-      uses: darenm/Setup-VSTest@v1.2      
+      uses: darenm/Setup-VSTest@v1.2
+    - name: Acquire vcpkg Artifacts
+      uses: dawidd6/action-download-artifact@v2
+      with:
+        name: vcpkg-artifacts
+        commit: ${{ vars.VCPKG_ARTIFACT_SHA }}
+        path: vcpkg
     - name: Build
       shell: pwsh      
       run: .\build\build.ps1 $(git rev-parse --short HEAD) $(git rev-list --count "$(git log -1 --pretty=format:"%H" version.json)..HEAD") Package
@@ -43,7 +49,7 @@ jobs:
         name: artifacts
         path: artifacts/**/*
     - name: vcpkg Artifacts
-      if: always()
+      if: ${{ vars.UPLOAD_VCPKG == 'true' }}
       uses: actions/upload-artifact@v2
       with:
         name: vcpkg-artifacts
