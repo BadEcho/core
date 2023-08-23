@@ -13,7 +13,7 @@
 
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 
-namespace BadEcho.Game.Pipeline;
+namespace BadEcho.Game.Pipeline.BoundedTextures;
 
 /// <summary>
 /// Provides the raw data for a texture with spatial boundaries defined.

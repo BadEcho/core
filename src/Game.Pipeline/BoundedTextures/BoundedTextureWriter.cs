@@ -14,7 +14,7 @@
 using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler;
 
-namespace BadEcho.Game.Pipeline;
+namespace BadEcho.Game.Pipeline.BoundedTextures;
 
 /// <summary>
 /// Provides a writer of raw bounded texture content to the content pipeline.

@@ -21,7 +21,7 @@
 
 	<ItemGroup>
 	  <PackageReference Include="MonoGame.Framework.Content.Pipeline" Version="3.8.1.303" />
-		<PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" >
+		<PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303">
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
 	</ItemGroup>

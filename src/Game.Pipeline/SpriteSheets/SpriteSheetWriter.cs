@@ -15,7 +15,7 @@ using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler;
 
-namespace BadEcho.Game.Pipeline;
+namespace BadEcho.Game.Pipeline.SpriteSheets;
 
 /// <summary>
 /// Provides a writer of raw sprite sheet content to the content pipeline.

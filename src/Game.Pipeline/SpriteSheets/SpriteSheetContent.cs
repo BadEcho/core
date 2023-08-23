@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Game.Pipeline;
+namespace BadEcho.Game.Pipeline.SpriteSheets;
 
 /// <summary>
 /// Provides the raw data for a sprite sheet asset.

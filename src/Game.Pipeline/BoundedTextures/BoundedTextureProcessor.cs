@@ -19,7 +19,7 @@ using System.ComponentModel;
 using BadEcho.Extensions;
 using BadEcho.Game.Pipeline.Properties;
 
-namespace BadEcho.Game.Pipeline;
+namespace BadEcho.Game.Pipeline.BoundedTextures;
 
 /// <summary>
 /// Provides a processor of bounded texture asset data for the content pipeline.

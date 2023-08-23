@@ -16,7 +16,7 @@ using BadEcho.Extensions;
 using Microsoft.Xna.Framework.Content.Pipeline;
 using BadEcho.Game.Pipeline.Properties;
 
-namespace BadEcho.Game.Pipeline;
+namespace BadEcho.Game.Pipeline.SpriteSheets;
 
 /// <summary>
 /// Provides an importer of sprite sheet asset data for the content pipeline.
