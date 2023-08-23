@@ -50,7 +50,7 @@ jobs:
         name: artifacts
         path: artifacts/**/*
     - name: vcpkg Artifacts
-      if: always()
+      if: ${{ vars.UPLOAD_VCPKG == 'true' }}
       uses: actions/upload-artifact@v2
       with:
         name: vcpkg-artifacts
