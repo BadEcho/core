@@ -33,7 +33,7 @@ jobs:
       with:
         name: vcpkg-artifacts
         commit: ${{ vars.VCPKG_ARTIFACT_SHA }}
-        path: vcpkg/installed/
+        path: vcpkg/packages/
     - name: Build
       shell: pwsh      
       run: .\build\build.ps1 $(git rev-parse --short HEAD) $(git rev-list --count "$(git log -1 --pretty=format:"%H" version.json)..HEAD") Package
@@ -54,4 +54,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: vcpkg-artifacts
-        path: vcpkg/installed/**/*
+        path: vcpkg/packages/**/*
