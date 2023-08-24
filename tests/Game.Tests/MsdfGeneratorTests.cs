@@ -23,7 +23,7 @@ public class MsdfGeneratorTests
     {
         Assert.True(File.Exists(@"..\..\tests\Game.Tests\Content\Fonts\Lato-Regular.ttf"));
 
-        FontAtlas.Generate(new FontConfiguration
+        DistanceFieldFontAtlas.Generate(new FontConfiguration
                            {
                                fontPath = @"..\..\tests\Game.Tests\Content\Fonts\Lato-Regular.ttf",
                                jsonPath = "Lato-layout.json",

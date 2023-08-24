@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-#include "font-atlas.h"
+#include "DistanceFieldFontAtlas.h"
 #include <msclr/marshal.h>
 #include <msclr/marshal_cppstd.h>
 
@@ -21,7 +21,7 @@ using namespace msdf_atlas;
 using namespace msclr::interop;
 using namespace BadEcho::MsdfGenerator;
 
-void FontAtlas::Generate(FontConfiguration configuration)
+void DistanceFieldFontAtlas::Generate(FontConfiguration configuration)
 {
 	FreetypeHandle* freeType = initializeFreetype();
 
@@ -57,7 +57,7 @@ void FontAtlas::Generate(FontConfiguration configuration)
 	deinitializeFreetype(freeType);
 }
 
-void FontAtlas::Generate(FontHandle* font, const Charset& charset, FontConfiguration configuration)
+void DistanceFieldFontAtlas::Generate(FontHandle* font, const Charset& charset, FontConfiguration configuration)
 {
 	std::vector<GlyphGeometry> glyphs;
 	FontGeometry fontGeometry(&glyphs);

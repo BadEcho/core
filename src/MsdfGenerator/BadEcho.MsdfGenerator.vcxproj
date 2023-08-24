@@ -159,12 +159,12 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="font-atlas.h" />
+    <ClInclude Include="DistanceFieldFontAtlas.h" />
     <ClInclude Include="Resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
-    <ClCompile Include="font-atlas.cpp" />
+    <ClCompile Include="DistanceFieldFontAtlas.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc" />

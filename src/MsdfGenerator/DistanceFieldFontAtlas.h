@@ -51,7 +51,7 @@ namespace BadEcho::MsdfGenerator {
 	/// <summary>
 	/// Provides multi-channel signed distance field font atlas generation methods.
 	/// </summary>
-	public ref class FontAtlas abstract sealed
+	public ref class DistanceFieldFontAtlas abstract sealed
 	{
 	public:
 		/// <summary>
