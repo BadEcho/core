@@ -31,7 +31,7 @@
     },
     "resolution": {
       "type": "integer",
-      "description": "The size of the glyphs in the atlas, in pixels.",
+      "description": "The size of the glyphs in the atlas, in pixels per em.",
       "minimum": 1
     },
     "range": {
