@@ -37,6 +37,6 @@
       "description": "The index of the row containing initially drawn frames, prior to any movement occurring."
     }
   },
-  "required": ["texturePath", "rows", "columns", "rowUp", "rowDown", "rowLeft", "rowRight"],
+  "required": [ "texturePath", "rows", "columns", "rowUp", "rowDown", "rowLeft", "rowRight" ],
   "additionalProperties": false
 }
