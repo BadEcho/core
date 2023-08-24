@@ -39,6 +39,7 @@ jobs:
       if: ${{ vars.DOWNLOAD_VCPKG == 'true' }}
       uses: dawidd6/action-download-artifact@v2
       with:
+        workflow: push.yml
         name: vcpkg-artifacts
         commit: ${{ vars.VCPKG_ARTIFACT_SHA }}
         path: src/MsdfGenerator/vcpkg_installed/
