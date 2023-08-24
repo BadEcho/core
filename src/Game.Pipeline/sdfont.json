@@ -1,0 +1,45 @@
+{
+  "schema": "http://json-schema.org/draft-04/schema",
+  "title": "Bad Echo multi-channel signed distance field font JSON schema",
+  "description": "Defines the parameters for generating an atlas for font that uses multi-channel signed distance fields.",
+  "type": "object",
+  "properties": {
+    "fontPath": {
+      "type": "string",
+      "description": "The path to the font file (.ttf/.otf) to create an atlas for."
+    },
+    "characterSet": {
+      "type": "array",
+      "description": "The character set that will be included in the font atlas.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "integer",
+            "description": "The decimal value for the first character in a range of characters to include in the character set."
+          },
+          "end": {
+            "type": "integer",
+            "description": "The decimal value for the last character in a range of characters to include in the character set."
+          }
+        },
+        "required": [ "start", "end" ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "resolution": {
+      "type": "integer",
+      "description": "The size of the glyphs in the atlas, in pixels.",
+      "minimum": 1
+    },
+    "range": {
+      "type": "integer",
+      "description": "The distance field range in output pixels, which affects how far the distance field extends beyond the glyphs.",
+      "minimum": 1
+    }
+  },
+  "required": [ "fontPath" ],
+  "additionalProperties": false
+}

@@ -39,11 +39,11 @@ namespace BadEcho::MsdfGenerator {
 		/// </summary>
 		System::String^ outputPath;
 		/// <summary>
-		/// The size of the glyphs in the atlas in pixels per EM.
+		/// The size of the glyphs in the atlas, in pixels.
 		/// </summary>
 		unsigned int resolution;
 		/// <summary>
-		/// The distance field range in output pixels.
+		/// The distance field range in output pixels, which affects how far the distance field extends beyond the glyphs.
 		/// </summary>
 		unsigned int range;
 	};
