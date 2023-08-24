@@ -1,3 +1,5 @@
+# On a push to source control, this compiles a release build for the repository's code, runs tests, and then publishes new development builds to MyGet.
+
 name: CI on Push
  
 on:
