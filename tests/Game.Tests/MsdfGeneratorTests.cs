@@ -12,6 +12,7 @@
 //-----------------------------------------------------------------------
 
 using BadEcho.MsdfGenerator;
+using System.Runtime.CompilerServices;
 using Xunit;
 
 namespace BadEcho.Game.Tests;
@@ -25,7 +26,7 @@ public class MsdfGeneratorTests
 
         DistanceFieldFontAtlas.Generate(new FontConfiguration
                            {
-                               fontPath = @"..\..\tests\Game.Tests\Content\Fonts\Lato-Regular.ttf",
+                               fontPath = GetAssetPath("Lato-Regular.ttf"),
                                jsonPath = "Lato-layout.json",
                                outputPath = "Lato-atlas.png",
                                range = 4,
@@ -35,4 +36,7 @@ public class MsdfGeneratorTests
         Assert.True(File.Exists("Lato-atlas.png"));
         Assert.True(File.Exists("Lato-layout.json"));
     }
+
+    private static string GetAssetPath(string assetName, [CallerFilePath] string rootPath = "")
+        => $"{Path.GetDirectoryName(rootPath)}\\Content\\Fonts\\{assetName}";
 }
