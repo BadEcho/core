@@ -32,9 +32,12 @@ public sealed class SpriteSheetImporter : ContentImporter<SpriteSheetContent>
          
         context.Log(Strings.ImportingSpriteSheet.InvariantFormat(filename));
 
-        var fileContents = File.ReadAllText(filename); 
+        var fileContents = File.ReadAllText(filename);
         var asset = JsonSerializer.Deserialize<SpriteSheetAsset?>(fileContents,
-                                                                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                                                                  new JsonSerializerOptions
+                                                                  {
+                                                                      PropertyNameCaseInsensitive = true
+                                                                  });
         if (asset == null)
             throw new ArgumentException(Strings.SheetIsNull.InvariantFormat(filename), nameof(filename));
 
