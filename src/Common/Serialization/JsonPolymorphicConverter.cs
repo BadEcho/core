@@ -32,9 +32,8 @@ public abstract class JsonPolymorphicConverter<TTypeDescriptor,TBase> : JsonConv
     private const string DEFAULT_TYPE_PROPERTY_NAME = "Type";
 
     /// <summary>
-    /// Gets the expected property name of the number in JSON whose
-    /// <typeparamref name="TTypeDescriptor"/> representation is used to determine the specific
-    /// type of <typeparamref name="TBase"/> instantiated.
+    /// Gets the expected property name of the number in JSON whose <typeparamref name="TTypeDescriptor"/> 
+    /// representation is used to determine the specific type of <typeparamref name="TBase"/> instantiated.
     /// </summary>
     protected virtual string TypePropertyName 
         => DEFAULT_TYPE_PROPERTY_NAME;
@@ -45,8 +44,7 @@ public abstract class JsonPolymorphicConverter<TTypeDescriptor,TBase> : JsonConv
     protected abstract string DataPropertyName { get; }
 
     /// <inheritdoc/>
-    public override TBase? Read(
-        ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override TBase? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         Utf8JsonReader dataPropertyReader = default;
 
