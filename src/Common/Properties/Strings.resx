@@ -305,7 +305,4 @@
 	<data name="JsonExtremumValueNotNumber" xml:space="preserve">
 		<value>The provided JSON object's extremum property is not a number.</value>
 	</data>
-	<data name="JsonConverterTypeNotNumeric" xml:space="preserve">
-		<value>The JSON converter type must be convertible to and from a numeric value.</value>
-	</data>
 </root>

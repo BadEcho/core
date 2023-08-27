@@ -11,6 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using BadEcho.Properties;
@@ -49,6 +50,7 @@ namespace BadEcho.Serialization;
 /// </para>
 /// </example>
 public sealed class JsonRangeConverter<T> : JsonConverter<IEnumerable<T>>
+    where T : unmanaged, IConvertible
 {
     /// <inheritdoc/>
     public override IEnumerable<T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -81,8 +83,7 @@ public sealed class JsonRangeConverter<T> : JsonConverter<IEnumerable<T>>
 
         foreach (T valueInRange in value)
         {
-            if (valueInRange is not int numberInRange)
-                throw new JsonException(Strings.JsonConverterTypeNotNumeric);
+            int numberInRange = valueInRange.ToInt32(CultureInfo.InvariantCulture);
 
             if (range.Count == 0 || numberInRange - range[^1] <= 1)
                 range.Add(numberInRange);
@@ -112,10 +113,8 @@ public sealed class JsonRangeConverter<T> : JsonConverter<IEnumerable<T>>
         reader.Read();
 
         for (int i = start; i <= end; i++)
-        {
-            if (i is not T value)
-                throw new JsonException(Strings.JsonConverterTypeNotNumeric);
-
+        {   
+            T value = (T) Convert.ChangeType(i, typeof(T), CultureInfo.InvariantCulture);
             range.Add(value);
         }
 

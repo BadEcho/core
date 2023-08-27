@@ -367,15 +367,6 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The JSON converter type must be convertible to and from a numeric value..
-        /// </summary>
-        internal static string JsonConverterTypeNotNumeric {
-            get {
-                return ResourceManager.GetString("JsonConverterTypeNotNumeric", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The provided JSON object&apos;s data property is not a JSON object..
         /// </summary>
         internal static string JsonDataValueNotObject {
