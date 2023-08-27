@@ -114,7 +114,7 @@
     <value>The provided JSON object's type descriptor property is not a number.</value>
   </data>
   <data name="JsonDataValueNotObject" xml:space="preserve">
-    <value>The provided JSON object's object data property is not a JSON object.</value>
+    <value>The provided JSON object's data property is not a JSON object.</value>
   </data>
   <data name="ArgumentStringEmpty" xml:space="preserve">
     <value>The provided string cannot be empty.</value>
@@ -298,5 +298,14 @@
 	</data>
 	<data name="ActivationContextManifestResourceNotFound" xml:space="preserve">
 		<value>Could not load manifest resource from the Bad Echo Core Framework's assembly.</value>
+	</data>
+	<data name="JsonNotStartArray" xml:space="preserve">
+		<value>The provided JSON text does not begin with the start of a JSON array.</value>
+	</data>
+	<data name="JsonExtremumValueNotNumber" xml:space="preserve">
+		<value>The provided JSON object's extremum property is not a number.</value>
+	</data>
+	<data name="JsonConverterTypeNotNumeric" xml:space="preserve">
+		<value>The JSON converter type must be convertible to and from a numeric value.</value>
 	</data>
 </root>

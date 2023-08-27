@@ -367,11 +367,29 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The provided JSON object&apos;s object data property is not a JSON object..
+        ///   Looks up a localized string similar to The JSON converter type must be convertible to and from a numeric value..
+        /// </summary>
+        internal static string JsonConverterTypeNotNumeric {
+            get {
+                return ResourceManager.GetString("JsonConverterTypeNotNumeric", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The provided JSON object&apos;s data property is not a JSON object..
         /// </summary>
         internal static string JsonDataValueNotObject {
             get {
                 return ResourceManager.GetString("JsonDataValueNotObject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The provided JSON object&apos;s extremum property is not a number..
+        /// </summary>
+        internal static string JsonExtremumValueNotNumber {
+            get {
+                return ResourceManager.GetString("JsonExtremumValueNotNumber", resourceCulture);
             }
         }
         
@@ -390,6 +408,15 @@ namespace BadEcho.Properties {
         internal static string JsonMalformedText {
             get {
                 return ResourceManager.GetString("JsonMalformedText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The provided JSON text does not begin with the start of a JSON array..
+        /// </summary>
+        internal static string JsonNotStartArray {
+            get {
+                return ResourceManager.GetString("JsonNotStartArray", resourceCulture);
             }
         }
         

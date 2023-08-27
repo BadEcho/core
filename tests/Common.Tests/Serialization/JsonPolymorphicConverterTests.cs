@@ -19,10 +19,10 @@ namespace BadEcho.Tests.Serialization;
 public class JsonPolymorphicConverterTests
 {
     private const string JSON_FAKE_OBJECT =
-        @"[ { ""Type"": 0, ""Object"": { ""SomeIdentifier"": ""hello there"" } } ]";
+        """[ { "Type": 0, "Object": { "SomeIdentifier": "hello there" } } ]""";
 
     private const string JSON_OUT_OF_ORDER_OBJECT =
-        @"[ { ""Object"": { ""SomeIdentifier"": ""hello there"" }, ""Type"": 0 } ]";
+        """[ { "Object": { "SomeIdentifier": "hello there" }, "Type": 0 } ]""";
 
     [Fact]
     public void Read_First_ValidConversion()

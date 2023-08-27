@@ -13,6 +13,7 @@
 
 using System.ComponentModel;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using BadEcho.Serialization;
 
 namespace BadEcho.Tests.Serialization;
@@ -35,10 +36,18 @@ public sealed class SecondFakeJsonObject : FakeJsonObject
     { get; set; }
 }
 
+public sealed class RangeFakeJsonObject : FakeJsonObject
+{
+    [JsonConverter(typeof(JsonRangeConverter<int>))]
+    public IEnumerable<int>? Ranges
+    { get; init; }
+}
+
 public enum FakeJsonObjectType
 {
     First,
-    Second
+    Second,
+    Range
 }
 
 public sealed class FakeJsonObjectConverter : JsonPolymorphicConverter<FakeJsonObjectType, FakeJsonObject>
@@ -52,6 +61,7 @@ public sealed class FakeJsonObjectConverter : JsonPolymorphicConverter<FakeJsonO
         {
             FakeJsonObjectType.First => JsonSerializer.Deserialize<FirstFakeJsonObject>(ref reader),
             FakeJsonObjectType.Second => JsonSerializer.Deserialize<SecondFakeJsonObject>(ref reader),
+            FakeJsonObjectType.Range => JsonSerializer.Deserialize<RangeFakeJsonObject>(ref reader),
             _ => throw new InvalidEnumArgumentException(nameof(typeDescriptor),
                                                         (int) typeDescriptor,
                                                         typeof(FakeJsonObjectType))
@@ -64,6 +74,7 @@ public sealed class FakeJsonObjectConverter : JsonPolymorphicConverter<FakeJsonO
         {
             FirstFakeJsonObject => FakeJsonObjectType.First,
             SecondFakeJsonObject => FakeJsonObjectType.Second,
+            RangeFakeJsonObject => FakeJsonObjectType.Range,
             _ => throw new ArgumentException("Type described in JSON not supported.",
                                              nameof(value))
         };
