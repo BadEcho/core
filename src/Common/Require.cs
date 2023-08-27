@@ -45,7 +45,7 @@ public static class Require
     {
         NotNull(value, parameterName);
 
-        if (0u >= (uint) value.Length)
+        if (0 >= value.Length)
             throw new ArgumentException(Strings.ArgumentStringEmpty, parameterName);
     }
 }
