@@ -6,6 +6,7 @@
 		<Title>$(Product)</Title>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
 	  <IsPackable>$(CoreIsPackable)</IsPackable>
+		<Platforms>x64;x86</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,6 +30,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Common\BadEcho.Common.csproj" />
 	  <ProjectReference Include="..\Game\BadEcho.Game.csproj" />
+	  <ProjectReference Include="..\MsdfGenerator\BadEcho.MsdfGenerator.vcxproj" />
 	</ItemGroup>
 
 	<ItemGroup>

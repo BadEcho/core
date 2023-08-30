@@ -39,7 +39,7 @@ namespace BadEcho::MsdfGenerator {
 		/// </summary>
 		System::String^ outputPath;
 		/// <summary>
-		/// The size of the glyphs in the atlas, in pixels per em.
+		/// The size of the glyphs in the atlas, in pixels-per-em.
 		/// </summary>
 		unsigned int resolution;
 		/// <summary>

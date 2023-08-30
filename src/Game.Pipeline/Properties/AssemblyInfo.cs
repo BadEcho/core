@@ -29,3 +29,9 @@ using BadEcho.Properties;
                            Scope = "member", 
                            Target = "~M:BadEcho.Game.Pipeline.SpriteSheets.SpriteSheetImporter.Import(System.String,Microsoft.Xna.Framework.Content.Pipeline.ContentImporterContext)~BadEcho.Game.Pipeline.SpriteSheets.SpriteSheetContent",
                            Justification = "Simplifying this null check in the suggested manner would make the code harder to read.")]
+
+[assembly: SuppressMessage("Style", 
+                           "IDE0270:Use coalesce expression", 
+                           Scope = "member", 
+                           Target = "~M:BadEcho.Game.Pipeline.Fonts.DistanceFieldFontImporter.Import(System.String,Microsoft.Xna.Framework.Content.Pipeline.ContentImporterContext)~BadEcho.Game.Pipeline.Fonts.DistanceFieldFontContent",
+                           Justification = "Simplifying this null check in the suggested manner would make the code harder to read.")]

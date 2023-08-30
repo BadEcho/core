@@ -11,6 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Graphics;
@@ -62,7 +63,7 @@ internal sealed class TestContentProcessorContext : ContentProcessorContext
 
     /// <inheritdoc />
     public override string IntermediateDirectory
-        => string.Empty;
+        => Path.Combine(GetContentPath(), "obj");
 
     /// <inheritdoc />
     public override ContentBuildLogger Logger
@@ -91,4 +92,7 @@ internal sealed class TestContentProcessorContext : ContentProcessorContext
     /// <inheritdoc />
     public override GraphicsProfile TargetProfile
         => GraphicsProfile.HiDef;
+
+    private static string GetContentPath([CallerFilePath] string rootPath = "")
+        => $"{Path.GetDirectoryName(rootPath)}\\Content\\";
 }

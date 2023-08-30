@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <EmbeddedResource Update="Properties\Strings.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
 		<EmbeddedResource Include="Properties\app.manifest">

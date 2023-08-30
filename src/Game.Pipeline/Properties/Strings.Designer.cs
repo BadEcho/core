@@ -151,6 +151,42 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The .sdfont asset identified by {0} consists of a single &apos;null&apos; literal token, which cannot be processed as a distance field font. A JSON document conforming to the .sdfont schema found at https://BadEcho.com/sdfont.json must be provided..
+        /// </summary>
+        internal static string DistanceFieldFontIsNull {
+            get {
+                return ResourceManager.GetString("DistanceFieldFontIsNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The JSON layout file for the font consists of a single &apos;null&apos; literal, which cannot be processed as metadata for the distance field font. This is most likely due to an internal error during MSDF atlas generation..
+        /// </summary>
+        internal static string DistanceFieldFontJsonIsNull {
+            get {
+                return ResourceManager.GetString("DistanceFieldFontJsonIsNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Font atlas generation did not output a JSON layout file..
+        /// </summary>
+        internal static string DistanceFieldFontNoJsonOutput {
+            get {
+                return ResourceManager.GetString("DistanceFieldFontNoJsonOutput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Font atlas generation did not output an atlas texture file..
+        /// </summary>
+        internal static string DistanceFieldFontNoOutput {
+            get {
+                return ResourceManager.GetString("DistanceFieldFontNoOutput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The custom property type &apos;{0}&apos; parser returned a null value despite a successful parse of the custom property &apos;{1}&apos; with value &apos;{2}&apos;..
         /// </summary>
         internal static string ExtensibleParsedNullPropertyValue {
@@ -192,6 +228,15 @@ namespace BadEcho.Game.Pipeline.Properties {
         internal static string ImportingDependency {
             get {
                 return ResourceManager.GetString("ImportingDependency", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Importing distance field font: {0}.
+        /// </summary>
+        internal static string ImportingDistanceFieldFont {
+            get {
+                return ResourceManager.GetString("ImportingDistanceFieldFont", resourceCulture);
             }
         }
         
@@ -255,6 +300,15 @@ namespace BadEcho.Game.Pipeline.Properties {
         internal static string ProcessingBoundedTexture {
             get {
                 return ResourceManager.GetString("ProcessingBoundedTexture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Processing distance field font: {0}.
+        /// </summary>
+        internal static string ProcessingDistanceFieldFont {
+            get {
+                return ResourceManager.GetString("ProcessingDistanceFieldFont", resourceCulture);
             }
         }
         
@@ -340,7 +394,7 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The .spritesheet asset identified by {0} consists of a single &apos;null&apos; JSON token, which cannot be processed as sprite sheet. A JSON document conforming to the .spritesheet schema found at http://badecho.com/spritesheet.json must be provided..
+        ///   Looks up a localized string similar to The .spritesheet asset identified by {0} consists of a single &apos;null&apos; literal token, which cannot be processed as sprite sheet. A JSON document conforming to the .spritesheet schema found at https://BadEcho.com/spritesheet.json must be provided..
         /// </summary>
         internal static string SheetIsNull {
             get {

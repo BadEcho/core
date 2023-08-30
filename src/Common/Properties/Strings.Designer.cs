@@ -22,7 +22,7 @@ namespace BadEcho.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Strings {
+    public class Strings {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace BadEcho.Properties {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("BadEcho.Properties.Strings", typeof(Strings).Assembly);
@@ -51,7 +51,7 @@ namespace BadEcho.Properties {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Could not load manifest resource from the Bad Echo Core Framework&apos;s assembly..
         /// </summary>
-        internal static string ActivationContextManifestResourceNotFound {
+        public static string ActivationContextManifestResourceNotFound {
             get {
                 return ResourceManager.GetString("ActivationContextManifestResourceNotFound", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to A handle to the module containing an embedded manifest resource could not be loaded. If this is a single-file packaged, the resource name for the manifest file must be provided instead..
         /// </summary>
-        internal static string ActivationContextModuleNotFound {
+        public static string ActivationContextModuleNotFound {
             get {
                 return ResourceManager.GetString("ActivationContextModuleNotFound", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Cannot retrieve a value from an export that isn&apos;t representing an object..
         /// </summary>
-        internal static string ArgumentExportValueNoObject {
+        public static string ArgumentExportValueNoObject {
             get {
                 return ResourceManager.GetString("ArgumentExportValueNoObject", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The provided string cannot be empty..
         /// </summary>
-        internal static string ArgumentStringEmpty {
+        public static string ArgumentStringEmpty {
             get {
                 return ResourceManager.GetString("ArgumentStringEmpty", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid INotifyPropertyChanged implementation; event data is missing property name information..
         /// </summary>
-        internal static string BadINotifyPropertyChangedImplementation {
+        public static string BadINotifyPropertyChangedImplementation {
             get {
                 return ResourceManager.GetString("BadINotifyPropertyChangedImplementation", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to EnumDisplayMonitors failed unexpectedly..
         /// </summary>
-        internal static string DisplayEnumDisplayMonitorsFailed {
+        public static string DisplayEnumDisplayMonitorsFailed {
             get {
                 return ResourceManager.GetString("DisplayEnumDisplayMonitorsFailed", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to HRESULT of {0} returned when attempting to query for a monitor&apos;s DPI. Because of this, display device will default to using the system-wide DPI..
         /// </summary>
-        internal static string DisplayGetDpiForMonitorFailed {
+        public static string DisplayGetDpiForMonitorFailed {
             get {
                 return ResourceManager.GetString("DisplayGetDpiForMonitorFailed", resourceCulture);
             }
@@ -126,7 +126,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to HRESULT of {0} returned when attempting to query for a monitor&apos;s scale factor. Because of this, display device will default to using a default scale factor of 100 percent..
         /// </summary>
-        internal static string DisplayGetScaleFactorForMonitorFailed {
+        public static string DisplayGetScaleFactorForMonitorFailed {
             get {
                 return ResourceManager.GetString("DisplayGetScaleFactorForMonitorFailed", resourceCulture);
             }
@@ -135,7 +135,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Enumeration has already finished; no more objects exist in the sequence..
         /// </summary>
-        internal static string EnumerationAtEnd {
+        public static string EnumerationAtEnd {
             get {
                 return ResourceManager.GetString("EnumerationAtEnd", resourceCulture);
             }
@@ -144,7 +144,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Enumeration has not started. A call to MoveNext() must occur at least once prior to reading the Current object..
         /// </summary>
-        internal static string EnumerationNotStarted {
+        public static string EnumerationNotStarted {
             get {
                 return ResourceManager.GetString("EnumerationNotStarted", resourceCulture);
             }
@@ -153,7 +153,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The enumeration type&apos;s underlying integral numeric type is not an integer..
         /// </summary>
-        internal static string EnumIntegralTypeNotInteger {
+        public static string EnumIntegralTypeNotInteger {
             get {
                 return ResourceManager.GetString("EnumIntegralTypeNotInteger", resourceCulture);
             }
@@ -162,7 +162,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The executor is already running on a thread..
         /// </summary>
-        internal static string ExecutorAlreadyRunning {
+        public static string ExecutorAlreadyRunning {
             get {
                 return ResourceManager.GetString("ExecutorAlreadyRunning", resourceCulture);
             }
@@ -171,7 +171,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to An executor can only be disabled on the thread which the executor was created on..
         /// </summary>
-        internal static string ExecutorCannotDisableOnOtherThread {
+        public static string ExecutorCannotDisableOnOtherThread {
             get {
                 return ResourceManager.GetString("ExecutorCannotDisableOnOtherThread", resourceCulture);
             }
@@ -180,7 +180,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to An executor can only be re-enabled on the thread which the executor was created on..
         /// </summary>
-        internal static string ExecutorCannotEnableOnOtherThread {
+        public static string ExecutorCannotEnableOnOtherThread {
             get {
                 return ResourceManager.GetString("ExecutorCannotEnableOnOtherThread", resourceCulture);
             }
@@ -189,7 +189,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Message queue still pumping for executor that is in a disabled state..
         /// </summary>
-        internal static string ExecutorDisabledByQueuePumping {
+        public static string ExecutorDisabledByQueuePumping {
             get {
                 return ResourceManager.GetString("ExecutorDisabledByQueuePumping", resourceCulture);
             }
@@ -198,7 +198,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Executor operation must either be complete or canceled prior to finalizing completion..
         /// </summary>
-        internal static string ExecutorFinalizedBeforeDone {
+        public static string ExecutorFinalizedBeforeDone {
             get {
                 return ResourceManager.GetString("ExecutorFinalizedBeforeDone", resourceCulture);
             }
@@ -207,7 +207,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The executor needs to be running before frames can be pushed to it..
         /// </summary>
-        internal static string ExecutorFramesRequireRun {
+        public static string ExecutorFramesRequireRun {
             get {
                 return ResourceManager.GetString("ExecutorFramesRequireRun", resourceCulture);
             }
@@ -216,7 +216,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Executor is disposed and cannot be ran again..
         /// </summary>
-        internal static string ExecutorIsDisposed {
+        public static string ExecutorIsDisposed {
             get {
                 return ResourceManager.GetString("ExecutorIsDisposed", resourceCulture);
             }
@@ -225,7 +225,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The executor&apos;s ability to process operations is currently disabled..
         /// </summary>
-        internal static string ExecutorProcessingDisabled {
+        public static string ExecutorProcessingDisabled {
             get {
                 return ResourceManager.GetString("ExecutorProcessingDisabled", resourceCulture);
             }
@@ -234,7 +234,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The executor has been shutdown and cannot execute any further operations..
         /// </summary>
-        internal static string ExecutorShutdown {
+        public static string ExecutorShutdown {
             get {
                 return ResourceManager.GetString("ExecutorShutdown", resourceCulture);
             }
@@ -243,7 +243,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Executor may not wait on an operation executing on the same thread..
         /// </summary>
-        internal static string ExecutorWaitOperationSameThread {
+        public static string ExecutorWaitOperationSameThread {
             get {
                 return ResourceManager.GetString("ExecutorWaitOperationSameThread", resourceCulture);
             }
@@ -252,7 +252,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to A plugin directory was explicitly specified in this application&apos;s configuration, however &apos;{0}&apos; does not exist. Please ensure that a desired plugin directory exists when configuring its use, or simply forego specifying an explicit plugin directory name if its existence cannot be guaranteed..
         /// </summary>
-        internal static string ExtensibilityConfigurationDirectoryNotFound {
+        public static string ExtensibilityConfigurationDirectoryNotFound {
             get {
                 return ResourceManager.GetString("ExtensibilityConfigurationDirectoryNotFound", resourceCulture);
             }
@@ -261,7 +261,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Cannot check if assembly &apos;{0}&apos; is an extensibility point because it is missing the following dependency: &apos;{1}&apos;.
         /// </summary>
-        internal static string ExtensibilityPointMissingDependency {
+        public static string ExtensibilityPointMissingDependency {
             get {
                 return ResourceManager.GetString("ExtensibilityPointMissingDependency", resourceCulture);
             }
@@ -270,7 +270,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; is not a registered filterable family identity value. Registration of a filterable family requires a FilterableFamily export action..
         /// </summary>
-        internal static string FamilyIdNotRegistered {
+        public static string FamilyIdNotRegistered {
             get {
                 return ResourceManager.GetString("FamilyIdNotRegistered", resourceCulture);
             }
@@ -279,7 +279,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid filterable family identity value. Values must be parseable as standard globally unique identifiers..
         /// </summary>
-        internal static string FamilyIdNotValid {
+        public static string FamilyIdNotValid {
             get {
                 return ResourceManager.GetString("FamilyIdNotValid", resourceCulture);
             }
@@ -288,7 +288,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Changing a SafeHandle&apos;s underlying handle value during marshalling is not supported..
         /// </summary>
-        internal static string HandleCannotChangeDuringMarshalling {
+        public static string HandleCannotChangeDuringMarshalling {
             get {
                 return ResourceManager.GetString("HandleCannotChangeDuringMarshalling", resourceCulture);
             }
@@ -297,7 +297,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to No routable plugin has been registered to handle calls made to &apos;{0}&apos;..
         /// </summary>
-        internal static string HostAdapterUnregisteredMethod {
+        public static string HostAdapterUnregisteredMethod {
             get {
                 return ResourceManager.GetString("HostAdapterUnregisteredMethod", resourceCulture);
             }
@@ -306,7 +306,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Attempting to create a pointer pointed at the best-fitting image resulted in a pointer overflow due to the icon file itself containing too much data..
         /// </summary>
-        internal static string IconFileTooLarge {
+        public static string IconFileTooLarge {
             get {
                 return ResourceManager.GetString("IconFileTooLarge", resourceCulture);
             }
@@ -315,7 +315,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The best-fitting image&apos;s specified amount of data exceeds the total length of the icon file..
         /// </summary>
-        internal static string IconImageExceedsFile {
+        public static string IconImageExceedsFile {
             get {
                 return ResourceManager.GetString("IconImageExceedsFile", resourceCulture);
             }
@@ -324,7 +324,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Calculating the ending offset for the best-fitting image described by the icon file resulted in an overflow..
         /// </summary>
-        internal static string IconImageOffsetOverflow {
+        public static string IconImageOffsetOverflow {
             get {
                 return ResourceManager.GetString("IconImageOffsetOverflow", resourceCulture);
             }
@@ -333,7 +333,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The best-fitting image described by the icon file is too large for realignment and loading..
         /// </summary>
-        internal static string IconImageTooLarge {
+        public static string IconImageTooLarge {
             get {
                 return ResourceManager.GetString("IconImageTooLarge", resourceCulture);
             }
@@ -342,7 +342,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The icon file has no image entries..
         /// </summary>
-        internal static string IconNoEntries {
+        public static string IconNoEntries {
             get {
                 return ResourceManager.GetString("IconNoEntries", resourceCulture);
             }
@@ -351,7 +351,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The size of the icon file isn&apos;t large enough to describe the number of images it says it contains..
         /// </summary>
-        internal static string IconTooSmallForEntries {
+        public static string IconTooSmallForEntries {
             get {
                 return ResourceManager.GetString("IconTooSmallForEntries", resourceCulture);
             }
@@ -360,7 +360,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Injection of exported parts into an attributed pluggable part of type &apos;{0}&apos; within a self-armed context requires said part to be assignable to the specified dependency value of type &apos;{1}&apos;..
         /// </summary>
-        internal static string IncompatibleDependencyTypeForInjection {
+        public static string IncompatibleDependencyTypeForInjection {
             get {
                 return ResourceManager.GetString("IncompatibleDependencyTypeForInjection", resourceCulture);
             }
@@ -369,7 +369,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The provided JSON object&apos;s data property is not a JSON object..
         /// </summary>
-        internal static string JsonDataValueNotObject {
+        public static string JsonDataValueNotObject {
             get {
                 return ResourceManager.GetString("JsonDataValueNotObject", resourceCulture);
             }
@@ -378,7 +378,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The provided JSON object&apos;s extremum property is not a number..
         /// </summary>
-        internal static string JsonExtremumValueNotNumber {
+        public static string JsonExtremumValueNotNumber {
             get {
                 return ResourceManager.GetString("JsonExtremumValueNotNumber", resourceCulture);
             }
@@ -387,7 +387,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The &apos;{0}&apos; property found on the provided JSON object is not the expected type descriptor property &apos;{1}&apos;..
         /// </summary>
-        internal static string JsonInvalidTypeName {
+        public static string JsonInvalidTypeName {
             get {
                 return ResourceManager.GetString("JsonInvalidTypeName", resourceCulture);
             }
@@ -396,16 +396,34 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The provided JSON text is malformed. A collection of one or more key-value pairs is expected for an object..
         /// </summary>
-        internal static string JsonMalformedText {
+        public static string JsonMalformedText {
             get {
                 return ResourceManager.GetString("JsonMalformedText", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unexpected &apos;null&apos; literal token encountered in JSON when an object was expected..
+        /// </summary>
+        public static string JsonNodeIsNull {
+            get {
+                return ResourceManager.GetString("JsonNodeIsNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The provided JSON text is not a JSON number..
+        /// </summary>
+        public static string JsonNotNumber {
+            get {
+                return ResourceManager.GetString("JsonNotNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The provided JSON text does not begin with the start of a JSON array..
         /// </summary>
-        internal static string JsonNotStartArray {
+        public static string JsonNotStartArray {
             get {
                 return ResourceManager.GetString("JsonNotStartArray", resourceCulture);
             }
@@ -414,7 +432,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The provided JSON text does not begin with the start of a JSON object..
         /// </summary>
-        internal static string JsonNotStartObject {
+        public static string JsonNotStartObject {
             get {
                 return ResourceManager.GetString("JsonNotStartObject", resourceCulture);
             }
@@ -423,7 +441,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The provided JSON object&apos;s type descriptor property is not a number..
         /// </summary>
-        internal static string JsonTypeValueNotNumber {
+        public static string JsonTypeValueNotNumber {
             get {
                 return ResourceManager.GetString("JsonTypeValueNotNumber", resourceCulture);
             }
@@ -432,7 +450,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Missing exception payload..
         /// </summary>
-        internal static string LoggingMissingException {
+        public static string LoggingMissingException {
             get {
                 return ResourceManager.GetString("LoggingMissingException", resourceCulture);
             }
@@ -441,7 +459,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Missing message payload..
         /// </summary>
-        internal static string LoggingMissingMessage {
+        public static string LoggingMissingMessage {
             get {
                 return ResourceManager.GetString("LoggingMissingMessage", resourceCulture);
             }
@@ -450,7 +468,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Multiple exports for contract type &apos;{0}&apos; belong to the &apos;{1}&apos; filterable family; any part beyond the first of its type from a filterable context is ignored..
         /// </summary>
-        internal static string MultipleExportsFoundForFamily {
+        public static string MultipleExportsFoundForFamily {
             get {
                 return ResourceManager.GetString("MultipleExportsFoundForFamily", resourceCulture);
             }
@@ -459,7 +477,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Multiple exports for the locally exported contract type &apos;{0}&apos; were found. Only a single provider should ever be available for contract types meant to be loaded from a local context..
         /// </summary>
-        internal static string MultipleExportsFoundForLocalContract {
+        public static string MultipleExportsFoundForLocalContract {
             get {
                 return ResourceManager.GetString("MultipleExportsFoundForLocalContract", resourceCulture);
             }
@@ -468,7 +486,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Extensibility configuration lacks registration for contract &apos;{0}&apos;..
         /// </summary>
-        internal static string NoContractInConfiguration {
+        public static string NoContractInConfiguration {
             get {
                 return ResourceManager.GetString("NoContractInConfiguration", resourceCulture);
             }
@@ -477,7 +495,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Registry was not armed with an expected dependency..
         /// </summary>
-        internal static string NoDependencyArmed {
+        public static string NoDependencyArmed {
             get {
                 return ResourceManager.GetString("NoDependencyArmed", resourceCulture);
             }
@@ -486,7 +504,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to No comparable exception class can be mapped to the provided HRESULT as it does not represent a failed operation..
         /// </summary>
-        internal static string NoExceptionFromSuccessfulResult {
+        public static string NoExceptionFromSuccessfulResult {
             get {
                 return ResourceManager.GetString("NoExceptionFromSuccessfulResult", resourceCulture);
             }
@@ -495,7 +513,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to No export for contract type &apos;{0}&apos; belongs to the &apos;{1}&apos; filterable family..
         /// </summary>
-        internal static string NoExportFoundForFamily {
+        public static string NoExportFoundForFamily {
             get {
                 return ResourceManager.GetString("NoExportFoundForFamily", resourceCulture);
             }
@@ -504,7 +522,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to No local export for the contract type &apos;{0}&apos; was found. If this is an expected contract, then it should be exported within the consuming component&apos;s own assembly. If expectancy is tenuous, check for support via the appropriate methods provided by the plugin host system first..
         /// </summary>
-        internal static string NoExportFoundForLocalContract {
+        public static string NoExportFoundForLocalContract {
             get {
                 return ResourceManager.GetString("NoExportFoundForLocalContract", resourceCulture);
             }
@@ -513,7 +531,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Failed to send a message adding or modifying an icon to the taskbar&apos;s notification area..
         /// </summary>
-        internal static string NotifyIconAddModifyFailed {
+        public static string NotifyIconAddModifyFailed {
             get {
                 return ResourceManager.GetString("NotifyIconAddModifyFailed", resourceCulture);
             }
@@ -522,7 +540,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Failed to send a message requesting a balloon notification to the taskbar&apos;s notification area..
         /// </summary>
-        internal static string NotifyIconBalloonFailed {
+        public static string NotifyIconBalloonFailed {
             get {
                 return ResourceManager.GetString("NotifyIconBalloonFailed", resourceCulture);
             }
@@ -531,7 +549,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Cannot send a balloon notification until the icon has been added to the taskbar&apos;s notification area..
         /// </summary>
-        internal static string NotifyIconBalloonRequiresTaskbar {
+        public static string NotifyIconBalloonRequiresTaskbar {
             get {
                 return ResourceManager.GetString("NotifyIconBalloonRequiresTaskbar", resourceCulture);
             }
@@ -540,7 +558,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Failed to send a message deleting an icon from the taskbar&apos;s notification area..
         /// </summary>
-        internal static string NotifyIconDeleteFailed {
+        public static string NotifyIconDeleteFailed {
             get {
                 return ResourceManager.GetString("NotifyIconDeleteFailed", resourceCulture);
             }
@@ -549,7 +567,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Cannot send a balloon notification using a custom icon without a custom balloon icon being loaded first..
         /// </summary>
-        internal static string NotifyIconNoCustomBalloonIconLoaded {
+        public static string NotifyIconNoCustomBalloonIconLoaded {
             get {
                 return ResourceManager.GetString("NotifyIconNoCustomBalloonIconLoaded", resourceCulture);
             }
@@ -558,7 +576,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The file &apos;{0}&apos; being scanned for pluggable exports failed to load due to most likely not being a valid .NET assembly..
         /// </summary>
-        internal static string PluginBadImageException {
+        public static string PluginBadImageException {
             get {
                 return ResourceManager.GetString("PluginBadImageException", resourceCulture);
             }
@@ -567,7 +585,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The file &apos;{0}&apos; being scanned for pluggable exports failed to load..
         /// </summary>
-        internal static string PluginFileLoadException {
+        public static string PluginFileLoadException {
             get {
                 return ResourceManager.GetString("PluginFileLoadException", resourceCulture);
             }
@@ -576,7 +594,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Unable to set popup as the foreground window. The menu will not disappear if the user clicks outside of it..
         /// </summary>
-        internal static string PopupNotInForeground {
+        public static string PopupNotInForeground {
             get {
                 return ResourceManager.GetString("PopupNotInForeground", resourceCulture);
             }
@@ -585,7 +603,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The executing process is unmanaged, therefore no contract implementation are able to be exported by it..
         /// </summary>
-        internal static string ProcessCannotExportContracts {
+        public static string ProcessCannotExportContracts {
             get {
                 return ResourceManager.GetString("ProcessCannotExportContracts", resourceCulture);
             }
@@ -594,7 +612,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid call-routable plugin identity value. Values must be parseable as standard globally unique identifiers..
         /// </summary>
-        internal static string RoutablePluginIdNotValid {
+        public static string RoutablePluginIdNotValid {
             get {
                 return ResourceManager.GetString("RoutablePluginIdNotValid", resourceCulture);
             }
@@ -603,7 +621,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to RoutableProxy was not provided a IHostAdapter due to improper initialization. Use a static factory method such as RoutableProxy.Create instead to initialize the proxy properly..
         /// </summary>
-        internal static string RoutableProxyNotInitializedCorrectly {
+        public static string RoutableProxyNotInitializedCorrectly {
             get {
                 return ResourceManager.GetString("RoutableProxyNotInitializedCorrectly", resourceCulture);
             }
@@ -612,7 +630,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to RouteProxy instance was somehow invoked with null method information..
         /// </summary>
-        internal static string RoutableProxyNullMethodInfo {
+        public static string RoutableProxyNullMethodInfo {
             get {
                 return ResourceManager.GetString("RoutableProxyNullMethodInfo", resourceCulture);
             }
@@ -621,7 +639,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Subclass message processing procedure invoked while in a detached state..
         /// </summary>
-        internal static string SubclassDetachedWndProc {
+        public static string SubclassDetachedWndProc {
             get {
                 return ResourceManager.GetString("SubclassDetachedWndProc", resourceCulture);
             }
@@ -630,7 +648,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Unable to detach a subclassed window&apos;s WndProc from the window&apos;s message chain..
         /// </summary>
-        internal static string SubclassDetachmentFailed {
+        public static string SubclassDetachmentFailed {
             get {
                 return ResourceManager.GetString("SubclassDetachmentFailed", resourceCulture);
             }
@@ -639,7 +657,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Unable to forcibly detach a subclassed window&apos;s WndProc from the window&apos;s message chain..
         /// </summary>
-        internal static string SubclassForcibleDetachmentFailed {
+        public static string SubclassForcibleDetachmentFailed {
             get {
                 return ResourceManager.GetString("SubclassForcibleDetachmentFailed", resourceCulture);
             }
@@ -648,7 +666,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Cannot load an operation into an already initialized ThreadExecutorOperationTaskSource..
         /// </summary>
-        internal static string ThreadExecutorSourceAlreadyInitialized {
+        public static string ThreadExecutorSourceAlreadyInitialized {
             get {
                 return ResourceManager.GetString("ThreadExecutorSourceAlreadyInitialized", resourceCulture);
             }
@@ -657,7 +675,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to ThreadExecutorOperationTaskSource has not been initialized..
         /// </summary>
-        internal static string ThreadExecutorSourceNotInitialized {
+        public static string ThreadExecutorSourceNotInitialized {
             get {
                 return ResourceManager.GetString("ThreadExecutorSourceNotInitialized", resourceCulture);
             }
@@ -666,7 +684,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Weak list enumerator requires a strong reference to enumerate..
         /// </summary>
-        internal static string WeakListEnumeratorNoReference {
+        public static string WeakListEnumeratorNoReference {
             get {
                 return ResourceManager.GetString("WeakListEnumeratorNoReference", resourceCulture);
             }
@@ -675,7 +693,7 @@ namespace BadEcho.Properties {
         /// <summary>
         ///   Looks up a localized string similar to A hot key has already been registered with the identifier &apos;{0}&apos;..
         /// </summary>
-        internal static string WindowHotKeyDuplicateId {
+        public static string WindowHotKeyDuplicateId {
             get {
                 return ResourceManager.GetString("WindowHotKeyDuplicateId", resourceCulture);
             }

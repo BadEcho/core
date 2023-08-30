@@ -17,12 +17,13 @@ using Xunit;
 
 namespace BadEcho.Game.Tests;
 
-public class MsdfGeneratorTests
+public class DistanceFieldFontAtlasTests
 {
     [Fact]
     public void Generate_CreatesAtlas_OutputFilesExist()
     {
-        Assert.True(File.Exists(@"..\..\tests\Game.Tests\Content\Fonts\Lato-Regular.ttf"));
+        var fontPath = GetAssetPath("Lato-Regular.ttf");
+        Assert.True(File.Exists(fontPath));
 
         DistanceFieldFontAtlas.Generate(new FontConfiguration
                            {

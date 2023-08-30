@@ -305,4 +305,10 @@
 	<data name="JsonExtremumValueNotNumber" xml:space="preserve">
 		<value>The provided JSON object's extremum property is not a number.</value>
 	</data>
+	<data name="JsonNodeIsNull" xml:space="preserve">
+		<value>Unexpected 'null' literal token encountered in JSON when an object was expected.</value>
+	</data>
+	<data name="JsonNotNumber" xml:space="preserve">
+		<value>The provided JSON text is not a JSON number.</value>
+	</data>
 </root>

@@ -139,7 +139,7 @@
 		<value>The atlas region identified by {0} is configured to use 9-slice scaling but has no slices down its right side.</value>
 	</data>
   <data name="SheetIsNull" xml:space="preserve">
-    <value>The .spritesheet asset identified by {0} consists of a single 'null' JSON token, which cannot be processed as sprite sheet. A JSON document conforming to the .spritesheet schema found at http://badecho.com/spritesheet.json must be provided.</value>
+	  <value>The .spritesheet asset identified by {0} consists of a single 'null' literal token, which cannot be processed as sprite sheet. A JSON document conforming to the .spritesheet schema found at https://BadEcho.com/spritesheet.json must be provided.</value>
   </data>
   <data name="SheetHasNoRows" xml:space="preserve">
 		<value>The sprite sheet must be configured to have one or more rows in order to be considered valid.</value>
@@ -242,5 +242,23 @@
 	</data>
   <data name="CircleNeedsSameWidthHeight" xml:space="preserve">
 	  <value>All lines connecting two points on the edge of the circle through the center must have the same length; therefore, the circle must have the same width and height.</value>
+  </data>
+  <data name="ImportingDistanceFieldFont" xml:space="preserve">
+	  <value>Importing distance field font: {0}</value>
+  </data>
+  <data name="DistanceFieldFontIsNull" xml:space="preserve">
+	  <value>The .sdfont asset identified by {0} consists of a single 'null' literal token, which cannot be processed as a distance field font. A JSON document conforming to the .sdfont schema found at https://BadEcho.com/sdfont.json must be provided.</value>
+  </data>
+  <data name="ProcessingDistanceFieldFont" xml:space="preserve">
+	  <value>Processing distance field font: {0}</value>
+  </data>
+  <data name="DistanceFieldFontNoOutput" xml:space="preserve">
+	  <value>Font atlas generation did not output an atlas texture file.</value>
+  </data>
+  <data name="DistanceFieldFontNoJsonOutput" xml:space="preserve">
+	  <value>Font atlas generation did not output a JSON layout file.</value>
+  </data>
+  <data name="DistanceFieldFontJsonIsNull" xml:space="preserve">
+	  <value>The JSON layout file for the font consists of a single 'null' literal, which cannot be processed as metadata for the distance field font. This is most likely due to an internal error during MSDF atlas generation.</value>
   </data>
 </root>

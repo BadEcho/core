@@ -13,6 +13,14 @@
 	<PropertyGroup Condition=" '$(Configuration)' == 'Release'">
 		<MonoGameMGCBAdditionalArguments>/define:IsRelease=Yes</MonoGameMGCBAdditionalArguments>
 	</PropertyGroup>
+	<ItemGroup>
+	  <Compile Remove="Content\bin\**" />
+	  <Compile Remove="Content\obj\**" />
+	  <EmbeddedResource Remove="Content\bin\**" />
+	  <EmbeddedResource Remove="Content\obj\**" />
+	  <None Remove="Content\bin\**" />
+	  <None Remove="Content\obj\**" />
+	</ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0-preview-20220726-02" />
@@ -57,5 +65,10 @@
 		<Message Text="Restoring dotnet tools" Importance="High" />
 		<Exec Command="dotnet tool restore" />
 	</Target>
+	<ProjectExtensions>
+		<VisualStudio>
+			<UserProperties content_4fonts_4lato_1sdfont__JsonSchema="https://BadEcho.com/sdfont.json" />
+		</VisualStudio>
+	</ProjectExtensions>
 
 </Project>

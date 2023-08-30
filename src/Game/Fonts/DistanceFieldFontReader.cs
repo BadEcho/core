@@ -11,24 +11,16 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Xna.Framework.Content;
 
-namespace BadEcho.Game.Pipeline.DistanceFieldFonts;
+namespace BadEcho.Game.Fonts;
 
 /// <summary>
-/// Provides configuration data for a multi-channel signed distance field font.
+/// Provides a reader of raw multi-channel signed distance field font content from the content pipeline.
 /// </summary>
-public sealed class DistanceFieldFontAsset
+public sealed class DistanceFieldFontReader : ContentTypeReader<DistanceFieldFont>
 {
-    /// <summary>
-	/// Initializes a new instance of the <see cref="DistanceFieldFontAsset"/> class.
-	/// </summary>
-    public DistanceFieldFontAsset()
-    {
-
-    }
+    /// <inheritdoc/>
+    protected override DistanceFieldFont Read(ContentReader input, DistanceFieldFont existingInstance)
+        => throw new NotImplementedException();
 }
