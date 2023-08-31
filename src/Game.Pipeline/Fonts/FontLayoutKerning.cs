@@ -19,13 +19,13 @@ namespace BadEcho.Game.Pipeline.Fonts;
 internal sealed class FontLayoutKerning
 {
     /// <summary>
-    /// Gets the character code value for the first unicode character in the pair.
+    /// Gets the first unicode character in the pair.
     /// </summary>
     public char Unicode1
     { get; init; }
 
     /// <summary>
-    /// Gets the character code value for the second unicode character in the pair.
+    /// Gets the second unicode character in the pair.
     /// </summary>
     public char Unicode2
     { get; init; }

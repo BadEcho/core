@@ -39,7 +39,7 @@ public sealed class DistanceFieldFontProcessor : ContentProcessor<DistanceFieldF
         => static typeInfo =>
         {
             foreach (var property in typeInfo.Properties)
-            {   // "Unicode" would be a confusing property name for our character code values.
+            {   // "Unicode" would be a confusing property name for our character values.
                 if (property.Name.Equals(nameof(FontGlyph.Character), StringComparison.OrdinalIgnoreCase))
                     property.Name = UNICODE_PROPERTY_NAME;
                 // Unicode character values are encoded as JSON numbers in the generated layout file; .NET's own data type for UTF-16 code
