@@ -12,6 +12,7 @@
 //-----------------------------------------------------------------------
 
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.Fonts;
 
@@ -22,5 +23,14 @@ public sealed class DistanceFieldFontReader : ContentTypeReader<DistanceFieldFon
 {
     /// <inheritdoc/>
     protected override DistanceFieldFont Read(ContentReader input, DistanceFieldFont existingInstance)
-        => throw new NotImplementedException();
+    {
+        Require.NotNull(input, nameof(input));
+
+        var fontAtlas = input.ReadExternalReference<Texture2D>();
+        var characteristics = input.ReadObject<FontCharacteristics>();
+        var glyphs = input.ReadObject<Dictionary<char, FontGlyph>>();
+        var kernings = input.ReadObject<Dictionary<KerningPair, float>>();
+
+        throw new NotImplementedException();
+    }
 }

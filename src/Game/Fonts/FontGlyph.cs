@@ -29,7 +29,7 @@ public class FontGlyph
     /// next glyph.
     /// </summary>
     /// <remarks>
-    /// The advance width is used to know where to play the next glyph; it is the distance between two successive pen positions.
+    /// The advance width is used to know where to place the next glyph; it is the distance between two successive pen positions.
     /// </remarks>
     public double Advance
     { get; set; }
