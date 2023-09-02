@@ -13,6 +13,7 @@
 
 using BadEcho.Extensions;
 using BadEcho.Properties;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.Fonts;
@@ -71,5 +72,26 @@ public sealed class DistanceFieldFont
             throw new ArgumentException(Strings.GlyphNotInFont.InvariantFormat(character), nameof(character));
 
         return glyph;
+    }
+
+    /// <summary>
+    /// Determines the next advance width to apply to the cursor given the specified character sequence and direction.
+    /// </summary>  
+    /// <param name="current">The character the cursor is currently positioned at.</param>
+    /// <param name="next">
+    /// The next character to advance the cursor to, or null if the current character was the last one.
+    /// </param>
+    /// <param name="advanceDirection">The direction to advance the cursor.</param>
+    /// <param name="scale">The amount of scaling to apply to the text.</param>
+    /// <returns>The next advance width to apply to the current cursor position.</returns>
+    public Vector2 GetNextAdvance(char current, char? next, Vector2 advanceDirection, float scale)
+    {
+        FontGlyph currentGlyph = FindGlyph(current);
+        Vector2 advance = advanceDirection * currentGlyph.Advance * scale;
+
+        if (next.HasValue && _kernings.TryGetValue(new CharacterPair(current, next.Value), out KerningPair? kerning))
+            advance += advanceDirection * kerning.Advance * scale;
+
+        return advance;
     }
 }
