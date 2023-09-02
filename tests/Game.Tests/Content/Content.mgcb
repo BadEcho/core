@@ -76,3 +76,8 @@ $endif
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Lato.spritefont
+
+#begin Fonts/Lato.sdfont
+/importer:DistanceFieldFontImporter
+/processor:DistanceFieldFontProcessor
+/build:Fonts/Lato.sdfont

@@ -24,6 +24,12 @@ namespace BadEcho.Game.Tests;
 /// </summary>
 internal sealed class TestContentProcessorContext : ContentProcessorContext
 {
+    public TestContentProcessorContext()
+    {
+        if (!Directory.Exists(IntermediateDirectory))
+            Directory.CreateDirectory(IntermediateDirectory);
+    }
+
     /// <inheritdoc />
     public override void AddDependency(string filename)
     { }
@@ -63,7 +69,7 @@ internal sealed class TestContentProcessorContext : ContentProcessorContext
 
     /// <inheritdoc />
     public override string IntermediateDirectory
-        => Path.Combine(GetContentPath(), "obj");
+        => Path.Combine(GetContentPath(), "obj\\tests");
 
     /// <inheritdoc />
     public override ContentBuildLogger Logger
