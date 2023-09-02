@@ -286,6 +286,15 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A glyph for the character &apos;{0}&apos; could not be found, most likely because it was not part of the character set used to generate the font&apos;s atlas..
+        /// </summary>
+        public static string GlyphNotInFont {
+            get {
+                return ResourceManager.GetString("GlyphNotInFont", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Changing a SafeHandle&apos;s underlying handle value during marshalling is not supported..
         /// </summary>
         public static string HandleCannotChangeDuringMarshalling {

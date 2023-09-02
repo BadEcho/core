@@ -311,4 +311,7 @@
 	<data name="JsonNotNumber" xml:space="preserve">
 		<value>The provided JSON text is not a JSON number.</value>
 	</data>
+	<data name="GlyphNotInFont" xml:space="preserve">
+		<value>A glyph for the character '{0}' could not be found, most likely because it was not part of the character set used to generate the font's atlas.</value>
+	</data>
 </root>

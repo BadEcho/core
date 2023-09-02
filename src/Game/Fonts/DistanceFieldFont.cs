@@ -11,6 +11,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Extensions;
+using BadEcho.Properties;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.Fonts;
@@ -57,4 +59,17 @@ public sealed class DistanceFieldFont
     /// </summary>
     public FontCharacteristics Characteristics
     { get; }
+
+    /// <summary>
+    /// Retrieves the typographic representation of the specified unicode character from this font.
+    /// </summary>
+    /// <param name="character">The unique character to retrieve the typographic representation for.</param>
+    /// <returns>The <see cref="FontGlyph"/> representing <c>character</c>.</returns>
+    public FontGlyph FindGlyph(char character)
+    {
+        if (!_glyphs.TryGetValue(character, out FontGlyph? glyph))
+            throw new ArgumentException(Strings.GlyphNotInFont.InvariantFormat(character), nameof(character));
+
+        return glyph;
+    }
 }
