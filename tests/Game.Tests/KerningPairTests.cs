@@ -11,15 +11,24 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BadEcho.Game.Fonts;
 using Xunit;
 
 namespace BadEcho.Game.Tests;
 
 public class KerningPairTests
 {
+    [Fact]
+    public void GetHashCode_SimilarPairs_ReturnsUnique()
+    {
+        var abPair = new CharacterPair('a', 'b');
+        var baPair = new CharacterPair('b', 'a');
+        var lvPair = new CharacterPair('l', 'v');
+        var ptPair = new CharacterPair('p', 't');
+
+        // Different order.
+        Assert.NotEqual(abPair.GetHashCode(), baPair.GetHashCode());
+        // Equal sum of code values.
+        Assert.NotEqual(lvPair.GetHashCode(), ptPair.GetHashCode());
+    }
 }

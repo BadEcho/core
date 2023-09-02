@@ -114,8 +114,8 @@ public sealed class DistanceFieldFontProcessor : ContentProcessor<DistanceFieldF
                    Identity = input.Identity,
                    Characteristics = fontLayout.Characteristics,
                    Glyphs = fontLayout.Glyphs.ToDictionary(kv => kv.Character),
-                   Kernings = fontLayout.Kerning.ToDictionary(kv => new KerningPair(kv.Unicode1, kv.Unicode2, kv.Advance),
-                                                              kv => kv.Advance)
+                   Kernings = fontLayout.Kerning.ToDictionary(kv => new CharacterPair(kv.Unicode1, kv.Unicode2),
+                                                              kv => new KerningPair(kv.Unicode1, kv.Unicode2, kv.Advance))
                };
     }
     

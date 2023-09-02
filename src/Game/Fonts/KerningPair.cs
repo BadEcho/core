@@ -11,14 +11,12 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Extensions;
-
 namespace BadEcho.Game.Fonts;
 
 /// <summary>
-/// Provides the adjustment of space between two specific glyphs.
+/// Provides the adjustment of space between two specific character glyphs.
 /// </summary>
-public class KerningPair
+public sealed class KerningPair : CharacterPair
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="KerningPair"/> class.
@@ -27,23 +25,10 @@ public class KerningPair
     /// <param name="secondCharacter">The second unicode character in the pair.</param>
     /// <param name="advance">An adjustment to the advance width when rendering the character pair.</param>
     public KerningPair(char firstCharacter, char secondCharacter, float advance)
+        : base(firstCharacter, secondCharacter)
     {
-        FirstCharacter = firstCharacter;
-        SecondCharacter = secondCharacter;
         Advance = advance;
     }
-
-    /// <summary>
-    /// Gets the first unicode character in the pair.
-    /// </summary>
-    public char FirstCharacter
-    { get; }
-
-    /// <summary>
-    /// Gets the second unicode character in the pair.
-    /// </summary>
-    public char SecondCharacter
-    { get; }
 
     /// <summary>
     /// Gets an adjustment to the advance width when rendering the character pair.
@@ -54,18 +39,4 @@ public class KerningPair
     /// </remarks>
     public float Advance
     { get; }
-
-    /// <inheritdoc/>
-    public override bool Equals(object? obj)
-    {
-        if (obj is not KerningPair other)
-            return false;
-
-        return FirstCharacter == other.FirstCharacter
-               && SecondCharacter == other.SecondCharacter;
-    }
-
-    /// <inheritdoc/>
-    public override int GetHashCode()
-        => this.GetHashCode(FirstCharacter, SecondCharacter);
 }

@@ -50,6 +50,6 @@ public sealed class DistanceFieldFontContent : ContentItem<DistanceFieldFontAsse
     /// Gets a mapping between unicode character pairs and the adjustments of space between them, parsed from
     /// the generated layout data.
     /// </summary>
-    public Dictionary<KerningPair, float> Kernings
+    public Dictionary<CharacterPair, KerningPair> Kernings
     { get; init; } = new();
 }

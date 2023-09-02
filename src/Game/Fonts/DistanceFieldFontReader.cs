@@ -29,7 +29,7 @@ public sealed class DistanceFieldFontReader : ContentTypeReader<DistanceFieldFon
         var fontAtlas = input.ReadExternalReference<Texture2D>();
         var characteristics = input.ReadObject<FontCharacteristics>();
         var glyphs = input.ReadObject<Dictionary<char, FontGlyph>>();
-        var kernings = input.ReadObject<Dictionary<KerningPair, float>>();
+        var kernings = input.ReadObject<Dictionary<CharacterPair, KerningPair>>();
 
         throw new NotImplementedException();
     }
