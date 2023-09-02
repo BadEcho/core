@@ -34,10 +34,10 @@ public sealed class DistanceFieldFontWriter : ContentTypeWriter<DistanceFieldFon
         Require.NotNull(output, nameof(output));
         Require.NotNull(value, nameof(value));
 
-        ExternalReference<Texture2DContent> fontAtlasReference
-            = value.GetReference<Texture2DContent>(value.FontAtlasPath);
+        ExternalReference<Texture2DContent> atlasReference
+            = value.GetReference<Texture2DContent>(value.AtlasPath);
 
-        output.WriteExternalReference(fontAtlasReference);
+        output.WriteExternalReference(atlasReference);
         output.WriteObject(value.Characteristics);
         output.WriteObject(value.Glyphs);
         output.WriteObject(value.Kernings);

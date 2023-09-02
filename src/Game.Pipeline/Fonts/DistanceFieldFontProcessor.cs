@@ -59,14 +59,14 @@ public sealed class DistanceFieldFontProcessor : ContentProcessor<DistanceFieldF
 
         string intermediatePath = context.IntermediateDirectory;
         string charsetPath = CreateCharacterSetFile(input.Asset, input.Name, intermediatePath);
-        string fontAtlasPath = Path.Combine(intermediatePath, $"{input.Name}-atlas.png");
+        string atlasPath = Path.Combine(intermediatePath, $"{input.Name}-atlas.png");
         string jsonPath = Path.Combine(intermediatePath, $"{input.Name}-layout.json");
 
         var fontConfiguration = new FontConfiguration
                                 {
                                     fontPath = input.Asset.FontPath,
                                     charsetPath = charsetPath,
-                                    outputPath = fontAtlasPath,
+                                    outputPath = atlasPath,
                                     jsonPath = jsonPath,
                                     range = (uint) input.Asset.Range,
                                     resolution = (uint) input.Asset.Resolution
@@ -74,7 +74,7 @@ public sealed class DistanceFieldFontProcessor : ContentProcessor<DistanceFieldF
 
         DistanceFieldFontAtlas.Generate(fontConfiguration);
 
-        if (!File.Exists(fontAtlasPath))
+        if (!File.Exists(atlasPath))
             throw new PipelineException(Strings.DistanceFieldFontNoOutput);
 
         if (!File.Exists(jsonPath))
@@ -82,8 +82,8 @@ public sealed class DistanceFieldFontProcessor : ContentProcessor<DistanceFieldF
 
         DistanceFieldFontContent output = ProcessOutput(input, jsonPath);
 
-        output.FontAtlasPath = fontAtlasPath;
-        output.AddReference<Texture2DContent>(context, fontAtlasPath, new OpaqueDataDictionary());
+        output.AtlasPath = atlasPath;
+        output.AddReference<Texture2DContent>(context, atlasPath, new OpaqueDataDictionary());
 
         return output;
     }

@@ -30,11 +30,11 @@ public sealed class DistanceFieldFontContent : ContentItem<DistanceFieldFontAsse
     /// <summary>
     /// Gets or sets the path to the generated atlas image file.
     /// </summary>
-    public string FontAtlasPath
+    public string AtlasPath
     { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets font characteristics parsed from the generated layout data.
+    /// Gets or sets the font's characteristics parsed from the generated layout data.
     /// </summary>
     public FontCharacteristics Characteristics
     { get; set; } = new();
