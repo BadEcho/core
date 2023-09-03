@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-	  <TargetFramework>net7.0-windows</TargetFramework>
-	  <Nullable>enable</Nullable>
-	  <IsPackable>false</IsPackable>
-	  <Platforms>x64;x86</Platforms>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<IsPackable>false</IsPackable>
+		<Platforms>x64;x86</Platforms>
+	</PropertyGroup>
 
 	<PropertyGroup Condition=" '$(Configuration)' == 'Debug'">
 		<MonoGameMGCBAdditionalArguments>/define:IsRelease=No</MonoGameMGCBAdditionalArguments>
@@ -14,52 +14,52 @@
 		<MonoGameMGCBAdditionalArguments>/define:IsRelease=Yes</MonoGameMGCBAdditionalArguments>
 	</PropertyGroup>
 	<ItemGroup>
-	  <Compile Remove="Content\bin\**" />
-	  <Compile Remove="Content\obj\**" />
-	  <EmbeddedResource Remove="Content\bin\**" />
-	  <EmbeddedResource Remove="Content\obj\**" />
-	  <None Remove="Content\bin\**" />
-	  <None Remove="Content\obj\**" />
+		<Compile Remove="Content\bin\**" />
+		<Compile Remove="Content\obj\**" />
+		<EmbeddedResource Remove="Content\bin\**" />
+		<EmbeddedResource Remove="Content\obj\**" />
+		<None Remove="Content\bin\**" />
+		<None Remove="Content\obj\**" />
 	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0-preview-20220726-02" />
-    <PackageReference Include="MonoGame.Content.Builder.BadEchoTask" Version="3.8.2.1-develop" />
-    <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.1.303" />
-    <PackageReference Include="xunit" Version="2.4.2" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="coverlet.collector" Version="3.1.2">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0-preview-20220726-02" />
+		<PackageReference Include="MonoGame.Content.Builder.BadEchoTask" Version="3.8.2.1-develop" />
+		<PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.1.303" />
+		<PackageReference Include="xunit" Version="2.4.2" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="coverlet.collector" Version="3.1.2">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\Common\BadEcho.Common.csproj" />
-    <ProjectReference Include="..\..\src\Game.Pipeline\BadEcho.Game.Pipeline.csproj" />
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\Common\BadEcho.Common.csproj" />
+		<ProjectReference Include="..\..\src\Game.Pipeline\BadEcho.Game.Pipeline.csproj" />
 		<ProjectReference Include="..\..\src\Game\BadEcho.Game.csproj" />
-  </ItemGroup>
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Update="Content\Atlases\BlackShuttleGrass.atlas">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="Content\Tiles\GrassCsvFormat.tmx">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="Content\Tiles\GrassGzipFormat.tmx">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="Content\Tiles\GrassUncompressedBase64Format.tmx">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="Content\Tiles\GrassZlibFormat.tmx">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="Content\Atlases\BlackShuttleGrass.atlas">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</None>
+		<None Update="Content\Tiles\GrassCsvFormat.tmx">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</None>
+		<None Update="Content\Tiles\GrassGzipFormat.tmx">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</None>
+		<None Update="Content\Tiles\GrassUncompressedBase64Format.tmx">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</None>
+		<None Update="Content\Tiles\GrassZlibFormat.tmx">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 	<Target Name="RestoreDotnetTools" BeforeTargets="Restore">
 		<Message Text="Restoring dotnet tools" Importance="High" />
 		<Exec Command="dotnet tool restore" />
