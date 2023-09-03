@@ -16,6 +16,9 @@ namespace BadEcho.Game.Fonts;
 /// <summary>
 /// Provides the adjustment of space between two specific character glyphs.
 /// </summary>
+/// <suppressions>
+/// ReSharper disable UnusedMember.Local
+/// </suppressions>
 public sealed class KerningPair : CharacterPair
 {
     /// <summary>
@@ -31,6 +34,13 @@ public sealed class KerningPair : CharacterPair
     }
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="KerningPair"/> class.
+    /// </summary>
+    /// <remarks>Required for content pipeline deserialization.</remarks>
+    private KerningPair()
+    { }
+
+    /// <summary>
     /// Gets an adjustment to the advance width when rendering the character pair.
     /// </summary>
     /// <remarks>
@@ -38,5 +48,5 @@ public sealed class KerningPair : CharacterPair
     /// its advance width, resulting in a (hopefully) finely tuned amount of spacing between the two characters.
     /// </remarks>
     public float Advance
-    { get; }
+    { get; init; }
 }

@@ -32,6 +32,13 @@ public class CharacterPair
     }
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="CharacterPair"/> class.
+    /// </summary>
+    /// <remarks>Required for content pipeline deserialization.</remarks>
+    protected CharacterPair()
+    { }
+
+    /// <summary>
     /// Gets the first unicode character in the pair.
     /// </summary>
     public char FirstCharacter
