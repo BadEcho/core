@@ -50,7 +50,7 @@ public sealed class FontCharacteristics
     /// beyond the cap height (the height of the typeface's uppercase letters, measured from the baseline
     /// to the top of its flat-topped glyphs). The ascender line depicts the height of the highest ascender.
     /// </remarks>
-    public double Ascender
+    public float Ascender
     { get; init; }
 
     /// <summary>
@@ -60,6 +60,6 @@ public sealed class FontCharacteristics
     /// Descenders are downward strokes found in certain (and typically lowercase) letters that extend
     /// beyond the baseline. The descender line depicts the height of the lowest descender.
     /// </remarks>
-    public double Descender
+    public float Descender
     { get; init; }
 }

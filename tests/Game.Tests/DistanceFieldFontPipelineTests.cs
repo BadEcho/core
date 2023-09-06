@@ -38,8 +38,8 @@ public class DistanceFieldFontPipelineTests
         Assert.Equal(4, content.Characteristics.DistanceRange);
         Assert.Equal(592, content.Characteristics.Width);
         Assert.Equal(592, content.Characteristics.Height);
-        Assert.Equal(-0.80500000000000005, content.Characteristics.Ascender);
-        Assert.Equal(0.19500000000000001, content.Characteristics.Descender);
+        Assert.Equal(-0.80500000f, content.Characteristics.Ascender);
+        Assert.Equal(0.19500000f, content.Characteristics.Descender);
         Assert.Equal(1.2, content.Characteristics.LineHeight, 5);
 
         Assert.NotEmpty(content.Glyphs);
