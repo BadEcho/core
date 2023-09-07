@@ -18,10 +18,7 @@ namespace BadEcho.Presentation.Tests.ViewModels;
 
 public class CollectionViewModelTests
 {
-    private readonly FakeCollectionViewModel _collectionViewModel;
-
-    public CollectionViewModelTests() 
-        => _collectionViewModel = new FakeCollectionViewModel();
+    private readonly FakeCollectionViewModel _collectionViewModel = new();
 
     [Fact]
     public void Bind_Model_AddedToChildrenOnce()

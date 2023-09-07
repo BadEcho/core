@@ -36,7 +36,7 @@ public sealed class PositionalItemTemplateSelector : DataTemplateSelector
     { get; set; }
 
     /// <inheritdoc/>
-    public override DataTemplate? SelectTemplate(object item, DependencyObject container)
+    public override DataTemplate? SelectTemplate(object? item, DependencyObject container)
     {
         ItemsControl control = ItemsControl.ItemsControlFromItemContainer(container);
         int index = control.ItemContainerGenerator.IndexFromContainer(container);

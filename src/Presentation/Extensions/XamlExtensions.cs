@@ -35,9 +35,8 @@ public static class XamlExtensions
     {
         Require.NotNull(xaml, nameof(xaml));
 
-        return xaml.ParseLooseXaml() is T typedRoot
-            ? typedRoot
-            : throw new ArgumentException(Strings.WrongXamlRootType, nameof(xaml));
+        return xaml.ParseLooseXaml() as T 
+               ?? throw new ArgumentException(Strings.WrongXamlRootType, nameof(xaml));
     }
 
     /// <summary>

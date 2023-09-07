@@ -143,4 +143,7 @@
 	<data name="GridRowOutOfRange" xml:space="preserve">
 		<value>Specified row is outside the range of this grid's rows.</value>
 	</data>
+	<data name="EffectMissingResource" xml:space="preserve">
+		<value>Missing expected effect resource '{0}'.</value>
+	</data>
 </root>

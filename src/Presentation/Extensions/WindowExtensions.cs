@@ -97,7 +97,7 @@ public static class WindowExtensions
             height = referenceArea.Height;
         }
 
-        return new Rectangle(referenceArea.X, referenceArea.Y, width, height);
+        return referenceArea with { Width = width, Height = height };
     }
 
     private static void HandleStateChangedToNormal(object? sender, EventArgs e)

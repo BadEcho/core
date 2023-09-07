@@ -26,11 +26,11 @@ namespace BadEcho.Presentation.Converters;
 public abstract class ValueConverter<TInput,TOutput> : IValueConverter
 {
     /// <inheritdoc/>
-    public virtual object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public virtual object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         => value is TInput inputValue ? Convert(inputValue, parameter, culture) : DependencyProperty.UnsetValue;
 
     /// <inheritdoc/>
-    public virtual object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) 
+    public virtual object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) 
         => value is TOutput outputValue ? ConvertBack(outputValue, parameter, culture) : DependencyProperty.UnsetValue;
 
     /// <summary>
@@ -38,12 +38,12 @@ public abstract class ValueConverter<TInput,TOutput> : IValueConverter
     /// </summary>
     /// <inheritdoc cref="IValueConverter.Convert"/>
     /// <returns><c>value</c> in its <typeparamref name="TOutput"/> typed form.</returns>
-    protected abstract TOutput Convert(TInput value, object parameter, CultureInfo culture);
+    protected abstract TOutput Convert(TInput value, object? parameter, CultureInfo culture);
 
     /// <summary>
     /// Converts the provided output value back into its <typeparamref name="TInput"/> typed form.
     /// </summary>
     /// <inheritdoc cref="IValueConverter.ConvertBack"/>
     /// <returns><c>value</c> in its <typeparamref name="TInput"/> typed form.</returns>
-    protected abstract TInput ConvertBack(TOutput value, object parameter, CultureInfo culture);
+    protected abstract TInput ConvertBack(TOutput value, object? parameter, CultureInfo culture);
 }

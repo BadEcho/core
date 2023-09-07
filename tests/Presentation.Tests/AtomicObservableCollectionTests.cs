@@ -103,10 +103,10 @@ public class AtomicObservableCollectionTests
         bool done = false;
 
         Task.Factory.StartNew(() =>
-                              {
-                                  var unused = Dispatcher.CurrentDispatcher;
-                                  _collection.Add(2);
-                              })
+            {
+                _ = Dispatcher.CurrentDispatcher;
+                _collection.Add(2);
+            })
             .ContinueWith(_ => done = true);
 
         while (!done)

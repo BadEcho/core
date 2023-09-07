@@ -79,6 +79,15 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Missing expected effect resource &apos;{0}&apos;..
+        /// </summary>
+        internal static string EffectMissingResource {
+            get {
+                return ResourceManager.GetString("EffectMissingResource", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The specified element is outside this quadtree&apos;s boundaries..
         /// </summary>
         internal static string ElementOutsideQuadtreeBounds {

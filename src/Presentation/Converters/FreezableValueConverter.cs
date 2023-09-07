@@ -27,25 +27,19 @@ namespace BadEcho.Presentation.Converters;
 public abstract class FreezableValueConverter<TInput,TOutput> : Freezable, IValueConverter
 {
     /// <inheritdoc/>
-    public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is not TInput)
-            return DependencyProperty.UnsetValue;
-
-        var inputValue = (TInput)value;
-
-        return Convert(inputValue, parameter, culture);
+        return value is TInput inputValue
+            ? Convert(inputValue, parameter, culture)
+            : DependencyProperty.UnsetValue;
     }
 
     /// <inheritdoc/>
-    public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is not TOutput)
-            return DependencyProperty.UnsetValue;
-
-        TOutput outputValue = (TOutput) value;
-
-        return ConvertBack(outputValue, parameter, culture);
+        return value is TOutput outputValue
+            ? ConvertBack(outputValue, parameter, culture)
+            : DependencyProperty.UnsetValue;
     }
 
     /// <summary>
@@ -53,12 +47,12 @@ public abstract class FreezableValueConverter<TInput,TOutput> : Freezable, IValu
     /// </summary>
     /// <inheritdoc cref="IValueConverter.Convert"/>
     /// <returns><c>value</c> in its <typeparamref name="TOutput"/> typed form.</returns>
-    protected abstract TOutput Convert(TInput value, object parameter, CultureInfo culture);
+    protected abstract TOutput Convert(TInput value, object? parameter, CultureInfo culture);
 
     /// <summary>
     /// Converts the provided output value back into its <typeparamref name="TInput"/> typed form.
     /// </summary>
     /// <inheritdoc cref="IValueConverter.ConvertBack"/>
     /// <returns><c>value</c> in its <typeparamref name="TInput"/> typed form.</returns>
-    protected abstract TInput ConvertBack(TOutput value, object parameter, CultureInfo culture);
+    protected abstract TInput ConvertBack(TOutput value, object? parameter, CultureInfo culture);
 }

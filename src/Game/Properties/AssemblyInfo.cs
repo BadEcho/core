@@ -39,3 +39,9 @@ using System.Runtime.InteropServices;
                            Scope = "member", 
                            Target = "~F:BadEcho.Game.UI.Grid._cells",
                            Justification = "A jagged array would not benefit us here, as this multidimensional array is meant to represent cell data in a grid. We want each row to have the same number of columns; in no situation would it ever make sense for this not to be the case.")]
+
+[assembly: SuppressMessage("Performance", 
+                           "CA1819:Properties should not return arrays", 
+                           Scope = "member", 
+                           Target = "~P:BadEcho.Game.Properties.Effects.AlphaSpriteEffect",
+                           Justification = "The shader effects are required in byte array form to be used, therefore it makes sense to return them as an array. A property is used here so this class feels similar to a typical *.resx generated class when used.")]

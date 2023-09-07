@@ -27,7 +27,7 @@ public class TextureAtlasTests : IClassFixture<ContentManagerFixture>
     [Fact]
     public void Load_BlackShuttleGrass_NotNull()
     {
-        TextureAtlas atlas = _content.Load<TextureAtlas>($"Atlases\\BlackShuttleGrass");
+        TextureAtlas atlas = _content.Load<TextureAtlas>("Atlases\\BlackShuttleGrass");
 
         Assert.NotNull(atlas);
     }
@@ -35,7 +35,7 @@ public class TextureAtlasTests : IClassFixture<ContentManagerFixture>
     [Fact]
     public void Load_BlackShuttleGrass_ValidRegions()
     {
-        TextureAtlas atlas = _content.Load<TextureAtlas>($"Atlases\\BlackShuttleGrass");
+        TextureAtlas atlas = _content.Load<TextureAtlas>("Atlases\\BlackShuttleGrass");
 
         var shuttle = atlas["shuttle"];
 

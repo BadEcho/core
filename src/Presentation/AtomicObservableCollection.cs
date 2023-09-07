@@ -112,11 +112,13 @@ public sealed class AtomicObservableCollection<T> : ObservableCollection<T>, IHa
     {
         Require.NotNull(items, nameof(items));
 
+        List<T> itemsList = items.ToList();
+
         SynchronizeOperation(AddOperation);
 
         void AddOperation()
         {
-            int newItems = AddSilently(items);
+            int newItems = AddSilently(itemsList);
 
             if (!notifyAfter) 
                 return;
@@ -145,13 +147,13 @@ public sealed class AtomicObservableCollection<T> : ObservableCollection<T>, IHa
     {
         Require.NotNull(items, nameof(items));
 
+        // Only you can prevent modified collection enumerations!
+        List<T> itemsList = items.ToList();
+
         SynchronizeOperation(RemoveOperation);
 
         void RemoveOperation()
         {
-            // Only you can prevent modified collection enumerations!
-            List<T> itemsList = items.ToList();
-
             int removedItems = RemoveSilently(itemsList);
 
             if (!notifyAfter)

@@ -37,7 +37,7 @@ public sealed class StaticModel : PrimitiveModel<VertexBuffer, IndexBuffer>
             = new VertexBuffer(Device, VertexPositionTexture.VertexDeclaration, modelData.VertexCount, BufferUsage.WriteOnly);
 
         modelData.LoadVertices(vertexBuffer);
-
+        
         return vertexBuffer;
     }
 

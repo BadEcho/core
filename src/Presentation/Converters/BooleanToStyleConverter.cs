@@ -37,10 +37,10 @@ public sealed class BooleanToStyleConverter : ValueConverter<bool,Style?>
     {  get; set; }
 
     /// <inheritdoc/>
-    protected override Style? Convert(bool value, object parameter, CultureInfo culture)
+    protected override Style? Convert(bool value, object? parameter, CultureInfo culture)
         => value ? StyleWhenTrue : StyleWhenFalse;
 
     /// <inheritdoc/>
-    protected override bool ConvertBack(Style? value, object parameter, CultureInfo culture)
+    protected override bool ConvertBack(Style? value, object? parameter, CultureInfo culture)
         => StyleWhenTrue == value;
 }

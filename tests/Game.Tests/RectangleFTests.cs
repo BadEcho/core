@@ -17,12 +17,7 @@ namespace BadEcho.Game.Tests;
 
 public class RectangleFTests
 {
-    private readonly RectangleF _rect;
-
-    public RectangleFTests()
-    {   
-        _rect = new RectangleF(0, 0, 300, 600);
-    }
+    private readonly RectangleF _rect = new(0, 0, 300, 600);
 
     [Fact]
     public void Intersects_OverlappingRectangle_ReturnsTrue()

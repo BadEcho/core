@@ -19,12 +19,7 @@ namespace BadEcho.Tests.Extensibility;
 
 public class FilterablePluginContextStrategyTests
 {
-    private readonly string _path;
-
-    public FilterablePluginContextStrategyTests()
-    {
-        _path = Path.Combine(Environment.CurrentDirectory, "testPlugins");
-    }
+    private readonly string _path = Path.Combine(Environment.CurrentDirectory, "testPlugins");
 
     [Theory]
     [InlineData(FakeFilterableIds.AlphaFakeIdValue)]

@@ -18,10 +18,7 @@ namespace BadEcho.Tests.Extensibility;
 
 public class RoutableProxyTests
 {
-    private readonly ISegmentedContract _proxy;
-
-    public RoutableProxyTests() 
-        => _proxy = RoutableProxy.Create<ISegmentedContract>(new HostAdapterStub());
+    private readonly ISegmentedContract _proxy = RoutableProxy.Create<ISegmentedContract>(new HostAdapterStub());
 
     [Fact]
     public void SomeMethod_FirstContract()

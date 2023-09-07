@@ -50,7 +50,7 @@ public sealed class ArithmeticConverter : FreezableValueConverter<double,double>
     { get; set; }
 
     /// <inheritdoc/>
-    protected override double Convert(double value, object parameter, CultureInfo culture)
+    protected override double Convert(double value, object? parameter, CultureInfo culture)
     {
         if (Operand.ApproximatelyEquals(0.0) && Operation == ArithmeticOperation.Division)
             return value;
@@ -66,7 +66,7 @@ public sealed class ArithmeticConverter : FreezableValueConverter<double,double>
     }
 
     /// <inheritdoc/>
-    protected override double ConvertBack(double value, object parameter, CultureInfo culture)
+    protected override double ConvertBack(double value, object? parameter, CultureInfo culture)
     {
         if (Operand.ApproximatelyEquals(0.0) && Operation == ArithmeticOperation.Multiplication)
             return value;

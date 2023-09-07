@@ -44,15 +44,15 @@ public sealed class JsonFlattenedObjectConverter<T> : JsonConverter<T>
         if (reader.TokenType != JsonTokenType.StartObject)
             throw new JsonException(Strings.JsonNotStartObject);
 
-        JsonObject? baseObject = JsonNode.Parse(ref reader)?.AsObject()
-                                 ?? throw new JsonException(Strings.JsonNodeIsNull);
+        JsonObject baseObject = JsonNode.Parse(ref reader)?.AsObject()
+                                ?? throw new JsonException(Strings.JsonNodeIsNull);
 
         for (int i = 1; i < _elementsToSquash; i++)
         {
             reader.Read();
 
-            JsonObject? nextObject = JsonNode.Parse(ref reader)?.AsObject()
-                                     ?? throw new JsonException(Strings.JsonNodeIsNull);
+            JsonObject nextObject = JsonNode.Parse(ref reader)?.AsObject()
+                                    ?? throw new JsonException(Strings.JsonNodeIsNull);
 
             foreach (var nextObjectProperty in nextObject.ToList())
             {

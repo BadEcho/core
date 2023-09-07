@@ -69,7 +69,7 @@ public sealed class PercentageToPointConverter : ReversibleValueConverter<double
     { get; set; }
 
     /// <inheritdoc/>
-    protected override Point Convert(double value, object parameter, CultureInfo culture)
+    protected override Point Convert(double value, object? parameter, CultureInfo culture)
     {
         if (value >= 1.0)
             value += FractionalCascadeAmount;
@@ -81,7 +81,7 @@ public sealed class PercentageToPointConverter : ReversibleValueConverter<double
     }
 
     /// <inheritdoc/>
-    protected override double ConvertBack(Point value, object parameter, CultureInfo culture)
+    protected override double ConvertBack(Point value, object? parameter, CultureInfo culture)
     {   
         // Not going to bother too much with intense validation here, as we don't want to ever throw errors
         // in an IValueConverter. We assume the point value was created by this converter, and convert the

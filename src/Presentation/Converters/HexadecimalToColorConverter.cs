@@ -31,7 +31,7 @@ public sealed class HexadecimalToColorConverter : ValueConverter<string,Color>
     { get; set; } = Colors.Transparent;
 
     /// <inheritdoc/>
-    protected override Color Convert(string value, object parameter, CultureInfo culture)
+    protected override Color Convert(string value, object? parameter, CultureInfo culture)
     {
         try
         {
@@ -45,6 +45,6 @@ public sealed class HexadecimalToColorConverter : ValueConverter<string,Color>
     }
 
     /// <inheritdoc/>
-    protected override string ConvertBack(Color value, object parameter, CultureInfo culture) 
+    protected override string ConvertBack(Color value, object? parameter, CultureInfo culture) 
         => $"{value.A:X2}{value.R:X2}{value.G:X2}{value.B:X2}";
 }

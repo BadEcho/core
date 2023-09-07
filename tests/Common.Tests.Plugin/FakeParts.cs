@@ -57,6 +57,9 @@ public sealed class SharedFakePart : ISharedFakePart
         return -1;
     }
 
+    /// <suppressions>
+    /// ReSharper disable UnusedType.Local
+    /// </suppressions>
     [Export(typeof(IConventionProvider))]
     private sealed class SharedConventionProvider : IConventionProvider
     {

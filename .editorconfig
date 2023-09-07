@@ -759,3 +759,6 @@ csharp_style_expression_bodied_local_functions = false:suggestion
 
 # IDE0130: Namespace does not match folder structure
 dotnet_diagnostic.IDE0130.severity = none
+
+# I don't like using statements.
+csharp_prefer_simple_using_statement = false

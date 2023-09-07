@@ -35,7 +35,7 @@ public abstract class ReversibleValueConverter<TInput,TOutput> : ValueConverter<
     { get; set; }
 
     /// <inheritdoc/>
-    public override object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public override object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         return !Reversed
             ? base.Convert(value, targetType, parameter, culture)

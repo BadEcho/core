@@ -42,7 +42,7 @@ public sealed class DoubleToThicknessConverter : ReversibleValueConverter<double
     { get; set; }
 
     /// <inheritdoc/>
-    protected override Thickness Convert(double value, object parameter, CultureInfo culture)
+    protected override Thickness Convert(double value, object? parameter, CultureInfo culture)
     {
         // Wow, an actual mutable value type.
         var thickness = new Thickness();
@@ -63,7 +63,7 @@ public sealed class DoubleToThicknessConverter : ReversibleValueConverter<double
     }
 
     /// <inheritdoc/>
-    protected override double ConvertBack(Thickness value, object parameter, CultureInfo culture)
+    protected override double ConvertBack(Thickness value, object? parameter, CultureInfo culture)
     {
         return Scope.HasFlag(Edges.Bottom)
             ? value.Bottom

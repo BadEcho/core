@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Game.Pipeline;
 using BadEcho.Game.Tiles;
 using Microsoft.Xna.Framework.Content;
 using Xunit;

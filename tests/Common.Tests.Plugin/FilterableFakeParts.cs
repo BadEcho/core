@@ -62,6 +62,9 @@ public sealed class SharedGammaFakePart : IFilterableFakePart
     public Guid FamilyId
         => new(GammaFamily.FamilyIdValue);
 
+    /// <suppressions>
+    /// ReSharper disable UnusedType.Local
+    /// </suppressions>
     [Export(typeof(IConventionProvider))]
     private sealed class SharedConventionProvider : IConventionProvider
     {

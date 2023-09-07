@@ -80,7 +80,7 @@ public abstract class ConfigurationProvider : IConfigurationProvider, IDisposabl
         T? section = default;
         var settingsFile = new FileInfo(SettingsFile);
 
-        if (settingsFile.Exists && settingsFile.Length > 0)
+        if (settingsFile is {Exists: true, Length: > 0})
         {
             section = ReadConfiguration<T>(settingsFile.ReadAllText(FileShare.ReadWrite), sectionName);
 
@@ -130,7 +130,7 @@ public abstract class ConfigurationProvider : IConfigurationProvider, IDisposabl
     {
         var settingsFile = new FileInfo(SettingsFile);
 
-        return settingsFile.Exists && settingsFile.Length > 0
+        return settingsFile is {Exists: true, Length: > 0}
             ? settingsFile.ReadAllText(FileShare.ReadWrite)
             : string.Empty;
     }

@@ -103,7 +103,7 @@ public sealed class NotifyIcon : IDisposable
     }
 
     /// <summary>
-    /// Displays the icon in the taskbar's notification area.
+    /// Displays the icon in the notification area of the taskbar's notification area.
     /// </summary>
     /// <remarks>
     /// Following initialization, the notification area icon is not displayed until this method is called.

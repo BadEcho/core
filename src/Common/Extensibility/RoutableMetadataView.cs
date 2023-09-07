@@ -14,7 +14,7 @@
 namespace BadEcho.Extensibility;
 
 /// <summary>
-/// Provides a metadata view for a call-routable plugin's metadata.
+/// Provides a metadata view for a call-routable plugin.
 /// </summary>
 public sealed class RoutableMetadataView : IRoutableMetadata
 {

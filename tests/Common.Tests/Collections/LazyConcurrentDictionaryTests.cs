@@ -18,18 +18,13 @@ namespace BadEcho.Tests.Collections;
 
 public class LazyConcurrentDictionaryTests
 {
-    private readonly LazyConcurrentDictionary<int,string> _lazyDictionary;
-
-    public LazyConcurrentDictionaryTests()
-    {
-        _lazyDictionary = new LazyConcurrentDictionary<int, string>(
-            new List<KeyValuePair<int, Lazy<string>>>
-            {
-                new (0, new Lazy<string>(() => "First")),
-                new (1, new Lazy<string>(() => "Second"))
-            },
-            LazyThreadSafetyMode.ExecutionAndPublication);
-    }
+    private readonly LazyConcurrentDictionary<int,string> _lazyDictionary = new(
+        new List<KeyValuePair<int, Lazy<string>>>
+        {
+            new (0, new Lazy<string>(() => "First")),
+            new (1, new Lazy<string>(() => "Second"))
+        },
+        LazyThreadSafetyMode.ExecutionAndPublication);
 
     [Fact]
     public void GetOrAdd_Existing_ReturnsFirst()
