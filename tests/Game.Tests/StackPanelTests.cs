@@ -26,7 +26,7 @@ public class StackPanelTests : IClassFixture<ContentManagerFixture>
 
     public StackPanelTests(ContentManagerFixture contentFixture)
     {
-        var font = contentFixture.Content.Load<SpriteFont>("Fonts\\Lato");
+        var font = contentFixture.Content.Load<SpriteFont>("Fonts\\LatoSprite");
 
         _firstLabel = new Label
                       {

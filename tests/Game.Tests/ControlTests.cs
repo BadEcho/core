@@ -26,7 +26,7 @@ public class ControlTests : IClassFixture<ContentManagerFixture>
 
     public ControlTests(ContentManagerFixture contentFixture)
     {
-        var font = contentFixture.Content.Load<SpriteFont>("Fonts\\Lato");
+        var font = contentFixture.Content.Load<SpriteFont>("Fonts\\LatoSprite");
 
         _label = new Label
                  {
