@@ -23,6 +23,14 @@ public abstract class QuadModelData<TVertex> : ModelData<TVertex>
     where TVertex : struct, IVertexType
 {
     /// <summary>
+    /// Initializes a new instance of the <see cref="QuadModelData{TVertex}"/> class.
+    /// </summary>
+    /// <param name="vertexDeclaration">Value defining the shader declarations used by the vertices within the vertex data.</param>
+    protected QuadModelData(VertexDeclaration vertexDeclaration)
+        : base(vertexDeclaration)
+    { }
+
+    /// <summary>
     /// Adds 3D modeling data for a quadrilateral surface defined by the specified vertices.
     /// </summary>
     /// <param name="topLeft">The top-left vertex of the quadrilateral.</param>

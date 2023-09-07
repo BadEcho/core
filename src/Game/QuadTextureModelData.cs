@@ -23,6 +23,13 @@ namespace BadEcho.Game;
 public sealed class QuadTextureModelData : QuadModelData<VertexPositionTexture>
 {
     /// <summary>
+    /// Initializes a new instance of the <see cref="QuadTextureModelData"/> class.
+    /// </summary>
+    public QuadTextureModelData()
+        : base(VertexPositionTexture.VertexDeclaration)
+    { }
+
+    /// <summary>
     /// Adds 3D modeling data for a quadrilateral surface that can be mapped to a particular region of a texture during rendering.
     /// </summary>
     /// <param name="textureBounds">

@@ -26,15 +26,15 @@ public sealed class DynamicModel : PrimitiveModel<DynamicVertexBuffer, DynamicIn
     /// <param name="device">The graphics device to use when rendering the model.</param>
     /// <param name="texture">The texture to map onto the model.</param>
     /// <param name="modelData">The vertex data required to render the model.</param>
-    public DynamicModel(GraphicsDevice device, Texture2D texture, ModelData<VertexPositionTexture> modelData) 
+    public DynamicModel(GraphicsDevice device, Texture2D texture, IModelData modelData) 
         : base(device, texture, modelData)
     { }
 
     /// <inheritdoc />
-    protected override DynamicVertexBuffer CreateVertexBuffer<TVertex>(ModelData<TVertex> modelData)
+    protected override DynamicVertexBuffer CreateVertexBuffer(IModelData modelData)
     {
         var vertexBuffer
-            = new DynamicVertexBuffer(Device, VertexPositionTexture.VertexDeclaration, modelData.VertexCount, BufferUsage.WriteOnly);
+            = new DynamicVertexBuffer(Device, modelData.VertexDeclaration, modelData.VertexCount, BufferUsage.WriteOnly);
 
         modelData.LoadVertices(vertexBuffer);
 
@@ -42,7 +42,7 @@ public sealed class DynamicModel : PrimitiveModel<DynamicVertexBuffer, DynamicIn
     }
 
     /// <inheritdoc />
-    protected override DynamicIndexBuffer CreateIndexBuffer<TVertex>(ModelData<TVertex> modelData)
+    protected override DynamicIndexBuffer CreateIndexBuffer(IModelData modelData)
     {
         var indexBuffer
             = new DynamicIndexBuffer(Device, IndexElementSize.SixteenBits, modelData.IndexCount, BufferUsage.WriteOnly);

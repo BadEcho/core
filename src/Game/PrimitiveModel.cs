@@ -41,7 +41,7 @@ public abstract class PrimitiveModel<TVertexBuffer, TIndexBuffer> : IPrimitiveMo
     /// <param name="device">The graphics device to use when rendering the model.</param>
     /// <param name="texture">The texture to map onto the model.</param>
     /// <param name="modelData">The vertex data required to render the model.</param>
-    protected PrimitiveModel(GraphicsDevice device, Texture2D texture, ModelData<VertexPositionTexture> modelData)
+    protected PrimitiveModel(GraphicsDevice device, Texture2D texture, IModelData modelData)
     {
         Require.NotNull(device, nameof(device));
         Require.NotNull(texture, nameof(texture));
@@ -142,22 +142,18 @@ public abstract class PrimitiveModel<TVertexBuffer, TIndexBuffer> : IPrimitiveMo
     /// <summary>
     /// Creates and loads the model's vertex buffer with vertices from the the provided model data.
     /// </summary>
-    /// <typeparam name="TVertex">The type of vertices to load into the vertex buffer.</typeparam>
     /// <param name="modelData">The model data to load into the created vertex buffer.</param>
     /// <returns>
     /// A <typeparamref name="TVertexBuffer"/> instance loaded with vertices from <c>modelData</c>.
     /// </returns>
-    protected abstract TVertexBuffer CreateVertexBuffer<TVertex>(ModelData<TVertex> modelData)
-        where TVertex : struct, IVertexType;
+    protected abstract TVertexBuffer CreateVertexBuffer(IModelData modelData);
 
     /// <summary>
     /// Creates and loads the model's index buffer with vertex indices from the provided model data.
     /// </summary>
-    /// <typeparam name="TVertex">The type of vertices used by the provided model data.</typeparam>
     /// <param name="modelData">The model data to load into the created index buffer.</param>
     /// <returns>
     /// A <typeparamref name="TIndexBuffer"/> instance loaded with vertex indices from <c>modelData</c>.
     /// </returns>
-    protected abstract TIndexBuffer CreateIndexBuffer<TVertex>(ModelData<TVertex> modelData)
-        where TVertex : struct, IVertexType;
+    protected abstract TIndexBuffer CreateIndexBuffer(IModelData modelData);
 }

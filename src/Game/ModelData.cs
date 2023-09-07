@@ -20,24 +20,30 @@ namespace BadEcho.Game;
 /// Provides the vertex data required to render a 3D model.
 /// </summary>
 /// <typeparam name="TVertex">The vertex type structure to compose the 3D model with.</typeparam>
-public abstract class ModelData<TVertex>
+public abstract class ModelData<TVertex> : IModelData
     where TVertex : struct, IVertexType
 {
     /// <summary>
-    /// Gets the number of vertices composing the 3D model.
+    /// Initializes a new instance of the <see cref="ModelData{TVertex}"/> class.
     /// </summary>
+    /// <param name="vertexDeclaration">Value defining the shader declarations used by the vertices within the vertex data.</param>
+    protected ModelData(VertexDeclaration vertexDeclaration)
+    {
+        VertexDeclaration = vertexDeclaration;
+    }
+
+    /// <inheritdoc/>
     public int VertexCount
         => Vertices.Count;
 
-    /// <summary>
-    /// Gets the number of indices pointing to distinct vertices within the vertex data.
-    /// </summary>
-    /// <remarks>
-    /// A nonzero value is indicative of indexed vertex data requiring the use of an index buffer in order to be rendered properly.
-    /// </remarks>
+    /// <inheritdoc/>
     public int IndexCount
         => Indices.Count;
-    
+
+    /// <inheritdoc/>
+    public VertexDeclaration VertexDeclaration 
+    { get; }
+
     /// <summary>
     /// Gets the vertices composing the 3D model.
     /// </summary>
@@ -50,10 +56,7 @@ public abstract class ModelData<TVertex>
     protected IList<ushort> Indices
     { get; } = new List<ushort>();
 
-    /// <summary>
-    /// Loads the provided vertex buffer with the vertices for the model.
-    /// </summary>
-    /// <param name="vertexBuffer">The vertex buffer to load the model's vertices into.</param>
+    /// <inheritdoc/>
     public void LoadVertices(VertexBuffer vertexBuffer)
     {
         Require.NotNull(vertexBuffer, nameof(vertexBuffer));
@@ -61,11 +64,7 @@ public abstract class ModelData<TVertex>
         vertexBuffer.SetData(Vertices.ToArray(), 0, VertexCount);
     }
 
-    /// <summary>
-    /// Loads the provided index buffer with indices pointing to distinct vertices within the vertex data.
-    /// </summary>
-    /// <param name="indexBuffer">The index buffer to load the model's vertex indices into.</param>
-    /// <exception cref="InvalidOperationException">No indices were provided for the vertex data.</exception>
+    /// <inheritdoc/>
     public void LoadIndices(IndexBuffer indexBuffer)
     {
         Require.NotNull(indexBuffer, nameof(indexBuffer));

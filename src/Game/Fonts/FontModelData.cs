@@ -28,6 +28,7 @@ public sealed class FontModelData : QuadModelData<VertexPositionColorTexture>
     /// </summary>
     /// <param name="color">The color of the text.</param>
     public FontModelData(Color color)
+        : base(VertexPositionColorTexture.VertexDeclaration)
     {
         _color = color;
     }
