@@ -34,7 +34,7 @@ public sealed class AlphaSpriteEffect : Effect
     /// </summary>
     /// <param name="device">The graphics device used for sprite rendering.</param>
     public AlphaSpriteEffect(GraphicsDevice device)
-        : base(device, Properties.Effects.AlphaSpriteEffect)
+        : base(device, Shaders.AlphaSpriteEffect)
     {
         CacheEffectParameters();
     }

@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Properties\Effects.resources" />
+    <EmbeddedResource Include="Effects\Shaders.resources" />
   </ItemGroup>
 
 	<ItemGroup>

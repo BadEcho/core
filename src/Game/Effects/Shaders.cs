@@ -11,20 +11,21 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.Globalization;
-using System.Resources;
 using BadEcho.Extensions;
 using Microsoft.Xna.Framework.Graphics;
+using System.Globalization;
+using System.Resources;
+using BadEcho.Game.Properties;
 
-namespace BadEcho.Game.Properties;
+namespace BadEcho.Game.Effects;
 
 /// <summary>
 /// Provides access to shader effect resources.
 /// </summary>
-public static class Effects
+public static class Shaders
 {
-    private static readonly ResourceManager _Manager = new("BadEcho.Game.Properties.Effects",
-                                                           typeof(Effects).Assembly);
+    private static readonly ResourceManager _Manager = new("BadEcho.Game.Effects.Shaders",
+                                                           typeof(Shaders).Assembly);
     /// <summary>
     /// Gets the data for a <see cref="SpriteBatch"/> effect that allows control over the alpha channel
     /// of all sprites in a batch.
