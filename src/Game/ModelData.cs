@@ -19,6 +19,7 @@ namespace BadEcho.Game;
 /// <summary>
 /// Provides the vertex data required to render a 3D model.
 /// </summary>
+/// <typeparam name="TVertex">The vertex type structure to compose the 3D model with.</typeparam>
 public abstract class ModelData<TVertex>
     where TVertex : struct, IVertexType
 {

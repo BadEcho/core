@@ -220,7 +220,7 @@ public sealed class TileMap : Extensible
 
     private void CreateLayerModels(ImageLayer layer)
     {
-        var imageData = new QuadModelData();
+        var imageData = new QuadTextureModelData();
 
         imageData.AddTexture(layer.Image.Bounds, layer.Image.Bounds, layer.Position);
 
@@ -235,7 +235,7 @@ public sealed class TileMap : Extensible
         // Layer tile data must be processed tile set by tile set, as they provide the actual textures that individual tiles are sourced from.
         foreach (TileSet tileSet in TileSets)
         {
-            var tileData = new QuadModelData();
+            var tileData = new QuadTextureModelData();
             int firstId = _tileSetFirstIdMap[tileSet];
             Texture2D texture = tileSet.Texture;
             // Extract the tiles in the layer we're adding that belong to the current tile set.
@@ -252,7 +252,7 @@ public sealed class TileMap : Extensible
                 {
                     layerModels.Add(new StaticModel(_device, texture, tileData));
                     
-                    tileData = new QuadModelData();
+                    tileData = new QuadTextureModelData();
                 }
             }
 

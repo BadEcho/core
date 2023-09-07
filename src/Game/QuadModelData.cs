@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game;
@@ -19,57 +18,25 @@ namespace BadEcho.Game;
 /// <summary>
 /// Provides the vertex data required to render a 3D model of flat quadrilateral polygons.
 /// </summary>
-/// <remarks>
-/// Quadrilateral polygons defined by this type of model data are expressed and subsequently rendered as pairs of adjacent
-/// 3D triangle primitives.
-/// </remarks>
-public sealed class QuadModelData : ModelData<VertexPositionTexture>
+/// <typeparam name="TVertex">The vertex type structure to compose the 3D model with.</typeparam>
+public abstract class QuadModelData<TVertex> : ModelData<TVertex>
+    where TVertex : struct, IVertexType
 {
     /// <summary>
-    /// Adds 3D modeling data for a quadrilateral surface that can be mapped to a particular region of a texture during rendering.
+    /// Adds 3D modeling data for a quadrilateral surface defined by the specified vertices.
     /// </summary>
-    /// <param name="textureBounds">
-    /// The dimensions of the texture the mapped region is being sourced from, required for purposes of texture coordinate normalization.
-    /// </param>
-    /// <param name="sourceArea">The bounding rectangle of the region of the texture to create modeling data for.</param>
-    /// <param name="position">The drawing location of the model.</param>
-    /// <remarks>
-    /// <para>
-    /// In order to source a particular region of a texture, we need to create <see cref="VertexPositionTexture"/> values whose
-    /// texture coordinates are normalized such that they are in a range from 0 to 1 where (0, 0) is the top-left of the texture
-    /// and (1, 1) is the bottom-right of the texture.
-    /// </para>
-    /// <para>
-    /// In order to normalize the specified source region's coordinates, all we need do is simply divide the source rectangle's
-    /// individual vertex coordinates by the appropriate texture dimension, based on the axis that the particular vertex rests on. 
-    /// </para>
-    /// </remarks>
-    public void AddTexture(Rectangle textureBounds, Rectangle sourceArea, Vector2 position)
+    /// <param name="topLeft">The top-left vertex of the quadrilateral.</param>
+    /// <param name="topRight">The top-right vertex of the quadrilateral.</param>
+    /// <param name="bottomLeft">The bottom-left vertex of the quadrilateral.</param>
+    /// <param name="bottomRight">The bottom-right vertex of the quadrilateral.</param>
+    protected void AddVertices(TVertex topLeft, TVertex topRight, TVertex bottomLeft, TVertex bottomRight)
     {
-        float texelLeft = (float) sourceArea.X / textureBounds.Width;
-        float texelRight = (float) (sourceArea.X + sourceArea.Width) / textureBounds.Width;
-        float texelTop = (float) sourceArea.Y / textureBounds.Height;
-        float texelBottom = (float) (sourceArea.Y + sourceArea.Height) / textureBounds.Height;
-
-        var vertexTopLeft
-            = new VertexPositionTexture(new Vector3(position, 0),
-                                        new Vector2(texelLeft, texelTop));
-        var vertexTopRight
-            = new VertexPositionTexture(new Vector3(position + new Vector2(sourceArea.Width, 0), 0),
-                                        new Vector2(texelRight, texelTop));
-        var vertexBottomLeft
-            = new VertexPositionTexture(new Vector3(position + new Vector2(0, sourceArea.Height), 0),
-                                        new Vector2(texelLeft, texelBottom));
-        var vertexBottomRight
-            = new VertexPositionTexture(new Vector3(position + new Vector2(sourceArea.Width, sourceArea.Height), 0),
-                                        new Vector2(texelRight, texelBottom));
-
         AddIndices(VertexCount);
 
-        Vertices.Add(vertexTopLeft);
-        Vertices.Add(vertexTopRight);
-        Vertices.Add(vertexBottomLeft);
-        Vertices.Add(vertexBottomRight);
+        Vertices.Add(topLeft);
+        Vertices.Add(topRight);
+        Vertices.Add(bottomLeft);
+        Vertices.Add(bottomRight);
     }
 
     private void AddIndices(int offset)
