@@ -32,9 +32,13 @@ public sealed class ContentManagerFixture : IDisposable
         services.AddService(typeof(IGraphicsDeviceService), graphicsService);
 
         Content = new ContentManager(services, "Content");
+        Device = graphicsService.GraphicsDevice;
     }
 
     public ContentManager Content
+    { get; }
+
+    public GraphicsDevice Device
     { get; }
 
     /// <inheritdoc />
