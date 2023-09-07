@@ -76,25 +76,25 @@ public readonly struct RectangleF : IEquatable<RectangleF>, IShape
     /// Gets the x-coordinate of the upper-left corner of this rectangle.
     /// </summary>
     public float X
-    { get; }
+    { get; init; }
 
     /// <summary>
     /// Gets the y-coordinate of the upper-left corner of this rectangle.
     /// </summary>
     public float Y
-    { get; }
+    { get; init; }
 
     /// <summary>
     /// Gets the width of this rectangle.
     /// </summary>
     public float Width
-    { get; }
+    { get; init; }
 
     /// <summary>
     /// Gets the height of this rectangle.
     /// </summary>
     public float Height
-    { get; }
+    { get; init; }
 
     /// <summary>
     /// Gets the x-coordinate of the left edge of this rectangle.
