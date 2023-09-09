@@ -75,51 +75,16 @@ public sealed class DistanceFieldFont
     }
 
     /// <summary>
-    /// Creates 3D modeling data for text using this font that can be rendered at a later time.
-    /// </summary>
-    /// <param name="text">The text to prepare modeling data for.</param>
-    /// <param name="position">The position of the top-left corner of the text.</param>
-    /// <param name="color">The color of the text.</param>
+    /// Determines the next advance width to apply to the cursor given the specified character sequence and direction.
+    /// </summary>  
+    /// <param name="current">The character the cursor is currently positioned at.</param>
+    /// <param name="next">
+    /// The next character to advance the cursor to, or null if the current character was the last one.
+    /// </param>
+    /// <param name="advanceDirection">The direction to advance the cursor.</param>
     /// <param name="scale">The amount of scaling to apply to the text.</param>
-    /// <returns>
-    /// A <see cref="FontModelData"/> instance containing modeling data that, when rendered, will draw <c>text</c> to the screen.
-    /// </returns>
-    public FontModelData CreateModelData(string text, Vector2 position, Color color, float scale)
-    {
-        var modelData = new FontModelData(color);
-
-        if (string.IsNullOrEmpty(text))
-            return modelData;
-
-        var advanceDirection = new Vector2(1, 0);
-        // The vertical direction is the vector that's perpendicular to our advance direction.
-        var verticalDirection = -1 * new Vector2(advanceDirection.Y, -advanceDirection.X);
-
-        // The provided position vector value specifies where the top-left corner of the text should be placed.
-        // The generated signed distance glyph plane coordinates, however, are meant to be applied relative to the baseline cursor.
-        // Therefore, we subtract the distance between the baseline and ascender line from our initial cursor, giving us a cursor now
-        // positioned at the baseline.
-        Vector2 cursorStart = position + verticalDirection * scale * Characteristics.Ascender * -1;
-        Vector2 cursor = cursorStart;
-        Vector2 scaledAdvance = advanceDirection * scale;
-
-        for (int i = 0; i < text.Length; i++)
-        {
-            char character = text[i];
-            FontGlyph glyph = FindGlyph(character);
-
-            if (!char.IsWhiteSpace(character)) 
-                modelData.AddGlyph(glyph, Characteristics, cursor, scaledAdvance);
-
-            char? nextCharacter = i < text.Length - 1 ? text[i + 1] : null;
-
-            cursor += GetNextAdvance(character, nextCharacter, advanceDirection, scale);
-        }
-
-        return modelData;
-    }
-    
-    private Vector2 GetNextAdvance(char current, char? next, Vector2 advanceDirection, float scale)
+    /// <returns>The next advance width to apply to the current cursor position.</returns>
+    public Vector2 GetNextAdvance(char current, char? next, Vector2 advanceDirection, float scale)
     {
         FontGlyph currentGlyph = FindGlyph(current);
         Vector2 advance = advanceDirection * currentGlyph.Advance * scale;

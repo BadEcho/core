@@ -43,12 +43,28 @@ public class DistanceFieldFontTests : IClassFixture<ContentManagerFixture>
     }
 
     [Fact]
-    public void CreateModelData_Lato_ReturnsValid()
+    public void GetNextAdvance_Lato_ReturnsValid()
     {
         DistanceFieldFont font = _content.Load<DistanceFieldFont>("Fonts\\Lato");
 
-        var modelData = font.CreateModelData("Hi", new Vector2(20, 20), Color.White, 32);
-        
+        Vector2 direction = new(1, 0);
+        float scale = 1.0f;
+
+        Vector2 expectedAdvance = direction * 0.5655f * scale;
+
+        expectedAdvance += direction * -0.093f * scale;
+
+        Assert.Equal(expectedAdvance, font.GetNextAdvance('F', 'J', direction, scale));
+    }
+
+    [Fact]
+    public void AddText_Lato_ReturnsValid()
+    {
+        DistanceFieldFont font = _content.Load<DistanceFieldFont>("Fonts\\Lato");
+        var modelData = new FontModelData(font, Color.White);
+
+        modelData.AddText("Hi", new Vector2(20, 20), 32);
+
         var vertexBuffer = new VertexBuffer(_device,
                                             VertexPositionColorTexture.VertexDeclaration,
                                             8,
@@ -100,11 +116,13 @@ public class DistanceFieldFontTests : IClassFixture<ContentManagerFixture>
     }
 
     [Fact]
-    public void CreateModelData_LatoKerning_ReturnsValid()
+    public void AddText_LatoKerning_ReturnsValid()
     { 
         DistanceFieldFont font = _content.Load<DistanceFieldFont>("Fonts\\Lato");
         // A kerning adjustment exists in Lato for L + v.
-        var modelData = font.CreateModelData("Lv", new Vector2(20, 20), Color.White, 32);
+        var modelData = new FontModelData(font, Color.White);
+        
+        modelData.AddText("Lv", new Vector2(20, 20), 32);
         
         var vertexBuffer = new VertexBuffer(_device,
                                             VertexPositionColorTexture.VertexDeclaration,

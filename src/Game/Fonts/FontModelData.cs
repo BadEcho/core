@@ -21,28 +21,30 @@ namespace BadEcho.Game.Fonts;
 /// </summary>
 public sealed class FontModelData : QuadModelData<VertexPositionColorTexture>
 {
+    private readonly DistanceFieldFont _font;
     private readonly Color _color;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FontModelData"/> class.
     /// </summary>
+    /// <param name="font">The multi-channel signed distance font to vertex data for.</param>
     /// <param name="color">The color of the text.</param>
-    public FontModelData(Color color)
+    public FontModelData(DistanceFieldFont font,  Color color)
         : base(VertexPositionColorTexture.VertexDeclaration)
     {
+        Require.NotNull(font, nameof(font));
+
+        _font = font;
         _color = color;
     }
 
     /// <summary>
-    /// Adds 3D modeling data for a quadrilateral surface that can be mapped to a glyph found in a font atlas texture during
-    /// rendering.
+    /// Adds 3D modeling data for quadrilateral surfaces that can be mapped to the specified text using glyphs found in a font
+    /// atlas texture during rendering.
     /// </summary>
-    /// <param name="glyph">The font glyph to model.</param>
-    /// <param name="characteristics">Characteristics of the font the glyph belongs to.</param>
-    /// <param name="cursor">The current position of the text's cursor.</param>
-    /// <param name="scaledAdvance">
-    /// The current advance width with the desired scaling applied to it, which helps determine the position of the text.
-    /// </param>
+    /// <param name="text">The text to prepare modeling data for.</param>
+    /// <param name="position">The position of the top-left corner of the text.</param>
+    /// <param name="scale">The amount of scaling to apply to the text.</param>
     /// <remarks>
     /// <para>
     /// In order to model a glyph, we create <see cref="VertexPositionColorTexture"/> values whose texture coordinates are
@@ -50,16 +52,47 @@ public sealed class FontModelData : QuadModelData<VertexPositionColorTexture>
     /// from 0 to 1 where (0, 0) is the top-left of the texture and (1, 1) is the bottom-right of the texture.
     /// </para>
     /// <para>
-    /// Much like what we do with <see cref="QuadTextureModelData"/>, we divide the atlas (source) rectangle's individual vertex coordinates by the
-    /// appropriate font atlas texture dimension, based on the axis that the particular vertex rests on.
+    /// Much like what we do with <see cref="QuadTextureModelData"/>, we divide the atlas (source) rectangle's individual vertex
+    /// coordinates by the appropriate font atlas texture dimension, based on the axis that the particular vertex rests on.
     /// </para>
     /// <para>
-    /// Unlike what we do with <see cref="QuadTextureModelData"/>, the source rectangle has no impact on the position of the vertices; rather, we
-    /// make base the position off of the generated plane coordinates for the glyph. These coordinates are relative to the baseline cursor,
-    /// and allow us to position the glyphs appropriately.
+    /// Unlike what we do with <see cref="QuadTextureModelData"/>, the source rectangle has no impact on the position of the vertices;
+    /// rather, we make base the position off of the generated plane coordinates for the glyph. These coordinates are relative to the
+    /// baseline cursor, and allow us to position the glyphs appropriately.
     /// </para>
     /// </remarks>
-    public void AddGlyph(FontGlyph glyph, FontCharacteristics characteristics, Vector2 cursor, Vector2 scaledAdvance)
+    public void AddText(string text, Vector2 position, float scale)
+    {
+        if (string.IsNullOrEmpty(text))
+            return;
+
+        var advanceDirection = new Vector2(1, 0);
+        // The vertical direction is the vector that's perpendicular to our advance direction.
+        var verticalDirection = -1 * new Vector2(advanceDirection.Y, -advanceDirection.X);
+
+        // The provided position vector value specifies where the top-left corner of the text should be placed.
+        // The generated signed distance glyph plane coordinates, however, are meant to be applied relative to the baseline cursor.
+        // Therefore, we subtract the distance between the baseline and ascender line from our initial cursor, giving us a cursor now
+        // positioned at the baseline.
+        Vector2 cursorStart = position + verticalDirection * scale * _font.Characteristics.Ascender * -1;
+        Vector2 cursor = cursorStart;
+        Vector2 scaledAdvance = advanceDirection * scale;
+
+        for (int i = 0; i < text.Length; i++)
+        {
+            char character = text[i];
+            FontGlyph glyph = _font.FindGlyph(character);
+
+            if (!char.IsWhiteSpace(character)) 
+                AddGlyph(glyph, _font.Characteristics, cursor, scaledAdvance);
+
+            char? nextCharacter = i < text.Length - 1 ? text[i + 1] : null;
+
+            cursor += _font.GetNextAdvance(character, nextCharacter, advanceDirection, scale);
+        }
+    }
+
+    private void AddGlyph(FontGlyph glyph, FontCharacteristics characteristics, Vector2 cursor, Vector2 scaledAdvance)
     {
         Require.NotNull(glyph, nameof(glyph));
         Require.NotNull(characteristics, nameof(characteristics));
