@@ -11,34 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-#if OPENGL
-    #define _vs(r)  : register(vs, r)
-    #define _ps(r)  : register(ps, r)
-    #define _cb(r)
-    #define VS_MODEL vs_3_0
-    #define PS_MODEL ps_3_0
-
-    #define BEGIN_PARAMETERS
-    #define END_PARAMETERS
-
-    #define SAMPLE(texture, texCoord) tex2D(texture, texCoord) 
-
-    sampler2D Texture : register(s0);
-#else
-    #define _vs(r)
-    #define _ps(r)
-    #define _cb(r)
-    #define VS_MODEL vs_4_0_level_9_1
-    #define PS_MODEL ps_4_0_level_9_1
-
-    #define BEGIN_PARAMETERS    cbuffer Parameters : register(b0) {
-    #define END_PARAMETERS      };
-
-    #define SAMPLE(texture, texCoord) texture.Sample(texture##Sampler, texCoord)
-
-    Texture2D<float4> Texture : register(t0);
-    sampler TextureSampler : register(s0);
-#endif
+#include "Defines.fxh"
 
 BEGIN_PARAMETERS
     float4x4 MatrixTransform _vs(c0) _cb(c0);
