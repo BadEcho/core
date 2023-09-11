@@ -18,7 +18,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace BadEcho.Game.Effects;
 
 /// <summary>
-/// Provides a <see cref="SpriteBatch"/> effect that allows control over the alpha channel of all
+/// Provides <see cref="SpriteBatch"/> shaders that allow control over the alpha channel of all
 /// sprites drawn in a batch.
 /// </summary>
 public sealed class AlphaSpriteEffect : Effect
@@ -37,6 +37,8 @@ public sealed class AlphaSpriteEffect : Effect
         : base(device, Shaders.AlphaSpriteEffect)
     {
         CacheEffectParameters();
+
+        Alpha = 1f;
     }
 
     /// <summary>
@@ -65,7 +67,10 @@ public sealed class AlphaSpriteEffect : Effect
     /// This is set to be fully opaque by default.
     /// </remarks>
     public float Alpha
-    { get; set; } = 1f;
+    {
+        get => _alphaParam.GetValueSingle();
+        set => _alphaParam.SetValue(value);
+    }
 
     /// <summary>
     /// Creates a clone of the current <see cref="AlphaSpriteEffect"/> instance.
@@ -102,8 +107,6 @@ public sealed class AlphaSpriteEffect : Effect
             _matrixParam.SetValue(MatrixTransform.GetValueOrDefault() * _projection);
         else
             _matrixParam.SetValue(_projection);
-
-        _alphaParam.SetValue(Alpha);
     }
     
     [MemberNotNull(nameof(_matrixParam), nameof(_alphaParam))]
