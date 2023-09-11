@@ -97,6 +97,30 @@ public abstract class PrimitiveModel<TVertexBuffer, TIndexBuffer> : IPrimitiveMo
 
         if (IndexBuffer != null)
             Device.Indices = IndexBuffer;
+        
+        foreach (var pass in effect.CurrentTechnique.Passes)
+        {
+            pass.Apply();
+
+            if (IndexBuffer == null)
+                Device.DrawPrimitives(PrimitiveType.TriangleList, 0, _primitiveCount);
+            else
+                Device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, _primitiveCount);
+        }
+    }
+
+    /// <inheritdoc/>
+    public void Draw(ITextureEffect effect)
+    {
+        Require.NotNull(effect, nameof(effect));
+
+        if (_texture != null)
+            effect.Texture = _texture;
+
+        Device.SetVertexBuffer(VertexBuffer);
+
+        if (IndexBuffer != null)
+            Device.Indices = IndexBuffer;
 
         foreach (var pass in effect.CurrentTechnique.Passes)
         {

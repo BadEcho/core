@@ -31,6 +31,6 @@ public sealed class DistanceFieldFontReader : ContentTypeReader<DistanceFieldFon
         var glyphs = input.ReadObject<Dictionary<char, FontGlyph>>();
         var kernings = input.ReadObject<Dictionary<CharacterPair, KerningPair>>();
 
-        return new DistanceFieldFont(atlas, characteristics, glyphs, kernings);
+        return new DistanceFieldFont(input.GetGraphicsDevice(), atlas, characteristics, glyphs, kernings);
     }
 }

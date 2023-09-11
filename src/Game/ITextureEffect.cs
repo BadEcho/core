@@ -16,19 +16,17 @@ using Microsoft.Xna.Framework.Graphics;
 namespace BadEcho.Game;
 
 /// <summary>
-/// Defines a generated model of 3D triangle primitives for rendering.
+/// Defines shaders that support mapping a texture onto vertex data.
 /// </summary>
-public interface IPrimitiveModel : IDisposable
+public interface ITextureEffect
 {
     /// <summary>
-    /// Draws the model to the screen.
+    /// Gets or sets the texture to be applied by this effect.
     /// </summary>
-    /// <param name="effect">The shaders to be used during the rendering of this model.</param>
-    void Draw(BasicEffect effect);
+    Texture2D Texture { get; set; }
 
     /// <summary>
-    /// Draws the model to the screen.
+    /// Gets or sets the active technique.
     /// </summary>
-    /// <param name="effect">Custom shaders that support texture mapping to be used during the rendering of this model.</param>
-    void Draw(ITextureEffect effect);
+    EffectTechnique CurrentTechnique { get; set; }
 }

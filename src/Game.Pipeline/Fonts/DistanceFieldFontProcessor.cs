@@ -20,6 +20,7 @@ using BadEcho.Game.Pipeline.Properties;
 using BadEcho.Serialization;
 using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
+using Microsoft.Xna.Framework.Content.Pipeline.Processors;
 
 namespace BadEcho.Game.Pipeline.Fonts;
 
@@ -83,8 +84,13 @@ public sealed class DistanceFieldFontProcessor : ContentProcessor<DistanceFieldF
         DistanceFieldFontContent output = ProcessOutput(input, jsonPath);
 
         output.AtlasPath = atlasPath;
-        output.AddReference<Texture2DContent>(context, atlasPath, new OpaqueDataDictionary());
-
+        output.AddReference<Texture2DContent>(context,
+                                              atlasPath,
+                                              new OpaqueDataDictionary
+                                              {
+                                                  { nameof(TextureProcessor.ColorKeyEnabled), false },
+                                                  { nameof(TextureProcessor.PremultiplyAlpha), false}
+                                              });
         return output;
     }
 

@@ -45,3 +45,9 @@ using System.Runtime.InteropServices;
                            Scope = "member", 
                            Target = "~P:BadEcho.Game.Effects.Shaders.AlphaSpriteEffect",
                            Justification = "The shader effects are required in byte array form to be used, therefore it makes sense to return them as an array. A property is used here so this class feels similar to a typical *.resx generated class when used.")]
+
+[assembly: SuppressMessage("Performance", 
+                           "CA1819:Properties should not return arrays", 
+                           Scope = "member", 
+                           Target = "~P:BadEcho.Game.Effects.Shaders.DistanceFieldFontEffect",
+                           Justification = "The shader effects are required in byte array form to be used, therefore it makes sense to return them as an array. A property is used here so this class feels similar to a typical *.resx generated class when used.")]

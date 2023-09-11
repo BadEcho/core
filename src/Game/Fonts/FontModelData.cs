@@ -111,19 +111,19 @@ public sealed class FontModelData : QuadModelData<VertexPositionColorTexture>
         Vector2 positionBottom = verticalAdvance * planeBounds.Bottom;
 
         var vertexTopLeft
-            = new VertexPositionColorTexture(new Vector3(cursor + positionTop + positionLeft, 1),
+            = new VertexPositionColorTexture(new Vector3(cursor + positionTop + positionLeft, 0),
                                              _color,
                                              new Vector2(texelLeft, texelTop));
         var vertexTopRight
-            = new VertexPositionColorTexture(new Vector3(cursor + positionTop + positionRight, 1),
+            = new VertexPositionColorTexture(new Vector3(cursor + positionTop + positionRight, 0),
                                              _color,
                                              new Vector2(texelRight, texelTop));
         var vertexBottomLeft
-            = new VertexPositionColorTexture(new Vector3(cursor + positionBottom + positionLeft, 1),
+            = new VertexPositionColorTexture(new Vector3(cursor + positionBottom + positionLeft, 0),
                                              _color,
                                              new Vector2(texelLeft, texelBottom));
         var vertexBottomRight
-            = new VertexPositionColorTexture(new Vector3(cursor + positionBottom + positionRight, 1),
+            = new VertexPositionColorTexture(new Vector3(cursor + positionBottom + positionRight, 0),
                                              _color,
                                              new Vector2(texelRight, texelBottom));
 

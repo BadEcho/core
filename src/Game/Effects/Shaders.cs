@@ -33,6 +33,12 @@ public static class Shaders
     public static byte[] AlphaSpriteEffect
         => GetStreamBytes(nameof(AlphaSpriteEffect));
 
+    /// <summary>
+    /// Gets the data for an effect required to correctly render multi-channel signed distance field font text.
+    /// </summary>
+    public static byte[] DistanceFieldFontEffect
+        => GetStreamBytes(nameof(DistanceFieldFontEffect));
+    
     private static byte[] GetStreamBytes(string name)
     {
         UnmanagedMemoryStream stream
