@@ -87,8 +87,10 @@ public sealed class DistanceFieldFontProcessor : ContentProcessor<DistanceFieldF
         output.AddReference<Texture2DContent>(context,
                                               atlasPath,
                                               new OpaqueDataDictionary
-                                              {
+                                              {   // The default color key is similar to the colors used for distance fields.
                                                   { nameof(TextureProcessor.ColorKeyEnabled), false },
+                                                  // Our atlas image is already in a premultiplied format.
+                                                  // Formatting it again would corrupt it.
                                                   { nameof(TextureProcessor.PremultiplyAlpha), false}
                                               });
         return output;
