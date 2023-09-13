@@ -47,6 +47,22 @@ struct VSOutput
     float2 TexCoord : TEXCOORD0;
 };
 
+// Returns the channel value that is in the middle of a data set consisting of the provided color's RGB values.
+float Median(float3 color)
+{
+    return max(min(color.r, color.g), min(max(color.r, color.g), color.b));
+}
+
+// Normalizes the provided vector, safely.
+float2 SafeNormalize(float2 v)
+{
+    float vLength = length(v);
+
+    vLength = (vLength > 0.0) ? 1.0 / vLength : 0.0;
+
+    return v * vLength;
+}
+
 // A fairly standard vertex shader; most of the work is done in the pixel shader.
 VSOutput DistanceVertexShader(in VSInput input)
 {
@@ -59,13 +75,14 @@ VSOutput DistanceVertexShader(in VSInput input)
     return output;
 }
 
+// A pixel shader to use for normal- and large-sized text.
 float4 DistancePixelShader(VSOutput input) : COLOR
 {   // Divide the distance field range by the atlas size to give us a distance range applicable to texels.
     float2 texelDistanceRange = DistanceRange / AtlasSize;
     float3 sample = tex2D(AtlasSampler, input.TexCoord).rgb;
 
     // We take the middle value in the data set and shift its range to -0.5 to 0.5, centering it at zero.
-    float signedDistance = max(min(sample.r, sample.g), min(max(sample.r, sample.g), sample.b)) - 0.5f;
+    float signedDistance = Median(sample)- 0.5f;
 
     // Calculate the relation between the texel distance range and the changes across the input coordinates, and apply this to our
     // signed distance.
@@ -76,11 +93,66 @@ float4 DistancePixelShader(VSOutput input) : COLOR
     return input.Color * opacity;
 }
 
+// A pixel shader to use for small-sized text.
+float4 SmallDistancePixelShader(VSOutput input) : COLOR
+{   // A downside of SDF fonts is that small font sizes will experience a degradation in quality when working from the same, large
+    // resolution font atlas that all other sizes are working from. Because creating a separate font atlas specifically for small font sizes
+    // defeats the purpose of MSDF altogether, a special shader needs to be provided for when the font size is small enough.
+
+    // This shader takes inspiration from the concepts discussed by James M. Lan Verth in his article on the topic:
+    // http://www.essentialmath.com/blog/?p=151&cpage=1
+    // As well as the implementation of said concepts by the Cinder-SdfText project (https://github.com/chaoticbob/Cinder-SdfText).
+    float2 pixelCoord = input.TexCoord * AtlasSize;
+
+    // A signed distance field is a texture that stores distance values rather than colors. A negative distance means we're inside the shape, zero
+    // means we're on the border, and positive values indicate that we're outside the shape. The main job of this shader is to approximate pixel coverage based
+    // on our distance from the edge. If a shape's edge hits a pixel's center exactly, then we would have a distance of 0, with 50% coverage.
+    // The inverse of the pixel coverage can be used as an opacity value that can be multiplied against our color.
+
+    // The distance from the center of a pixel to one of its corners is the square root of 2 divided by 2 (the length of a diagonal is the length of a
+    // side (which is 1) multiplied by the square root of 2, dividing by 2 gives us the length from the center), or 0.7071. This is our maximum distance from pixel center.
+    const float distanceLimit = sqrt(2.0f) / 2.0f;  // If we use this value to define the min and max range in a smoothstep function, while using a distance value as
+    const float thickness = 0.125f;                 // the value to be interpolated, this will return the appropriate amount of pixel coverage.
+													// This only works, however, if the size of the geometry we're rendering is the same size as the distance field's rectangle
+													// in the source texture. This is not the case with our signed distance fonts.
+
+
+    // Multiplying our distance limit by the partial derivative of the non-normalized texture pixel coords (pixelCoord) will provide us with uniform scaling.
+    // In order to account for non-uniform scaling and perspective, however, we need to scale our distance limit based on how a vector normal to the outline curve
+    // is transformed (like with ellipses). We do this by using of a normalized gradient vector (normalized to approximation errors when near the edge of the shape)
+    // which we multiply by a Jacobian matrix containing our coordinate's first-order partial derivatives.
+    float2 Jdx = ddx(pixelCoord);
+    float2 Jdy = ddy(pixelCoord);
+    float3 sample = tex2D(AtlasSampler, input.TexCoord).rgb;
+    float signedDistance = Median(sample) - 0.5f;
+    float2 gradientDistance = SafeNormalize(float2(ddx(signedDistance), ddy(signedDistance)));
+    float2 gradient = float2(gradientDistance.x * Jdx.x + gradientDistance.y * Jdy.x, gradientDistance.x * Jdx.y + gradientDistance.y * Jdy.y);
+
+    float scaledDistanceLimit = min(thickness * distanceLimit * length(gradient), 0.5f);
+
+    float opacity = smoothstep(-scaledDistanceLimit, scaledDistanceLimit, signedDistance);
+    float4 color;
+
+    color.a = pow(abs(input.Color.a * opacity), 1.0f / 2.2f);   // Correct for gamma, 2.2 is a valid gamma for most LCD monitors.
+    color.rgb = input.Color.rgb * color.a;
+
+    return color;
+}
+
 technique DistanceFieldFont
 {
     pass
     {
         VertexShader = compile VS_MODEL DistanceVertexShader();
         PixelShader = compile PS_MODEL DistancePixelShader();
+    }
+}
+
+technique SmallDistanceFieldFont
+{
+    pass
+    {
+        VertexShader = compile VS_MODEL DistanceVertexShader();
+        PixelShader = compile PS_MODEL SmallDistancePixelShader();
     }
 }

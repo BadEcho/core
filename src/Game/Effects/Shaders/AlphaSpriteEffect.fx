@@ -20,9 +20,9 @@ END_PARAMETERS
     
 struct VSOutput
 {
-    float4 position : SV_Position;
-    float4 color    : COLOR0;
-    float2 texCoord : TEXCOORD0;
+    float4 Position : SV_Position;
+    float4 Color    : COLOR0;
+    float2 TexCoord : TEXCOORD0;
 };
 
 VSOutput SpriteVertexShader(    float4 position : POSITION0, 
@@ -31,18 +31,18 @@ VSOutput SpriteVertexShader(    float4 position : POSITION0,
 {
     VSOutput output;
     
-    output.position = mul(position, MatrixTransform);
-    output.color = color;
-    output.color.a = Alpha;
-    output.color.rgb *= Alpha;    
-    output.texCoord = texCoord;
+    output.Position = mul(position, MatrixTransform);
+    output.Color = color;
+    output.Color.a = Alpha;
+    output.Color.rgb *= Alpha;    
+    output.TexCoord = texCoord;
     
     return output;
 }
 
 float4 SpritePixelShader(VSOutput input) : SV_Target0
 {
-    return SAMPLE(Texture, input.texCoord) * input.color;
+    return SAMPLE(Texture, input.TexCoord) * input.Color;
 }
 
 technique SpriteBatch
