@@ -27,7 +27,6 @@ public sealed class DistanceFieldFont
     private readonly GraphicsDevice _device;
     private readonly Dictionary<char, FontGlyph> _glyphs;
     private readonly Dictionary<CharacterPair, KerningPair> _kernings;
-    private readonly List<StaticModel> _models = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DistanceFieldFont"/> class.
@@ -69,52 +68,23 @@ public sealed class DistanceFieldFont
     { get; }
 
     /// <summary>
-    /// Draws modeled text using this font to the screen.
-    /// </summary>
-    public void Draw()
-    {
-        var projection =
-            Matrix.CreateOrthographicOffCenter(0, _device.Viewport.Width, _device.Viewport.Height, 0, 0, -1);
-        
-        var effect = new DistanceFieldFontEffect(_device)
-                     {
-                         WorldViewProjection = projection,
-                         AtlasSize = new Vector2(Characteristics.Width, Characteristics.Height),
-                         DistanceRange = Characteristics.DistanceRange,
-                         Texture = Atlas
-                     };
-
-        foreach (var model in _models)
-        {
-            model.Draw(effect);
-        }
-    }
-
-    /// <summary>
     /// Generates a model required to render the specified text when it is being submitted for drawing.
     /// </summary>
     /// <param name="text">The text to prepare a model for.</param>
     /// <param name="position">The position of the top-left corner of the text.</param>
     /// <param name="color">The color of the text.</param>
     /// <param name="scale">The amount of scaling to apply to the text.</param>
-    public void AddModel(string text, Vector2 position, Color color, float scale)
+    public IModelRenderer AddModel(string text, Vector2 position, Color color, float scale)
     {
-        if (string.IsNullOrEmpty(text))
-            return;
-
         var fontData = new FontModelData(this, color);
 
-        fontData.AddText(text, position, scale);
-
-        _models.Add(new StaticModel(_device, Atlas, fontData));
+        if (!string.IsNullOrEmpty(text)) 
+            fontData.AddText(text, position, scale);
+        
+        var model = new StaticModel(_device, Atlas, fontData);
+        return new DistanceFieldFontRenderer(this, model, scale <= 25.0f);
     }
 
-    /// <summary>
-    /// Clears previously generated font models.
-    /// </summary>
-    public void ClearModels()
-        => _models.Clear();
-    
     /// <summary>
     /// Retrieves the typographic representation of the specified unicode character from this font.
     /// </summary>
@@ -147,5 +117,55 @@ public sealed class DistanceFieldFont
             advance += advanceDirection * kerning.Advance * scale;
 
         return advance;
+    }
+
+    /// <summary>
+    /// Provides a renderer of signed distance field font models using shaders appropriate to the size of the text.
+    /// </summary>
+    private sealed class DistanceFieldFontRenderer : IModelRenderer
+    {
+        private readonly DistanceFieldFont _font;
+        private readonly StaticModel _model;
+        private readonly bool _useSmallShader;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DistanceFieldFontRenderer"/> class.
+        /// </summary>
+        /// <param name="font">The multi-channel signed distance font to render.</param>
+        /// <param name="model">A generated model of static font data for rendering.</param>
+        /// <param name="useSmallShader">Value indicating whether a shader optimized for rendering small text is used.</param>
+        public DistanceFieldFontRenderer(DistanceFieldFont font, StaticModel model, bool useSmallShader)
+        {
+            _font = font;
+            _model = model;
+            _useSmallShader = useSmallShader;
+        }
+
+        /// <inheritdoc/>
+        public void Draw()
+            => Draw(Matrix.Identity);
+
+        /// <inheritdoc/>
+        public void Draw(Matrix view)
+        {
+            GraphicsDevice device = _font._device;
+
+            var projection =
+                Matrix.CreateOrthographicOffCenter(0, device.Viewport.Width, device.Viewport.Height, 0, 0, -1);
+
+            var effect = new DistanceFieldFontEffect(device)
+                         {
+                             WorldViewProjection = projection,
+                             AtlasSize = new Vector2(_font.Characteristics.Width, _font.Characteristics.Height),
+                             DistanceRange = _font.Characteristics.DistanceRange,
+                             Texture = _font.Atlas
+                         };
+
+            effect.CurrentTechnique = _useSmallShader
+                ? effect.Techniques[DistanceFieldFontEffect.SmallTextTechnique]
+                : effect.Techniques[DistanceFieldFontEffect.LargeTextTechnique];
+
+            _model.Draw(effect);
+        }
     }
 }

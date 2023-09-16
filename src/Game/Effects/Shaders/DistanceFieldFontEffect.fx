@@ -112,7 +112,7 @@ float4 SmallDistancePixelShader(VSOutput input) : COLOR
     // The distance from the center of a pixel to one of its corners is the square root of 2 divided by 2 (the length of a diagonal is the length of a
     // side (which is 1) multiplied by the square root of 2, dividing by 2 gives us the length from the center), or 0.7071. This is our maximum distance from pixel center.
     const float distanceLimit = sqrt(2.0f) / 2.0f;  // If we use this value to define the min and max range in a smoothstep function, while using a distance value as
-    const float thickness = 0.125f;                 // the value to be interpolated, this will return the appropriate amount of pixel coverage.
+    const float thickness = 1.0f / DistanceRange;   // the value to be interpolated, this will return the appropriate amount of pixel coverage.
 													// This only works, however, if the size of the geometry we're rendering is the same size as the distance field's rectangle
 													// in the source texture. This is not the case with our signed distance fonts.
 
