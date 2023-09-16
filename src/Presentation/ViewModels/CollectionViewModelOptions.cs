@@ -98,6 +98,13 @@ public sealed class CollectionViewModelOptions
     { get; set; }
 
     /// <summary>
+    /// Gets or sets a value indicating if existing children that lack representation in a provided sequence of data being bound should be removed
+    /// from the child view model collection.
+    /// </summary>
+    public bool RemoveChildrenMissingFromBatch
+    { get; set; }
+
+    /// <summary>
     /// Gets or sets the method meant to handle changes in either the children collection's composition or property values of items
     /// belonging to said collection.
     /// </summary>

@@ -349,11 +349,13 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
     {
         List<TModel> newChildrenModels;
         List<TModel> existingChildrenModels;
+        List<TModel> missingChildrenModels;
 
         lock (_processedModelsLock)
         {
             newChildrenModels = models.Except(_processedModels).ToList();
             existingChildrenModels = models.Intersect(_processedModels).ToList();
+            missingChildrenModels = _processedModels.Except(models).ToList();
 
             _processedModels.AddRange(newChildrenModels);
         }
@@ -370,6 +372,11 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
             RequestEnforceCapacity();
         }
 
+        if (_options.RemoveChildrenMissingFromBatch)
+            Unbind(missingChildrenModels);
+
+        // This is merely done to add the new child view models to the engine's bound data list.
+        // The change strategy has already taken care of adding it to the collection of children view models.
         foreach (TChildViewModel createdChild in createdChildren)
         {
             Bind(createdChild);
