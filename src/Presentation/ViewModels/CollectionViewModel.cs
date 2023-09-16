@@ -93,10 +93,7 @@ public abstract class CollectionViewModel<TModel, TChildViewModel> : ViewModel<T
 
     /// <inheritdoc/>
     protected override bool OnBatchBinding(IEnumerable<TModel> models)
-    {
-        if (base.OnBatchBinding(models))
-            return true;
-
+    {   
         _engine.Bind(models);
 
         return true;
@@ -109,9 +106,6 @@ public abstract class CollectionViewModel<TModel, TChildViewModel> : ViewModel<T
     /// <inheritdoc/>
     protected override bool OnBatchUnbound(IEnumerable<TModel> models)
     {
-        if (base.OnBatchUnbound(models))
-            return true;
-
         _engine.Unbind(models);
 
         return true;
