@@ -36,14 +36,16 @@ sampler AtlasSampler : register(s0) = sampler_state
 struct VSInput
 {
     float4 Position : POSITION0;
-    float4 Color : COLOR0;
+    float4 FillColor : COLOR0;
+    float4 StrokeColor : COLOR1;
     float2 TexCoord : TEXCOORD0;
 };
 
 struct VSOutput
 {
     float4 Position : SV_POSITION;
-    float4 Color : COLOR0;
+    float4 FillColor : COLOR0;
+    float4 StrokeColor : COLOR1;
     float2 TexCoord : TEXCOORD0;
 };
 
@@ -69,31 +71,79 @@ VSOutput DistanceVertexShader(in VSInput input)
     VSOutput output;
 
     output.Position = mul(input.Position, WorldViewProjection);
-    output.Color = input.Color;
+    output.FillColor = input.FillColor;
+    output.StrokeColor = input.StrokeColor;
     output.TexCoord = input.TexCoord;
 
     return output;
 }
 
-// A pixel shader to use for normal- and large-sized text.
+// A pixel shader to use for large-sized text.
 float4 DistancePixelShader(VSOutput input) : COLOR
 {   // Divide the distance field range by the atlas size to give us a distance range applicable to texels.
     float2 texelDistanceRange = DistanceRange / AtlasSize;
     float3 sample = tex2D(AtlasSampler, input.TexCoord).rgb;
-
-    // We take the middle value in the data set and shift its range to -0.5 to 0.5, centering it at zero.
-    float signedDistance = Median(sample)- 0.5f;
+        
+    // Vertex color values go from 0.0 to 1.0. The center of a pixel is located at (0, 0), however the edges are located at +/- 0.5.
+    // We subtract 0.5 to align with the pixels.
+    float signedDistance = Median(sample) - 0.5f;
 
     // Calculate the relation between the texel distance range and the changes across the input coordinates, and apply this to our
-    // signed distance.
-    signedDistance = signedDistance * dot(texelDistanceRange, 0.5f / fwidth(input.TexCoord));
+    // signed distance. This converts the distance to screen pixels.
+    signedDistance *= dot(texelDistanceRange, 0.5f / fwidth(input.TexCoord));
 
+    // Align the distance value back to a normal vertex color value range by adding 0.5 back to it.
     float opacity = clamp(signedDistance + 0.5f, 0.0f, 1.0f);
 
-    return input.Color * opacity;
+    return input.FillColor * opacity;
 }
 
-// A pixel shader to use for small-sized text.
+// A pixel shader to use for text outlines.
+float4 StrokeOnlyDistancePixelShader(VSOutput input) : COLOR
+{   // Refer to DistancePixelShader for documentation on code common to both shaders.
+    float2 texelDistanceRange = DistanceRange / AtlasSize;
+    float3 sample = tex2D(AtlasSampler, input.TexCoord).rgb;
+    
+    const float strokeThickness = 0.1875f;
+    float strokeDistance = -(abs(Median(sample) - 0.25f - strokeThickness) - strokeThickness);
+
+    // We now convert the signed stroke distance to screen pixels.
+    strokeDistance *= dot(texelDistanceRange, 0.5f / fwidth(input.TexCoord));
+    
+    float strokeOpacity = clamp(strokeDistance + 0.5f, 0.0f, 1.0f);
+    
+    return input.StrokeColor * strokeOpacity;
+}
+
+// A pixel shader to use for large-sized outlined text.
+float4 StrokedDistancePixelShader(VSOutput input) : COLOR
+{   // Refer to DistancePixelShader for documentation on the code common to both shaders.
+    float2 texelDistanceRange = DistanceRange / AtlasSize;
+    float3 sample = tex2D(AtlasSampler, input.TexCoord).rgb;
+
+    float medianSample = Median(sample);
+    float signedDistance = medianSample - 0.5f;
+
+    float distanceInputRelation = dot(texelDistanceRange, 0.5f / fwidth(input.TexCoord));
+
+    signedDistance *= distanceInputRelation;
+
+    const float strokeThickness = 0.1875f;
+    // We want to fill in the stroke based on proximity to the edge, as opposed to the center of the glyph, and we only want the outline itself to be so thick.
+    // We align the sampled texture data such that, unlike the fill color, positive values will result in an outline along the edge.
+    float strokeDistance = -(abs(medianSample - 0.25f - strokeThickness) - strokeThickness);
+
+    // We now convert the signed stroke distance to screen pixels.
+    strokeDistance *= distanceInputRelation;
+    
+    float opacity = clamp(signedDistance + 0.5f, 0.0f, 1.0f);
+    float strokeOpacity = clamp(strokeDistance + 0.5f, 0.0f, 1.0f);
+
+    // Blend the colors together with some linear interpolation.
+    return lerp(input.StrokeColor, input.FillColor, opacity) * max(opacity, strokeOpacity);
+}
+
+// A pixel shader to use for small- and normal-sized text.
 float4 SmallDistancePixelShader(VSOutput input) : COLOR
 {   // A downside of SDF fonts is that small font sizes will experience a degradation in quality when working from the same, large
     // resolution font atlas that all other sizes are working from. Because creating a separate font atlas specifically for small font sizes
@@ -125,16 +175,16 @@ float4 SmallDistancePixelShader(VSOutput input) : COLOR
     float2 Jdy = ddy(pixelCoord);
     float3 sample = tex2D(AtlasSampler, input.TexCoord).rgb;
     float signedDistance = Median(sample) - 0.5f;
+
     float2 gradientDistance = SafeNormalize(float2(ddx(signedDistance), ddy(signedDistance)));
     float2 gradient = float2(gradientDistance.x * Jdx.x + gradientDistance.y * Jdy.x, gradientDistance.x * Jdx.y + gradientDistance.y * Jdy.y);
-
     float scaledDistanceLimit = min(thickness * distanceLimit * length(gradient), 0.5f);
 
     float opacity = smoothstep(-scaledDistanceLimit, scaledDistanceLimit, signedDistance);
     float4 color;
 
-    color.a = pow(abs(input.Color.a * opacity), 1.0f / 2.2f);   // Correct for gamma, 2.2 is a valid gamma for most LCD monitors.
-    color.rgb = input.Color.rgb * color.a;
+    color.a = pow(abs(input.FillColor.a * opacity), 1.0f / 2.2f);   // Correct for gamma, 2.2 is a valid gamma for most LCD monitors.
+    color.rgb = input.FillColor.rgb * color.a;
 
     return color;
 }
@@ -151,6 +201,29 @@ technique DistanceFieldFont
 technique SmallDistanceFieldFont
 {
     pass
+    {
+        VertexShader = compile VS_MODEL DistanceVertexShader();
+        PixelShader = compile PS_MODEL SmallDistancePixelShader();
+    }
+}
+
+technique StrokedDistanceFieldFont
+{
+    pass
+    {
+        VertexShader = compile VS_MODEL DistanceVertexShader();
+        PixelShader = compile PS_MODEL StrokedDistancePixelShader();
+    }
+}
+
+technique StrokedSmallDistanceFieldFont
+{
+    pass P0
+    {
+        VertexShader = compile VS_MODEL DistanceVertexShader();
+        PixelShader = compile PS_MODEL StrokeOnlyDistancePixelShader();
+    }
+    pass P1
     {
         VertexShader = compile VS_MODEL DistanceVertexShader();
         PixelShader = compile PS_MODEL SmallDistancePixelShader();

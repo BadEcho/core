@@ -12,31 +12,50 @@
 //-----------------------------------------------------------------------
 
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.Fonts;
 
 /// <summary>
 /// Provides the vertex data required to render a 3D model of flat signed distance field font text.
 /// </summary>
-public sealed class FontModelData : QuadModelData<VertexPositionColorTexture>
+public sealed class FontModelData : QuadModelData<VertexPositionOutlinedColorTexture>
 {
     private readonly DistanceFieldFont _font;
-    private readonly Color _color;
+    private readonly Color _fillColor;
+    private readonly Color _strokeColor;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FontModelData"/> class.
     /// </summary>
     /// <param name="font">The multi-channel signed distance font to vertex data for.</param>
     /// <param name="color">The color of the text.</param>
-    public FontModelData(DistanceFieldFont font,  Color color)
-        : base(VertexPositionColorTexture.VertexDeclaration)
+    public FontModelData(DistanceFieldFont font, Color color)
+        : this(font, color, default)
+    {
+        FillOnly = true;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FontModelData"/> class.
+    /// </summary>
+    /// <param name="font">The multi-channel signed distance font to vertex data for.</param>
+    /// <param name="fillColor">The inner color of the text.</param>
+    /// <param name="strokeColor">The outer color of the text.</param>
+    public FontModelData(DistanceFieldFont font, Color fillColor, Color strokeColor)
+        : base(VertexPositionOutlinedColorTexture.VertexDeclaration)
     {
         Require.NotNull(font, nameof(font));
 
         _font = font;
-        _color = color;
+        _fillColor = fillColor;
+        _strokeColor = strokeColor;
     }
+
+    /// <summary>
+    /// Gets a value indicating if the coloring of the text consists of only a single fill color, without any outlining.
+    /// </summary>
+    public bool FillOnly
+    { get; }
 
     /// <summary>
     /// Adds 3D modeling data for quadrilateral surfaces that can be mapped to the specified text using glyphs found in a font
@@ -47,7 +66,7 @@ public sealed class FontModelData : QuadModelData<VertexPositionColorTexture>
     /// <param name="scale">The amount of scaling to apply to the text.</param>
     /// <remarks>
     /// <para>
-    /// In order to model a glyph, we create <see cref="VertexPositionColorTexture"/> values whose texture coordinates are
+    /// In order to model a glyph, we create <see cref="VertexPositionOutlinedColorTexture"/> values whose texture coordinates are
     /// based on the generated atlas coordinates for the glyph. These coordinates must be normalized such that they are in a range
     /// from 0 to 1 where (0, 0) is the top-left of the texture and (1, 1) is the bottom-right of the texture.
     /// </para>
@@ -111,21 +130,25 @@ public sealed class FontModelData : QuadModelData<VertexPositionColorTexture>
         Vector2 positionBottom = verticalAdvance * planeBounds.Bottom;
 
         var vertexTopLeft
-            = new VertexPositionColorTexture(new Vector3(cursor + positionTop + positionLeft, 0),
-                                             _color,
-                                             new Vector2(texelLeft, texelTop));
+            = new VertexPositionOutlinedColorTexture(new Vector3(cursor + positionTop + positionLeft, 0),
+                                                     _fillColor,
+                                                     _strokeColor,
+                                                     new Vector2(texelLeft, texelTop));
         var vertexTopRight
-            = new VertexPositionColorTexture(new Vector3(cursor + positionTop + positionRight, 0),
-                                             _color,
-                                             new Vector2(texelRight, texelTop));
+            = new VertexPositionOutlinedColorTexture(new Vector3(cursor + positionTop + positionRight, 0),
+                                                     _fillColor,
+                                                     _strokeColor,
+                                                     new Vector2(texelRight, texelTop));
         var vertexBottomLeft
-            = new VertexPositionColorTexture(new Vector3(cursor + positionBottom + positionLeft, 0),
-                                             _color,
-                                             new Vector2(texelLeft, texelBottom));
+            = new VertexPositionOutlinedColorTexture(new Vector3(cursor + positionBottom + positionLeft, 0),
+                                                     _fillColor,
+                                                     _strokeColor,
+                                                     new Vector2(texelLeft, texelBottom));
         var vertexBottomRight
-            = new VertexPositionColorTexture(new Vector3(cursor + positionBottom + positionRight, 0),
-                                             _color,
-                                             new Vector2(texelRight, texelBottom));
+            = new VertexPositionOutlinedColorTexture(new Vector3(cursor + positionBottom + positionRight, 0),
+                                                     _fillColor,
+                                                     _strokeColor,
+                                                     new Vector2(texelRight, texelBottom));
 
         AddVertices(vertexTopLeft, vertexTopRight, vertexBottomLeft, vertexBottomRight);
     }

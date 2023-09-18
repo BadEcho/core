@@ -74,15 +74,28 @@ public sealed class DistanceFieldFont
     /// <param name="position">The position of the top-left corner of the text.</param>
     /// <param name="color">The color of the text.</param>
     /// <param name="scale">The amount of scaling to apply to the text.</param>
+    /// <returns>A <see cref="IModelRenderer"/> instance that will render the model.</returns>
     public IModelRenderer AddModel(string text, Vector2 position, Color color, float scale)
     {
         var fontData = new FontModelData(this, color);
 
-        if (!string.IsNullOrEmpty(text)) 
-            fontData.AddText(text, position, scale);
-        
-        var model = new StaticModel(_device, Atlas, fontData);
-        return new DistanceFieldFontRenderer(this, model, scale <= 25.0f);
+        return AddModel(fontData, text, position, scale);
+    }
+
+    /// <summary>
+    /// Generates a model required to render the specified text when it is being submitted for drawing.
+    /// </summary>
+    /// <param name="text">The text to prepare a model for.</param>
+    /// <param name="position">The position of the top-left corner of the text.</param>
+    /// <param name="fillColor">The fill color of the text.</param>
+    /// <param name="strokeColor">The stroke color of the text.</param>
+    /// <param name="scale">The amount of scaling to apply to the text.</param>
+    /// <returns>A <see cref="IModelRenderer"/> instance that will render the model.</returns>
+    public IModelRenderer AddModel(string text, Vector2 position, Color fillColor, Color strokeColor, float scale)
+    {
+        var fontData = new FontModelData(this, fillColor, strokeColor);
+
+        return AddModel(fontData, text, position, scale);
     }
 
     /// <summary>
@@ -118,6 +131,17 @@ public sealed class DistanceFieldFont
 
         return advance;
     }
+    
+    private IModelRenderer AddModel(FontModelData fontData, string text, Vector2 position, float scale)
+    {
+        if (!string.IsNullOrEmpty(text))
+            fontData.AddText(text, position, scale);
+
+        var model = new StaticModel(_device, Atlas, fontData);
+        bool useSmallShader = !fontData.FillOnly && scale <= 14.0f || fontData.FillOnly && scale <= 25.0f;
+
+        return new DistanceFieldFontRenderer(this, model, useSmallShader, !fontData.FillOnly);
+    }
 
     /// <summary>
     /// Provides a renderer of signed distance field font models using shaders appropriate to the size of the text.
@@ -127,6 +151,7 @@ public sealed class DistanceFieldFont
         private readonly DistanceFieldFont _font;
         private readonly StaticModel _model;
         private readonly bool _useSmallShader;
+        private readonly bool _useStrokedShader;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DistanceFieldFontRenderer"/> class.
@@ -134,11 +159,13 @@ public sealed class DistanceFieldFont
         /// <param name="font">The multi-channel signed distance font to render.</param>
         /// <param name="model">A generated model of static font data for rendering.</param>
         /// <param name="useSmallShader">Value indicating whether a shader optimized for rendering small text is used.</param>
-        public DistanceFieldFontRenderer(DistanceFieldFont font, StaticModel model, bool useSmallShader)
+        /// <param name="useStrokedShader">Value indicating whether a shader that applies an outline is used.</param>
+        public DistanceFieldFontRenderer(DistanceFieldFont font, StaticModel model, bool useSmallShader, bool useStrokedShader)
         {
             _font = font;
             _model = model;
             _useSmallShader = useSmallShader;
+            _useStrokedShader = useStrokedShader;
         }
 
         /// <inheritdoc/>
@@ -161,11 +188,18 @@ public sealed class DistanceFieldFont
                              Texture = _font.Atlas
                          };
 
-            effect.CurrentTechnique = _useSmallShader
-                ? effect.Techniques[DistanceFieldFontEffect.SmallTextTechnique]
-                : effect.Techniques[DistanceFieldFontEffect.LargeTextTechnique];
+            effect.CurrentTechnique = GetTechnique(effect);
 
             _model.Draw(effect);
         }
+
+        private EffectTechnique GetTechnique(Effect effect) => (_useSmallShader, _useStrokedShader)
+            switch
+            {
+                (false, false) => effect.Techniques[DistanceFieldFontEffect.LargeTextTechnique],
+                (true, false) => effect.Techniques[DistanceFieldFontEffect.SmallTextTechnique],
+                (false, true) => effect.Techniques[DistanceFieldFontEffect.LargeStrokedTextTechnique],
+                (true, true) => effect.Techniques[DistanceFieldFontEffect.SmallStrokedTextTechnique]
+            };
     }
 }

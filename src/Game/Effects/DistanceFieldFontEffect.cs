@@ -60,6 +60,18 @@ public sealed class DistanceFieldFontEffect : Effect, ITextureEffect
         => "SmallDistanceFieldFont";
 
     /// <summary>
+    /// Gets the name of the technique designed to render outlined larger text optimally.
+    /// </summary>
+    public static string LargeStrokedTextTechnique
+        => "StrokedDistanceFieldFont";
+
+    /// <summary>
+    /// Gets the name of the technique designed to render outlined smaller text optimally.
+    /// </summary>
+    public static string SmallStrokedTextTechnique
+        => "StrokedSmallDistanceFieldFont";
+
+    /// <summary>
     /// Gets or sets the world, view, and projection transformation matrix.
     /// </summary>
     public Matrix WorldViewProjection
