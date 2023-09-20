@@ -76,10 +76,30 @@ public sealed class DistanceFieldFont
     /// <param name="scale">The amount of scaling to apply to the text.</param>
     /// <returns>A <see cref="IModelRenderer"/> instance that will render the model.</returns>
     public IModelRenderer AddModel(string text, Vector2 position, Color color, float scale)
+        => AddModel(text, position, color, scale, false);
+
+    /// <summary>
+    /// Generates a model required to render the specified text when it is being submitted for drawing.
+    /// </summary>
+    /// <param name="text">The text to prepare a model for.</param>
+    /// <param name="position">The position of the top-left corner of the text.</param>
+    /// <param name="color">The color of the text.</param>
+    /// <param name="scale">The amount of scaling to apply to the text.</param>
+    /// <param name="optimizeForSmallText">
+    /// Value indicating if the text should be rendered using a shader optimized for smaller text, the use of which
+    /// helps to avoid the artifacting normally observed when attempting to render signed distance fonts at small scale.
+    /// </param>
+    /// <returns>A <see cref="IModelRenderer"/> instance that will render the model.</returns>
+    /// <remarks>
+    /// If text being rendered with the default shader exhibit artifacts, it is recommended to pass <c>true</c> for
+    /// <c>optimizeForSmallText</c>. The small-optimized shader is also able to render larger text, however the additional
+    /// thickness applied in order to account for artifacting will also become more noticeable as the scale increases.
+    /// </remarks>
+    public IModelRenderer AddModel(string text, Vector2 position, Color color, float scale, bool optimizeForSmallText)
     {
         var fontData = new FontModelData(this, color);
 
-        return AddModel(fontData, text, position, scale);
+        return AddModel(fontData, text, position, scale, optimizeForSmallText);
     }
 
     /// <summary>
@@ -92,10 +112,36 @@ public sealed class DistanceFieldFont
     /// <param name="scale">The amount of scaling to apply to the text.</param>
     /// <returns>A <see cref="IModelRenderer"/> instance that will render the model.</returns>
     public IModelRenderer AddModel(string text, Vector2 position, Color fillColor, Color strokeColor, float scale)
+        => AddModel(text, position, fillColor, strokeColor, scale, false);
+
+    /// <summary>
+    /// Generates a model required to render the specified text when it is being submitted for drawing.
+    /// </summary>
+    /// <param name="text">The text to prepare a model for.</param>
+    /// <param name="position">The position of the top-left corner of the text.</param>
+    /// <param name="fillColor">The fill color of the text.</param>
+    /// <param name="strokeColor">The stroke color of the text.</param>
+    /// <param name="scale">The amount of scaling to apply to the text.</param>
+    /// <param name="optimizeForSmallText">
+    /// Value indicating if the text should be rendered using a shader optimized for smaller text, the use of which
+    /// helps to avoid the artifacting normally observed when attempting to render signed distance fonts at small scale.
+    /// </param>
+    /// <returns>A <see cref="IModelRenderer"/> instance that will render the model.</returns>
+    /// <remarks>
+    /// If text being rendered with the default shader exhibit artifacts, it is recommended to pass <c>true</c> for
+    /// <c>optimizeForSmallText</c>. The small-optimized shader is also able to render larger text, however the additional
+    /// thickness applied in order to account for artifacting will also become more noticeable as the scale increases.
+    /// </remarks>
+    public IModelRenderer AddModel(string text, 
+                                   Vector2 position, 
+                                   Color fillColor, 
+                                   Color strokeColor, 
+                                   float scale, 
+                                   bool optimizeForSmallText)
     {
         var fontData = new FontModelData(this, fillColor, strokeColor);
 
-        return AddModel(fontData, text, position, scale);
+        return AddModel(fontData, text, position, scale, optimizeForSmallText);
     }
 
     /// <summary>
@@ -131,16 +177,19 @@ public sealed class DistanceFieldFont
 
         return advance;
     }
-    
-    private IModelRenderer AddModel(FontModelData fontData, string text, Vector2 position, float scale)
+
+    private IModelRenderer AddModel(FontModelData fontData, 
+                                    string text, 
+                                    Vector2 position, 
+                                    float scale,
+                                    bool optimizeForSmallText)
     {
         if (!string.IsNullOrEmpty(text))
             fontData.AddText(text, position, scale);
 
         var model = new StaticModel(_device, Atlas, fontData);
-        bool useSmallShader = !fontData.FillOnly && scale <= 14.0f || fontData.FillOnly && scale <= 25.0f;
-
-        return new DistanceFieldFontRenderer(this, model, useSmallShader, !fontData.FillOnly);
+        
+        return new DistanceFieldFontRenderer(this, model, optimizeForSmallText, !fontData.FillOnly);
     }
 
     /// <summary>
