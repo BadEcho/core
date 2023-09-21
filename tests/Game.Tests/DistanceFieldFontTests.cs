@@ -66,41 +66,49 @@ public class DistanceFieldFontTests : IClassFixture<ContentManagerFixture>
         modelData.AddText("Hi", new Vector2(20, 20), 32);
 
         var vertexBuffer = new VertexBuffer(_device,
-                                            VertexPositionColorTexture.VertexDeclaration,
+                                            VertexPositionOutlinedColorTexture.VertexDeclaration,
                                             8,
                                             BufferUsage.None);
 
         modelData.LoadVertices(vertexBuffer);
 
-        VertexPositionColorTexture[] vertices = new VertexPositionColorTexture[8];
+        VertexPositionOutlinedColorTexture[] vertices = new VertexPositionOutlinedColorTexture[8];
 
         vertexBuffer.GetData(vertices);
 
-        var expectedVertices = new VertexPositionColorTexture[]
+        var expectedVertices = new VertexPositionOutlinedColorTexture[]
                                {
-                                   new(new Vector3(21.716f, 21.7960014f, 1f),
+                                   new(new Vector3(21.716f, 21.7960014f, 0f),
                                        Color.White,
+                                       Color.Transparent,
                                        new Vector2(0.286317557f, 0.8353041f)),
-                                   new(new Vector3(42.716f, 21.7960014f, 1f),
+                                   new(new Vector3(42.716f, 21.7960014f, 0f),
                                        Color.White,
+                                       Color.Transparent,
                                        new Vector2(0.3572635f, 0.8353041f)),
-                                   new(new Vector3(21.716f, 46.796f, 1f),
+                                   new(new Vector3(21.716f, 46.796f, 0f),
                                        Color.White,
+                                       Color.Transparent,
                                        new Vector2(0.286317557f, 0.9197635f)),
-                                   new(new Vector3(42.716f, 46.796f, 1f),
+                                   new(new Vector3(42.716f, 46.796f, 0f),
                                        Color.White,
+                                       Color.Transparent,
                                        new Vector2(0.3572635f, 0.9197635f)),
-                                   new(new Vector3(45.022f, 21.3380013f, 1f),
+                                   new(new Vector3(45.022f, 21.3380013f, 0f),
                                        Color.White,
+                                       Color.Transparent,
                                        new Vector2(0.9771959f, 0.0008445946f)),
-                                   new(new Vector3(51.522f, 21.3380013f, 1f),
+                                   new(new Vector3(51.522f, 21.3380013f, 0f),
                                        Color.White,
+                                       Color.Transparent,
                                        new Vector2(0.9991554f, 0.0008445946f)),
-                                   new(new Vector3(45.022f, 46.838f, 1f),
+                                   new(new Vector3(45.022f, 46.838f, 0f),
                                        Color.White,
+                                       Color.Transparent,
                                        new Vector2(0.9771959f, 0.08699324f)),
-                                   new(new Vector3(51.522f, 46.838f, 1f),
+                                   new(new Vector3(51.522f, 46.838f, 0f),
                                        Color.White,
+                                       Color.Transparent,
                                        new Vector2(0.9991554f, 0.08699324f))
                                };
 
@@ -125,41 +133,49 @@ public class DistanceFieldFontTests : IClassFixture<ContentManagerFixture>
         modelData.AddText("Lv", new Vector2(20, 20), 32);
         
         var vertexBuffer = new VertexBuffer(_device,
-                                            VertexPositionColorTexture.VertexDeclaration,
+                                            VertexPositionOutlinedColorTexture.VertexDeclaration,
                                             8,
                                             BufferUsage.None);
 
         modelData.LoadVertices(vertexBuffer);
 
-        VertexPositionColorTexture[] vertices = new VertexPositionColorTexture[8];
+        VertexPositionOutlinedColorTexture[] vertices = new VertexPositionOutlinedColorTexture[8];
 
         vertexBuffer.GetData(vertices);
 
-        var expectedVertices = new VertexPositionColorTexture[]
+        var expectedVertices = new VertexPositionOutlinedColorTexture[]
                                {
-                                   new(new Vector3(21.682f, 21.7960014f, 1f),
+                                   new(new Vector3(21.682f, 21.7960014f, 0f),
                                        Color.White,
+                                       Color.Transparent,
                                        new Vector2(0.7440878f, 0.8724662f)),
-                                   new(new Vector3(37.182f, 21.7960014f, 1f),
+                                   new(new Vector3(37.182f, 21.7960014f, 0f),
                                        Color.White,
+                                       Color.Transparent,
                                        new Vector2(0.7964527f, 0.8724662f)),
-                                   new(new Vector3(21.682f, 46.796f, 1f),
+                                   new(new Vector3(21.682f, 46.796f, 0f),
                                        Color.White,
+                                       Color.Transparent,
                                        new Vector2(0.7440878f, 0.9569257f)),
-                                   new(new Vector3(37.182f, 46.796f, 1f),
+                                   new(new Vector3(37.182f, 46.796f, 0f),
                                        Color.White,
+                                       Color.Transparent,
                                        new Vector2(0.7964527f, 0.9569257f)),
-                                   new(new Vector3(32.744f, 28.406002f, 1f),
+                                   new(new Vector3(32.744f, 28.406002f, 0f),
                                        Color.White,
+                                       Color.Transparent,
                                        new Vector2(0.504223f, 0.0008445946f)),
-                                   new(new Vector3(50.744f, 28.406002f, 1f),
+                                   new(new Vector3(50.744f, 28.406002f, 0f),
                                        Color.White,
+                                       Color.Transparent,
                                        new Vector2(0.5650338f, 0.0008445946f)),
-                                   new(new Vector3(32.744f, 46.906002f, 1f),
+                                   new(new Vector3(32.744f, 46.906002f, 0f),
                                        Color.White,
+                                       Color.Transparent,
                                        new Vector2(0.504223f, 0.0633446f)),
-                                   new(new Vector3(50.744f, 46.906002f, 1f),
+                                   new(new Vector3(50.744f, 46.906002f, 0f),
                                        Color.White,
+                                       Color.Transparent,
                                        new Vector2(0.5650338f, 0.0633446f))
                                };
 
