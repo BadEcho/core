@@ -51,4 +51,10 @@ public interface IModelData
     /// <param name="indexBuffer">The index buffer to load the model's vertex indices into.</param>
     /// <exception cref="InvalidOperationException">No indices were provided for the vertex data.</exception>
     void LoadIndices(IndexBuffer indexBuffer);
+
+    /// <summary>
+    /// Calculates the size of the described model's contents when rendered.
+    /// </summary>
+    /// <returns>A <see cref="SizeF"/> value representing the size of the described model's contents when rendered.</returns>
+    SizeF MeasureSize();
 }

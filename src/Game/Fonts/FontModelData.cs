@@ -96,22 +96,30 @@ public sealed class FontModelData : QuadModelData<VertexPositionOutlinedColorTex
         Vector2 cursorStart = position + verticalDirection * scale * _font.Characteristics.Ascender * -1;
         Vector2 cursor = cursorStart;
         Vector2 scaledAdvance = advanceDirection * scale;
+        PointF? offset = position;
 
         for (int i = 0; i < text.Length; i++)
-        {
+        { 
             char character = text[i];
             FontGlyph glyph = _font.FindGlyph(character);
 
             if (!char.IsWhiteSpace(character)) 
-                AddGlyph(glyph, _font.Characteristics, cursor, scaledAdvance);
+                AddGlyph(glyph, _font.Characteristics, cursor, scaledAdvance, offset);
 
             char? nextCharacter = i < text.Length - 1 ? text[i + 1] : null;
 
             cursor += _font.GetNextAdvance(character, nextCharacter, advanceDirection, scale);
+
+            // Only apply an offset the starting quad corner of the text. Another offset may be needed if a line break is inserted.
+            offset = null;
         }
     }
 
-    private void AddGlyph(FontGlyph glyph, FontCharacteristics characteristics, Vector2 cursor, Vector2 scaledAdvance)
+    /// <inheritdoc/>
+    protected override Vector3 GetVertexPosition(VertexPositionOutlinedColorTexture vertex)
+        => vertex.Position;
+
+    private void AddGlyph(FontGlyph glyph, FontCharacteristics characteristics, Vector2 cursor, Vector2 scaledAdvance, PointF? offset)
     {
         Require.NotNull(glyph, nameof(glyph));
         Require.NotNull(characteristics, nameof(characteristics));
@@ -151,5 +159,8 @@ public sealed class FontModelData : QuadModelData<VertexPositionOutlinedColorTex
                                                      new Vector2(texelRight, texelBottom));
 
         AddVertices(vertexTopLeft, vertexTopRight, vertexBottomLeft, vertexBottomRight);
+
+        if (offset != null)
+            AddQuadCornerOffset(vertexTopLeft, offset.Value);
     }
 }

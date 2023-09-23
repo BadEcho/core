@@ -70,4 +70,8 @@ public sealed class QuadTextureModelData : QuadModelData<VertexPositionTexture>
 
         AddVertices(vertexTopLeft, vertexTopRight, vertexBottomLeft, vertexBottomRight);
     }
+
+    /// <inheritdoc/>
+    protected override Vector3 GetVertexPosition(VertexPositionTexture vertex)
+        => vertex.Position;
 }

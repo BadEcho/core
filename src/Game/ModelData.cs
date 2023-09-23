@@ -74,4 +74,7 @@ public abstract class ModelData<TVertex> : IModelData
 
         indexBuffer.SetData(Indices.ToArray(), 0, IndexCount);
     }
+
+    /// <inheritdoc/>
+    public abstract SizeF MeasureSize();
 }

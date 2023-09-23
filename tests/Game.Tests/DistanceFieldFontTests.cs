@@ -189,4 +189,20 @@ public class DistanceFieldFontTests : IClassFixture<ContentManagerFixture>
                           t => Assert.Equal(expectedVertices[6], t),
                           t => Assert.Equal(expectedVertices[7], t));
     }
+    
+    [Fact]
+    public void MeasureText_Lato_ReturnsValid()
+    {
+        DistanceFieldFont font = _content.Load<DistanceFieldFont>("Fonts\\Lato");
+
+        var modelData = new FontModelData(font, Color.White);
+
+        modelData.AddText("Hi", new Vector2(20, 20), 32);
+
+        var expectedSize = new Size(32, 27);
+        var actualSize = modelData.MeasureSize();
+
+        Assert.Equal(expectedSize,
+                     new Size((int) Math.Round(actualSize.Width, 0), (int) Math.Round(actualSize.Height, 0)));
+    } 
 }

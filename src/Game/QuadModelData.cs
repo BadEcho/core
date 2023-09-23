@@ -11,6 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game;
@@ -22,6 +23,8 @@ namespace BadEcho.Game;
 public abstract class QuadModelData<TVertex> : ModelData<TVertex>
     where TVertex : struct, IVertexType
 {
+    private readonly Dictionary<TVertex, PointF> _quadCornerOffsetMap = new();
+
     /// <summary>
     /// Initializes a new instance of the <see cref="QuadModelData{TVertex}"/> class.
     /// </summary>
@@ -29,6 +32,45 @@ public abstract class QuadModelData<TVertex> : ModelData<TVertex>
     protected QuadModelData(VertexDeclaration vertexDeclaration)
         : base(vertexDeclaration)
     { }
+
+    /// <inheritdoc/>
+    public override SizeF MeasureSize()
+    {
+        float left = 0;
+        float top = 0;
+        float right = 0;
+        float bottom = 0;
+
+        for (int i = 0; i < IndexCount / 6; i++)
+        {
+            TVertex topLeftVertex = Vertices[i * 4 + 0];
+            
+            Vector3 topLeft = GetVertexPosition(topLeftVertex);
+            Vector3 topRight = GetVertexPosition(Vertices[i * 4 + 1]);
+            Vector3 bottomLeft = GetVertexPosition(Vertices[i * 4 + 2]);
+            Vector3 bottomRight = GetVertexPosition(Vertices[i * 4 + 3]);
+
+            float topY = Math.Min(topLeft.Y, topRight.Y);
+            float bottomY = Math.Max(bottomLeft.Y, bottomRight.Y);
+            float leftX = Math.Min(topLeft.X, bottomLeft.X);
+            float rightX = Math.Max(topRight.X, bottomRight.X);
+
+            if (_quadCornerOffsetMap.TryGetValue(topLeftVertex, out PointF offset))
+            {
+                left = offset.X;
+                top = offset.Y;           
+            }
+
+            left = Math.Min(leftX, left);
+            top = Math.Min(topY, top);
+            right = Math.Max(rightX, right);
+            bottom = Math.Max(bottomY, bottom);
+        }
+
+        var area = new RectangleF(left, top, right - left, bottom - top);
+
+        return area.Size;
+    }
 
     /// <summary>
     /// Adds 3D modeling data for a quadrilateral surface defined by the specified vertices.
@@ -46,6 +88,21 @@ public abstract class QuadModelData<TVertex> : ModelData<TVertex>
         Vertices.Add(bottomLeft);
         Vertices.Add(bottomRight);
     }
+
+    /// <summary>
+    /// Adds an adjustment to pre-rendered size measurements involving the specified vertex.
+    /// </summary>
+    /// <param name="vertex">The vertex to apply the offset to.</param>
+    /// <param name="offset">The amount to offset the vertex's position.</param>
+    protected void AddQuadCornerOffset(TVertex vertex, PointF offset) 
+        => _quadCornerOffsetMap.Add(vertex, offset);
+
+    /// <summary>
+    /// Gets the drawing location of the specified vertex.
+    /// </summary>
+    /// <param name="vertex">The vertex to get the position for.</param>
+    /// <returns>The position of <c>vertex</c>.</returns>
+    protected abstract Vector3 GetVertexPosition(TVertex vertex);
 
     private void AddIndices(int offset)
     {   // The order the indices are defined is important as it defines the winding direction of the rendered triangles.
