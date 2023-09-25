@@ -65,12 +65,12 @@ public sealed class DistanceFieldFontProcessor : ContentProcessor<DistanceFieldF
 
         var fontConfiguration = new FontConfiguration
                                 {
-                                    fontPath = input.Asset.FontPath,
-                                    charsetPath = charsetPath,
-                                    outputPath = atlasPath,
-                                    jsonPath = jsonPath,
-                                    range = (uint) input.Asset.Range,
-                                    resolution = (uint) input.Asset.Resolution
+                                    FontPath = input.Asset.FontPath,
+                                    CharsetPath = charsetPath,
+                                    OutputPath = atlasPath,
+                                    JsonPath = jsonPath,
+                                    Range = (uint) input.Asset.Range,
+                                    Resolution = (uint) input.Asset.Resolution
                                 };
 
         DistanceFieldFontAtlas.Generate(fontConfiguration);

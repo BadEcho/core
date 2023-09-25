@@ -25,11 +25,11 @@ public class DistanceFieldFontAtlasTests
 
         DistanceFieldFontAtlas.Generate(new FontConfiguration
                                         {
-                                            fontPath = "Lato-Regular.ttf",
-                                            jsonPath = "Lato-layout.json",
-                                            outputPath = "Lato-atlas.png",
-                                            range = 4,
-                                            resolution = 64
+                                            FontPath = "Lato-Regular.ttf",
+                                            JsonPath = "Lato-layout.json",
+                                            OutputPath = "Lato-atlas.png",
+                                            Range = 4,
+                                            Resolution = 64
                                         });
 
         Assert.True(File.Exists("Lato-atlas.png"));

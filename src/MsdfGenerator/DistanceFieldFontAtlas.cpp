@@ -29,21 +29,21 @@ void DistanceFieldFontAtlas::Generate(FontConfiguration configuration)
 		return;
 
 	marshal_context^ context = gcnew marshal_context();
-	const char* fontPath = context->marshal_as<const char*>(configuration.fontPath);
+	const char* fontPath = context->marshal_as<const char*>(configuration.FontPath);
 
 	if (FontHandle* font = loadFont(freeType, fontPath))
 	{
 		Charset charset;
 		bool charsetLoaded;	
 
-		if (String::IsNullOrEmpty(configuration.charsetPath))
+		if (String::IsNullOrEmpty(configuration.CharsetPath))
 		{
 			charset = Charset::ASCII;
 			charsetLoaded = true;
 		}
 		else
 		{
-			const char* charsetPath = context->marshal_as<const char*>(configuration.charsetPath);
+			const char* charsetPath = context->marshal_as<const char*>(configuration.CharsetPath);
 			charsetLoaded = charset.load(charsetPath, false);
 		}
 
@@ -75,8 +75,8 @@ void DistanceFieldFontAtlas::Generate(FontHandle* font, const Charset& charset, 
 	TightAtlasPacker atlasPacker;
 
 	atlasPacker.setDimensionsConstraint(TightAtlasPacker::DimensionsConstraint::MULTIPLE_OF_FOUR_SQUARE);
-	atlasPacker.setScale(configuration.resolution);
-	atlasPacker.setPixelRange(configuration.range);
+	atlasPacker.setScale(configuration.Resolution);
+	atlasPacker.setPixelRange(configuration.Range);
 	atlasPacker.setUnitRange(0);
 	atlasPacker.setMiterLimit(0);
 	atlasPacker.setPadding(0);
@@ -98,8 +98,8 @@ void DistanceFieldFontAtlas::Generate(FontHandle* font, const Charset& charset, 
 	generator.generate(glyphs.data(), glyphCount);
 
 	marshal_context^ context = gcnew marshal_context();
-	const char* outputPath = context->marshal_as<const char*>(configuration.outputPath);
-	const char* jsonPath = context->marshal_as<const char*>(configuration.jsonPath);
+	const char* outputPath = context->marshal_as<const char*>(configuration.OutputPath);
+	const char* jsonPath = context->marshal_as<const char*>(configuration.JsonPath);
 
 	savePng(generator.atlasStorage(), outputPath);
 	exportJSON(&fontGeometry, 1, scale, range, width, height, ImageType::MTSDF, YDirection::TOP_DOWN, jsonPath, true);

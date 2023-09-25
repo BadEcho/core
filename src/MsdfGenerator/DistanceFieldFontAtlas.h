@@ -25,27 +25,27 @@ namespace BadEcho::MsdfGenerator {
 		/// <summary>
 		/// The path to the font file (.ttf/.otf) to create an atlas for.
 		/// </summary>
-		System::String^ fontPath;
+		System::String^ FontPath;
 		/// <summary>
 		/// The path to the file containing the character set to include in the atlas; defaults to ASCII if unset.
 		/// </summary>
-		System::String^ charsetPath;		
+		System::String^ CharsetPath;		
 		/// <summary>
 		/// The path to the JSON file to write the atlas's layout data to.
 		/// </summary>
-		System::String^ jsonPath;
+		System::String^ JsonPath;
 		/// <summary>
 		/// The path to the image file to write the atlas to.
 		/// </summary>
-		System::String^ outputPath;
+		System::String^ OutputPath;
 		/// <summary>
 		/// The size of the glyphs in the atlas, in pixels-per-em.
 		/// </summary>
-		unsigned int resolution;
+		unsigned int Resolution;
 		/// <summary>
 		/// The distance field range in output pixels, which affects how far the distance field extends beyond the glyphs.
 		/// </summary>
-		unsigned int range;
+		unsigned int Range;
 	};
 
 	/// <summary>
