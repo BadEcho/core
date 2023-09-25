@@ -10,6 +10,6 @@
       "end": 255
     }
   ],
-  "resolution": 64,
-  "range": 4
+  "resolution": 128,
+  "range": 16
 }
