@@ -74,14 +74,14 @@ float GetOpacityFromDistance(float signedDistance, float2 Jdx, float2 Jdy)
 
     // The distance from the center of a pixel to one of its corners is the square root of 2 divided by 2 (the length of a diagonal is the length of a
     // side (which is 1) multiplied by the square root of 2, dividing by 2 gives us the length from the center), or 0.7071. This is our maximum distance from pixel center.
-    const float distanceLimit = sqrt(2.0f) / 2.0f;  // If we use this value to define the min and max range in a smoothstep function, while using a distance value as
+    const float distanceLimit = sqrt(2.0f) / 2.0f;  // If we use this value to define the min and max range in a smoothstep function, along with the signed distance value as
     const float thickness = 1.0f / DistanceRange;   // the value to be interpolated, this will return the appropriate amount of pixel coverage.
 													// This only works, however, if the size of the geometry we're rendering is the same size as the distance field's
 													// rectangle in the source texture. This is not the case with our signed distance fonts.
 
-	// Multiplying our distance limit by the partial derivative of the non-normalized texture pixel coords (pixelCoord) will provide us with uniform scaling.
+	// Multiplying our distance limit by the partial derivative of non-normalized texture pixel coordinates (pixelCoord) will provide us with uniform scaling.
     // In order to account for non-uniform scaling and perspective, however, we need to scale our distance limit based on how a vector normal to the outline curve
-    // is transformed (like with ellipses). We do this by using of a normalized gradient vector (normalized to avoid approximation errors when near the edge of the shape)
+    // is transformed (like with ellipses). We do this by using a normalized gradient vector (normalized to avoid approximation errors when near the edge of the shape)
     // which we multiply by a Jacobian matrix containing our coordinate's first-order partial derivatives.
     float2 gradientDistance = SafeNormalize(float2(ddx(signedDistance), ddy(signedDistance)));
     float2 gradient = float2(gradientDistance.x * Jdx.x + gradientDistance.y * Jdy.x, gradientDistance.x * Jdx.y + gradientDistance.y * Jdy.y);
