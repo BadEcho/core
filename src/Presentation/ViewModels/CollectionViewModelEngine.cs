@@ -367,8 +367,13 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
         BindExistingChildren(existingChildrenModels);
 
         if (!DelayBindings)
-        {
-            _changeStrategy.AddRange(_viewModel, createdChildren);
+        {   // Batch insertions may be affected by capacity enforcement, so we make sure the two operations are synchronized.
+            // This will also ensure that any concurrent batch bindings are synchronized.
+            lock (_capacityEnforcementLock)
+            {
+                _changeStrategy.AddRange(_viewModel, createdChildren);
+            }
+
             RequestEnforceCapacity();
         }
 

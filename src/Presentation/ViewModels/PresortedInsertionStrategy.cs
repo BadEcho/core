@@ -27,7 +27,7 @@ namespace BadEcho.Presentation.ViewModels;
 /// <typeparam name="TKey">The type of key returned by the selector used to sort the children.</typeparam>
 public sealed class PresortedInsertionStrategy<TChildViewModel, TKey> : ICollectionChangeStrategy<TChildViewModel>
     where TChildViewModel : class, IViewModel
-{
+{   
     private readonly Func<TChildViewModel, TKey> _keySelector;
     private readonly bool _descending;
 
@@ -73,10 +73,10 @@ public sealed class PresortedInsertionStrategy<TChildViewModel, TKey> : ICollect
     {
         Require.NotNull(collectionViewModel, nameof(collectionViewModel));
 
-        viewModels = Sort(viewModels).ToList();
+        viewModels = viewModels.ToList();
 
         List<TChildViewModel> originalChildren = collectionViewModel.Children.ToList();
-            
+
         IEnumerable<TChildViewModel> allChildren
             = originalChildren.Concat(viewModels);
 
