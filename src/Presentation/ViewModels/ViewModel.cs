@@ -53,6 +53,6 @@ public abstract class ViewModel : IViewModel
     /// </summary>
     /// <param name="propertyName">Optional. The name of the property whose value changed.</param>
     /// <remarks>If no value is provided for <c>propertyName</c>, the name of the caller to this method will be used.</remarks>
-    protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }
