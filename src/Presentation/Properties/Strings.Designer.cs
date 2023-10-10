@@ -115,6 +115,15 @@ namespace BadEcho.Presentation.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string BeginStoryboardActionNeedsTarget {
+            get {
+                return ResourceManager.GetString("BeginStoryboardActionNeedsTarget", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Behavior is already attached to the target dependency object..
         /// </summary>
         internal static string BehaviorAlreadyAttachedToTarget {

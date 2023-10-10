@@ -53,6 +53,7 @@ public abstract class AttachableComponent<T> : Animatable, IAttachableComponent<
 
         WritePreamble();
         _targetObject = targetObject;
+        OnAttached();
         WritePostscript();
     }
 
@@ -63,7 +64,20 @@ public abstract class AttachableComponent<T> : Animatable, IAttachableComponent<
             return;
             
         WritePreamble();
+        OnDetaching();
         _targetObject = null;
         WritePostscript();
     }
+
+    /// <summary>
+    /// Called when this component has been attached to a new <see cref="DependencyObject"/> instance.
+    /// </summary>
+    protected virtual void OnAttached()
+    { }
+
+    /// <summary>
+    /// Called when this component is being detached from a previously targeted <see cref="DependencyObject"/> instance.
+    /// </summary>
+    protected virtual void OnDetaching()
+    { }
 }

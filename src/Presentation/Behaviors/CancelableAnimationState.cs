@@ -47,7 +47,7 @@ public sealed class CancelableAnimationState : AttachableComponent<DependencyObj
     public event EventHandler? AnimationCanceling;
 
     /// <summary>
-    /// Gets or sets the storyboard whose playback on the dependency object this component is attached to will be made cancelable.
+    /// Gets or sets the <see cref="Storyboard"/> whose playback on the dependency object this component is attached to will be made cancelable.
     /// </summary>
     public Storyboard? Storyboard
     {
@@ -56,7 +56,7 @@ public sealed class CancelableAnimationState : AttachableComponent<DependencyObj
     }
 
     /// <summary>
-    /// Gets or sets the mediator used to receive animation cancellation requests.
+    /// Gets or sets the <see cref="Mediator"/> used to receive animation cancellation requests.
     /// </summary>
     public Mediator? Mediator
     {
@@ -67,6 +67,15 @@ public sealed class CancelableAnimationState : AttachableComponent<DependencyObj
     /// <inheritdoc/>
     protected override Freezable CreateInstanceCore()
         => new CancelableAnimationState();
+
+    /// <inheritdoc/>
+    protected override void OnDetaching()
+    {
+        base.OnDetaching();
+
+        if (Mediator != null)
+            UnregisterMediator(Mediator);
+    }
 
     private static void OnMediatorChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
     {

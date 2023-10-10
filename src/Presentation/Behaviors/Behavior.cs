@@ -64,8 +64,11 @@ public abstract class Behavior<TTarget,TProperty> : Animatable, IAttachableCompo
 
         TProperty? associatedValue = TargetMap[targetObject];
 
+        // Value disassociation will have already happened if detachment is occurring by the WPF XAML parser a la OnAttachChanged.
+        // Programmatic detachment will occur by calling this method directly, however, and therefore we need to account for values still
+        // requiring disassociation.
         if (associatedValue != null)
-            OnValueDisassociated(targetObject, associatedValue);
+            DisassociateValue(targetObject, associatedValue);
 
         WritePreamble();
         TargetMap.Remove(targetObject);
@@ -102,6 +105,22 @@ public abstract class Behavior<TTarget,TProperty> : Animatable, IAttachableCompo
     /// <param name="oldValue">The previous local value for the attached property.</param>
     protected abstract void OnValueDisassociated(TTarget targetObject, TProperty oldValue);
 
+    private void AssociateValue(TTarget targetObject, TProperty newValue)
+    {
+        WritePreamble();
+        TargetMap[targetObject] = newValue;
+        OnValueAssociated(targetObject, newValue);
+        WritePostscript();
+    }
+
+    private void DisassociateValue(TTarget targetObject, TProperty oldValue)
+    {
+        WritePreamble();
+        TargetMap[targetObject] = default;
+        OnValueDisassociated(targetObject, oldValue);
+        WritePostscript();
+    }
+
     private void OnAttachChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
     {
         if (sender is not TTarget targetObject)
@@ -111,7 +130,7 @@ public abstract class Behavior<TTarget,TProperty> : Animatable, IAttachableCompo
             return;
 
         if (e.OldValue is TProperty oldValue)
-            OnValueDisassociated(targetObject, oldValue);
+            DisassociateValue(targetObject, oldValue);
             
         var newValue = (TProperty?)e.NewValue;
 
@@ -122,7 +141,6 @@ public abstract class Behavior<TTarget,TProperty> : Animatable, IAttachableCompo
         }
             
         Attach(targetObject);
-            
-        OnValueAssociated(targetObject, newValue);
+        AssociateValue(targetObject, newValue);
     }
 }

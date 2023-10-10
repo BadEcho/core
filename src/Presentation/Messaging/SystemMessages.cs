@@ -25,4 +25,10 @@ public static class SystemMessages
     /// </summary>
     public static MediatorMessage CancelAnimationsRequested
     { get; } = new (nameof(CancelAnimationsRequested), typeof(Action));
+
+    /// <summary>
+    /// Gets a message that queries whether a hold on new animations is in effect.
+    /// </summary>
+    public static MediatorMessage AnimationHoldQuery
+    { get; } = new (nameof(AnimationHoldQuery), typeof(Func<bool>));
 }

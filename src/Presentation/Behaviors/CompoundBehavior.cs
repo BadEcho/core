@@ -19,10 +19,10 @@ namespace BadEcho.Presentation.Behaviors;
 /// Provides a base behavior that influences the state and functioning of a target dependency object by controlling an
 /// auxiliary component that's attached to it.
 /// </summary>
-/// <typeparam name="TTarget">The type of <see cref="DependencyObject"/> the auxiliary component attaches to.</typeparam>
+/// <typeparam name="TTarget">The type of <see cref="FrameworkElement"/> the auxiliary component attaches to.</typeparam>
 /// <typeparam name="TAttachableComponent">The type of attachable component controlled by this behavior.</typeparam>
 public abstract class CompoundBehavior<TTarget, TAttachableComponent> : Behavior<TTarget, TAttachableComponent>
-    where TTarget : DependencyObject
+    where TTarget : FrameworkElement
     where TAttachableComponent : class, IAttachableComponent<TTarget>, new()
 {
     /// <summary>
@@ -52,16 +52,29 @@ public abstract class CompoundBehavior<TTarget, TAttachableComponent> : Behavior
     /// <inheritdoc/>
     protected override void OnValueAssociated(TTarget targetObject, TAttachableComponent newValue)
     {
+        Require.NotNull(targetObject, nameof(targetObject));
         Require.NotNull(newValue, nameof(newValue));
-
+        
         newValue.Attach(targetObject);
+
+        targetObject.Unloaded += OnUnloadedEvent;
     }
 
     /// <inheritdoc/>
     protected override void OnValueDisassociated(TTarget targetObject, TAttachableComponent oldValue)
     {
+        Require.NotNull(targetObject, nameof(targetObject));
         Require.NotNull(oldValue, nameof(oldValue));
-
+        
         oldValue.Detach(targetObject);
+
+        targetObject.Unloaded -= OnUnloadedEvent;
+    }
+    
+    private void OnUnloadedEvent(object sender, RoutedEventArgs e)
+    {
+        TTarget targetObject = (TTarget) sender;
+
+        Detach(targetObject);
     }
 }
