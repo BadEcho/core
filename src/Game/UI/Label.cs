@@ -11,6 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Game.Fonts;
 using BadEcho.Game.Properties;
 using BadEcho.Logging;
 using Microsoft.Xna.Framework;
@@ -25,6 +26,8 @@ public sealed class Label : Control
 {
     private string _text = string.Empty;
     private SpriteFont? _font;
+    private DistanceFieldFont? _msdfFont;
+    private IModelRenderer? _textRenderer;
 
     /// <summary>
     /// Gets or sets the font used for this label's text.
@@ -36,9 +39,24 @@ public sealed class Label : Control
     }
 
     /// <summary>
+    /// Gets or sets the font used for this label's text.
+    /// </summary>
+    public DistanceFieldFont? MsdfFont
+    {
+        get => _msdfFont;
+        set => RemeasureIfChanged(ref _msdfFont, value);
+    }
+
+    /// <summary>
     /// Gets or sets the color of the font used for this label's text.
     /// </summary>
     public Color FontColor
+    { get; set; }
+
+    /// <summary>
+    /// Gets or sets the size of the font used for this label's text.
+    /// </summary>
+    public float FontSize
     { get; set; }
 
     /// <summary>
@@ -53,23 +71,26 @@ public sealed class Label : Control
     /// <inheritdoc />
     protected override Size MeasureCore(Size availableSize)
     {
-        if (Font == null)
+        if (MsdfFont == null)
             return Size.Empty;
 
-        return Font.MeasureString(Text).ToPoint();
+        // TODO: need to research how to convert font points to scale.
+        _textRenderer = MsdfFont.AddModel(Text, Vector2.Zero, FontColor, 0.767f * FontSize);
+
+        return (Size) _textRenderer.Size;
     }
 
     /// <inheritdoc />
     protected override void DrawCore(SpriteBatch spriteBatch)
     {
-        if (Font == null)
+        if (_textRenderer == null)
         {
             Logger.Debug(Strings.LabelNoFont);
             return;
         }
 
-        Vector2 contentPosition = ContentBounds.Location.ToVector2();
+        Matrix textTranslation = Matrix.CreateTranslation(ContentBounds.X, ContentBounds.Y, 0);
 
-        spriteBatch.DrawString(Font, Text, contentPosition, FontColor);
+        _textRenderer.Draw(textTranslation);
     }
 }
