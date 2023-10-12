@@ -323,7 +323,7 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
     protected override void OnBinding(TChildViewModel viewModel)
     {
         // Child view models being bound in batches are added to the child view model collection silently prior to
-        // their binding, unless binding is delayed, to avoid excessive collection change notifications being broadcast.
+        // their individual binding, unless binding is delayed, to avoid excessive collection change notifications being broadcast.
         if (Children.Contains(viewModel))
             return;
 
@@ -342,7 +342,12 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
     /// <inheritdoc/>
     protected override void OnUnbound(TChildViewModel viewModel)
     {
-        _changeStrategy.Remove(_viewModel, viewModel);
+        // Child view models being unbound in batches are removed from the child view model collection silently prior to their
+        // individual unbinding to avoid excessive collection change notifications being broadcast.
+        if (Children.Contains(viewModel))
+            _changeStrategy.Remove(_viewModel, viewModel);
+
+        viewModel.Disconnect();
     }
 
     private void BindRunner(IReadOnlyCollection<TModel> models)
@@ -366,7 +371,7 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
         IReadOnlyCollection<TChildViewModel> createdChildren = BindNewChildren(newChildrenModels);
         BindExistingChildren(existingChildrenModels);
 
-        if (!DelayBindings)
+        if (!DelayBindings && createdChildren.Any())
         {   // Batch insertions may be affected by capacity enforcement, so we make sure the two operations are synchronized.
             // This will also ensure that any concurrent batch bindings are synchronized.
             lock (_capacityEnforcementLock)
@@ -377,8 +382,8 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
             RequestEnforceCapacity();
         }
 
-        if (_options.RemoveChildrenMissingFromBatch)
-            Unbind(missingChildrenModels);
+        if (_options.RemoveChildrenMissingFromBatch && missingChildrenModels.Any())
+            _viewModel.Unbind(missingChildrenModels);
 
         // This is merely done to add the new child view models to the engine's bound data list.
         // The change strategy has already taken care of adding it to the collection of children view models.
