@@ -138,6 +138,13 @@ public readonly struct SizeF : IEquatable<SizeF>
         => ToVector2(size);
 
     /// <summary>
+    /// Defines an explicit conversion of a <see cref="SizeF"/> value to a <see cref="Size"/> value.
+    /// </summary>
+    /// <param name="size">The size to convert.</param>
+    public static explicit operator Size(SizeF size)
+        => ToSize(size);
+
+    /// <summary>
     /// Determines whether two <see cref="SizeF"/> values have the same width and height.
     /// </summary>
     /// <param name="left">The first size to compare.</param>
@@ -235,6 +242,14 @@ public readonly struct SizeF : IEquatable<SizeF>
     /// <returns>A <see cref="SizeF"/> value equivalent to <c>size</c>.</returns>
     public static SizeF FromSize(Size size)
         => new(size);
+
+    /// <summary>
+    /// Converts the specified <see cref="SizeF"/> value to an equivalent <see cref="Size"/> value.
+    /// </summary>
+    /// <param name="size">The size to convert.</param>
+    /// <returns>A <see cref="Size"/> value equivalent to <c>size</c>.</returns>
+    public static Size ToSize(SizeF size)
+        => new((int) Math.Round(size.Width, 0), (int) Math.Round(size.Height, 0));
 
     /// <summary>
     /// Converts the specified <see cref="SizeF"/> value to an equivalent <see cref="PointF"/> value.

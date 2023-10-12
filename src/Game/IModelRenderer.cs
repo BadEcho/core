@@ -21,6 +21,11 @@ namespace BadEcho.Game;
 public interface IModelRenderer
 {
     /// <summary>
+    /// Gets the size of the model when it is rendered.
+    /// </summary>
+    SizeF Size { get; }
+
+    /// <summary>
     /// Draws the models to the screen.
     /// </summary>
     void Draw();
