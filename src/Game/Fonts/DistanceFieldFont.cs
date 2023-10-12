@@ -187,34 +187,47 @@ public sealed class DistanceFieldFont
         if (!string.IsNullOrEmpty(text))
             fontData.AddText(text, position, scale);
 
-        var model = new StaticModel(_device, Atlas, fontData);
-        
-        return new DistanceFieldFontRenderer(this, model, optimizeForSmallText, !fontData.FillOnly);
+        return new DistanceFieldFontRenderer(this, fontData, optimizeForSmallText);
     }
 
     /// <summary>
     /// Provides a renderer of signed distance field font models using shaders appropriate to the size of the text.
     /// </summary>
-    private sealed class DistanceFieldFontRenderer : IModelRenderer
+    private sealed class DistanceFieldFontRenderer : IModelRenderer, IDisposable
     {
         private readonly DistanceFieldFont _font;
         private readonly StaticModel _model;
+        private readonly FontModelData _fontData;
         private readonly bool _useSmallShader;
         private readonly bool _useStrokedShader;
+
+        private SizeF? _size;
+        private bool _disposed;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DistanceFieldFontRenderer"/> class.
         /// </summary>
         /// <param name="font">The multi-channel signed distance font to render.</param>
-        /// <param name="model">A generated model of static font data for rendering.</param>
+        /// <param name="fontData">Vertex data required to render the model.</param>
         /// <param name="useSmallShader">Value indicating whether a shader optimized for rendering small text is used.</param>
-        /// <param name="useStrokedShader">Value indicating whether a shader that applies an outline is used.</param>
-        public DistanceFieldFontRenderer(DistanceFieldFont font, StaticModel model, bool useSmallShader, bool useStrokedShader)
+        public DistanceFieldFontRenderer(DistanceFieldFont font, FontModelData fontData, bool useSmallShader)
         {
             _font = font;
-            _model = model;
+            _fontData = fontData;
+            _model = new StaticModel(font._device, font.Atlas, fontData);
             _useSmallShader = useSmallShader;
-            _useStrokedShader = useStrokedShader;
+            _useStrokedShader = !fontData.FillOnly;
+        }
+
+        /// <inheritdoc/>
+        public SizeF Size
+        {
+            get
+            {
+                _size ??= _fontData.MeasureSize();
+
+                return _size.Value;
+            }
         }
 
         /// <inheritdoc/>
@@ -231,7 +244,7 @@ public sealed class DistanceFieldFont
 
             var effect = new DistanceFieldFontEffect(device)
                          {
-                             WorldViewProjection = projection,
+                             WorldViewProjection = view * projection,
                              AtlasSize = new Vector2(_font.Characteristics.Width, _font.Characteristics.Height),
                              DistanceRange = _font.Characteristics.DistanceRange,
                              Texture = _font.Atlas
@@ -240,6 +253,17 @@ public sealed class DistanceFieldFont
             effect.CurrentTechnique = GetTechnique(effect);
 
             _model.Draw(effect);
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            if (_disposed)
+                return;
+
+            _model.Dispose();
+
+            _disposed = true;
         }
 
         private EffectTechnique GetTechnique(Effect effect) => (_useSmallShader, _useStrokedShader)

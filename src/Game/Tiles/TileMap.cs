@@ -76,7 +76,7 @@ public sealed class TileMap : Extensible, IModelRenderer
     /// The dimensions of the tile map is determined using tiles (whose sizes are known) as opposed to simply pixels. A 64x64 size,
     /// for example, indicates a map that is a 64 tiles wide by 64 tiles hide, with a total area of 4,096 tiles.
     /// </remarks>
-    public Size Size
+    public SizeF Size
     { get; }
 
     /// <summary>
