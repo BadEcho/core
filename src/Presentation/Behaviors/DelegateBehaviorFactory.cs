@@ -37,7 +37,10 @@ public static class DelegateBehaviorFactory
     /// </returns>
     public static DependencyProperty Create<TTarget, TParameter>(Action<TTarget, TParameter> associationAction,
                                                                  string propertyName,
-                                                                 Type ownerType) where TTarget : DependencyObject
+                                                                 Type ownerType) 
+        where TTarget : DependencyObject
+        where TParameter : class
+                                                                                    
     {
         var behavior = new DelegateBehavior<TTarget, TParameter>(associationAction);
 
@@ -66,7 +69,9 @@ public static class DelegateBehaviorFactory
     public static DependencyProperty Create<TTarget, TParameter>(Action<TTarget, TParameter> associationAction,
                                                                  Action<TTarget, TParameter> disassociationAction,
                                                                  string propertyName,
-                                                                 Type ownerType) where TTarget : DependencyObject
+                                                                 Type ownerType) 
+        where TTarget : DependencyObject
+        where TParameter : class
     {
         var behavior = new DelegateBehavior<TTarget, TParameter>(associationAction, disassociationAction);
 

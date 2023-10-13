@@ -23,6 +23,7 @@ namespace BadEcho.Presentation.Behaviors;
 /// <typeparam name="TParameter">The type of parameter accepted by the method executed by this behavior.</typeparam>
 public sealed class DelegateBehavior<TTarget,TParameter> : Behavior<TTarget, TParameter>
     where TTarget : DependencyObject
+    where TParameter : class
 {
     private readonly Action<TTarget, TParameter> _associationAction;
     private readonly Action<TTarget, TParameter>? _disassociationAction;

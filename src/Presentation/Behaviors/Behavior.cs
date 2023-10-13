@@ -11,6 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media.Animation;
 using BadEcho.Presentation.Properties;
@@ -26,8 +27,9 @@ namespace BadEcho.Presentation.Behaviors;
 /// <typeparam name="TProperty">The type of value accepted by this behavior as an attached property.</typeparam>
 public abstract class Behavior<TTarget,TProperty> : Animatable, IAttachableComponent<TTarget>
     where TTarget: DependencyObject
+    where TProperty : class
 {
-    private readonly Dictionary<TTarget, TProperty?> _targetMap = new();
+    private readonly ConditionalWeakTable<TTarget, TProperty?> _targetMap = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Behavior{TTarget,TProperty}"/> class.
@@ -46,7 +48,7 @@ public abstract class Behavior<TTarget,TProperty> : Animatable, IAttachableCompo
     {
         VerifyAccess();
 
-        if (TargetMap.ContainsKey(targetObject))
+        if (TargetMap.TryGetValue(targetObject, out _))
             throw new InvalidOperationException(Strings.BehaviorAlreadyAttachedToTarget);
 
         WritePreamble();
@@ -59,10 +61,8 @@ public abstract class Behavior<TTarget,TProperty> : Animatable, IAttachableCompo
     {
         VerifyAccess();
 
-        if (!TargetMap.ContainsKey(targetObject))
+        if (!TargetMap.TryGetValue(targetObject, out TProperty? associatedValue))
             return;
-
-        TProperty? associatedValue = TargetMap[targetObject];
 
         // Value disassociation will have already happened if detachment is occurring by the WPF XAML parser a la OnAttachChanged.
         // Programmatic detachment will occur by calling this method directly, however, and therefore we need to account for values still
@@ -79,7 +79,7 @@ public abstract class Behavior<TTarget,TProperty> : Animatable, IAttachableCompo
     /// Gets a mapping between target dependency objects and associated values while assuring this <see cref="Freezable"/>
     /// is being accessed appropriately.
     /// </summary>
-    private IDictionary<TTarget, TProperty?> TargetMap
+    private ConditionalWeakTable<TTarget, TProperty?> TargetMap
     {
         get
         {
@@ -108,7 +108,7 @@ public abstract class Behavior<TTarget,TProperty> : Animatable, IAttachableCompo
     private void AssociateValue(TTarget targetObject, TProperty newValue)
     {
         WritePreamble();
-        TargetMap[targetObject] = newValue;
+        TargetMap.AddOrUpdate(targetObject, newValue);
         OnValueAssociated(targetObject, newValue);
         WritePostscript();
     }
@@ -116,7 +116,7 @@ public abstract class Behavior<TTarget,TProperty> : Animatable, IAttachableCompo
     private void DisassociateValue(TTarget targetObject, TProperty oldValue)
     {
         WritePreamble();
-        TargetMap[targetObject] = default;
+        TargetMap.AddOrUpdate(targetObject, default);
         OnValueDisassociated(targetObject, oldValue);
         WritePostscript();
     }

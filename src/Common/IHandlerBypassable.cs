@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 
 namespace BadEcho;
 
@@ -25,16 +25,38 @@ namespace BadEcho;
 /// </remarks>
 public interface IHandlerBypassable
 {
-    private static readonly ConcurrentDictionary<IHandlerBypassable, bool> _HandlersBypassedMap
+    private static readonly ConditionalWeakTable<IHandlerBypassable, object> _HandlersBypassedMap
         = new();
 
     /// <summary>
     /// Gets a value indicating if event handlers should be bypassed.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// A <see cref="ConditionalWeakTable{TKey,TValue}"/> instance cannot use value types for the <c>TValue</c> generic parameter,
+    /// therefore we simply box a Boolean value as an object. We cannot use <see cref="ConditionalWeakTable{TKey,TValue}.GetOrCreateValue"/>
+    /// as that will just initialize a default object instance which we cannot cast to a <see cref="bool"/> type. Therefore, we initialize
+    /// default values on our own.
+    /// </para>
+    /// <para>
+    /// The performance hit from boxing here is, of course, negligible, as there is always considerable overhead simply through the use of
+    /// <see cref="ConditionalWeakTable{TKey,TValue}"/> -- however, it is imperative we maintain a dictionary of weakly referenced keys,
+    /// lest we create a nasty memory leak.
+    /// </para>
+    /// </remarks>
     internal bool HandlersBypassed
     {
-        get => _HandlersBypassedMap.GetOrAdd(this, false);
-        set => _HandlersBypassedMap[this] = value;
+        get
+        {    
+            if (!_HandlersBypassedMap.TryGetValue(this, out object? value))
+            {
+                value = false;
+                _HandlersBypassedMap.Add(this, value);
+            }
+
+            return (bool) value;
+        } 
+        set => _HandlersBypassedMap.AddOrUpdate(this, value);
     }
 }
 
