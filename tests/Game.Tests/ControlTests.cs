@@ -11,8 +11,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Game.Fonts;
 using BadEcho.Game.UI;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Xunit;
 
@@ -26,7 +26,7 @@ public class ControlTests : IClassFixture<ContentManagerFixture>
 
     public ControlTests(ContentManagerFixture contentFixture)
     {
-        var font = contentFixture.Content.Load<SpriteFont>("Fonts\\LatoSprite");
+        var font = contentFixture.Content.Load<DistanceFieldFont>("Fonts\\Lato");
 
         _label = new Label
                  {

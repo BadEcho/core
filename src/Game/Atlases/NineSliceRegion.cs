@@ -74,7 +74,7 @@ public sealed class NineSliceRegion : TextureRegion
     { get; }
 
     /// <inheritdoc/>
-    public override void Draw(SpriteBatch spriteBatch, Rectangle targetArea)
+    public override void Draw(ConfiguredSpriteBatch spriteBatch, Rectangle targetArea)
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
 

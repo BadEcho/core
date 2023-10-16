@@ -11,8 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using Microsoft.Xna.Framework.Graphics;
-
 namespace BadEcho.Game.UI;
 
 /// <summary>
@@ -65,6 +63,6 @@ public abstract class ContentControl<T> : Control
     }
 
     /// <inheritdoc/>
-    protected override void DrawCore(SpriteBatch spriteBatch)
+    protected override void DrawCore(ConfiguredSpriteBatch spriteBatch)
         => Content.Draw(spriteBatch);
 }

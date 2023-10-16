@@ -11,8 +11,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Game.Fonts;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.UI;
 
@@ -72,7 +72,7 @@ public sealed class MenuItem : Control
     /// <summary>
     /// Gets or sets the font used for this menu item's text.
     /// </summary>
-    public SpriteFont? Font
+    public DistanceFieldFont? Font
     {
         get => _innerLabel.Font;
         set => _innerLabel.Font = value;
@@ -85,6 +85,15 @@ public sealed class MenuItem : Control
     {
         get => _innerLabel.FontColor;
         set => _innerLabel.FontColor = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the size of the font in points used for this menu item's text.
+    /// </summary>
+    public float FontSize
+    {
+        get => _innerLabel.FontSize;
+        set => _innerLabel.FontSize = value;
     }
 
     /// <summary>
@@ -139,7 +148,7 @@ public sealed class MenuItem : Control
     }
 
     /// <inheritdoc />
-    protected override void DrawCore(SpriteBatch spriteBatch)
+    protected override void DrawCore(ConfiguredSpriteBatch spriteBatch)
     {
         _innerPanel.Draw(spriteBatch);
     }

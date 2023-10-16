@@ -104,6 +104,12 @@ public abstract class GameState : IDisposable
         => true;
 
     /// <summary>
+    /// The drawing order for sprite and text drawing.
+    /// </summary>
+    protected virtual SpriteSortMode SortMode
+        => SpriteSortMode.Deferred;
+
+    /// <summary>
     /// Performs any necessary updates to the state, including its position, activation status, and other state-specific
     /// concerns.
     /// </summary>
@@ -163,15 +169,19 @@ public abstract class GameState : IDisposable
                               MatrixTransform = transform
                           };
 
-        spriteBatch.Begin(SpriteSortMode.Immediate,
-                          blendState: BlendState.AlphaBlend,
-                          samplerState: SamplerState.PointClamp,
-                          rasterizerState: new RasterizerState { ScissorTestEnable = clippingEnabled },
-                          effect: alphaEffect);
+        var configuredSpriteBatch = new ConfiguredSpriteBatch(
+            spriteBatch,
+            SortMode,
+            BlendState.AlphaBlend,
+            SamplerState.PointClamp,
+            rasterizerState: new RasterizerState { ScissorTestEnable = clippingEnabled },
+            effect: alphaEffect);
 
-        DrawCore(spriteBatch);
+        configuredSpriteBatch.Begin();
+        
+        DrawCore(configuredSpriteBatch);
 
-        spriteBatch.End();
+        configuredSpriteBatch.End();
     }
     
     /// <summary>
@@ -228,8 +238,10 @@ public abstract class GameState : IDisposable
     /// <summary>
     /// Executes the custom rendering logic required to draw the state to the screen.
     /// </summary>
-    /// <param name="spriteBatch">A <see cref="SpriteBatch"/> instance with an active batch operation to draw this state to.</param>
-    protected abstract void DrawCore(SpriteBatch spriteBatch);
+    /// <param name="spriteBatch">
+    /// A <see cref="ConfiguredSpriteBatch"/> instance with an active batch operation to draw this state to.
+    /// </param>
+    protected abstract void DrawCore(ConfiguredSpriteBatch spriteBatch);
 
     /// <summary>
     /// Loads state-specific resources using the provided content manager.

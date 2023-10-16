@@ -11,9 +11,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Game.Fonts;
 using BadEcho.Game.UI;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Xunit;
 
 namespace BadEcho.Game.Tests;
@@ -26,13 +26,15 @@ public class StackPanelTests : IClassFixture<ContentManagerFixture>
 
     public StackPanelTests(ContentManagerFixture contentFixture)
     {
-        var font = contentFixture.Content.Load<SpriteFont>("Fonts\\LatoSprite");
+        var font = contentFixture.Content.Load<DistanceFieldFont>("Fonts\\Lato");
 
         _firstLabel = new Label
                       {
                           Background = new Brush(Color.Gray),
                           Border = new Brush(Color.Aqua),
                           BorderThickness = new Thickness(1),
+                          FontColor = Color.White,
+                          FontSize = 21,
                           Font = font,
                           Text = "Hello there",
                           VerticalAlignment = VerticalAlignment.Top,
@@ -44,6 +46,8 @@ public class StackPanelTests : IClassFixture<ContentManagerFixture>
                            Background = new Brush(Color.SteelBlue),
                            Border = new Brush(Color.Yellow),
                            BorderThickness = new Thickness(1),
+                           FontColor = Color.White,
+                           FontSize = 21,
                            Font = font,
                            Text = "What's up?",
                            VerticalAlignment = VerticalAlignment.Top,
@@ -71,18 +75,18 @@ public class StackPanelTests : IClassFixture<ContentManagerFixture>
         _stackPanel.Measure(screenBounds.Size);
         _stackPanel.Arrange(screenBounds);
 
-        Assert.Equal(new Rectangle(0, 0, 369, 60), _stackPanel.LayoutBounds);
-        Assert.Equal(new Rectangle(0, 0, 369, 60), _stackPanel.ContentBounds);
+        Assert.Equal(new Rectangle(0, 0, 324, 50), _stackPanel.LayoutBounds);
+        Assert.Equal(new Rectangle(0, 0, 324, 50), _stackPanel.ContentBounds);
 
-        Assert.Equal(new Rectangle(0, 0, 180, 60), _firstLabel.LayoutBounds);
-        Assert.Equal(new Rectangle(1, 1, 178, 58), _firstLabel.BackgroundBounds);
-        Assert.Equal(new Rectangle(11, 11, 158, 38), _firstLabel.ContentBounds);
+        Assert.Equal(new Rectangle(0, 0, 157, 45), _firstLabel.LayoutBounds);
+        Assert.Equal(new Rectangle(1, 1, 155, 43), _firstLabel.BackgroundBounds);
+        Assert.Equal(new Rectangle(11, 11, 135, 23), _firstLabel.ContentBounds);
 
-        Assert.Equal(new Rectangle(180, 0, 189, 60), _secondLabel.LayoutBounds);
-        Assert.Equal(new Rectangle(191, 1, 177, 58), _secondLabel.BackgroundBounds);
-        Assert.Equal(new Rectangle(201, 11, 157, 38), _secondLabel.ContentBounds);
+        Assert.Equal(new Rectangle(157, 0, 167, 50), _secondLabel.LayoutBounds);
+        Assert.Equal(new Rectangle(168, 1, 155, 48), _secondLabel.BackgroundBounds);
+        Assert.Equal(new Rectangle(178, 11, 135, 28), _secondLabel.ContentBounds);
     }
-
+     
     [Fact]
     public void MeasureArrange_TopLeftMarginLeftTopAlignment_ValidLayoutBounds()
     {
@@ -95,16 +99,16 @@ public class StackPanelTests : IClassFixture<ContentManagerFixture>
         _stackPanel.Measure(screenBounds.Size);
         _stackPanel.Arrange(screenBounds);
 
-        Assert.Equal(new Rectangle(0, 0, 379, 70), _stackPanel.LayoutBounds);
-        Assert.Equal(new Rectangle(10, 10, 369, 60), _stackPanel.ContentBounds);
+        Assert.Equal(new Rectangle(0, 0, 334, 60), _stackPanel.LayoutBounds);
+        Assert.Equal(new Rectangle(10, 10, 324, 50), _stackPanel.ContentBounds);
 
-        Assert.Equal(new Rectangle(10, 10, 180, 60), _firstLabel.LayoutBounds);
-        Assert.Equal(new Rectangle(11, 11, 178, 58), _firstLabel.BackgroundBounds);
-        Assert.Equal(new Rectangle(21, 21, 158, 38), _firstLabel.ContentBounds);
+        Assert.Equal(new Rectangle(10, 10, 157, 45), _firstLabel.LayoutBounds);
+        Assert.Equal(new Rectangle(11, 11, 155, 43), _firstLabel.BackgroundBounds);
+        Assert.Equal(new Rectangle(21, 21, 135, 23), _firstLabel.ContentBounds);
 
-        Assert.Equal(new Rectangle(190, 10, 189, 60), _secondLabel.LayoutBounds);
-        Assert.Equal(new Rectangle(201, 11, 177, 58), _secondLabel.BackgroundBounds);
-        Assert.Equal(new Rectangle(211, 21, 157, 38), _secondLabel.ContentBounds);
+        Assert.Equal(new Rectangle(167, 10, 167, 50), _secondLabel.LayoutBounds);
+        Assert.Equal(new Rectangle(178, 11, 155, 48), _secondLabel.BackgroundBounds);
+        Assert.Equal(new Rectangle(188, 21, 135, 28), _secondLabel.ContentBounds);
     }
 
     [Fact]
@@ -118,16 +122,16 @@ public class StackPanelTests : IClassFixture<ContentManagerFixture>
         _stackPanel.Measure(screenBounds.Size);
         _stackPanel.Arrange(screenBounds);
 
-        Assert.Equal(new Rectangle(775, 0, 369, 60), _stackPanel.LayoutBounds);
-        Assert.Equal(new Rectangle(775, 0, 369, 60), _stackPanel.ContentBounds);
+        Assert.Equal(new Rectangle(798, 0, 324, 50), _stackPanel.LayoutBounds);
+        Assert.Equal(new Rectangle(798, 0, 324, 50), _stackPanel.ContentBounds);
 
-        Assert.Equal(new Rectangle(775, 0, 180, 60), _firstLabel.LayoutBounds);
-        Assert.Equal(new Rectangle(776, 1, 178, 58), _firstLabel.BackgroundBounds);
-        Assert.Equal(new Rectangle(786, 11, 158, 38), _firstLabel.ContentBounds);
+        Assert.Equal(new Rectangle(798, 0, 157, 45), _firstLabel.LayoutBounds);
+        Assert.Equal(new Rectangle(799, 1, 155, 43), _firstLabel.BackgroundBounds);
+        Assert.Equal(new Rectangle(809, 11, 135, 23), _firstLabel.ContentBounds);
 
-        Assert.Equal(new Rectangle(955, 0, 189, 60), _secondLabel.LayoutBounds);
-        Assert.Equal(new Rectangle(966, 1, 177, 58), _secondLabel.BackgroundBounds);
-        Assert.Equal(new Rectangle(976, 11, 157, 38), _secondLabel.ContentBounds);
+        Assert.Equal(new Rectangle(955, 0, 167, 50), _secondLabel.LayoutBounds);
+        Assert.Equal(new Rectangle(966, 1, 155, 48), _secondLabel.BackgroundBounds);
+        Assert.Equal(new Rectangle(976, 11, 135, 28), _secondLabel.ContentBounds);
     }
 
     [Fact]
@@ -141,16 +145,16 @@ public class StackPanelTests : IClassFixture<ContentManagerFixture>
         _stackPanel.Measure(screenBounds.Size);
         _stackPanel.Arrange(screenBounds);
 
-        Assert.Equal(new Rectangle(0, 0, 1920, 60), _stackPanel.LayoutBounds);
-        Assert.Equal(new Rectangle(0, 0, 1920, 60), _stackPanel.ContentBounds);
+        Assert.Equal(new Rectangle(0, 0, 1920, 50), _stackPanel.LayoutBounds);
+        Assert.Equal(new Rectangle(0, 0, 1920, 50), _stackPanel.ContentBounds);
 
-        Assert.Equal(new Rectangle(0, 0, 180, 60), _firstLabel.LayoutBounds);
-        Assert.Equal(new Rectangle(1, 1, 178, 58), _firstLabel.BackgroundBounds);
-        Assert.Equal(new Rectangle(11, 11, 158, 38), _firstLabel.ContentBounds);
+        Assert.Equal(new Rectangle(0, 0, 157, 45), _firstLabel.LayoutBounds);
+        Assert.Equal(new Rectangle(1, 1, 155, 43), _firstLabel.BackgroundBounds);
+        Assert.Equal(new Rectangle(11, 11, 135, 23), _firstLabel.ContentBounds);
 
-        Assert.Equal(new Rectangle(180, 0, 189, 60), _secondLabel.LayoutBounds);
-        Assert.Equal(new Rectangle(191, 1, 177, 58), _secondLabel.BackgroundBounds);
-        Assert.Equal(new Rectangle(201, 11, 157, 38), _secondLabel.ContentBounds);
+        Assert.Equal(new Rectangle(157, 0, 167, 50), _secondLabel.LayoutBounds);
+        Assert.Equal(new Rectangle(168, 1, 155, 48), _secondLabel.BackgroundBounds);
+        Assert.Equal(new Rectangle(178, 11, 135, 28), _secondLabel.ContentBounds);
     }
 
     [Fact]
@@ -164,15 +168,15 @@ public class StackPanelTests : IClassFixture<ContentManagerFixture>
         _stackPanel.Measure(screenBounds.Size);
         _stackPanel.Arrange(screenBounds);
 
-        Assert.Equal(new Rectangle(775, 510, 369, 60), _stackPanel.LayoutBounds);
-        Assert.Equal(new Rectangle(775, 510, 369, 60), _stackPanel.ContentBounds);
+        Assert.Equal(new Rectangle(798, 515, 324, 50), _stackPanel.LayoutBounds);
+        Assert.Equal(new Rectangle(798, 515, 324, 50), _stackPanel.ContentBounds);
 
-        Assert.Equal(new Rectangle(775, 510, 180, 60), _firstLabel.LayoutBounds);
-        Assert.Equal(new Rectangle(776, 511, 178, 58), _firstLabel.BackgroundBounds);
-        Assert.Equal(new Rectangle(786, 521, 158, 38), _firstLabel.ContentBounds);
+        Assert.Equal(new Rectangle(798, 515, 157, 45), _firstLabel.LayoutBounds);
+        Assert.Equal(new Rectangle(799, 516, 155, 43), _firstLabel.BackgroundBounds);
+        Assert.Equal(new Rectangle(809, 526, 135, 23), _firstLabel.ContentBounds);
 
-        Assert.Equal(new Rectangle(955, 510, 189, 60), _secondLabel.LayoutBounds);
-        Assert.Equal(new Rectangle(966, 511, 177, 58), _secondLabel.BackgroundBounds);
-        Assert.Equal(new Rectangle(976, 521, 157, 38), _secondLabel.ContentBounds);
+        Assert.Equal(new Rectangle(955, 515, 167, 50), _secondLabel.LayoutBounds);
+        Assert.Equal(new Rectangle(966, 516, 155, 48), _secondLabel.BackgroundBounds);
+        Assert.Equal(new Rectangle(976, 526, 135, 28), _secondLabel.ContentBounds);
     }
 }

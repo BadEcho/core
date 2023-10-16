@@ -12,7 +12,6 @@
 //-----------------------------------------------------------------------
 
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics.CodeAnalysis;
 using BadEcho.Game.Properties;
 using Microsoft.Xna.Framework.Input;
@@ -243,7 +242,7 @@ public sealed class Grid : Panel, ISelectable
     }
 
     /// <inheritdoc/>
-    protected override void DrawCore(SpriteBatch spriteBatch)
+    protected override void DrawCore(ConfiguredSpriteBatch spriteBatch)
     {
         if (HoveredItemBackground != null && IsCellHovered)
         {

@@ -146,4 +146,7 @@
 	<data name="EffectMissingResource" xml:space="preserve">
 		<value>Missing expected effect resource '{0}'.</value>
 	</data>
+	<data name="GameStateResourcesNotLoaded" xml:space="preserve">
+		<value>Game state resources were not loaded.</value>
+	</data>
 </root>

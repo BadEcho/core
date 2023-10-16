@@ -36,7 +36,7 @@ public sealed class Brush : IVisual, IDisposable
     }
 
     /// <inheritdoc />
-    public void Draw(SpriteBatch spriteBatch, Rectangle targetArea)
+    public void Draw(ConfiguredSpriteBatch spriteBatch, Rectangle targetArea)
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
 

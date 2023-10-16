@@ -53,12 +53,8 @@ public class TextureRegion : IVisualRegion
     public Size Size
         => SourceArea.Size;
 
-    /// <summary>
-    /// Draws the texture region to the screen.
-    /// </summary>
-    /// <param name="spriteBatch">The <see cref="SpriteBatch"/> instance to use to draw the region.</param>
-    /// <param name="targetArea">The bounding rectangle of the region of the screen that this region will be drawn to.</param>
-    public virtual void Draw(SpriteBatch spriteBatch, Rectangle targetArea)
+    /// <inheritdoc/>
+    public virtual void Draw(ConfiguredSpriteBatch spriteBatch, Rectangle targetArea)
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
 

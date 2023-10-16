@@ -11,8 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using Microsoft.Xna.Framework.Graphics;
-
 namespace BadEcho.Game.UI;
 
 /// <summary>
@@ -52,7 +50,7 @@ public sealed class Image : Control
     }
 
     /// <inheritdoc />
-    protected override void DrawCore(SpriteBatch spriteBatch)
+    protected override void DrawCore(ConfiguredSpriteBatch spriteBatch)
     {
         Visual?.Draw(spriteBatch, ContentBounds);
     }

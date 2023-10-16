@@ -12,7 +12,6 @@
 //-----------------------------------------------------------------------
 
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using BadEcho.Extensions;
 using BadEcho.Game.Properties;
 using Microsoft.Xna.Framework.Input;
@@ -431,8 +430,8 @@ public abstract class Control : IArrangeable, IInputElement
     /// <summary>
     /// Draws the control to the screen.
     /// </summary>
-    /// <param name="spriteBatch">The <see cref="SpriteBatch"/> instance to use to draw the control.</param>
-    public void Draw(SpriteBatch spriteBatch)
+    /// <param name="spriteBatch">The <see cref="ConfiguredSpriteBatch"/> instance to use to draw the control.</param>
+    public void Draw(ConfiguredSpriteBatch spriteBatch)
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
         
@@ -629,11 +628,11 @@ public abstract class Control : IArrangeable, IInputElement
     /// <summary>
     /// Executes the custom rendering logic required to draw the control to the screen.
     /// </summary>
-    /// <param name="spriteBatch">The <see cref="SpriteBatch"/> instance to use to draw the control.</param>
+    /// <param name="spriteBatch">The <see cref="ConfiguredSpriteBatch"/> instance to use to draw the control.</param>
     /// <remarks>
     /// This is where the actually rendering logic for the content (something this base type knows nothing about) needs to occur.
     /// </remarks>
-    protected abstract void DrawCore(SpriteBatch spriteBatch);
+    protected abstract void DrawCore(ConfiguredSpriteBatch spriteBatch);
 
     /// <summary>
     /// When overridden in a derived class, provides custom logic for selecting the background visual of the control based on its

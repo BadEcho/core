@@ -11,8 +11,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Game.Fonts;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.UI;
 
@@ -74,7 +74,7 @@ public sealed class Button : Control
     /// <summary>
     /// Gets or sets the font used for this button's text.
     /// </summary>
-    public SpriteFont? Font
+    public DistanceFieldFont? Font
     {
         get => _innerLabel.Font;
         set => _innerLabel.Font = value;
@@ -154,7 +154,7 @@ public sealed class Button : Control
     }
 
     /// <inheritdoc />
-    protected override void DrawCore(SpriteBatch spriteBatch)
+    protected override void DrawCore(ConfiguredSpriteBatch spriteBatch)
     {
         _innerPanel.Draw(spriteBatch);
     }

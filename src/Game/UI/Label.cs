@@ -15,7 +15,6 @@ using BadEcho.Game.Fonts;
 using BadEcho.Game.Properties;
 using BadEcho.Logging;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.UI;
 
@@ -25,26 +24,16 @@ namespace BadEcho.Game.UI;
 public sealed class Label : Control
 {
     private string _text = string.Empty;
-    private SpriteFont? _font;
-    private DistanceFieldFont? _msdfFont;
+    private DistanceFieldFont? _font;
     private IModelRenderer? _textRenderer;
 
     /// <summary>
     /// Gets or sets the font used for this label's text.
     /// </summary>
-    public SpriteFont? Font
+    public DistanceFieldFont? Font
     {
         get => _font;
         set => RemeasureIfChanged(ref _font, value);
-    }
-
-    /// <summary>
-    /// Gets or sets the font used for this label's text.
-    /// </summary>
-    public DistanceFieldFont? MsdfFont
-    {
-        get => _msdfFont;
-        set => RemeasureIfChanged(ref _msdfFont, value);
     }
 
     /// <summary>
@@ -54,7 +43,7 @@ public sealed class Label : Control
     { get; set; }
 
     /// <summary>
-    /// Gets or sets the size of the font used for this label's text.
+    /// Gets or sets the size of the font in points used for this label's text.
     /// </summary>
     public float FontSize
     { get; set; }
@@ -71,17 +60,16 @@ public sealed class Label : Control
     /// <inheritdoc />
     protected override Size MeasureCore(Size availableSize)
     {
-        if (MsdfFont == null)
+        if (Font == null)
             return Size.Empty;
-
-        // TODO: need to research how to convert font points to scale.
-        _textRenderer = MsdfFont.AddModel(Text, Vector2.Zero, FontColor, 0.767f * FontSize);
+        
+        _textRenderer = Font.AddModel(Text, Vector2.Zero, FontColor, FontSize / 0.767f);
 
         return (Size) _textRenderer.Size;
     }
 
     /// <inheritdoc />
-    protected override void DrawCore(SpriteBatch spriteBatch)
+    protected override void DrawCore(ConfiguredSpriteBatch spriteBatch)
     {
         if (_textRenderer == null)
         {
@@ -89,8 +77,13 @@ public sealed class Label : Control
             return;
         }
 
+        // UI elements are drawn immediately, as opposed to being deferred, so creating a new batch here won't be any significant effect.
+        spriteBatch.End();
+
         Matrix textTranslation = Matrix.CreateTranslation(ContentBounds.X, ContentBounds.Y, 0);
 
         _textRenderer.Draw(textTranslation);
+
+        spriteBatch.Begin();
     }
 }

@@ -160,8 +160,8 @@ public sealed class Screen : IArrangeable, IInputHandler
     /// <summary>
     /// Draws the user interface to the screen.
     /// </summary>
-    /// <param name="spriteBatch">The <see cref="SpriteBatch"/> instance to use to draw the user interface.</param>
-    public void Draw(SpriteBatch spriteBatch)
+    /// <param name="spriteBatch">The <see cref="ConfiguredSpriteBatch"/> instance to use to draw the user interface.</param>
+    public void Draw(ConfiguredSpriteBatch spriteBatch)
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
 

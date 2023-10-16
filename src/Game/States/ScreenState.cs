@@ -45,6 +45,10 @@ public sealed class ScreenState : GameState
         => false;
 
     /// <inheritdoc/>
+    protected override SpriteSortMode SortMode
+        => SpriteSortMode.Immediate;
+
+    /// <inheritdoc/>
     public override void Update(GameUpdateTime time)
     {
         _screen.Update();
@@ -55,7 +59,7 @@ public sealed class ScreenState : GameState
     }
 
     /// <inheritdoc />
-    protected override void DrawCore(SpriteBatch spriteBatch)
+    protected override void DrawCore(ConfiguredSpriteBatch spriteBatch)
         => _screen.Draw(spriteBatch);
 
     /// <inheritdoc />

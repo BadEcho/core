@@ -11,8 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using Microsoft.Xna.Framework.Graphics;
-
 namespace BadEcho.Game.UI;
 
 /// <summary>
@@ -85,7 +83,7 @@ public abstract class Panel : Control
     }
 
     /// <inheritdoc/>
-    protected override void DrawCore(SpriteBatch spriteBatch)
+    protected override void DrawCore(ConfiguredSpriteBatch spriteBatch)
     {
         foreach (Control control in Children.Where(c => c.IsVisible))
         {

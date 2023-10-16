@@ -11,7 +11,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using Microsoft.Xna.Framework.Graphics;
+using BadEcho.Extensions;
+using BadEcho.Game.Fonts;
 using Microsoft.Xna.Framework;
 
 namespace BadEcho.Game.UI;
@@ -24,8 +25,9 @@ public sealed class Menu : ContentControl<Grid>, ISelectable
     private readonly List<MenuItem> _menuItems = new();
 
     private Orientation _orientation;
-    private SpriteFont? _itemFont;
+    private DistanceFieldFont? _itemFont;
     private Color _itemFontColor;
+    private float _itemFontSize;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Menu"/> class.
@@ -51,7 +53,7 @@ public sealed class Menu : ContentControl<Grid>, ISelectable
     /// <summary>
     /// Gets or sets the font used for the text of selectable items inside this menu.
     /// </summary>
-    public SpriteFont? ItemFont
+    public DistanceFieldFont? ItemFont
     {
         get => _itemFont;
         set
@@ -77,6 +79,23 @@ public sealed class Menu : ContentControl<Grid>, ISelectable
                 return;
 
             _itemFontColor = value;
+
+            _menuItems.ForEach(UpdateItemAppearance);
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the size of the font in points used for the text of selectable items inside this menu.
+    /// </summary>
+    public float ItemFontSize
+    {
+        get => _itemFontSize;
+        set
+        {
+            if (_itemFontSize.ApproximatelyEquals(value))
+                return;
+
+            _itemFontSize = value;
 
             _menuItems.ForEach(UpdateItemAppearance);
         }
@@ -139,8 +158,9 @@ public sealed class Menu : ContentControl<Grid>, ISelectable
 
     private void UpdateItemAppearance(MenuItem menuItem)
     {
-        menuItem.Font = _itemFont;
         menuItem.FontColor = _itemFontColor;
+        menuItem.FontSize = _itemFontSize;
+        menuItem.Font = _itemFont;
     }
 
     private void UpdateItemContainer()

@@ -97,6 +97,15 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Game state resources were not loaded..
+        /// </summary>
+        internal static string GameStateResourcesNotLoaded {
+            get {
+                return ResourceManager.GetString("GameStateResourcesNotLoaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Specified column is outside the range of this grid&apos;s columns..
         /// </summary>
         internal static string GridColumnOutOfRange {
