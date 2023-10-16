@@ -47,7 +47,7 @@ public class PresortedInsertionStrategyTests
     }
 
     [Fact]
-    public void Add_ExistingItems()
+    public void Add_NewItems_AddedAndSorted()
     {
         var newItem = new ModelStub("New", 3);
         var newChild = new ViewModelStub();
@@ -60,7 +60,7 @@ public class PresortedInsertionStrategyTests
     }
 
     [Fact]
-    public void AddRange_ExistingItems()
+    public void AddRange_NewItems_AddedAndSorted()
     {
         var newItem1 = new ModelStub("New1", 3);
         var newItem2 = new ModelStub("New2", 0);

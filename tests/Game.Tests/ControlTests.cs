@@ -32,6 +32,7 @@ public class ControlTests : IClassFixture<ContentManagerFixture>
                  {
                      Background = new Brush(Color.Gray),
                      Border = new Brush(Color.Aqua),
+                     FontSize = 24,
                      Font = font,
                      Text = "Hello there",
                      VerticalAlignment = VerticalAlignment.Top,
@@ -45,7 +46,7 @@ public class ControlTests : IClassFixture<ContentManagerFixture>
         _label.Measure(_screenBounds.Size);
         _label.Arrange(_screenBounds);
 
-        var bounds = new Rectangle(0, 0, 158, 38);
+        var bounds = new Rectangle(0, 0, 154, 27);
 
         Assert.Equal(bounds, _label.LayoutBounds);
         Assert.Equal(bounds, _label.BorderBounds);
@@ -60,8 +61,8 @@ public class ControlTests : IClassFixture<ContentManagerFixture>
         _label.Measure(_screenBounds.Size);
         _label.Arrange(_screenBounds);
 
-        var layoutBounds = new Rectangle(0, 0, 178, 58);
-        var contentBounds = new Rectangle(10, 10, 158, 38);
+        var layoutBounds = new Rectangle(0, 0, 174, 47);
+        var contentBounds = new Rectangle(10, 10, 154, 27);
         
         Assert.Equal(layoutBounds, _label.LayoutBounds);
         Assert.Equal(contentBounds, _label.BorderBounds);
@@ -76,8 +77,8 @@ public class ControlTests : IClassFixture<ContentManagerFixture>
         _label.Measure(_screenBounds.Size);
         _label.Arrange(_screenBounds);
 
-        var layoutBounds = new Rectangle(0, 0, 162, 42);
-        var contentBounds = new Rectangle(2, 2, 158, 38);
+        var layoutBounds = new Rectangle(0, 0, 158, 31);
+        var contentBounds = new Rectangle(2, 2, 154, 27);
 
         Assert.Equal(layoutBounds, _label.LayoutBounds);
         Assert.Equal(layoutBounds, _label.BorderBounds);
@@ -92,8 +93,8 @@ public class ControlTests : IClassFixture<ContentManagerFixture>
         _label.Measure(_screenBounds.Size);
         _label.Arrange(_screenBounds);
 
-        var layoutBounds = new Rectangle(0, 0, 168, 48);
-        var contentBounds = new Rectangle(5, 5, 158, 38);
+        var layoutBounds = new Rectangle(0, 0, 164, 37);
+        var contentBounds = new Rectangle(5, 5, 154, 27);
 
         Assert.Equal(layoutBounds, _label.LayoutBounds);
         Assert.Equal(layoutBounds, _label.BorderBounds);
@@ -110,10 +111,10 @@ public class ControlTests : IClassFixture<ContentManagerFixture>
         _label.Measure(_screenBounds.Size);
         _label.Arrange(_screenBounds);
 
-        var layoutBounds = new Rectangle(0, 0, 192, 72);
-        var borderBounds = new Rectangle(10, 10, 172, 52);
-        var backgroundBounds = new Rectangle(12, 12, 168, 48);
-        var contentBounds = new Rectangle(17, 17, 158, 38);
+        var layoutBounds = new Rectangle(0, 0, 188, 61);
+        var borderBounds = new Rectangle(10, 10, 168, 41);
+        var backgroundBounds = new Rectangle(12, 12, 164, 37);
+        var contentBounds = new Rectangle(17, 17, 154, 27);
 
         Assert.Equal(layoutBounds, _label.LayoutBounds);
         Assert.Equal(borderBounds, _label.BorderBounds);
@@ -128,7 +129,7 @@ public class ControlTests : IClassFixture<ContentManagerFixture>
         _label.Measure(_screenBounds.Size);
         _label.Arrange(_screenBounds);
 
-        var bounds = new Rectangle(0, 0, 300, 38);
+        var bounds = new Rectangle(0, 0, 300, 27);
 
         Assert.Equal(bounds, _label.LayoutBounds);
         Assert.Equal(bounds, _label.BorderBounds);
