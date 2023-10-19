@@ -12,34 +12,27 @@
 //-----------------------------------------------------------------------
 
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game;
 
 /// <summary>
-/// Defines a renderer of one or more related models using shaders appropriate for the model type.
+/// Defines shaders that support a standard set of parameters.
 /// </summary>
-public interface IModelRenderer
+public interface IStandardEffect
 {
     /// <summary>
-    /// Gets the size of the model when it is rendered.
+    /// Gets or sets an optional matrix to apply to position, rotation, scale, and depth data.
     /// </summary>
-    SizeF Size { get; }
+    Matrix? MatrixTransform { get; set; }
 
     /// <summary>
-    /// Draws the models to the screen.
+    /// Gets or sets the transparency of the material being rendered.
     /// </summary>
-    void Draw();
+    float Alpha { get; set; }
 
     /// <summary>
-    /// Draws the models to the screen.
+    /// Gets or sets the active technique.
     /// </summary>
-    /// <param name="view">The view matrix to use.</param>
-    void Draw(Matrix view);
-
-    /// <summary>
-    /// Draws the models to the screen.
-    /// </summary>
-    /// <param name="view">The view matrix to use.</param>
-    /// <param name="alpha">The transparency of the material being rendered.</param>
-    void Draw(Matrix view, float alpha);
+    EffectTechnique CurrentTechnique { get; set; }
 }

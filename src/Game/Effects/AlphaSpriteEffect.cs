@@ -21,7 +21,7 @@ namespace BadEcho.Game.Effects;
 /// Provides <see cref="SpriteBatch"/> shaders that allow control over the alpha channel of all
 /// sprites drawn in a batch.
 /// </summary>
-public sealed class AlphaSpriteEffect : Effect
+public sealed class AlphaSpriteEffect : Effect, IStandardEffect
 {
     private EffectParameter _matrixParam;
     private EffectParameter _alphaParam;
@@ -51,21 +51,11 @@ public sealed class AlphaSpriteEffect : Effect
         CacheEffectParameters();
     }
 
-    /// <summary>
-    /// Gets or sets an optional matrix used to transform the sprite geometry.
-    /// </summary>
-    /// <remarks>
-    /// A <see cref="Matrix.Identity"/> value is used if this is null.
-    /// </remarks>
+    /// <inheritdoc/>
     public Matrix? MatrixTransform
     { get; set; }
 
-    /// <summary>
-    /// Gets or sets the transparency of all sprites drawn in a batch.
-    /// </summary>
-    /// <remarks>
-    /// This is set to be fully opaque by default.
-    /// </remarks>
+    /// <inheritdoc/>
     public float Alpha
     {
         get => _alphaParam.GetValueSingle();

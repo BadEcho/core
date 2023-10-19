@@ -16,9 +16,10 @@
 #include "Defines.fxh"
 
 BEGIN_PARAMETERS
-    float4x4 WorldViewProjection _vs(c0) _cb(c0);
+    float4x4 MatrixTransform _vs(c0) _cb(c0);
     float2 AtlasSize _ps(c0) _cb(c4);
     float DistanceRange _ps(c1)  _cb(c5);
+    float Alpha _vs(c4) _cb(c6);
 END_PARAMETERS
 
 texture Texture : register(t0);
@@ -95,10 +96,15 @@ VSOutput DistanceVertexShader(in VSInput input)
 {
     VSOutput output;
 
-    output.Position = mul(input.Position, WorldViewProjection);
+    output.Position = mul(input.Position, MatrixTransform);
     output.FillColor = input.FillColor;
     output.StrokeColor = input.StrokeColor;
     output.TexCoord = input.TexCoord;
+
+    output.FillColor.a = Alpha;
+    output.FillColor.rgb *= Alpha;
+    output.StrokeColor.a = Alpha;
+    output.StrokeColor.rgb *= Alpha;
 
     return output;
 }

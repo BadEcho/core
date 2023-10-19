@@ -147,6 +147,10 @@ public sealed class TileMap : Extensible, IModelRenderer
 
     /// <inheritdoc/>
     public void Draw(Matrix view)
+        => Draw(view, 1.0f);
+
+    /// <inheritdoc/>
+    public void Draw(Matrix view, float alpha)
     {
         if (_layerModelMap.Count == 0)
             CreateModels();
@@ -161,7 +165,8 @@ public sealed class TileMap : Extensible, IModelRenderer
                          {
                              World = _world,
                              View = view,
-                             Projection = projection
+                             Projection = projection,
+                             Alpha = alpha
                          };
 
             foreach (var layerModel in _layerModelMap[layer])

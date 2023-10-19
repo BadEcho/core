@@ -236,6 +236,10 @@ public sealed class DistanceFieldFont
 
         /// <inheritdoc/>
         public void Draw(Matrix view)
+            => Draw(view, 1.0f);
+
+        /// <inheritdoc/>
+        public void Draw(Matrix view, float alpha)
         {
             GraphicsDevice device = _font._device;
 
@@ -244,10 +248,11 @@ public sealed class DistanceFieldFont
 
             var effect = new DistanceFieldFontEffect(device)
                          {
-                             WorldViewProjection = view * projection,
+                             MatrixTransform = view * projection,
                              AtlasSize = new Vector2(_font.Characteristics.Width, _font.Characteristics.Height),
                              DistanceRange = _font.Characteristics.DistanceRange,
-                             Texture = _font.Atlas
+                             Texture = _font.Atlas,
+                             Alpha = alpha
                          };
 
             effect.CurrentTechnique = GetTechnique(effect);

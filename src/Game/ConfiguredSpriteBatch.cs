@@ -27,7 +27,10 @@ public sealed class ConfiguredSpriteBatch
     private readonly SamplerState _samplerState;
     private readonly DepthStencilState _depthStencilState;
     private readonly RasterizerState _rasterizerState;
-    private readonly Effect? _effect;
+    private readonly Matrix? _matrixTransform;
+
+    private Effect? _effect;
+    private IStandardEffect? _standardEffect;
     
     /// <summary>
     /// Initializes a new instance of the <see cref="ConfiguredSpriteBatch"/> class.
@@ -44,10 +47,7 @@ public sealed class ConfiguredSpriteBatch
     /// <param name="rasterizerState">
     /// State of the rasterization. If null, <see cref="RasterizerState.CullCounterClockwise"/> is used.
     /// </param>
-    /// <param name="effect">
-    /// A custom <see cref="Effect"/> to override the default sprite effect. If null, the default sprite effect is used.
-    /// </param>
-    /// <param name="transformMatrix">
+    /// <param name="matrixTransform">
     /// An optional matrix used to transform the sprite geometry. If null, <see cref="Matrix.Identity"/> is used.
     /// </param>
     public ConfiguredSpriteBatch(SpriteBatch spriteBatch,
@@ -56,8 +56,7 @@ public sealed class ConfiguredSpriteBatch
                                  SamplerState? samplerState = null,
                                  DepthStencilState? depthStencilState = null,
                                  RasterizerState? rasterizerState = null,
-                                 Effect? effect = null,
-                                 Matrix? transformMatrix = null)
+                                 Matrix? matrixTransform = null)
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
 
@@ -67,8 +66,7 @@ public sealed class ConfiguredSpriteBatch
         _samplerState = samplerState ?? SamplerState.LinearClamp;
         _depthStencilState = depthStencilState ?? DepthStencilState.None;
         _rasterizerState = rasterizerState ?? RasterizerState.CullCounterClockwise;
-        _effect = effect;
-        TransformMatrix = transformMatrix ?? Matrix.Identity;
+        _matrixTransform = matrixTransform ?? Matrix.Identity;
     }
 
     /// <summary>
@@ -84,10 +82,22 @@ public sealed class ConfiguredSpriteBatch
         => _spriteBatch.GraphicsDevice;
 
     /// <summary>
-    /// Gets or sets a matrix to apply to position, rotation, scale, and depth data.
+    /// Gets the custom <see cref="IStandardEffect"/> being used to override the default sprite effect, if any.
     /// </summary>
-    public Matrix TransformMatrix
-    { get; set; }
+    public IStandardEffect? Effect
+        => _standardEffect;
+
+    /// <summary>
+    /// Loads a custom <typeparamref name="TEffect"/> to override the default sprite effect.
+    /// </summary>
+    /// <typeparam name="TEffect">An <see cref="Effect"/> type implementing <see cref="IStandardEffect"/>.</typeparam>
+    /// <param name="effect">A custom effect to override the default sprite effect.</param>
+    public void LoadEffect<TEffect>(TEffect effect)
+        where TEffect : Effect, IStandardEffect
+    {
+        _effect = effect;
+        _standardEffect = effect;
+    }
 
     /// <summary>
     /// Begins a new sprite batch operation by preparing the graphics device for drawing sprites.
@@ -103,7 +113,7 @@ public sealed class ConfiguredSpriteBatch
                            _depthStencilState,
                            _rasterizerState,
                            _effect,
-                           TransformMatrix);
+                           _matrixTransform);
 
         BatchStarted = true;
     }

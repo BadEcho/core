@@ -22,10 +22,11 @@ namespace BadEcho.Game.Effects;
 /// </summary>
 public sealed class DistanceFieldFontEffect : Effect, ITextureEffect
 {
-    private EffectParameter _worldViewProjectionParam;
+    private EffectParameter _matrixParam;
     private EffectParameter _atlasSizeParam;
     private EffectParameter _distanceRangeParam;
     private EffectParameter _textureParam;
+    private EffectParameter _alphaParam;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DistanceFieldFontEffect"/> class.
@@ -35,6 +36,9 @@ public sealed class DistanceFieldFontEffect : Effect, ITextureEffect
         : base(device, Shaders.DistanceFieldFontEffect)
     {
         CacheEffectParameters();
+
+        MatrixTransform = Matrix.Identity;
+        Alpha = 1f;
     }
 
     /// <summary>
@@ -72,15 +76,6 @@ public sealed class DistanceFieldFontEffect : Effect, ITextureEffect
         => "StrokedSmallDistanceFieldFont";
 
     /// <summary>
-    /// Gets or sets the world, view, and projection transformation matrix.
-    /// </summary>
-    public Matrix WorldViewProjection
-    {
-        get => _worldViewProjectionParam.GetValueMatrix();
-        set => _worldViewProjectionParam.SetValue(value);
-    }
-
-    /// <summary>
     /// Gets or sets the width and height of the atlas texture.
     /// </summary>
     public Vector2 AtlasSize
@@ -98,9 +93,21 @@ public sealed class DistanceFieldFontEffect : Effect, ITextureEffect
         set => _distanceRangeParam.SetValue(value);
     }
 
-    /// <summary>
-    /// Gets or sets the font atlas texture.
-    /// </summary>
+    /// <inheritdoc/>
+    public Matrix? MatrixTransform
+    {
+        get => _matrixParam.GetValueMatrix();
+        set => _matrixParam.SetValue(value ?? Matrix.Identity);
+    }
+
+    /// <inheritdoc/>
+    public float Alpha
+    {
+        get => _alphaParam.GetValueSingle();
+        set => _alphaParam.SetValue(value);
+    }
+
+    /// <inheritdoc/>
     public Texture2D Texture
     {
         get => _textureParam.GetValueTexture2D();
@@ -114,15 +121,17 @@ public sealed class DistanceFieldFontEffect : Effect, ITextureEffect
     public override Effect Clone()
         => new DistanceFieldFontEffect(this);
 
-    [MemberNotNull(nameof(_worldViewProjectionParam),
+    [MemberNotNull(nameof(_matrixParam),
                    nameof(_atlasSizeParam),
                    nameof(_distanceRangeParam),
-                   nameof(_textureParam))]
+                   nameof(_textureParam),
+                   nameof(_alphaParam))]
     private void CacheEffectParameters()
     {
-        _worldViewProjectionParam = Parameters[nameof(WorldViewProjection)];
+        _matrixParam = Parameters[nameof(MatrixTransform)];
         _atlasSizeParam = Parameters[nameof(AtlasSize)];
         _distanceRangeParam = Parameters[nameof(DistanceRange)];
         _textureParam = Parameters[nameof(Texture)];
+        _alphaParam = Parameters[nameof(Alpha)];
     }
 }

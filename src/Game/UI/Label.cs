@@ -81,8 +81,15 @@ public sealed class Label : Control
         spriteBatch.End();
 
         Matrix textTranslation = Matrix.CreateTranslation(ContentBounds.X, ContentBounds.Y, 0);
+        float alpha = 1.0f;
 
-        _textRenderer.Draw(textTranslation);
+        if (spriteBatch.Effect != null)
+        {
+            textTranslation *= spriteBatch.Effect.MatrixTransform ?? Matrix.Identity;
+            alpha = spriteBatch.Effect.Alpha;
+        }
+
+        _textRenderer.Draw(textTranslation, alpha);
 
         spriteBatch.Begin();
     }

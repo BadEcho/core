@@ -18,15 +18,10 @@ namespace BadEcho.Game;
 /// <summary>
 /// Defines shaders that support mapping a texture onto vertex data.
 /// </summary>
-public interface ITextureEffect
+public interface ITextureEffect : IStandardEffect
 {
     /// <summary>
     /// Gets or sets the texture to be applied by this effect.
     /// </summary>
     Texture2D Texture { get; set; }
-
-    /// <summary>
-    /// Gets or sets the active technique.
-    /// </summary>
-    EffectTechnique CurrentTechnique { get; set; }
 }

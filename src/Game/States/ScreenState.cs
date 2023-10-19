@@ -37,7 +37,7 @@ public sealed class ScreenState : GameState
 
         _userInterface = userInterface;
         _screen = new Screen(device);
-        ActivationTime = TimeSpan.FromSeconds(1.5);
+        ActivationTime = TimeSpan.FromSeconds(0.5);
     }
 
     /// <inheritdoc/>

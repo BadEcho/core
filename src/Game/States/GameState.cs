@@ -174,9 +174,9 @@ public abstract class GameState : IDisposable
             SortMode,
             BlendState.AlphaBlend,
             SamplerState.PointClamp,
-            rasterizerState: new RasterizerState { ScissorTestEnable = clippingEnabled },
-            effect: alphaEffect);
+            rasterizerState: new RasterizerState { ScissorTestEnable = clippingEnabled });
 
+        configuredSpriteBatch.LoadEffect(alphaEffect);
         configuredSpriteBatch.Begin();
         
         DrawCore(configuredSpriteBatch);
