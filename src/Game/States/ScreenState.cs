@@ -20,9 +20,10 @@ namespace BadEcho.Game.States;
 /// <summary>
 /// Provides a game state that hosts a rendering surface for drawing user interface elements.
 /// </summary>
-public sealed class ScreenState : GameState
+public sealed class ScreenState : GameState, IScreenManager
 {
     private readonly UserInterface _userInterface;
+    private readonly GraphicsDevice _device;
     private readonly Screen _screen;
 
     /// <summary>
@@ -34,9 +35,10 @@ public sealed class ScreenState : GameState
     {
         Require.NotNull(userInterface, nameof(userInterface));
         Require.NotNull(device, nameof(device));
-
+        
         _userInterface = userInterface;
         _screen = new Screen(device);
+        _device = device;
         ActivationTime = TimeSpan.FromSeconds(0.5);
     }
 
@@ -57,6 +59,23 @@ public sealed class ScreenState : GameState
 
         base.Update(time);
     }
+
+    /// <inheritdoc />
+    public void AddScreen(UserInterface userInterface)
+        => AddScreen(userInterface, Transitions.None);
+
+    /// <inheritdoc />
+    public void AddScreen(UserInterface userInterface, Transitions transitions)
+    {
+        Manager?.AddState(new ScreenState(userInterface, _device)
+                          {
+                              StateTransitions = transitions
+                          });
+    }
+
+    /// <inheritdoc />
+    public void RemoveScreen() 
+        => Manager?.RemoveState(this);
 
     /// <inheritdoc />
     protected override void DrawCore(ConfiguredSpriteBatch spriteBatch)

@@ -10,6 +10,7 @@
 //      https://www.gnu.org/licenses/agpl-3.0.html
 // </copyright>
 //-----------------------------------------------------------------------
+
 using Microsoft.Xna.Framework.Content;
 
 namespace BadEcho.Game.UI;
@@ -26,6 +27,15 @@ public abstract class UserInterface
     /// <param name="screen">The screen to display this user interface on.</param>
     /// <param name="contentManager">The content manager to use to load the content's dependencies.</param>
     public void Attach(Screen screen, ContentManager contentManager)
+        => Attach(screen, contentManager, null);
+
+    /// <summary>
+    /// Attaches this user interface onto the provided screen.
+    /// </summary>
+    /// <param name="screen">The screen to display this user interface on.</param>
+    /// <param name="contentManager">The content manager to use to load the content's dependencies.</param>
+    /// <param name="screenManager">An optional screen manager the user interface can use to spawn child interfaces.</param>
+    public void Attach(Screen screen, ContentManager contentManager, IScreenManager? screenManager)
     {
         Require.NotNull(screen, nameof(screen));
         Require.NotNull(contentManager, nameof(contentManager));
@@ -34,7 +44,7 @@ public abstract class UserInterface
 
         screen.Content = LoadControls();
 
-        OnAttached();
+        OnAttached(screenManager);
     }
 
     /// <summary>
@@ -52,6 +62,9 @@ public abstract class UserInterface
     /// <summary>
     /// Called when this user interface has been attached to a screen.
     /// </summary>
-    protected virtual void OnAttached()
+    /// <param name="screenManager">
+    /// A screen manager the user interface can use to spawn child interfaces, optionally provided at the time of attachment.
+    /// </param>
+    protected virtual void OnAttached(IScreenManager? screenManager)
     { }
 }

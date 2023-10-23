@@ -100,6 +100,7 @@ public sealed class StateManager : DrawableGameComponent
     public void AddState(GameState state)
     {
         Require.NotNull(state, nameof(state));
+        state.Manager = this;
 
         // If the game component has been loaded and a graphics device is available, we'll activate the states.
         if (_isLoaded)
@@ -115,6 +116,7 @@ public sealed class StateManager : DrawableGameComponent
     public void RemoveState(GameState state)
     {
         Require.NotNull(state, nameof(state));
+        state.Manager = null;
 
         // If the screen was added and then removed prior to the component's initialization, there won't be any graphics resources
         // to unload.

@@ -23,6 +23,9 @@ namespace BadEcho.Game.States;
 /// </summary>
 public abstract class GameState : IDisposable
 {
+    private const Transitions MOVEMENT_FLAGS =
+        Transitions.MoveLeft | Transitions.MoveRight | Transitions.MoveUp | Transitions.MoveDown;
+
     private ContentManager? _contentManager;
     private bool _isExiting;
     private bool _disposed;
@@ -61,15 +64,9 @@ public abstract class GameState : IDisposable
     /// <summary>
     /// Gets or sets the transitions this state undergoes when activating and deactivating.
     /// </summary>
-    public StateTransitions Transitions
+    public Transitions StateTransitions
     { get; set; }
-
-    /// <summary>
-    /// Gets or sets the direction this state moves when undergoing a <see cref="StateTransitions.Move"/> transition.
-    /// </summary>
-    public MovementDirection TransitionDirection
-    { get; set; }
-
+    
     /// <summary>
     /// Gets or sets the exponential power of the transitional animation interpolation.
     /// </summary>
@@ -83,12 +80,18 @@ public abstract class GameState : IDisposable
         => false;
 
     /// <summary>
+    /// Gets the state manager this state has been added to.
+    /// </summary>
+    protected internal StateManager? Manager
+    { get; internal set; }
+
+    /// <summary>
     /// Gets or sets the coordinates to the upper-left corner of the state's content.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// Used when performing <see cref="StateTransitions.Move"/> transitions in order to begin the transition at a position
-    /// bordering visible content. Often a state's content does not encompass the entire screen.
+    /// Used when performing movement transitions to begin the transition at a position bordering visible content. Often a state's 
+    /// content does not encompass the entire screen.
     /// </para>
     /// <para>
     /// Leave this at the default to move content end-to-end across the entire viewport.
@@ -146,17 +149,17 @@ public abstract class GameState : IDisposable
 
         var viewport = spriteBatch.GraphicsDevice.Viewport;
         var transform = Matrix.Identity;
-
-        if (Transitions.HasFlag(StateTransitions.Move))
+        
+        if ((StateTransitions & MOVEMENT_FLAGS) != 0)
             transform *= CreateMoveTransform(viewport);
 
-        if (Transitions.HasFlag(StateTransitions.Zoom))
+        if (StateTransitions.HasFlag(Transitions.Zoom))
             transform *= CreateZoomTransform(viewport);
 
-        if (Transitions.HasFlag(StateTransitions.Rotate))
+        if (StateTransitions.HasFlag(Transitions.Rotate))
             transform *= Matrix.CreateRotationZ(MathHelper.ToRadians(ActivationPercentage * 360));
 
-        var alpha = Transitions.HasFlag(StateTransitions.Fade)
+        var alpha = StateTransitions.HasFlag(Transitions.Fade)
             ? (float) Math.Pow(ActivationPercentage, PowerCurve)
             : 1f;
 
@@ -288,22 +291,22 @@ public abstract class GameState : IDisposable
 
     private Matrix CreateMoveTransform(Viewport viewport)
     {
-        var position = TransitionDirection switch
+        var position = (StateTransitions & MOVEMENT_FLAGS) switch
         {
-            MovementDirection.Left => new Vector3(CalculateDisplacement(viewport, true, true), 0f, 0f),
-            MovementDirection.Right => new Vector3(CalculateDisplacement(viewport, true, false), 0f, 0f),
-            MovementDirection.Up => new Vector3(0f, CalculateDisplacement(viewport, false, true), 0f),
-            MovementDirection.Down => new Vector3(0f, CalculateDisplacement(viewport, false, false), 0f),
+            Transitions.MoveLeft => new Vector3(CalculateDisplacement(viewport, true, true), 0f, 0f),
+            Transitions.MoveRight => new Vector3(CalculateDisplacement(viewport, true, false), 0f, 0f),
+            Transitions.MoveUp => new Vector3(0f, CalculateDisplacement(viewport, false, true), 0f),
+            Transitions.MoveDown => new Vector3(0f, CalculateDisplacement(viewport, false, false), 0f),
             _ => Vector3.Zero
         };
 
         return Matrix.CreateTranslation(position);
     }
 
-    private float CalculateDisplacement(Viewport viewport, bool horizontal, bool positiveDirection)
+    private float CalculateDisplacement(Viewport viewport, bool horizontal, bool positiveOrigination)
     {
         // The directional multiplier.
-        float dX = positiveDirection ? 1f : -1f;
+        float dX = positiveOrigination ? 1f : -1f;
 
         return horizontal
             ? dX * (viewport.Width - ContentOrigin.X) - dX * (viewport.Width - ContentOrigin.X) * CalculateAnimationCurve()
