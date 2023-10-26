@@ -83,5 +83,5 @@ public sealed class ScreenState : GameState, IScreenManager
 
     /// <inheritdoc />
     protected override void LoadContent(ContentManager contentManager) 
-        => _userInterface.Attach(_screen, contentManager);
+        => _userInterface.Attach(_screen, contentManager, this);
 }
