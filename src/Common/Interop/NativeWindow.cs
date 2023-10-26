@@ -26,25 +26,35 @@ public sealed class NativeWindow
     private readonly List<int> _hotKeyIds = new();
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="NativeWindow"/> class. 
+    /// </summary>
+    /// <param name="handle">The handle to the window.</param>
+    public NativeWindow(IntPtr handle)
+    {
+        Handle = new WindowHandle(handle, false);
+
+        if (!User32.GetWindowRect(Handle, out RECT rect))
+            throw ((ResultHandle)Marshal.GetHRForLastWin32Error()).GetException();
+
+        Left = rect.Left;
+        Top = rect.Top;
+        Width = rect.Width;
+        Height = rect.Height;
+    }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="NativeWindow"/> class.
     /// </summary>
     /// <param name="handle">The handle to the window.</param>
     /// <param name="windowWrapper">A wrapper around a window and the messages it receives.</param>
     public NativeWindow(IntPtr handle, IWindowWrapper windowWrapper)
+        : this(handle)
     {
         Require.NotNull(windowWrapper, nameof(windowWrapper));
 
         Handle = new WindowHandle(handle, false);
 
         windowWrapper.AddHook(WndProc);
-
-        if (!User32.GetWindowRect(Handle, out RECT rect))
-            throw ((ResultHandle) Marshal.GetHRForLastWin32Error()).GetException();
-
-        Left = rect.Left;
-        Top = rect.Top;
-        Width = rect.Width;
-        Height = rect.Height;
     }
 
     /// <summary>
@@ -83,7 +93,7 @@ public sealed class NativeWindow
     { get; }
 
     /// <summary>
-    /// Sets the windows extended style information so that acts as transparent overlay which all input passes through.
+    /// Sets the windows extended style information so that said window acts as transparent overlay which all input passes through.
     /// </summary>
     /// <remarks>
     /// <para>
@@ -112,6 +122,20 @@ public sealed class NativeWindow
         User32.SetWindowLongPtr(Handle,
                                 WindowAttribute.ExtendedStyle,
                                 new IntPtr((int) extendedStyle));
+    }
+
+    /// <summary>
+    /// Sets the windows style information so that said window is stripped of its title bar.
+    /// </summary>
+    public void RemoveTitleBar()
+    {
+        var style = (WindowStyles) User32.GetWindowLongPtr(Handle, WindowAttribute.Style);
+
+        style &= ~(WindowStyles.Caption | WindowStyles.SystemMenu);
+
+        User32.SetWindowLongPtr(Handle,
+                                WindowAttribute.ExtendedStyle,
+                                new IntPtr((int) style));
     }
 
     /// <summary>

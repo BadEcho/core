@@ -21,6 +21,22 @@ namespace BadEcho.Interop;
 public enum WindowStyles : uint
 {
     /// <summary>
+    /// The window has a window menu on its title bar.
+    /// </summary>
+    SystemMenu = 0x80000,
+    /// <summary>
+    /// The window has a border of a style typically used with dialog boxes.
+    /// </summary>
+    DialogFrame = 0x00400000,
+    /// <summary>
+    /// The window has a thin-line border.
+    /// </summary>
+    Border = 0x00800000,
+    /// <summary>
+    /// The window has a title bar and border.
+    /// </summary>
+    Caption = DialogFrame | Border,
+    /// <summary>
     /// The window excludes the area occupied by child windows when drawing occurs within it.
     /// </summary>
     ClipChildren = 0x02000000,
