@@ -237,6 +237,12 @@ public abstract class GameState : IDisposable
         _contentManager.Unload();
         _contentManager = null;
     }
+    
+    /// <summary>
+    /// Loads state-specific resources using the provided content manager.
+    /// </summary>
+    /// <param name="contentManager">The content manager to use to load the content.</param>
+    protected abstract void LoadContent(ContentManager contentManager);
 
     /// <summary>
     /// Executes the custom rendering logic required to draw the state to the screen.
@@ -245,12 +251,6 @@ public abstract class GameState : IDisposable
     /// A <see cref="ConfiguredSpriteBatch"/> instance with an active batch operation to draw this state to.
     /// </param>
     protected abstract void DrawCore(ConfiguredSpriteBatch spriteBatch);
-
-    /// <summary>
-    /// Loads state-specific resources using the provided content manager.
-    /// </summary>
-    /// <param name="contentManager">The content manager to use to load the content.</param>
-    protected abstract void LoadContent(ContentManager contentManager);
 
     /// <summary>
     /// Releases unmanaged and (optionally) managed resources.

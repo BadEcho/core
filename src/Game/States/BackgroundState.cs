@@ -49,6 +49,10 @@ public sealed class BackgroundState : GameState
 
         base.Update(time);
     }
+    
+    /// <inheritdoc/>
+    protected override void LoadContent(ContentManager contentManager) 
+        => _texture = contentManager.Load<Texture2D>(_backgroundAssetPath);
 
     /// <inheritdoc/>
     protected override void DrawCore(ConfiguredSpriteBatch spriteBatch)
@@ -64,10 +68,6 @@ public sealed class BackgroundState : GameState
                          new Rectangle(0, 0, viewport.Width, viewport.Height),
                          Color.White);
     }
-
-    /// <inheritdoc/>
-    protected override void LoadContent(ContentManager contentManager) 
-        => _texture = contentManager.Load<Texture2D>(_backgroundAssetPath);
 
     /// <inheritdoc/>
     protected override void Dispose(bool disposing)

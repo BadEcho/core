@@ -76,12 +76,12 @@ public sealed class ScreenState : GameState, IScreenManager
     /// <inheritdoc />
     public void RemoveScreen() 
         => Manager?.RemoveState(this);
+    
+    /// <inheritdoc />
+    protected override void LoadContent(ContentManager contentManager) 
+        => _userInterface.Attach(_screen, contentManager, this);
 
     /// <inheritdoc />
     protected override void DrawCore(ConfiguredSpriteBatch spriteBatch)
         => _screen.Draw(spriteBatch);
-
-    /// <inheritdoc />
-    protected override void LoadContent(ContentManager contentManager) 
-        => _userInterface.Attach(_screen, contentManager, this);
 }
