@@ -24,6 +24,12 @@ namespace BadEcho.Game.Effects;
 /// </summary>
 public static class Shaders
 {
+#if OPENGL
+    private const string PLATFORM_EXTENSION = "ogl";
+#else
+    private const string PLATFORM_EXTENSION = "dx11";
+#endif
+
     private static readonly ResourceManager _Manager = new("BadEcho.Game.Effects.Shaders",
                                                            typeof(Shaders).Assembly);
     /// <summary>
@@ -31,13 +37,13 @@ public static class Shaders
     /// of all sprites in a batch.
     /// </summary>
     public static byte[] AlphaSpriteEffect
-        => GetStreamBytes(nameof(AlphaSpriteEffect));
+        => GetStreamBytes($"{nameof(AlphaSpriteEffect)}.{PLATFORM_EXTENSION}");
 
     /// <summary>
     /// Gets the data for an effect required to correctly render multi-channel signed distance field font text.
     /// </summary>
     public static byte[] DistanceFieldFontEffect
-        => GetStreamBytes(nameof(DistanceFieldFontEffect));
+        => GetStreamBytes($"{nameof(DistanceFieldFontEffect)}.{PLATFORM_EXTENSION}");
     
     private static byte[] GetStreamBytes(string name)
     {
