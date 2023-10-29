@@ -251,16 +251,10 @@ public sealed class NotifyIcon : IDisposable
 
     private static unsafe IconHandle LoadIconHandle(byte[] data, int width, int height)
     {
-        uint bestFitResourceSize = 0;
-
         fixed (byte* pData = data)
         {
             IconHandle iconHandle;
-            ICONDIR* iconDir = (ICONDIR*)pData;
-            byte bestFitWidth = 0;
-            byte bestFitHeight = 0;
-            uint bestFitBitDepth = 0;
-            uint bestFitImageOffset = 0;
+            ICONDIR* iconDir = (ICONDIR*) pData;
 
             if (iconDir->idCount == 0)
                 throw new ArgumentException(Strings.IconNoEntries, nameof(data));
@@ -270,48 +264,13 @@ public sealed class NotifyIcon : IDisposable
                 throw new ArgumentException(Strings.IconTooSmallForEntries, nameof(data));
 
             var iconEntries = new ReadOnlySpan<ICONDIRENTRY>(&iconDir->idEntries, iconDir->idCount);
-
-            foreach (var iconEntry in iconEntries)
-            {
-                bool bestFit = false;
-                uint iconBitDepth = iconEntry.wBitCount;
-
-                if (bestFitResourceSize == 0)
-                    bestFit = true;
-                else
-                {
-                    int bestFitDelta = Math.Abs(bestFitWidth - width) + Math.Abs(bestFitHeight - height);
-                    int currentDelta = Math.Abs(iconEntry.bWidth - width) + Math.Abs(iconEntry.bHeight - height);
-
-                    // If the difference between desired/actual width/height is smaller, then this is the best fit so far.
-                    if (currentDelta < bestFitDelta)
-                        bestFit = true;
-                    // If they're the same, we take a look at the bit depth.
-                    else if (currentDelta == bestFitDelta)
-                    {   // If the icon's bit depth is closer to our device's without exceeding it, it's a best fit.
-                        if (iconEntry.wBitCount <= _BitDepth && iconEntry.wBitCount > bestFitBitDepth)
-                            bestFit = true;
-                        // If the bit depth does exceed our device's, but is still closer than the current best fit, then it's better!
-                        else if (bestFitBitDepth > _BitDepth && iconEntry.wBitCount < bestFitBitDepth)
-                            bestFit = true;
-                    }
-                }
-
-                if (bestFit)
-                {
-                    bestFitWidth = iconEntry.bWidth;
-                    bestFitHeight = iconEntry.bHeight;
-                    bestFitImageOffset = iconEntry.dwImageOffset;
-                    bestFitResourceSize = iconEntry.dwBytesInRes;
-                    bestFitBitDepth = iconBitDepth;
-                }
-            }
+            ICONDIRENTRY bestFitIconEntry = FindBestFitIcon(iconEntries, width, height);
 
             uint imageOffsetEnd;
 
             try
             {
-                imageOffsetEnd = checked(bestFitImageOffset + bestFitResourceSize);
+                imageOffsetEnd = checked(bestFitIconEntry.dwImageOffset + bestFitIconEntry.dwBytesInRes);
             }
             catch (OverflowException oEx)
             {
@@ -322,17 +281,23 @@ public sealed class NotifyIcon : IDisposable
                 throw new ArgumentException(Strings.IconImageExceedsFile, nameof(data));
 
             // If the image in the icon data is unaligned, we copy it over to an aligned buffer.
-            if (bestFitImageOffset % IntPtr.Size != 0)
+            if (bestFitIconEntry.dwImageOffset % IntPtr.Size != 0)
             {   // In order to rent out a pre-allocated array, our size needs to be convertible to an int.
-                if (bestFitResourceSize > int.MaxValue)
+                if (bestFitIconEntry.dwBytesInRes > int.MaxValue)
                     throw new ArgumentException(Strings.IconImageTooLarge, nameof(data));
 
-                byte[] alignedBuffer = ArrayPool<byte>.Shared.Rent((int)bestFitResourceSize);
-                Array.Copy(data, bestFitImageOffset, alignedBuffer, 0, bestFitResourceSize);
+                byte[] alignedBuffer = ArrayPool<byte>.Shared.Rent((int) bestFitIconEntry.dwBytesInRes);
+                Array.Copy(data, bestFitIconEntry.dwImageOffset, alignedBuffer, 0, bestFitIconEntry.dwBytesInRes);
 
                 fixed (byte* pAlignedBuffer = alignedBuffer)
                 {
-                    iconHandle = User32.CreateIconFromResourceEx(pAlignedBuffer, bestFitResourceSize, true, 0x30000, 0, 0, 0);
+                    iconHandle = User32.CreateIconFromResourceEx(pAlignedBuffer,
+                                                                 bestFitIconEntry.dwBytesInRes,
+                                                                 true,
+                                                                 0x30000,
+                                                                 0,
+                                                                 0,
+                                                                 0);
                 }
 
                 ArrayPool<byte>.Shared.Return(alignedBuffer);
@@ -341,8 +306,8 @@ public sealed class NotifyIcon : IDisposable
             {
                 try
                 {
-                    iconHandle = User32.CreateIconFromResourceEx(checked(pData + bestFitImageOffset),
-                                                                 bestFitResourceSize,
+                    iconHandle = User32.CreateIconFromResourceEx(checked(pData + bestFitIconEntry.dwImageOffset),
+                                                                 bestFitIconEntry.dwBytesInRes,
                                                                  true,
                                                                  0x30000,
                                                                  0,
@@ -356,12 +321,48 @@ public sealed class NotifyIcon : IDisposable
             }
 
             if (iconHandle.IsInvalid)
-            {
                 throw new Win32Exception(Marshal.GetLastWin32Error());
-            }
 
             return iconHandle;
         }
+    }
+
+    private static ICONDIRENTRY FindBestFitIcon(ReadOnlySpan<ICONDIRENTRY> iconEntries, int width, int height)
+    {
+        ICONDIRENTRY bestFitIconEntry = default;
+
+        foreach (var iconEntry in iconEntries)
+        {
+            bool bestFit = false;
+
+            // Zero-byte image data indicates a default ICONDIRENTRY value.
+            if (bestFitIconEntry.dwBytesInRes == 0)
+                bestFit = true;
+            else
+            {
+                int bestFitDelta = Math.Abs(bestFitIconEntry.bWidth - width) + Math.Abs(bestFitIconEntry.bHeight - height);
+                int currentDelta = Math.Abs(iconEntry.bWidth - width) + Math.Abs(iconEntry.bHeight - height);
+
+                // If the difference between desired/actual width/height is smaller, then this is the best fit so far.
+                if (currentDelta < bestFitDelta)
+                    bestFit = true;
+                // If they're the same, we take a look at the bit depth.
+                else if (currentDelta == bestFitDelta)
+                {
+                    // If the icon's bit depth is closer to our device's without exceeding it, it's a best fit.
+                    if (iconEntry.wBitCount <= _BitDepth && iconEntry.wBitCount > bestFitIconEntry.wBitCount)
+                        bestFit = true;
+                    // If the bit depth does exceed our device's, but is still closer than the current best fit, then it's better!
+                    else if (bestFitIconEntry.wBitCount > _BitDepth && iconEntry.wBitCount < bestFitIconEntry.wBitCount)
+                        bestFit = true;
+                }
+            }
+
+            if (bestFit)
+                bestFitIconEntry = iconEntry;
+        }
+
+        return bestFitIconEntry;
     }
 
     private void Update()
