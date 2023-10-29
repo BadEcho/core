@@ -198,6 +198,8 @@ public sealed class Grid : Panel, ISelectable
             cell.Add(child);
         }
 
+        // We conduct two measure passes: the first accounting for provided discrete dimensional values, and the second
+        // accounting for the measurements proportional to the sizes calculated in the first pass.
         MeasureDiscreteDimensions(availableSize);
         MeasureProportionalDimensions();
 
