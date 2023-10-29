@@ -398,6 +398,18 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     }
 
     /// <inheritdoc/>
+    public int Wait(IntPtr[] waitHandles, bool waitAll, int millisecondsTimeout)
+    {
+        Require.NotNull(waitHandles, nameof(waitHandles));
+
+        return Kernel32.WaitForMultipleObjectsEx(waitHandles.Length,
+                                                 waitHandles,
+                                                 waitAll,
+                                                 (uint) millisecondsTimeout,
+                                                 false);
+    }
+
+    /// <inheritdoc/>
     public void Dispose()
     {
         if (_disposed)

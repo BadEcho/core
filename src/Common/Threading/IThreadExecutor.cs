@@ -143,6 +143,9 @@ public interface IThreadExecutor
     /// <returns>The <see cref="SynchronizationContext"/> instance previously set as the synchronization context.</returns>
     SynchronizationContext? SwitchContext();
 
+    /// <inheritdoc cref="SynchronizationContext.Wait"/>
+    int Wait(IntPtr[] waitHandles, bool waitAll, int millisecondsTimeout);
+
     /// <summary>
     /// Executes the provided delegate synchronously using the executor's context and thread.
     /// </summary>

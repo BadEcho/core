@@ -11,8 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Interop;
-
 namespace BadEcho.Threading;
 
 /// <summary>
@@ -56,15 +54,8 @@ internal sealed class ThreadExecutorContext : SynchronizationContext
     /// <inheritdoc/>
     public override int Wait(IntPtr[] waitHandles, bool waitAll, int millisecondsTimeout)
     {
-        if (_executor.DisableRequests > 0)
-        {
-            return Kernel32.WaitForMultipleObjectsEx(waitHandles.Length,
-                                                     waitHandles,
-                                                     waitAll,
-                                                     (uint) millisecondsTimeout,
-                                                     false);
-        }
-
-        return WaitHelper(waitHandles, waitAll, millisecondsTimeout);
+        return _executor.DisableRequests > 0
+            ? _executor.Wait(waitHandles, waitAll, millisecondsTimeout)
+            : WaitHelper(waitHandles, waitAll, millisecondsTimeout);
     }
 }
