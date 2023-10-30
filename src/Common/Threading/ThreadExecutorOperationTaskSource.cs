@@ -20,7 +20,7 @@ namespace BadEcho.Threading;
 /// Provides a source for a <see cref="TaskCompletionSource{TResult}"/> for a particular <see cref="ThreadExecutorOperation"/>.
 /// </summary>
 /// <typeparam name="TResult">The type of result returned by the operation.</typeparam>
-internal class ThreadExecutorOperationTaskSource<TResult> : IThreadExecutorOperationTaskSource
+internal sealed class ThreadExecutorOperationTaskSource<TResult> : IThreadExecutorOperationTaskSource
 {
     private TaskCompletionSource<TResult?>? _source;
 

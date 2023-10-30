@@ -29,9 +29,11 @@ public sealed class NativeWindow
     /// Initializes a new instance of the <see cref="NativeWindow"/> class. 
     /// </summary>
     /// <param name="handle">The handle to the window.</param>
-    public NativeWindow(IntPtr handle)
+    public NativeWindow(WindowHandle handle)
     {
-        Handle = new WindowHandle(handle, false);
+        Require.NotNull(handle, nameof(handle));
+
+        Handle = handle;
 
         if (!User32.GetWindowRect(Handle, out RECT rect))
             throw ((ResultHandle)Marshal.GetHRForLastWin32Error()).GetException();
@@ -45,14 +47,11 @@ public sealed class NativeWindow
     /// <summary>
     /// Initializes a new instance of the <see cref="NativeWindow"/> class.
     /// </summary>
-    /// <param name="handle">The handle to the window.</param>
     /// <param name="windowWrapper">A wrapper around a window and the messages it receives.</param>
-    public NativeWindow(IntPtr handle, IWindowWrapper windowWrapper)
-        : this(handle)
+    public NativeWindow(IWindowWrapper windowWrapper)
+        : this(GetWrapperHandle(windowWrapper))
     {
         Require.NotNull(windowWrapper, nameof(windowWrapper));
-
-        Handle = new WindowHandle(handle, false);
 
         windowWrapper.AddHook(WndProc);
     }
@@ -163,6 +162,13 @@ public sealed class NativeWindow
     {
         if (!User32.UnregisterHotKey(Handle, id))
             throw ((ResultHandle) Marshal.GetHRForLastWin32Error()).GetException();
+    }
+
+    private static WindowHandle GetWrapperHandle(IWindowWrapper windowWrapper)
+    {
+        Require.NotNull(windowWrapper, nameof(windowWrapper));
+
+        return windowWrapper.Handle;
     }
 
     private IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam, ref bool handled)

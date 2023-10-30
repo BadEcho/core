@@ -17,7 +17,7 @@ namespace BadEcho;
 /// Provides a trampoline operation, which allows for a tail-recursive styled operation to be executed as if it was
 /// implemented in a language supporting tail call optimizations.
 /// </summary>
-public sealed class Trampoline
+public static class Trampoline
 {
     /// <summary>
     /// Executes a method that takes no arguments in a tail-recursive fashion until the end of the trampolined call chain has been

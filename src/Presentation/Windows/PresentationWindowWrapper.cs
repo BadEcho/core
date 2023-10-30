@@ -14,6 +14,7 @@
 using System.Windows.Interop;
 using BadEcho.Presentation.Properties;
 using BadEcho.Interop;
+using BadEcho.Presentation.Extensions;
 
 namespace BadEcho.Presentation.Windows;
 
@@ -35,8 +36,8 @@ public sealed class PresentationWindowWrapper : IWindowWrapper
         
         _source = source
             ?? throw new ArgumentException(Strings.WindowNotPresentation, nameof(handle));
-        
-        Handle = new WindowHandle(handle, false);
+
+        Handle = source.GetSafeHandle();
     }
 
     /// <inheritdoc/>
