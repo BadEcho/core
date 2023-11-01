@@ -14,11 +14,11 @@
 namespace BadEcho.Game.Tiles;
 
 /// <summary>
-/// Provides a reference to a rectangular graphic image that exists within a grid of tile data.
+/// Represents a rectangular graphic image that exists within a grid of tile data.
 /// </summary>
 /// <remarks>
 /// <para>
-/// Tiles are the rectangular images that compose a tile map. The <see cref="Tile"/> class, however, contains no texture
+/// Tiles are the rectangular images that compose a tile map. <see cref="Tile"/> values, however, contain no texture
 /// data. This is because an individual tile is sourced from a tile set, which itself only needs to be loaded into memory once.
 /// </para>
 /// <para>
@@ -26,7 +26,7 @@ namespace BadEcho.Game.Tiles;
 /// as well as where it is positioned in the grid of tile data it resides in.
 /// </para>
 /// </remarks>  
-public sealed class Tile
+public readonly record struct Tile
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Tile"/> class.

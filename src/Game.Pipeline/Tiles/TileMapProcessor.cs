@@ -120,10 +120,7 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent, TileMapC
         {
             for (int column = 0; column < mapWidth; column++)
             {
-                Tile? tile = CreateTile(column, row, mapWidth, tileData);
-
-                if (tile != null)
-                    yield return tile;
+                yield return CreateTile(column, row, mapWidth, tileData);
             }
         }
     }
@@ -134,10 +131,7 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent, TileMapC
         {
             for (int column = 0; column < mapWidth; column++)
             {
-                Tile? tile = CreateTile(column, row, mapWidth, tileData);
-
-                if (tile != null)
-                    yield return tile;
+                yield return CreateTile(column, row, mapWidth, tileData);
             }
         }
     }
@@ -148,10 +142,7 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent, TileMapC
         {
             for (int column = mapWidth - 1; column >= 0; column--)
             {
-                Tile? tile = CreateTile(column, row, mapWidth, tileData);
-
-                if (tile != null)
-                    yield return tile;
+                yield return CreateTile(column, row, mapWidth, tileData);
             }
         }
     }
@@ -162,20 +153,17 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent, TileMapC
         {
             for (int column = mapWidth - 1; column >= 0; column--)
             {
-                Tile? tile = CreateTile(column, row, mapWidth, tileData);
-
-                if (tile != null)
-                    yield return tile;
+                yield return CreateTile(column, row, mapWidth, tileData);
             }
         }
     }
 
-    private static Tile? CreateTile(int column, int row, int mapWidth, IList<uint> tileData)
+    private static Tile CreateTile(int column, int row, int mapWidth, IList<uint> tileData)
     {
         int tileIndex = column + row * mapWidth;
         uint tileId = tileData[tileIndex];
 
-        return tileId == 0 ? null : new Tile(tileId, column, row);
+        return tileId == 0 ? default : new Tile(tileId, column, row);
     }
 
     private static IList<uint> DecodeTileData(DataAsset tileData, int tilesToDecode)

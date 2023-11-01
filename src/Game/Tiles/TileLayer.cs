@@ -21,7 +21,8 @@ namespace BadEcho.Game.Tiles;
 /// </summary>
 public sealed class TileLayer : Layer
 {
-    private readonly Tile?[] _tiles;
+    private readonly Dictionary<int, List<int>> _tileIdIndicesMap = new();
+    private readonly Tile[] _tiles;
     private readonly Size _tileSize;
     private readonly Size _size;
 
@@ -49,7 +50,7 @@ public sealed class TileLayer : Layer
     /// <summary>
     /// Gets the tiles belonging to this tile layer.
     /// </summary>
-    public IReadOnlyCollection<Tile?> Tiles
+    public IReadOnlyCollection<Tile> Tiles
         => _tiles;
 
     /// <summary>
@@ -62,16 +63,24 @@ public sealed class TileLayer : Layer
     {
         int lastId = maxCount + firstId - 1;
 
-        return Tiles.WhereNotNull()
-                    .Where(t => t.Id >= firstId && t.Id <= lastId);
+        for (int i = firstId; i <= lastId; i++)
+        {
+            if (!_tileIdIndicesMap.TryGetValue(i, out List<int>? tileIndices))
+                continue;
+
+            foreach (int tileIndex in tileIndices)
+            {
+                yield return _tiles[tileIndex];
+            }
+        }
     }
 
     /// <summary>
     /// Gets the tile, if any, found at the specified position in the layer.
     /// </summary>
     /// <param name="position">The drawing location of the tile to return.</param>
-    /// <returns>The tile being drawn at <c>position</c>, if one exists; otherwise, null.</returns>
-    public Tile? GetTile(Vector2 position)
+    /// <returns>The tile being drawn at <c>position</c>.</returns>
+    public Tile GetTile(Vector2 position)
     {
         int column = (int) position.X / _tileSize.Width;
         int row = (int) position.Y / _tileSize.Height;
@@ -90,7 +99,11 @@ public sealed class TileLayer : Layer
     {
         int index = CalculateTileIndex(column, row);
         
-        _tiles[index] = new Tile(idWithFlags, column, row);
+        var tile = new Tile(idWithFlags, column, row);
+        var tileIndices = _tileIdIndicesMap.GetValueOrAdd(tile.Id, _ => new List<int>());
+
+        _tiles[index] = tile;
+        tileIndices.Add(index);
     }
 
     /// <summary>
@@ -100,7 +113,7 @@ public sealed class TileLayer : Layer
     internal IEnumerable<ISpatialEntity> ToSpatialLayer()
     {
         var validTiles = Tiles.Select((t, i) => new { Tile = t, Index = i })
-                              .Where(ti => ti.Tile != null);
+                              .Where(ti => ti.Tile != default);
 
         foreach (var validTile in validTiles)
         {
