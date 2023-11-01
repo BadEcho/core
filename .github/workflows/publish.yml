@@ -43,6 +43,9 @@ jobs:
         name: vcpkg-artifacts
         commit: ${{ vars.VCPKG_ARTIFACT_SHA }}
         path: src/MsdfGenerator/vcpkg_installed/
+    - name: Update vcpkg Output Timestamp
+      if: ${{ vars.DOWNLOAD_VCPKG == 'true' }}
+      run: touch src/MsdfGenerator/vcpkg_installed/x64-windows-static-md/.msbuildstamp-x64-windows-static-md.stamp
     - name: Build
       shell: pwsh
       run: .\build\build.ps1 -PackageConfiguration Package -SkipTests
