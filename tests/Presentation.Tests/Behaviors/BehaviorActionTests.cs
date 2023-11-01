@@ -13,7 +13,6 @@
 
 using System.Windows;
 using BadEcho.Presentation.Behaviors;
-using BadEcho.Presentation.Commands;
 using Xunit;
 
 namespace BadEcho.Presentation.Tests.Behaviors;

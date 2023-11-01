@@ -13,7 +13,7 @@
 
 using System.Windows.Media;
 
-namespace BadEcho.Presentation.Configuration;
+namespace BadEcho.Presentation;
 
 /// <summary>
 /// Provides configuration settings for a Bad Echo Presentation framework application.

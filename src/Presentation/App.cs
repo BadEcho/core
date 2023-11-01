@@ -22,7 +22,6 @@ using BadEcho.Extensibility.Hosting;
 using BadEcho.Extensions;
 using BadEcho.Interop;
 using BadEcho.Logging;
-using BadEcho.Presentation.Configuration;
 using BadEcho.Presentation.Extensions;
 using BadEcho.Presentation.Properties;
 using ThreadExceptionEventArgs = BadEcho.Threading.ThreadExceptionEventArgs;

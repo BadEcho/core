@@ -23,7 +23,7 @@ using BadEcho.Presentation.Properties;
 using BadEcho.Extensions;
 using BadEcho.Logging;
 
-namespace BadEcho.Presentation.Controls;
+namespace BadEcho.Presentation;
 
 /// <summary>
 /// Provides a text element that supports both a fill brush for the glyphs and a stroke brush surrounding the glyphs.
@@ -356,7 +356,7 @@ public sealed class OutlinedTextElement : FrameworkElement
             DpiScale dpi = VisualTreeHelper.GetDpi(this);
 
             var text = !string.IsNullOrEmpty(Text) ? FormatText(Text, TextFormatString) : string.Empty;
-                
+
             _formattedText = new FormattedText(text,
                                                CultureInfo.CurrentUICulture,
                                                FlowDirection,
@@ -379,7 +379,7 @@ public sealed class OutlinedTextElement : FrameworkElement
         {
             if (_innerTextGeometry != null)
                 return _innerTextGeometry;
-                
+
             _innerTextGeometry = FormattedText.BuildGeometry(new Point(0, 0));
 
             return _innerTextGeometry;
@@ -461,7 +461,7 @@ public sealed class OutlinedTextElement : FrameworkElement
         drawingContext.DrawGeometry(null, _innerOutlinePen, InnerTextGeometry);
         drawingContext.DrawGeometry(null, _outerOutlinePen, OuterTextGeometry);
         drawingContext.DrawGeometry(Fill, null, InnerTextGeometry);
-            
+
         base.OnRender(drawingContext);
     }
 
@@ -515,7 +515,7 @@ public sealed class OutlinedTextElement : FrameworkElement
 
         textElement.UpdateInnerOutlinePen();
     }
-        
+
     private static void OnOuterStrokePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
     {
         var textElement = (OutlinedTextElement) sender;
@@ -560,12 +560,12 @@ public sealed class OutlinedTextElement : FrameworkElement
     private void UpdateInnerOutlinePen()
     {
         _innerOutlinePen = new Pen(InnerStroke, InnerStrokeThickness)
-                           {
-                               DashCap = PenLineCap.Round,
-                               EndLineCap = PenLineCap.Round,
-                               LineJoin = PenLineJoin.Round,
-                               StartLineCap = PenLineCap.Round
-                           };
+        {
+            DashCap = PenLineCap.Round,
+            EndLineCap = PenLineCap.Round,
+            LineJoin = PenLineJoin.Round,
+            StartLineCap = PenLineCap.Round
+        };
 
         InvalidateVisual();
     }
@@ -574,12 +574,12 @@ public sealed class OutlinedTextElement : FrameworkElement
     private void UpdateOuterOutlinePen()
     {
         _outerOutlinePen = new Pen(OuterStroke, OuterStrokeThickness)
-                           {
-                               DashCap = PenLineCap.Round,
-                               EndLineCap = PenLineCap.Round,
-                               LineJoin = PenLineJoin.Round,
-                               StartLineCap = PenLineCap.Round
-                           };
+        {
+            DashCap = PenLineCap.Round,
+            EndLineCap = PenLineCap.Round,
+            LineJoin = PenLineJoin.Round,
+            StartLineCap = PenLineCap.Round
+        };
 
         InvalidateVisual();
     }

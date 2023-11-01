@@ -33,8 +33,6 @@ public sealed class TileMap : Extensible, IModelRenderer
     private readonly List<Layer> _layers = new();
     private readonly GraphicsDevice _device;
     
-    private Matrix _world = Matrix.Identity;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="TileMap"/> class.
     /// </summary>
@@ -159,11 +157,13 @@ public sealed class TileMap : Extensible, IModelRenderer
 
         foreach (var layer in Layers)
         {
-            _world.Translation = new Vector3(layer.Offset, 0);
+            Matrix world = Matrix.Identity;
+
+            world.Translation = new Vector3(layer.Offset, 0);
 
             var effect = new BasicEffect(_device)
                          {
-                             World = _world,
+                             World = world,
                              View = view,
                              Projection = projection,
                              Alpha = alpha

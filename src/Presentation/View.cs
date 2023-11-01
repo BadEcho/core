@@ -15,7 +15,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace BadEcho.Presentation.Views;
+namespace BadEcho.Presentation;
 
 /// <summary>
 /// Provides the root presentational logic for all views used in a Bad Echo Presentation framework application.
@@ -27,13 +27,13 @@ public class View : UserControl
     /// <summary>
     /// Initializes the <see cref="View"/> class.
     /// </summary>
-    static View() 
+    static View()
         => DataContextProperty.OverrideMetadata(typeof(View), new FrameworkPropertyMetadata(null, OnCoerceDataContext));
 
     /// <summary>
     /// Initializes a new instance of the <see cref="View"/> class.
     /// </summary>
-    protected View() 
+    protected View()
         => UserInterface.BuildEnvironment();
 
     private static object? OnCoerceDataContext(DependencyObject sender, object? baseValue)

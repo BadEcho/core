@@ -17,7 +17,7 @@ using System.Text.Json.Serialization;
 using System.Windows;
 using BadEcho.Presentation.Properties;
 
-namespace BadEcho.Presentation.Serialization;
+namespace BadEcho.Presentation;
 
 /// <summary>
 /// Provides a converter of <see cref="Thickness"/> objects to and from JSON.
@@ -30,7 +30,7 @@ public sealed class JsonThicknessConverter : JsonConverter<Thickness>
         string thickness = reader.GetString() ?? string.Empty;
 
         double[] lengths = ParseLengths(thickness);
-            
+
         return lengths.Length switch
         {
             1 => new Thickness(lengths[0]),
@@ -53,14 +53,14 @@ public sealed class JsonThicknessConverter : JsonConverter<Thickness>
     private static double[] ParseLengths(string value)
     {
         if (string.IsNullOrEmpty(value))
-            return new[] {0.0};
+            return new[] { 0.0 };
 
         string separator = CultureInfo.InvariantCulture.TextInfo.ListSeparator;
         string[] values = value.Split(separator);
 
         return values.Length switch
         {
-            1 => new[] {double.Parse(values[0], CultureInfo.InvariantCulture)},
+            1 => new[] { double.Parse(values[0], CultureInfo.InvariantCulture) },
             2 => new[]
                  {
                      double.Parse(values[0], CultureInfo.InvariantCulture),

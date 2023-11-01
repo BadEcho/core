@@ -14,7 +14,7 @@
 using System.Windows.Input;
 using BadEcho.Presentation.Properties;
 
-namespace BadEcho.Presentation.Commands;
+namespace BadEcho.Presentation;
 
 /// <summary>
 /// Provides a command that executes a method encapsulated by a delegate.
@@ -40,7 +40,7 @@ public sealed class DelegateCommand : ICommand
     public DelegateCommand(Action<object?> action, Predicate<object?>? canExecute)
     {
         _action = action;
-            
+
         if (canExecute != null)
             _canExecute = canExecute;
     }
