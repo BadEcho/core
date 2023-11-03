@@ -122,8 +122,8 @@ public sealed class Grid : Panel, ISelectable
         if (!base.Focus())
             return false;
 
-        if (Children.Count != 0) 
-            _mouseOverColumn = _mouseOverRow = 0;
+        if (Children.Count != 0)
+            UpdateMouseOver(0, 0);
 
         return true;
     }
@@ -162,7 +162,10 @@ public sealed class Grid : Panel, ISelectable
     /// Cancels the selection of any previously selected item in the grid.
     /// </summary>
     public void Unselect()
-        => _mouseOverColumn = _mouseOverRow = _selectedColumn = _selectedRow = null;
+    {
+        UpdateMouseOver(null, null);
+        UpdateSelection(null, null);
+    } 
 
     /// <inheritdoc/>
     protected override Size MeasureCore(Size availableSize)
@@ -287,13 +290,15 @@ public sealed class Grid : Panel, ISelectable
         int mouseX = InputHandler.MousePosition.X;
         int mouseY = InputHandler.MousePosition.Y;
 
-        _mouseOverColumn = _cellsX.Select((x, i) => new { X = x, Index = i })
-                                  .FirstOrDefault(cell => mouseX >= cell.X && mouseX < cell.X + _columnWidths[cell.Index])
-                                  ?.Index;
+        int? column = _cellsX.Select((x, i) => new { X = x, Index = i })
+                             .FirstOrDefault(cell => mouseX >= cell.X && mouseX < cell.X + _columnWidths[cell.Index])
+                             ?.Index;
 
-        _mouseOverRow = _cellsY.Select((y, i) => new { Y = y, Index = i })
-                               .FirstOrDefault(cell => mouseY >= cell.Y && mouseY < cell.Y + _rowHeights[cell.Index])
-                               ?.Index;
+        int ? row = _cellsY.Select((y, i) => new { Y = y, Index = i })
+                           .FirstOrDefault(cell => mouseY >= cell.Y && mouseY < cell.Y + _rowHeights[cell.Index])
+                           ?.Index;
+        
+        UpdateMouseOver(column, row);
     }
 
     /// <inheritdoc/>
@@ -302,7 +307,7 @@ public sealed class Grid : Panel, ISelectable
         base.OnMouseLeave();
 
         if (!IsHoverPersistent)
-            _mouseOverColumn = _mouseOverRow = null;
+            UpdateMouseOver(null, null);
     }
 
     /// <inheritdoc/>
@@ -326,7 +331,7 @@ public sealed class Grid : Panel, ISelectable
         {
             if (IsSelectionInvalid)
             {
-                _selectedColumn = _selectedRow = null;
+                UpdateSelection(null, null);
             }
             else if (_selectionBeingMade && IsCellSelected)
             {
@@ -523,8 +528,7 @@ public sealed class Grid : Panel, ISelectable
         int? previousSelectedColumn = _selectedColumn;
         int? previousSelectedRow = _selectedRow;
 
-        _selectedColumn = _mouseOverColumn;
-        _selectedRow = _mouseOverRow;
+        UpdateSelection(_mouseOverColumn, _mouseOverRow);
 
         if (IsCellSelected && (previousSelectedColumn != _selectedColumn || previousSelectedRow != _selectedRow))
         {
@@ -548,5 +552,17 @@ public sealed class Grid : Panel, ISelectable
         
         if (row < 0 || row >= _cellsY.Count)
             throw new ArgumentOutOfRangeException(nameof(row), Strings.GridRowOutOfRange);
+    }
+    
+    private void UpdateMouseOver(int? column, int? row)
+    {
+        _mouseOverColumn = column;
+        _mouseOverRow = row;
+    }
+
+    private void UpdateSelection(int? column, int? row)
+    {
+        _selectedColumn = column;
+        _selectedRow = row;
     }
 }

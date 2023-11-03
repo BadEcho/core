@@ -25,7 +25,7 @@ internal static partial class Gdi32
     /// <summary>
     /// Gets the stock object type for a null brush.
     /// </summary>
-    public static int StockObjectBrushNull = 5;
+    public const int StockObjectBrushNull = 5;
     
     /// <summary>
     /// Retrieves device-specific information for the specified device.

@@ -22,6 +22,7 @@
 		<UseCommonOutputDirectory>false</UseCommonOutputDirectory>
 		<IncludePackageReferencesDuringMarkupCompilation>false</IncludePackageReferencesDuringMarkupCompilation>
 		<ImplicitUsings>true</ImplicitUsings>
+		<DefineConstants>$(DefineConstants);CODE_ANALYSIS</DefineConstants>
 	</PropertyGroup>
 
   <!--Versioning.-->
