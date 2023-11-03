@@ -58,7 +58,7 @@ public abstract class PolymorphicCollectionViewModel<TModel, TChildViewModel> : 
     { }
 
     /// <inheritdoc/>
-    public override TChildViewModel CreateChild(TModel model)
+    public override TChildViewModel CreateItem(TModel model)
     {
         Require.NotNull(model, nameof(model));
 
@@ -71,7 +71,7 @@ public abstract class PolymorphicCollectionViewModel<TModel, TChildViewModel> : 
     }
 
     /// <inheritdoc/>
-    public override void UpdateChild(TModel model)
+    public override void UpdateItem(TModel model)
     {
         Require.NotNull(model, nameof(model));
 
@@ -120,7 +120,7 @@ public abstract class PolymorphicCollectionViewModel<TModel, TChildViewModel> : 
                             {
                                 var model = (TModelImpl)baseModel;
                                 
-                                var childViewModel = FindChild<TChildViewModelImpl>(model)
+                                var childViewModel = FindItem<TChildViewModelImpl>(model)
                                     ?? throw new ArgumentException(Strings.CannotUpdateUnboundData, nameof(baseModel));
 
                                 childViewModel.Bind(model);

@@ -24,5 +24,5 @@ public interface IParent<TChild, out TCollection>
     /// <summary>
     /// Gets a collection of all of the children that exist within this <see cref="IParent{TChild, TCollection}"/> object.
     /// </summary>
-    TCollection Children { get; }
+    TCollection Items { get; }
 }

@@ -49,13 +49,13 @@ public interface ICollectionViewModel<TModel, TChildViewModel> : IViewModel<TMod
     /// </summary>
     /// <param name="model">The data to generate a child view model for.</param>
     /// <returns>A <typeparamref name="TChildViewModel"/> object with <c>model</c> bound to it.</returns>
-    TChildViewModel CreateChild(TModel model);
+    TChildViewModel CreateItem(TModel model);
 
     /// <summary>
     /// Updates an existing child view model to use the provided data.
     /// </summary>
     /// <param name="model">The data to update an existing child view model with.</param>
-    void UpdateChild(TModel model);
+    void UpdateItem(TModel model);
 
     /// <summary>
     /// Changes the dispatcher currently in use by the view model to the provided one.
@@ -77,5 +77,5 @@ public interface ICollectionViewModel<TModel, TChildViewModel> : IViewModel<TMod
     /// <returns>
     /// The <typeparamref name="TChildViewModelImpl"/> instance that <c>model</c> is bound to, or null if nothing was found.
     /// </returns>
-    TChildViewModelImpl? FindChild<TChildViewModelImpl>(TModel model) where TChildViewModelImpl : TChildViewModel;
+    TChildViewModelImpl? FindItem<TChildViewModelImpl>(TModel model) where TChildViewModelImpl : TChildViewModel;
 }

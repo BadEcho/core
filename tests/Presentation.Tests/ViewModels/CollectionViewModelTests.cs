@@ -21,20 +21,20 @@ public class CollectionViewModelTests
     private readonly FakeCollectionViewModel _collectionViewModel = new();
 
     [Fact]
-    public void Bind_Model_AddedToChildrenOnce()
+    public void Bind_Model_AddedToItemsOnce()
     {
         var model = new ModelStub("Test", 2);
 
         _collectionViewModel.Bind(model);
 
-        var child = _collectionViewModel.Children.SingleOrDefault(vm => Equals(vm.ActiveModel, model));
+        var child = _collectionViewModel.Items.SingleOrDefault(vm => Equals(vm.ActiveModel, model));
 
         Assert.NotNull(child);
-        Assert.Equal(2, _collectionViewModel.Children[0].Value);
+        Assert.Equal(2, _collectionViewModel.Items[0].Value);
     }
 
     [Fact]
-    public void Bind_ViewModel_AddedToChildrenOnce()
+    public void Bind_ViewModel_AddedToItemsOnce()
     {
         var model = new ModelStub("Test", 2);
         var viewModel = new ViewModelStub();
@@ -43,13 +43,13 @@ public class CollectionViewModelTests
 
         _collectionViewModel.Bind(viewModel);
 
-        var child = _collectionViewModel.Children.Single(vm => Equals(vm.ActiveModel, model));
+        var child = _collectionViewModel.Items.Single(vm => Equals(vm.ActiveModel, model));
 
         Assert.NotNull(child);
     }
 
     [Fact]
-    public void Bind_ViewModelTwice_AddedToChildrenOnce()
+    public void Bind_ViewModelTwice_AddedToItemsOnce()
     {
         var model = new ModelStub("Test", 2);
         var viewModel = new ViewModelStub();
@@ -59,7 +59,7 @@ public class CollectionViewModelTests
         _collectionViewModel.Bind(viewModel);
         _collectionViewModel.Bind(viewModel);
 
-        var child = _collectionViewModel.Children.Single(vm => Equals(vm.ActiveModel, model));
+        var child = _collectionViewModel.Items.Single(vm => Equals(vm.ActiveModel, model));
 
         Assert.NotNull(child);
     }
@@ -94,15 +94,15 @@ public class CollectionViewModelTests
 
         _collectionViewModel.Bind(model);
 
-        Assert.Single(_collectionViewModel.Children);
-        Assert.Equal(2, _collectionViewModel.Children[0].Value);
+        Assert.Single(_collectionViewModel.Items);
+        Assert.Equal(2, _collectionViewModel.Items[0].Value);
 
         model.Value = 3;
 
         _collectionViewModel.Bind(model);
 
-        Assert.Single(_collectionViewModel.Children);
-        Assert.Equal(3, _collectionViewModel.Children[0].Value);
+        Assert.Single(_collectionViewModel.Items);
+        Assert.Equal(3, _collectionViewModel.Items[0].Value);
     }
 
     [Fact]
@@ -112,38 +112,38 @@ public class CollectionViewModelTests
 
         _collectionViewModel.Bind(models);
 
-        Assert.Equal(2, _collectionViewModel.Children.Count);
-        Assert.Equal(2, _collectionViewModel.Children[0].Value);
+        Assert.Equal(2, _collectionViewModel.Items.Count);
+        Assert.Equal(2, _collectionViewModel.Items[0].Value);
 
         models[0].Value = 3;
 
         _collectionViewModel.Bind(models);
 
-        Assert.Equal(2, _collectionViewModel.Children.Count);
-        Assert.Equal(3, _collectionViewModel.Children[0].Value);
+        Assert.Equal(2, _collectionViewModel.Items.Count);
+        Assert.Equal(3, _collectionViewModel.Items[0].Value);
     }
 
     [Fact]
-    public void AddChildren_ViewModel_ModelIsBound()
+    public void AddItems_ViewModel_ModelIsBound()
     {
         var model = new ModelStub("Test", 2);
         var viewModel = new ViewModelStub();
 
         viewModel.Bind(model);
 
-        _collectionViewModel.Children.Add(viewModel);
+        _collectionViewModel.Items.Add(viewModel);
             
         Assert.True(_collectionViewModel.IsBound(model));
     }
 
     [Fact]
-    public void RemoveChildren_ViewModel_ModelUnbound()
+    public void RemoveItems_ViewModel_ModelUnbound()
     {
         var model = new ModelStub("Test", 2);
 
         _collectionViewModel.Bind(model);
 
-        _collectionViewModel.Children.Remove(_collectionViewModel.Children.First());
+        _collectionViewModel.Items.Remove(_collectionViewModel.Items.First());
 
         Assert.False(_collectionViewModel.IsBound(model));
     }
@@ -155,7 +155,7 @@ public class CollectionViewModelTests
 
         _collectionViewModel.Bind(model);
 
-        var child = _collectionViewModel.Children.First();
+        var child = _collectionViewModel.Items.First();
 
         _collectionViewModel.Unbind(child);
 
@@ -163,23 +163,23 @@ public class CollectionViewModelTests
     }
 
     [Fact]
-    public void Unbind_ViewModel_RemovedFromChildren()
+    public void Unbind_ViewModel_RemovedFromItems()
     {
         var model = new ModelStub("Test", 2);
 
         _collectionViewModel.Bind(model);
 
-        var child = _collectionViewModel.Children.First();
+        var child = _collectionViewModel.Items.First();
 
         _collectionViewModel.Unbind(child);
 
-        child = _collectionViewModel.Children.FirstOrDefault(vm => Equals(vm.ActiveModel, model));
+        child = _collectionViewModel.Items.FirstOrDefault(vm => Equals(vm.ActiveModel, model));
 
         Assert.Null(child);
     }
 
     [Fact]
-    public void Unbind_Model_RemovedFromChildren()
+    public void Unbind_Model_RemovedFromItems()
     {
         var model = new ModelStub("Test", 2);
 
@@ -187,7 +187,7 @@ public class CollectionViewModelTests
 
         _collectionViewModel.Unbind(model);
 
-        var child = _collectionViewModel.Children.FirstOrDefault(vm => Equals(vm.ActiveModel, model));
+        var child = _collectionViewModel.Items.FirstOrDefault(vm => Equals(vm.ActiveModel, model));
 
         Assert.Null(child);
     }
@@ -197,7 +197,7 @@ public class CollectionViewModelTests
         public FakeCollectionViewModel() : base(new CollectionViewModelOptions { AsyncBatchBindings = false })
         { }
 
-        public override ViewModelStub CreateChild(ModelStub model)
+        public override ViewModelStub CreateItem(ModelStub model)
         {
             var stub = new ViewModelStub();
 
@@ -206,9 +206,9 @@ public class CollectionViewModelTests
             return stub;
         }
 
-        public override void UpdateChild(ModelStub model)
+        public override void UpdateItem(ModelStub model)
         {
-            var existingChild = FindChild<ViewModelStub>(model);
+            var existingChild = FindItem<ViewModelStub>(model);
 
             existingChild?.Bind(model);
         }

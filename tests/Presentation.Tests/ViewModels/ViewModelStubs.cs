@@ -55,7 +55,7 @@ public sealed class ModelStub
     
 public sealed class FakeAncestorViewModel : ViewModel, IAncestorViewModel<ViewModelStub>
 {
-    public AtomicObservableCollection<ViewModelStub> Children { get; }
+    public AtomicObservableCollection<ViewModelStub> Items { get; }
         = new();
 
     public override void Disconnect()

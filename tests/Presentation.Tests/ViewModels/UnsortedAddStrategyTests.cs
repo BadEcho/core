@@ -40,10 +40,10 @@ public class UnsortedAddStrategyTests
         cVm.Bind(c);
         dVm.Bind(d);
 
-        _collectionViewModel.Children.Add(aVm);
-        _collectionViewModel.Children.Add(dVm);
-        _collectionViewModel.Children.Add(bVm);
-        _collectionViewModel.Children.Add(cVm);
+        _collectionViewModel.Items.Add(aVm);
+        _collectionViewModel.Items.Add(dVm);
+        _collectionViewModel.Items.Add(bVm);
+        _collectionViewModel.Items.Add(cVm);
     }
 
     [Fact]
@@ -56,7 +56,7 @@ public class UnsortedAddStrategyTests
 
         _strategy.Add(_collectionViewModel, newChild);
 
-        Assert.Equal(newChild, _collectionViewModel.Children[4]);
+        Assert.Equal(newChild, _collectionViewModel.Items[4]);
     }
 
     [Fact]
@@ -84,10 +84,10 @@ public class UnsortedAddStrategyTests
 
         _strategy.AddRange(_collectionViewModel, newItems);
 
-        Assert.Equal(newChild1, _collectionViewModel.Children[4]);
-        Assert.Equal(newChild2, _collectionViewModel.Children[5]);
-        Assert.Equal(newChild3, _collectionViewModel.Children[6]);
-        Assert.Equal(newChild4, _collectionViewModel.Children[7]);
-        Assert.Equal(newChild5, _collectionViewModel.Children[8]);
+        Assert.Equal(newChild1, _collectionViewModel.Items[4]);
+        Assert.Equal(newChild2, _collectionViewModel.Items[5]);
+        Assert.Equal(newChild3, _collectionViewModel.Items[6]);
+        Assert.Equal(newChild4, _collectionViewModel.Items[7]);
+        Assert.Equal(newChild5, _collectionViewModel.Items[8]);
     }
 }

@@ -26,7 +26,7 @@ public sealed class UnsortedAddStrategy<TChildViewModel> : ICollectionChangeStra
     {
         Require.NotNull(collectionViewModel, nameof(collectionViewModel));
 
-        collectionViewModel.Children.Add(viewModel);
+        collectionViewModel.Items.Add(viewModel);
     }
 
     /// <inheritdoc/>
@@ -34,7 +34,7 @@ public sealed class UnsortedAddStrategy<TChildViewModel> : ICollectionChangeStra
     {
         Require.NotNull(collectionViewModel, nameof(collectionViewModel));
 
-        collectionViewModel.Children.AddRange(viewModels);
+        collectionViewModel.Items.AddRange(viewModels);
     }
 
     /// <inheritdoc/>
@@ -42,7 +42,7 @@ public sealed class UnsortedAddStrategy<TChildViewModel> : ICollectionChangeStra
     {
         Require.NotNull(collectionViewModel, nameof(collectionViewModel));
 
-        collectionViewModel.Children.Remove(viewModel);
+        collectionViewModel.Items.Remove(viewModel);
     }
 
     /// <inheritdoc/>
@@ -50,7 +50,7 @@ public sealed class UnsortedAddStrategy<TChildViewModel> : ICollectionChangeStra
     {
         Require.NotNull(collectionViewModel, nameof(collectionViewModel));
 
-        collectionViewModel.Children.RemoveRange(viewModels);
+        collectionViewModel.Items.RemoveRange(viewModels);
     }
 
     /// <inheritdoc/>
@@ -60,7 +60,7 @@ public sealed class UnsortedAddStrategy<TChildViewModel> : ICollectionChangeStra
 
         for (int i = 0; i < countExceeded; i++)
         {
-            collectionViewModel.Children.RemoveAt(0);
+            collectionViewModel.Items.RemoveAt(0);
         }
     }
 }

@@ -60,12 +60,12 @@ public sealed class PresortedInsertionStrategy<TChildViewModel, TKey> : ICollect
         Require.NotNull(collectionViewModel, nameof(collectionViewModel));
 
         var allChildren
-            = collectionViewModel.Children.Concat(viewModel.AsEnumerable());
+            = collectionViewModel.Items.Concat(viewModel.AsEnumerable());
 
         List<TChildViewModel> sortedChildren = Sort(allChildren).ToList();
         int index = sortedChildren.IndexOf(viewModel);
 
-        collectionViewModel.Children.Insert(index, viewModel);
+        collectionViewModel.Items.Insert(index, viewModel);
     }
 
     /// <inheritdoc/>
@@ -75,7 +75,7 @@ public sealed class PresortedInsertionStrategy<TChildViewModel, TKey> : ICollect
 
         viewModels = Sort(viewModels).ToList();
 
-        List<TChildViewModel> originalChildren = collectionViewModel.Children.ToList();
+        List<TChildViewModel> originalChildren = collectionViewModel.Items.ToList();
 
         IEnumerable<TChildViewModel> allChildren
             = originalChildren.Concat(viewModels);
@@ -87,7 +87,7 @@ public sealed class PresortedInsertionStrategy<TChildViewModel, TKey> : ICollect
 
         foreach (var (viewModel, index) in viewModelIndexPairs)
         {
-            collectionViewModel.Children.Insert(index, viewModel);
+            collectionViewModel.Items.Insert(index, viewModel);
         }
     }
 
@@ -96,7 +96,7 @@ public sealed class PresortedInsertionStrategy<TChildViewModel, TKey> : ICollect
     {
         Require.NotNull(collectionViewModel, nameof(collectionViewModel));
 
-        collectionViewModel.Children.Remove(viewModel);
+        collectionViewModel.Items.Remove(viewModel);
     }
 
     /// <inheritdoc/>
@@ -104,7 +104,7 @@ public sealed class PresortedInsertionStrategy<TChildViewModel, TKey> : ICollect
     {
         Require.NotNull(collectionViewModel, nameof(collectionViewModel));
 
-        collectionViewModel.Children.RemoveRange(viewModels);
+        collectionViewModel.Items.RemoveRange(viewModels);
     }
 
     /// <inheritdoc/>
@@ -115,9 +115,9 @@ public sealed class PresortedInsertionStrategy<TChildViewModel, TKey> : ICollect
         for (int i = 0; i < countExceeded; i++)
         {
             if (_descending)
-                collectionViewModel.Children.RemoveAt(collectionViewModel.Children.Count - 1);
+                collectionViewModel.Items.RemoveAt(collectionViewModel.Items.Count - 1);
             else
-                collectionViewModel.Children.RemoveAt(0);
+                collectionViewModel.Items.RemoveAt(0);
         }
     }
 

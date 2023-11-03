@@ -55,7 +55,7 @@ public sealed class CollectionViewModelOptions
     /// Gets or sets a value indicating if the bound data of view models added to the child view model collection should be bound
     /// to the collection view model itself.
     /// </summary>
-    public bool BindChildren
+    public bool BindItems
     { get; set; } = true;
 
     /// <summary>
@@ -101,13 +101,13 @@ public sealed class CollectionViewModelOptions
     /// Gets or sets a value indicating if existing children that lack representation in a provided sequence of data being bound should be removed
     /// from the child view model collection.
     /// </summary>
-    public bool RemoveChildrenMissingFromBatch
+    public bool RemoveItemsMissingFromBatch
     { get; set; }
 
     /// <summary>
     /// Gets or sets the method meant to handle changes in either the children collection's composition or property values of items
     /// belonging to said collection.
     /// </summary>
-    public EventHandler<CollectionPropertyChangedEventArgs>? ChildrenChangedHandler 
+    public EventHandler<CollectionPropertyChangedEventArgs>? ItemsChangedHandler 
     { get; set; }
 }

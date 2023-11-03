@@ -69,7 +69,7 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
         Require.NotNull(changeStrategy, nameof(changeStrategy));
         Require.NotNull(options, nameof(options));
 
-        if (options.ChildrenChangedHandler == null)
+        if (options.ItemsChangedHandler == null)
             throw new ArgumentException(Strings.CollectionViewModelEngineRequiresHandler, nameof(options));
             
         _viewModel = viewModel;
@@ -82,18 +82,18 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
         _capacityEnforcementTimer.Interval = options.CapacityEnforcementDelay;
         _capacityEnforcementTimer.Tick += HandleCapacityEnforcementTimerTick;
 
-        Children = new AtomicObservableCollection<TChildViewModel>();
+        Items = new AtomicObservableCollection<TChildViewModel>();
 
-        var collectionChangePublisher = new CollectionPropertyChangePublisher<TChildViewModel>(Children);
+        var collectionChangePublisher = new CollectionPropertyChangePublisher<TChildViewModel>(Items);
 
-        collectionChangePublisher.Changed += options.ChildrenChangedHandler + HandleChildrenChanged;
+        collectionChangePublisher.Changed += options.ItemsChangedHandler + HandleItemsChanged;
     }
 
     /// <summary>
     /// Gets a collection of child view models, each of which represent an individual item bound to an
     /// <see cref="ICollectionViewModel{TModel, TChildViewModel}"/> typed view model powered by this engine.
     /// </summary>
-    public AtomicObservableCollection<TChildViewModel> Children
+    public AtomicObservableCollection<TChildViewModel> Items
     { get; }
 
     /// <summary>
@@ -146,7 +146,7 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
 
         _capacityEnforcementTimer.Tick += HandleCapacityEnforcementTimerTick;
 
-        Children.ChangeDispatcher(dispatcher);
+        Items.ChangeDispatcher(dispatcher);
     }
 
     /// <summary>
@@ -176,11 +176,11 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
 
         if (update)
         {
-            _viewModel.UpdateChild(model);
+            _viewModel.UpdateItem(model);
             return;
         }
 
-        TChildViewModel childViewModel = _viewModel.CreateChild(model);
+        TChildViewModel childViewModel = _viewModel.CreateItem(model);
 
         Bind(childViewModel);
     }
@@ -223,7 +223,7 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
                 return;
         }
 
-        TChildViewModel? childToUnbind = _viewModel.FindChild<TChildViewModel>(model);
+        TChildViewModel? childToUnbind = _viewModel.FindItem<TChildViewModel>(model);
 
         if (null == childToUnbind)
         {
@@ -251,7 +251,7 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
             processedModels = models.Where(_processedModels.Remove).ToList();
         }
 
-        List<TChildViewModel> childrenToUnbind = processedModels.Select(m => _viewModel.FindChild<TChildViewModel>(m))
+        List<TChildViewModel> childrenToUnbind = processedModels.Select(m => _viewModel.FindItem<TChildViewModel>(m))
                                                                 .WhereNotNull()
                                                                 .ToList();
 
@@ -283,9 +283,9 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
             _processedModels.Clear();
         }
 
-        List<TChildViewModel> childrenToUnbind = Children.ToList();
+        List<TChildViewModel> childrenToUnbind = Items.ToList();
 
-        Children.Clear();
+        Items.Clear();
 
         foreach (TChildViewModel childToUnbind in childrenToUnbind)
         {
@@ -302,20 +302,20 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
     /// <returns>
     /// The <typeparamref name="TChildViewModelImpl"/> instance that <c>model</c> is bound to, or null if nothing was found.
     /// </returns>
-    public TChildViewModelImpl? FindChild<TChildViewModelImpl>(TModel model)
+    public TChildViewModelImpl? FindItem<TChildViewModelImpl>(TModel model)
         where TChildViewModelImpl : TChildViewModel
     {
         try
         {
-            return Children.OfType<TChildViewModelImpl>()
-                           .SingleOrDefault(c => c.ActiveModel != null && c.ActiveModel.Equals<TModel>(model));
+            return Items.OfType<TChildViewModelImpl>()
+                        .SingleOrDefault(c => c.ActiveModel != null && c.ActiveModel.Equals<TModel>(model));
         }
         catch (InvalidOperationException ex)
         {
             Logger.Error(Strings.DuplicateModelInCollectionViewModel, ex);
 
-            return Children.OfType<TChildViewModelImpl>()
-                           .First(c => c.ActiveModel != null && c.ActiveModel.Equals<TModel>(model));
+            return Items.OfType<TChildViewModelImpl>()
+                        .First(c => c.ActiveModel != null && c.ActiveModel.Equals<TModel>(model));
         }
     }
 
@@ -324,7 +324,7 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
     {
         // Child view models being bound in batches are added to the child view model collection silently prior to
         // their individual binding, unless binding is delayed, to avoid excessive collection change notifications being broadcast.
-        if (Children.Contains(viewModel))
+        if (Items.Contains(viewModel))
             return;
 
         if (!DelayBindings)
@@ -344,7 +344,7 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
     {
         // Child view models being unbound in batches are removed from the child view model collection silently prior to their
         // individual unbinding to avoid excessive collection change notifications being broadcast.
-        if (Children.Contains(viewModel))
+        if (Items.Contains(viewModel))
             _changeStrategy.Remove(_viewModel, viewModel);
 
         viewModel.Disconnect();
@@ -382,7 +382,7 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
             RequestEnforceCapacity();
         }
 
-        if (_options.RemoveChildrenMissingFromBatch && missingChildrenModels.Any())
+        if (_options.RemoveItemsMissingFromBatch && missingChildrenModels.Any())
             _viewModel.Unbind(missingChildrenModels);
 
         // This is merely done to add the new child view models to the engine's bound data list.
@@ -400,12 +400,12 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
         {
             Parallel.For(0,
                          createdChildren.Length,
-                         i => createdChildren[i] = _viewModel.CreateChild(models[i]));
+                         i => createdChildren[i] = _viewModel.CreateItem(models[i]));
         }
         else
         {
             for (int i = 0; i < models.Count; i++)
-                createdChildren[i] = _viewModel.CreateChild(models[i]);
+                createdChildren[i] = _viewModel.CreateItem(models[i]);
         }
 
         return createdChildren;
@@ -417,19 +417,19 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
         {
             Parallel.For(0,
                          models.Count,
-                         i => _viewModel.UpdateChild(models[i]));
+                         i => _viewModel.UpdateItem(models[i]));
         }
         else
         {
             foreach (var modelToUpdate in models)
-                _viewModel.UpdateChild(modelToUpdate);
+                _viewModel.UpdateItem(modelToUpdate);
         }
     }
 
     private void PurgeZombies(IEnumerable<TModel> zombieModels)
     {
-        List<TChildViewModel> zombieChildren = Children.Where(c => c.ActiveModel == null)
-                                                       .ToList();
+        List<TChildViewModel> zombieChildren = Items.Where(c => c.ActiveModel == null)
+                                                    .ToList();
         if (0 != zombieChildren.Count) 
             _changeStrategy.RemoveRange(_viewModel, zombieChildren);
 
@@ -447,7 +447,7 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
         if (_options.Capacity <= 0)
             return;
 
-        if (!DelayCapacityEnforcement || _options.CapacityEnforcementDelayLimit > 0 && Children.Count >= _options.CapacityEnforcementDelayLimit)
+        if (!DelayCapacityEnforcement || _options.CapacityEnforcementDelayLimit > 0 && Items.Count >= _options.CapacityEnforcementDelayLimit)
             EnforceCapacity();
         else
             _capacityEnforcementTimer.Start();
@@ -457,7 +457,7 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
     {
         lock (_capacityEnforcementLock)
         {
-            int exceededCount = Children.Count - _options.Capacity;
+            int exceededCount = Items.Count - _options.Capacity;
 
             _changeStrategy.TrimExcess(_viewModel, exceededCount);
         }
@@ -474,7 +474,7 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
                                DispatcherPriority.Send);
     }
 
-    private void HandleChildrenChanged(object? sender, CollectionPropertyChangedEventArgs e)
+    private void HandleItemsChanged(object? sender, CollectionPropertyChangedEventArgs e)
     {
         if (DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
             return;
@@ -498,7 +498,7 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
                     _processedModels.Add(childViewModel.ActiveModel);
             }
 
-            if (_options.BindChildren)
+            if (_options.BindItems)
                 _viewModel.Bind(childViewModel.ActiveModel);
         }
     }
