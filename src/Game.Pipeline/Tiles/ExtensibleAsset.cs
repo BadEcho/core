@@ -11,6 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Globalization;
 using System.Xml.Linq;
 using BadEcho.Game.Pipeline.Properties;
 using BadEcho.Extensions;
@@ -122,6 +123,12 @@ public abstract class ExtensibleAsset
         return true;
     }
 
+    private static bool TryParseFloat(string? value, out float result)
+    {   // We want culturally invariant parsing of floats (which will be saved in a culturally invariant format by notable editors
+        // such as Tiled, regardless of the user's regional format settings).
+        return float.TryParse(value, CultureInfo.InvariantCulture, out result);
+    }
+
     private static T ParsePropertyValue<T>(string name, string value, CustomPropertyType type, PropertyParser<T> parser)
     {
         if (!parser(value, out T? parsedValue))
@@ -162,7 +169,7 @@ public abstract class ExtensibleAsset
                 break;
 
             case CustomPropertyType.Float:
-                float floatValue = ParsePropertyValue<float>(name, value, type, float.TryParse);
+                float floatValue = ParsePropertyValue<float>(name, value, type, TryParseFloat);
 
                 _customFloatProperties.Add(name, floatValue);
                 break;
