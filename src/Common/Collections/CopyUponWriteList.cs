@@ -11,30 +11,29 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.Collections;
-
 namespace BadEcho.Collections;
 
 /// <summary>
-/// Provides a thread-safe <see cref="ArrayList"/> that performs a copy of itself upon each write to support consistency,
-/// and is used for various sensitive operations that require such a collection.
+/// Provides a thread-safe list that performs a copy of itself upon each write to support consistency, and is used for
+/// various sensitive operations that require such a collection.
 /// </summary>
-internal class CopyUponWriteList
+/// <typeparam name="T">The type of items in the list.</typeparam>
+internal class CopyUponWriteList<T>
 {
-    private ArrayList? _readonlyWrapper;
+    private IReadOnlyList<T>? _readonlyWrapper;
 
     /// <summary>
     /// Gets a read-only wrapper of the list.
     /// </summary>
-    protected ArrayList ReadOnlyInnerList
+    protected IReadOnlyList<T> ReadOnlyInnerList
     {
         get
         {
-            ArrayList readOnlyInnerList;
+            IReadOnlyList<T> readOnlyInnerList;
 
             lock (InnerListLock)
             {
-                _readonlyWrapper ??= ArrayList.ReadOnly(InnerList);
+                _readonlyWrapper ??= InnerList.AsReadOnly();
 
                 readOnlyInnerList = _readonlyWrapper;
             }
@@ -47,10 +46,10 @@ internal class CopyUponWriteList
     /// Gets the actual inner list which lacks any copy-on-write protection.
     /// </summary>
     /// <remarks>
-    /// The methods that modify the <see cref="CopyUponWriteList"/> are responsible for checking this and copying it before
+    /// The methods that modify the <see cref="CopyUponWriteList{T}"/> are responsible for checking this and copying it before
     /// modifying it, as well as clearing it when necessary.
     /// </remarks>
-    protected ArrayList InnerList
+    protected List<T> InnerList
     { get; private set; } = new();
 
     /// <summary>
@@ -63,7 +62,7 @@ internal class CopyUponWriteList
     /// Performs a copy and then adds the object to the actual list.
     /// </summary>
     /// <param name="value">The object to add.</param>
-    protected void InnerAdd(object value)
+    protected void InnerAdd(T value)
     {
         PerformCopyUponWrite();
 
@@ -75,7 +74,7 @@ internal class CopyUponWriteList
     /// </summary>
     /// <param name="index">THe index to insert the object at.</param>
     /// <param name="value">The item to insert.</param>
-    protected void InnerInsert(int index, object value)
+    protected void InnerInsert(int index, T value)
     {
         PerformCopyUponWrite();
 
@@ -107,7 +106,7 @@ internal class CopyUponWriteList
         if (_readonlyWrapper == null)
             return;
 
-        InnerList = (ArrayList) InnerList.Clone();
+        InnerList = new List<T>(InnerList);
 
         _readonlyWrapper = null;
     }

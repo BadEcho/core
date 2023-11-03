@@ -23,7 +23,7 @@ namespace BadEcho.Interop;
 /// </summary>
 public sealed class MessageOnlyWindowWrapper : IWindowWrapper, IDisposable
 {
-    private readonly CachedWeakList _hooks = new();
+    private readonly CachedWeakList<WindowHookProc> _hooks = new();
     private readonly int _ownerThreadId = Environment.CurrentManagedThreadId;
 
     private readonly IThreadExecutor _executor;
