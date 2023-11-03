@@ -47,14 +47,14 @@ internal sealed class CachedWeakList<T> : CopyUponWriteList<WeakReference<T>>, I
     {
         if (skipFind)
         {
-            if (InnerList.Count == InnerList.Capacity)
+            if (Items.Count == Items.Capacity)
                 Purge();
         }
 
         else if (FindReferenceIndex(value) >= 0)
             return false;
 
-        InnerAdd(new WeakReference<T>(value));
+        ItemsAdd(new WeakReference<T>(value));
 
         return true;
     }
@@ -67,14 +67,14 @@ internal sealed class CachedWeakList<T> : CopyUponWriteList<WeakReference<T>>, I
     /// <returns>True if <c>value</c> was inserted; otherwise, false.</returns>
     public bool Insert(int index, T value)
     {
-        lock (InnerListLock)
+        lock (ItemsLock)
         {
             int existingIndex = FindReferenceIndex(value);
 
             if (existingIndex >= 0)
                 return false;
 
-            InnerInsert(index, new WeakReference<T>(value));
+            ItemsInsert(index, new WeakReference<T>(value));
 
             return true;
         }
@@ -87,7 +87,7 @@ internal sealed class CachedWeakList<T> : CopyUponWriteList<WeakReference<T>>, I
     /// <returns>True if the object was removed; otherwise, false.</returns>
     public bool Remove(T value)
     {
-        lock (InnerListLock)
+        lock (ItemsLock)
         {
             int index = FindReferenceIndex(value);
 
@@ -97,7 +97,7 @@ internal sealed class CachedWeakList<T> : CopyUponWriteList<WeakReference<T>>, I
 
     /// <inheritdoc/>
     public IEnumerator<T> GetEnumerator()
-        => new CurrentWeakListEnumerator(ReadOnlyInnerList);
+        => new CurrentWeakListEnumerator(ReadOnlyItems);
     
     private int FindReferenceIndex(T value)
     {
@@ -108,11 +108,11 @@ internal sealed class CachedWeakList<T> : CopyUponWriteList<WeakReference<T>>, I
         {
             deadReferences = false;
 
-            var list = InnerList;
+            var items = Items;
 
-            for (int i = 0; i < list.Count; i++)
+            for (int i = 0; i < items.Count; i++)
             {
-                var weakReference = (WeakReference<T>?) list[i];
+                var weakReference = (WeakReference<T>?) items[i];
 
                 if (weakReference?.TryGetTarget(out T? target) == true)
                 {
@@ -135,14 +135,14 @@ internal sealed class CachedWeakList<T> : CopyUponWriteList<WeakReference<T>>, I
         
     private void Purge()
     {
-        var list = InnerList;
+        var items = Items;
 
         int destinationIndex;
-        int count = list.Count;
+        int count = items.Count;
 
         for (destinationIndex = 0; destinationIndex < count; ++destinationIndex)
         {
-            var weakReference = (WeakReference<T>?) list[destinationIndex];
+            var weakReference = (WeakReference<T>?) items[destinationIndex];
 
             if (weakReference?.TryGetTarget(out T? _) == true)
                 break;
@@ -153,25 +153,25 @@ internal sealed class CachedWeakList<T> : CopyUponWriteList<WeakReference<T>>, I
 
         PerformCopyUponWrite();
 
-        list = InnerList;
+        items = Items;
 
         for (int i = destinationIndex + 1; i < count; ++i)
         {
-            var weakReference = (WeakReference<T>?) list[i];
+            var weakReference = (WeakReference<T>?) items[i];
 
             if (weakReference?.TryGetTarget(out T? _) == true)
-                list[destinationIndex++] = list[i];
+                items[destinationIndex++] = items[i];
         }
 
         if (destinationIndex >= count)
             return;
 
-        list.RemoveRange(destinationIndex, count - destinationIndex);
+        items.RemoveRange(destinationIndex, count - destinationIndex);
 
         int newCapacity = destinationIndex << 1;
 
-        if (newCapacity < list.Capacity)
-            list.Capacity = newCapacity;
+        if (newCapacity < items.Capacity)
+            items.Capacity = newCapacity;
     }
 
     /// <summary>
@@ -201,7 +201,7 @@ internal sealed class CachedWeakList<T> : CopyUponWriteList<WeakReference<T>>, I
     /// </remarks>
     private struct CurrentWeakListEnumerator : IEnumerator<T>
     {
-        private readonly IReadOnlyList<WeakReference<T>> _list;
+        private readonly IReadOnlyList<WeakReference<T>> _items;
 
         private int _index;
         private T? _strongReference;
@@ -209,11 +209,11 @@ internal sealed class CachedWeakList<T> : CopyUponWriteList<WeakReference<T>>, I
         /// <summary>
         /// Initializes a new instance of the <see cref="CurrentWeakListEnumerator"/> class.
         /// </summary>
-        /// <param name="list">The list to enumerate.</param>
-        public CurrentWeakListEnumerator(IReadOnlyList<WeakReference<T>> list)
+        /// <param name="items">The list to enumerate.</param>
+        public CurrentWeakListEnumerator(IReadOnlyList<WeakReference<T>> items)
         {
             _index = 0;
-            _list = list;
+            _items = items;
             _strongReference = null;
         }
 
@@ -237,9 +237,9 @@ internal sealed class CachedWeakList<T> : CopyUponWriteList<WeakReference<T>>, I
         {
             T? strongReference = null;
 
-            while (_index < _list.Count)
+            while (_index < _items.Count)
             {
-                var weakReference = (WeakReference<T>?) _list[_index++];
+                var weakReference = (WeakReference<T>?) _items[_index++];
 
                 if (weakReference?.TryGetTarget(out strongReference) == true)
                     break;

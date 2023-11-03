@@ -25,20 +25,20 @@ internal class CopyUponWriteList<T>
     /// <summary>
     /// Gets a read-only wrapper of the list.
     /// </summary>
-    protected IReadOnlyList<T> ReadOnlyInnerList
+    protected IReadOnlyList<T> ReadOnlyItems
     {
         get
         {
-            IReadOnlyList<T> readOnlyInnerList;
+            IReadOnlyList<T> readonlyItems;
 
-            lock (InnerListLock)
+            lock (ItemsLock)
             {
-                _readonlyWrapper ??= InnerList.AsReadOnly();
+                _readonlyWrapper ??= Items.AsReadOnly();
 
-                readOnlyInnerList = _readonlyWrapper;
+                readonlyItems = _readonlyWrapper;
             }
 
-            return readOnlyInnerList;
+            return readonlyItems;
         }
     }
 
@@ -49,24 +49,24 @@ internal class CopyUponWriteList<T>
     /// The methods that modify the <see cref="CopyUponWriteList{T}"/> are responsible for checking this and copying it before
     /// modifying it, as well as clearing it when necessary.
     /// </remarks>
-    protected List<T> InnerList
+    protected List<T> Items
     { get; private set; } = new();
 
     /// <summary>
-    /// Gets the synchronization object used to access the <see cref="InnerList"/>.
+    /// Gets the synchronization object used to access the <see cref="Items"/>.
     /// </summary>
-    protected object InnerListLock
+    protected object ItemsLock
     { get; } = new();
 
     /// <summary>
     /// Performs a copy and then adds the object to the actual list.
     /// </summary>
     /// <param name="value">The object to add.</param>
-    protected void InnerAdd(T value)
+    protected void ItemsAdd(T value)
     {
         PerformCopyUponWrite();
 
-        InnerList.Add(value);
+        Items.Add(value);
     }
 
     /// <summary>
@@ -74,11 +74,11 @@ internal class CopyUponWriteList<T>
     /// </summary>
     /// <param name="index">THe index to insert the object at.</param>
     /// <param name="value">The item to insert.</param>
-    protected void InnerInsert(int index, T value)
+    protected void ItemsInsert(int index, T value)
     {
         PerformCopyUponWrite();
 
-        InnerList.Insert(index, value);
+        Items.Insert(index, value);
     }
 
     /// <summary>
@@ -88,12 +88,12 @@ internal class CopyUponWriteList<T>
     /// <returns>True if an item at <c>index</c> is removed; otherwise, false.</returns>
     protected bool RemoveAt(int index)
     {
-        if (index < 0 || index >= InnerList.Count)
+        if (index < 0 || index >= Items.Count)
             return false;
 
         PerformCopyUponWrite();
 
-        InnerList.RemoveAt(index);
+        Items.RemoveAt(index);
 
         return true;
     }
@@ -106,7 +106,7 @@ internal class CopyUponWriteList<T>
         if (_readonlyWrapper == null)
             return;
 
-        InnerList = new List<T>(InnerList);
+        Items = new List<T>(Items);
 
         _readonlyWrapper = null;
     }
