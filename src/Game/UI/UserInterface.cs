@@ -11,60 +11,70 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Game.States;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.UI;
 
 /// <summary>
-/// Provides a self-contained user interface configuration that loads and deploys packaged controls onto a provided
-/// <see cref="Screen"/> instances.
+/// Provides a self-contained user interface configuration game state that loads and deploys packaged controls onto a provided
+/// <see cref="Screen"/> instance.
 /// </summary>
-public abstract class UserInterface
+public abstract class UserInterface : GameState
 {
-    /// <summary>
-    /// Attaches this user interface onto the provided screen.
-    /// </summary>
-    /// <param name="screen">The screen to display this user interface on.</param>
-    /// <param name="contentManager">The content manager to use to load the content's dependencies.</param>
-    public void Attach(Screen screen, ContentManager contentManager)
-        => Attach(screen, contentManager, null);
+    private readonly Screen _screen;
 
     /// <summary>
-    /// Attaches this user interface onto the provided screen.
+    /// Initializes a new instance of the <see cref="UserInterface"/> class.
     /// </summary>
-    /// <param name="screen">The screen to display this user interface on.</param>
-    /// <param name="contentManager">The content manager to use to load the content's dependencies.</param>
-    /// <param name="screenManager">An optional screen manager the user interface can use to spawn child interfaces.</param>
-    public void Attach(Screen screen, ContentManager contentManager, IScreenManager? screenManager)
+    /// <param name="device">The graphics device that will power the rendering surface.</param>
+    protected UserInterface(GraphicsDevice device)
     {
-        Require.NotNull(screen, nameof(screen));
-        Require.NotNull(contentManager, nameof(contentManager));
+        Require.NotNull(device, nameof(device));
 
-        LoadContent(contentManager);
-
-        screen.Content = LoadControls();
-
-        OnAttached(screenManager);
+        _screen = new Screen(device);
     }
 
-    /// <summary>
-    /// Loads resources that this interface's controls depend on using the provided content manager.
-    /// </summary>
-    /// <param name="contentManager">The content manager to use to load the content's dependencies.</param>
-    protected abstract void LoadContent(ContentManager contentManager);
+    /// <inheritdoc/>
+    protected override bool ClipDuringTransitions
+        => false;
 
+    /// <inheritdoc/>
+    protected override SpriteSortMode SortMode
+        => SpriteSortMode.Immediate;
+
+    /// <inheritdoc/>
+    public override void Update(GameUpdateTime time)
+    {
+        _screen.Update();
+
+        ContentOrigin = _screen.Content.LayoutBounds.Location;
+
+        base.Update(time);
+    }
+
+    /// <inheritdoc/>
+    protected override void LoadContent(ContentManager contentManager)
+    {
+        LoadInterfaceContent(contentManager);
+
+        _screen.Content = LoadControls();
+    }
+
+    /// <inheritdoc/>
+    protected override void DrawCore(ConfiguredSpriteBatch spriteBatch)
+        => _screen.Draw(spriteBatch);
+
+    /// <summary>
+    /// Loads resources using the provided content manager that this interface and its controls depend on.
+    /// </summary>
+    /// <param name="contentManager">The content manager to use to load this interface's dependencies.</param>
+    protected abstract void LoadInterfaceContent(ContentManager contentManager);
+    
     /// <summary>
     /// Initializes and returns a layout panel containing this interface's controls.
     /// </summary>
     /// <returns>A <see cref="Panel"/> instance containing this interface's controls.</returns>
     protected abstract Panel LoadControls();
-
-    /// <summary>
-    /// Called when this user interface has been attached to a screen.
-    /// </summary>
-    /// <param name="screenManager">
-    /// A screen manager the user interface can use to spawn child interfaces, optionally provided at the time of attachment.
-    /// </param>
-    protected virtual void OnAttached(IScreenManager? screenManager)
-    { }
 }

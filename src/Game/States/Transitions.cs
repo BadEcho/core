@@ -11,48 +11,48 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Game;
+namespace BadEcho.Game.States;
 
 /// <summary>
-/// Specifies the types of transitions a component undergoes when appearing and disappearing from view.
+/// Specifies the types of transitions a game state undergoes when appearing and disappearing from view.
 /// </summary>
 [Flags]
 public enum Transitions
 {
     /// <summary>
-    /// The component does not transition onto or off the screen.
+    /// The game state does not transition onto or off the screen.
     /// </summary>
     None = 0x0,
     /// <summary>
-    /// The component transitions onto the screen in a leftward direction and transitions off the screen in a rightward
+    /// The game state transitions onto the screen in a leftward direction and transitions off the screen in a rightward
     /// direction.
     /// </summary>
     MoveLeft = 0x1,
     /// <summary>
-    /// The component transitions onto the screen in a rightward direction and transitions off the screen in a leftward
+    /// The game state transitions onto the screen in a rightward direction and transitions off the screen in a leftward
     /// direction.
     /// </summary>
     MoveRight = 0x2,
     /// <summary>
-    /// The component transitions onto the screen in an upward direction and transitions off the screen in a downward
+    /// The game state transitions onto the screen in an upward direction and transitions off the screen in a downward
     /// direction.
     /// </summary>
     MoveUp = 0x4,
     /// <summary>
-    /// The component transitions onto the screen in a downward direction and transitions off the screen in an upward
+    /// The game state transitions onto the screen in a downward direction and transitions off the screen in an upward
     /// direction.
     /// </summary>
     MoveDown = 0x8,
     /// <summary>
-    /// The component transitions onto the screen by fading in and transitions off the screen by fading out.
+    /// The game state transitions onto the screen by fading in and transitions off the screen by fading out.
     /// </summary>
     Fade = 0x10,
     /// <summary>
-    /// The component transitions onto the screen by zooming in and transitions off the screen by zooming out.
+    /// The game state transitions onto the screen by zooming in and transitions off the screen by zooming out.
     /// </summary>
     Zoom = 0x20,
     /// <summary>
-    /// The component transitions onto and off the screen doing a full rotation.
+    /// The game state transitions onto and off the screen doing a full rotation.
     /// </summary>
     Rotate = 0x40
 

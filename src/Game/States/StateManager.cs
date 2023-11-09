@@ -37,6 +37,12 @@ public sealed class StateManager : DrawableGameComponent
         : base(game)
     { }
 
+    /// <summary>
+    /// Gets the states loaded into this manager.
+    /// </summary>
+    public IReadOnlyCollection<GameState> States
+        => _states;
+
     /// <inheritdoc/>
     public override void Update(GameTime gameTime)
     {

@@ -283,6 +283,7 @@ public abstract class GameState : IDisposable
             ActivationPercentage = Math.Clamp(ActivationPercentage, 0, 1);
 
             ActivationStatus = isActivating ? ActivationStatus.Activated : ActivationStatus.Deactivated;
+            return;
         }
 
         // We're still in the process of activating/deactivating the game state.

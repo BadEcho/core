@@ -11,46 +11,38 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Game.UI;
+using BadEcho.Game.States;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace BadEcho.Game.States;
+namespace BadEcho.Game.UI;
 
 /// <summary>
-/// Provides a game state that acts a loading screen, used to distract the player from the fact that the game takes so
-/// damn long to load.
+/// Provides a self-contained user interface configuration game state that acts a loading screen, used to distract the player from 
+/// the fact that the game takes so damn long to load.
 /// </summary>
-public sealed class LoadingState : GameState
+public abstract class LoadingUserInterface : UserInterface
 {
     private readonly IEnumerable<GameState> _statesToLoad;
-    private readonly UserInterface _loadingInterface;
-    private readonly Screen _screen;
-
     private bool _otherStatesUnloaded;
 
-
-    public LoadingState(IEnumerable<GameState> statesToLoad, UserInterface loadingInterface, GraphicsDevice device)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LoadingUserInterface"/> class.
+    /// </summary>
+    /// <param name="statesToLoad">The game states loaded by this interface.</param>
+    /// <param name="device">The graphics device that will power the rendering surface.</param>
+    protected LoadingUserInterface(IEnumerable<GameState> statesToLoad, GraphicsDevice device)
+        : base(device)
     {
         Require.NotNull(statesToLoad, nameof(statesToLoad));
-        Require.NotNull(loadingInterface, nameof(loadingInterface));
-        Require.NotNull(device, nameof(device));
 
         _statesToLoad = statesToLoad;
-        _loadingInterface = loadingInterface;
-
-        _screen = new Screen(device);
-
         ActivationTime = TimeSpan.FromSeconds(0.5);
     }
 
     /// <inheritdoc/>
     public override void Update(GameUpdateTime time)
     {
-        _screen.Update();
-
-        ContentOrigin = _screen.Content.LayoutBounds.Location;
-
         base.Update(time);
 
         if (_otherStatesUnloaded)
@@ -61,7 +53,7 @@ public sealed class LoadingState : GameState
             }
 
             Manager?.Game.ResetElapsedTime();
-            Manager?.RemoveState(this);
+            Exit();
         }
 
         if (ActivationStatus == ActivationStatus.Activated && Manager?.States.Count == 1)
@@ -71,18 +63,14 @@ public sealed class LoadingState : GameState
     /// <inheritdoc/>
     protected override void LoadContent(ContentManager contentManager)
     {
+        base.LoadContent(contentManager);
+
         if (Manager == null)
             return;
-
+                
         foreach (GameState state in Manager.States)
         {
             state.Exit();
-        }
-
-        _loadingInterface.Attach(_screen, contentManager);
+        }       
     }
-
-    /// <inheritdoc/>
-    protected override void DrawCore(ConfiguredSpriteBatch spriteBatch)
-        => _screen.Draw(spriteBatch);
 }
