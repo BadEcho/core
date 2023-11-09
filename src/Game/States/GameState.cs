@@ -273,8 +273,9 @@ public abstract class GameState : IDisposable
 
     private void UpdateActivation(GameUpdateTime time, bool isActivating)
     {
-        float activationScale
-            = (float) (time.ElapsedGameTime.TotalMilliseconds / ActivationTime.TotalMilliseconds);
+        float activationScale = ActivationTime != TimeSpan.Zero
+            ? (float) (time.ElapsedGameTime.TotalMilliseconds / ActivationTime.TotalMilliseconds)
+            : 1;
 
         ActivationPercentage += activationScale * (isActivating ? 1 : -1);
 
