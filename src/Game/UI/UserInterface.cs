@@ -33,6 +33,7 @@ public abstract class UserInterface : GameState
     {
         Require.NotNull(device, nameof(device));
 
+        Device = device;
         _screen = new Screen(device);
     }
 
@@ -43,6 +44,12 @@ public abstract class UserInterface : GameState
     /// <inheritdoc/>
     protected override SpriteSortMode SortMode
         => SpriteSortMode.Immediate;
+
+    /// <summary>
+    /// Gets the graphics device powering the rendering surface.
+    /// </summary>
+    protected GraphicsDevice Device
+    { get; }
 
     /// <inheritdoc/>
     public override void Update(GameUpdateTime time)
