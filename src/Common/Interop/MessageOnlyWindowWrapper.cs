@@ -13,17 +13,15 @@
 
 using System.ComponentModel;
 using System.Runtime.InteropServices;
-using BadEcho.Collections;
 using BadEcho.Threading;
 
 namespace BadEcho.Interop;
 
 /// <summary>
-/// Provides a disposable wrapper around an <c>HWND</c> of a message-only window and the messages it receives.
+/// Provides a disposable wrapper around an <c>HWND</c> of a self-generated message-only window and the messages it receives.
 /// </summary>
-public sealed class MessageOnlyWindowWrapper : IWindowWrapper, IDisposable
+public sealed class MessageOnlyWindowWrapper : WindowWrapper, IDisposable
 {
-    private readonly CachedWeakList<WindowHookProc> _hooks = new();
     private readonly int _ownerThreadId = Environment.CurrentManagedThreadId;
 
     private readonly IThreadExecutor _executor;
@@ -37,12 +35,13 @@ public sealed class MessageOnlyWindowWrapper : IWindowWrapper, IDisposable
     /// </summary>
     /// <param name="executor">The executor used by the wrapper to execute actions.</param>
     public MessageOnlyWindowWrapper(IThreadExecutor executor)
+        : base(WindowHandle.InvalidHandle)
     {
         Require.NotNull(executor, nameof(executor));
 
         _executor = executor;
 
-        var subclass = new WindowSubclass(WndProc, executor);
+        var subclass = new WindowSubclass(WindowProcedure, executor);
 
         // We store a reference to the initial WndProc so that it isn't garbage collected before our subclass replaces the WndProc with its
         // own following the first message it receives after our call to CreateWindowEx.
@@ -50,7 +49,6 @@ public sealed class MessageOnlyWindowWrapper : IWindowWrapper, IDisposable
         string className = CreateClassName();
 
         _classAtom = RegisterClass(initialCallback, className);
-        Handle = WindowHandle.InvalidHandle;
 
         try
         {
@@ -115,33 +113,6 @@ public sealed class MessageOnlyWindowWrapper : IWindowWrapper, IDisposable
     }
 
     /// <inheritdoc/>
-    public WindowHandle Handle
-    { get; }
-
-    /// <summary>
-    /// Adds a hook that will receive messages prior to any existing hooks receiving them.
-    /// </summary>
-    /// <param name="hook">The hook to invoke when messages are sent to the wrapped window.</param>
-    public void AddStartingHook(WindowHookProc hook)
-    {
-        _hooks.Insert(0, hook);
-    }
-
-    /// <inheritdoc/>
-    public void AddHook(WindowHookProc hook)
-    {
-        _hooks.Add(hook);
-    }
-
-    /// <inheritdoc/>
-    public void RemoveHook(WindowHookProc hook)
-    {
-        Require.NotNull(hook, nameof(hook));
-
-        _hooks.Remove(hook);
-    }
-
-    /// <inheritdoc/>
     public void Dispose()
     {   // Since WM_NCDESTROY messages are propagated, there is a chance this method will be invoked multiple times.
         if (_disposed)
@@ -165,6 +136,16 @@ public sealed class MessageOnlyWindowWrapper : IWindowWrapper, IDisposable
         _classAtom = 0;
 
         GC.SuppressFinalize(this);
+    }
+
+    /// <inheritdoc/>
+    protected override void OnDestroyWindow()
+    {
+        base.OnDestroyWindow();
+
+        // Time to cleanup, though the class unregistration needs to be delayed since the window is already being destroyed.
+        _windowIsBeingDestroyed = true;
+        Dispose();
     }
 
     private static string CreateClassName()
@@ -224,34 +205,5 @@ public sealed class MessageOnlyWindowWrapper : IWindowWrapper, IDisposable
 
         if (User32.UnregisterClass(new IntPtr(classAtom), hInstance) == 0)
             throw new Win32Exception(Marshal.GetLastWin32Error());
-    }
-
-    private IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-    {
-        var result = IntPtr.Zero;
-        var message = (WindowMessage) msg;
-
-        foreach (WindowHookProc hook in _hooks)
-        {
-            result = hook(hWnd, msg, wParam, lParam, ref handled);
-                    
-            if (handled)
-                break;
-        }
-
-        if (WindowMessage.CreateNonclientArea == message)
-        {
-            handled = false;
-        }
-        else if (WindowMessage.DestroyNonclientArea == message)
-        {   // Time to cleanup, though the class unregistration needs to be delayed since the window is already being destroyed.
-            _windowIsBeingDestroyed = true;
-            Dispose();
-
-            // We want to make sure we always pass on WM_NCDESTROY messages.
-            handled = false;
-        }
-
-        return result;
     }
 }
