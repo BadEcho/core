@@ -24,7 +24,8 @@ internal static partial class User32
     private const string LIBRARY_NAME = "user32";
 
     /// <summary>
-    /// Gets the name for the exported <c>DefWindowProcW</c> function.
+    /// Gets the name for the exported <c>DefWindowProcW</c> function, which is the default window procedure for processing
+    /// messages.
     /// </summary>
     public static string ExportDefWindowProcW
         => "DefWindowProcW";
