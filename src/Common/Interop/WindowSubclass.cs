@@ -52,12 +52,12 @@ internal sealed class WindowSubclass : IDisposable
     private static readonly AssemblyLoadContext _LoadContext;
 
     [ThreadStatic]
-    private static SubclassOperationParameters? _ExecutorOperationCallbackParameters;
+    private static SubclassOperationParameters? _OperationCallbackParameters;
 
     private static int _ShutdownHandled;
 
-    private readonly ThreadExecutorOperationCallback _executorOperationCallback;
-    private readonly IThreadExecutor _executor;
+    private readonly ThreadExecutorOperationCallback _operationCallback;
+    private readonly IThreadExecutor? _executor;
 
     private bool _disposed;
 
@@ -100,18 +100,46 @@ internal sealed class WindowSubclass : IDisposable
     /// <param name="hook">The delegate that will be executed to process messages that are sent or posted to the window.</param>
     /// <param name="executor">The executor that will power the subclass.</param>
     public WindowSubclass(WindowHookProc hook, IThreadExecutor executor)
+        : this(hook)
     {
-        Require.NotNull(hook, nameof(hook));
         Require.NotNull(executor, nameof(executor));
 
         _executor = executor;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WindowSubclass"/> class.
+    /// </summary>
+    /// <param name="hook">The delegate that will be executed to process messages that are sent or posted to the window.</param>
+    /// <remarks>
+    /// Subclassing without the use of a <see cref="IThreadExecutor"/> will result in direct invocation of the message processing
+    /// hook. Use of an executor is recommended if support for more complex functionality such as async operations is desired.
+    /// </remarks>
+    public WindowSubclass(WindowHookProc hook)
+    {
+        Require.NotNull(hook, nameof(hook));
+        
         _hook = new WeakReference(hook);
 
         // A reference is required to this method in order to avoid GC collection while the callback is still being referenced by unmanaged
         // objects. Figuring out the root cause of the kind of crashes brought about by this sort of problem is not easy!
-        _executorOperationCallback = ExecuteHook;
+        _operationCallback = ExecuteHook;
 
         _gcHandle = GCHandle.Alloc(this);
+    }
+    
+    /// <summary>
+    /// Attaches to and effectively subclasses the provided window by changing the address of its
+    /// <see cref="WindowAttribute.WindowProcedure"/>.
+    /// </summary>
+    /// <param name="window">The window to subclass.</param>
+    public void Attach(WindowHandle window)
+    {
+        Require.NotNull(window, nameof(window));
+        
+        IntPtr oldWndProc = User32.GetWindowLongPtr(window, WindowAttribute.WindowProcedure);
+
+        Attach(window, WndProc, oldWndProc);
     }
 
     /// <inheritdoc/>
@@ -135,6 +163,16 @@ internal sealed class WindowSubclass : IDisposable
     /// <param name="wParam">Additional message-specific information.</param>
     /// <param name="lParam">Additional message-specific information.</param>
     /// <returns>Value indicating the success of the operation.</returns>
+    /// <remarks>
+    /// <para>
+    /// Attachment and thus the subclassing of the window is performed here if <see cref="Attach(WindowHandle)"/> has not
+    /// already been called. This sort of scenario is possible if a window class was manually registered, with its
+    /// <see cref="WindowClass.WindowProc"/> set to this method.
+    /// </para>
+    /// <para>
+    /// Otherwise, this method will only begin to process messages once <see cref="Attach(WindowHandle)"/> has been executed.
+    /// </para>
+    /// </remarks>
     internal IntPtr WndProc(IntPtr hWnd, uint msg, nint wParam, nint lParam)
     {
         var result = IntPtr.Zero;
@@ -167,7 +205,7 @@ internal sealed class WindowSubclass : IDisposable
         }
         else
         {
-            if (!_executor.IsShutdownComplete)
+            if (_executor is not { IsShutdownComplete: true })
                 result = SendOperation(hWnd, msg, wParam, lParam, ref handled);
 
             if (WindowMessage.DestroyNonclientArea == message)
@@ -250,7 +288,7 @@ internal sealed class WindowSubclass : IDisposable
             _SubclassHandleMap[this] = window;
         }
     }
-    
+
     /// <remarks>
     /// <para>
     /// The <c>forcibly</c> parameter exists because, due to how subclassing works, it is not always possible to safely remove
@@ -340,10 +378,10 @@ internal sealed class WindowSubclass : IDisposable
         var result = IntPtr.Zero;
 
         // The parameters are cached locally, followed by setting the class member for the parameters to null for purposes of reentrancy.
-        _ExecutorOperationCallbackParameters ??= new SubclassOperationParameters();
+        _OperationCallbackParameters ??= new SubclassOperationParameters();
 
         SubclassOperationParameters parameters
-            = _ExecutorOperationCallbackParameters with
+            = _OperationCallbackParameters with
               {
                   HWnd = hWnd,
                   Msg = msg,
@@ -351,16 +389,18 @@ internal sealed class WindowSubclass : IDisposable
                   LParam = lParam
               };
 
-        _ExecutorOperationCallbackParameters = null;
-        object? executorResult = _executor.Invoke(_executorOperationCallback, parameters);
+        _OperationCallbackParameters = null;
+        object? operationResult = _executor != null
+            ? _executor.Invoke(_operationCallback, parameters)
+            : _operationCallback(parameters);
 
-        if (executorResult != null)
+        if (operationResult != null)
         {
             result = parameters.Result;
             handled = parameters.Handled;
         }
 
-        _ExecutorOperationCallbackParameters = parameters;
+        _OperationCallbackParameters = parameters;
 
         return result;
     }
