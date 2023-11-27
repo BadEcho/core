@@ -23,6 +23,10 @@ internal enum WindowsHook
     /// </summary>
     JournalRecord = 0,
     /// <summary>
+    /// A hook procedure that receives notifications useful to shell applications.
+    /// </summary>
+    Shell,
+    /// <summary>
     /// A hook procedure that monitors low-level keyboard input events.
     /// </summary>
     KeyboardLowLevel = 13

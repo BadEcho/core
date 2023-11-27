@@ -189,6 +189,20 @@ public sealed class Display
     public Rectangle WorkingArea
     { get; }
 
+    /// <summary>
+    /// Retrieves the display device containing the largest area of intersection with the bounding rectangle of a specified
+    /// window.
+    /// </summary>
+    /// <param name="window">A handle to the window of interest.</param>
+    /// <returns>The <see cref="Display"/> instance containing the largest area of intersection with the <c>window</c>.</returns>
+    public static Display FromWindow(WindowHandle window)
+    {
+        Require.NotNull(window, nameof(window));
+
+        // Default to the nearest device if the window is not intersecting any display monitor.
+        return new Display(User32.MonitorFromWindow(window, 0x2));
+    }
+
     private static IEnumerable<Display> LoadDisplays()
     {
         var displays = new List<Display>();

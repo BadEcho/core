@@ -19,7 +19,7 @@ namespace BadEcho.Interop;
 internal enum WindowMessage
 {
     /// <summary>
-    /// A window message corresponding to WM_NULL.
+    /// A window message corresponding to WM_NULL, posted when...absolutely nothing is happening.
     /// </summary>
     Null = 0,
     /// <summary>
@@ -27,19 +27,40 @@ internal enum WindowMessage
     /// </summary>
     Destroy = 0x2,
     /// <summary>
+    /// A window message corresponding to a window being resized (WM_SIZE).
+    /// </summary>
+    Size = 0x5,
+    /// <summary>
     /// A window message corresponding to WM_CLOSE.
     /// </summary>
     Close = 0x10,
     /// <summary>
-    /// A window message corresponding to a nonclient area being created.
+    /// A window message corresponding to WM_ERASEBKGND, posted when the window background must be erased.
+    /// </summary>
+    EraseBackground = 0x14,
+    /// <summary>
+    /// A window message corresponding to WM_SHOWWINDOW, posted when the window is about to be hidden or shown.
+    /// </summary>
+    ShowWindow = 0x18,
+    /// <summary>
+    /// A window message corresponding to WM_WINDOWPOSCHANGING, posted when the window's size, position, or place in the
+    /// Z order is about to change.
+    /// </summary>
+    WindowPositionChanging = 0x46,
+    /// <summary>
+    /// A window message corresponding to a nonclient area being created (WM_NCCREATE).
     /// </summary>
     CreateNonclientArea = 0x81,
     /// <summary>
-    /// A window message corresponding to a nonclient area being destroyed.
+    /// A window message corresponding to a nonclient area being destroyed (WM_NCDESTROY).
     /// </summary>
     DestroyNonclientArea = 0x82,
     /// <summary>
-    /// A window message corresponding to a nonsystem key being pressed. A nonsystem key is a key that is pressed
+    /// A window message corresponding to WM_SYNCPAINT, used to synchronize painting while avoiding linking independent GUI threads.
+    /// </summary>
+    SyncPaint = 0x88,
+    /// <summary>
+    /// A window message corresponding to a nonsystem key being pressed (WM_KEYDOWN). A nonsystem key is a key that is pressed
     /// when the ALT key is not pressed.
     /// </summary>
     KeyDown = 0x100,

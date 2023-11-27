@@ -25,7 +25,7 @@ public class Gdi32Tests
     [Fact]
     public void GetDeviceCaps_PpiHeight_ReturnsValid()
     {
-        using (DeviceContextHandle deviceContext = User32.GetDC(IntPtr.Zero))
+        using (DeviceContextHandle deviceContext = User32.GetDC(WindowHandle.InvalidHandle))
         {
             Assert.False(deviceContext.IsInvalid);
 

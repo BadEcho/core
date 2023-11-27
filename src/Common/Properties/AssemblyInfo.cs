@@ -142,3 +142,9 @@ using BadEcho.Properties;
                            Scope = "member",
                            Target = "~P:BadEcho.Interop.NotifyIconDataMarshaller.ManagedToUnmanagedRef.NOTIFYICONDATAW.InfoTitle",
                            Justification = "This is technically an incorrect recommendation. Although, at the time of writing, a readonly modifier here would compile fine, this setter is in fact modifying the state of this struct. The state is being modified through the copying of the input value's contents into a fixed buffer, whose location in memory is being pointed to by the Span<T> returned by the SzInfoTitle property.")]
+
+[assembly: SuppressMessage("Design", 
+                           "CA1008:Enums should have zero value", 
+                           Scope = "type", 
+                           Target = "~T:BadEcho.Interop.WindowStyles",
+                           Justification = "One must not attempt to weave changes into the fabric of ancient codespace; according to official Win32 documentation, a constant value of 0x0 represents an 'overlapped' window style. Therefore, 'Overlapped' its name shall be.")]

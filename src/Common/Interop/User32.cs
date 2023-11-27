@@ -223,6 +223,17 @@ internal static partial class User32
     public static partial bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFOEX lpmi);
 
     /// <summary>
+    /// Retrieves a handle to the display monitor that has the largest area of intersection with the bounding rectangle of a
+    /// specified window.
+    /// </summary>
+    /// <param name="hWnd">A handle to the window of interest.</param>
+    /// <param name="dwFlags">Determines the function's return value if the window does not intersect any display monitor.</param>
+    /// <returns>The handle to the display monitor that has the largest area of intersection with the window.</returns>
+    [LibraryImport(LIBRARY_NAME)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial IntPtr MonitorFromWindow(WindowHandle hWnd, uint dwFlags);
+
+    /// <summary>
     /// Retrieves the specified system metric or configuration setting.
     /// </summary>
     /// <param name="nIndex">An enumeration value that specifies the system metric or configuration setting to retrieve.</param>
@@ -246,6 +257,24 @@ internal static partial class User32
     public static partial bool GetWindowRect(WindowHandle hWnd, out RECT lpRect);
 
     /// <summary>
+    /// Adds a rectangle to the specified window's update region. The update region represents the portion of the window's client
+    /// area that must be redrawn.
+    /// </summary>
+    /// <param name="hWnd">A handle to the window whose update region has changed.</param>
+    /// <param name="lpRect">
+    /// A pointer to a <see cref="RECT"/> structure that contains the client coordinates of the rectangle to be added to the update
+    /// region.
+    /// </param>
+    /// <param name="bErase">
+    /// Specifies whether the background within the update region is to be erased when the update region is processed.
+    /// </param>
+    /// <returns>A nonzero value if successful; otherwise, zero.</returns>
+    [LibraryImport(LIBRARY_NAME)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static unsafe partial bool InvalidateRect(WindowHandle hWnd, RECT* lpRect, [MarshalAs(UnmanagedType.Bool)] bool bErase);
+
+    /// <summary>
     /// Brings the thread that created the specified window into the foreground and activates the window.
     /// </summary>
     /// <param name="hWnd">A handle to the window that should be activated and brought to the foreground.</param>
@@ -267,13 +296,13 @@ internal static partial class User32
     /// Retrieves a handle to a device context (DC) for the client area of either a specified window or for the entire screen.
     /// </summary>
     /// <param name="hWnd">
-    /// A handle to the window whose DC is to be retrieved. A value of <see cref="IntPtr.Zero"/> will retrieve the DC for the entire
-    /// screen.
+    /// A handle to the window whose DC is to be retrieved. A value of <see cref="WindowHandle.InvalidHandle"/> will retrieve the
+    /// DC for the entire screen.
     /// </param>
     /// <returns>If successful, a handle to the DC; otherwise, null.</returns>
     [LibraryImport(LIBRARY_NAME, SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    public static partial DeviceContextHandle GetDC(IntPtr hWnd);
+    public static partial DeviceContextHandle GetDC(WindowHandle hWnd);
 
     /// <summary>
     /// Releases a device context (DC), freeing it for use by other applications.
@@ -351,19 +380,63 @@ internal static partial class User32
     /// <returns>The requested value if successful; otherwise, zero.</returns>
     public static IntPtr GetWindowLongPtr(WindowHandle hWnd, WindowAttribute attribute)
         => IntPtr.Size == 4 ? GetWindowLongPtr32(hWnd, (int) attribute) : GetWindowLongPtr64(hWnd, (int) attribute);
-
+    
     /// <summary>
     /// Changes an attribute for the specified window.
     /// </summary>
     /// <param name="hWnd">A handle to the window and, indirectly, the class to which the window belongs.</param>
     /// <param name="attribute">An enumeration value that specifies the window attribute to replace.</param>
     /// <param name="dwNewLong">The replacement value.</param>
-    /// <returns>The previous value of the specified offset if successful; otherwise, zero.</returns>
+    /// <returns>The previous value of the specified attribute if successful; otherwise, zero.</returns>
     public static IntPtr SetWindowLongPtr(WindowHandle hWnd, WindowAttribute attribute, IntPtr dwNewLong)
         => IntPtr.Size == 4
             ? SetWindowLongPtr32(hWnd, (int) attribute, dwNewLong)
             : SetWindowLongPtr64(hWnd, (int) attribute, dwNewLong);
 
+    /// <summary>
+    /// Retrieves information about a specified window's class.
+    /// </summary>
+    /// <param name="hWnd">A handle to the window and, indirectly, the class to which the window belongs.</param>
+    /// <param name="attribute">An enumeration value that specifies the window class attribute to retrieve.</param>
+    /// <returns>The requested value if successful; otherwise, zero.</returns>
+    public static IntPtr GetClassLongPtr(WindowHandle hWnd, WindowClassAttribute attribute)
+        => IntPtr.Size == 4
+            ? GetClassLongPtr32(hWnd, (int) attribute)
+            : GetClassLongPtr64(hWnd, (int) attribute);
+
+    /// <summary>
+    /// Changes an attribute for the specified window's class.
+    /// </summary>
+    /// <param name="hWnd">A handle to the window and, indirectly, the class to which the window belongs.</param>
+    /// <param name="attribute">An enumeration value that specifies the window class attribute to replace.</param>
+    /// <param name="dwNewLong">The replacement value.</param>
+    /// <returns>The previous value of the specified attribute if successful; otherwise, zero.</returns>
+    public static IntPtr SetClassLongPtr(WindowHandle hWnd, WindowClassAttribute attribute, IntPtr dwNewLong)
+        => IntPtr.Size == 4
+            ? SetClassLongPtr32(hWnd, (int) attribute, dwNewLong)
+            : SetClassLongPtr64(hWnd, (int) attribute, dwNewLong);
+    
+    /// <summary>
+    /// Changes the size, position, and Z order of a child, pop-up or top-level window.
+    /// </summary>
+    /// <param name="hWnd">A handle to the window.</param>
+    /// <param name="hwndInsertAfter">A handle to the window to precede the positioned window in the Z order.</param>
+    /// <param name="x">The new position of the left side of the window, in client coordinates.</param>
+    /// <param name="y">The new position of the top of the window, in client coordinates.</param>
+    /// <param name="cx">The new width of the window, in pixels.</param>
+    /// <param name="cy">THe new height of the window, in pixels.</param>
+    /// <param name="uFlags">The window sizing and positioning flags.</param>
+    /// <returns>True if the function succeeds; otherwise, false.</returns>
+    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool SetWindowPos(WindowHandle hWnd,
+                                            IntPtr hwndInsertAfter,
+                                            int x,
+                                            int y,
+                                            int cx,
+                                            int cy,
+                                            WindowPositionFlags uFlags);
     /// <summary>
     /// Defines a system-wide hot key.
     /// </summary>
@@ -576,7 +649,7 @@ internal static partial class User32
     /// <param name="hWnd">A handle to the window and, indirectly, the class to which the window belongs.</param>
     /// <param name="nIndex">The zero-based offset to the value to be retrieved.</param>
     /// <returns>The requested value if successful; otherwise, zero.</returns>
-    /// <remarks>This should only ever be called from a 32-bit machine.</remarks>
+    /// <remarks>This should only ever be called from a 32-bit process.</remarks>
     [LibraryImport(LIBRARY_NAME, EntryPoint = "GetWindowLong")]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static partial IntPtr GetWindowLongPtr32(WindowHandle hWnd, int nIndex);
@@ -587,7 +660,7 @@ internal static partial class User32
     /// <param name="hWnd">A handle to the window and, indirectly, the class to which the window belongs.</param>
     /// <param name="nIndex">The zero-based offset to the value to be retrieved.</param>
     /// <returns>The requested value if successful; otherwise, zero.</returns>
-    /// <remarks>This should only ever be called from a 64-bit machine.</remarks>
+    /// <remarks>This should only ever be called from a 64-bit process.</remarks>
     [LibraryImport(LIBRARY_NAME, EntryPoint = "GetWindowLongPtrW")]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static partial IntPtr GetWindowLongPtr64(WindowHandle hWnd, int nIndex);
@@ -599,7 +672,7 @@ internal static partial class User32
     /// <param name="nIndex">The zero-based offset to the value to be set.</param>
     /// <param name="dwNewLong">The replacement value.</param>
     /// <returns>The previous value of the specified offset if successful; otherwise, zero.</returns>
-    /// <remarks>This should only ever be called from a 32-bit machine.</remarks>
+    /// <remarks>This should only ever be called from a 32-bit process.</remarks>
     [LibraryImport(LIBRARY_NAME, EntryPoint = "SetWindowLong")]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static partial IntPtr SetWindowLongPtr32(WindowHandle hWnd, int nIndex, IntPtr dwNewLong);
@@ -611,8 +684,54 @@ internal static partial class User32
     /// <param name="nIndex">The zero-based offset to the value to be set.</param>
     /// <param name="dwNewLong">The replacement value.</param>
     /// <returns>The previous value of the specified offset if successful; otherwise, zero.</returns>
-    /// <remarks>This should only ever be called from a 64-bit machine.</remarks>
+    /// <remarks>This should only ever be called from a 64-bit process.</remarks>
     [LibraryImport(LIBRARY_NAME, EntryPoint = "SetWindowLongPtrW")]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static partial IntPtr SetWindowLongPtr64(WindowHandle hWnd, int nIndex, IntPtr dwNewLong);
+
+    /// <summary>
+    /// Retrieves information about a specified window's class.
+    /// </summary>
+    /// <param name="hWnd">A handle to the window and, indirectly, the class to which the window belongs.</param>
+    /// <param name="nIndex">The zero-based offset to the value to be retrieved.</param>
+    /// <returns>The requested value if successful; otherwise, zero.</returns>
+    /// <remarks>This should only ever be called from a 32-bit process.</remarks>
+    [LibraryImport(LIBRARY_NAME, EntryPoint = "GetClassLong")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    private static partial IntPtr GetClassLongPtr32(WindowHandle hWnd, int nIndex);
+
+    /// <summary>
+    /// Retrieves information about a specified window's class.
+    /// </summary>
+    /// <param name="hWnd">A handle to the window and, indirectly, the class to which the window belongs.</param>
+    /// <param name="nIndex">The zero-based offset to the value to be retrieved.</param>
+    /// <returns>The requested value if successful; otherwise, zero.</returns>
+    /// <remarks>This should only ever be called from a 64-bit process.</remarks>
+    [LibraryImport(LIBRARY_NAME, EntryPoint = "GetClassLongPtrW")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    private static partial IntPtr GetClassLongPtr64(WindowHandle hWnd, int nIndex);
+    
+    /// <summary>
+    /// Changes an attribute for the specified window's class.
+    /// </summary>
+    /// <param name="hWnd">A handle to the window and, indirectly, the class to which the window belongs.</param>
+    /// <param name="nIndex">The zero-based offset to the value to be set.</param>
+    /// <param name="dwNewLong">The replacement value.</param>
+    /// <returns>The previous value of the specified offset if successful; otherwise, zero.</returns>
+    /// <remarks>This should only ever be called from a 32-bit process.</remarks>
+    [LibraryImport(LIBRARY_NAME, EntryPoint = "SetClassLong")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    private static partial IntPtr SetClassLongPtr32(WindowHandle hWnd, int nIndex, IntPtr dwNewLong);
+
+    /// <summary>
+    /// Changes an attribute for the specified window's class.
+    /// </summary>
+    /// <param name="hWnd">A handle to the window and, indirectly, the class to which the window belongs.</param>
+    /// <param name="nIndex">The zero-based offset to the value to be set.</param>
+    /// <param name="dwNewLong">The replacement value.</param>
+    /// <returns>The previous value of the specified offset if successful; otherwise, zero.</returns>
+    /// <remarks>This should only ever be called from a 64-bit process.</remarks>
+    [LibraryImport(LIBRARY_NAME, EntryPoint = "SetClassLongPtrW")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    private static partial IntPtr SetClassLongPtr64(WindowHandle hWnd, int nIndex, IntPtr dwNewLong);
 }

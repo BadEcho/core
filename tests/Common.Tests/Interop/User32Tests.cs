@@ -109,7 +109,7 @@ public class User32Tests
     [Fact]
     public void GetDC_ReturnsValid()
     {
-        DeviceContextHandle handle = User32.GetDC(IntPtr.Zero);
+        DeviceContextHandle handle = User32.GetDC(WindowHandle.InvalidHandle);
 
         Assert.False(handle.IsInvalid);
     }
@@ -117,7 +117,7 @@ public class User32Tests
     [Fact]
     public void ReleaseDC_ReturnsValid()
     {
-        DeviceContextHandle handle = User32.GetDC(IntPtr.Zero);
+        DeviceContextHandle handle = User32.GetDC(WindowHandle.InvalidHandle);
 
         Assert.Equal(1, User32.ReleaseDC(IntPtr.Zero, handle.DangerousGetHandle()));
     }

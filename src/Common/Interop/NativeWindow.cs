@@ -11,6 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using BadEcho.Extensions;
 using BadEcho.Properties;
@@ -25,35 +26,38 @@ public sealed class NativeWindow
 {
     private readonly List<int> _hotKeyIds = new();
 
+    private bool _displayingWithoutFlicker;
+    private bool _ignoreSizeChanges;
+    
+    private WindowStyles _displayStyles;
+    
     /// <summary>
-    /// Initializes a new instance of the <see cref="NativeWindow"/> class. 
+    /// Initializes a new instance of the <see cref="NativeWindow"/> class.
     /// </summary>
     /// <param name="handle">The handle to the window.</param>
     public NativeWindow(WindowHandle handle)
-    {
-        Require.NotNull(handle, nameof(handle));
-
-        Handle = handle;
-
-        if (!User32.GetWindowRect(Handle, out RECT rect))
-            throw ((ResultHandle)Marshal.GetHRForLastWin32Error()).GetException();
-
-        Left = rect.Left;
-        Top = rect.Top;
-        Width = rect.Width;
-        Height = rect.Height;
-    }
+        : this(CreateWrapper(handle))
+    { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NativeWindow"/> class.
     /// </summary>
     /// <param name="windowWrapper">A wrapper around a window and the messages it receives.</param>
     public NativeWindow(IWindowWrapper windowWrapper)
-        : this(GetWrapperHandle(windowWrapper))
     {
         Require.NotNull(windowWrapper, nameof(windowWrapper));
 
+        Handle = windowWrapper.Handle;
+        
+        if (!User32.GetWindowRect(Handle, out RECT rect))
+            throw ((ResultHandle)Marshal.GetHRForLastWin32Error()).GetException();
+        
         windowWrapper.AddHook(WndProc);
+
+        Left = rect.Left;
+        Top = rect.Top;
+        Width = rect.Width;
+        Height = rect.Height;
     }
 
     /// <summary>
@@ -71,25 +75,58 @@ public sealed class NativeWindow
     /// Gets the position of the window's left edge.
     /// </summary>
     public int Left
-    { get; }
+    { get; private set; }
 
     /// <summary>
     /// Gets the position of the window's top edge.
     /// </summary>
     public int Top
-    { get; }
+    { get; private set; }
 
     /// <summary>
     /// Gets the width of the window.
     /// </summary>
     public int Width
-    { get; }
+    { get; private set; }
 
     /// <summary>
     /// Gets the height of the window.
     /// </summary>
     public int Height
-    { get; }
+    { get; private set; }
+
+    /// <summary>
+    /// Gets a value indicating if techniques intended to eliminate the possibility of a flickering background during the initial
+    /// display of the window should be employed.
+    /// </summary>
+    public bool DisplayWithoutFlicker
+    { get; init; }
+
+    /// <summary>
+    /// Applies a brush of the specified color as the background for this window's class.
+    /// </summary>
+    /// <param name="r">The intensity of the red color.</param>
+    /// <param name="g">The intensity of the green color.</param>
+    /// <param name="b">The intensity of the blue color.</param>
+    /// <remarks>
+    /// After changing the class background, window instances must have their client areas invalidated in order for the new
+    /// background color to be painted. This can be done by invoking <see cref="Invalidate"/>.
+    /// </remarks>
+    public void ChangeClassBackground(byte r, byte g, byte b)
+    {   // Win32 COLORREF values use the BGR format.
+        int newBrushColor = ((b << 16) | (g << 8) | r);
+        
+        IntPtr newBrush = Gdi32.CreateSolidBrush(newBrushColor);
+        IntPtr oldBrush = User32.SetClassLongPtr(Handle, WindowClassAttribute.Background, newBrush);
+        
+        Gdi32.DeleteObject(oldBrush);
+    }
+
+    /// <summary>
+    /// Invalidates the client area of the window, causing it to eventually be redrawn.
+    /// </summary>
+    public unsafe void Invalidate()
+        => User32.InvalidateRect(Handle, null, true);
 
     /// <summary>
     /// Sets the windows extended style information so that said window acts as transparent overlay which all input passes through.
@@ -164,14 +201,14 @@ public sealed class NativeWindow
             throw ((ResultHandle) Marshal.GetHRForLastWin32Error()).GetException();
     }
 
-    private static WindowHandle GetWrapperHandle(IWindowWrapper windowWrapper)
-    {
-        Require.NotNull(windowWrapper, nameof(windowWrapper));
+    private static IWindowWrapper CreateWrapper(WindowHandle handle)
+    {   
+        Require.NotNull(handle, nameof(handle));
 
-        return windowWrapper.Handle;
+        return new WindowWrapper(handle);
     }
 
-    private IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    private IntPtr WndProc(IntPtr hWnd, uint msg, nint wParam, nint lParam, ref bool handled)
     {
         var message = (WindowMessage) msg;
 
@@ -182,6 +219,101 @@ public sealed class NativeWindow
 
                 if (_hotKeyIds.Contains(hotKeyId))
                     HotKeyPressed?.Invoke(this, new EventArgs<int>(hotKeyId));
+
+                break;
+
+            case WindowMessage.Size:
+                if (!_ignoreSizeChanges)
+                {
+                    Width = (int) lParam & 0xFFFF;
+                    Height = (int) lParam >> 16;
+                }
+
+                break;
+
+            case WindowMessage.EraseBackground:
+                if (_displayingWithoutFlicker)
+                {
+                    Display display = Display.FromWindow(Handle);
+                    int displayStyles = unchecked((int) _displayStyles);
+
+                    User32.SetWindowLongPtr(Handle, WindowAttribute.Style, displayStyles);
+
+                    // Prevent recursive handling of this message.
+                    _displayingWithoutFlicker = false;
+
+                    // We account for the invisible borders that exist around most windows for purpose of mouse cursor grabs.
+                    // This becomes important if we're dealing with "fullscreen" bordered windows (it'll extend onto other displays
+                    // without this adjustment). 
+                    int centeredWidth = (display.WorkingArea.Width / 2 - Width / 2) - 9;
+                    int centeredHeight = display.WorkingArea.Height / 2 - Height / 2;
+
+                    const WindowPositionFlags uFlags = WindowPositionFlags.NoRedraw
+                                                       | WindowPositionFlags.ShowWindow
+                                                       | WindowPositionFlags.NoSendChanging;
+
+                    bool resized = User32.SetWindowPos(Handle,
+                                                       IntPtr.Zero,
+                                                       centeredWidth,
+                                                       centeredHeight,
+                                                       Width,
+                                                       Height,
+                                                       uFlags);
+                    if (!resized)
+                        throw new Win32Exception(Marshal.GetLastWin32Error());
+                }
+
+                handled = true;
+                return new IntPtr(1);
+
+            case WindowMessage.ShowWindow when wParam == 1: // Ignore windows becoming hidden
+                if (DisplayWithoutFlicker)
+                {   // Window is about to be shown and we're configured to make a best attempt at preventing any initial flickering.
+                    if (!User32.GetWindowRect(Handle, out RECT rect))
+                        throw ((ResultHandle) Marshal.GetHRForLastWin32Error()).GetException();
+
+                    // The Windows OS has an ancient flaw where a window w/ a title bar, configured to be visible immediately upon
+                    // creation, will briefly flash white as it is appearing before being painted with whatever background brush it uses.
+                    // One can observe this behavior using all sorts of programs, even Chrome will briefly attack our sight with bright
+                    // white its window gets painted.
+
+                    // If a window lacks a title bar (i.e., it was created with the WS_POPUP style) then it will not flash. However, if
+                    // a window is set to display upon creation via WS_VISIBLE and was configured to have a title bar, then it is too
+                    // late. The only way to shield the abrasive white flicker is to shrink the window size to a pixel in both dimensions,
+                    // and remove the title bar so it is essentially invisible. After it displays we can resize it, and its appearance
+                    // will be much more smooth.
+
+                    // We first back up the initial dimensions of the window. Depending on the API that was used to create the window
+                    // (i.e., Win32 directory, SDL, etc.), the size characteristics of our window, even at this point in time in which
+                    // the window is about to be shown, may not be finalized. To account for this, we monitor for changes in size during
+                    // our display operation.
+                    Width = rect.Width;
+                    Height = rect.Height;
+                    _displayingWithoutFlicker = true;
+
+                    // Strip the title bar, shredding all evidence of the protective measure being taken to shield our fragile eyes from
+                    // such deviance in window behavior.
+                    const int popupStyle = unchecked((int) WindowStyles.Popup);
+
+                    _displayStyles
+                        = (WindowStyles) User32.SetWindowLongPtr(Handle, WindowAttribute.Style, popupStyle);
+
+                    // We can't set the width and length to 0...they have to be at least 1. A single pixel window with no title bar is basically
+                    // invisible. We temporarily disable our size monitoring hook so we don't update our size properties with bunk values.
+                    _ignoreSizeChanges = true;
+
+                    bool resized = User32.SetWindowPos(Handle,
+                                                       IntPtr.Zero,
+                                                       0,
+                                                       0,
+                                                       1,
+                                                       1,
+                                                       WindowPositionFlags.NoMove | WindowPositionFlags.NoActivate);
+                    if (!resized)
+                        throw new Win32Exception(Marshal.GetLastWin32Error());
+
+                    _ignoreSizeChanges = false;
+                }
 
                 break;
         }

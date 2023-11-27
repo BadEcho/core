@@ -26,6 +26,15 @@ internal static partial class Gdi32
     /// Gets the stock object type for a null brush.
     /// </summary>
     public const int StockObjectBrushNull = 5;
+
+    /// <summary>
+    /// Creates a logical brush that has the specified solid color.
+    /// </summary>
+    /// <param name="color">The color of the brush.</param>
+    /// <returns>The logical brush if successful; otherwise, null.</returns>
+    [LibraryImport(LIBRARY_NAME)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial IntPtr CreateSolidBrush(int color);
     
     /// <summary>
     /// Retrieves device-specific information for the specified device.
@@ -45,4 +54,15 @@ internal static partial class Gdi32
     [LibraryImport(LIBRARY_NAME, SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial IntPtr GetStockObject(int stockObject);
+
+    /// <summary>
+    /// Deletes a logical pen, brush, font, bitmap, region, or palette, freeing all system resources
+    /// associated with the obj et.
+    /// </summary>
+    /// <param name="hObject">A handle to the object.</param>
+    /// <returns>A nonzero value if the function succeeds; otherwise, zero.</returns>
+    [LibraryImport(LIBRARY_NAME)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool DeleteObject(IntPtr hObject);
 }

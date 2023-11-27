@@ -240,7 +240,7 @@ public sealed class NotifyIcon : IDisposable
 
     private static int LoadBitDepth()
     {
-        using (DeviceContextHandle deviceContext = User32.GetDC(IntPtr.Zero))
+        using (DeviceContextHandle deviceContext = User32.GetDC(WindowHandle.InvalidHandle))
         {
             int pixelBits = Gdi32.GetDeviceCaps(deviceContext, DeviceInformation.BitsPixel);
             int colorPlanes = Gdi32.GetDeviceCaps(deviceContext, DeviceInformation.ColorPlanes);

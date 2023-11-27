@@ -355,7 +355,7 @@ internal sealed class WindowSubclass : IDisposable
             return false;
 
         _state = AttachmentState.Detaching;
-
+            
         lock (_MapLock)
         {
             _SubclassHandleMap.Remove(this);
@@ -373,6 +373,7 @@ internal sealed class WindowSubclass : IDisposable
         return true;
     }
 
+    //  TODO: Do a final review of this sometime.
     private IntPtr SendOperation(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
         var result = IntPtr.Zero;
@@ -394,10 +395,10 @@ internal sealed class WindowSubclass : IDisposable
             ? _executor.Invoke(_operationCallback, parameters)
             : _operationCallback(parameters);
 
-        if (operationResult != null)
+        if (operationResult is SubclassOperationParameters parametersResult)
         {
-            result = parameters.Result;
-            handled = parameters.Handled;
+            result = parametersResult.Result;
+            handled = parametersResult.Handled;
         }
 
         _OperationCallbackParameters = parameters;
@@ -415,7 +416,7 @@ internal sealed class WindowSubclass : IDisposable
         if (_state == AttachmentState.Attached)
         {   // Here we finalize the passing of a message received by our subclass to the registered hook.
             bool handled = false;
-
+            
             if (_hook is { Target: WindowHookProc hook })
             {
                 parameters
