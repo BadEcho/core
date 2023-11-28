@@ -41,5 +41,6 @@ internal static partial class ShellScaling
     /// <param name="pScale">A scale factor value, specified as a percentage.</param>
     /// <returns>The result of the operation.</returns>
     [LibraryImport(LIBRARY_NAME)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial ResultHandle GetScaleFactorForMonitor(IntPtr hMonitor, out int pScale);
 }

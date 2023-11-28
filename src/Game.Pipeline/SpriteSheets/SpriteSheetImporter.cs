@@ -24,6 +24,10 @@ namespace BadEcho.Game.Pipeline.SpriteSheets;
 [ContentImporter(".spritesheet", DisplayName = "Sprite Sheet Importer - Bad Echo", DefaultProcessor = nameof(SpriteSheetProcessor))]
 public sealed class SpriteSheetImporter : ContentImporter<SpriteSheetContent>
 {
+    private static readonly JsonSerializerOptions _AssetFileOptions = new()
+                                                                      {
+                                                                          PropertyNameCaseInsensitive = true
+                                                                      };
     /// <inheritdoc/>
     public override SpriteSheetContent Import(string filename, ContentImporterContext context)
     {
@@ -34,10 +38,7 @@ public sealed class SpriteSheetImporter : ContentImporter<SpriteSheetContent>
 
         var fileContents = File.ReadAllText(filename);
         var asset = JsonSerializer.Deserialize<SpriteSheetAsset?>(fileContents,
-                                                                  new JsonSerializerOptions
-                                                                  {
-                                                                      PropertyNameCaseInsensitive = true
-                                                                  });
+                                                                  _AssetFileOptions);
         if (asset == null)
             throw new ArgumentException(Strings.SheetIsNull.InvariantFormat(filename), nameof(filename));
 

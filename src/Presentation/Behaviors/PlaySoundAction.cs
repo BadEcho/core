@@ -71,7 +71,7 @@ public sealed class PlaySoundAction : BehaviorAction<DependencyObject>
         // dependency property here.
         var sound = Sound?.ToList();
 
-        if (sound == null || !sound.Any())
+        if (sound == null || sound.Count == 0)
             return false;
 
         // The task thread won't have access to this dependency property.

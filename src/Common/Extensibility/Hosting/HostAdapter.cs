@@ -27,7 +27,7 @@ namespace BadEcho.Extensibility.Hosting;
 public sealed class HostAdapter<T> : IHostAdapter
     where T : notnull
 {
-    private readonly IDictionary<string, IPluginAdapter<T>> _routingTable;
+    private readonly Dictionary<string, IPluginAdapter<T>> _routingTable;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="HostAdapter{T}"/> class.
@@ -64,13 +64,13 @@ public sealed class HostAdapter<T> : IHostAdapter
     {
         Require.NotNullOrEmpty(methodName, nameof(methodName));
 
-        if (!_routingTable.ContainsKey(methodName))
+        if (!_routingTable.TryGetValue(methodName, out IPluginAdapter<T>? methodAdapter))
         {
             throw new InvalidOperationException(
                 Strings.HostAdapterUnregisteredMethod.InvariantFormat(methodName));
         }
-            
-        return _routingTable[methodName].Contract;
+
+        return methodAdapter.Contract;
     }
 
     private static IContractConfiguration FindContractConfiguration(IExtensibilityConfiguration configuration)
@@ -84,7 +84,7 @@ public sealed class HostAdapter<T> : IHostAdapter
             ?? throw new ArgumentException(Strings.NoContractInConfiguration.InvariantFormat(name), nameof(configuration));
     }
 
-    private static IDictionary<string, IPluginAdapter<T>> CreateRoutingTable(
+    private static Dictionary<string, IPluginAdapter<T>> CreateRoutingTable(
         IContractConfiguration configuration,
         IDictionary<Guid, IPluginAdapter<T>> adapters)
     {
@@ -93,7 +93,7 @@ public sealed class HostAdapter<T> : IHostAdapter
         IEnumerable<IRoutablePluginConfiguration> nonPrimaryPlugins
             = configuration.RoutablePlugins.Where(p => p.Id != primaryId);
 
-        IDictionary<string, IPluginAdapter<T>> routingTable
+        Dictionary<string, IPluginAdapter<T>> routingTable
             = nonPrimaryPlugins
               .SelectMany(p => p.MethodClaims, (config, method) => new {config.Id, Claim = method})
               .ToDictionary(k => k.Claim, v => adapters[v.Id]);

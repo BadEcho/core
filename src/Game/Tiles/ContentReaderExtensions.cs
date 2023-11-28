@@ -47,7 +47,7 @@ internal static class ContentReaderExtensions
                };
     }
 
-    private static IReadOnlyDictionary<string, T> ReadProperties<T>(ContentReader reader, Func<ContentReader, T> valueReader)
+    private static Dictionary<string, T> ReadProperties<T>(ContentReader reader, Func<ContentReader, T> valueReader)
     {
         var customProperties = new Dictionary<string, T>();
         var customPropertiesToRead = reader.ReadInt32();

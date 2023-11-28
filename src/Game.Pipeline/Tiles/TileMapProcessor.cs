@@ -166,7 +166,7 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent, TileMapC
         return tileId == 0 ? default : new Tile(tileId, column, row);
     }
 
-    private static IList<uint> DecodeTileData(DataAsset tileData, int tilesToDecode)
+    private static List<uint> DecodeTileData(DataAsset tileData, int tilesToDecode)
         => tileData.Encoding switch
         {
             ENCODING_BASE64 => DecodeBase64TileData(tileData, tilesToDecode),
@@ -174,13 +174,13 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent, TileMapC
             _ => throw new NotSupportedException(Strings.TileLayerEncodingUnsupported.InvariantFormat(tileData.Encoding))
         };
 
-    private static IList<uint> DecodeCsvTileData(DataAsset tileData)
+    private static List<uint> DecodeCsvTileData(DataAsset tileData)
         => tileData.Payload
                    .Split(',')
                    .Select(uint.Parse)
                    .ToList();
 
-    private static IList<uint> DecodeBase64TileData(DataAsset tileData, int tilesToDecode)
+    private static List<uint> DecodeBase64TileData(DataAsset tileData, int tilesToDecode)
     {
         var tiles = new List<uint>();
         byte[] decodedData = Convert.FromBase64String(tileData.Payload.Trim());

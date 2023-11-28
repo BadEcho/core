@@ -495,7 +495,7 @@ public sealed class Grid : Panel, ISelectable
                            .Where(c => c.Dimension.Unit == GridDimensionUnit.Proportional)
                            .ToList();
 
-        if (proportionalColumns.Any())
+        if (proportionalColumns.Count > 0)
         {
             int maxColumnWidth = proportionalColumns.Max(c => c.Width);
 
@@ -511,7 +511,7 @@ public sealed class Grid : Panel, ISelectable
                          .Where(r => r.Dimension.Unit == GridDimensionUnit.Proportional)
                          .ToList();
 
-        if (proportionalRows.Any())
+        if (proportionalRows.Count > 0)
         {
             int maxRowHeight = proportionalRows.Max(r => r.Height);
 

@@ -24,6 +24,11 @@ namespace BadEcho.Game.Pipeline.Atlases;
 [ContentImporter(".atlas", DisplayName = "Texture Atlas Importer - Bad Echo", DefaultProcessor = nameof(TextureAtlasProcessor))]
 public sealed class TextureAtlasImporter : ContentImporter<TextureAtlasContent>
 {
+    private static readonly JsonSerializerOptions _AssetFileOptions = new()
+                                                                      {
+                                                                          PropertyNameCaseInsensitive = true,
+                                                                          IncludeFields = true
+                                                                      };
     /// <inheritdoc />
     public override TextureAtlasContent Import(string filename, ContentImporterContext context)
     {
@@ -34,11 +39,7 @@ public sealed class TextureAtlasImporter : ContentImporter<TextureAtlasContent>
 
         var fileContents = File.ReadAllBytes(filename);
         var asset = JsonSerializer.Deserialize<TextureAtlasAsset?>(fileContents,
-                                                                   new JsonSerializerOptions
-                                                                   {
-                                                                       PropertyNameCaseInsensitive = true,
-                                                                       IncludeFields = true
-                                                                   });
+                                                                   _AssetFileOptions);
         if (asset == null)
             throw new ArgumentException(Strings.AtlasIsNull.InvariantFormat(filename), nameof(filename));
 

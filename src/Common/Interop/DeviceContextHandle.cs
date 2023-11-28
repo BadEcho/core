@@ -26,7 +26,7 @@ internal sealed class DeviceContextHandle : SafeHandle
     /// <summary>
     /// Initializes a new instance of the <see cref="DeviceContextHandle"/> class.
     /// </summary>
-    internal DeviceContextHandle()
+    public DeviceContextHandle()
         : this(true)
     { }
 

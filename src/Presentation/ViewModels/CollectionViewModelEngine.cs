@@ -371,7 +371,7 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
         IReadOnlyCollection<TChildViewModel> createdChildren = BindNewChildren(newChildrenModels);
         BindExistingChildren(existingChildrenModels);
 
-        if (!DelayBindings && createdChildren.Any())
+        if (!DelayBindings && createdChildren.Count > 0)
         {   // Batch insertions may be affected by capacity enforcement, so we make sure the two operations are synchronized.
             // This will also ensure that any concurrent batch bindings are synchronized.
             lock (_capacityEnforcementLock)
@@ -382,7 +382,7 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
             RequestEnforceCapacity();
         }
 
-        if (_options.RemoveItemsMissingFromBatch && missingChildrenModels.Any())
+        if (_options.RemoveItemsMissingFromBatch && missingChildrenModels.Count > 0)
             _viewModel.Unbind(missingChildrenModels);
 
         // This is merely done to add the new child view models to the engine's bound data list.
@@ -393,7 +393,7 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
         }
     }
 
-    private IReadOnlyCollection<TChildViewModel> BindNewChildren(IList<TModel> models)
+    private TChildViewModel[] BindNewChildren(IList<TModel> models)
     {
         TChildViewModel[] createdChildren = new TChildViewModel[models.Count];
         if (models.Count >= _options.BindingParallelizationThreshold)

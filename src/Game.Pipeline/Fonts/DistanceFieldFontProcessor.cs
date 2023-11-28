@@ -31,6 +31,21 @@ namespace BadEcho.Game.Pipeline.Fonts;
 public sealed class DistanceFieldFontProcessor : ContentProcessor<DistanceFieldFontContent, DistanceFieldFontContent>
 {
     private const string UNICODE_PROPERTY_NAME = "unicode";
+    
+    private static readonly JsonSerializerOptions _OutputFileOptions
+        = new()
+          {
+              PropertyNameCaseInsensitive = true,
+              Converters =
+              {
+                  new EdgeRectangleConverter(),
+                  new JsonFlattenedObjectConverter<FontCharacteristics>(2) // "atlas": {...}, "metrics": {...}
+              },
+              TypeInfoResolver = new DefaultJsonTypeInfoResolver
+                                 {
+                                     Modifiers = { ConvertUnicodeProperties }
+                                 }
+          };
 
     /// <summary>
     /// Acts as a modifier to the initial resolved <see cref="JsonTypeInfo"/> contract which normalizes the differences between
@@ -99,21 +114,8 @@ public sealed class DistanceFieldFontProcessor : ContentProcessor<DistanceFieldF
     private static DistanceFieldFontContent ProcessOutput(DistanceFieldFontContent input, string jsonPath)
     {
         var layoutFileContents = File.ReadAllText(jsonPath);
-        var options = new JsonSerializerOptions
-                      {
-                          PropertyNameCaseInsensitive = true,
-                          Converters =
-                          {
-                              new EdgeRectangleConverter(),
-                              new JsonFlattenedObjectConverter<FontCharacteristics>(2) // "atlas": {...}, "metrics": {...}
-                          },
-                          TypeInfoResolver = new DefaultJsonTypeInfoResolver
-                                             {
-                                                 Modifiers = { ConvertUnicodeProperties }
-                                             }
-                      };
 
-        var fontLayout = JsonSerializer.Deserialize<FontLayout>(layoutFileContents, options)
+        var fontLayout = JsonSerializer.Deserialize<FontLayout>(layoutFileContents, _OutputFileOptions)
                          ?? throw new JsonException(Strings.DistanceFieldFontJsonIsNull);
         
         return new DistanceFieldFontContent(input.Asset)

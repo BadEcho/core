@@ -24,7 +24,7 @@ internal sealed class ActivationContextCookieHandle : SafeHandleZeroOrMinusOneIs
     /// <summary>
     /// Initializes a new instance of the <see cref="ActivationContextCookieHandle"/> class.
     /// </summary>
-    internal ActivationContextCookieHandle()
+    public ActivationContextCookieHandle()
         : base(true) 
     { }
 

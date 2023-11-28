@@ -12,7 +12,6 @@
 //-----------------------------------------------------------------------
 
 using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Framework.Content.Pipeline.Builder;
@@ -44,7 +43,7 @@ internal sealed class TestContentProcessorContext : ContentProcessorContext
                                                                OpaqueDataDictionary processorParameters,
                                                                string importerName)
     {
-        return (TOutput) FormatterServices.GetUninitializedObject(typeof(TOutput));
+        return (TOutput) RuntimeHelpers.GetUninitializedObject(typeof(TOutput));
     }
 
     /// <inheritdoc />
@@ -60,7 +59,7 @@ internal sealed class TestContentProcessorContext : ContentProcessorContext
     /// <inheritdoc />
     public override TOutput Convert<TInput, TOutput>(TInput input, string processorName, OpaqueDataDictionary processorParameters)
     {
-        return (TOutput) FormatterServices.GetUninitializedObject(typeof(TOutput));
+        return (TOutput) RuntimeHelpers.GetUninitializedObject(typeof(TOutput));
     }
 
     /// <inheritdoc />

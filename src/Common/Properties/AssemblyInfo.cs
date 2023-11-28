@@ -148,3 +148,9 @@ using BadEcho.Properties;
                            Scope = "type", 
                            Target = "~T:BadEcho.Interop.WindowStyles",
                            Justification = "One must not attempt to weave changes into the fabric of ancient codespace; according to official Win32 documentation, a constant value of 0x0 represents an 'overlapped' window style. Therefore, 'Overlapped' its name shall be.")]
+
+[assembly: SuppressMessage("Performance", 
+                           "CA1869:Cache and reuse 'JsonSerializerOptions' instances", 
+                           Scope = "member", 
+                           Target = "~M:BadEcho.Serialization.JsonFlattenedObjectConverter`1.Read(System.Text.Json.Utf8JsonReader@,System.Type,System.Text.Json.JsonSerializerOptions)~`0",
+                           Justification = "Using a cached JsonSerializerOptions is not possible here as we need to base the options do use off of what is passed in as a parameter, as there's a good chance the options that are passed in will change across invocations.")]

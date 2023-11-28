@@ -476,8 +476,8 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
         }
     }
 
-    private IThreadExecutorFrame CreateFrame(bool exitUponRequest)
-        => new MessageOnlyExecutorFrame(this, exitUponRequest);
+    private MessageOnlyExecutorFrame CreateFrame(bool exitUponRequest)
+        => new (this, exitUponRequest);
 
     private void InvokeAsync(ThreadExecutorOperation operation)
     {

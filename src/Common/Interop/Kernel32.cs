@@ -132,7 +132,7 @@ internal static partial class Kernel32
     [LibraryImport(LIBRARY_NAME, SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial int WaitForMultipleObjectsEx(int nCount,
-                                                       IntPtr[] lpHandles,
+                                                       [In] IntPtr[] lpHandles,
                                                        [MarshalAs(UnmanagedType.Bool)] bool bWaitAll,
                                                        uint dwMilliseconds,
                                                        [MarshalAs(UnmanagedType.Bool)] bool bAlertable);

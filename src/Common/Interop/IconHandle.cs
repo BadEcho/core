@@ -23,7 +23,7 @@ internal sealed class IconHandle : SafeHandle
     /// <summary>
     /// Initializes a new instance of the <see cref="IconHandle"/> class.
     /// </summary>
-    internal IconHandle()
+    public IconHandle()
         : base(IntPtr.Zero, true)
     { }
 

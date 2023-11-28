@@ -406,7 +406,7 @@ internal sealed class WindowSubclass : IDisposable
         return result;
     }
 
-    private object? ExecuteHook(object? argument)
+    private SubclassOperationParameters? ExecuteHook(object? argument)
     {
         if (argument == null)
             return null;

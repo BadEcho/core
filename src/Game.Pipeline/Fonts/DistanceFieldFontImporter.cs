@@ -24,6 +24,10 @@ namespace BadEcho.Game.Pipeline.Fonts;
 [ContentImporter(".sdfont", DisplayName = "Distance Field Font Importer - Bad Echo", DefaultProcessor = nameof(DistanceFieldFontProcessor))]
 public sealed class DistanceFieldFontImporter : ContentImporter<DistanceFieldFontContent>
 {
+    private static readonly JsonSerializerOptions _AssetFileOptions = new()
+                                                                      {
+                                                                          PropertyNameCaseInsensitive = true
+                                                                      };
     /// <inheritdoc/>
     public override DistanceFieldFontContent Import(string filename, ContentImporterContext context)
     {
@@ -34,10 +38,7 @@ public sealed class DistanceFieldFontImporter : ContentImporter<DistanceFieldFon
 
         var fileContents = File.ReadAllText(filename);
         var asset = JsonSerializer.Deserialize<DistanceFieldFontAsset?>(fileContents,
-                                                                        new JsonSerializerOptions
-                                                                        {
-                                                                            PropertyNameCaseInsensitive = true
-                                                                        });
+                                                                        _AssetFileOptions);
         if (asset == null)
             throw new ArgumentException(Strings.DistanceFieldFontIsNull.InvariantFormat(filename), nameof(filename));
 

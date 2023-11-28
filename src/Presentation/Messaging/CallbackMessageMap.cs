@@ -118,7 +118,7 @@ internal sealed class CallbackMessageMap
                                          message.CallbackType));}
     }
     
-    private IEnumerable<TCallback> CollectCallbacks<TCallback>(MediatorMessage message)
+    private List<TCallback> CollectCallbacks<TCallback>(MediatorMessage message)
         where TCallback : class
     {
         EnsureCompatibleCallback(message, typeof(TCallback));

@@ -203,7 +203,7 @@ public sealed class Display
         return new Display(User32.MonitorFromWindow(window, 0x2));
     }
 
-    private static IEnumerable<Display> LoadDisplays()
+    private static List<Display> LoadDisplays()
     {
         var displays = new List<Display>();
 

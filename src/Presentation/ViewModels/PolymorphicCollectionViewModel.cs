@@ -77,13 +77,13 @@ public abstract class PolymorphicCollectionViewModel<TModel, TChildViewModel> : 
 
         Type modelType = model.GetType();
 
-        if (!_typeUpdaterMap.ContainsKey(modelType))
+        if (!_typeUpdaterMap.TryGetValue(modelType, out Action<TModel>? typeUpdater))
         {
             throw new ArgumentException(Strings.ModelImplentationNotRegistered.InvariantFormat(modelType.Name),
                                         nameof(model));
         }
 
-        _typeUpdaterMap[modelType](model);
+        typeUpdater(model);
     }
 
     /// <summary>

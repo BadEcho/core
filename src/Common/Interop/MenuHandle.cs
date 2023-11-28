@@ -23,7 +23,7 @@ internal sealed class MenuHandle : SafeHandle
     /// <summary>
     /// Initializes a new instance of the <see cref="MenuHandle"/> class.
     /// </summary>
-    internal MenuHandle()
+    public MenuHandle()
         : this(true)
     { }
 

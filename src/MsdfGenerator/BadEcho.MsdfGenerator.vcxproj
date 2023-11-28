@@ -25,7 +25,7 @@
     <Keyword>NetCoreCProj</Keyword>
     <RootNamespace>BadEcho.MsdfGenerator</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ProjectName>BadEcho.MsdfGenerator</ProjectName>
     <TargetName>BadEcho.MsdfGenerator</TargetName>
   </PropertyGroup>

@@ -23,7 +23,7 @@ internal sealed class ActivationContextHandle : SafeHandleMinusOneIsInvalid
     /// <summary>
     /// Initializes a new instance of the <see cref="ActivationContextHandle"/> class.
     /// </summary>
-    internal ActivationContextHandle() 
+    public ActivationContextHandle() 
         : base(true)
     { }
 

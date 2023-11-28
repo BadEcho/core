@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.Runtime.Serialization;
 using BadEcho.Extensions;
 using BadEcho.XmlConfiguration.Properties;
 
@@ -90,17 +89,6 @@ public sealed class ConfigurationMissingException : Exception
     /// </summary>
     public string? MissingEntityExpression
     { get; }
-
-    /// <inheritdoc/>
-    public override void GetObjectData(SerializationInfo info, StreamingContext context)
-    {
-        Require.NotNull(info, nameof(info));
-
-        info.AddValue(nameof(MissingType), MissingType);
-        info.AddValue(nameof(MissingEntityExpression), MissingEntityExpression);
-
-        base.GetObjectData(info, context);
-    }
 
     private static string FormatMessage(MissingConfigurationType missingType, string missingEntityExpression)
     {

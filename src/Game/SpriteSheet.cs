@@ -103,13 +103,13 @@ public sealed class SpriteSheet
     /// <exception cref="ArgumentException"><c>frame</c> exceeds the total number of frames found for the <c>direction</c>.</exception>
     public Rectangle GetFrameRectangle(MovementDirection direction, int frame)
     {
-        if (!_directionRows.ContainsKey(direction))
+        if (!_directionRows.TryGetValue(direction, out int directionRow))
             throw new ArgumentException(Strings.SheetNoFramesForDirection, nameof(direction));
 
         if (frame >= ColumnCount)
             throw new ArgumentException(Strings.SheetFrameExceedsTotal, nameof(frame));
 
-        Size frameLocation = new(frame, _directionRows[direction]);
+        Size frameLocation = new(frame, directionRow);
 
         return new Rectangle(frameLocation * FrameSize, FrameSize);
     }

@@ -178,11 +178,11 @@ public sealed class DistanceFieldFont
         return advance;
     }
 
-    private IModelRenderer AddModel(FontModelData fontData, 
-                                    string text, 
-                                    Vector2 position, 
-                                    float scale,
-                                    bool optimizeForSmallText)
+    private DistanceFieldFontRenderer AddModel(FontModelData fontData, 
+                                               string text, 
+                                               Vector2 position, 
+                                               float scale,
+                                               bool optimizeForSmallText)
     {
         if (!string.IsNullOrEmpty(text))
             fontData.AddText(text, position, scale);

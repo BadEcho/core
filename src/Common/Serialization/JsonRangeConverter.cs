@@ -100,7 +100,7 @@ public sealed class JsonRangeConverter<T> : JsonConverter<IEnumerable<T>>
         writer.WriteEndArray();
     }
 
-    private static IEnumerable<T> ReadRange(ref Utf8JsonReader reader)
+    private static List<T> ReadRange(ref Utf8JsonReader reader)
     {
         if (reader.TokenType != JsonTokenType.StartObject)
             throw new JsonException(Strings.JsonNotStartObject);

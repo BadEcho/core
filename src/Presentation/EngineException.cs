@@ -11,8 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.Runtime.Serialization;
-
 namespace BadEcho.Presentation;
 
 /// <summary>
@@ -67,14 +65,4 @@ public sealed class EngineException : Exception
     /// </remarks>
     public bool IsProcessed
     { get; }
-
-    /// <inheritdoc/>
-    public override void GetObjectData(SerializationInfo info, StreamingContext context)
-    {
-        Require.NotNull(info, nameof(info));
-
-        info.AddValue(nameof(IsProcessed), IsProcessed);
-
-        base.GetObjectData(info, context);
-    }
 }

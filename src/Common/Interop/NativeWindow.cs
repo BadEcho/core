@@ -201,7 +201,7 @@ public sealed class NativeWindow
             throw ((ResultHandle) Marshal.GetHRForLastWin32Error()).GetException();
     }
 
-    private static IWindowWrapper CreateWrapper(WindowHandle handle)
+    private static WindowWrapper CreateWrapper(WindowHandle handle)
     {   
         Require.NotNull(handle, nameof(handle));
 

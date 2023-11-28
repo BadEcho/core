@@ -67,9 +67,9 @@ public sealed class PresentationWindowWrapper : IWindowWrapper
     {
         Require.NotNull(hook, nameof(hook));
 
-        if (!_hookMapper.ContainsKey(hook))
+        if (!_hookMapper.TryGetValue(hook, out HwndSourceHook? sourceHook))
             return;
 
-        _source.RemoveHook(_hookMapper[hook]);
+        _source.RemoveHook(sourceHook);
     }
 }

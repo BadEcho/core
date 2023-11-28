@@ -26,7 +26,7 @@ namespace BadEcho.Extensibility.Hosting;
 /// </summary>
 public static class CompositionExtensions
 {
-    private static readonly ICollection<Assembly> _ExtensibilityPoints;
+    private static readonly List<Assembly> _ExtensibilityPoints;
 
     /// <summary>
     /// Initializes the <see cref="CompositionExtensions"/> class.
