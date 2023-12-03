@@ -18,18 +18,18 @@ using Microsoft.Xna.Framework.Graphics;
 namespace BadEcho.Game.UI;
 
 /// <summary>
-/// Provides a self-contained user interface configuration game state that loads and deploys packaged controls onto a provided
+/// Provides a self-contained user interface game state that loads and deploys packaged controls onto a provided
 /// <see cref="Screen"/> instance.
 /// </summary>
-public abstract class UserInterface : GameState
+public abstract class ScreenState : GameState
 {
     private readonly Screen _screen;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="UserInterface"/> class.
+    /// Initializes a new instance of the <see cref="ScreenState"/> class.
     /// </summary>
     /// <param name="device">The graphics device that will power the rendering surface.</param>
-    protected UserInterface(GraphicsDevice device)
+    protected ScreenState(GraphicsDevice device)
     {
         Require.NotNull(device, nameof(device));
 

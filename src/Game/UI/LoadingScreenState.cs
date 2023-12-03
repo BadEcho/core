@@ -21,17 +21,17 @@ namespace BadEcho.Game.UI;
 /// Provides a self-contained user interface configuration game state that acts a loading screen, used to distract the player from 
 /// the fact that the game takes so damn long to load.
 /// </summary>
-public abstract class LoadingUserInterface : UserInterface
+public abstract class LoadingScreenState : ScreenState
 {
     private readonly IEnumerable<GameState> _statesToLoad;
     private bool _otherStatesUnloaded;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="LoadingUserInterface"/> class.
+    /// Initializes a new instance of the <see cref="LoadingScreenState"/> class.
     /// </summary>
     /// <param name="statesToLoad">The game states loaded by this interface.</param>
     /// <param name="device">The graphics device that will power the rendering surface.</param>
-    protected LoadingUserInterface(IEnumerable<GameState> statesToLoad, GraphicsDevice device)
+    protected LoadingScreenState(IEnumerable<GameState> statesToLoad, GraphicsDevice device)
         : base(device)
     {
         Require.NotNull(statesToLoad, nameof(statesToLoad));
@@ -53,7 +53,7 @@ public abstract class LoadingUserInterface : UserInterface
             }
 
             Manager?.Game.ResetElapsedTime();
-            Exit();
+            Manager?.RemoveState(this);
         }
 
         if (ActivationStatus == ActivationStatus.Activated && Manager?.States.Count == 1)
