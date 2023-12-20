@@ -314,4 +314,7 @@
 	<data name="GlyphNotInFont" xml:space="preserve">
 		<value>A glyph for the character '{0}' could not be found, most likely because it was not part of the character set used to generate the font's atlas.</value>
 	</data>
+	<data name="GlobalHookMessageQueueFailed" xml:space="preserve">
+		<value>Failed to create global hook message queue.</value>
+	</data>
 </root>

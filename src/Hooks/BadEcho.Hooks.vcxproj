@@ -20,27 +20,25 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
-    <EnableManagedPackageReferenceSupport>false</EnableManagedPackageReferenceSupport>
-    <ProjectGuid>{9A554C9B-B87F-44B3-8F6C-BFD8A7AC24E9}</ProjectGuid>
-    <Keyword>NetCoreCProj</Keyword>
-    <RootNamespace>BadEcho.MsdfGenerator</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{af92b5d1-9e02-413b-800d-90b87e59ed89}</ProjectGuid>
+    <RootNamespace>BadEcho.Hooks</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <TargetFramework>net8.0</TargetFramework>
-    <ProjectName>BadEcho.MsdfGenerator</ProjectName>
-    <TargetName>BadEcho.MsdfGenerator</TargetName>
+    <ProjectName>BadEcho.Hooks</ProjectName>
+    <TargetName>BadEcho.Hooks</TargetName>
     <IntDir>obj\$(Configuration)\</IntDir>
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>    
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
-    <CLRSupport>NetCore</CLRSupport>
   </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />  
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" Label="Configuration">
     <UseDebugLibraries>true</UseDebugLibraries>
     <OutDir>$(SolutionDir)\bin\dbg\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" Label="Configuration">
-    <UseDebugLibraries>false</UseDebugLibraries>    
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
     <OutDir>$(SolutionDir)\bin\rel\</OutDir>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -61,52 +59,20 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Label="Vcpkg">
-    <LockPath>$([System.IO.Path]::GetFullPath($(MSBuildProjectDirectory)\..\..\..))</LockPath>
-    <VcpkgEnabled>true</VcpkgEnabled>
-    <VcpkgEnableManifest>true</VcpkgEnableManifest>
-    <VcpkgManifestInstall>true</VcpkgManifestInstall>
-    <VcpkgAutoLink>true</VcpkgAutoLink>
-    <VcpkgUseStatic>true</VcpkgUseStatic>
-    <VcpkgUseMD>true</VcpkgUseMD>
-    <VcpkgConfiguration>$(Configuration)</VcpkgConfiguration>
-  </PropertyGroup>
-  <Choose>
-    <When Condition="'$(SolutionDir)' != '' and Exists('$(LockPath)\universal.lock')">
-      <PropertyGroup>
-        <VcpkgRoot>$(LockPath)\universal\src\$([System.IO.Path]::GetFileName($(SolutionDir.TrimEnd('\'))))\vcpkg</VcpkgRoot>
-      </PropertyGroup>
-    </When>
-    <Otherwise>
-      <PropertyGroup>
-        <VcpkgRoot>$(MSBuildThisFileDirectory)\..\..\vcpkg</VcpkgRoot>
-      </PropertyGroup>
-    </Otherwise>
-  </Choose>
   <ItemDefinitionGroup>
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <DisableSpecificWarnings>4635;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <ConformanceMode>false</ConformanceMode>
+      <ConformanceMode>true</ConformanceMode>
       <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalOptions>/ignore:4248 %(AdditionalOptions)</AdditionalOptions>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
     </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Platform)'=='x64'">
-    <ClCompile>
-      <AdditionalIncludeDirectories>.\vcpkg_installed\x64-windows-static-md\x64-windows-static-md\include\msdfgen;.\vcpkg_installed\x64-windows-static-md\x64-windows-static-md\include\msdf-atlas-gen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Platform)'=='Win32'">
-    <ClCompile>
-      <AdditionalIncludeDirectories>.\vcpkg_installed\x86-windows-static-md\x86-windows-static-md\include\msdfgen;.\vcpkg_installed\x86-windows-static-md\x86-windows-static-md\include\msdf-atlas-gen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)' == 'Debug'">
     <ClCompile>
@@ -115,55 +81,42 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>WIN32;_DEBUG;MSDF_ATLAS_PUBLIC=;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;HOOKS_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PreprocessorDefinitions>_DEBUG;MSDF_ATLAS_PUBLIC=;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;HOOKS_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)' == 'Release'">
     <ClCompile>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-			<IntrinsicFunctions>true</IntrinsicFunctions>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-			<OptimizeReferences>true</OptimizeReferences>
+      <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>WIN32;NDEBUG;MSDF_ATLAS_PUBLIC=;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;HOOKS_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PreprocessorDefinitions>NDEBUG;MSDF_ATLAS_PUBLIC=;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;HOOKS_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="DistanceFieldFontAtlas.h" />
-    <ClInclude Include="Resource.h" />
+    <ClCompile Include="DllMain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AssemblyInfo.cpp" />
-    <ClCompile Include="DistanceFieldFontAtlas.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="app.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="app.ico" />
+    <ClInclude Include="Hooks.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <Target Name="PrepareForBuild">
-    <Error Condition="!Exists('$(MSBuildThisFileDirectory)\..\..\vcpkg\bootstrap-vcpkg.bat')" Text="The vcpkg submodule is missing. Please clone missing submodules by executing &quot;git submodule update --init&quot; in this repository." />
-    <Exec Condition="!Exists('$(MSBuildThisFileDirectory)\..\..\vcpkg\vcpkg.exe')" Command="call $(MSBuildThisFileDirectory)\..\..\vcpkg\bootstrap-vcpkg.bat" />
-  </Target>
-  <Import Project="$(MSBuildThisFileDirectory)\..\..\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets" Condition="Exists('$(MSBuildThisFileDirectory)\..\..\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets')" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
 </Project>

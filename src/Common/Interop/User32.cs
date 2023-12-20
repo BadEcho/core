@@ -285,6 +285,17 @@ internal static partial class User32
     public static partial bool SetForegroundWindow(WindowHandle hWnd);
 
     /// <summary>
+    /// Retrieves the identifier of the thread that created the specified window and, optionally, the identifier of the process
+    /// that created the window.
+    /// </summary>
+    /// <param name="hWnd">A handle to the window.</param>
+    /// <param name="lpdwProcessId">A point to a variable that receives the process identifier.</param>
+    /// <returns>If successful, the identifier of the thread that created the window; otherwise, zero.</returns>
+    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial uint GetWindowThreadProcessId(WindowHandle hWnd, IntPtr lpdwProcessId);
+
+    /// <summary>
     /// Returns the system DPI.
     /// </summary>
     /// <returns>The system DPI value.</returns>

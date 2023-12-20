@@ -139,9 +139,9 @@ public sealed class MessageOnlyWindowWrapper : WindowWrapper, IDisposable
     }
 
     /// <inheritdoc/>
-    protected override void OnDestroyWindow()
+    protected override void OnDestroyingWindow()
     {
-        base.OnDestroyWindow();
+        base.OnDestroyingWindow();
 
         // Time to cleanup, though the class unregistration needs to be delayed since the window is already being destroyed.
         _windowIsBeingDestroyed = true;

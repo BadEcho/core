@@ -201,11 +201,11 @@ public sealed class NativeWindow
             throw ((ResultHandle) Marshal.GetHRForLastWin32Error()).GetException();
     }
 
-    private static WindowWrapper CreateWrapper(WindowHandle handle)
+    private static LocalWindowWrapper CreateWrapper(WindowHandle handle)
     {   
         Require.NotNull(handle, nameof(handle));
 
-        return new WindowWrapper(handle);
+        return new LocalWindowWrapper(handle);
     }
 
     private IntPtr WndProc(IntPtr hWnd, uint msg, nint wParam, nint lParam, ref bool handled)

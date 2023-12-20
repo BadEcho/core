@@ -22,7 +22,7 @@ namespace BadEcho.Interop;
 internal static partial class Kernel32
 {
     private const string LIBRARY_NAME = "kernel32";
-
+    
     /// <summary>
     /// Retrieves a module handle for the specified module. The module must have been loaded by the calling process.
     /// </summary>
@@ -40,7 +40,7 @@ internal static partial class Kernel32
     /// </remarks>
     [LibraryImport(LIBRARY_NAME, EntryPoint = "GetModuleHandleW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    internal static partial IntPtr GetModuleHandle(string? lpModuleName);
+    public static partial IntPtr GetModuleHandle(string? lpModuleName);
 
     /// <summary>
     /// Retrieves the address of an exported function or variable from the specified dynamic-link library.

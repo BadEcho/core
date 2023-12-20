@@ -18,7 +18,7 @@ namespace BadEcho.Interop;
 /// <summary>
 /// Provides a wrapper around an <c>HWND</c> of a provided window and the messages it receives.
 /// </summary>
-public class WindowWrapper : IWindowWrapper
+public abstract class WindowWrapper : IWindowWrapper
 {
     private readonly CachedWeakList<WindowHookProc> _hooks = new();
 
@@ -26,29 +26,16 @@ public class WindowWrapper : IWindowWrapper
     /// Initializes a new instance of the <see cref="WindowWrapper"/> class.
     /// </summary>
     /// <param name="handle">A handle to the window being wrapped.</param>
-    public WindowWrapper(WindowHandle handle)
+    protected WindowWrapper(WindowHandle handle)
     {
         Require.NotNull(handle, nameof(handle));
 
         Handle = handle;
-
-        if (Handle.IsInvalid)
-            return;
-
-        var subclass = new WindowSubclass(WndProc);
-
-        subclass.Attach(handle);
     }
 
     /// <inheritdoc/>
     public WindowHandle Handle 
     { get; init; }
-
-    /// <summary>
-    /// Gets the hooks receiving messages sent to the wrapped window.
-    /// </summary>
-    protected IEnumerable<WindowHookProc> Hooks
-        => _hooks;
 
     /// <summary>
     /// Gets the callback that processes messages sent to the wrapped window by calling any registered hooks.
@@ -69,6 +56,8 @@ public class WindowWrapper : IWindowWrapper
     public void AddHook(WindowHookProc hook)
     {
         _hooks.Add(hook);
+
+        OnHookAdded(hook);
     }
 
     /// <inheritdoc/>
@@ -77,13 +66,29 @@ public class WindowWrapper : IWindowWrapper
         Require.NotNull(hook, nameof(hook));
 
         _hooks.Remove(hook);
+
+        OnHookRemoved(hook);
     }
+
+    /// <summary>
+    /// Called when a hook has been added to the wrapped window.
+    /// </summary>
+    /// <param name="addedHook">The hook that was added.</param>
+    protected virtual void OnHookAdded(WindowHookProc addedHook)
+    { }
+
+    /// <summary>
+    /// Called when a hook has been removed from the wrapped window.
+    /// </summary>
+    /// <param name="removedHook">The hook that was removed.</param>
+    protected virtual void OnHookRemoved(WindowHookProc removedHook)
+    { }
 
     /// <summary>
     /// Called when the wrapped window is in the process of being destroyed.
     /// </summary>
     /// <remarks>Override this to engage in any last minute cleanup efforts.</remarks>
-    protected virtual void OnDestroyWindow()
+    protected virtual void OnDestroyingWindow()
     { }
 
     private IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -105,7 +110,7 @@ public class WindowWrapper : IWindowWrapper
         }
         else if (WindowMessage.DestroyNonclientArea == message)
         {
-            OnDestroyWindow();
+            OnDestroyingWindow();
             // We want to make sure we always pass on WM_NCDESTROY messages.
             handled = false;
         }
