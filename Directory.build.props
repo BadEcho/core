@@ -7,7 +7,7 @@
 		<PackageProjectUrl>https://badecho.com</PackageProjectUrl>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<Authors>Matt Weber</Authors>
-		<Company>BadEcho LLC</Company>
+		<Company>Bad Echo LLC</Company>
 		<Copyright>© Bad Echo LLC. All rights reserved.</Copyright>
 		<PackageLicenseExpression>AGPL-3.0-only</PackageLicenseExpression>
 		<PackageIcon>Icon.png</PackageIcon>
