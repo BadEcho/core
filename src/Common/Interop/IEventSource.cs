@@ -14,24 +14,22 @@
 namespace BadEcho.Interop;
 
 /// <summary>
-/// Defines a wrapper around an <c>HWND</c> of a window and the messages it receives.
+/// Defines a publisher of events associated with a hook chain.
 /// </summary>
-public interface IWindowWrapper
+/// <typeparam name="THookProc">The type of hook procedure used by the hook type.</typeparam>
+public interface IEventSource<in THookProc> where THookProc : Delegate
 {
     /// <summary>
-    /// Gets the handle to the wrapped window.
+    /// Adds a hook that will receives messages sent to the hook chain.
     /// </summary>
-    WindowHandle Handle { get; }
+    /// <param name="hook">The hook to invoke when messages are sent to the associated hook chain.</param>
+    void AddHook(THookProc hook);
 
     /// <summary>
-    /// Adds a hook that will receive messages sent to the wrapped window.
-    /// </summary>
-    /// <param name="hook">The hook to invoke when messages are sent to the wrapped window.</param>
-    void AddHook(WindowHookProc hook);
-
-    /// <summary>
-    /// Removes a hook previously receiving messages sent to the wrapped window.
+    /// Removes a hook previously receiving messages sent to the hook chain.
     /// </summary>
     /// <param name="hook">The hook to remove.</param>
-    void RemoveHook(WindowHookProc hook);
+    void RemoveHook(THookProc hook);
 }
+
+

@@ -43,7 +43,7 @@ public sealed class NativeWindow
     /// Initializes a new instance of the <see cref="NativeWindow"/> class.
     /// </summary>
     /// <param name="windowWrapper">A wrapper around a window and the messages it receives.</param>
-    public NativeWindow(IWindowWrapper windowWrapper)
+    public NativeWindow(WindowWrapper windowWrapper)
     {
         Require.NotNull(windowWrapper, nameof(windowWrapper));
 

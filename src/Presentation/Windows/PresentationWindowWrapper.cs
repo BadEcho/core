@@ -21,7 +21,7 @@ namespace BadEcho.Presentation.Windows;
 /// <summary>
 /// Provides a wrapper around an <c>HWND</c> of a window created by WPF.
 /// </summary>
-public sealed class PresentationWindowWrapper : IWindowWrapper
+public sealed class PresentationWindowWrapper : WindowWrapper
 {
     private readonly Dictionary<WindowHookProc, HwndSourceHook> _hookMapper = new();
     private readonly HwndSource _source;
@@ -31,6 +31,7 @@ public sealed class PresentationWindowWrapper : IWindowWrapper
     /// </summary>
     /// <param name="handle">A handle for a window created by WPF.</param>
     public PresentationWindowWrapper(IntPtr handle)
+        : base(WindowHandle.InvalidHandle)
     {
         var source = HwndSource.FromHwnd(handle);
         
@@ -41,35 +42,32 @@ public sealed class PresentationWindowWrapper : IWindowWrapper
     }
 
     /// <inheritdoc/>
-    public WindowHandle Handle
-    { get; }
-
-    /// <inheritdoc/>
-    public void AddHook(WindowHookProc hook)
+    protected override void OnHookAdded(WindowHookProc addedHook)
     {
-        Require.NotNull(hook, nameof(hook));
+        base.OnHookAdded(addedHook);
 
-        if (_hookMapper.ContainsKey(hook))
-            throw new ArgumentException(Strings.PresentationWindowWrapperDuplicateHook, nameof(hook));
+        if (_hookMapper.ContainsKey(addedHook))
+            throw new ArgumentException(Strings.PresentationWindowWrapperDuplicateHook, nameof(addedHook));
 
-        _hookMapper.Add(hook, SourceHook);
-            
+        _hookMapper.Add(addedHook, SourceHook);
+
         _source.AddHook(SourceHook);
 
         IntPtr SourceHook(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            return hook(hWnd, (uint)msg, wParam, lParam, ref handled);
+            return addedHook(hWnd, (uint)msg, wParam, lParam, ref handled);
         }
     }
 
     /// <inheritdoc/>
-    public void RemoveHook(WindowHookProc hook)
+    protected override void OnHookRemoved(WindowHookProc removedHook)
     {
-        Require.NotNull(hook, nameof(hook));
+        base.OnHookRemoved(removedHook);
 
-        if (!_hookMapper.TryGetValue(hook, out HwndSourceHook? sourceHook))
+        if (!_hookMapper.TryGetValue(removedHook, out HwndSourceHook? sourceHook))
             return;
 
+        _hookMapper.Remove(removedHook);
         _source.RemoveHook(sourceHook);
     }
 }

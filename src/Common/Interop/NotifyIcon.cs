@@ -34,7 +34,7 @@ public sealed class NotifyIcon : IDisposable
     private static readonly int _BitDepth
         = LoadBitDepth();
 
-    private readonly IWindowWrapper _windowWrapper;
+    private readonly WindowWrapper _windowWrapper;
     private readonly IconHandle _iconHandle;
     private readonly Guid _id;
 
@@ -56,7 +56,7 @@ public sealed class NotifyIcon : IDisposable
     /// This will load all resources associated with the notification area icon, however it will not be displayed
     /// until <see cref="Show"/> is called.
     /// </remarks>
-    public NotifyIcon(IWindowWrapper windowWrapper, string tooltip, byte[] data)
+    public NotifyIcon(WindowWrapper windowWrapper, string tooltip, byte[] data)
     {
         Require.NotNull(windowWrapper, nameof(windowWrapper));
         Require.NotNull(tooltip, nameof(tooltip));

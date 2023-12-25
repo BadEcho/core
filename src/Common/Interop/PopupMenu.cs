@@ -25,7 +25,7 @@ public sealed class PopupMenu : IDisposable
 {
     private readonly List<MenuItem> _items = new();
 
-    private readonly IWindowWrapper _windowWrapper;
+    private readonly WindowWrapper _windowWrapper;
     private readonly MenuHandle _menu;
 
     private bool _disposed;
@@ -34,7 +34,7 @@ public sealed class PopupMenu : IDisposable
     /// Initializes a new instance of the <see cref="PopupMenu"/> class.
     /// </summary>
     /// <param name="windowWrapper">A wrapper around the window that will receive the menu's messages.</param>
-    public PopupMenu(IWindowWrapper windowWrapper)
+    public PopupMenu(WindowWrapper windowWrapper)
     {
         Require.NotNull(windowWrapper, nameof(windowWrapper));
 

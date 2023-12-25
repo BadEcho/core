@@ -21,13 +21,13 @@ namespace BadEcho.Interop;
 /// </summary>
 public sealed class ClipboardNotifier
 {
-    private readonly IWindowWrapper _windowWrapper;
+    private readonly WindowWrapper _windowWrapper;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ClipboardNotifier"/> class.
     /// </summary>
     /// <param name="windowWrapper">A wrapper around the window that will receive clipboard-related messages.</param>
-    public ClipboardNotifier(IWindowWrapper windowWrapper)
+    public ClipboardNotifier(WindowWrapper windowWrapper)
     {
         Require.NotNull(windowWrapper, nameof(windowWrapper));
 
