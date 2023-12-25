@@ -136,6 +136,13 @@ public class Sprite : IPositionalEntity, ISpatialEntity
         spriteBatch.Draw(Texture, (Rectangle) GetTargetArea(), GetSourceArea(), Color.White);
     }
 
+    public void Draw(ConfiguredSpriteBatch spriteBatch)
+    {
+        Require.NotNull(spriteBatch, nameof(spriteBatch));
+        
+        spriteBatch.Draw(Texture, (Rectangle) GetTargetArea(), GetSourceArea(), Color.White);
+    }
+
     /// <summary>
     /// Draws the sprite to the screen.
     /// </summary>

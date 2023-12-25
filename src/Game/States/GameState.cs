@@ -107,7 +107,13 @@ public abstract class GameState : IDisposable
         => true;
 
     /// <summary>
-    /// The drawing order for sprite and text drawing.
+    /// Gets the base matrix to apply to position, rotation, scale, and depth data.
+    /// </summary>
+    protected virtual Matrix MatrixTransform
+        => Matrix.Identity;
+
+    /// <summary>
+    /// Gets the drawing order for sprite and text drawing.
     /// </summary>
     protected virtual SpriteSortMode SortMode
         => SpriteSortMode.Deferred;
@@ -148,7 +154,7 @@ public abstract class GameState : IDisposable
         Require.NotNull(spriteBatch, nameof(spriteBatch));
 
         var viewport = spriteBatch.GraphicsDevice.Viewport;
-        var transform = Matrix.Identity;
+        var transform = MatrixTransform;
         
         if ((StateTransitions & MOVEMENT_FLAGS) != 0)
             transform *= CreateMoveTransform(viewport);
@@ -177,7 +183,8 @@ public abstract class GameState : IDisposable
             SortMode,
             BlendState.AlphaBlend,
             SamplerState.PointClamp,
-            rasterizerState: new RasterizerState { ScissorTestEnable = clippingEnabled });
+            rasterizerState: new RasterizerState { ScissorTestEnable = clippingEnabled },
+            matrixTransform: transform);
 
         configuredSpriteBatch.LoadEffect(alphaEffect);
         configuredSpriteBatch.Begin();

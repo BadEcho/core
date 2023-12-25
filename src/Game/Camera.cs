@@ -11,6 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Runtime.InteropServices;
 using BadEcho.Game.Properties;
 using Microsoft.Xna.Framework;
 
@@ -39,6 +40,16 @@ public sealed class Camera : IPositionalEntity
         _viewportConnector = viewportConnector;
         
         Origin = new Vector2(_viewportConnector.VirtualSize.Width / 2f, _viewportConnector.VirtualSize.Height / 2f);
+    }
+
+    public RectangleF VirtualArea
+    {
+        get
+        {
+            var virtualArea = new RectangleF(Position.ToPoint(), _viewportConnector.VirtualSize);
+
+            return virtualArea;
+        }
     }
 
     /// <inheritdoc />
