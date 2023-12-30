@@ -21,6 +21,9 @@ namespace BadEcho.Presentation.Windows;
 /// <summary>
 /// Provides a wrapper around an <c>HWND</c> of a window created by WPF.
 /// </summary>
+/// <suppressions>
+/// ReSharper disable RedundantAssignment
+/// </suppressions>
 public sealed class PresentationWindowWrapper : WindowWrapper
 {
     private readonly Dictionary<WindowHookProc, HwndSourceHook> _hookMapper = new();
@@ -55,7 +58,10 @@ public sealed class PresentationWindowWrapper : WindowWrapper
 
         IntPtr SourceHook(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            return addedHook(hWnd, (uint)msg, wParam, lParam, ref handled);
+            HookResult result = addedHook(hWnd, (uint)msg, wParam, lParam);
+            handled = result.Handled;
+
+            return result.LResult;
         }
     }
 

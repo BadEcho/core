@@ -208,9 +208,11 @@ public sealed class NativeWindow
         return new LocalWindowWrapper(handle);
     }
 
-    private IntPtr WndProc(IntPtr hWnd, uint msg, nint wParam, nint lParam, ref bool handled)
+    private HookResult WndProc(IntPtr hWnd, uint msg, nint wParam, nint lParam)
     {
+        var lResult = IntPtr.Zero;
         var message = (WindowMessage) msg;
+        bool handled = false;
 
         switch (message)
         {
@@ -264,7 +266,8 @@ public sealed class NativeWindow
                 }
 
                 handled = true;
-                return new IntPtr(1);
+                lResult = new IntPtr(1);
+                break;
 
             case WindowMessage.ShowWindow when wParam == 1: // Ignore windows becoming hidden
                 if (DisplayWithoutFlicker)
@@ -318,6 +321,6 @@ public sealed class NativeWindow
                 break;
         }
 
-        return IntPtr.Zero;
+        return new HookResult(lResult, handled);
     }
 }

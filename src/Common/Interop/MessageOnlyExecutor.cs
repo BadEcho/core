@@ -107,7 +107,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
                     case Func<object> function:
                         return function();
 
-                    case ThreadExecutorOperationCallback function:
+                    case Func<object?,object> function:
                         return function(argument);
 
                     case SendOrPostCallback callback:
@@ -506,7 +506,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
         }
     }
 
-    private IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    private HookResult WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
     {
         var message = (WindowMessage) msg;
 
@@ -524,7 +524,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
             ProcessOperation();
         }
 
-        return new IntPtr(0);
+        return new HookResult(IntPtr.Zero, false);
     }
 
     private void ProcessOperation()

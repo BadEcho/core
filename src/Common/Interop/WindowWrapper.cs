@@ -40,12 +40,6 @@ public abstract class WindowWrapper : IEventSource<WindowHookProc>
     { get; init; }
 
     /// <summary>
-    /// Gets the callback that processes messages sent to the wrapped window by calling any registered hooks.
-    /// </summary>
-    protected WindowHookProc WindowProcedure
-        => WndProc;
-
-    /// <summary>
     /// Adds a hook that will receive messages prior to any existing hooks receiving them.
     /// </summary>
     /// <param name="hook">The hook to invoke when messages are sent to the wrapped window.</param>
@@ -73,7 +67,7 @@ public abstract class WindowWrapper : IEventSource<WindowHookProc>
 
         OnHookRemoved(hook);
     }
-
+    
     /// <summary>
     /// Called when a hook has been added to the wrapped window.
     /// </summary>
@@ -94,31 +88,45 @@ public abstract class WindowWrapper : IEventSource<WindowHookProc>
     /// <remarks>Override this to engage in any last minute cleanup efforts.</remarks>
     protected virtual void OnDestroyingWindow()
     { }
-
-    private IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    
+    /// <summary>
+    /// The callback, or window procedure, that processes messages sent to the wrapped window by calling any registered hooks.
+    /// </summary>
+    /// <param name="hWnd">A handle to the window.</param>
+    /// <param name="msg">The message.</param>
+    /// <param name="wParam">Additional message-specific information.</param>
+    /// <param name="lParam">Additional message-specific information.</param>
+    /// <returns>
+    /// The result of the message processing, which of course depends on the message being processed.
+    /// </returns>
+    protected HookResult WindowProcedure(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
     {
-        var result = IntPtr.Zero;
+        bool forceUnhandled = false;
+        var result = new HookResult(IntPtr.Zero, false);
         var message = (WindowMessage) msg;
 
         foreach (WindowHookProc hook in _hooks)
         {
-            result = hook(hWnd, msg, wParam, lParam, ref handled);
+            result = hook(hWnd, msg, wParam, lParam);
                     
-            if (handled)
+            if (result.Handled)
                 break;
         }
 
         if (WindowMessage.CreateNonclientArea == message)
         {
-            handled = false;
+            forceUnhandled = true;
         }
         else if (WindowMessage.DestroyNonclientArea == message)
         {
             OnDestroyingWindow();
             // We want to make sure we always pass on WM_NCDESTROY messages.
-            handled = false;
+            forceUnhandled = true;
         }
 
-        return result;
+        return result with
+               {
+                   Handled = !forceUnhandled && result.Handled
+               };
     }
 }

@@ -72,7 +72,7 @@ public sealed class MessageOnlyWindowWrapper : WindowWrapper, IDisposable
         {
             if (Handle.IsInvalid)
             {   // The subclass pins itself, so if window creation fails, we need to manually release it here and now.
-                subclass.Dispose();
+                subclass.Detach();
             }
         }
 

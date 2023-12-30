@@ -31,5 +31,3 @@ public interface IEventSource<in THookProc> where THookProc : Delegate
     /// <param name="hook">The hook to remove.</param>
     void RemoveHook(THookProc hook);
 }
-
-

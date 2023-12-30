@@ -31,11 +31,11 @@ namespace BadEcho.Interop;
 /// control or window.
 /// </para>
 /// <para>
-/// Put more succinctly, it allows us to replace the window's default window procedure with our own so that we may intercept
+/// Put more succinctly, it allows us to replace the window's window procedure with our own so that we may intercept
 /// and process messages sent to the window.
 /// </para>
 /// </remarks>
-internal sealed class WindowSubclass : IDisposable
+internal sealed class WindowSubclass
 {
     private static readonly WindowMessage _DetachMessage
         = User32.RegisterWindowMessage("WindowSubclass.DetachMessage");
@@ -51,15 +51,10 @@ internal sealed class WindowSubclass : IDisposable
 
     private static readonly AssemblyLoadContext _LoadContext;
 
-    [ThreadStatic]
-    private static SubclassOperationParameters? _OperationCallbackParameters;
-
     private static int _ShutdownHandled;
 
-    private readonly ThreadExecutorOperationCallback _operationCallback;
     private readonly IThreadExecutor? _executor;
-
-    private bool _disposed;
+    private readonly WeakReference _hook;
 
     /// <summary>
     /// <para>
@@ -74,7 +69,6 @@ internal sealed class WindowSubclass : IDisposable
     /// </para>
     /// </summary>
     private GCHandle _gcHandle;
-    private WeakReference? _hook;
     private WindowHandle? _window;
     private AttachmentState _state;
     private WindowProc? _wndProcCallback;
@@ -121,10 +115,6 @@ internal sealed class WindowSubclass : IDisposable
         
         _hook = new WeakReference(hook);
 
-        // A reference is required to this method in order to avoid GC collection while the callback is still being referenced by unmanaged
-        // objects. Figuring out the root cause of the kind of crashes brought about by this sort of problem is not easy!
-        _operationCallback = ExecuteHook;
-
         _gcHandle = GCHandle.Alloc(this);
     }
     
@@ -142,18 +132,16 @@ internal sealed class WindowSubclass : IDisposable
         Attach(window, WndProc, oldWndProc);
     }
 
-    /// <inheritdoc/>
-    public void Dispose()
-    {
-        if (_disposed)
-            return;
-
-        _hook = null;
-
-        Unhook(false);
-
-        _disposed = true;
-    }
+    /// <summary>
+    /// Removes the subclass callback from any attached window, and then unpins this instance, making it eligible
+    /// for garbage collection.
+    /// </summary>
+    /// <remarks>
+    /// Normally, this class automatically takes care of window detachment and self-cleanup. Only call this
+    /// method if an error occurred with the creation of the window which we intended to subclass.
+    /// </remarks>
+    public void Detach() 
+        => Unhook(false);
 
     /// <summary>
     /// Processes messages sent to the subclassed window.
@@ -175,7 +163,7 @@ internal sealed class WindowSubclass : IDisposable
     /// </remarks>
     internal IntPtr WndProc(IntPtr hWnd, uint msg, nint wParam, nint lParam)
     {
-        var result = IntPtr.Zero;
+        var lResult = IntPtr.Zero;
         var message = (WindowMessage)msg;
         bool handled = false;
 
@@ -198,15 +186,22 @@ internal sealed class WindowSubclass : IDisposable
             {
                 bool forcibly = lParam > 0;
 
-                result = Detach(forcibly) ? new IntPtr(1) : IntPtr.Zero;
-
+                lResult = Detach(forcibly) ? new IntPtr(1) : IntPtr.Zero;
                 handled = !forcibly;
             }
         }
         else
         {
             if (_executor is not { IsShutdownComplete: true })
-                result = SendOperation(hWnd, msg, wParam, lParam, ref handled);
+            {
+                HookResult? result = SendOperation(hWnd, msg, wParam, lParam);
+
+                if (result != null)
+                {
+                    lResult = result.LResult;
+                    handled = result.Handled;
+                }
+            }
 
             if (WindowMessage.DestroyNonclientArea == message)
             {
@@ -216,11 +211,11 @@ internal sealed class WindowSubclass : IDisposable
             }
         }
 
-        // If the message wasn't handled, pass it up the WndProc chain.
+        // If the message wasn't handled, pass it down the WndProc chain.
         if (!handled)
-            result = User32.CallWindowProc(oldWndProc, hWnd, message, wParam, lParam);
+            lResult = User32.CallWindowProc(oldWndProc, hWnd, message, wParam, lParam);
 
-        return result;
+        return lResult;
     }
 
     private static IntPtr GetDefaultWindowProc()
@@ -373,91 +368,43 @@ internal sealed class WindowSubclass : IDisposable
         return true;
     }
 
-    //  TODO: Do a final review of this sometime.
-    private IntPtr SendOperation(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    private HookResult? SendOperation(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
     {
-        var result = IntPtr.Zero;
-
-        // The parameters are cached locally, followed by setting the class member for the parameters to null for purposes of reentrancy.
-        _OperationCallbackParameters ??= new SubclassOperationParameters();
-
-        SubclassOperationParameters parameters
-            = _OperationCallbackParameters with
-              {
-                  HWnd = hWnd,
-                  Msg = msg,
-                  WParam = wParam,
-                  LParam = lParam
-              };
-
-        _OperationCallbackParameters = null;
+        SubclassOperationParameters parameters = new (hWnd, msg, wParam, lParam);
+        
         object? operationResult = _executor != null
-            ? _executor.Invoke(_operationCallback, parameters)
-            : _operationCallback(parameters);
+            ? _executor.Invoke(ExecuteHook, null)
+            : ExecuteHook();
 
-        if (operationResult is SubclassOperationParameters parametersResult)
+        return operationResult as HookResult;
+
+        HookResult? ExecuteHook()
         {
-            result = parametersResult.Result;
-            handled = parametersResult.Handled;
-        }
+            HookResult? result = null;
 
-        _OperationCallbackParameters = parameters;
-
-        return result;
-    }
-
-    private SubclassOperationParameters? ExecuteHook(object? argument)
-    {
-        if (argument == null)
-            return null;
-
-        var parameters = (SubclassOperationParameters)argument;
-
-        if (_state == AttachmentState.Attached)
-        {   // Here we finalize the passing of a message received by our subclass to the registered hook.
-            bool handled = false;
-            
-            if (_hook is { Target: WindowHookProc hook })
-            {
-                parameters
-                    = parameters with
-                      {
-                          Result = hook(parameters.HWnd, parameters.Msg, parameters.WParam, parameters.LParam, ref handled),
-                          Handled = handled
-                      };
+            if (_state == AttachmentState.Attached)
+            {   // The message received by our subclass shall now be passed to the entry point for our
+                // registered window message hooks.
+                if (_hook is { Target: WindowHookProc hook })
+                {
+                    result = hook(parameters.HWnd, parameters.Msg, parameters.WParam, parameters.LParam);
+                }
             }
-        }
 
-        return parameters;
+            return result;
+        }
     }
 
-    /// <summary>
-    /// Specifies the state of our subclass's attachment to a window.
-    /// </summary>
     private enum AttachmentState
     {
-        /// <summary>
-        /// The subclass has not been attached to the window.
-        /// </summary>
         Unattached,
-        /// <summary>
-        /// The subclass has been attached to the window.
-        /// </summary>
         Attached,
-        /// <summary>
-        /// The subclass is currently detaching from the window.
-        /// </summary>
         Detaching,
-        /// <summary>
-        /// The subclass, previously attached to the window, is now unattached.
-        /// </summary>
         Detached
     }
 
     private sealed record SubclassOperationParameters(IntPtr HWnd = default,
-                                                      IntPtr WParam = default,
-                                                      IntPtr LParam = default,
                                                       uint Msg = default,
-                                                      IntPtr Result = default,
-                                                      bool Handled = false);
+                                                      IntPtr WParam = default,
+                                                      IntPtr LParam = default);
 }

@@ -11,11 +11,11 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Threading;
+namespace BadEcho.Interop;
 
 /// <summary>
-/// A callback to use for thread executor operations.
+/// Provides the result of a hook procedure's processing of a message.
 /// </summary>
-/// <param name="argument">An argument to pass to the callback.</param>
-/// <returns>The result of the callback.</returns>
-internal delegate object? ThreadExecutorOperationCallback(object? argument);
+/// <param name="LResult">The response to the particular message.</param>
+/// <param name="Handled">A value that indicates whether the message was handled.</param>
+public sealed record HookResult(IntPtr LResult, bool Handled);

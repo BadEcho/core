@@ -17,9 +17,8 @@ namespace BadEcho.Interop;
 /// Provides a wrapper around an <c>HWND</c> of a provided in-process window and the messages it receives.
 /// </summary>
 /// <remarks>
-/// Intercepting window messages 
-/// Because this wrapper intercepts window messages by subclassing the provided window, the window being wrapped must be
-/// local to the same process hosting the .NET runtime that is executing this code. If the window was created in another
+/// Because this wrapper intercepts window messages by subclassing the provided window, the window being wrapped must be 
+/// local to the same process hosting the .NET runtime that is executing this code. If the window was created in another 
 /// process, you'll need to use the <see cref="GlobalWindowWrapper"/> type instead.
 /// </remarks>
 public sealed class LocalWindowWrapper : WindowWrapper

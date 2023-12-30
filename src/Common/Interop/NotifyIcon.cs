@@ -395,9 +395,11 @@ public sealed class NotifyIcon : IDisposable
         } 
     }
 
-    private IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    private HookResult WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
     {
+        IntPtr lResult = IntPtr.Zero;
         var message = (WindowMessage) msg;
+        bool handled = false;
 
         if (_TrayEvent == message)
         {
@@ -417,6 +419,6 @@ public sealed class NotifyIcon : IDisposable
         else if (WindowMessage.Destroy == message) 
             Dispose();
 
-        return IntPtr.Zero;
+        return new HookResult(lResult, handled);
     }
 }

@@ -44,7 +44,7 @@ public sealed class ClipboardNotifier
     /// </summary>
     public event EventHandler? ClipboardChanged; 
 
-    private IntPtr WndProc(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    private HookResult WndProc(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam)
     {
         var message = (WindowMessage) msg;
 
@@ -52,9 +52,7 @@ public sealed class ClipboardNotifier
         {
             case WindowMessage.ClipboardUpdate:
                 ClipboardChanged?.Invoke(this, EventArgs.Empty);
-                handled = true;
-
-                break;
+                return new HookResult(IntPtr.Zero, true);
 
             case WindowMessage.Destroy:
                 if (!User32.RemoveClipboardFormatListener(_windowWrapper.Handle))
@@ -63,6 +61,6 @@ public sealed class ClipboardNotifier
                 break;
         }
 
-        return IntPtr.Zero;
+        return new HookResult(IntPtr.Zero, false);
     }
 }
