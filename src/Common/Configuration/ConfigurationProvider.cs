@@ -11,6 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using BadEcho.Extensions;
 
@@ -31,9 +32,9 @@ public abstract class ConfigurationProvider : IConfigurationProvider, IDisposabl
                                                       NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size
                                                   };
 
-    private readonly Dictionary<Type, object> _cachedSections = new();
+    private readonly ConcurrentDictionary<Type, object> _cachedSections = new();
     private readonly object _isMonitoringLock = new();
-
+    
     private bool _isMonitoring;
     private bool _disposed;
 
@@ -74,17 +75,14 @@ public abstract class ConfigurationProvider : IConfigurationProvider, IDisposabl
 
         Type sectionType = typeof(T);
 
-        if (_cachedSections.TryGetValue(sectionType, out object? cachedSection))
-            return (T) cachedSection;
-
         T? section = default;
         var settingsFile = new FileInfo(SettingsFile);
 
-        if (settingsFile is {Exists: true, Length: > 0})
+        if (settingsFile is { Exists: true, Length: > 0 })
         {
-            section = ReadConfiguration<T>(settingsFile.ReadAllText(FileShare.ReadWrite), sectionName);
-
-            _cachedSections.Add(sectionType, section);
+            section = (T) _cachedSections.GetOrAdd(
+                sectionType,
+                _ => ReadConfiguration<T>(settingsFile.ReadAllText(FileShare.ReadWrite), sectionName));
         }
 
         return section ?? new T();
