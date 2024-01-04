@@ -17,14 +17,14 @@ using System.Runtime.InteropServices;
 namespace BadEcho.Interop;
 
 /// <summary>
-/// Provides interoperability with the Bad Echo global hooks API.
+/// Provides interoperability with the Bad Echo Win32 hooks API.
 /// </summary>
 internal static partial class Hooks
 {
     private const string LIBRARY_NAME = "BadEcho.Hooks";
     
     /// <summary>
-    /// Installs a new globally-scoped hook procedure into the specified thread.
+    /// Installs a new Win32 hook procedure into the specified thread.
     /// </summary>
     /// <param name="hookType">The type of hook procedure to install.</param>
     /// <param name="threadId">The identifier of the thread with which the hook procedure is to be associated.</param>
@@ -37,7 +37,7 @@ internal static partial class Hooks
     public static partial bool AddHook(HookType hookType, int threadId, WindowHandle destination);
 
     /// <summary>
-    /// Uninstalls a globally-scoped hook procedure from the specified thread.
+    /// Uninstalls a Win32 hook procedure from the specified thread.
     /// </summary>
     /// <param name="hookType">The type of hook procedure to uninstall.</param>
     /// <param name="threadId">The identifier of the thread to remove the hook procedure from.</param>
