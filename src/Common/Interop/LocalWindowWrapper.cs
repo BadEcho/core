@@ -21,8 +21,11 @@ namespace BadEcho.Interop;
 /// local to the same process hosting the .NET runtime that is executing this code. If the window was created in another 
 /// process, you'll need to use the <see cref="GlobalWindowWrapper"/> type instead.
 /// </remarks>
-public sealed class LocalWindowWrapper : WindowWrapper
+public sealed class LocalWindowWrapper : WindowWrapper, IDisposable
 {
+    private readonly WindowSubclass _subclass;
+    private bool _disposed;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="LocalWindowWrapper"/> class.
     /// </summary>
@@ -30,8 +33,19 @@ public sealed class LocalWindowWrapper : WindowWrapper
     public LocalWindowWrapper(WindowHandle handle) 
         : base(handle)
     {
-        var subclass = new WindowSubclass(WindowProcedure);
+        _subclass = new WindowSubclass(WindowProcedure);
 
-        subclass.Attach(handle);
+        _subclass.Attach(handle);
+    }
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        if (_disposed)
+            return;
+
+        _subclass.Dispose();
+
+        _disposed = true;
     }
 }

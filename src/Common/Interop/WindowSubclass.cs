@@ -35,15 +35,15 @@ namespace BadEcho.Interop;
 /// and process messages sent to the window.
 /// </para>
 /// </remarks>
-internal sealed class WindowSubclass
+internal sealed class WindowSubclass : IDisposable
 {
     private static readonly WindowMessage _DetachMessage
         = User32.RegisterWindowMessage("WindowSubclass.DetachMessage");
 
-    private static readonly Dictionary<WindowSubclass, WindowHandle> _SubclassHandleMap
+    private static readonly List<WindowSubclass> _Subclasses
         = new();
 
-    private static readonly object _MapLock
+    private static readonly object _SubclassesLock
         = new();
 
     private static readonly IntPtr _DefaultWindowProc 
@@ -74,6 +74,7 @@ internal sealed class WindowSubclass
     private WindowProc? _wndProcCallback;
     private IntPtr _wndProc;
     private IntPtr _oldWndProc;
+    private bool _disposed;
 
     /// <summary>
     /// Initializes the <see cref="WindowSubclass"/> class.
@@ -132,16 +133,22 @@ internal sealed class WindowSubclass
         Attach(window, WndProc, oldWndProc);
     }
 
-    /// <summary>
-    /// Removes the subclass callback from any attached window, and then unpins this instance, making it eligible
-    /// for garbage collection.
-    /// </summary>
-    /// <remarks>
-    /// Normally, this class automatically takes care of window detachment and self-cleanup. Only call this
-    /// method if an error occurred with the creation of the window which we intended to subclass.
-    /// </remarks>
-    public void Detach() 
-        => Unhook(false);
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        if (_disposed)
+            return;
+
+        Unhook(false);
+
+        // If somehow we're still pinned, unpin ourselves so we can get garbage collected.
+        // This should only occur if attachment never occurred due to an error occurring
+        // with the creation of the window which we intended to subclass.
+        if (_gcHandle.IsAllocated)
+            _gcHandle.Free();
+
+        _disposed = true;
+    }
 
     /// <summary>
     /// Processes messages sent to the subclassed window.
@@ -225,15 +232,15 @@ internal sealed class WindowSubclass
         return Kernel32.GetProcAddress(hModule, User32.ExportDefWindowProcW);
     }
 
-    private static void RestoreDefaultWindowProc(WindowHandle window, IntPtr defaultWindowProc)
+    private static void RestoreWindowProc(WindowHandle window, IntPtr procToRestore, bool forceClose)
     {
         if (window.IsInvalid)
             return;
 
-        if (defaultWindowProc == IntPtr.Zero)
+        if (procToRestore == IntPtr.Zero)
             return;
 
-        IntPtr result = User32.SetWindowLongPtr(window, WindowAttribute.WindowProcedure, defaultWindowProc);
+        IntPtr result = User32.SetWindowLongPtr(window, WindowAttribute.WindowProcedure, procToRestore);
 
         if (result == IntPtr.Zero)
         {   // The only acceptable outcome here is a window handle that is now invalid due to the window being destroyed already.
@@ -243,7 +250,7 @@ internal sealed class WindowSubclass
                 throw new Win32Exception((int)error);
         }
 
-        if (result != IntPtr.Zero)
+        if (forceClose && result != IntPtr.Zero)
             User32.PostMessage(window, WindowMessage.Close, IntPtr.Zero, IntPtr.Zero);
     }
 
@@ -254,15 +261,25 @@ internal sealed class WindowSubclass
 
         _LoadContext.Unloading -= HandleContextUnloading;
 
-        lock (_MapLock)
+        lock (_SubclassesLock)
         {
-            foreach (var window in _SubclassHandleMap.Values)
+            foreach (var subclass in _Subclasses)
             {
+                if (subclass._window == null)
+                    continue;
+
                 // Back when multiple AppDomains existed, there was a chance the AppDomain hosting this code could be unloading
                 // in a multiple AppDomain environment where a host window belonging to a separate AppDomain had one or more of its
                 // child windows subclassed, which meant we needed to notify the parent window in some fashion by sending a blocking
                 // detach message. Don't need to worry about that now! I think...
-                RestoreDefaultWindowProc(window, _DefaultWindowProc);
+
+                // If the default context is being unloaded, we will simply restore the
+                // DefaultWindowProc in case the previous window procedure is also managed.
+                IntPtr procToRestore = loadContext == AssemblyLoadContext.Default
+                    ? _DefaultWindowProc
+                    : subclass._oldWndProc;
+
+                RestoreWindowProc(subclass._window, procToRestore, true);
             }
         }
     }
@@ -278,9 +295,9 @@ internal sealed class WindowSubclass
 
         User32.SetWindowLongPtr(_window, WindowAttribute.WindowProcedure, _wndProc);
         
-        lock (_MapLock)
+        lock (_SubclassesLock)
         {
-            _SubclassHandleMap[this] = window;
+            _Subclasses.Add(this);
         }
     }
 
@@ -351,19 +368,20 @@ internal sealed class WindowSubclass
 
         _state = AttachmentState.Detaching;
             
-        lock (_MapLock)
+        lock (_Subclasses)
         {
-            _SubclassHandleMap.Remove(this);
+            _Subclasses.Remove(this);
         }
 
-        RestoreDefaultWindowProc(_window, _oldWndProc);
+        RestoreWindowProc(_window, _oldWndProc, false);
 
         _state = AttachmentState.Detached;
         _oldWndProc = IntPtr.Zero;
         _wndProcCallback = null;
         _wndProc = IntPtr.Zero;
 
-        _gcHandle.Free();
+        if (_gcHandle.IsAllocated)
+            _gcHandle.Free();
 
         return true;
     }
