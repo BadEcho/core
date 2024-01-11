@@ -19,16 +19,16 @@ namespace BadEcho.Interop;
 internal enum HookType
 {
     /// <summary>
-    /// A hook procedure (WH_CALLWNDPROC) that monitors messages before the system sends them to a destination window procedure.
+    /// Monitors <c>WH_CALLWNDPROC</c> messages before the system sends them to a destination window procedure.
     /// </summary>
     WindowProcPreview,
     /// <summary>
-    /// A hook procedure (WH_CALLWNDPROCRET) that monitors messages after they have been processed by the destination window
+    /// Monitors <c>WH_CALLWNDPROCRET</c> messages after they have been processed by the destination window
     /// procedure.
     /// </summary>
     WindowProcReturn,
     /// <summary>
-    /// A hook procedure (WH_GETMESSAGE) that monitors messages posted to a message queue.
+    /// Monitors <c>WH_GETMESSAGE</c> messages posted to a message queue prior to their retrieval.
     /// </summary>
     MessageQueueRead
 }

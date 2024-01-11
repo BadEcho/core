@@ -27,10 +27,10 @@ BOOL APIENTRY DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved)
                 PAGE_READWRITE,
                 0,
                 SharedMemorySize,
-                TEXT("dllmemfilemap"));
+                TEXT("BadEcho.Hooks.FileMappingObject"));
 
             if (MapObject == nullptr)
-                return false;
+                return FALSE;
 
             init = GetLastError() != ERROR_ALREADY_EXISTS;
 
@@ -58,7 +58,7 @@ BOOL APIENTRY DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved)
             CloseHandle(MapObject);
             break;
     	default:
-            return false;
+            return FALSE;
     }
 
 	return TRUE;    
