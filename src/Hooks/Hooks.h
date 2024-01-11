@@ -122,8 +122,10 @@ inline ThreadData* SharedData;
 inline LPVOID SharedMemory = nullptr;
 inline HANDLE MapObject = nullptr;
 
-// Add a data section to our binary file for variables we want shared across all injected processes.
-// The variables that are shared mainly deal with the number of active hooks and message parameters up for modification.
+// Add a data section to our binary file for variables we want shared across all injected
+// processes.
+// The variables that are shared mainly deal with the number of active hooks and message
+// parameters up for modification.
 #pragma data_seg(".shared")
 inline bool ModifyMessage = false;
 inline UINT CurrentMessage = 0;
