@@ -13,7 +13,7 @@
 
 #include "Hooks.h"
 
-BOOL APIENTRY DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved)
+BOOL APIENTRY DllMain(HINSTANCE instance, DWORD reason, LPVOID)
 {
     BOOL init;
 
@@ -21,27 +21,29 @@ BOOL APIENTRY DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved)
     {
     	case DLL_PROCESS_ATTACH:        
             Instance = instance;
-            MapObject = CreateFileMapping(
+            FileMapping = CreateFileMapping(
                 INVALID_HANDLE_VALUE,
                 nullptr,
                 PAGE_READWRITE,
                 0,
                 SharedMemorySize,
-                TEXT("BadEcho.Hooks.FileMappingObject"));
+                TEXT("BadEcho.Hooks.FileMappingObject"));            
 
-            if (MapObject == nullptr)
+            if (FileMapping == nullptr)
                 return FALSE;
 
             init = GetLastError() != ERROR_ALREADY_EXISTS;
 
-            SharedMemory = MapViewOfFile(
-                MapObject,
-                FILE_MAP_WRITE,
-                0,
-                0,
-                0);
+            SharedMemory
+    			= MapViewOfFile(FileMapping, FILE_MAP_WRITE, 0, 0, 0);
 
             if (SharedMemory == nullptr)
+                return FALSE;
+
+            SharedSectionMutex
+    			= CreateMutex(nullptr, FALSE, TEXT("BadEcho.Hooks.MutexObject"));
+
+            if (SharedSectionMutex == nullptr)
                 return FALSE;
 
             if (init)
@@ -55,7 +57,8 @@ BOOL APIENTRY DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved)
             break;   	
     	case DLL_PROCESS_DETACH:
             UnmapViewOfFile(SharedMemory);
-            CloseHandle(MapObject);
+            CloseHandle(FileMapping);
+            CloseHandle(SharedSectionMutex);
             break;
     	default:
             return FALSE;
@@ -88,13 +91,18 @@ ThreadData *GetLocalData(int threadId, bool addEntry)
         SharedData[index].CallWndProcRetHook.Destination = nullptr;
         SharedData[index].GetMessageHook.Handle = nullptr;
         SharedData[index].GetMessageHook.Destination = nullptr;
+
+        // Synchronization is required as multiple processes may be attempting to increment the
+        // thread count.
+        WaitForSingleObject(SharedSectionMutex, INFINITE);
         ThreadCount++;
+        ReleaseMutex(SharedSectionMutex);
     }
 
     return &SharedData[index];
 }
 
-HOOKS_API bool AddHook(HookType hookType, int threadId, HWND destination)
+bool __cdecl AddHook(HookType hookType, int threadId, HWND destination)
 {
     ThreadData* localData = GetLocalData(threadId, true);
 
@@ -140,7 +148,7 @@ HOOKS_API bool AddHook(HookType hookType, int threadId, HWND destination)
     return true;
 }
 
-HOOKS_API bool RemoveHook(HookType hookType, int threadId)
+bool __cdecl RemoveHook(HookType hookType, int threadId)
 {
     ThreadData* localData = GetLocalData(threadId, false);
 
@@ -175,12 +183,20 @@ HOOKS_API bool RemoveHook(HookType hookType, int threadId)
     return result;
 }
 
+void __cdecl ChangeMessageDetails(UINT message, WPARAM wParam, LPARAM lParam)
+{
+    ChangedMessage = message;
+    ChangedWParam = wParam;
+    ChangedLParam = lParam;
+    ChangeMessage = true;
+}
+
 
 LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
     int threadId = static_cast<int>(GetCurrentThreadId());
 
-    if (ThreadData* localData = GetLocalData(threadId, false); localData != nullptr && nCode == HC_ACTION)
+    if (ThreadData* localData = GetLocalData(threadId, false); nCode == HC_ACTION)
     {   
         HWND destination = localData->CallWndProcHook.Destination;
 
@@ -197,7 +213,7 @@ LRESULT CALLBACK CallWndProcRet(int nCode, WPARAM wParam, LPARAM lParam)
 {
     int threadId = static_cast<int>(GetCurrentThreadId());    
 
-    if (ThreadData* localData = GetLocalData(threadId, false); localData != nullptr && nCode == HC_ACTION)
+    if (ThreadData* localData = GetLocalData(threadId, false); nCode == HC_ACTION)
     {
         HWND destination = localData->CallWndProcRetHook.Destination;
 
@@ -214,22 +230,36 @@ LRESULT CALLBACK GetMsgProc(int code, WPARAM wParam, LPARAM lParam)
 {
     int threadId = static_cast<int>(GetCurrentThreadId());    
 
-    if (ThreadData* localData = GetLocalData(threadId, false); localData != nullptr && code == HC_ACTION)
+    if (ThreadData* localData = GetLocalData(threadId, false); code == HC_ACTION)
     {   
         if (HWND destination = localData->GetMessageHook.Destination; destination != nullptr)
         {
-            // Unlike some of these other hooks, we are able to modify messages of this hook type before control is returned to the system.
+            // Unlike some of these other hooks, we are able to modify messages of this hook type
+            // before control is returned to the system.
             auto messageParameters = PointTo<MSG>(lParam);
 
-            ModifyMessage = false;
+            WaitForSingleObject(SharedSectionMutex, INFINITE);
 
-            SendMessage(destination, messageParameters->message, messageParameters->wParam, messageParameters->lParam);
-
-            if (ModifyMessage)
+            __try
             {
-                messageParameters->message = CurrentMessage;
-                messageParameters->wParam = CurrentWParam;
-                messageParameters->lParam = CurrentLParam;
+                ChangeMessage = false;
+
+                SendMessage(
+                    destination, 
+                    messageParameters->message, 
+                    messageParameters->wParam, 
+                    messageParameters->lParam);
+
+                if (ChangeMessage)
+                {
+                    messageParameters->message = ChangedMessage;
+                    messageParameters->wParam = ChangedWParam;
+                    messageParameters->lParam = ChangedLParam;
+                }
+            }
+            __finally
+            {
+                ReleaseMutex(SharedSectionMutex);
             }
         }        
     }

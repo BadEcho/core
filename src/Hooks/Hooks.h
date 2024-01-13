@@ -76,8 +76,8 @@ HOOKS_API void __cdecl ChangeMessageDetails(UINT message, WPARAM wParam, LPARAM 
 
 // Installable hook procedures.
 
-LRESULT CALLBACK CallWndProc(int code, WPARAM wParam, LPARAM lParam);
-LRESULT CALLBACK CallWndProcRet(int code, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK CallWndProcRet(int nCode, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK GetMsgProc(int code, WPARAM wParam, LPARAM lParam);
 
 /**
@@ -120,17 +120,18 @@ struct ThreadData
 
 inline ThreadData* SharedData;
 inline LPVOID SharedMemory = nullptr;
-inline HANDLE MapObject = nullptr;
+inline HANDLE FileMapping = nullptr;
+inline HANDLE SharedSectionMutex = nullptr;
 
 // Add a data section to our binary file for variables we want shared across all injected
 // processes.
 // The variables that are shared mainly deal with the number of active hooks and message
 // parameters up for modification.
 #pragma data_seg(".shared")
-inline bool ModifyMessage = false;
-inline UINT CurrentMessage = 0;
-inline WPARAM CurrentWParam = 0;
-inline LPARAM CurrentLParam = 0;
+inline bool ChangeMessage = false;
+inline UINT ChangedMessage = 0;
+inline WPARAM ChangedWParam = 0;
+inline LPARAM ChangedLParam = 0;
 inline int ThreadCount = 0;
 #pragma data_seg()
 #pragma comment(linker, "/SECTION:.shared,RWS")
