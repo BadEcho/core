@@ -24,4 +24,4 @@ namespace BadEcho.Interop;
 /// <returns>
 /// The result of the message processing, which of course depends on the message being processed.
 /// </returns>
-public delegate IntPtr GetMessagesHookProc(IntPtr hWnd, ref uint msg, ref IntPtr wParam, ref IntPtr lParam, ref bool handled);
+public delegate HookResult GetMessagesHookProc(IntPtr hWnd, ref uint msg, ref IntPtr wParam, ref IntPtr lParam);

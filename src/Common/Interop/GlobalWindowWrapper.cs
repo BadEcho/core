@@ -51,7 +51,7 @@ public sealed class GlobalWindowWrapper : WindowWrapper, IDisposable
     private readonly int _threadId;
     
     private bool _disposed;
-    private bool _windowProcPreviewHooked;
+    private bool _windowHooked;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GlobalWindowWrapper"/> class.
@@ -74,7 +74,7 @@ public sealed class GlobalWindowWrapper : WindowWrapper, IDisposable
         if (_disposed)
             return;
 
-        if (_windowProcPreviewHooked) 
+        if (_windowHooked) 
             Hooks.RemoveHook(HookType.WindowProcPreview, _threadId);
 
         _hookExecutor.Dispose();
@@ -102,9 +102,8 @@ public sealed class GlobalWindowWrapper : WindowWrapper, IDisposable
 
         _hookExecutor.Window.AddHook(WindowProcedure);
 
-        _windowProcPreviewHooked
-            = Hooks.AddHook(HookType.WindowProcPreview,
-                            _threadId,
-                            _hookExecutor.Window.Handle);
+        _windowHooked = Hooks.AddHook(HookType.WindowProcPreview,
+                                      _threadId,
+                                      _hookExecutor.Window.Handle);
     }
 }
