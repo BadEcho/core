@@ -47,4 +47,15 @@ internal static partial class Hooks
     [return: MarshalAs(UnmanagedType.U1)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
     public static partial bool RemoveHook(HookType hookType, int threadId);
+
+    /// <summary>
+    /// Changes the details of a hook message currently being intercepted.
+    /// </summary>
+    /// <param name="message">The message identifier to use.</param>
+    /// <param name="wParam">Additional information about the message to use.</param>
+    /// <param name="lParam">Additional information about the message to use.</param>
+    [LibraryImport(LIBRARY_NAME)]
+    [UnmanagedCallConv(CallConvs = new [] { typeof(CallConvCdecl)})]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
+    public static partial void ChangeMessageDetails(uint message, IntPtr wParam, IntPtr lParam);
 }

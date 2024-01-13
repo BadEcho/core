@@ -62,7 +62,6 @@ HOOKS_API bool __cdecl AddHook(HookType hookType, int threadId, HWND destination
  */
 HOOKS_API bool __cdecl RemoveHook(HookType hookType, int threadId);
 
-
 /**
  * Changes the details of a hook message currently being intercepted.
  * @param message The message identifier to use.
