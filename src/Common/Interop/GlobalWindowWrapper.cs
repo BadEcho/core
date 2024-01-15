@@ -47,7 +47,7 @@ namespace BadEcho.Interop;
 /// </remarks>
 public sealed class GlobalWindowWrapper : WindowWrapper, IDisposable
 {
-    private readonly MessageOnlyExecutor _hookExecutor;
+    private readonly MessageOnlyExecutor _hookExecutor = new();
     private readonly int _threadId;
     
     private bool _disposed;
@@ -64,8 +64,6 @@ public sealed class GlobalWindowWrapper : WindowWrapper, IDisposable
 
         if (_threadId == 0)
             throw new Win32Exception(Marshal.GetLastWin32Error());
-
-        _hookExecutor = new MessageOnlyExecutor();
     }
 
     /// <inheritdoc/>
@@ -75,7 +73,7 @@ public sealed class GlobalWindowWrapper : WindowWrapper, IDisposable
             return;
 
         if (_windowHooked) 
-            Hooks.RemoveHook(HookType.WindowProcPreview, _threadId);
+            Hooks.RemoveHook(HookType.CallWindowProcedure, _threadId);
 
         _hookExecutor.Dispose();
         
@@ -102,7 +100,7 @@ public sealed class GlobalWindowWrapper : WindowWrapper, IDisposable
 
         _hookExecutor.Window.AddHook(WindowProcedure);
 
-        _windowHooked = Hooks.AddHook(HookType.WindowProcPreview,
+        _windowHooked = Hooks.AddHook(HookType.CallWindowProcedure,
                                       _threadId,
                                       _hookExecutor.Window.Handle);
     }

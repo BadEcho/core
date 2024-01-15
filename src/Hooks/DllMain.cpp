@@ -115,19 +115,19 @@ bool __cdecl AddHook(HookType hookType, int threadId, HWND destination)
 
     switch (hookType)
     {
-    	case WindowProcPreview:
+    	case CallWindowProcedure:
             hookData = &localData->CallWndProcHook;
             idHook = WH_CALLWNDPROC;
             lpfn = CallWndProc;
             break;
 
-    	case WindowProcReturn:
+    	case CallWindowProcedureReturn:
             hookData = &localData->CallWndProcRetHook;
             idHook = WH_CALLWNDPROCRET;
             lpfn = CallWndProcRet;
             break;
 
-    	case MessageQueueRead:
+    	case GetMessages:
             hookData = &localData->GetMessageHook;
             idHook = WH_GETMESSAGE;
             lpfn = GetMsgProc;
@@ -159,13 +159,13 @@ bool __cdecl RemoveHook(HookType hookType, int threadId)
 
     switch (hookType)
     {
-		case WindowProcPreview:
+		case CallWindowProcedure:
             hookData = &localData->CallWndProcHook;
             break;
-		case WindowProcReturn:
+		case CallWindowProcedureReturn:
             hookData = &localData->CallWndProcRetHook;
             break;
-		case MessageQueueRead:
+		case GetMessages:
             hookData = &localData->GetMessageHook;
             break;
 		default:

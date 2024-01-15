@@ -21,14 +21,14 @@ internal enum HookType
     /// <summary>
     /// Monitors <c>WH_CALLWNDPROC</c> messages before the system sends them to a destination window procedure.
     /// </summary>
-    WindowProcPreview,
+    CallWindowProcedure,
     /// <summary>
     /// Monitors <c>WH_CALLWNDPROCRET</c> messages after they have been processed by the destination window
     /// procedure.
     /// </summary>
-    WindowProcReturn,
+    CallWindowProcedureReturn,
     /// <summary>
     /// Monitors <c>WH_GETMESSAGE</c> messages posted to a message queue prior to their retrieval.
     /// </summary>
-    MessageQueueRead
+    GetMessage
 }

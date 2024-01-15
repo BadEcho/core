@@ -25,16 +25,16 @@ enum HookType
 	 * Monitors \c WH_CALLWNDPROC messages before the system sends them to a destination window
 	 * procedure.
 	 */
-	WindowProcPreview,
+	CallWindowProcedure,
 	/**
 	 * Monitors \c WH_CALLWNDPROCRET messages after they have been processed by the destination
 	 * window procedure.
 	 */
-	WindowProcReturn,
+	CallWindowProcedureReturn,
 	/**
 	 * Monitors \c WH_GETMESSAGE messages posted to a message queue prior to their retrieval.
 	 */
-	MessageQueueRead
+	GetMessages
 };
 
 enum
