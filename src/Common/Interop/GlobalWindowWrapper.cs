@@ -85,10 +85,10 @@ public sealed class GlobalWindowWrapper : WindowWrapper, IDisposable
     {
         base.OnHookAdded(addedHook);
 
-        InitializeGlobalHook();
+        InitializeHook();
     }
 
-    private async void InitializeGlobalHook()
+    private async void InitializeHook()
     {
         if (_hookExecutor.Window != null)
             return;
