@@ -20,8 +20,7 @@ namespace BadEcho.Interop;
 /// <param name="msg">The message.</param>
 /// <param name="wParam">Additional message-specific information.</param>
 /// <param name="lParam">Additional message-specific information.</param>
-/// <param name="handled">A value that indicates whether the message was handled.</param>
 /// <returns>
 /// The result of the message processing, which of course depends on the message being processed.
 /// </returns>
-public delegate HookResult GetMessagesHookProc(IntPtr hWnd, ref uint msg, ref IntPtr wParam, ref IntPtr lParam);
+public delegate HookResult GetMessageHookProc(IntPtr hWnd, ref uint msg, ref IntPtr wParam, ref IntPtr lParam);
