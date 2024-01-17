@@ -320,4 +320,7 @@
 	<data name="UnhookWindowFailed" xml:space="preserve">
 		<value>Failed to unregister window hook for thread with ID '{0}'.</value>
 	</data>
+	<data name="UnhookMessageQueueFailed" xml:space="preserve">
+		<value>Failed to unregister message queue hook for thread with ID '{0}'.</value>
+	</data>
 </root>

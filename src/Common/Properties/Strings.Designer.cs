@@ -700,6 +700,15 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to unregister message queue hook for thread with ID &apos;{0}&apos;..
+        /// </summary>
+        public static string UnhookMessageQueueFailed {
+            get {
+                return ResourceManager.GetString("UnhookMessageQueueFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to unregister window hook for thread with ID &apos;{0}&apos;..
         /// </summary>
         public static string UnhookWindowFailed {
