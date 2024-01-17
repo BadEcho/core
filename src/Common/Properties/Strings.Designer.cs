@@ -286,15 +286,6 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to create global hook message queue..
-        /// </summary>
-        public static string GlobalHookMessageQueueFailed {
-            get {
-                return ResourceManager.GetString("GlobalHookMessageQueueFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to A glyph for the character &apos;{0}&apos; could not be found, most likely because it was not part of the character set used to generate the font&apos;s atlas..
         /// </summary>
         public static string GlyphNotInFont {
@@ -480,6 +471,15 @@ namespace BadEcho.Properties {
         public static string LoggingMissingMessage {
             get {
                 return ResourceManager.GetString("LoggingMissingMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to create global hook message queue..
+        /// </summary>
+        public static string MessageQueueForHookFailed {
+            get {
+                return ResourceManager.GetString("MessageQueueForHookFailed", resourceCulture);
             }
         }
         
@@ -696,6 +696,15 @@ namespace BadEcho.Properties {
         public static string ThreadExecutorSourceNotInitialized {
             get {
                 return ResourceManager.GetString("ThreadExecutorSourceNotInitialized", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to unregister window hook for thread with ID &apos;{0}&apos;..
+        /// </summary>
+        public static string UnhookWindowFailed {
+            get {
+                return ResourceManager.GetString("UnhookWindowFailed", resourceCulture);
             }
         }
         

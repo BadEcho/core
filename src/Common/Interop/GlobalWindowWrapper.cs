@@ -13,6 +13,8 @@
 
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using BadEcho.Extensions;
+using BadEcho.Logging;
 using BadEcho.Properties;
 
 namespace BadEcho.Interop;
@@ -72,8 +74,7 @@ public sealed class GlobalWindowWrapper : WindowWrapper, IDisposable
         if (_disposed)
             return;
 
-        if (_windowHooked) 
-            Hooks.RemoveHook(HookType.CallWindowProcedure, _threadId);
+        CloseHook();
 
         _hookExecutor.Dispose();
         
@@ -88,6 +89,14 @@ public sealed class GlobalWindowWrapper : WindowWrapper, IDisposable
         InitializeHook();
     }
 
+    /// <inheritdoc/>
+    protected override void OnDestroyingWindow()
+    {
+        base.OnDestroyingWindow();
+
+        CloseHook();
+    }
+
     private async void InitializeHook()
     {
         if (_hookExecutor.Window != null)
@@ -96,12 +105,23 @@ public sealed class GlobalWindowWrapper : WindowWrapper, IDisposable
         await _hookExecutor.RunAsync();
             
         if (_hookExecutor.Window == null)
-            throw new InvalidOperationException(Strings.GlobalHookMessageQueueFailed);
+            throw new InvalidOperationException(Strings.MessageQueueForHookFailed);
 
         _hookExecutor.Window.AddHook(WindowProcedure);
 
         _windowHooked = Hooks.AddHook(HookType.CallWindowProcedure,
                                       _threadId,
                                       _hookExecutor.Window.Handle);
+    }
+
+    private void CloseHook()
+    {
+        if (!_windowHooked)
+            return;
+
+        _windowHooked = !Hooks.RemoveHook(HookType.CallWindowProcedure, _threadId);
+
+        if (_windowHooked)
+            Logger.Warning(Strings.UnhookWindowFailed.InvariantFormat(_threadId));
     }
 }
