@@ -14,10 +14,10 @@
 namespace BadEcho.Interop;
 
 /// <summary>
-/// Defines a publisher of events associated with a hook chain.
+/// Defines a publisher of messages sent through a hook chain.
 /// </summary>
 /// <typeparam name="THookProc">The type of hook procedure used by the hook type.</typeparam>
-public interface IEventSource<in THookProc> where THookProc : Delegate
+public interface IMessageSource<in THookProc> where THookProc : Delegate
 {
     /// <summary>
     /// Adds a hook that will receives messages sent to the hook chain.

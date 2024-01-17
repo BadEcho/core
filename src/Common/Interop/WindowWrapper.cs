@@ -18,7 +18,7 @@ namespace BadEcho.Interop;
 /// <summary>
 /// Provides a wrapper around an <c>HWND</c> of a provided window and the messages it receives.
 /// </summary>
-public abstract class WindowWrapper : IEventSource<WindowHookProc>
+public abstract class WindowWrapper : IMessageSource<WindowHookProc>
 {
     private readonly CachedWeakList<WindowHookProc> _hooks = new();
 
