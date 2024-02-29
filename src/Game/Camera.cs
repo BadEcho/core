@@ -30,7 +30,7 @@ public sealed class Camera : IPositionalEntity
     private float _zoomSpeed = 0.3f;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Camera"/> class.
+    /// Initializes a new instance of the <see cref="Camera"/> class.   
     /// </summary>
     /// <param name="viewportConnector">A connection to the render-target surface that the camera will be looking at.</param>
     public Camera(ViewportConnector viewportConnector)
@@ -42,15 +42,12 @@ public sealed class Camera : IPositionalEntity
         Origin = new Vector2(_viewportConnector.VirtualSize.Width / 2f, _viewportConnector.VirtualSize.Height / 2f);
     }
 
+    /// <summary>
+    /// Gets the bounding rectangle of visible content corresponding to its resolution as it was before any scaling meant to fit
+    /// said content to the render-target surface was applied.
+    /// </summary>
     public RectangleF VirtualArea
-    {
-        get
-        {
-            var virtualArea = new RectangleF(Position.ToPoint(), _viewportConnector.VirtualSize);
-
-            return virtualArea;
-        }
-    }
+        => new(Position.X, Position.Y, _viewportConnector.VirtualSize.Width, _viewportConnector.VirtualSize.Height);
 
     /// <inheritdoc />
     public Vector2 Position 

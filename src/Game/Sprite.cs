@@ -136,6 +136,10 @@ public class Sprite : IPositionalEntity, ISpatialEntity
         spriteBatch.Draw(Texture, (Rectangle) GetTargetArea(), GetSourceArea(), Color.White);
     }
 
+    /// <summary>
+    /// Draws the sprite to the screen.
+    /// </summary>
+    /// <param name="spriteBatch">The <see cref="ConfiguredSpriteBatch"/> instance to use to draw the sprite.</param>
     public void Draw(ConfiguredSpriteBatch spriteBatch)
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));

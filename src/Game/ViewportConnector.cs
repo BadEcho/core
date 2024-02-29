@@ -88,7 +88,8 @@ public class ViewportConnector
         => new(Device.Viewport.Width, Device.Viewport.Height);
 
     /// <summary>
-    /// Gets the base resolution of drawn content, scaled to fit the actual surface <see cref="Size"/> during rendering.
+    /// Gets the base resolution of drawn content, which will be scaled to fit the actual surface
+    /// <see cref="Size"/> during rendering.
     /// </summary>
     public Size VirtualSize
     { get; }
