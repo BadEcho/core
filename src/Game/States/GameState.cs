@@ -166,7 +166,7 @@ public abstract class GameState : IDisposable
             transform *= Matrix.CreateRotationZ(MathHelper.ToRadians(ActivationPercentage * 360));
 
         var alpha = StateTransitions.HasFlag(Transitions.Fade)
-            ? (float) Math.Pow(ActivationPercentage, PowerCurve)
+            ? CalculateAnimationCurve()
             : 1f;
 
         bool clippingEnabled
@@ -322,8 +322,11 @@ public abstract class GameState : IDisposable
             : dX * (viewport.Height - ContentOrigin.Y) - dX * (viewport.Height - ContentOrigin.Y) * CalculateAnimationCurve();
     }
 
+    // Will make this configurable if there's ever a need for more control over the easing functions.
     private float CalculateAnimationCurve()
-        => (float) Math.Pow(ActivationPercentage, PowerCurve);
+        => ActivationStatus == ActivationStatus.Activating
+            ? (float) (1 - Math.Pow(1 - ActivationPercentage, PowerCurve))  // Ease-out
+            : (float) Math.Pow(ActivationPercentage, PowerCurve);           // Ease-in
 
     private Matrix CreateZoomTransform(Viewport viewport)
     {
