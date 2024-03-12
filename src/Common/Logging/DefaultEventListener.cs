@@ -27,7 +27,7 @@ internal sealed class DefaultEventListener : EventListener
     protected override void OnEventSourceCreated(EventSource eventSource)
     {
         base.OnEventSourceCreated(eventSource);
-
+        
         if (eventSource.Name == LogSource.EventSourceName)
             EnableEvents(eventSource, EventLevel.LogAlways, EventKeywords.All);
     }
@@ -35,6 +35,15 @@ internal sealed class DefaultEventListener : EventListener
     /// <inheritdoc/>
     protected override void OnEventWritten(EventWrittenEventArgs eventData)
     {
+        base.OnEventWritten(eventData);
+
+        // We must continue to check that the event source name corresponds to our own (BadEcho).
+        // Even though our event source is the only one we explicitly enabled, this listener will have
+        // been automatically attached to any event sources enabled at process start, all courtesy of the runtime.
+        // One such event source is 'EventCounters', released with VS 17.8 and exceptionally noisy.
+        if (eventData.EventSource.Name!= LogSource.EventSourceName)
+            return;
+
         var outputMessage = $@"{eventData.TimeStamp:HH:mm} | {eventData.OSThreadId} | {eventData.Level}";
 
         outputMessage
@@ -47,7 +56,5 @@ internal sealed class DefaultEventListener : EventListener
         }
 
         Debugger.Log(0, null, $"{outputMessage}{Environment.NewLine}");
-
-        base.OnEventWritten(eventData);
     }
 }
