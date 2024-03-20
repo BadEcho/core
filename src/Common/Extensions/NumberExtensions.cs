@@ -64,4 +64,10 @@ public static class NumberExtensions
 
         return Math.Abs(source - other) < epsilon;
     }
+
+    public static float NextValue(this float source)
+        => source + (Math.Abs(source) + 10) * MACHINE_FLOAT_EPSILON;
+
+    public static float PreviousValue(this float source)
+        => source - (Math.Abs(source) + 10) * MACHINE_FLOAT_EPSILON;
 }
