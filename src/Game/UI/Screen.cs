@@ -69,6 +69,7 @@ public sealed class Screen : IArrangeable, IInputHandler
 
         _content = content;
         _content.Parent = this;
+        _content.InputHandler = this;
     }
 
     /// <summary>
