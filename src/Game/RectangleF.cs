@@ -235,7 +235,7 @@ public readonly struct RectangleF : IEquatable<RectangleF>, IShape
     /// <returns>True if <c>point</c> is contained within this rectangle; otherwise, false.</returns>
     /// <remarks>
     /// <para>
-    /// Rectangles are endpoint exclusive. If a point lies on the right or bottom edge, it's considered to be
+    /// Rectangles are endpoint-exclusive. If a point lies on the right or bottom edge, it's considered to be
     /// outside of the rectangle.
     ///</para>
     /// <para>
@@ -266,11 +266,11 @@ public readonly struct RectangleF : IEquatable<RectangleF>, IShape
 
         if (Center == other.Center)
             return new Vector2(0, Height / 2 + other.Height / 2);
-
+        
         // Finding the penetration vector for axis-aligned rectangles is simple. We just look at the
         // intersecting rectangle and return a vector matching the direction and magnitude of its width
         // or height, whichever is smaller (giving a more accurate and smoother correction).
-        return intersection.Width < intersection.Height
+        return intersection.Width < intersection.Height && (other.X > X || Right > other.Right)
             ? new Vector2(Center.X < other.Center.X ? -intersection.Width : intersection.Width, 0)
             : new Vector2(0, Center.Y < other.Center.Y ? -intersection.Height : intersection.Height);
     }
@@ -306,7 +306,8 @@ public readonly struct RectangleF : IEquatable<RectangleF>, IShape
     public PointF GetPointClosestTo(PointF point)
     {
         PointF upperLeft = Location;
-        PointF bottomRight = new(Right, Bottom);
+        // Remember, our rectangles are endpoint-exclusive.
+        PointF bottomRight = new(Right.PreviousValue(), Bottom.PreviousValue());
 
         // If the given point is within our rectangle, then the closest point to it is the given point itself.
         float closestX = point.X;
