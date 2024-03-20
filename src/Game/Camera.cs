@@ -11,9 +11,12 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Numerics;
 using System.Runtime.InteropServices;
 using BadEcho.Game.Properties;
 using Microsoft.Xna.Framework;
+using Vector2 = Microsoft.Xna.Framework.Vector2;
+using Vector3 = Microsoft.Xna.Framework.Vector3;
 
 namespace BadEcho.Game;
 
@@ -68,6 +71,25 @@ public sealed class Camera : IPositionalEntity
     /// <inheritdoc />
     public float AngularVelocity 
     { get; set; }
+
+    public RectangleF Bounds
+    {
+        get
+        {
+            Matrix view = GetVirtualViewMatrix();
+            Matrix projection = Matrix.CreateOrthographicOffCenter(
+                0, _viewportConnector.VirtualSize.Width, _viewportConnector.VirtualSize.Height, 0, -1, 0);
+
+            Matrix.Multiply(ref view, ref projection, out projection);
+
+            var frustum = new BoundingFrustum(projection);
+            Vector3[] corners = frustum.GetCorners();
+            Vector3 topLeft = corners[0];
+            Vector3 bottomRight = corners[2];
+
+            return new RectangleF(topLeft.X, topLeft.Y, bottomRight.X - topLeft.X, bottomRight.Y - topLeft.Y);
+        }
+    }
 
     /// <summary>
     /// Gets the location in world space where the coordinate axes intersect (i.e., the center).
@@ -164,13 +186,7 @@ public sealed class Camera : IPositionalEntity
     /// to change at the same rate as the position of the camera.
     /// </remarks>
     public Matrix GetViewMatrix(Vector2 parallaxFactor)
-        // TODO: Document purpose of each operation
-        => Matrix.CreateTranslation(new Vector3(-Position * parallaxFactor, 0f))
-           * Matrix.CreateTranslation(new Vector3(-Origin, 0f))
-           * Matrix.CreateRotationZ(Angle)
-           * Matrix.CreateScale(Zoom, Zoom, 1f)
-           * Matrix.CreateTranslation(new Vector3(Origin, 0f))
-           * _viewportConnector.GetScaleMatrix();
+        => GetVirtualViewMatrix(parallaxFactor) * _viewportConnector.GetScaleMatrix();
 
     /// <summary>
     /// Directly moves the camera to the specified position.
@@ -203,5 +219,65 @@ public sealed class Camera : IPositionalEntity
         Require.NotNull(time, nameof(time));
 
         Zoom -= ZoomSpeed * (float) time.ElapsedGameTime.TotalSeconds;
+    }
+
+    private Matrix GetVirtualViewMatrix()
+        => GetVirtualViewMatrix(Vector2.One);
+
+    private Matrix GetVirtualViewMatrix(Vector2 parallaxFactor)
+        => Matrix.CreateTranslation(new Vector3(-Position * parallaxFactor, 0f))
+           * Matrix.CreateTranslation(new Vector3(-Origin, 0f))
+           * Matrix.CreateRotationZ(Angle)
+           * Matrix.CreateScale(Zoom, Zoom, 1f)
+           * Matrix.CreateTranslation(new Vector3(Origin, 0f));
+
+    public IEnumerable<ISpatialEntity> CreateScrollRegions(SizeF padding)
+    {
+        var top = new RectangleF(VirtualArea.X, VirtualArea.Y, VirtualArea.Width, padding.Height);
+        var left = new RectangleF(VirtualArea.X, VirtualArea.Y + padding.Height, padding.Width, padding.Height);
+        var right = new RectangleF(VirtualArea.Right - padding.Width,
+                                   VirtualArea.Y + padding.Height,
+                                   padding.Width,
+                                   padding.Height);
+        var bottom = new RectangleF(VirtualArea.X,
+                                    VirtualArea.Bottom - padding.Height,
+                                    VirtualArea.Width,
+                                    padding.Height);
+
+        return new[]
+               {
+                   new ScrollRegion(this, () => new RectangleF(VirtualArea.X, VirtualArea.Y, VirtualArea.Width, padding.Height)),
+                   new ScrollRegion(this, () => new RectangleF(VirtualArea.X, VirtualArea.Y + padding.Height, padding.Width, VirtualArea.Height - padding.Height * 2)),
+                   new ScrollRegion(this, () => new RectangleF(VirtualArea.Right - padding.Width,
+                                                               VirtualArea.Y + padding.Height,
+                                                               padding.Width,
+                                                               VirtualArea.Height - padding.Height * 2)),
+                   new ScrollRegion(this, () => new RectangleF(VirtualArea.X,
+                                                               VirtualArea.Bottom - padding.Height,
+                                                               VirtualArea.Width,
+                                                               padding.Height))
+               };
+    }
+
+    private sealed class ScrollRegion : ISpatialEntity
+    {
+        private readonly Camera _camera;
+        private readonly Func<IShape> _bounds;
+
+        public ScrollRegion(Camera camera, Func<IShape> getBounds)
+        {
+            _camera = camera;
+            _bounds = getBounds;
+        }
+
+        public IShape Bounds
+            => _bounds();
+
+        public void ResolveCollision(IShape shape)
+        {
+            Vector2 penetration = Bounds.CalculatePenetration(shape);
+
+            _camera.Position += penetration;
+        }
     }
 }
