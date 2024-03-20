@@ -11,6 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Extensions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -27,7 +28,7 @@ public sealed class PlayerMovementSystem : IMovementSystem
     private const Keys MOVEMENT_RIGHT = Keys.D;
     private const Keys MOVEMENT_DOWN = Keys.S;
     // TODO: Will be configurable based on entity.
-    private const float VELOCITY_INCREMENT = .3f;
+    private const float VELOCITY_INCREMENT = .05f;
     private const float VELOCITY_MAX = 1.5f;
     private const float VELOCITY_MIN = -1.5f;
 
@@ -62,7 +63,12 @@ public sealed class PlayerMovementSystem : IMovementSystem
         bool negativeMovement = keyboardState.IsKeyDown(negativeDirectionKey);
 
         if (!positiveMovement && !negativeMovement)
-            return 0;
+        {
+            if (currentVelocity.ApproximatelyEquals(0))
+                return 0;
+
+            velocityDelta += (currentVelocity > 0 ? -1 : 1) * VELOCITY_INCREMENT;
+        }
 
         if (positiveMovement)
         {
