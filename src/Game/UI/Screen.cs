@@ -11,6 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -67,9 +68,7 @@ public sealed class Screen : IArrangeable, IInputHandler
         _device = device;
         _screenBounds = new Rectangle(0, 0, device.Viewport.Width, device.Viewport.Height);
 
-        _content = content;
-        _content.Parent = this;
-        _content.InputHandler = this;
+        LoadContent(content);
     }
 
     /// <summary>
@@ -85,9 +84,8 @@ public sealed class Screen : IArrangeable, IInputHandler
             
             _content.Parent = null;
             _content.InputHandler = null;
-            _content = value;
-            _content.Parent = this;
-            _content.InputHandler = this;
+
+            LoadContent(value);
         }
     }
 
@@ -167,6 +165,14 @@ public sealed class Screen : IArrangeable, IInputHandler
         Require.NotNull(spriteBatch, nameof(spriteBatch));
 
         Content.Draw(spriteBatch);
+    }
+
+    [MemberNotNull(nameof(_content))]
+    private void LoadContent(Panel content)
+    {
+        _content = content;
+        _content.Parent = this;
+        _content.InputHandler = this;
     }
 
     private void UpdateInput()
