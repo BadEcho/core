@@ -28,7 +28,8 @@ public sealed class PlayerMovementSystem : IMovementSystem
     private const Keys MOVEMENT_RIGHT = Keys.D;
     private const Keys MOVEMENT_DOWN = Keys.S;
     // TODO: Will be configurable based on entity.
-    private const float VELOCITY_INCREMENT = .05f;
+    private const float VELOCITY_INCREMENT = .3f;
+    private const float FRICTION = 0.05f;
     private const float VELOCITY_MAX = 1.5f;
     private const float VELOCITY_MIN = -1.5f;
 
@@ -67,7 +68,7 @@ public sealed class PlayerMovementSystem : IMovementSystem
             if (currentVelocity.ApproximatelyEquals(0))
                 return 0;
 
-            velocityDelta += (currentVelocity > 0 ? -1 : 1) * VELOCITY_INCREMENT;
+            velocityDelta += (currentVelocity > 0 ? -1 : 1) * FRICTION;
         }
 
         if (positiveMovement)
@@ -75,7 +76,7 @@ public sealed class PlayerMovementSystem : IMovementSystem
             if (currentVelocity < 0)
                 currentVelocity = 0;
 
-            velocityDelta += VELOCITY_INCREMENT;
+            velocityDelta += VELOCITY_INCREMENT - FRICTION;
         }
 
         if (negativeMovement)
@@ -83,7 +84,7 @@ public sealed class PlayerMovementSystem : IMovementSystem
             if (currentVelocity > 0)
                 currentVelocity = 0;
 
-            velocityDelta -= VELOCITY_INCREMENT;
+            velocityDelta -= VELOCITY_INCREMENT + FRICTION;
         }
 
         return (float) Math.Min(VELOCITY_MAX, Math.Max(VELOCITY_MIN, currentVelocity + velocityDelta));
