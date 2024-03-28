@@ -11,12 +11,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.Numerics;
-using System.Runtime.InteropServices;
 using BadEcho.Game.Properties;
 using Microsoft.Xna.Framework;
-using Vector2 = Microsoft.Xna.Framework.Vector2;
-using Vector3 = Microsoft.Xna.Framework.Vector3;
 
 namespace BadEcho.Game;
 
@@ -77,12 +73,9 @@ public sealed class Camera : IPositionalEntity
         get
         {
             Matrix view = GetVirtualViewMatrix();
-            Matrix projection = Matrix.CreateOrthographicOffCenter(
-                0, _viewportConnector.VirtualSize.Width, _viewportConnector.VirtualSize.Height, 0, -1, 0);
+            Matrix viewProjection = view.MultiplyBy2DProjection(_viewportConnector.VirtualSize);
 
-            Matrix.Multiply(ref view, ref projection, out projection);
-
-            var frustum = new BoundingFrustum(projection);
+            var frustum = new BoundingFrustum(viewProjection);
             Vector3[] corners = frustum.GetCorners();
             Vector3 topLeft = corners[0];
             Vector3 bottomRight = corners[2];

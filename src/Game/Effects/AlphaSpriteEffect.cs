@@ -27,7 +27,8 @@ public sealed class AlphaSpriteEffect : Effect, IStandardEffect
     private EffectParameter _alphaParam;
 
     private Viewport _lastViewport;
-    private Matrix _projection;
+    private Matrix? _lastTransform;
+    private Matrix _viewProjection;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AlphaSpriteEffect"/> class.
@@ -76,27 +77,19 @@ public sealed class AlphaSpriteEffect : Effect, IStandardEffect
     {
         Viewport viewport = GraphicsDevice.Viewport;
 
-        if (viewport.Width != _lastViewport.Width || viewport.Height != _lastViewport.Height)
-        {   // 3D cameras look into the -z direction (z = 1 is in front of z = 0).
-            // Sprite batch layers are ordered in the opposite (z  = 0 is in front of z = 1).
-            // We correct this by passing 0 for zNearPlane and -1 for zFarPlane; essentially a
-            // reverse mapping of the two.
-            Matrix.CreateOrthographicOffCenter(
-                0, viewport.Width, viewport.Height, 0, 0, -1, out _projection);
+        bool parametersChanged =
+            viewport.Width != _lastViewport.Width || viewport.Height != _lastViewport.Height || _lastTransform != MatrixTransform;
 
-            if (GraphicsDevice.UseHalfPixelOffset)
-            {
-                _projection.M41 -= 0.5f * _projection.M11;
-                _projection.M42 -= 0.5f * _projection.M22;
-            }
+        if (parametersChanged)
+        {
+            _viewProjection = (MatrixTransform ?? Matrix.Identity)
+                .MultiplyBy2DProjection(viewport.Bounds.Size, GraphicsDevice.UseHalfPixelOffset);
 
             _lastViewport = viewport;
+            _lastTransform = MatrixTransform;
         }
 
-        if (MatrixTransform.HasValue)
-            _matrixParam.SetValue(MatrixTransform.GetValueOrDefault() * _projection);
-        else
-            _matrixParam.SetValue(_projection);
+        _matrixParam.SetValue(_viewProjection);
     }
     
     [MemberNotNull(nameof(_matrixParam), nameof(_alphaParam))]

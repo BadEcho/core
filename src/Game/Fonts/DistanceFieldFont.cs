@@ -243,12 +243,11 @@ public sealed class DistanceFieldFont
         {
             GraphicsDevice device = _font._device;
 
-            var projection =
-                Matrix.CreateOrthographicOffCenter(0, device.Viewport.Width, device.Viewport.Height, 0, 0, -1);
+            Matrix viewProjection = view.MultiplyBy2DProjection(device.Viewport.Bounds.Size);
 
             var effect = new DistanceFieldFontEffect(device)
                          {
-                             MatrixTransform = view * projection,
+                             MatrixTransform = viewProjection,
                              AtlasSize = new Vector2(_font.Characteristics.Width, _font.Characteristics.Height),
                              DistanceRange = _font.Characteristics.DistanceRange,
                              Texture = _font.Atlas,

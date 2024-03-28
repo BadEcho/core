@@ -152,8 +152,8 @@ public sealed class TileMap : Extensible, IModelRenderer
     {
         if (_layerModelMap.Count == 0)
             CreateModels();
-        
-        var projection = Matrix.CreateOrthographicOffCenter(0, _device.Viewport.Width, _device.Viewport.Height, 0, 0, -1);
+
+        var projection = Matrix.Identity.MultiplyBy2DProjection(_device.Viewport.Bounds.Size);
 
         foreach (var layer in Layers)
         {

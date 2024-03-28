@@ -27,6 +27,7 @@ public abstract class GameState : IDisposable
         Transitions.MoveLeft | Transitions.MoveRight | Transitions.MoveUp | Transitions.MoveDown;
 
     private ContentManager? _contentManager;
+    private AlphaSpriteEffect? _alphaEffect;
     private bool _isExiting;
     private bool _disposed;
 
@@ -172,11 +173,10 @@ public abstract class GameState : IDisposable
         bool clippingEnabled
             = ActivationStatus is ActivationStatus.Activated or ActivationStatus.Deactivated || ClipDuringTransitions;
 
-        var alphaEffect = new AlphaSpriteEffect(spriteBatch.GraphicsDevice)
-                          {   
-                              Alpha = alpha,
-                              MatrixTransform = transform
-                          };
+        _alphaEffect ??= new AlphaSpriteEffect(spriteBatch.GraphicsDevice);
+
+        _alphaEffect.Alpha = alpha;
+        _alphaEffect.MatrixTransform = transform;
 
         var configuredSpriteBatch = new ConfiguredSpriteBatch(
             spriteBatch,
@@ -186,7 +186,7 @@ public abstract class GameState : IDisposable
             rasterizerState: new RasterizerState { ScissorTestEnable = clippingEnabled },
             matrixTransform: transform);
 
-        configuredSpriteBatch.LoadEffect(alphaEffect);
+        configuredSpriteBatch.LoadEffect(_alphaEffect);
         configuredSpriteBatch.Begin();
         
         DrawCore(configuredSpriteBatch);
