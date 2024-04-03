@@ -124,6 +124,15 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Can only create a scrolling region in the up, left, right, and down direction..
+        /// </summary>
+        internal static string InvalidScrollRegionDirection {
+            get {
+                return ResourceManager.GetString("InvalidScrollRegionDirection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Label control requires a font to be set in order to draw text..
         /// </summary>
         internal static string LabelNoFont {

@@ -22,7 +22,7 @@ namespace BadEcho.Game;
 public sealed class Camera : IPositionalEntity
 {
     private readonly ViewportConnector _viewportConnector;
-    
+
     private float _zoom = 1f;
     private float _minimumZoom = 0.1f;
     private float _maximumZoom = float.MaxValue;
@@ -37,44 +37,43 @@ public sealed class Camera : IPositionalEntity
         Require.NotNull(viewportConnector, nameof(viewportConnector));
 
         _viewportConnector = viewportConnector;
-        
+
         Origin = new Vector2(_viewportConnector.VirtualSize.Width / 2f, _viewportConnector.VirtualSize.Height / 2f);
     }
 
+    /// <inheritdoc />
+    public Vector2 Position
+    { get; set; }
+
+    /// <inheritdoc />
+    public Vector2 LastMovement
+    { get; set; }
+
+    /// <inheritdoc />
+    public Vector2 Velocity
+    { get; set; }
+
+    /// <inheritdoc />
+    public float Angle
+    { get; set; }
+
+    /// <inheritdoc />
+    public float AngularVelocity
+    { get; set; }
+
     /// <summary>
-    /// Gets the bounding rectangle of visible content corresponding to its resolution as it was before any scaling meant to fit
-    /// said content to the render-target surface was applied.
+    /// Gets the bounding rectangle of visible content, with coordinates corresponding to the virtual size of the content,
+    /// which is its size prior to any scaling meant to fit it to the render-target surface is applied.
     /// </summary>
-    public RectangleF VirtualArea
-        => new(Position.X, Position.Y, _viewportConnector.VirtualSize.Width, _viewportConnector.VirtualSize.Height);
-
-    /// <inheritdoc />
-    public Vector2 Position 
-    { get; set; }
-
-    /// <inheritdoc />
-    public Vector2 LastMovement 
-    { get; set; }
-
-    /// <inheritdoc />
-    public Vector2 Velocity 
-    { get; set; }
-
-    /// <inheritdoc />
-    public float Angle 
-    { get; set; }
-
-    /// <inheritdoc />
-    public float AngularVelocity 
-    { get; set; }
-
     public RectangleF Bounds
     {
         get
         {
+            // The virtual view matrix will be free of any scaling used to fit the content to the render-target surface.
             Matrix view = GetVirtualViewMatrix();
             Matrix viewProjection = view.MultiplyBy2DProjection(_viewportConnector.VirtualSize);
 
+            // We can easily get our bounds by using the corners of a bounding frustum that uses our view * projection matrix.
             var frustum = new BoundingFrustum(viewProjection);
             Vector3[] corners = frustum.GetCorners();
             Vector3 topLeft = corners[0];
@@ -213,6 +212,21 @@ public sealed class Camera : IPositionalEntity
 
         Zoom -= ZoomSpeed * (float) time.ElapsedGameTime.TotalSeconds;
     }
+    
+    /// <summary>
+    /// Creates spatial regions on the edges of this camera's space that will result in the camera scrolling when entities
+    /// collide with it.
+    /// </summary>
+    /// <param name="size"></param>
+    /// <returns></returns>
+    public IEnumerable<ISpatialEntity> CreateScrollRegions(SizeF size)
+        =>
+        [
+            new ScrollRegion(this, MovementDirection.Up, size),
+            new ScrollRegion(this, MovementDirection.Left, size),
+            new ScrollRegion(this, MovementDirection.Right, size),
+            new ScrollRegion(this, MovementDirection.Down, size)
+        ];
 
     private Matrix GetVirtualViewMatrix()
         => GetVirtualViewMatrix(Vector2.One);
@@ -224,48 +238,62 @@ public sealed class Camera : IPositionalEntity
            * Matrix.CreateScale(Zoom, Zoom, 1f)
            * Matrix.CreateTranslation(new Vector3(Origin, 0f));
 
-    public IEnumerable<ISpatialEntity> CreateScrollRegions(SizeF padding)
-    {
-        var top = new RectangleF(VirtualArea.X, VirtualArea.Y, VirtualArea.Width, padding.Height);
-        var left = new RectangleF(VirtualArea.X, VirtualArea.Y + padding.Height, padding.Width, padding.Height);
-        var right = new RectangleF(VirtualArea.Right - padding.Width,
-                                   VirtualArea.Y + padding.Height,
-                                   padding.Width,
-                                   padding.Height);
-        var bottom = new RectangleF(VirtualArea.X,
-                                    VirtualArea.Bottom - padding.Height,
-                                    VirtualArea.Width,
-                                    padding.Height);
-
-        return new[]
-               {
-                   new ScrollRegion(this, () => new RectangleF(VirtualArea.X, VirtualArea.Y, VirtualArea.Width, padding.Height)),
-                   new ScrollRegion(this, () => new RectangleF(VirtualArea.X, VirtualArea.Y + padding.Height, padding.Width, VirtualArea.Height - padding.Height * 2)),
-                   new ScrollRegion(this, () => new RectangleF(VirtualArea.Right - padding.Width,
-                                                               VirtualArea.Y + padding.Height,
-                                                               padding.Width,
-                                                               VirtualArea.Height - padding.Height * 2)),
-                   new ScrollRegion(this, () => new RectangleF(VirtualArea.X,
-                                                               VirtualArea.Bottom - padding.Height,
-                                                               VirtualArea.Width,
-                                                               padding.Height))
-               };
-    }
-
+    /// <summary>
+    /// Provides a spatial entity that will result in the camera scrolling in a specified direction when an
+    /// entity collides with it.
+    /// </summary>
     private sealed class ScrollRegion : ISpatialEntity
     {
         private readonly Camera _camera;
-        private readonly Func<IShape> _bounds;
+        private readonly MovementDirection _direction;
+        private readonly SizeF _size;
 
-        public ScrollRegion(Camera camera, Func<IShape> getBounds)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ScrollRegion"/> class.
+        /// </summary>
+        /// <param name="camera">The camera that this region scrolls.</param>
+        /// <param name="direction">The direction this region will cause the camera to scroll when collided with.</param>
+        /// <param name="size">The size of the region in relation to the edge of the camera it occupies.</param>
+        public ScrollRegion(Camera camera, MovementDirection direction, SizeF size)
         {
             _camera = camera;
-            _bounds = getBounds;
+            _direction = direction;
+            _size= size;
         }
 
+        /// <inheritdoc/>
         public IShape Bounds
-            => _bounds();
+        {
+            get
+            {
+                RectangleF cameraBounds = _camera.Bounds;
 
+                return _direction switch
+                {
+                    MovementDirection.Up
+                        => new RectangleF(cameraBounds.X, cameraBounds.Y, cameraBounds.Width, _size.Height),
+                    MovementDirection.Left
+                        => new RectangleF(cameraBounds.X,
+                                          cameraBounds.Y + _size.Height,
+                                          _size.Width,
+                                          cameraBounds.Height - _size.Height * 2),
+                    MovementDirection.Right
+                        => new RectangleF(cameraBounds.Right - _size.Width,
+                                          cameraBounds.Y + _size.Height,
+                                          _size.Width,
+                                          cameraBounds.Height - _size.Height * 2),
+                    MovementDirection.Down
+                        => new RectangleF(cameraBounds.X,
+                                          cameraBounds.Bottom - _size.Height,
+                                          cameraBounds.Width,
+                                          _size.Height),
+                    MovementDirection.None => RectangleF.Empty,
+                    _ => throw new InvalidOperationException(Strings.InvalidScrollRegionDirection)
+                };
+            }
+        }
+
+        /// <inheritdoc/>
         public void ResolveCollision(IShape shape)
         {
             Vector2 penetration = Bounds.CalculatePenetration(shape);

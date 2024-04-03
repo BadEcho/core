@@ -149,4 +149,7 @@
 	<data name="GameStateResourcesNotLoaded" xml:space="preserve">
 		<value>Game state resources were not loaded.</value>
 	</data>
+	<data name="InvalidScrollRegionDirection" xml:space="preserve">
+		<value>Invalid movement direction for scrolling region.</value>
+	</data>
 </root>
