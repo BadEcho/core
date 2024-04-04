@@ -27,7 +27,7 @@ public sealed class Camera : IPositionalEntity
     private float _minimumZoom = 0.1f;
     private float _maximumZoom = float.MaxValue;
     private float _zoomSpeed = 0.3f;
-
+    
     /// <summary>
     /// Initializes a new instance of the <see cref="Camera"/> class.   
     /// </summary>
@@ -84,7 +84,7 @@ public sealed class Camera : IPositionalEntity
     }
 
     /// <summary>
-    /// Gets the location in world space where the coordinate axes intersect (i.e., the center).
+    /// Gets the location in world-space where the coordinate axes intersect (i.e., the center).
     /// </summary>
     public Vector2 Origin
     { get; }
@@ -185,9 +185,9 @@ public sealed class Camera : IPositionalEntity
     /// </summary>
     /// <param name="position">The position to center the camera on.</param>
     public void MoveTo(Vector2 position)
-    {   // Simply setting the position to the the provided value will place it in the upper-left corner of the
-        // camera's view. We can center the camera in on the position instead by subtracting our origin from
-        // the position, which will shift it to the center of our view. Perfect!
+    {   // The "Position" property specifies the set of coordinates for the camera's upper-left corner.
+        // We can offset the value provided to this function by the center of world-space to shift said
+        // value to the center of the camera's view.
         Position = position - Origin;
     }
 

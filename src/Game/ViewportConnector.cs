@@ -106,7 +106,7 @@ public class ViewportConnector
     /// <returns>A scaling <see cref="Matrix"/> to use to transform coordinates.</returns>
     /// <remarks>
     /// The matrix returned here is a scale matrix with its dimensional scales equal to the ratio between physical and
-    /// virtual resolutions. This should be used during the transformation of world space into view space by consumers
+    /// virtual resolutions. This should be used during the transformation of world-space into view space by consumers
     /// of this viewport connector. 
     /// </remarks>
     public Matrix GetScaleMatrix()
