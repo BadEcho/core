@@ -306,8 +306,9 @@ public readonly struct RectangleF : IEquatable<RectangleF>, IShape
     public PointF GetPointClosestTo(PointF point)
     {
         PointF upperLeft = Location;
-        // Remember, our rectangles are endpoint-exclusive.
-        PointF bottomRight = new(Right.PreviousValue(), Bottom.PreviousValue());
+        // Remember, our rectangles are endpoint-exclusive. We achieve exclusion by limiting coordinate points
+        // to the nearest representable values less than our boundary edges.
+        PointF bottomRight = new(float.BitDecrement(Right), float.BitDecrement(Bottom));
 
         // If the given point is within our rectangle, then the closest point to it is the given point itself.
         float closestX = point.X;
