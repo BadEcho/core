@@ -236,12 +236,12 @@ public readonly struct RectangleF : IEquatable<RectangleF>, IShape
     /// <remarks>
     /// <para>
     /// Rectangles are endpoint-exclusive. If a point lies on the right or bottom edge, it's considered to be
-    /// outside of the rectangle.
+    /// outside the rectangle.
     ///</para>
     /// <para>
     /// For example, a rectangle whose left corner is at x:0 and has a width of four will extend from the upper
     /// left corner of x:0 all the way to the upper right corner of x:3. Therefore, even though the width is four,
-    /// a coordinate point of x:4 is actually outside of the rectangle.
+    /// a coordinate point of x:4 is actually outside the rectangle.
     /// </para>
     /// </remarks>
     public bool Contains(PointF point)
@@ -270,7 +270,7 @@ public readonly struct RectangleF : IEquatable<RectangleF>, IShape
         // Finding the penetration vector for axis-aligned rectangles is simple. We just look at the
         // intersecting rectangle and return a vector matching the direction and magnitude of its width
         // or height, whichever is smaller (giving a more accurate and smoother correction).
-        return intersection.Width < intersection.Height && (other.X > X || Right > other.Right)
+        return intersection.Width < intersection.Height
             ? new Vector2(Center.X < other.Center.X ? -intersection.Width : intersection.Width, 0)
             : new Vector2(0, Center.Y < other.Center.Y ? -intersection.Height : intersection.Height);
     }
