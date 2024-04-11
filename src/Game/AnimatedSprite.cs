@@ -24,7 +24,8 @@ public sealed class AnimatedSprite : Sprite
     private readonly SpriteSheet _sheet;
 
     // TODO: Replace with configurable initial value.
-    private float _remainingFrameDistance = 15.0f;    
+    private const float FRAME_DISTANCE = 7.5f;
+    private float _remainingFrameDistance = FRAME_DISTANCE;
     private MovementDirection _direction;
     private int _currentFrame;
 
@@ -65,7 +66,7 @@ public sealed class AnimatedSprite : Sprite
             if (_remainingFrameDistance <= 0)
             {   
                 _currentFrame++;
-                _remainingFrameDistance = 15.0f;
+                _remainingFrameDistance = FRAME_DISTANCE;
             }
         }
 
