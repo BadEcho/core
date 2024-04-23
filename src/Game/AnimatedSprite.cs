@@ -46,15 +46,17 @@ public sealed class AnimatedSprite : Sprite
 
         MovementDirection newDirection = Velocity.ToDirection();
 
-        if (_currentDirection == newDirection)
-            return;
+        if (_currentDirection != newDirection)
+        {
+            if (newDirection == MovementDirection.None)
+                _currentAnimation.Pause();
+            else
+                _currentAnimation = new SpriteAnimation(newDirection.ToString(), FRAMES_PER_SECOND);
 
-        if (newDirection == MovementDirection.None)
-            _currentAnimation.Pause();
-        else
-            _currentAnimation = new SpriteAnimation(newDirection.ToString(), FRAMES_PER_SECOND);
+            _currentDirection = newDirection;
+        }
 
-        _currentDirection = newDirection;
+        _currentAnimation.Update(time);
     }
 
     /// <inheritdoc/>
