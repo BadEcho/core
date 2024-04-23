@@ -39,12 +39,18 @@ public sealed class SpriteSheetWriter : ContentTypeWriter<SpriteSheetContent>
             = value.GetReference<Texture2DContent>(asset.TexturePath);
 
         output.WriteExternalReference(textureReference);
-        output.Write(asset.RowCount);
         output.Write(asset.ColumnCount);
-        output.Write(asset.RowUp);
-        output.Write(asset.RowDown);
-        output.Write(asset.RowLeft);
-        output.Write(asset.RowRight);
-        output.Write(asset.RowInitial);
+        output.Write(asset.RowCount);
+        output.Write(asset.InitialFrame);
+
+        // Record the count to guide the reader.
+        output.Write(asset.Animations.Count);
+
+        foreach (SpriteAnimationAsset animation in asset.Animations)
+        {
+            output.Write(animation.Name);
+            output.Write(animation.StartFrame);
+            output.Write(animation.EndFrame);
+        }
     }
 }

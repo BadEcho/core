@@ -101,15 +101,6 @@
 	<data name="AtlasAlreadyHasRegion" xml:space="preserve">
 		<value>Texture atlas already has a region named '{0}'.</value>
 	</data>
-	<data name="SheetFrameExceedsTotal" xml:space="preserve">
-		<value>Requested frame exceeds the total number of frames found in this sprite sheet for the specified direction of movement.</value>
-	</data>
-	<data name="SheetAlreadyHasDirection" xml:space="preserve">
-		<value>Sprite sheet already has frames registered for the specified direction of movement.</value>
-	</data>
-	<data name="SheetNoFramesForDirection" xml:space="preserve">
-		<value>Sprite sheet contains no frames for the specified direction of movement.</value>
-	</data>
 	<data name="ModelNoVertexIndices" xml:space="preserve">
 		<value>No indices were provided for the vertex data.</value>
 	</data>
@@ -151,5 +142,11 @@
 	</data>
 	<data name="InvalidScrollRegionDirection" xml:space="preserve">
 		<value>Invalid movement direction for scrolling region.</value>
+	</data>
+	<data name="SheetAlreadyHasAnimation" xml:space="preserve">
+		<value>Sprite sheet already has an animation with the specified name.</value>
+	</data>
+	<data name="SheetNoFramesForAnimation" xml:space="preserve">
+		<value>Sprite sheet contains no frames for the specified animation.</value>
 	</data>
 </root>

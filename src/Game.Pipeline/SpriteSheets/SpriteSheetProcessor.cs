@@ -49,19 +49,25 @@ public sealed class SpriteSheetProcessor : ContentProcessor<SpriteSheetContent, 
         if (asset.ColumnCount <= 0)
             throw new PipelineException(Strings.SheetHasNoColumns);
 
-        if (asset.RowUp >= asset.RowCount)
-            throw new PipelineException(Strings.SheetUpwardRowOutOfRange);
+        int finalFrame = 0;
+        HashSet<string> animationNames = [];
 
-        if (asset.RowDown >= asset.RowCount)
-            throw new PipelineException(Strings.SheetDownwardRowOutOfRange);
+        foreach (SpriteAnimationAsset animation in asset.Animations)
+        {
+            if (animation.StartFrame > animation.EndFrame)
+                throw new PipelineException(Strings.SheetInvalidAnimationSequence);
 
-        if (asset.RowLeft >= asset.RowCount)
-            throw new PipelineException(Strings.SheetLeftwardRowOutOfRange);
+            if (animation.EndFrame > finalFrame)
+                finalFrame = animation.EndFrame;
 
-        if (asset.RowRight >= asset.RowCount)
-            throw new PipelineException(Strings.SheetRightwardRowOutOfRange);
+            if (!animationNames.Add(animation.Name))
+                throw new PipelineException(Strings.SheetNonUniqueAnimationNames);
+        }
 
-        if (asset.RowInitial >= asset.RowCount)
-            throw new PipelineException(Strings.SheetInitialRowOutOfRange);
+        if (asset.RowCount * asset.ColumnCount < finalFrame + 1)
+            throw new PipelineException(Strings.SheetTooManyFrames);
+
+        if (asset.InitialFrame > finalFrame)
+            throw new PipelineException(Strings.SheetInitialFrameOutOfRange);
     }
 }

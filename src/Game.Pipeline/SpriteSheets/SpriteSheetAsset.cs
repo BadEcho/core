@@ -35,34 +35,16 @@ public sealed class SpriteSheetAsset
     /// </summary>
     public int ColumnCount 
     { get; init; }
-
+    
     /// <summary>
-    /// Gets the index of the row for upward movement.
+    /// Gets the index of the frame to initially draw prior to any animations starting.
     /// </summary>
-    public int RowUp
+    public int InitialFrame
     { get; init; }
 
     /// <summary>
-    /// Gets the index of the row for downward movement.
+    /// Gets the animations the sprite sheet contains.
     /// </summary>
-    public int RowDown
-    { get; init; }
-
-    /// <summary>
-    /// Gets the index of the row for leftward movement.
-    /// </summary>
-    public int RowLeft
-    { get; init; }
-
-    /// <summary>
-    /// Gets the index of the row for rightward movement.
-    /// </summary>
-    public int RowRight
-    { get; init; }
-
-    /// <summary>
-    /// Gets or sets the index of the row containing initially drawn frames, prior to any movement occurring.
-    /// </summary>
-    public int RowInitial
-    { get; set; }
+    public IReadOnlyCollection<SpriteAnimationAsset> Animations
+    { get; init; } = new List<SpriteAnimationAsset>();
 }

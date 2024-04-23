@@ -35,7 +35,8 @@ namespace BadEcho.Game;
 /// </remarks>
 public sealed class SpriteSheet
 {
-    private readonly Dictionary<MovementDirection, int> _directionRows = new();
+    private readonly Dictionary<string, (int StartFrame, int EndFrame)> _animations 
+        = new(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SpriteSheet"/> class.
@@ -51,7 +52,7 @@ public sealed class SpriteSheet
         ColumnCount = columnCount;
         RowCount = rowCount;
     }
-
+    
     /// <summary>
     /// Gets the texture containing the individual frames that compose the sprite sheet.
     /// </summary>
@@ -77,39 +78,36 @@ public sealed class SpriteSheet
     { get; }
 
     /// <summary>
-    /// Registers the specified direction of movement and the row in the sprite sheet containing its corresponding frames.
+    /// Registers the named animation with the sprite sheet.
     /// </summary>
-    /// <param name="direction">The direction of movement whose frames are being registered.</param>
-    /// <param name="row">The index of the row in the sprite sheet containing the movement direction's frames.</param>
-    /// <exception cref="ArgumentException">Frames for the <c>direction</c> have already been registered.</exception>
-    /// <exception cref="ArgumentException"><c>row</c> is equal to or greater than <see cref="RowCount"/>.</exception>
-    public void AddDirection(MovementDirection direction, int row)
+    /// <param name="name">The name of the animation.</param>
+    /// <param name="startFrame">The index of the first frame in the animation.</param>
+    /// <param name="endFrame">The index of the last frame in the animation.</param>
+    /// <exception cref="ArgumentException"><c>name</c> is already associated with an existing registered animation.</exception>
+    public void AddAnimation(string name, int startFrame, int endFrame)
     {
-        if (_directionRows.ContainsKey(direction))
-            throw new ArgumentException(Strings.SheetAlreadyHasDirection, nameof(direction));
-
-        _directionRows.Add(direction, row);
+        if (!_animations.TryAdd(name, (startFrame, endFrame)))
+            throw new ArgumentException(Strings.SheetAlreadyHasAnimation, nameof(name));
     }
 
     /// <summary>
-    /// Gets the region of the sprite sheet's texture corresponding to the requested frame for the specified direction of movement.
+    /// Gets the region of the sprite sheet's texture corresponding to the requested frame of the specified animation.
     /// </summary>
-    /// <param name="direction">The direction of movement the returned region will encompass.</param>
-    /// <param name="frame">
-    /// The specific frame the returned region will encompass on the sprite sheet's texture for the given direction of movement.
-    /// </param>
-    /// <returns>The bounding rectangle of the region of <see cref="Texture"/> that encompasses the <c>frame</c> for <c>direction</c>.</returns>
-    /// <exception cref="ArgumentException">No frames for the <c>direction</c> were found.</exception>
-    /// <exception cref="ArgumentException"><c>frame</c> exceeds the total number of frames found for the <c>direction</c>.</exception>
-    public Rectangle GetFrameRectangle(MovementDirection direction, int frame)
+    /// <param name="animation">The animation containing the frame that the region will encompass.</param>
+    /// <returns>
+    /// The bounding rectangle of the region of <see cref="Texture"/> that encompasses the current frame for
+    /// <c>animation</c>.
+    /// </returns>
+    /// <exception cref="ArgumentException">No frames for <c>animation</c> were found.</exception>
+    public Rectangle GetFrameRectangle(SpriteAnimation animation)
     {
-        if (!_directionRows.TryGetValue(direction, out int directionRow))
-            throw new ArgumentException(Strings.SheetNoFramesForDirection, nameof(direction));
+        Require.NotNull(animation, nameof(animation));
 
-        if (frame >= ColumnCount)
-            throw new ArgumentException(Strings.SheetFrameExceedsTotal, nameof(frame));
+        if (!_animations.TryGetValue(animation.Name, out var frames))
+            throw new ArgumentException(Strings.SheetNoFramesForAnimation, nameof(animation));
 
-        Size frameLocation = new(frame, directionRow);
+        int frameIndex = animation.CurrentFrame % (frames.EndFrame - frames.StartFrame + 1) + frames.StartFrame;
+        Size frameLocation = new(frameIndex % ColumnCount, frameIndex / ColumnCount);
 
         return new Rectangle(frameLocation * FrameSize, FrameSize);
     }

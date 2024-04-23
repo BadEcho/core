@@ -16,18 +16,17 @@ using Microsoft.Xna.Framework;
 namespace BadEcho.Game;
 
 /// <summary>
-/// Provides a canvas for a texture containing multiple smaller images arranged tabularly, allowing for the animation of a 2D entity
+/// Provides a canvas for a texture containing multiple smaller images arranged tabularly, allowing for the animation of an entity
 /// via selective image drawing of the frames found on a provided sprite sheet.
 /// </summary>
 public sealed class AnimatedSprite : Sprite
 {
-    private readonly SpriteSheet _sheet;
-
     // TODO: Replace with configurable initial value.
-    private const float FRAME_DISTANCE = 7.5f;
-    private float _remainingFrameDistance = FRAME_DISTANCE;
-    private MovementDirection _direction;
-    private int _currentFrame;
+    private const float FRAMES_PER_SECOND = 5f;
+
+    private readonly SpriteSheet _sheet;
+    private SpriteAnimation _currentAnimation = new(string.Empty, FRAMES_PER_SECOND);
+    private MovementDirection _currentDirection; 
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AnimatedSprite"/> class.
@@ -44,39 +43,23 @@ public sealed class AnimatedSprite : Sprite
     public override void Update(GameUpdateTime time)
     {
         base.Update(time);
-        
+
         MovementDirection newDirection = Velocity.ToDirection();
-        
-        if (_direction != newDirection)
-        {
-            _currentFrame = 0;
 
-            // If no movement is occurring, then we want to preserve our current direction, reset back to its initial animation frame.
-            if (newDirection != MovementDirection.None)
-                _direction = newDirection;
-        }
-        else if(newDirection != MovementDirection.None)
-        {
-            float frameDistanceDelta = newDirection is MovementDirection.Up or MovementDirection.Down
-                ? Math.Abs(LastMovement.Y)
-                : Math.Abs(LastMovement.X);
+        if (_currentDirection == newDirection)
+            return;
 
-            _remainingFrameDistance -= frameDistanceDelta;
+        if (newDirection == MovementDirection.None)
+            _currentAnimation.Pause();
+        else
+            _currentAnimation = new SpriteAnimation(newDirection.ToString(), FRAMES_PER_SECOND);
 
-            if (_remainingFrameDistance <= 0)
-            {   
-                _currentFrame++;
-                _remainingFrameDistance = FRAME_DISTANCE;
-            }
-        }
-
-        if (_currentFrame == _sheet.ColumnCount)
-            _currentFrame = 0;
+        _currentDirection = newDirection;
     }
 
     /// <inheritdoc/>
     protected override Rectangle GetSourceArea() 
-        => _sheet.GetFrameRectangle(_direction, _currentFrame);
+        => _sheet.GetFrameRectangle(_currentAnimation);
 
     /// <inheritdoc/>
     protected override RectangleF GetTargetArea()

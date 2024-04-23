@@ -147,22 +147,7 @@
 	<data name="SheetHasNoColumns" xml:space="preserve">
 		<value>The sprite sheet must be configured to have one or more columns in order to be considered valid.</value>
 	</data>
-	<data name="SheetUpwardRowOutOfRange" xml:space="preserve">
-		<value>Upward direction's row index is greater than or equal to the number of rows in the sprite sheet.</value>
-	</data>
-	<data name="SheetDownwardRowOutOfRange" xml:space="preserve">
-		<value>Downward direction's row index is greater than or equal to the number of rows in the sprite sheet.</value>
-	</data>
-	<data name="SheetLeftwardRowOutOfRange" xml:space="preserve">
-		<value>Leftward direction's row index is greater than or equal to the number of rows in the sprite sheet.</value>
-	</data>
-	<data name="SheetRightwardRowOutOfRange" xml:space="preserve">
-		<value>Rightward direction's row index is greater than or equal to the number of rows in the sprite sheet.</value>
-	</data>
-	<data name="SheetInitialRowOutOfRange" xml:space="preserve">
-		<value>Initial frame's row index is greater than or equal to the number of rows in the sprite sheet.</value>
-	</data>
-	<data name="NoReferenceInContentItem" xml:space="preserve">
+  <data name="NoReferenceInContentItem" xml:space="preserve">
 		<value>No reference to the asset '{0}' was found on this content item.</value>
 	</data>
   <data name="ImageLayerNoImage" xml:space="preserve">
@@ -260,5 +245,17 @@
   </data>
   <data name="DistanceFieldFontJsonIsNull" xml:space="preserve">
 	  <value>The JSON layout file for the font consists of a single 'null' literal, which cannot be processed as metadata for the distance field font. This is most likely due to an internal error during MSDF atlas generation.</value>
+  </data>
+  <data name="SheetInvalidAnimationSequence" xml:space="preserve">
+	  <value>Invalid animation sequence in the sprite sheet; starting index must be less than or equal to ending index.</value>
+  </data>
+  <data name="SheetInitialFrameOutOfRange" xml:space="preserve">
+	  <value>Initial frame index exceeds the number of frames in the sprite sheet.</value>
+  </data>
+  <data name="SheetTooManyFrames" xml:space="preserve">
+	  <value>The number of animation frames exceeds the maximum allowed by the sprite sheet's configured dimensions.</value>
+  </data>
+  <data name="SheetNonUniqueAnimationNames" xml:space="preserve">
+	  <value>All animations in the sprite sheet must have unique names.</value>
   </data>
 </root>

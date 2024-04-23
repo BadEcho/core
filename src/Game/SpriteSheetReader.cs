@@ -27,22 +27,27 @@ public sealed class SpriteSheetReader : ContentTypeReader<SpriteSheet>
         Require.NotNull(input, nameof(input));
 
         var texture = input.ReadExternalReference<Texture2D>();
-        var rows = input.ReadInt32();
-        var columns = input.ReadInt32();
-        var rowUp = input.ReadInt32();
-        var rowDown = input.ReadInt32();
-        var rowLeft = input.ReadInt32();
-        var rowRight = input.ReadInt32();
-        var rowInitial = input.ReadInt32();
-        
-        var spriteSheet = new SpriteSheet(texture, columns, rows);
+        var columnCount = input.ReadInt32();
+        var rowCount = input.ReadInt32();
+        var initialFrame = input.ReadInt32();
 
-        spriteSheet.AddDirection(MovementDirection.None, rowInitial);
-        spriteSheet.AddDirection(MovementDirection.Up, rowUp);
-        spriteSheet.AddDirection(MovementDirection.Down, rowDown);
-        spriteSheet.AddDirection(MovementDirection.Left, rowLeft);
-        spriteSheet.AddDirection(MovementDirection.Right, rowRight);
-        
+        var spriteSheet = new SpriteSheet(texture, columnCount, rowCount);
+
+        spriteSheet.AddAnimation(string.Empty, initialFrame, initialFrame);
+
+        var animationsToRead = input.ReadInt32();
+
+        while (animationsToRead > 0)
+        {
+            var name = input.ReadString();
+            int startFrame = input.ReadInt32();
+            int endFrame = input.ReadInt32();
+
+            spriteSheet.AddAnimation(name, startFrame, endFrame);
+
+            animationsToRead--;
+        }
+
         return spriteSheet;
     }
 }

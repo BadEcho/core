@@ -124,7 +124,7 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Can only create a scrolling region in the up, left, right, and down direction..
+        ///   Looks up a localized string similar to Invalid movement direction for scrolling region..
         /// </summary>
         internal static string InvalidScrollRegionDirection {
             get {
@@ -178,29 +178,20 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sprite sheet already has frames registered for the specified direction of movement..
+        ///   Looks up a localized string similar to Sprite sheet already has an animation with the specified name..
         /// </summary>
-        internal static string SheetAlreadyHasDirection {
+        internal static string SheetAlreadyHasAnimation {
             get {
-                return ResourceManager.GetString("SheetAlreadyHasDirection", resourceCulture);
+                return ResourceManager.GetString("SheetAlreadyHasAnimation", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Requested frame exceeds the total number of frames found in this sprite sheet for the specified direction of movement..
+        ///   Looks up a localized string similar to Sprite sheet contains no frames for the specified animation..
         /// </summary>
-        internal static string SheetFrameExceedsTotal {
+        internal static string SheetNoFramesForAnimation {
             get {
-                return ResourceManager.GetString("SheetFrameExceedsTotal", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Sprite sheet contains no frames for the specified direction of movement..
-        /// </summary>
-        internal static string SheetNoFramesForDirection {
-            get {
-                return ResourceManager.GetString("SheetNoFramesForDirection", resourceCulture);
+                return ResourceManager.GetString("SheetNoFramesForAnimation", resourceCulture);
             }
         }
         

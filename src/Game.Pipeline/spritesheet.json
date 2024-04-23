@@ -16,27 +16,34 @@
       "type": "integer",
       "description": "The number of columns of frames in the sprite sheet."
     },
-    "rowUp": {
+    "initialFrame": {
       "type": "integer",
-      "description": "The index of the row for upward movement."
+      "description": "The index of the frame to initially draw prior to any animations starting."
     },
-    "rowDown": {
-      "type": "integer",
-      "description": "The index of the row for downward movement."
-    },
-    "rowLeft": {
-      "type": "integer",
-      "description": "The index of the row for leftward movement."
-    },
-    "rowRight": {
-      "type": "integer",
-      "description": "The index of the row for rightward movement."
-    },
-    "rowInitial": {
-      "type": "integer",
-      "description": "The index of the row containing initially drawn frames, prior to any movement occurring."
+    "animations": {
+      "type": "array",
+      "description": "The animations the sprite sheet contains.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the animation."
+          },
+          "startFrame": {
+            "type": "integer",
+            "description": "The index of the first frame in the animation."
+          },
+          "endFrame": {
+            "type": "integer",
+            "description": "The index of the last frame in the animation."
+          }
+        },
+        "required": ["name", "startFrame", "endFrame"],
+        "additionalProperties": false
+      }
     }
   },
-  "required": [ "texturePath", "rows", "columns", "rowUp", "rowDown", "rowLeft", "rowRight" ],
+  "required": [ "texturePath", "rowCount", "columnCount", "animations" ],
   "additionalProperties": false
 }

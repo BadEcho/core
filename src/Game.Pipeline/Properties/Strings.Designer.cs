@@ -358,15 +358,6 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Downward direction&apos;s row index is greater than or equal to the number of rows in the sprite sheet..
-        /// </summary>
-        internal static string SheetDownwardRowOutOfRange {
-            get {
-                return ResourceManager.GetString("SheetDownwardRowOutOfRange", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The sprite sheet must be configured to have one or more columns in order to be considered valid..
         /// </summary>
         internal static string SheetHasNoColumns {
@@ -385,11 +376,20 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Initial frame&apos;s row index is greater than or equal to the number of rows in the sprite sheet..
+        ///   Looks up a localized string similar to Initial frame index exceeds the number of frames in the sprite sheet..
         /// </summary>
-        internal static string SheetInitialRowOutOfRange {
+        internal static string SheetInitialFrameOutOfRange {
             get {
-                return ResourceManager.GetString("SheetInitialRowOutOfRange", resourceCulture);
+                return ResourceManager.GetString("SheetInitialFrameOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid animation sequence in the sprite sheet; starting index must be less than or equal to ending index..
+        /// </summary>
+        internal static string SheetInvalidAnimationSequence {
+            get {
+                return ResourceManager.GetString("SheetInvalidAnimationSequence", resourceCulture);
             }
         }
         
@@ -403,29 +403,20 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Leftward direction&apos;s row index is greater than or equal to the number of rows in the sprite sheet..
+        ///   Looks up a localized string similar to All animations in the sprite sheet must have unique names..
         /// </summary>
-        internal static string SheetLeftwardRowOutOfRange {
+        internal static string SheetNonUniqueAnimationNames {
             get {
-                return ResourceManager.GetString("SheetLeftwardRowOutOfRange", resourceCulture);
+                return ResourceManager.GetString("SheetNonUniqueAnimationNames", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rightward direction&apos;s row index is greater than or equal to the number of rows in the sprite sheet..
+        ///   Looks up a localized string similar to The number of animation frames exceeds the maximum allowed by the sprite sheet&apos;s configured dimensions..
         /// </summary>
-        internal static string SheetRightwardRowOutOfRange {
+        internal static string SheetTooManyFrames {
             get {
-                return ResourceManager.GetString("SheetRightwardRowOutOfRange", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Upward direction&apos;s row index is greater than or equal to the number of rows in the sprite sheet..
-        /// </summary>
-        internal static string SheetUpwardRowOutOfRange {
-            get {
-                return ResourceManager.GetString("SheetUpwardRowOutOfRange", resourceCulture);
+                return ResourceManager.GetString("SheetTooManyFrames", resourceCulture);
             }
         }
         
