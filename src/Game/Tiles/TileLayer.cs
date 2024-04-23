@@ -120,7 +120,7 @@ public sealed class TileLayer : Layer
             int row = validTile.Index / _size.Width;
             int column = row == 0 ? validTile.Index : validTile.Index % (row * _size.Width);
 
-            yield return new TileSpatialEntity(column, row, _tileSize);
+            yield return new SpatialTile(column, row, _tileSize);
         }
     }
 
@@ -130,15 +130,15 @@ public sealed class TileLayer : Layer
     /// <summary>
     /// Provides spatial boundaries for a collidable tile.
     /// </summary>
-    private sealed class TileSpatialEntity : ISpatialEntity
+    private sealed class SpatialTile : ISpatialEntity
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TileSpatialEntity"/> class.
+        /// Initializes a new instance of the <see cref="SpatialTile"/> class.
         /// </summary>
         /// <param name="column">The index of the column within the tile layer that the tile occupies.</param>
         /// <param name="row">The index of the row within the tile layer that the tile occupies.</param>
         /// <param name="tileSize">The size of the tile.</param>
-        public TileSpatialEntity(int column, int row, Size tileSize)
+        public SpatialTile(int column, int row, Size tileSize)
         {
             float x = column * tileSize.Width;
             float y = row * tileSize.Height;

@@ -16,7 +16,7 @@ using Microsoft.Xna.Framework;
 namespace BadEcho.Game;
 
 /// <summary>
-/// Defines a system for exerting control over a 2D entity's movement.
+/// Defines a system for exerting control over a positional entity's movement.
 /// </summary>
 public interface IMovementSystem
 {

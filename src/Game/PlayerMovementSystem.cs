@@ -17,11 +17,11 @@ using Microsoft.Xna.Framework.Input;
 namespace BadEcho.Game;
 
 /// <summary>
-/// Provides a system for the player to exert control over a 2D entity's movement.
+/// Provides a system for the player to exert control over a positional entity's movement.
 /// </summary>
 public sealed class PlayerMovementSystem : IMovementSystem
 {
-    // TODO: These will be set via a hot pluggable config module in future.
+    // TODO: These will be set via a hot pluggable config module in the future. This entire class will have a major refactor.
     private const Keys MOVEMENT_LEFT = Keys.A;
     private const Keys MOVEMENT_UP = Keys.W;
     private const Keys MOVEMENT_RIGHT = Keys.D;

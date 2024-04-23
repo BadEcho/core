@@ -17,7 +17,8 @@ using Microsoft.Xna.Framework.Graphics;
 namespace BadEcho.Game;
 
 /// <summary>
-/// Provides a canvas for a texture able to be positioned on the screen as a 2D entity.
+/// Provides a canvas for a texture able to be positioned and moved on the screen as a spatial entity in
+/// two dimensions.
 /// </summary>
 public class Sprite : IPositionalEntity, ISpatialEntity
 {

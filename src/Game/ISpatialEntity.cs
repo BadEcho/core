@@ -22,7 +22,7 @@ public interface ISpatialEntity
     /// Gets the spatial shape of the entity.
     /// </summary>
     /// <remarks>
-    /// The spatial shape of the entity acts as its boundary that, if crossed by another entity, would
+    /// The spatial shape of the entity acts as its boundary that, if crossed by another spatial entity, would
     /// result in a collision between the two.
     /// </remarks>
     IShape Bounds { get; }

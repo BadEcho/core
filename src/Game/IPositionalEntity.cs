@@ -16,7 +16,7 @@ using Microsoft.Xna.Framework;
 namespace BadEcho.Game;
 
 /// <summary>
-/// Defines an entity able to be positioned on the screen as a 2D entity.
+/// Defines an entity able to be positioned and moved on the screen in two dimensions.
 /// </summary>
 public interface IPositionalEntity
 {

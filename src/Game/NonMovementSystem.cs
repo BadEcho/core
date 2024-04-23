@@ -16,7 +16,7 @@ using Microsoft.Xna.Framework;
 namespace BadEcho.Game;
 
 /// <summary>
-/// Provides a system that has no effect on a 2D entity's movement.
+/// Provides a system that has no effect on a positional entity's movement.
 /// </summary>
 public sealed class NonMovementSystem : IMovementSystem
 {

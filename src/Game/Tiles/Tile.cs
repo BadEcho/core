@@ -22,8 +22,8 @@ namespace BadEcho.Game.Tiles;
 /// data. This is because an individual tile is sourced from a tile set, which itself only needs to be loaded into memory once.
 /// </para>
 /// <para>
-/// What this type does contain, is the necessary information that both identifies which tile in a tile set is being represented,
-/// as well as where it is positioned in the grid of tile data it resides in.
+/// What this type does contain, is the necessary information that both identifies which tile in a tile set is being represented
+/// and where it is positioned in the grid of tile data it resides in.
 /// </para>
 /// </remarks>  
 public readonly record struct Tile

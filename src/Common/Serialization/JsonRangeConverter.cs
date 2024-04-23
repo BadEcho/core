@@ -85,6 +85,7 @@ public sealed class JsonRangeConverter<T> : JsonConverter<IEnumerable<T>>
         {
             int numberInRange = valueInRange.ToInt32(CultureInfo.InvariantCulture);
 
+            // If this number comes immediately after the previous one, we add it to the current range.
             if (range.Count == 0 || numberInRange - range[^1] <= 1)
                 range.Add(numberInRange);
             else
