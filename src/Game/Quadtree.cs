@@ -151,7 +151,7 @@ public sealed class Quadtree
             if (!element.Bounds.Intersects(node.Bounds))
                 continue;
 
-            collisions.AddRange(node._elements.Where(e => element.Bounds.Intersects(e.Bounds)));
+            collisions.AddRange(node._elements.Where(e => e.Bounds.Intersects(element.Bounds)));
 
             if (!node.IsLeaf)
             {
