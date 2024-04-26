@@ -168,6 +168,5 @@ public class LoggerTests : IDisposable
         Logger.DisableDefaultListener();
     }
 
-    private sealed class EventListenerStub : EventListener
-    { }
+    private sealed class EventListenerStub : EventListener;
 }

@@ -18,5 +18,4 @@ namespace BadEcho.Presentation.ViewModels;
 /// </summary>
 /// <typeparam name="T">The type of view model that may descend from this view model.</typeparam>
 public interface IAncestorViewModel<T> : IViewModel, IParent<T, AtomicObservableCollection<T>>
-    where T : class, IViewModel
-{ }
+    where T : class, IViewModel;

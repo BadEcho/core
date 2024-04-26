@@ -13,5 +13,4 @@
 
 namespace BadEcho.Tests.ExtensibilityPoint;
 
-public interface IExtensibilityPart
-{ }
+public interface IExtensibilityPart;

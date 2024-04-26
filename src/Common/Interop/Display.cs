@@ -243,7 +243,7 @@ public sealed class Display
     /// </summary>
     private sealed class CallbackClosure
     {
-        private readonly List<Display> _retrievedDisplays = new();
+        private readonly List<Display> _retrievedDisplays = [];
 
         /// <summary>
         /// Gets the <see cref="Display"/> instances provided to the callback.

@@ -137,7 +137,7 @@ internal sealed class App
     }
 
     /// <summary>
-    /// Called in response to left clicking a text box, prior to the event reaching the text box, in order to prevent
+    /// Called in response to left-clicking a text box, prior to the event reaching the text box, in order to prevent
     /// the default handler from deselecting the currently selected text as well as text selected through subsequent event
     /// handlers.
     /// </summary>

@@ -62,10 +62,9 @@ public class View : UserControl
     /// </para>
     /// <para>
     /// Unfortunately, due to the way that dependency property inheritance works, we begin to see problems with design-time views
-    /// that have design-time data contexts defined both locally in regards to said view's definition as well as
-    /// locally in regards to a separate view's definition that references said view. Indeed, in such an instance we will observe
-    /// that the original design-time data will overwrite the local (in regards to the active file that is referencing the view)
-    /// design-time data.
+    /// that have design-time data contexts defined both locally in regard to said view's definition and locally in regard to
+    /// a separate view's definition that references said view. Indeed, in such an instance we will observe that the original
+    /// design-time data will overwrite the local (in regard to the active file that is referencing the view) design-time data.
     /// </para>
     /// <para>
     /// As an example, assume we have a WidgetView, with its own design-time data defined in WidgetView.xaml. Next, assume we also have

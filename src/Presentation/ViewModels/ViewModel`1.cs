@@ -22,7 +22,7 @@ namespace BadEcho.Presentation.ViewModels;
 /// <typeparam name="T">The type of data bound to the view model for display on a view.</typeparam>
 public abstract class ViewModel<T> : ViewModel, IViewModel<T>
 {
-    private readonly List<T> _boundData = new();
+    private readonly List<T> _boundData = [];
 
     /// <inheritdoc/>
     public T? ActiveModel
@@ -31,7 +31,7 @@ public abstract class ViewModel<T> : ViewModel, IViewModel<T>
     /// <inheritdoc/>
     public override void Disconnect()
     {
-        List<T> boundData = _boundData.ToList();
+        List<T> boundData = [.._boundData];
 
         foreach (T boundDatum in boundData)
         {

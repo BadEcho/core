@@ -27,12 +27,12 @@ public class ViewContextTemplateSelector : DataTemplateSelector
     /// <remarks>
     /// <para>
     /// We first try to locate a data template linked to the specific object's type, but if one does not exist, we
-    /// fallback to the first template found associated with the most derived of interfaces for the object type.
+    /// fall back to the first template found associated with the most derived of interfaces for the object type.
     /// This is to avoid including templates targeting interfaces that act as a base to other interfaces, which themselves
     /// may have distinct concrete implementations.
     /// </para>
     /// <para>
-    /// Interfaces are useful for the times where we may want to support view model types that exist in some sort of
+    /// Interfaces are useful for the times when we may want to support view model types that exist in some sort of
     /// object hierarchy that uses generic type parameters, something which is not supported by the majority of XAML parsers.
     /// </para>
     /// </remarks>

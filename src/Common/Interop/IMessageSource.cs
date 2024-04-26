@@ -20,7 +20,7 @@ namespace BadEcho.Interop;
 public interface IMessageSource<in THookProc> where THookProc : Delegate
 {
     /// <summary>
-    /// Adds a hook that will receives messages sent to the hook chain.
+    /// Adds a hook that will receive messages sent to the hook chain.
     /// </summary>
     /// <param name="hook">The hook to invoke when messages are sent to the associated hook chain.</param>
     void AddHook(THookProc hook);

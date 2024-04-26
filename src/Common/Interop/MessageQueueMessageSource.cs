@@ -23,7 +23,7 @@ namespace BadEcho.Interop;
 /// </summary>
 public sealed class MessageQueueMessageSource : IMessageSource<GetMessageHookProc>, IDisposable
 {
-    private readonly CachedWeakList<GetMessageHookProc> _hooks = new();
+    private readonly CachedWeakList<GetMessageHookProc> _hooks = [];
     private readonly MessageOnlyExecutor _hookExecutor = new();
     private readonly int _threadId;
 

@@ -26,11 +26,11 @@ public sealed class Grid : Panel, ISelectable
     private static readonly GridDimension _DefaultDimension 
         = new(1.0f, GridDimensionUnit.Auto);
 
-    private readonly List<Control> _visibleChildren = new();
-    private readonly List<int> _columnWidths = new();
-    private readonly List<int> _rowHeights = new();
-    private readonly List<int> _cellsX = new();
-    private readonly List<int> _cellsY = new();
+    private readonly List<Control> _visibleChildren = [];
+    private readonly List<int> _columnWidths = [];
+    private readonly List<int> _rowHeights = [];
+    private readonly List<int> _cellsX = [];
+    private readonly List<int> _cellsY = [];
 
     private List<Control>?[,] _cells 
         = new List<Control>[0,0];
@@ -114,7 +114,7 @@ public sealed class Grid : Panel, ISelectable
     /// no selection.
     /// </remarks>
     private bool IsSelectionInvalid
-        => _selectionBeingMade && (_selectedColumn != _mouseOverColumn && _selectedRow != _mouseOverRow);
+        => _selectionBeingMade && _selectedColumn != _mouseOverColumn && _selectedRow != _mouseOverRow;
 
     /// <inheritdoc/>
     public override bool Focus()
@@ -196,7 +196,7 @@ public sealed class Grid : Panel, ISelectable
 
         foreach (Control child in _visibleChildren)
         {
-            List<Control> cell = _cells[child.Row, child.Column] ??= new List<Control>();
+            List<Control> cell = _cells[child.Row, child.Column] ??= [];
 
             cell.Add(child);
         }
@@ -385,7 +385,7 @@ public sealed class Grid : Panel, ISelectable
     
     private static int WrapToGrid(int index, int dimensionalMax)
     {
-        int remainder = (index % dimensionalMax);
+        int remainder = index % dimensionalMax;
 
         return remainder < 0 ? dimensionalMax - 1 : remainder;
     }
@@ -460,7 +460,7 @@ public sealed class Grid : Panel, ISelectable
                 if (columnDimension.Unit == GridDimensionUnit.Absolute)
                     _columnWidths[column] = (int) columnDimension.Value;
 
-                List<Control> cellChildren = _cells[row, column] ??= new List<Control>();
+                List<Control> cellChildren = _cells[row, column] ??= [];
 
                 // If both the row and column are using absolute values for their measurements, we're done measuring this column.
                 // The desired sizes of cell controls take a back seat to absolute value dimensional definitions.

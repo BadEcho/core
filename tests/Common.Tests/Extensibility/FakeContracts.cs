@@ -39,8 +39,7 @@ public interface IFakePart
     int DoSomething();
 }
 
-public interface IFakeDependency
-{ }
+public interface IFakeDependency;
 
 public interface IFakePartWithDependencies
 {
@@ -57,16 +56,14 @@ public interface IFilterableFakePart : IFilterable
     int DoSomething();
 }
 
-public interface IFilterableFakeDependency : IFilterable
-{ }
+public interface IFilterableFakeDependency : IFilterable;
 
 public interface IFilterableFakePartWithDependencies : IFilterableFakePart
 {
     IFilterableFakeDependency Dependency { get; }
 }
 
-public interface IFilterableFakePartWithComposedDependencies : IFilterableFakePartWithDependencies
-{ }
+public interface IFilterableFakePartWithComposedDependencies : IFilterableFakePartWithDependencies;
 
 public interface IFilterableFakePartWithNonFilterableDependencies : IFilterableFakePart
 {
@@ -83,5 +80,4 @@ public interface ISharedFakePart
     int DoSomething();
 }
 
-public interface IUniqueRequirement
-{ }
+public interface IUniqueRequirement;

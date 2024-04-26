@@ -75,12 +75,12 @@ public sealed class NotifyIcon : IDisposable
     }
 
     /// <summary>
-    /// Occurs when the user has left clicked the icon.
+    /// Occurs when the user has left-clicked the icon.
     /// </summary>
     public event EventHandler? LeftClicked;
 
     /// <summary>
-    /// Occurs when the user has right clicked the icon.
+    /// Occurs when the user has right-clicked the icon.
     /// </summary>
     public event EventHandler? RightClicked;
 
@@ -349,10 +349,11 @@ public sealed class NotifyIcon : IDisposable
                 // If they're the same, we take a look at the bit depth.
                 else if (currentDelta == bestFitDelta)
                 {
-                    // If the icon's bit depth is closer to our device's without exceeding it, it's a best fit.
+                    // If the icon's bit depth is closer to our device's without exceeding it, it's the current best fit.
                     if (iconEntry.wBitCount <= _BitDepth && iconEntry.wBitCount > bestFitIconEntry.wBitCount)
                         bestFit = true;
-                    // If the bit depth does exceed our device's, but is still closer than the current best fit, then it's better!
+                    // If the current best fit exceeds our device's bit depth, then this icon is a better fit if it
+                    // has fewer bits per pixel.
                     else if (bestFitIconEntry.wBitCount > _BitDepth && iconEntry.wBitCount < bestFitIconEntry.wBitCount)
                         bestFit = true;
                 }

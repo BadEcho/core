@@ -31,7 +31,7 @@ internal static partial class Hooks
     /// <param name="destination">A handle to the window that will receive messages sent to the hook procedure.</param>
     /// <returns>True if successful; otherwise, false.</returns>
     [LibraryImport(LIBRARY_NAME, SetLastError = true)]
-    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.U1)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
     public static partial bool AddHook(HookType hookType, int threadId, WindowHandle destination);
@@ -43,7 +43,7 @@ internal static partial class Hooks
     /// <param name="threadId">The identifier of the thread to remove the hook procedure from.</param>
     /// <returns>True if successful; otherwise, false.</returns>
     [LibraryImport(LIBRARY_NAME, SetLastError = true)]
-    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.U1)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
     public static partial bool RemoveHook(HookType hookType, int threadId);
@@ -55,7 +55,7 @@ internal static partial class Hooks
     /// <param name="wParam">Additional information about the message to use.</param>
     /// <param name="lParam">Additional information about the message to use.</param>
     [LibraryImport(LIBRARY_NAME)]
-    [UnmanagedCallConv(CallConvs = new [] { typeof(CallConvCdecl)})]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
     public static partial void ChangeMessageDetails(uint message, IntPtr wParam, IntPtr lParam);
 }

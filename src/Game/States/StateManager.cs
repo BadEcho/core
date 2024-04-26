@@ -23,7 +23,7 @@ namespace BadEcho.Game.States;
 /// </summary>
 public sealed class StateManager : DrawableGameComponent
 {
-    private readonly List<GameState> _states = new();
+    private readonly List<GameState> _states = [];
 
     private SpriteBatch? _spriteBatch;
     private bool _isLoaded;

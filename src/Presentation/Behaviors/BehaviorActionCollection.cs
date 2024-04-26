@@ -16,7 +16,7 @@ using System.Windows;
 namespace BadEcho.Presentation.Behaviors;
 
 /// <summary>
-/// Provides a collection of actions that are able to be executed by the controlling behavior.
+/// Provides a collection of actions the controlling behavior is able to execute.
 /// </summary>
 /// <typeparam name="T">The type of <see cref="DependencyObject"/> this collection can attach to.</typeparam>
 public sealed class BehaviorActionCollection<T> : AttachableComponentCollection<T, BehaviorAction<T>>

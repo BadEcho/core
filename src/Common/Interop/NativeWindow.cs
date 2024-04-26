@@ -24,7 +24,7 @@ namespace BadEcho.Interop;
 /// </summary>
 public sealed class NativeWindow
 {
-    private readonly List<int> _hotKeyIds = new();
+    private readonly List<int> _hotKeyIds = [];
 
     private bool _displayingWithoutFlicker;
     private bool _ignoreSizeChanges;
@@ -106,7 +106,7 @@ public sealed class NativeWindow
     /// </remarks>
     public void ChangeClassBackground(byte r, byte g, byte b)
     {   // Win32 COLORREF values use the BGR format.
-        int newBrushColor = ((b << 16) | (g << 8) | r);
+        int newBrushColor = (b << 16) | (g << 8) | r;
         
         IntPtr newBrush = Gdi32.CreateSolidBrush(newBrushColor);
         IntPtr oldBrush = User32.SetClassLongPtr(Handle, WindowClassAttribute.Background, newBrush);
@@ -232,7 +232,7 @@ public sealed class NativeWindow
                     // We account for the invisible borders that exist around most windows for purpose of mouse cursor grabs.
                     // This becomes important if we're dealing with "fullscreen" bordered windows (it'll extend onto other displays
                     // without this adjustment). 
-                    int centeredWidth = (display.WorkingArea.Width / 2 - Width / 2) - 9;
+                    int centeredWidth = display.WorkingArea.Width / 2 - Width / 2 - 9;
                     int centeredHeight = display.WorkingArea.Height / 2 - Height / 2;
 
                     const WindowPositionFlags uFlags = WindowPositionFlags.NoRedraw
@@ -256,7 +256,7 @@ public sealed class NativeWindow
 
             case WindowMessage.ShowWindow when wParam == 1: // Ignore windows becoming hidden
                 if (DisplayWithoutFlicker)
-                {   // Window is about to be shown and we're configured to make a best attempt at preventing any initial flickering.
+                {   // Window is about to be shown, and we're configured to make a best-attempt at preventing any initial flickering.
                     if (!User32.GetWindowRect(Handle, out RECT rect))
                         throw ((ResultHandle) Marshal.GetHRForLastWin32Error()).GetException();
 
@@ -267,8 +267,8 @@ public sealed class NativeWindow
 
                     // If a window lacks a title bar (i.e., it was created with the WS_POPUP style) then it will not flash. However, if
                     // a window is set to display upon creation via WS_VISIBLE and was configured to have a title bar, then it is too
-                    // late. The only way to shield the abrasive white flicker is to shrink the window size to a pixel in both dimensions,
-                    // and remove the title bar so it is essentially invisible. After it displays we can resize it, and its appearance
+                    // late. The only way to shield the abrasive white flicker is to shrink the window size to a pixel in both dimensions
+                    // and remove the title bar, causing it to be essentially invisible. After it displays we can resize it, and its appearance
                     // will be much more smooth.
 
                     // We first back up the initial dimensions of the window. Depending on the API that was used to create the window
@@ -287,7 +287,7 @@ public sealed class NativeWindow
                         = (WindowStyles) User32.SetWindowLongPtr(Handle, WindowAttribute.Style, popupStyle);
 
                     // We can't set the width and length to 0...they have to be at least 1. A single pixel window with no title bar is basically
-                    // invisible. We temporarily disable our size monitoring hook so we don't update our size properties with bunk values.
+                    // invisible. We temporarily disable our size monitoring hook so that we don't update our size properties with bunk values.
                     _ignoreSizeChanges = true;
 
                     bool resized = User32.SetWindowPos(Handle,

@@ -137,8 +137,8 @@ public interface IBinding
     /// <para>
     /// If any code must interface with the data being inputted for binding, they must do so through this method. It is important
     /// for us to adopt the same approach that Microsoft uses in their own data binding logic when dealing with user input;
-    /// specifically: <c>all</c> exceptions must be caught. There is no application code on the stack when actual binding code is ran, so
-    /// any exceptions thrown are not actionable by the application.
+    /// specifically: <c>all</c> exceptions must be caught. There is no application code on the stack when actual binding code is run,
+    /// so any exceptions thrown are not actionable by the application.
     /// </para>
     /// <para>
     /// This means that unless we catch the exceptions here, the only possible outcome is for the application to crash; therefore,
@@ -158,8 +158,8 @@ public interface IBinding
     /// <para>
     /// If any code must interface with the data being inputted for binding, they must do so through this method. It is important
     /// for us to adopt the same approach that Microsoft uses in their own data binding logic when dealing with user input;
-    /// specifically: <c>all</c> exceptions must be caught. There is no application code on the stack when actual binding code is ran, so
-    /// any exceptions thrown are not actionable by the application.
+    /// specifically: <c>all</c> exceptions must be caught. There is no application code on the stack when actual binding code is run,
+    /// so any exceptions thrown are not actionable by the application.
     /// </para>
     /// <para>
     /// This means that unless we catch the exceptions here, the only possible outcome is for the application to crash; therefore,

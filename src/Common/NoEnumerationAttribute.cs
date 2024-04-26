@@ -18,5 +18,4 @@ namespace BadEcho;
 /// enumerated by the method.
 /// </summary>
 [AttributeUsage(AttributeTargets.Parameter)]
-public sealed class NoEnumerationAttribute : Attribute
-{ }
+public sealed class NoEnumerationAttribute : Attribute;

@@ -21,7 +21,7 @@ namespace BadEcho;
 /// <typeparam name="T">The type of value generated.</typeparam>
 public sealed class WeightedRandom<T>
 {
-    private readonly List<T> _values = new();
+    private readonly List<T> _values = [];
 
     /// <summary>
     /// Adds a weighted value that may be randomly returned.

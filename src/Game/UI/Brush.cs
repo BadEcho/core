@@ -44,7 +44,7 @@ public sealed class Brush : IVisual, IDisposable
         {
             _palette = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
 
-            _palette.SetData(new[] { Color.White });
+            _palette.SetData([Color.White]);
         }
         
         spriteBatch.Draw(_palette, targetArea, _color);

@@ -22,7 +22,7 @@ namespace BadEcho.Game;
 /// </summary>
 public sealed class Quadtree
 {
-    private readonly List<ISpatialEntity> _elements = new();
+    private readonly List<ISpatialEntity> _elements = [];
     
     private readonly int _bucketCapacity;
     private readonly int _maxDepth;

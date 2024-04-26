@@ -155,6 +155,5 @@ public class FilterablePluginContextStrategyTests
         Assert.Empty(container.GetExports<IExtensibilityPart>());
     }
 
-    private class ComposedDependency : IFakeDependency
-    { }
+    private class ComposedDependency : IFakeDependency;
 }

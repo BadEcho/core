@@ -16,7 +16,7 @@ using BadEcho.Extensions;
 namespace BadEcho.Presentation.ViewModels;
 
 /// <summary>
-/// Provides a strategy that will individually insert both single view models as well as presorted batches of view models into a
+/// Provides a strategy that will individually insert both single view models and presorted batches of view models into a
 /// view model's inner collection such that all items are already sorted following the insertion operation.
 /// </summary>
 /// <remarks>
@@ -44,7 +44,7 @@ public sealed class PresortedInsertionStrategy<TChildViewModel, TKey> : ICollect
     /// </summary>
     /// <param name="keySelector">A function to extract a key from an element, to use in the sorting operation.</param>
     /// <param name="descending">
-    /// Value indicating if elements should be sorted in a descending order as opposed to an ascending order.
+    /// Value indicating if elements should be sorted in descending as opposed to ascending order.
     /// </param>
     public PresortedInsertionStrategy(Func<TChildViewModel, TKey> keySelector, bool descending)
     {

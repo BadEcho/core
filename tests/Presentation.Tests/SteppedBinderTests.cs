@@ -229,7 +229,7 @@ public class SteppedBinderTests
 
     private SteppedBinder InitializeBinder(TimeSpan steppingDuration)
     {
-        var textBox = new TextBox {Text = null};
+        var textBox = new TextBox {Text = string.Empty};
         return new SteppedBinder(textBox,
                                  TextBox.TextProperty,
                                  new SteppingOptions(_binding)
@@ -417,7 +417,7 @@ public class SteppedBinderTests
         { get; set; }
 
         public Collection<ValidationRule> ValidationRules
-            => new();
+            => [];
 
         public void ClearConverter()
         { }

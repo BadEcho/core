@@ -135,6 +135,5 @@ public class PluginHostTests
         Assert.NotNull(part);
     }
 
-    private class ComposedDependency : IFakeDependency
-    { }
+    private class ComposedDependency : IFakeDependency;
 }

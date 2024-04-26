@@ -50,7 +50,7 @@ internal class CopyUponWriteList<T>
     /// modifying it, as well as clearing it when necessary.
     /// </remarks>
     protected List<T> Items
-    { get; private set; } = new();
+    { get; private set; } = [];
 
     /// <summary>
     /// Gets the synchronization object used to access the <see cref="Items"/>.
@@ -106,7 +106,7 @@ internal class CopyUponWriteList<T>
         if (_readonlyWrapper == null)
             return;
 
-        Items = new List<T>(Items);
+        Items = [..Items];
 
         _readonlyWrapper = null;
     }

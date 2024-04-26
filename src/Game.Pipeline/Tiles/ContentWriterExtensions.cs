@@ -24,7 +24,7 @@ internal static class ContentWriterExtensions
     /// Writes the provided extensible asset's custom properties to the content pipeline.
     /// </summary>
     /// <param name="writer">The current content writer.</param>
-    /// <param name="asset">A asset containing custom properties to write.</param>
+    /// <param name="asset">An asset containing custom properties to write.</param>
     public static void WriteProperties(this ContentWriter writer, ExtensibleAsset asset)
     {
         Require.NotNull(writer, nameof(writer));

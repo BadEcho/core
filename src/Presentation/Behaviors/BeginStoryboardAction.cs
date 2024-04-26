@@ -70,7 +70,7 @@ public sealed class BeginStoryboardAction : BehaviorAction<DependencyObject>
     /// </summary>
     /// <remarks>
     /// <para>
-    /// Setting a this value to true will cause a message to go out on the <see cref="Mediator"/> that will instruct other
+    /// Setting this value to true will cause a message to go out on the <see cref="Mediator"/> that will instruct other
     /// <see cref="BeginStoryboardAction"/> instances to ignore execution requests whenever this action begins an animation.
     /// </para>
     /// <para>

@@ -21,9 +21,8 @@ namespace BadEcho.Game;
 /// </summary>
 /// <remarks>
 /// <para>
-/// A viewport connector allows for the manipulation of graphics from when its drawn to when it eventually
-/// is rendered on an output surface. A viewport connector makes use of two sizing concepts: the physical
-/// resolution of the surface, and the virtual resolution of the content.
+/// A viewport connector allows for the manipulation of graphics when being rendered on an output surface. The connector
+/// makes use of two sizing concepts: the physical resolution of the surface, and the virtual resolution of the content.
 /// </para>
 /// <para>
 /// The physical resolution of the surface is, by default, the number of actual pixels of screen-space composing
@@ -36,7 +35,7 @@ namespace BadEcho.Game;
 /// of connector.
 /// </para>
 /// <para>
-/// With the base type of <see cref="ViewportConnector"/>, drawn content is stretched so it completely fills the
+/// With the base type of <see cref="ViewportConnector"/>, drawn content is stretched so that it completely fills the
 /// physical surface of the render-target surface. This will result in the aspect ratio of the source content not
 /// being maintained if the physical resolution's is not the same; however, the content will completely fill the
 /// physical surface, without any pillarboxing or letterboxing required.

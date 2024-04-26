@@ -27,10 +27,10 @@ namespace BadEcho.Game.Tiles;
 /// </remarks>
 public sealed class TileMap : Extensible, IModelRenderer
 {
-    private readonly Dictionary<Layer, IEnumerable<IPrimitiveModel>> _layerModelMap = new();
-    private readonly Dictionary<TileSet, int> _tileSetFirstIdMap = new();
-    private readonly List<TileSet> _tileSets = new();
-    private readonly List<Layer> _layers = new();
+    private readonly Dictionary<Layer, IEnumerable<IPrimitiveModel>> _layerModelMap = [];
+    private readonly Dictionary<TileSet, int> _tileSetFirstIdMap = [];
+    private readonly List<TileSet> _tileSets = [];
+    private readonly List<Layer> _layers = [];
     private readonly GraphicsDevice _device;
     
     /// <summary>

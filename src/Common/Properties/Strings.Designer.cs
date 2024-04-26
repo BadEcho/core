@@ -214,7 +214,7 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Executor is disposed and cannot be ran again..
+        ///   Looks up a localized string similar to Executor is disposed and cannot be run again..
         /// </summary>
         public static string ExecutorIsDisposed {
             get {
@@ -619,7 +619,7 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The executing process is unmanaged, therefore no contract implementation are able to be exported by it..
+        ///   Looks up a localized string similar to The executing process is unmanaged; therefore, no contract implementation is able to be exported by it..
         /// </summary>
         public static string ProcessCannotExportContracts {
             get {

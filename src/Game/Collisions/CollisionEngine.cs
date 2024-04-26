@@ -18,7 +18,7 @@ namespace BadEcho.Game.Collisions;
 /// </summary>
 public sealed class CollisionEngine
 {
-    private readonly List<ISpatialEntity> _collidables = new();
+    private readonly List<ISpatialEntity> _collidables = [];
     private readonly Quadtree _collisionTree;
 
     /// <summary>

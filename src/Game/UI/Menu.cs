@@ -22,7 +22,7 @@ namespace BadEcho.Game.UI;
 /// </summary>
 public sealed class Menu : ContentControl<Grid>, ISelectable
 {
-    private readonly List<MenuItem> _menuItems = new();
+    private readonly List<MenuItem> _menuItems = [];
 
     private Orientation _orientation;
     private DistanceFieldFont? _itemFont;
@@ -127,7 +127,7 @@ public sealed class Menu : ContentControl<Grid>, ISelectable
     }
 
     /// <summary>
-    /// Creates a item in a menu using the provided text as its label.
+    /// Creates an item in a menu using the provided text as its label.
     /// </summary>
     /// <param name="label">The text of the new menu item.</param>
     /// <returns>A <see cref="MenuItem"/> instance representing the newly added menu item.</returns>

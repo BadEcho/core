@@ -51,7 +51,7 @@ public class Kernel32Tests
     [Fact]
     public void WaitForMultipleObjectsEx_Timeout_ReturnsValid()
     {
-        int retVal = Kernel32.WaitForMultipleObjectsEx(1, new[] { Process.GetCurrentProcess().Handle }, false, 10, false);
+        int retVal = Kernel32.WaitForMultipleObjectsEx(1, [Process.GetCurrentProcess().Handle], false, 10, false);
 
         Assert.Equal(0x102, retVal);
     }

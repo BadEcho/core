@@ -18,5 +18,4 @@ namespace BadEcho.Presentation;
 /// <summary>
 /// Provides a collection of <see cref="SizeDefinition"/> objects.
 /// </summary>
-public sealed class SizeDefinitionCollection : Collection<SizeDefinition>
-{ }
+public sealed class SizeDefinitionCollection : Collection<SizeDefinition>;

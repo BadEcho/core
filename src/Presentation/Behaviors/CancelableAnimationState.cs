@@ -22,7 +22,7 @@ namespace BadEcho.Presentation.Behaviors;
 /// </summary>
 /// <remarks>
 /// This is meant to be provided to a <see cref="CancelableAnimationBehavior"/> instance using property element syntax in order
-/// to provide both messaging support as well as a means to specify which storyboard we aim to make cancelable.
+/// to provide both messaging support and a means to specify which storyboard we aim to make cancelable.
 /// </remarks>
 public sealed class CancelableAnimationState : AttachableComponent<DependencyObject>
 {

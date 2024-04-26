@@ -17,5 +17,4 @@ using BadEcho.Tests.Extensibility;
 namespace BadEcho.Tests.Plugin;
 
 [Export(typeof(IUniqueRequirement))]
-public sealed class UniqueRequirement : IUniqueRequirement
-{ }
+public sealed class UniqueRequirement : IUniqueRequirement;

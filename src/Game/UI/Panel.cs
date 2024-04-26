@@ -19,7 +19,7 @@ namespace BadEcho.Game.UI;
 /// </summary>
 public abstract class Panel : Control
 {
-    private readonly List<Control> _children = new();
+    private readonly List<Control> _children = [];
 
     /// <inheritdoc/>
     public override IInputHandler? InputHandler

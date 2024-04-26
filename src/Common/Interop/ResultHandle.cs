@@ -30,7 +30,7 @@ public enum ResultHandle
     /// The operation returned false.
     /// </summary>
     /// <remarks>Corresponds to S_FALSE. Function should still be considered successful.</remarks>
-    False = 1,
+    False = 1
 }
 
 /// <summary>

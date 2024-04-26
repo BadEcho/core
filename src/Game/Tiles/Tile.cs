@@ -50,7 +50,7 @@ public readonly record struct Tile
     /// Gets the global identifier for this tile, along with its flip flags.
     /// </summary>
     /// <remarks>
-    /// Refer to the <see cref="Id"/> property, which has the flip flag data stripped from the value, for a useable identifier.
+    /// Refer to the <see cref="Id"/> property, which has the flip flag data stripped from the value, for a usable identifier.
     /// </remarks>
     public uint IdWithFlags
     { get; }

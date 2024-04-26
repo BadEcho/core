@@ -16,5 +16,4 @@ using System.Composition;
 namespace BadEcho.Tests.ExtensibilityPoint;
 
 [Export(typeof(IExtensibilityPart))]
-public sealed class ExtensibilityPart : IExtensibilityPart
-{ }
+public sealed class ExtensibilityPart : IExtensibilityPart;

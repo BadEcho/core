@@ -21,7 +21,7 @@ namespace BadEcho.Presentation.Extensions;
 public static class DispatcherExtensions
 {
     /// <summary>
-    /// Executes the specified action action synchronously, at the specified priority, on the thread that the
+    /// Executes the specified action synchronously, at the specified priority, on the thread that the
     /// current object's <see cref="Dispatcher"/> is running on.
     /// </summary>
     /// <param name="dispatcherObject">The current object that is associated with a <see cref="Dispatcher"/>.</param>

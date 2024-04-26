@@ -39,8 +39,8 @@ namespace BadEcho.Game.UI;
 /// </remarks>
 public abstract class Control : IArrangeable, IInputElement
 {
-    private readonly List<MouseButton> _pressedButtons = new();
-    private readonly List<Keys> _pressedKeys = new();
+    private readonly List<MouseButton> _pressedButtons = [];
+    private readonly List<Keys> _pressedKeys = [];
 
     private bool _invalidArrange = true;
     private bool _invalidMeasure = true;
@@ -167,7 +167,7 @@ public abstract class Control : IArrangeable, IInputElement
     /// </summary>
     /// <remarks>
     /// This will ensure the control's width is at least the specified value, taking precedence over <see cref="MaximumWidth"/> and
-    /// <see cref="Width"/> values in regards to the minimum width constraint. If a minimum width is not set, then no minimum width
+    /// <see cref="Width"/> values in regard to the minimum width constraint. If a minimum width is not set, then no minimum width
     /// constraint exists.
     /// </remarks>
     public int? MinimumWidth
@@ -204,7 +204,7 @@ public abstract class Control : IArrangeable, IInputElement
     /// </summary>
     /// <remarks>
     /// This will ensure the control's height is at least the specified value, taking precedence over <see cref="MaximumHeight"/> and
-    /// <see cref="Height"/> values in regards to the minimum height constraint. If a minimum height is not set, then no minimum height
+    /// <see cref="Height"/> values in regard to the minimum height constraint. If a minimum height is not set, then no minimum height
     /// constraint exists.
     /// </remarks>
     public int? MinimumHeight
@@ -218,7 +218,7 @@ public abstract class Control : IArrangeable, IInputElement
     /// </summary>
     /// <remarks>
     /// This will ensure the control's height doesn't exceed the specified value, however the <see cref="MinimumHeight"/> will take precedence
-    /// over it if it happens to exceeds this value. If a maximum height is not set, then no maximum height constraint exists.
+    /// over it if it happens to exceed this value. If a maximum height is not set, then no maximum height constraint exists.
     /// </remarks>
     public int? MaximumHeight
     {
@@ -526,7 +526,7 @@ public abstract class Control : IArrangeable, IInputElement
     /// <param name="releasedButton">The button of the mouse that has been released.</param>
     /// <remarks>
     /// This will always be called when a button (previously pressed while the mouse was over this control) has been released,
-    /// regardless of whether or not the mouse is still over this control.
+    /// regardless of whether the mouse is still over this control or not.
     /// </remarks>
     protected virtual void OnMouseUp(MouseButton releasedButton)
     { }

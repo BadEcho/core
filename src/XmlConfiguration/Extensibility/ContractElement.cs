@@ -34,7 +34,7 @@ internal sealed class ContractElement : NamedConfigurationElement, IContractConf
         => (GuidElementCollection<RoutablePluginElement>) base[RoutablePluginChildrenSchema];
 
     /// <summary>
-    /// Gets the schema name for the child collection element containing all of the call-routable plugins for
+    /// Gets the schema name for the child collection element containing all the call-routable plugins for
     /// the contract represented by this element.
     /// </summary>
     internal static string RoutablePluginChildrenSchema
@@ -45,14 +45,14 @@ internal sealed class ContractElement : NamedConfigurationElement, IContractConf
         => _Properties.Value;
 
     private static ConfigurationPropertyCollection InitializeProperties()
-        => new()
-           {
-               new ConfigurationProperty(RoutablePluginChildrenSchema,
-                                         typeof(GuidElementCollection<RoutablePluginElement>),
-                                         null,
-                                         null,
-                                         new RoutablePluginsValidator(),
-                                         ConfigurationPropertyOptions.IsRequired),
-               CreateNameProperty()
-           };
+        =>
+        [
+            new ConfigurationProperty(RoutablePluginChildrenSchema,
+                                      typeof(GuidElementCollection<RoutablePluginElement>),
+                                      null,
+                                      null,
+                                      new RoutablePluginsValidator(),
+                                      ConfigurationPropertyOptions.IsRequired),
+            CreateNameProperty()
+        ];
 }

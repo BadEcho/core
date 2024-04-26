@@ -142,7 +142,7 @@ public static class PluginHost
     /// It is not considered an error if more than one contract export is found among filtered results, as we can still satisfy
     /// the inherent requirements of this particular method's signature (which asks for a single <typeparamref name="TContract"/>
     /// to be returned); however, it is still considered to be anomalous plugin design, as having multiple implementations of a
-    /// contract type for a family beggars the question as to whether or not enough filterable families themselves are defined.
+    /// contract type for a family begs the question whether enough filterable families themselves are defined.
     /// Perhaps an additional family needs to be made to assign this errant additional part to.
     /// </para>
     /// </remarks>

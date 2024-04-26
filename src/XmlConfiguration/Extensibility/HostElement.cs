@@ -43,13 +43,13 @@ internal sealed class HostElement : ConfigurationElement
         => _Properties.Value;
 
     private static ConfigurationPropertyCollection InitializeProperties()
-        => new()
-           {
-               new ConfigurationProperty(PLUGIN_DIRECTORY_ATTRIBUTE_SCHEMA,
-                                         typeof(string),
-                                         null,
-                                         null,
-                                         null,
-                                         ConfigurationPropertyOptions.None)
-           };
+        =>
+        [
+            new ConfigurationProperty(PLUGIN_DIRECTORY_ATTRIBUTE_SCHEMA,
+                                      typeof(string),
+                                      null,
+                                      null,
+                                      null,
+                                      ConfigurationPropertyOptions.None)
+        ];
 }

@@ -185,7 +185,7 @@ internal sealed class CachedWeakList<T> : CopyUponWriteList<WeakReference<T>>, I
     /// </para>
     /// <para>
     /// This enumerator is a struct in lieu of the use of value type enumerators found inside .NET's BCL. The team responsible
-    /// for the BCL did research and found that the vast majority of the time, the penalty we receiving for allocating and deallocating
+    /// for the BCL did research and found that the vast majority of the time, the penalty being received for allocating and deallocating
     /// the enumerator is large enough to warrant use of a value type instead.
     /// </para>
     /// <para>

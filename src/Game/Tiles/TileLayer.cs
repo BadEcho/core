@@ -100,7 +100,7 @@ public sealed class TileLayer : Layer
         int index = CalculateTileIndex(column, row);
         
         var tile = new Tile(idWithFlags, column, row);
-        var tileIndices = _tileIdIndicesMap.GetValueOrAdd(tile.Id, _ => new List<int>());
+        var tileIndices = _tileIdIndicesMap.GetValueOrAdd(tile.Id, _ => []);
 
         _tiles[index] = tile;
         tileIndices.Add(index);

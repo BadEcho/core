@@ -32,8 +32,8 @@ public sealed class TileMapAsset : ExtensibleAsset
     private const string TILE_LAYER_ELEMENT = "layer";
     private const string IMAGE_LAYER_ELEMENT = "imagelayer";
 
-    private readonly List<TileSetAsset> _tileSets = new();
-    private readonly List<LayerAsset> _layers = new();
+    private readonly List<TileSetAsset> _tileSets = [];
+    private readonly List<LayerAsset> _layers = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TileMapAsset"/> class.

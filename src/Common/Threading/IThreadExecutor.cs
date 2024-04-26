@@ -19,7 +19,7 @@ namespace BadEcho.Threading;
 public interface IThreadExecutor
 {
     /// <summary>
-    /// Gets a value indicating if the process to shutdown the executor has started.
+    /// Gets a value indicating if the process to shut down the executor has started.
     /// </summary>
     bool IsShutdownStarted { get; }
 

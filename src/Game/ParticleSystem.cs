@@ -22,11 +22,8 @@ namespace BadEcho.Game;
 /// </summary>
 public sealed class ParticleSystem
 {
-    private readonly List<Particle> _particles
-        = new();
-
-    private readonly Random _random
-        = new();
+    private readonly List<Particle> _particles = [];
+    private readonly Random _random = new();
 
     private readonly List<Texture2D> _textures;
 

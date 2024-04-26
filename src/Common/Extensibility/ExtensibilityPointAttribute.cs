@@ -25,11 +25,10 @@ namespace BadEcho.Extensibility;
 /// </para>
 /// <para>
 /// Sometimes, however, we might want to take advantage of the Extensibility framework's part discovery and loading capabilities
-/// in order to consume parts originating from referenced assemblies that are located outside of an isolated plugin directory.
+/// in order to consume parts originating from referenced assemblies that are located outside an isolated plugin directory.
 /// We refer to these types of assemblies as Extensibility points, and decorating them with this attribute will allow the Extensibility
 /// framework to bring in exported parts from them.
 /// </para>
 /// </remarks>
 [AttributeUsage(AttributeTargets.Assembly)]
-public sealed class ExtensibilityPointAttribute : Attribute
-{ }
+public sealed class ExtensibilityPointAttribute : Attribute;

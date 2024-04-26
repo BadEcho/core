@@ -91,7 +91,7 @@ public static class ReflectionExtensions
             ConstructorInfo? ctor = type.GetConstructor(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance,
                                                         Type.DefaultBinder,
                                                         parameterTypes,
-                                                        Array.Empty<ParameterModifier>());
+                                                        []);
             if (ctor != null) 
                 _TypeConstructorMap.Add(type, ctor);
 

@@ -82,7 +82,7 @@ internal abstract class TransientBinder : Freezable, IHandlerBypassable
                             };
 
         // Any converter found on the original binding has been moved over to the new target binding.
-        // We clear the converter on the source binding so we have access to the original values.
+        // We clear the converter on the source binding so that we have access to the original values.
         options.Binding.ClearConverter();
 
         this.BypassHandlers(() =>
@@ -127,7 +127,7 @@ internal abstract class TransientBinder : Freezable, IHandlerBypassable
 
         if (source.GetValue(BindersProperty) is not FreezableCollection<TransientBinder> binders)
         {
-            binders = new FreezableCollection<TransientBinder>();
+            binders = [];
 
             SetBinders(source, binders);
         }

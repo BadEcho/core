@@ -18,7 +18,7 @@ using BadEcho.Properties;
 namespace BadEcho.Serialization;
 
 /// <summary>
-/// Provides a encapsulated conversion of objects to or from numbers in JSON.
+/// Provides an encapsulated conversion of objects to or from numbers in JSON.
 /// </summary>
 /// <typeparam name="T">The type of object or value handled by the converter.</typeparam>
 public sealed class JsonIntFuncConverter<T> : JsonConverter<T>

@@ -24,11 +24,11 @@ internal enum MenuFlags
     /// </summary>
     String = 0,
     /// <summary>
-    /// The menu item is disabled and grayed out so it cannot be selected.
+    /// The menu item is disabled and grayed out so that it cannot be selected.
     /// </summary>
     Grayed = 0x1,
     /// <summary>
-    /// The menu item is disabled without graying it out so it cannot be selected.
+    /// The menu item is disabled without graying it out so that it cannot be selected.
     /// </summary>
     Disabled = 0x2,
     /// <summary>

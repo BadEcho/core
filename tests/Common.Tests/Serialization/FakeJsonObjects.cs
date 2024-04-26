@@ -21,8 +21,7 @@ namespace BadEcho.Tests.Serialization;
 /// <suppresions>
 /// ReSharper disable LocalizableElement
 /// </suppresions>
-public abstract class FakeJsonObject
-{ }
+public abstract class FakeJsonObject;
 
 public sealed class FirstFakeJsonObject : FakeJsonObject
 {

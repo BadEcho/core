@@ -168,7 +168,7 @@
     <value>Multiple exports for contract type '{0}' belong to the '{1}' filterable family; any part beyond the first of its type from a filterable context is ignored.</value>
   </data>
 	<data name="ProcessCannotExportContracts" xml:space="preserve">
-		<value>The executing process is unmanaged, therefore no contract implementation are able to be exported by it.</value>
+		<value>The executing process is unmanaged; therefore, no contract implementation is able to be exported by it.</value>
 	</data>
   <data name="MultipleExportsFoundForLocalContract" xml:space="preserve">
     <value>Multiple exports for the locally exported contract type '{0}' were found. Only a single provider should ever be available for contract types meant to be loaded from a local context.</value>
@@ -249,7 +249,7 @@
 		<value>The executor is already running on a thread.</value>
 	</data>
 	<data name="ExecutorIsDisposed" xml:space="preserve">
-		<value>Executor is disposed and cannot be ran again.</value>
+		<value>Executor is disposed and cannot be run again.</value>
 	</data>
 	<data name="IconNoEntries" xml:space="preserve">
 		<value>The icon file has no image entries.</value>

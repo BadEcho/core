@@ -36,8 +36,8 @@ namespace BadEcho.Presentation.ViewModels;
 internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewModel<TChildViewModel>
     where TChildViewModel : class, IViewModel, IModelProvider<TModel>
 {
-    private readonly ConcurrentQueue<TChildViewModel> _bindingQueue = new();
-    private readonly List<TModel> _processedModels = new();
+    private readonly ConcurrentQueue<TChildViewModel> _bindingQueue = [];
+    private readonly List<TModel> _processedModels = [];
     private readonly object _processedModelsLock = new();
     private readonly object _capacityEnforcementLock = new();
 

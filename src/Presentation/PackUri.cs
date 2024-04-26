@@ -31,7 +31,7 @@ namespace BadEcho.Presentation;
 /// assembly resource files, does no harm to us.
 /// </para>
 /// <para>
-/// An additional note in regards to the pack URIs created using <see cref="UriKind.Relative"/>: while the generated pack URI
+/// An additional note in regard to the pack URIs created using <see cref="UriKind.Relative"/>: while the generated pack URI
 /// is indeed relative according to the pack URI specification, be advised that these URIs are constructed using a leading
 /// backslash. The presence of this leading backslash means that the relative pack URI is considered relative to the <c>root</c>
 /// of the application, which makes them not so different from absolute URIs, except for the space saved from not having to

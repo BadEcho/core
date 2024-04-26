@@ -21,7 +21,7 @@ namespace BadEcho.Presentation.Converters;
 
 /// <summary>
 /// Provides a value converter that converts a provided <see cref="double"/> value by returning the result of an arithmetic
-/// operation involving both the input value as well as a bindable operand value.
+/// operation involving both the input value and a bindable operand value.
 /// </summary>
 [ValueConversion(typeof(double), typeof(double))]
 public sealed class ArithmeticConverter : FreezableValueConverter<double,double>

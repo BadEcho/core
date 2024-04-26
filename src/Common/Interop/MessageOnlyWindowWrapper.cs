@@ -143,15 +143,15 @@ public sealed class MessageOnlyWindowWrapper : WindowWrapper, IDisposable
     {
         base.OnDestroyingWindow();
 
-        // Time to cleanup, though the class unregistration needs to be delayed since the window is already being destroyed.
+        // Time to clean up, though the class unregistration needs to be delayed since the window is already being destroyed.
         _windowIsBeingDestroyed = true;
         Dispose();
     }
 
     private static string CreateClassName()
-    {   // The class name needs to be unique so we can be confident that class registration won't fail.
+    {   // The class name needs to be unique so that we can be confident that class registration won't fail.
         // To achieve this, we base the name off the application's name concatenated with the thread name,
-        // and a random GUID. We just need to be mindful of the 255 character limit for class names.
+        // and a random GUID. We just need to be mindful of the 255-character limit for class names.
         string applicationName = AppDomain.CurrentDomain.FriendlyName.Length >= 128
             ? AppDomain.CurrentDomain.FriendlyName[..128]
             : AppDomain.CurrentDomain.FriendlyName;

@@ -52,5 +52,5 @@ internal sealed class GraphicsDeviceService : IGraphicsDeviceService
     public GraphicsDevice GraphicsDevice 
     { get; } = new(GraphicsAdapter.DefaultAdapter,
                    GraphicsProfile.Reach,
-                   new PresentationParameters() { BackBufferWidth = 1920, BackBufferHeight = 1080 });
+                   new PresentationParameters { BackBufferWidth = 1920, BackBufferHeight = 1080 });
 }

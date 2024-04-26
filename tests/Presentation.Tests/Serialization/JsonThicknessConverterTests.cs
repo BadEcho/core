@@ -20,13 +20,13 @@ namespace BadEcho.Presentation.Tests.Serialization;
 public class JsonThicknessConverterTests
 {
     private const string FOUR_LENGTHS_OBJECT =
-        @"{""someThickness"":""2,1,0,3""}";
+        """{"someThickness":"2,1,0,3"}""";
 
     private const string TWO_LENGTHS_OBJECT =
-        @"{""someThickness"":""1,5""}";
+        """{"someThickness":"1,5"}""";
 
     private const string ONE_LENGTH_OBJECT =
-        @"{""someThickness"":""8""}";
+        """{"someThickness":"8"}""";
 
 
     [Fact]

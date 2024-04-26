@@ -40,11 +40,8 @@ internal sealed class WindowSubclass : IDisposable
     private static readonly WindowMessage _DetachMessage
         = User32.RegisterWindowMessage("WindowSubclass.DetachMessage");
 
-    private static readonly List<WindowSubclass> _Subclasses
-        = new();
-
-    private static readonly object _SubclassesLock
-        = new();
+    private static readonly List<WindowSubclass> _Subclasses = [];
+    private static readonly object _SubclassesLock = new();
 
     private static readonly IntPtr _DefaultWindowProc 
         = GetDefaultWindowProc();
@@ -58,7 +55,7 @@ internal sealed class WindowSubclass : IDisposable
 
     /// <summary>
     /// <para>
-    /// A <see cref="GCHandle"/> is employed by this class so it won't get collected even in the event that all managed
+    /// A <see cref="GCHandle"/> is employed by this class so that it won't get collected even in the event that all managed
     /// references to it get released. This is very important because the oh-so-relevant unmanaged component at hand (i.e., the
     /// window we're subclassing) will still have a reference to us, and this is a situation very much outside the purview of the
     /// .NET garbage collector.
@@ -141,7 +138,7 @@ internal sealed class WindowSubclass : IDisposable
 
         Unhook(false);
 
-        // If somehow we're still pinned, unpin ourselves so we can get garbage collected.
+        // If somehow we're still pinned, unpin ourselves so that we can get garbage collected.
         // This should only occur if attachment never occurred due to an error occurring
         // with the creation of the window which we intended to subclass.
         if (_gcHandle.IsAllocated)

@@ -21,7 +21,7 @@ namespace BadEcho.Game;
 /// </summary>
 /// <remarks>
 /// The overly verbose mathematical documentation is present because...well, why not? Also, it helps cement my own
-/// memory in regards to these matters.
+/// memory in regard to these matters.
 /// </remarks>
 /// <suppressions>
 /// ReSharper disable UnassignedReadonlyField
@@ -206,7 +206,7 @@ public readonly struct Circle : IEquatable<Circle>, IShape
     /// <inheritdoc/>
     /// <remarks>
     /// The nearest point on the circle is determined by first taking the displacement vector from this circle's center to
-    /// <c>point</c> and then normalizing it so we can scale the vector to the distance defined by this circle's radius.
+    /// <c>point</c> and then normalizing it so that we can scale the vector to the distance defined by this circle's radius.
     /// This will give us a vector that, when added to this circle's center, will extend from the center of the circle to a
     /// point on its perimeter in the direction of <c>point</c>.
     /// </remarks>

@@ -48,7 +48,7 @@ public sealed class AspectMaintainedViewportConnector : ViewportConnector
     /// </summary>
     /// <remarks>
     /// <para>
-    /// Because the size of the window very likely will present aspect ratio different than that of the content,
+    /// Because the size of the window very likely will present an aspect ratio different from that of the content,
     /// we manipulate the size of the viewport itself so, upon scaling the content to fit within it, the aspect
     /// ratio is the same.
     /// </para>

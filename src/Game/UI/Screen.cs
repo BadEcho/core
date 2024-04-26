@@ -34,8 +34,8 @@ namespace BadEcho.Game.UI;
 /// </remarks>
 public sealed class Screen : IArrangeable, IInputHandler
 {
-    private readonly List<MouseButton> _pressedButtons = new();
-    private readonly List<Keys> _pressedKeys = new();
+    private readonly List<MouseButton> _pressedButtons = [];
+    private readonly List<Keys> _pressedKeys = [];
 
     private readonly GraphicsDevice _device;
 

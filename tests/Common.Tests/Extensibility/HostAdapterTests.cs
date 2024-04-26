@@ -101,7 +101,7 @@ public class HostAdapterTests
         Assert.Equal(ISegmentedContract.SecondSomeOtherMethod, proxy.SomeOtherMethod());
     }
 
-    private IExtensibilityConfiguration CreateAlphaPrimaryConfiguration()
+    private static IExtensibilityConfiguration CreateAlphaPrimaryConfiguration()
     {
         return new ExtensibilityConfiguration
                {

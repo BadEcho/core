@@ -48,7 +48,7 @@ public class DistanceFieldFontTests : IClassFixture<ContentManagerFixture>
         DistanceFieldFont font = _content.Load<DistanceFieldFont>("Fonts\\Lato");
 
         Vector2 direction = new(1, 0);
-        float scale = 1.0f;
+        const float scale = 1.0f;
 
         Vector2 expectedAdvance = direction * 0.5655f * scale;
 

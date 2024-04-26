@@ -64,7 +64,7 @@ public static class NameOf
     /// </para>
     /// <para>
     /// This is not the case, however, as attached properties used in XAML do not actually get their accessors invoked; this is done
-    /// purposely as an optimization by the XAML parser. The only time they're actually invoked, outside of any calls we make to them
+    /// purposely as an optimization by the XAML parser. The only time they're actually invoked, outside any calls we make to them
     /// in our own code, is at design-time by the XAML designer when data binding is occurring on the property. This optimization by the
     /// XAML parser can result in problems if the attached property has been designed such that proper operation requires invocation of an
     /// accessor prior to the property being referenced and used.
@@ -93,6 +93,6 @@ public static class NameOf
 
     private static string RemoveDependencyPropertySuffix(MemberExpression expression)
         => expression.Member.Name.EndsWith(SUFFIX_DEPENDENCY_PROPERTY, StringComparison.OrdinalIgnoreCase)
-            ? expression.Member.Name[..^(SUFFIX_DEPENDENCY_PROPERTY.Length)]
+            ? expression.Member.Name[..^SUFFIX_DEPENDENCY_PROPERTY.Length]
             : expression.Member.Name;
 }

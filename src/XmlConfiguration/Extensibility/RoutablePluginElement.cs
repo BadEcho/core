@@ -55,21 +55,21 @@ internal sealed class RoutablePluginElement : GuidConfigurationElement, IRoutabl
         => _Properties.Value;
 
     private static ConfigurationPropertyCollection InitializeProperties()
-        => new()
-           {
-               new ConfigurationProperty(METHOD_CLAIMS_CHILD_SCHEMA,
-                                         typeof(NamedElementCollection<MethodClaimElement>),
-                                         null,
-                                         null,
-                                         null,
-                                         ConfigurationPropertyOptions.None),
-               new ConfigurationProperty(PRIMARY_ATTRIBUTE_SCHEMA,
-                                         typeof(bool),
-                                         false,
-                                         null,
-                                         null,
-                                         ConfigurationPropertyOptions.None),
-               CreateIdProperty(),
-               CreateNameProperty()
-           };
+        =>
+        [
+            new ConfigurationProperty(METHOD_CLAIMS_CHILD_SCHEMA,
+                                      typeof(NamedElementCollection<MethodClaimElement>),
+                                      null,
+                                      null,
+                                      null,
+                                      ConfigurationPropertyOptions.None),
+            new ConfigurationProperty(PRIMARY_ATTRIBUTE_SCHEMA,
+                                      typeof(bool),
+                                      false,
+                                      null,
+                                      null,
+                                      ConfigurationPropertyOptions.None),
+            CreateIdProperty(),
+            CreateNameProperty()
+        ];
 }

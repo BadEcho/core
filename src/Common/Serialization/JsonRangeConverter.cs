@@ -91,7 +91,7 @@ public sealed class JsonRangeConverter<T> : JsonConverter<IEnumerable<T>>
             else
             {
                 WriteRange(writer, range[0], range[^1]);
-                range = new List<int> { numberInRange };
+                range = [numberInRange];
             }
         }
 

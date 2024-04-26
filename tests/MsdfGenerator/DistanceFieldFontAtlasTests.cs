@@ -20,7 +20,7 @@ public class DistanceFieldFontAtlasTests
     [Fact]
     public void Generate_CreatesAtlas_OutputFilesExist()
     {
-        var fontPath = "Lato-Regular.ttf";
+        const string fontPath = "Lato-Regular.ttf";
         Assert.True(File.Exists(fontPath));
 
         DistanceFieldFontAtlas.Generate(new FontConfiguration

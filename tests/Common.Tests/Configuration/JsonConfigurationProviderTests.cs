@@ -71,9 +71,6 @@ public class JsonConfigurationProviderTests
         public ExtensionDataStore<FakeExtensionData>? Group { get; set; }
     }
 
-    private class FakeExtensionData
-    { }
-
-    private class FakeExtensionDataImpl : FakeExtensionData
-    { }
+    private class FakeExtensionData;
+    private class FakeExtensionDataImpl : FakeExtensionData;
 }

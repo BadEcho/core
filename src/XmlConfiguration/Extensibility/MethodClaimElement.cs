@@ -29,8 +29,5 @@ internal sealed class MethodClaimElement : NamedConfigurationElement
         => _Properties.Value;
 
     private static ConfigurationPropertyCollection InitializeProperties()
-        => new()
-           {
-               CreateNameProperty()
-           };
+        => [CreateNameProperty()];
 }

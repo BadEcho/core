@@ -26,7 +26,7 @@ namespace BadEcho.Presentation.Windows;
 /// <typeparam name="T">The type of data context used by the window.</typeparam>
 /// <remarks>
 /// <para>
-/// Because this class requires a generic type parameter to be specified, any direct descendent of this type will be unable
+/// Because this class requires a generic type parameter to be specified, any direct descendant of this type will be unable
 /// to support markup-compiled XAML (i.e., the normal practice of having a separate *.xaml file where the user interface is
 /// defined). This is because WPF still lacks support for markup-compiled WPF 2009 language features, which offer the
 /// <c>x:TypeArguments</c> directive.

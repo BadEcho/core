@@ -94,7 +94,7 @@ public sealed class AtomicObservableCollection<T> : ObservableCollection<T>, IHa
         => null != _dispatcher && Thread.CurrentThread != _dispatcher.Thread;
 
     /// <summary>
-    /// Adds the sequence of items to the collection, sending a single collection change notification once all of the items
+    /// Adds the sequence of items to the collection, sending a single collection change notification once all the items
     /// have been inserted.
     /// </summary>
     /// <param name="items">A sequence of items to add.</param>
@@ -129,7 +129,7 @@ public sealed class AtomicObservableCollection<T> : ObservableCollection<T>, IHa
     }
 
     /// <summary>
-    /// Removes the sequence of items from the collection, sending a single collection change notification once all of the items
+    /// Removes the sequence of items from the collection, sending a single collection change notification once all the items
     /// have been removed.
     /// </summary>
     /// <param name="items">A sequence of items to remove.</param>

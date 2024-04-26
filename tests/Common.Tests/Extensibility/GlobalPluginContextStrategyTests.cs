@@ -142,6 +142,5 @@ public class GlobalPluginContextStrategyTests
         Assert.NotNull(container.GetExport<IExtensibilityPart>());
     }
 
-    private class ComposedDependency : IFakeDependency  
-    { }
+    private class ComposedDependency : IFakeDependency;
 }

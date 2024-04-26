@@ -16,5 +16,4 @@ namespace BadEcho.Game.States;
 /// <summary>
 /// Skeleton for a game state that will provide useful functionality related to gameplay.
 /// </summary>
-public abstract class GameplayState : GameState
-{ }
+public abstract class GameplayState : GameState;

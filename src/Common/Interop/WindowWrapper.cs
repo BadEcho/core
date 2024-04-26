@@ -20,7 +20,7 @@ namespace BadEcho.Interop;
 /// </summary>
 public abstract class WindowWrapper : IMessageSource<WindowHookProc>
 {
-    private readonly CachedWeakList<WindowHookProc> _hooks = new();
+    private readonly CachedWeakList<WindowHookProc> _hooks = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WindowWrapper"/> class.

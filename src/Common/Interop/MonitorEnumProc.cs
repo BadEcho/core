@@ -18,7 +18,7 @@ namespace BadEcho.Interop;
 /// </summary>
 /// <param name="hMonitor">A handle to the display monitor.</param>
 /// <param name="hdcMonitor">A handle to the device context.</param>
-/// <param name="lprcMonitor">A pointer to the a rectangle structure.</param>
+/// <param name="lprcMonitor">A pointer to the rectangle structure.</param>
 /// <param name="lParam">Application-defined data.</param>
 /// <returns>Value indicating whether enumeration should continue.</returns>
 /// <remarks>

@@ -22,7 +22,7 @@ public interface IParent<TChild, out TCollection>
     where TCollection : ICollection<TChild>
 {
     /// <summary>
-    /// Gets a collection of all of the children that exist within this <see cref="IParent{TChild, TCollection}"/> object.
+    /// Gets a collection of all the children that exist within this <see cref="IParent{TChild, TCollection}"/> object.
     /// </summary>
     TCollection Items { get; }
 }

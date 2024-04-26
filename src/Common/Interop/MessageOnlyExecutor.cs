@@ -25,22 +25,17 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     private static readonly WindowMessage _ProcessOperation
         = User32.RegisterWindowMessage("MessageOnlyExecutor.ProcessOperation");
     
-    private static readonly List<WeakReference<IThreadExecutor>> _Executors 
-        = new();
-
-    private static readonly object _ExecutorsLock
-        = new();
+    private static readonly List<WeakReference<IThreadExecutor>> _Executors = [];
+    private static readonly object _ExecutorsLock = new();
 
     private static WeakReference<IThreadExecutor>? _LastExecutor;
 
-    private readonly List<ThreadExecutorOperation> _operationQueue
-        = new();
-
-    private readonly ManualResetEventSlim _running
-        = new();
+    private readonly List<ThreadExecutorOperation> _operationQueue = [];
+    private readonly ManualResetEventSlim _running = new();
     
     // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
-    // We need to keep a reference to this so it stays alive, as the window wrapper it is provided to stores it in a weak list.
+    // The window wrapper this is provided to will store it in a weak list,
+    // so we need to keep a reference to it to keep it alive.
     private readonly WindowHookProc _hook;
     private readonly WeakReference<IThreadExecutor> _thisExecutor;
 

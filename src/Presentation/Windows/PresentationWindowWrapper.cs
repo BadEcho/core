@@ -70,10 +70,9 @@ public sealed class PresentationWindowWrapper : WindowWrapper
     {
         base.OnHookRemoved(removedHook);
 
-        if (!_hookMapper.TryGetValue(removedHook, out HwndSourceHook? sourceHook))
+        if (!_hookMapper.Remove(removedHook, out HwndSourceHook? sourceHook))
             return;
 
-        _hookMapper.Remove(removedHook);
         _source.RemoveHook(sourceHook);
     }
 }

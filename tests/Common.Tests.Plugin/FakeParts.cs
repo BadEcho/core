@@ -37,8 +37,7 @@ public sealed class AnotherFakePart : IFakePart
 }
 
 [Export(typeof(IFakeDependency))]
-public class FakeDependency : IFakeDependency
-{ }
+public class FakeDependency : IFakeDependency;
 
 [Export(typeof(INonSharedFakePart))]
 public sealed class NonSharedFakePart : INonSharedFakePart

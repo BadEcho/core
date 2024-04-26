@@ -77,20 +77,20 @@ internal sealed class ExtensibilitySection : BindableConfigurationSection, IExte
     }
 
     private static ConfigurationPropertyCollection InitializeProperties()
-        => new()
-           {
-               new ConfigurationProperty(HOST_CHILD_SCHEMA,
-                                         typeof(HostElement),
-                                         new HostElement(),
-                                         null,
-                                         null,
-                                         ConfigurationPropertyOptions.None),
-               new ConfigurationProperty(SEGMENTED_CONTRACTS_CHILD_SCHEMA,
-                                         typeof(NamedElementCollection<ContractElement>),
-                                         new NamedElementCollection<ContractElement>(),
-                                         null,
-                                         null,
-                                         ConfigurationPropertyOptions.None),
-               CreateXmlnsProperty()
-           };
+        =>
+        [
+            new ConfigurationProperty(HOST_CHILD_SCHEMA,
+                                      typeof(HostElement),
+                                      new HostElement(),
+                                      null,
+                                      null,
+                                      ConfigurationPropertyOptions.None),
+            new ConfigurationProperty(SEGMENTED_CONTRACTS_CHILD_SCHEMA,
+                                      typeof(NamedElementCollection<ContractElement>),
+                                      new NamedElementCollection<ContractElement>(),
+                                      null,
+                                      null,
+                                      ConfigurationPropertyOptions.None),
+            CreateXmlnsProperty()
+        ];
 }

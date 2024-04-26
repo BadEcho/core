@@ -164,7 +164,7 @@ public abstract class PrimitiveModel<TVertexBuffer, TIndexBuffer> : IPrimitiveMo
     }
 
     /// <summary>
-    /// Creates and loads the model's vertex buffer with vertices from the the provided model data.
+    /// Creates and loads the model's vertex buffer with vertices from the provided model data.
     /// </summary>
     /// <param name="modelData">The model data to load into the created vertex buffer.</param>
     /// <returns>

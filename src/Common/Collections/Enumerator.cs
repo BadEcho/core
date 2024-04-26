@@ -18,13 +18,17 @@ namespace BadEcho.Collections;
 
 /// <summary>
 /// Provides a customizable enumerator that supports a simple iteration over a collection.
-/// This is an abstract class.
 /// </summary>
 /// <remarks>
 /// This class leaves the particulars of the enumeration mechanism to the other enumerator provided to it, allowing
 /// us to extend the base functionality of the provided enumerator with customizations defined in a derived
 /// class. 
 /// </remarks>
+/// <suppressions>
+/// ReSharper disable NotDisposedResource
+/// The enumerator is disposed if it implements <see cref="IDisposable"/> by the <see cref="Enumerator{T}"/> class.
+/// Other derivations of this type are responsible for replicating this behavior.
+/// </suppressions>
 public abstract class Enumerator : IEnumerator
 {
     private bool _endOfSequence;
@@ -36,7 +40,7 @@ public abstract class Enumerator : IEnumerator
     protected Enumerator(IEnumerable enumerable)
     {
         Require.NotNull(enumerable, nameof(enumerable));
-
+        
         InnerEnumerator = enumerable.GetEnumerator();
     }
         

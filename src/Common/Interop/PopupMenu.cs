@@ -23,7 +23,7 @@ namespace BadEcho.Interop;
 /// </summary>
 public sealed class PopupMenu : IDisposable
 {
-    private readonly List<MenuItem> _items = new();
+    private readonly List<MenuItem> _items = [];
 
     private readonly WindowWrapper _windowWrapper;
     private readonly MenuHandle _menu;

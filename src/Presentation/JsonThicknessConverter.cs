@@ -53,26 +53,26 @@ public sealed class JsonThicknessConverter : JsonConverter<Thickness>
     private static double[] ParseLengths(string value)
     {
         if (string.IsNullOrEmpty(value))
-            return new[] { 0.0 };
+            return [0.0];
 
         string separator = CultureInfo.InvariantCulture.TextInfo.ListSeparator;
         string[] values = value.Split(separator);
 
         return values.Length switch
         {
-            1 => new[] { double.Parse(values[0], CultureInfo.InvariantCulture) },
-            2 => new[]
-                 {
-                     double.Parse(values[0], CultureInfo.InvariantCulture),
-                     double.Parse(values[1], CultureInfo.InvariantCulture)
-                 },
-            4 => new[]
-                 {
-                     double.Parse(values[0], CultureInfo.InvariantCulture),
-                     double.Parse(values[1], CultureInfo.InvariantCulture),
-                     double.Parse(values[2], CultureInfo.InvariantCulture),
-                     double.Parse(values[3], CultureInfo.InvariantCulture)
-                 },
+            1 => [double.Parse(values[0], CultureInfo.InvariantCulture)],
+            2 =>
+            [
+                double.Parse(values[0], CultureInfo.InvariantCulture),
+                double.Parse(values[1], CultureInfo.InvariantCulture)
+            ],
+            4 =>
+            [
+                double.Parse(values[0], CultureInfo.InvariantCulture),
+                double.Parse(values[1], CultureInfo.InvariantCulture),
+                double.Parse(values[2], CultureInfo.InvariantCulture),
+                double.Parse(values[3], CultureInfo.InvariantCulture)
+            ],
             _ => throw new JsonException(Strings.JsonThicknessInvalidThickness)
         };
     }
