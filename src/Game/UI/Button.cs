@@ -19,7 +19,7 @@ namespace BadEcho.Game.UI;
 /// <summary>
 /// Provides a button user interface element, which can be clicked.
 /// </summary>
-public sealed class Button : Control
+public sealed class Button : Control<Button>
 {
     private readonly Label _innerLabel;
     private readonly Image _innerImage;
@@ -134,7 +134,7 @@ public sealed class Button : Control
         get => _innerImage.Height;
         set => _innerImage.Height = value;
     }
-
+    
     /// <inheritdoc />
     protected override Size MeasureCore(Size availableSize)
     {
