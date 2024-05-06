@@ -79,6 +79,15 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Derived control class must pass itself as the generic self-recurring type parameter..
+        /// </summary>
+        internal static string ControlNotSelfRecurring {
+            get {
+                return ResourceManager.GetString("ControlNotSelfRecurring", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Missing expected effect resource &apos;{0}&apos;..
         /// </summary>
         internal static string EffectMissingResource {

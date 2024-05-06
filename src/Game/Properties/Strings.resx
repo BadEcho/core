@@ -149,4 +149,7 @@
 	<data name="SheetNoFramesForAnimation" xml:space="preserve">
 		<value>Sprite sheet contains no frames for the specified animation.</value>
 	</data>
+	<data name="ControlNotSelfRecurring" xml:space="preserve">
+		<value>Derived control class must pass itself as the generic self-recurring type parameter.</value>
+	</data>
 </root>

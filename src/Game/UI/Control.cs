@@ -25,21 +25,23 @@ namespace BadEcho.Game.UI;
 /// <typeparam name="TSelf">The type of control deriving from this base.</typeparam>
 /// <remarks>
 /// <para>
-/// The goal here isn't to provide an incredibly rich and over-engineered user interface framework, but rather the minimum
-/// functionality required in order to be able to comfortably create interface elements for a game. Still, we do embrace some
-/// of the approaches taken by some of the more fully fleshed out general-purpose user interface frameworks out there. 
+/// The goal here isn't to provide an incredibly rich and over-engineered user interface framework, but rather the
+/// minimum functionality required in order to be able to comfortably create interface elements for a game.
+/// Still, we do embrace some of the approaches taken by some of the more fully fleshed out general-purpose user
+/// interface frameworks out there. 
 /// </para>
 /// <para>
-/// Specifically, we adopt the notion of a two-part layout process consisting of <c>Measure</c> and <c>Arrange</c> passes that
-/// must be executed if the layout has been invalidated prior to any actual rendering. This is a core concept a few user interface
-/// frameworks such as Windows Presentation Foundation.
+/// Specifically, we adopt the notion of a two-part layout process consisting of <c>Measure</c> and <c>Arrange</c> passes
+/// that must be executed if the layout has been invalidated prior to any actual rendering. This is a core concept shared
+/// by a few user interface frameworks such as Windows Presentation Foundation.
 /// </para>
 /// <para>
-/// Other than that, the intention is to keep the foundational logic for controls powered by this framework as simple as practicable.
+/// Other than that, the intention is to keep the foundational logic for controls powered by this framework as
+/// simple as practicable.
 /// </para>
 /// <para>
-/// This type implements the "curiously recurring template pattern" in order to support declarative styling à la WPF (albeit with a bit
-/// more type safety). Derived types should pass themselves as the generic type parameter.
+/// This type implements the "curiously recurring template pattern" in order to support declarative styling à la WPF
+/// (albeit with a bit more type safety). Derived types should pass themselves as the generic type parameter.
 /// </para>
 /// </remarks>
 public abstract class Control<TSelf> : IControl
@@ -280,12 +282,23 @@ public abstract class Control<TSelf> : IControl
     public bool IsFocusable
     { get; set; }
 
+    /// <summary>
+    /// Gets or sets the style used by this control when it is rendered.
+    /// </summary>
     public Style<TSelf>? Style
     {
         get => _style;
         set
         {
-            value?.ApplyTo(this);
+            _style = value;
+
+            if (_style == null)
+                return;
+
+            if (this is not TSelf self)
+                throw new InvalidOperationException(Strings.ControlNotSelfRecurring);
+
+            value?.ApplyTo(self);
             _style = value;
         }
     }
@@ -294,9 +307,6 @@ public abstract class Control<TSelf> : IControl
     [MemberNotNullWhen(true, nameof(InputHandler))]
     public bool IsFocused
         => InputHandler != null && InputHandler.FocusedElement == this;
-
-    public static implicit operator TSelf(Control<TSelf> control)
-        => (TSelf) control;
 
     /// <inheritdoc/>
     public void ClearFocus()
