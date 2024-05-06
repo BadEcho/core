@@ -19,13 +19,13 @@ using System.Runtime.InteropServices;
 [assembly: SuppressMessage("Design", 
                            "CA1045:Do not pass types by reference", 
                            Scope = "member", 
-                           Target = "~M:BadEcho.Game.UI.Control.RemeasureIfChanged``1(``0@,``0)",
+                           Target = "~M:BadEcho.Game.UI.Control`1.RemeasureIfChanged``1(``0@,``0)",
                            Justification = "The method is not public, and the immeasurable amount of convenience provided by this function vastly outweighs the inconvenience of passing an argument by reference. This is a proper use of ref parameters.")]
 
 [assembly: SuppressMessage("Design", 
                            "CA1045:Do not pass types by reference", 
                            Scope = "member", 
-                           Target = "~M:BadEcho.Game.UI.Control.RearrangeIfChanged``1(``0@,``0)",
+                           Target = "~M:BadEcho.Game.UI.Control`1.RearrangeIfChanged``1(``0@,``0)",
                            Justification = "The method is not public, and the immeasurable amount of convenience provided by this function vastly outweighs the inconvenience of passing an argument by reference. This is a proper use of ref parameters.")]
 
 [assembly: SuppressMessage("Performance", 

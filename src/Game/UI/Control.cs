@@ -80,11 +80,11 @@ public abstract class Control<TSelf> : IControl
     /// Gets the source of user input for this control.
     /// </summary>
     public virtual IInputHandler? InputHandler
-    { get; internal set; }
+    { get; set; }
 
     /// <inheritdoc/>
     public IArrangeable? Parent
-    { get; internal set; }
+    { get; set; }
 
     /// <inheritdoc/>
     public Size DesiredSize
@@ -451,10 +451,7 @@ public abstract class Control<TSelf> : IControl
         spriteBatch.GraphicsDevice.ScissorRectangle = clippingRectangle;
     }
 
-    /// <summary>
-    /// Processes events related to user input.
-    /// </summary>
-    /// <exception cref="InvalidOperationException">Control does not have a valid <see cref="InputHandler"/> assigned.</exception>
+    /// <inheritdoc/>
     public virtual void UpdateInput()
     {
         if (InputHandler == null)

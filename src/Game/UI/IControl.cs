@@ -21,9 +21,14 @@ namespace BadEcho.Game.UI;
 public interface IControl : IArrangeable, IInputElement
 {
     /// <summary>
-    /// Gets the parent of this control.
+    /// Gets or sets the source of user input for this control.
     /// </summary>
-    IArrangeable? Parent { get; }
+    IInputHandler? InputHandler { get; set; }
+
+    /// <summary>
+    /// Gets or sets the parent of this control.
+    /// </summary>
+    IArrangeable? Parent { get; set; }
 
     /// <summary>
     /// Gets the desired size of this control.
@@ -119,13 +124,13 @@ public interface IControl : IArrangeable, IInputElement
 
     /// <summary>
     /// Gets or sets the horizontal alignment characteristics that are applied to this control when composed
-    /// in a layout parent, such as a type of <see cref="Panel"/>.
+    /// in a layout parent, such as a type of <see cref="IPanel"/>.
     /// </summary>
     HorizontalAlignment HorizontalAlignment { get; set; }
 
     /// <summary>
     /// Gets or sets the vertical alignment characteristics that are applied to this control when composed in
-    /// a layout parent, such as a type of <see cref="Panel"/>.
+    /// a layout parent, such as a type of <see cref="IPanel"/>.
     /// </summary>
     VerticalAlignment VerticalAlignment { get; set; }
 
@@ -178,4 +183,10 @@ public interface IControl : IArrangeable, IInputElement
     /// </summary>
     /// <param name="spriteBatch">The <see cref="ConfiguredSpriteBatch"/> instance to use to draw the user interface.</param>
     void Draw(ConfiguredSpriteBatch spriteBatch);
+
+    /// <summary>
+    /// Processes events related to user input.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Control does not have a valid <see cref="InputHandler"/> assigned.</exception>
+    void UpdateInput();
 }

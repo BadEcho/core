@@ -18,7 +18,7 @@ namespace BadEcho.Game.UI;
 /// <summary>
 /// Provides a panel that arranges child controls into a single line that can be oriented horizontally or vertically.
 /// </summary>
-public sealed class StackPanel : Panel
+public sealed class StackPanel : Panel<StackPanel>
 {
     private Orientation _orientation;
 
@@ -39,7 +39,7 @@ public sealed class StackPanel : Panel
                                         isHorizontal ? availableSize.Height : int.MaxValue);
         var desiredSize = new Size();
 
-        foreach (Control child in Children.Where(c => c.IsVisible))
+        foreach (IControl child in Children.Where(c => c.IsVisible))
         {
             child.Measure(layoutAllocation);
             Size childDesiredSize = child.DesiredSize;
@@ -68,7 +68,7 @@ public sealed class StackPanel : Panel
         
         int nextChildPosition = isHorizontal ? ContentBounds.X : ContentBounds.Y;
 
-        foreach (Control child in Children.Where(c => c.IsVisible))
+        foreach (IControl child in Children.Where(c => c.IsVisible))
         {
             Rectangle effectiveChildArea;
 

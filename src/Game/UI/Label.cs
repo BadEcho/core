@@ -21,7 +21,7 @@ namespace BadEcho.Game.UI;
 /// <summary>
 /// Provides a text label user interface element.
 /// </summary>
-public sealed class Label : Control
+public sealed class Label : Control<Label>
 {
     private string _text = string.Empty;
     private DistanceFieldFont? _font;

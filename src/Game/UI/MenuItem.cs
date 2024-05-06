@@ -19,7 +19,7 @@ namespace BadEcho.Game.UI;
 /// <summary>
 /// Provides a selectable item inside a <see cref="Menu"/> control.
 /// </summary>
-public sealed class MenuItem : Control
+public sealed class MenuItem : Control<MenuItem>
 {
     private readonly Label _innerLabel;
     private readonly Image _innerImage;

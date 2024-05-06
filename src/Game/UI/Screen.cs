@@ -42,7 +42,7 @@ public sealed class Screen : IArrangeable, IInputHandler
     private KeyboardState _currentKeyboardState;
     private MouseState _currentMouseState;
     private Rectangle _screenBounds;
-    private Panel _content;
+    private IPanel _content;
 
     private bool _invalidArrange = true;
     private bool _invalidMeasure = true;
@@ -60,7 +60,7 @@ public sealed class Screen : IArrangeable, IInputHandler
     /// </summary>
     /// <param name="device">The graphics device to derive viewport information (i.e., screen bounds) from.</param>
     /// <param name="content">The root layout panel to render on the surface.</param>
-    public Screen(GraphicsDevice device, Panel content)
+    public Screen(GraphicsDevice device, IPanel content)
     {
         Require.NotNull(device, nameof(device));
         Require.NotNull(content, nameof(content));
@@ -74,7 +74,7 @@ public sealed class Screen : IArrangeable, IInputHandler
     /// <summary>
     /// Gets or sets the root layout panel to render on this surface.
     /// </summary>
-    public Panel Content
+    public IPanel Content
     {
         get => _content;
         set
@@ -168,7 +168,7 @@ public sealed class Screen : IArrangeable, IInputHandler
     }
 
     [MemberNotNull(nameof(_content))]
-    private void LoadContent(Panel content)
+    private void LoadContent(IPanel content)
     {
         _content = content;
         _content.Parent = this;
