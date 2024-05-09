@@ -9,6 +9,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.Marshalling;
 using System.Text;
 using System.Threading.Tasks;
+using BadEcho.Extensions;
+using BadEcho.Game.Properties;
 using Microsoft.Xna.Framework;
 
 namespace BadEcho.Game.UI;
@@ -77,29 +79,33 @@ public sealed class Style<T> : IEnumerable
         
         // Expressions accessing properties that return value types will have their member access information
         // stuffed inside a conversion UnaryExpression (on account of the necessary boxing).
-        if (propertyAccess.NodeType != ExpressionType.MemberAccess)
-        {   // If the expression is neither accessing nor converting a member, then it is an invalid expression for a style.
-            if (propertyAccess.NodeType != ExpressionType.Convert)
-                throw new ArgumentException();
-
+        if (propertyAccess.NodeType == ExpressionType.Convert) 
             propertyAccess = ((UnaryExpression) propertyAccess).Operand;
 
-            if (propertyAccess.NodeType != ExpressionType.MemberAccess)
-                throw new ArgumentException();
-        }
+        // If we don't have a member access expression at this point, then it is an invalid expression for a style.
+        if (propertyAccess.NodeType != ExpressionType.MemberAccess)
+            throw new ArgumentException(Strings.StyleSetterNotMemberAccess);
 
         MemberInfo member = ((MemberExpression) propertyAccess).Member;
 
-        // Only properties are meant to be styled.
+        // Only properties are meant to be set by the style.
         if (member.MemberType != MemberTypes.Property)
-            throw new ArgumentException();
+            throw new ArgumentException(Strings.StyleSetterNonPropertyAccess);
 
-        propertyAccess = Expression.Property(control, (PropertyInfo) member);
+        // Only the target control type is meant to be styled.
+        if (member.DeclaringType != null && !typeof(T).IsA(member.DeclaringType))
+            throw new ArgumentException(Strings.StyleSetterNonLocalProperty);
 
-        Expression<Action<T>> setterExpression
-            = Expression.Lambda<Action<T>>(propertyAccess, control);
+        PropertyInfo property = (PropertyInfo) member;
+        propertyAccess = Expression.Property(control, property);
 
-        _setters.Add(setterExpression.Compile());
+        Expression propertySetter 
+            = Expression.Assign(propertyAccess, Expression.Constant(setter.Value, property.PropertyType));
+
+        Expression<Action<T>> delegateExpression
+            = Expression.Lambda<Action<T>>(propertySetter, control);
+
+        _setters.Add(delegateExpression.Compile());
     }
 
     public void ApplyTo(T control)
