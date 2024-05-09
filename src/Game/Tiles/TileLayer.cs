@@ -21,7 +21,7 @@ namespace BadEcho.Game.Tiles;
 /// </summary>
 public sealed class TileLayer : Layer
 {
-    private readonly Dictionary<int, List<int>> _tileIdIndicesMap = new();
+    private readonly Dictionary<int, List<int>> _tileIdIndicesMap = [];
     private readonly Tile[] _tiles;
     private readonly Size _tileSize;
     private readonly Size _size;

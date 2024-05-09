@@ -14,8 +14,7 @@
 namespace BadEcho.Game.UI;
 
 /// <summary>
-/// Provides a base class for a layout parent control, responsible for positioning child controls on a rendering surface or
-/// parent panel control.
+/// Provides a base class for a layout parent control, responsible for positioning child controls on a rendering surface.
 /// </summary>
 public abstract class Panel<TSelf> : Control<TSelf>, IPanel
     where TSelf : Panel<TSelf>

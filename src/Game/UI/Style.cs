@@ -1,17 +1,21 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright>
+//      Created by Matt Weber <matt@badecho.com>
+//      Copyright @ 2024 Bad Echo LLC. All rights reserved.
+//
+//      Bad Echo Technologies are licensed under the
+//      GNU Affero General Public License v3.0.
+//
+//      See accompanying file LICENSE.md or a copy at:
+//      https://www.gnu.org/licenses/agpl-3.0.html
+// </copyright>
+//-----------------------------------------------------------------------
+
 using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices.Marshalling;
-using System.Text;
-using System.Threading.Tasks;
 using BadEcho.Extensions;
 using BadEcho.Game.Properties;
-using Microsoft.Xna.Framework;
 
 namespace BadEcho.Game.UI;
 
@@ -54,7 +58,10 @@ namespace BadEcho.Game.UI;
 public sealed class Style<T> : IEnumerable
     where T : IControl
 {
-    private readonly List<Action<T>> _setters = new();
+    private readonly List<Action<T>> _setters = [];
+
+    IEnumerator IEnumerable.GetEnumerator()
+        => _setters.GetEnumerator();
 
     /// <summary>
     /// Adds a setter that applies a property value to this style.
@@ -108,16 +115,15 @@ public sealed class Style<T> : IEnumerable
         _setters.Add(delegateExpression.Compile());
     }
 
+    /// <summary>
+    /// Applies this style to the provided control.
+    /// </summary>
+    /// <param name="control">The control to apply this style to.</param>
     public void ApplyTo(T control)
     {
-        foreach (var a in _setters)
+        foreach (Action<T> setter in _setters)
         {
-            a(control);
+            setter(control);
         }
-    }
-    
-    public IEnumerator GetEnumerator()
-    {
-        throw new NotImplementedException();
     }
 }

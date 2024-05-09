@@ -31,7 +31,7 @@ public class StyleTests
         Assert.Throws<ArgumentException>(
             () =>
             {
-                Style<Button> style =
+                Style<Button> _ =
                 [
                     (b => b.Width + b.Height, STYLE_HEIGHT)
                 ];
@@ -44,7 +44,7 @@ public class StyleTests
         Assert.Throws<ArgumentException>(
             () =>
             {
-                Style<Button> style =
+                Style<Button> _ =
                 [
                     (b => b.Width, "Hello")
                 ];
@@ -59,7 +59,7 @@ public class StyleTests
             {
                 var list = new List<int>{1};
 
-                Style<Button> style =
+                Style<Button> _ =
                 [
                     (b => list.Count, 3)
                 ];
@@ -74,9 +74,22 @@ public class StyleTests
             {
                 var grid = new Grid();
 
-                Style<Button> style =
+                Style<Button> _ =
                 [
                     (b => grid.Width, 3)
+                ];
+            });
+    }
+
+    [Fact]
+    public void Initialize_MemberNotProperty_ThrowsException()
+    {
+        Assert.Throws<ArgumentException>(
+            () =>
+            {
+                Style<Button> _ =
+                [
+                    (b => _background, "Hello")
                 ];
             });
     }

@@ -17,6 +17,7 @@ namespace BadEcho.Game.UI;
 /// Provides a control with a single piece of content of type <typeparamref name="T"/>.
 /// </summary>
 /// <typeparam name="T">The type of content rendered by this control.</typeparam>
+/// <typeparam name="TSelf">The type of control deriving from this base.</typeparam>
 public abstract class ContentControl<T,TSelf> : Control<TSelf>
     where T : Control<T>, new()
     where TSelf : ContentControl<T, TSelf>

@@ -82,6 +82,6 @@ public abstract class ScreenState : GameState
     /// <summary>
     /// Initializes and returns a layout panel containing this interface's controls.
     /// </summary>
-    /// <returns>A <see cref="Panel"/> instance containing this interface's controls.</returns>
+    /// <returns>An <see cref="IPanel"/> instance containing this interface's controls.</returns>
     protected abstract IPanel LoadControls();
 }

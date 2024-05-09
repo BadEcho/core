@@ -24,7 +24,7 @@ namespace BadEcho.Game.UI;
 /// <remarks>
 /// <para>
 /// In order to properly render user interface elements, they must be associated with a <see cref="Screen"/> instance, which can
-/// host any number of <see cref="Control"/> elements belonging to the root layout <see cref="Panel"/> instance assigned to it.
+/// host any number of <see cref="IControl"/> elements belonging to the root layout <see cref="IPanel"/> instance assigned to it.
 /// </para>
 /// <para>
 /// Although user interface elements can be technically drawn without a <see cref="Screen"/> instance, this class takes care of

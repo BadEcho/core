@@ -23,7 +23,7 @@ namespace BadEcho.Game;
 public abstract class QuadModelData<TVertex> : ModelData<TVertex>
     where TVertex : struct, IVertexType
 {
-    private readonly Dictionary<TVertex, PointF> _quadCornerOffsetMap = new();
+    private readonly Dictionary<TVertex, PointF> _quadCornerOffsetMap = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="QuadModelData{TVertex}"/> class.
