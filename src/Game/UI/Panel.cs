@@ -14,18 +14,18 @@
 namespace BadEcho.Game.UI;
 
 /// <summary>
-/// Provides a base class for a layout parent control, responsible for positioning child controls on a rendering surface or
-/// parent panel control.
+/// Provides a base class for a layout parent control, responsible for positioning child controls on a rendering surface.
 /// </summary>
-public abstract class Panel : Control
+public abstract class Panel<TSelf> : Control<TSelf>, IPanel
+    where TSelf : Panel<TSelf>
 {
-    private readonly List<Control> _children = [];
+    private readonly List<IControl> _children = [];
 
     /// <inheritdoc/>
     public override IInputHandler? InputHandler
     {
         get => base.InputHandler;
-        internal set
+        set
         {
             if (InputHandler != value) 
                 _children.ForEach(c => c.InputHandler = value);
@@ -34,17 +34,13 @@ public abstract class Panel : Control
         }
     }
 
-    /// <summary>
-    /// Gets a collection of all child controls of this panel.
-    /// </summary>
-    public IReadOnlyCollection<Control> Children
+    /// <inheritdoc/>
+    public IReadOnlyCollection<IControl> Children
         => _children;
 
-    /// <summary>
-    /// Adds the provided control to this panel.
-    /// </summary>
-    /// <param name="child">The control to add to this panel.</param>
-    public void AddChild(Control child)
+    /// <inheritdoc/>
+    public void AddChild<T>(T child)
+        where T : Control<T>
     {
         Require.NotNull(child, nameof(child));
 
@@ -54,11 +50,9 @@ public abstract class Panel : Control
         InvalidateMeasure();
     }
 
-    /// <summary>
-    /// Removes the specified child control from this panel.
-    /// </summary>
-    /// <param name="child">The control to remove from this panel.</param>
-    public void RemoveChild(Control child)
+    /// <inheritdoc/>
+    public void RemoveChild<T>(T child)
+        where T : Control<T>
     {
         Require.NotNull(child, nameof(child));
 
@@ -74,7 +68,7 @@ public abstract class Panel : Control
     {
         base.UpdateInput();
 
-        IEnumerable<Control> activeChildren = Children.Where(c => c.IsEnabled);
+        IEnumerable<IControl> activeChildren = Children.Where(c => c.IsEnabled);
 
         foreach (var activeChild in activeChildren)
         {
@@ -85,7 +79,7 @@ public abstract class Panel : Control
     /// <inheritdoc/>
     protected override void DrawCore(ConfiguredSpriteBatch spriteBatch)
     {
-        foreach (Control control in Children.Where(c => c.IsVisible))
+        foreach (IControl control in Children.Where(c => c.IsVisible))
         {
             control.Draw(spriteBatch);
         }

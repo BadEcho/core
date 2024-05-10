@@ -22,22 +22,30 @@ namespace BadEcho.Game.UI;
 /// <summary>
 /// Provides a base class for user interface elements in a game.
 /// </summary>
+/// <typeparam name="TSelf">The type of control deriving from this base.</typeparam>
 /// <remarks>
 /// <para>
-/// The goal here isn't to provide an incredibly rich and over-engineered user interface framework, but rather the minimum
-/// functionality required in order to be able to comfortably create interface elements for a game. Still, we do embrace some of
-/// the approaches taken by some of the more fully fleshed out general-purpose user interface frameworks out there. 
+/// The goal here isn't to provide an incredibly rich and over-engineered user interface framework, but rather the
+/// minimum functionality required in order to be able to comfortably create interface elements for a game.
+/// Still, we do embrace some of the approaches taken by some of the more fully fleshed out general-purpose user
+/// interface frameworks out there. 
 /// </para>
 /// <para>
-/// Specifically, we adopt the notion of a two-part layout process consisting of <c>Measure</c> and <c>Arrange</c> passes that must
-/// be executed if the layout has been invalidated prior to any actual rendering. This is a core concept a few user interface frameworks
-/// such as Windows Presentation Foundation.
+/// Specifically, we adopt the notion of a two-part layout process consisting of <c>Measure</c> and <c>Arrange</c> passes
+/// that must be executed if the layout has been invalidated prior to any actual rendering. This is a core concept shared
+/// by a few user interface frameworks such as Windows Presentation Foundation.
 /// </para>
 /// <para>
-/// Other than that, the intention is to keep the foundational logic for controls powered by this framework as simple as practicable.
+/// Other than that, the intention is to keep the foundational logic for controls powered by this framework as
+/// simple as practicable.
+/// </para>
+/// <para>
+/// This type implements the "curiously recurring template pattern" in order to support declarative styling à la WPF
+/// (albeit with a bit more type safety). Derived types should pass themselves as the generic type parameter.
 /// </para>
 /// </remarks>
-public abstract class Control : IArrangeable, IInputElement
+public abstract class Control<TSelf> : IControl
+    where TSelf : Control<TSelf>
 {
     private readonly List<MouseButton> _pressedButtons = [];
     private readonly List<Keys> _pressedKeys = [];
@@ -66,109 +74,85 @@ public abstract class Control : IArrangeable, IInputElement
     private Rectangle _lastEffectiveArea;
     private Point? _lastMousePosition;
 
-    /// <summary>
-    /// Gets the parent of this control.
-    /// </summary>
-    public IArrangeable? Parent
-    { get; internal set; }
+    private Style<TSelf>? _style;
 
     /// <summary>
     /// Gets the source of user input for this control.
     /// </summary>
     public virtual IInputHandler? InputHandler
-    { get; internal set; }
+    { get; set; }
 
-    /// <summary>
-    /// Gets the desired size of this control.
-    /// </summary>
+    /// <inheritdoc/>
+    public IArrangeable? Parent
+    { get; set; }
+
+    /// <inheritdoc/>
     public Size DesiredSize
     { get; private set; }
 
-    /// <summary>
-    /// Gets the bounding rectangle of the region occupied by this control, which includes its margin, border, background,
-    /// padding, and content.
-    /// </summary>
+    /// <inheritdoc/>
     public Rectangle LayoutBounds
     { get; protected set; }
 
-    /// <summary>
-    /// Gets the bounding rectangle of the region occupied by this control's border, which includes its background, padding,
-    /// and content.
-    /// </summary>
+    /// <inheritdoc/>
     public Rectangle BorderBounds
         => Margin.ApplyMargin(LayoutBounds);
 
-    /// <summary>
-    /// Gets the bounding rectangle of the region occupied by this control's background, padding, and content.
-    /// </summary>
+    /// <inheritdoc/>
     public Rectangle BackgroundBounds
         => BorderThickness.ApplyMargin(BorderBounds);
 
-    /// <summary>
-    /// Gets the bounding rectangle of the region occupied by this control's padding and actual content.
-    /// </summary>
+    /// <inheritdoc/>
     public Rectangle ContentBounds
         => Padding.ApplyMargin(BackgroundBounds);
 
-    /// <summary>
-    /// Gets or sets a value indicating if the control is enabled in the user interface and receiving input.
-    /// </summary>
+    /// <inheritdoc/>
     public bool IsEnabled
     { get; internal set; } = true;
 
-    /// <summary>
-    /// Gets or sets a value indicating if this control is visible.
-    /// </summary>
+    /// <inheritdoc/>
     public bool IsVisible
     {
         get => _isVisible;
         set => RemeasureIfChanged(ref _isVisible, value);
     }
 
-    /// <summary>
-    /// Gets or sets the space between this control and other elements adjacent to it when the layout is generated.
-    /// </summary>
+    /// <inheritdoc/>
     public Thickness Margin
     {
         get => _margin;
         set => RemeasureIfChanged(ref _margin, value);
     }
 
-    /// <summary>
-    /// Gets or sets the space between this control's border and its content.
-    /// </summary>
+    /// <inheritdoc/>
     public Thickness Padding
     {
         get => _padding;
         set => RemeasureIfChanged(ref _padding, value);
     }
 
-    /// <summary>
-    /// Gets or sets the thickness of this control's border.
-    /// </summary>
+    /// <inheritdoc/>
     public Thickness BorderThickness
     {
         get => _borderThickness;
         set => RemeasureIfChanged(ref _borderThickness, value);
     }
 
-    /// <summary>
-    /// Gets or sets the specific width of the control.
-    /// </summary>
-    /// <remarks>If a width is not explicitly set, then the control's width will be sized based on the size of its content.</remarks>
+    /// <inheritdoc/>
+    /// <remarks>
+    /// If a width is not explicitly set, then this control's width will be sized based on the size of its content.
+    /// </remarks>
     public int? Width
     {
         get => _width;
         set => RemeasureIfChanged(ref _width, value);
     }
 
-    /// <summary>
-    /// Gets or sets the minimum width of the control.
-    /// </summary>
+    /// <inheritdoc/>
     /// <remarks>
-    /// This will ensure the control's width is at least the specified value, taking precedence over <see cref="MaximumWidth"/> and
-    /// <see cref="Width"/> values in regard to the minimum width constraint. If a minimum width is not set, then no minimum width
-    /// constraint exists.
+    /// This will ensure this control's width is at least the specified value, taking precedence over <see cref="MaximumWidth"/>
+    /// and <see cref="Width"/> values in regard to the minimum width constraint. If a minimum width is not set, then no
+    /// minimum width constraint exists.
     /// </remarks>
     public int? MinimumWidth
     {
@@ -176,12 +160,11 @@ public abstract class Control : IArrangeable, IInputElement
         set => RemeasureIfChanged(ref _minimumWidth, value);
     }
 
-    /// <summary>
-    /// Gets or sets the maximum width of the control.
-    /// </summary>
+    /// <inheritdoc/>
     /// <remarks>
-    /// This will ensure the control's width doesn't exceed the specified value, however the <see cref="MinimumWidth"/> will take precedence
-    /// over it if it happens to exceed this value. If a maximum width is not set, then no maximum width constraint exists.
+    /// This will ensure this control's width doesn't exceed the specified value, however the <see cref="MinimumWidth"/>
+    /// will take precedence over it if it happens to exceed this value. If a maximum width is not set, then no maximum
+    /// width constraint exists.
     /// </remarks>
     public int? MaximumWidth
     {
@@ -189,23 +172,21 @@ public abstract class Control : IArrangeable, IInputElement
         set => RemeasureIfChanged(ref _maximumWidth, value);
     }
 
-    /// <summary>
-    /// Gets or sets the specific height of the control.
-    /// </summary>
-    /// <remarks>If a height is not explicitly set, then the control's height will be sized based on the size of its content.</remarks>
+    /// <inheritdoc/>
+    /// <remarks>
+    /// If a height is not explicitly set, then this control's height will be sized based on the size of its content.
+    /// </remarks>
     public int? Height
     {
         get => _height;
         set => RemeasureIfChanged(ref _height, value);
     }
 
-    /// <summary>
-    /// Gets or sets the minimum height of the control.
-    /// </summary>
+    /// <inheritdoc/>
     /// <remarks>
-    /// This will ensure the control's height is at least the specified value, taking precedence over <see cref="MaximumHeight"/> and
-    /// <see cref="Height"/> values in regard to the minimum height constraint. If a minimum height is not set, then no minimum height
-    /// constraint exists.
+    /// This will ensure this control's height is at least the specified value, taking precedence over <see cref="MaximumHeight"/>
+    /// and <see cref="Height"/> values in regard to the minimum height constraint. If a minimum height is not set, then no
+    /// minimum height constraint exists.
     /// </remarks>
     public int? MinimumHeight
     {
@@ -213,12 +194,11 @@ public abstract class Control : IArrangeable, IInputElement
         set => RemeasureIfChanged(ref _minimumHeight, value);
     }
 
-    /// <summary>
-    /// Gets or sets the maximum height of the control.
-    /// </summary>
+    /// <inheritdoc/>
     /// <remarks>
-    /// This will ensure the control's height doesn't exceed the specified value, however the <see cref="MinimumHeight"/> will take precedence
-    /// over it if it happens to exceed this value. If a maximum height is not set, then no maximum height constraint exists.
+    /// This will ensure this control's height doesn't exceed the specified value, however the <see cref="MinimumHeight"/>
+    /// will take precedence over it if it happens to exceed this value. If a maximum height is not set, then no maximum
+    /// height constraint exists.
     /// </remarks>
     public int? MaximumHeight
     {
@@ -226,9 +206,7 @@ public abstract class Control : IArrangeable, IInputElement
         set => RemeasureIfChanged(ref _maximumHeight, value);
     }
 
-    /// <summary>
-    /// Gets or sets the index of the column within a parent <see cref="Grid"/> panel containing this control.
-    /// </summary>
+    /// <inheritdoc/>
     /// <remarks>
     /// This property is ignored if <see cref="Parent"/> is not set to a <see cref="Grid"/> instance.
     /// </remarks>
@@ -238,9 +216,7 @@ public abstract class Control : IArrangeable, IInputElement
         set => RemeasureIfChanged(ref _column, value);
     }
 
-    /// <summary>
-    /// Gets or sets the index of the row within a parent <see cref="Grid"/> panel containing this control.
-    /// </summary>
+    /// <inheritdoc/>
     /// <remarks>
     /// This property is ignored if <see cref="Parent"/> is not set to a <see cref="Grid"/> instance.
     /// </remarks>
@@ -250,62 +226,44 @@ public abstract class Control : IArrangeable, IInputElement
         set => RemeasureIfChanged(ref _row, value);
     }
 
-    /// <summary>
-    /// Gets or sets the horizontal alignment characteristics that are applied to this control when composed in a layout parent, such as a
-    /// type of <see cref="Panel"/>.
-    /// </summary>
+    /// <inheritdoc/>
     public HorizontalAlignment HorizontalAlignment
     {
         get => _horizontalAlignment;
         set => RearrangeIfChanged(ref _horizontalAlignment, value);
     }
 
-    /// <summary>
-    /// Gets or sets the vertical alignment characteristics that are applied to this control when composed in a layout parent, such as a type
-    /// of <see cref="Panel"/>.
-    /// </summary>
+    /// <inheritdoc/>
     public VerticalAlignment VerticalAlignment
     {
         get => _verticalAlignment;
         set => RearrangeIfChanged(ref _verticalAlignment, value);
     }
     
-    /// <summary>
-    /// Gets or sets the background visual of this control.
-    /// </summary>
+    /// <inheritdoc/>
     public IVisual? Background
     { get; set; }
 
-    /// <summary>
-    /// Gets or sets the background visual of this control when it has been disabled via the <see cref="IsEnabled"/> property.
-    /// </summary>
+    /// <inheritdoc/>
     public IVisual? DisabledBackground
     { get; set; }
 
-    /// <summary>
-    /// Gets or sets the background visual of this control when the cursor is located over it.
-    /// </summary>
+    /// <inheritdoc/>
     /// <remarks>
     /// Not setting this property will result in no change to the control's background when the cursor is over it.
     /// </remarks>
     public IVisual? HoveredBackground
     { get; set; }
 
-    /// <summary>
-    /// Gets or sets the visual of the control's border.
-    /// </summary>
+    /// <inheritdoc/>
     public IVisual? Border
     { get; set; }
 
-    /// <summary>
-    /// Gets or sets the visual of the control's border when it has been disabled via the <see cref="IsEnabled"/> property.
-    /// </summary>
+    /// <inheritdoc/>
     public IVisual? DisabledBorder
     { get; set; }
 
-    /// <summary>
-    /// Gets or sets the visual of the control's border when the cursor is located over it.
-    /// </summary>
+    /// <inheritdoc/>
     /// <remarks>
     /// Not setting this property will result in no change to the appearance of the button's border when the cursor is over it.
     /// </remarks>
@@ -323,6 +281,27 @@ public abstract class Control : IArrangeable, IInputElement
     /// <inheritdoc/>
     public bool IsFocusable
     { get; set; }
+
+    /// <summary>
+    /// Gets or sets the style used by this control when it is rendered.
+    /// </summary>
+    public Style<TSelf>? Style
+    {
+        get => _style;
+        set
+        {
+            _style = value;
+
+            if (_style == null)
+                return;
+
+            if (this is not TSelf self)
+                throw new InvalidOperationException(Strings.ControlNotSelfRecurring);
+
+            value?.ApplyTo(self);
+            _style = value;
+        }
+    }
 
     /// <inheritdoc/>
     [MemberNotNullWhen(true, nameof(InputHandler))]
@@ -349,9 +328,9 @@ public abstract class Control : IArrangeable, IInputElement
 
     /// <inheritdoc/>
     /// <remarks>
-    /// The measurement state will be recalculated by this control's parent calling <see cref="Measure"/> during the next <c>Measure</c> pass.
-    /// Calling this will also call <see cref="InvalidateArrange"/>; it should only be called if a size-altering change to the control has been
-    /// made.
+    /// The measurement state will be recalculated by this control's parent calling <see cref="Measure"/> during the next
+    /// <c>Measure</c> pass. Calling this will also call <see cref="InvalidateArrange"/>; it should only be called if a
+    /// size-altering change to the control has been made.
     /// </remarks>
     public void InvalidateMeasure()
     {
@@ -363,7 +342,8 @@ public abstract class Control : IArrangeable, IInputElement
 
     /// <inheritdoc/>
     /// <remarks>
-    /// The arrangement state will be recalculated by this control's parent calling <see cref="Arrange"/> during the next <c>Arrange</c> pass.
+    /// The arrangement state will be recalculated by this control's parent calling <see cref="Arrange"/> during the next
+    /// <c>Arrange</c> pass.
     /// </remarks>
     public void InvalidateArrange()
     {
@@ -372,10 +352,7 @@ public abstract class Control : IArrangeable, IInputElement
         Parent?.InvalidateArrange();
     }
 
-    /// <summary>
-    /// Updates the desired size of this control, called during the <c>Measure</c> pass of a layout update.
-    /// </summary>
-    /// <param name="availableSize">The available space a parent control is allocating for this control.</param>
+    /// <inheritdoc/>
     public void Measure(Size availableSize)
     {
         // Even if measurement isn't invalidated, we re-measure if the available space has changed.
@@ -400,12 +377,7 @@ public abstract class Control : IArrangeable, IInputElement
         _invalidMeasure = false;
     }
 
-    /// <summary>
-    /// Updates the position of this control, called during the <c>Arrange</c> pass of a layout update.
-    /// </summary>
-    /// <param name="effectiveArea">
-    /// The effective area within the parent that this control should use to arrange itself and any children.   
-    /// </param>
+    /// <inheritdoc/>
     public void Arrange(Rectangle effectiveArea)
     {   // Even if the layout hasn't been invalidated, we will update the control's position if the effective area has changed.
         if (!_invalidArrange && _lastEffectiveArea == effectiveArea)
@@ -427,10 +399,7 @@ public abstract class Control : IArrangeable, IInputElement
         _invalidArrange = false;
     }
 
-    /// <summary>
-    /// Draws the control to the screen.
-    /// </summary>
-    /// <param name="spriteBatch">The <see cref="ConfiguredSpriteBatch"/> instance to use to draw the control.</param>
+    /// <inheritdoc/>
     public void Draw(ConfiguredSpriteBatch spriteBatch)
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
@@ -482,10 +451,7 @@ public abstract class Control : IArrangeable, IInputElement
         spriteBatch.GraphicsDevice.ScissorRectangle = clippingRectangle;
     }
 
-    /// <summary>
-    /// Processes events related to user input.
-    /// </summary>
-    /// <exception cref="InvalidOperationException">Control does not have a valid <see cref="InputHandler"/> assigned.</exception>
+    /// <inheritdoc/>
     public virtual void UpdateInput()
     {
         if (InputHandler == null)

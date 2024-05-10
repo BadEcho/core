@@ -19,13 +19,13 @@ using System.Runtime.InteropServices;
 [assembly: SuppressMessage("Design", 
                            "CA1045:Do not pass types by reference", 
                            Scope = "member", 
-                           Target = "~M:BadEcho.Game.UI.Control.RemeasureIfChanged``1(``0@,``0)",
+                           Target = "~M:BadEcho.Game.UI.Control`1.RemeasureIfChanged``1(``0@,``0)",
                            Justification = "The method is not public, and the immeasurable amount of convenience provided by this function vastly outweighs the inconvenience of passing an argument by reference. This is a proper use of ref parameters.")]
 
 [assembly: SuppressMessage("Design", 
                            "CA1045:Do not pass types by reference", 
                            Scope = "member", 
-                           Target = "~M:BadEcho.Game.UI.Control.RearrangeIfChanged``1(``0@,``0)",
+                           Target = "~M:BadEcho.Game.UI.Control`1.RearrangeIfChanged``1(``0@,``0)",
                            Justification = "The method is not public, and the immeasurable amount of convenience provided by this function vastly outweighs the inconvenience of passing an argument by reference. This is a proper use of ref parameters.")]
 
 [assembly: SuppressMessage("Performance", 
@@ -51,3 +51,15 @@ using System.Runtime.InteropServices;
                            Scope = "member", 
                            Target = "~P:BadEcho.Game.Effects.Shaders.DistanceFieldFontEffect",
                            Justification = "The shader effects are required in byte array form to be used, therefore it makes sense to return them as an array. A property is used here so this class feels similar to a typical *.resx generated class when used.")]
+
+[assembly: SuppressMessage("Naming", 
+                           "CA1710:Identifiers should have correct suffix", 
+                           Scope = "type", 
+                           Target = "~T:BadEcho.Game.UI.Style`1",
+                           Justification = "While I normally follow this rule consistently, this is a special case; Style is an IEnumerable so we can make use of collection expressions when declaring them. This is pointed out further in the class's own documentation with several examples included.")]
+
+[assembly: SuppressMessage("Design", 
+                           "CA1010:Generic interface should also be implemented", 
+                           Scope = "type", 
+                           Target = "~T:BadEcho.Game.UI.Style`1",
+                           Justification = "While I normally follow this rule consistently, the ability to convert between elements provided in a collection expression to a specific iterator type is unique to IEnumerable-only implementations. If we implemented IEnumerable<T>, we would not be able to declare instances of Style<T> as we do in the class's documentation.")]

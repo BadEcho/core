@@ -149,4 +149,16 @@
 	<data name="SheetNoFramesForAnimation" xml:space="preserve">
 		<value>Sprite sheet contains no frames for the specified animation.</value>
 	</data>
+	<data name="ControlNotSelfRecurring" xml:space="preserve">
+		<value>Derived control class must pass itself as the generic self-recurring type parameter.</value>
+	</data>
+	<data name="StyleSetterNotMemberAccess" xml:space="preserve">
+		<value>Setter expression for style must access a control's property.</value>
+	</data>
+	<data name="StyleSetterNonPropertyAccess" xml:space="preserve">
+		<value>Setter expression for style can only target properties and no other member types.</value>
+	</data>
+	<data name="StyleSetterNonLocalProperty" xml:space="preserve">
+		<value>Setter expression targets a property not belonging to the control type being styled.</value>
+	</data>
 </root>

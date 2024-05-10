@@ -21,19 +21,19 @@ namespace BadEcho.Game.UI;
 /// <summary>
 /// Provides a panel that consists of columns and rows.
 /// </summary>
-public sealed class Grid : Panel, ISelectable
+public sealed class Grid : Panel<Grid>, ISelectable
 {
     private static readonly GridDimension _DefaultDimension 
         = new(1.0f, GridDimensionUnit.Auto);
 
-    private readonly List<Control> _visibleChildren = [];
+    private readonly List<IControl> _visibleChildren = [];
     private readonly List<int> _columnWidths = [];
     private readonly List<int> _rowHeights = [];
     private readonly List<int> _cellsX = [];
     private readonly List<int> _cellsY = [];
 
-    private List<Control>?[,] _cells 
-        = new List<Control>[0,0];
+    private List<IControl>?[,] _cells 
+        = new List<IControl>[0,0];
 
     private int? _mouseOverColumn;
     private int? _mouseOverRow;
@@ -53,7 +53,7 @@ public sealed class Grid : Panel, ISelectable
     /// <summary>
     /// Occurs when a new cell has been selected.
     /// </summary>
-    public event EventHandler<EventArgs<IEnumerable<Control>>>? SelectionChanged;
+    public event EventHandler<EventArgs<IEnumerable<IControl>>>? SelectionChanged;
 
     /// <summary>
     /// Gets specified measurements for each column of this grid.
@@ -192,11 +192,11 @@ public sealed class Grid : Panel, ISelectable
         _rowHeights.AddRange(Enumerable.Repeat(0, rows));
 
         if (_cells.GetLength(0) < columns || _cells.GetLength(1) < rows)
-            _cells = new List<Control>?[rows, columns];
+            _cells = new List<IControl>?[rows, columns];
 
-        foreach (Control child in _visibleChildren)
+        foreach (IControl child in _visibleChildren)
         {
-            List<Control> cell = _cells[child.Row, child.Column] ??= [];
+            List<IControl> cell = _cells[child.Row, child.Column] ??= [];
 
             cell.Add(child);
         }
@@ -240,7 +240,7 @@ public sealed class Grid : Panel, ISelectable
             nextChildPosition += rowHeight;
         }
 
-        foreach (Control child in _visibleChildren)
+        foreach (IControl child in _visibleChildren)
         {
             ArrangeCell(child);
         }
@@ -335,10 +335,10 @@ public sealed class Grid : Panel, ISelectable
             }
             else if (_selectionBeingMade && IsCellSelected)
             {
-                IEnumerable<Control>? selectedControls = _cells[_selectedRow.Value, _selectedColumn.Value];
+                IEnumerable<IControl>? selectedControls = _cells[_selectedRow.Value, _selectedColumn.Value];
 
                 if (selectedControls != null)
-                    SelectionChanged?.Invoke(this, new EventArgs<IEnumerable<Control>>(selectedControls));
+                    SelectionChanged?.Invoke(this, new EventArgs<IEnumerable<IControl>>(selectedControls));
             }
 
             _selectionBeingMade = false;
@@ -417,7 +417,7 @@ public sealed class Grid : Panel, ISelectable
         }
     }
 
-    private void ArrangeCell(Control child)
+    private void ArrangeCell(IControl child)
     {
         int cellWidth = _columnWidths[child.Column];
         int cellHeight = _rowHeights[child.Row];
@@ -460,14 +460,14 @@ public sealed class Grid : Panel, ISelectable
                 if (columnDimension.Unit == GridDimensionUnit.Absolute)
                     _columnWidths[column] = (int) columnDimension.Value;
 
-                List<Control> cellChildren = _cells[row, column] ??= [];
+                List<IControl> cellChildren = _cells[row, column] ??= [];
 
                 // If both the row and column are using absolute values for their measurements, we're done measuring this column.
                 // The desired sizes of cell controls take a back seat to absolute value dimensional definitions.
                 if (rowDimension.Unit == GridDimensionUnit.Absolute && columnDimension.Unit == GridDimensionUnit.Absolute)
                     continue;
 
-                foreach (Control cellChild in cellChildren)
+                foreach (IControl cellChild in cellChildren)
                 {
                     Size desiredSize = Size.Empty;
 
@@ -532,10 +532,10 @@ public sealed class Grid : Panel, ISelectable
 
         if (IsCellSelected && (previousSelectedColumn != _selectedColumn || previousSelectedRow != _selectedRow))
         {
-            IEnumerable<Control>? selectedControls = _cells[_selectedRow.Value, _selectedColumn.Value];
+            IEnumerable<IControl>? selectedControls = _cells[_selectedRow.Value, _selectedColumn.Value];
 
             if (notify && selectedControls != null)
-                SelectionChanged?.Invoke(this, new EventArgs<IEnumerable<Control>>(selectedControls));
+                SelectionChanged?.Invoke(this, new EventArgs<IEnumerable<IControl>>(selectedControls));
         }
     }
 

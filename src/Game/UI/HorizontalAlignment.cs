@@ -21,7 +21,7 @@ public enum HorizontalAlignment
     /// <summary>
     /// The control is stretched to fill its layout allocation.
     /// </summary>
-    /// <remarks>An explicitly set <see cref="Control.Width"/> takes precedence over this value.</remarks>
+    /// <remarks>An explicitly set <see cref="Control{T}.Width"/> takes precedence over this value.</remarks>
     Stretch,
     /// <summary>
     /// The control is aligned to the left of its layout allocation.

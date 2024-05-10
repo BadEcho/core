@@ -20,7 +20,7 @@ namespace BadEcho.Game.UI;
 /// <summary>
 /// Provides a menu control that organizes various menu items associated with commands.
 /// </summary>
-public sealed class Menu : ContentControl<Grid>, ISelectable
+public sealed class Menu : ContentControl<Grid, Menu>, ISelectable
 {
     private readonly List<MenuItem> _menuItems = [];
 
@@ -182,7 +182,7 @@ public sealed class Menu : ContentControl<Grid>, ISelectable
         }
     }
 
-    private void HandleContainerSelectionChanged(object? sender, EventArgs<IEnumerable<Control>> e)
+    private void HandleContainerSelectionChanged(object? sender, EventArgs<IEnumerable<IControl>> e)
     {
         var selectedMenuItem = e.Data.OfType<MenuItem>()
                                 .First();

@@ -16,7 +16,7 @@ namespace BadEcho.Game.UI;
 /// <summary>
 /// Provides a control that displays an image.
 /// </summary>
-public sealed class Image : Control
+public sealed class Image : Control<Image>
 {
     private IVisualRegion? _visual;
 

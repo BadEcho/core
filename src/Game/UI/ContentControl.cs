@@ -17,14 +17,16 @@ namespace BadEcho.Game.UI;
 /// Provides a control with a single piece of content of type <typeparamref name="T"/>.
 /// </summary>
 /// <typeparam name="T">The type of content rendered by this control.</typeparam>
-public abstract class ContentControl<T> : Control
-    where T : Control, new()
+/// <typeparam name="TSelf">The type of control deriving from this base.</typeparam>
+public abstract class ContentControl<T,TSelf> : Control<TSelf>
+    where T : Control<T>, new()
+    where TSelf : ContentControl<T, TSelf>
 {
     /// <inheritdoc/>
     public override IInputHandler? InputHandler
     {
         get => base.InputHandler; 
-        internal set => base.InputHandler = Content.InputHandler = value;
+        set => base.InputHandler = Content.InputHandler = value;
     }
 
     /// <summary>

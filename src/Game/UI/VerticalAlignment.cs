@@ -21,7 +21,7 @@ public enum VerticalAlignment
     /// <summary>
     /// The control is stretched to fill its layout allocation.
     /// </summary>
-    /// <remarks>An explicitly set <see cref="Control.Height"/> takes precedence over this value.</remarks>
+    /// <remarks>An explicitly set <see cref="Control{T}.Height"/> takes precedence over this value.</remarks>
     Stretch,
     /// <summary>
     /// The control is aligned to the top of its layout allocation.

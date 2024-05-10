@@ -37,7 +37,7 @@ namespace BadEcho.Game.Atlases;
 /// </remarks>
 public sealed class TextureAtlas
 {
-    private readonly Dictionary<string, TextureRegion> _regions = new();
+    private readonly Dictionary<string, TextureRegion> _regions = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TextureAtlas"/> class.
