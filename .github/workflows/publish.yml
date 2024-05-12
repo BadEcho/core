@@ -17,7 +17,7 @@ jobs:
       product-Name: Bad Echo Core Technologies
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: recursive
         fetch-depth: 0      
@@ -28,16 +28,16 @@ jobs:
         git tag -a ${{ github.event.inputs.echo-version }} HEAD -m "${{ env.product-name }} ${{ github.event.inputs.echo-version }}"
         git push origin ${{ github.event.inputs.echo-version }}
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x      
     - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1.1
+      uses: microsoft/setup-msbuild@v2
     - name: Add VSTest to PATH
-      uses: darenm/Setup-VSTest@v1.2
+      uses: darenm/Setup-VSTest@v1.3
     - name: Acquire vcpkg Artifacts
       if: ${{ vars.DOWNLOAD_VCPKG == 'true' }}
-      uses: dawidd6/action-download-artifact@v2
+      uses: dawidd6/action-download-artifact@v3
       with:
         workflow: push.yml
         name: vcpkg-artifacts
@@ -57,7 +57,7 @@ jobs:
       shell: pwsh
     - name: Build Artifacts
       if: always()
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: artifacts
         path: artifacts/**/*
