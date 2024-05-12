@@ -18,25 +18,20 @@ using Microsoft.Xna.Framework.Graphics;
 namespace BadEcho.Game.UI;
 
 /// <summary>
-/// Provides a self-contained user interface configuration game state that acts a loading screen, used to distract the player from 
+/// Provides a self-contained user interface game state that acts a loading screen, used to distract the player from 
 /// the fact that the game takes so damn long to load.
 /// </summary>
 public abstract class LoadingScreenState : ScreenState
 {
-    private readonly IEnumerable<GameState> _statesToLoad;
     private bool _otherStatesUnloaded;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LoadingScreenState"/> class.
     /// </summary>
-    /// <param name="statesToLoad">The game states loaded by this interface.</param>
     /// <param name="device">The graphics device that will power the rendering surface.</param>
-    protected LoadingScreenState(IEnumerable<GameState> statesToLoad, GraphicsDevice device)
+    protected LoadingScreenState(GraphicsDevice device)
         : base(device)
     {
-        Require.NotNull(statesToLoad, nameof(statesToLoad));
-
-        _statesToLoad = statesToLoad;
         ActivationTime = TimeSpan.FromSeconds(0.5);
     }
 
@@ -47,7 +42,7 @@ public abstract class LoadingScreenState : ScreenState
 
         if (_otherStatesUnloaded)
         {
-            foreach (GameState stateToLoad in _statesToLoad)
+            foreach (GameState stateToLoad in GetStatesToLoad())
             {
                 Manager?.AddState(stateToLoad);
             }
@@ -73,4 +68,10 @@ public abstract class LoadingScreenState : ScreenState
             state.Exit();
         }       
     }
+
+    /// <summary>
+    /// Retrieves the game states to load with this user interface.
+    /// </summary>
+    /// <returns>The sequence of <see cref="GameState"/> instances to load.</returns>
+    protected abstract IEnumerable<GameState> GetStatesToLoad();
 }

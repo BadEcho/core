@@ -64,7 +64,7 @@ public abstract class ScreenState : GameState
     /// <inheritdoc/>
     protected override void LoadContent(ContentManager contentManager)
     {
-        LoadInterfaceContent(contentManager);
+        LoadScreenContent(contentManager);
 
         _screen.Content = LoadControls();
     }
@@ -74,14 +74,14 @@ public abstract class ScreenState : GameState
         => _screen.Draw(spriteBatch);
 
     /// <summary>
-    /// Loads resources using the provided content manager that this interface and its controls depend on.
+    /// Loads resources using the provided content manager that the user interface and its controls depend on.
     /// </summary>
-    /// <param name="contentManager">The content manager to use to load this interface's dependencies.</param>
-    protected abstract void LoadInterfaceContent(ContentManager contentManager);
+    /// <param name="contentManager">The content manager to use to load this user interface's dependencies.</param>
+    protected abstract void LoadScreenContent(ContentManager contentManager);
     
     /// <summary>
-    /// Initializes and returns a layout panel containing this interface's controls.
+    /// Initializes and returns a layout panel containing this user interface's controls.
     /// </summary>
-    /// <returns>An <see cref="IPanel"/> instance containing this interface's controls.</returns>
+    /// <returns>An <see cref="IPanel"/> instance containing this user interface's controls.</returns>
     protected abstract IPanel LoadControls();
 }
