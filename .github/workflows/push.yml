@@ -17,18 +17,18 @@ jobs:
     runs-on: windows-2022
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: recursive
         fetch-depth: 0
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
     - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1.1
+      uses: microsoft/setup-msbuild@v2
     - name: Add VSTest to PATH
-      uses: darenm/Setup-VSTest@v1.2
+      uses: darenm/Setup-VSTest@v1.3
     - name: Acquire vcpkg Artifacts
       if: ${{ vars.DOWNLOAD_VCPKG == 'true' }}
       uses: dawidd6/action-download-artifact@v3
