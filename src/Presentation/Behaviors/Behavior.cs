@@ -29,7 +29,7 @@ public abstract class Behavior<TTarget,TProperty> : Animatable, IAttachableCompo
     where TTarget: DependencyObject
     where TProperty : class
 {
-    private readonly ConditionalWeakTable<TTarget, TProperty?> _targetMap = new();
+    private readonly ConditionalWeakTable<TTarget, TProperty?> _targetMap = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Behavior{TTarget,TProperty}"/> class.

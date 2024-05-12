@@ -64,7 +64,7 @@ public sealed class AtomicObservableCollection<T> : ObservableCollection<T>, IHa
     /// </summary>
     /// <param name="dispatcher">The dispatcher that communications from this collection should be sent through.</param>
     public AtomicObservableCollection(Dispatcher? dispatcher)
-        : this(Enumerable.Empty<T>(), dispatcher)
+        : this([], dispatcher)
     { }
 
     /// <summary>
@@ -184,7 +184,7 @@ public sealed class AtomicObservableCollection<T> : ObservableCollection<T>, IHa
 
         void OrderByOperation()
         {
-            List<T> sortedItems = Items.OrderBy(keySelector, comparer).ToList();
+            List<T> sortedItems = [..Items.OrderBy(keySelector, comparer)];
 
             CommitSort(sortedItems);
         }
@@ -210,7 +210,7 @@ public sealed class AtomicObservableCollection<T> : ObservableCollection<T>, IHa
 
         void OrderByDescendingOperation()
         {
-            List<T> sortedItems = Items.OrderByDescending(keySelector, comparer).ToList();
+            List<T> sortedItems = [..Items.OrderByDescending(keySelector, comparer)];
 
             CommitSort(sortedItems);
         }

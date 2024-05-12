@@ -20,8 +20,7 @@ namespace BadEcho.Extensions;
 /// </summary>
 public static class ReflectionExtensions
 {
-    private static readonly Dictionary<Type, ConstructorInfo> _TypeConstructorMap 
-        = new();
+    private static readonly Dictionary<Type, ConstructorInfo> _TypeConstructorMap = [];
 
     private static readonly object _ConstructorLock 
         = new();

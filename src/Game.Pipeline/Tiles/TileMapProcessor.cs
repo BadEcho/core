@@ -56,7 +56,7 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent, TileMapC
         {
             if (!string.IsNullOrEmpty(tileSet.Source))
             {   // Leverage our tile set content loader to load this external tile set.
-                input.AddReference<TileSetContent>(context, tileSet.Source, new OpaqueDataDictionary());
+                input.AddReference<TileSetContent>(context, tileSet.Source, []);
             }
             else if (tileSet.Image != null)
             {   // If the tile set is embedded in the map, then we have to perform the content loading work here.

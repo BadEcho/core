@@ -35,7 +35,7 @@ public sealed class TextureAtlasProcessor : ContentProcessor<TextureAtlasContent
 
         ValidateAsset(input.Asset);
 
-        input.AddReference<Texture2DContent>(context, input.Asset.TexturePath, new OpaqueDataDictionary());
+        input.AddReference<Texture2DContent>(context, input.Asset.TexturePath, []);
 
         context.Log(Strings.ProcessingFinished.InvariantFormat(input.Identity.SourceFilename));
 

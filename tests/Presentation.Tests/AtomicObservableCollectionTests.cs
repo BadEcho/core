@@ -25,7 +25,7 @@ public class AtomicObservableCollectionTests
 
     public AtomicObservableCollectionTests()
     {
-        _collection = new AtomicObservableCollection<int>();
+        _collection = [];
         _collectionChanged = _collection;
     }
 

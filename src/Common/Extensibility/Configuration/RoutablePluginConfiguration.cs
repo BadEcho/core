@@ -20,7 +20,7 @@ namespace BadEcho.Extensibility.Configuration;
 public sealed class RoutablePluginConfiguration : IRoutablePluginConfiguration
 {
     IEnumerable<string> IRoutablePluginConfiguration.MethodClaims
-        => MethodClaims ?? Enumerable.Empty<string>();
+        => MethodClaims ?? [];
 
     /// <inheritdoc/>
     public Guid Id 

@@ -82,7 +82,7 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
         _capacityEnforcementTimer.Interval = options.CapacityEnforcementDelay;
         _capacityEnforcementTimer.Tick += HandleCapacityEnforcementTimerTick;
 
-        Items = new AtomicObservableCollection<TChildViewModel>();
+        Items = [];
 
         var collectionChangePublisher = new CollectionPropertyChangePublisher<TChildViewModel>(Items);
 
@@ -283,7 +283,7 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
             _processedModels.Clear();
         }
 
-        List<TChildViewModel> childrenToUnbind = Items.ToList();
+        List<TChildViewModel> childrenToUnbind = [..Items];
 
         Items.Clear();
 

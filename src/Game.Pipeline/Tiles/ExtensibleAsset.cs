@@ -29,12 +29,12 @@ public abstract class ExtensibleAsset
     private const string VALUE_ATTRIBUTE = "value";
     private const string TYPE_ATTRIBUTE = "type";
 
-    private readonly Dictionary<string, string> _customStringProperties = new();
-    private readonly Dictionary<string, bool> _customBoolProperties = new();
-    private readonly Dictionary<string, Color> _customColorProperties = new();
-    private readonly Dictionary<string, int> _customIntProperties = new();
-    private readonly Dictionary<string, float> _customFloatProperties = new();
-    private readonly Dictionary<string, string> _customFileProperties = new();
+    private readonly Dictionary<string, string> _customStringProperties = [];
+    private readonly Dictionary<string, bool> _customBoolProperties = [];
+    private readonly Dictionary<string, Color> _customColorProperties = [];
+    private readonly Dictionary<string, int> _customIntProperties = [];
+    private readonly Dictionary<string, float> _customFloatProperties = [];
+    private readonly Dictionary<string, string> _customFileProperties = [];
  
     /// <summary>
     /// Initializes a new instance of the <see cref="ExtensibleAsset"/> class.

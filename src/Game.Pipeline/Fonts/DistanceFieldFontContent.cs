@@ -44,12 +44,12 @@ public sealed class DistanceFieldFontContent : ContentItem<DistanceFieldFontAsse
     /// the generated layout data.
     /// </summary>
     public Dictionary<char, FontGlyph> Glyphs
-    { get; init; } = new();
+    { get; init; } = [];
 
     /// <summary>
     /// Gets a mapping between unicode character pairs and the adjustments of space between them, parsed from
     /// the generated layout data.
     /// </summary>
     public Dictionary<CharacterPair, KerningPair> Kernings
-    { get; init; } = new();
+    { get; init; } = [];
 }

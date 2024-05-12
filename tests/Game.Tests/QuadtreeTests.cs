@@ -41,7 +41,7 @@ public class QuadtreeTests
         _largeQuadtree 
             = new Quadtree(new RectangleF(0, 0, 10000, 10000), LARGE_BUCKET_CAPACITY, LARGE_MAX_DEPTH);
 
-        _largeQuadtreeItems = new List<SpatialStub>();
+        _largeQuadtreeItems = [];
         
         for (int i = 0; i < 400; i++)
         {

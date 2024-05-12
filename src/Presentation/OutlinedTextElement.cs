@@ -181,7 +181,7 @@ public sealed class OutlinedTextElement : FrameworkElement
         UpdateInnerOutlinePen();
         UpdateOuterOutlinePen();
 
-        TextDecorations = new TextDecorationCollection();
+        TextDecorations = [];
     }
 
     /// <summary>

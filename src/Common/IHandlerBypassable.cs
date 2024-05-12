@@ -25,8 +25,7 @@ namespace BadEcho;
 /// </remarks>
 public interface IHandlerBypassable
 {
-    private static readonly ConditionalWeakTable<IHandlerBypassable, object> _HandlersBypassedMap
-        = new();
+    private static readonly ConditionalWeakTable<IHandlerBypassable, object> _HandlersBypassedMap = [];
 
     /// <summary>
     /// Gets a value indicating if event handlers should be bypassed.

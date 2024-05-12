@@ -88,7 +88,7 @@ internal sealed class TestContentProcessorContext : ContentProcessorContext
 
     /// <inheritdoc />
     public override OpaqueDataDictionary Parameters
-        => new();
+        => [];
 
     /// <inheritdoc />
     public override TargetPlatform TargetPlatform 

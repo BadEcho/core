@@ -39,7 +39,7 @@ public static class MetadataExtensions
             || metadataType.FindConstructor(_DefaultMetadataType) != null 
             || !metadataType.IsInterface)
         {
-            return Enumerable.Empty<KeyValuePair<string, Type>>();
+            return [];
         }
 
         return metadataType.GetAllProperties()

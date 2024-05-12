@@ -30,8 +30,8 @@ public abstract class PolymorphicCollectionViewModel<TModel, TChildViewModel> : 
     where TModel : notnull
     where TChildViewModel : class, IViewModel, IModelProvider<TModel>
 {
-    private readonly Dictionary<Type, Func<TModel, TChildViewModel>> _typeInitializerMap = new();
-    private readonly Dictionary<Type, Action<TModel>> _typeUpdaterMap = new();
+    private readonly Dictionary<Type, Func<TModel, TChildViewModel>> _typeInitializerMap = [];
+    private readonly Dictionary<Type, Action<TModel>> _typeUpdaterMap = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PolymorphicCollectionViewModel{TModel, TChildViewModel}"/> class.

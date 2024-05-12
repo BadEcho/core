@@ -21,8 +21,7 @@ namespace BadEcho.Presentation.Messaging;
 /// </summary>
 internal sealed class CallbackMessageMap
 {
-    private readonly Dictionary<MediatorMessage, IList<WeakCallback>> _mappings
-        = new();
+    private readonly Dictionary<MediatorMessage, IList<WeakCallback>> _mappings = [];
 
     /// <summary>
     /// Creates a mapping between the message and the callback.

@@ -26,7 +26,7 @@ namespace BadEcho.Presentation.Windows;
 /// </suppressions>
 public sealed class PresentationWindowWrapper : WindowWrapper
 {
-    private readonly Dictionary<WindowHookProc, HwndSourceHook> _hookMapper = new();
+    private readonly Dictionary<WindowHookProc, HwndSourceHook> _hookMapper = [];
     private readonly HwndSource _source;
 
     /// <summary>

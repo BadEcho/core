@@ -75,7 +75,7 @@ public sealed class PresortedInsertionStrategy<TChildViewModel, TKey> : ICollect
 
         viewModels = Sort(viewModels).ToList();
 
-        List<TChildViewModel> originalChildren = collectionViewModel.Items.ToList();
+        List<TChildViewModel> originalChildren = [..collectionViewModel.Items];
 
         IEnumerable<TChildViewModel> allChildren
             = originalChildren.Concat(viewModels);

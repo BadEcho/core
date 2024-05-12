@@ -23,7 +23,7 @@ namespace BadEcho.Game.Pipeline;
 /// <typeparam name="T">The type of asset data described by the content.</typeparam>
 public abstract class ContentItem<T> : ContentItem, IContentItem
 {
-    private readonly Dictionary<string, ContentItem> _references = new();
+    private readonly Dictionary<string, ContentItem> _references = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ContentItem{T}"/> class.

@@ -32,11 +32,11 @@ internal sealed class FontLayout
     /// Gets the typographic representations of the unicode characters in the font atlas's character set.
     /// </summary>
     public IEnumerable<FontGlyph> Glyphs
-    { get; init; } = Enumerable.Empty<FontGlyph>();
+    { get; init; } = [];
 
     /// <summary>
     /// Gets the adjustments of space between each of the unicode characters in the font atlas's character set.
     /// </summary>
     public IEnumerable<FontLayoutKerning> Kerning
-    { get; init; } = Enumerable.Empty<FontLayoutKerning>();
+    { get; init; } = [];
 }
