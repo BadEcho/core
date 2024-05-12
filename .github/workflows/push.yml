@@ -31,7 +31,7 @@ jobs:
       uses: darenm/Setup-VSTest@v1.2
     - name: Acquire vcpkg Artifacts
       if: ${{ vars.DOWNLOAD_VCPKG == 'true' }}
-      uses: dawidd6/action-download-artifact@v2
+      uses: dawidd6/action-download-artifact@v3
       with:
         name: vcpkg-artifacts
         commit: ${{ vars.VCPKG_ARTIFACT_SHA }}
@@ -50,13 +50,13 @@ jobs:
       shell: pwsh
     - name: Build Artifacts
       if: always()
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: artifacts
         path: artifacts/**/*
     - name: vcpkg Artifacts
       if: ${{ vars.UPLOAD_VCPKG == 'true' }}
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: vcpkg-artifacts
         path: src/MsdfGenerator/vcpkg_installed/**/*
