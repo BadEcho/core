@@ -14,6 +14,17 @@
 namespace BadEcho.Game.States;
 
 /// <summary>
-/// Skeleton for a game state that will provide useful functionality related to gameplay.
+/// Provides a game state for hosting core gameplay.
 /// </summary>
-public abstract class GameplayState : GameState;
+public abstract class GameplayState : GameState
+{
+    public bool IsPaused
+    { get; protected set; }
+
+    public sealed override void Update(GameUpdateTime time, bool isTopmost)
+    {
+        base.Update(time, true);
+
+        
+    }
+}

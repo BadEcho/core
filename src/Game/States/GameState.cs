@@ -32,12 +32,6 @@ public abstract class GameState : IDisposable
     private bool _disposed;
 
     /// <summary>
-    /// Gets a value indicating this state has the topmost scene in the z-order.
-    /// </summary>
-    public bool IsTopmost 
-    { get; internal set; }
-     
-    /// <summary>
     /// Gets a <see cref="ActivationStatus"/> value that specifies this state's current activation phase.
     /// </summary>
     public ActivationStatus ActivationStatus
@@ -124,7 +118,12 @@ public abstract class GameState : IDisposable
     /// concerns.
     /// </summary>
     /// <param name="time">The game timing configuration and state for this update.</param>
-    public virtual void Update(GameUpdateTime time)
+    /// <param name="isTopmost">Value indicating whether this state is the topmost in the z-order.</param>
+    /// <remarks>
+    /// By default, a state will begin to deactivate if it is not the topmost in the z-order. To change this behavior,
+    /// override this method and pass <c>false</c> for <c>isTopmost</c> to the base method call.
+    /// </remarks>
+    public virtual void Update(GameUpdateTime time, bool isTopmost)
     {
         Require.NotNull(time, nameof(time));
 
@@ -143,7 +142,7 @@ public abstract class GameState : IDisposable
 
         // If this game state is at the top of the z-order, we'll transition to a visible state.
         // Otherwise, we'll transition to a hidden one.
-        UpdateActivation(time, IsTopmost);
+        UpdateActivation(time, isTopmost);
     }
 
     /// <summary>
