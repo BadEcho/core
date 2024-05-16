@@ -33,7 +33,7 @@ VSOutput SpriteVertexShader(    float4 position : POSITION0,
     
     output.Position = mul(position, MatrixTransform);
     output.Color = color;
-    output.Color.a = Alpha;
+    output.Color.a *= Alpha;
     output.Color.rgb *= Alpha;    
     output.TexCoord = texCoord;
     
