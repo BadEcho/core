@@ -52,30 +52,20 @@ public sealed class StateManager : DrawableGameComponent
 
         var states = new Stack<GameState>(_states);
         var updateTime = new GameUpdateTime(Game, gameTime);
-        bool isTopmost = true;
-        bool allowInput = Game.IsActive;
-
+        bool isActive = true;
+        
         while (states.Count > 0)
         {   // We iterate through the states, from the top in the z-order to the bottom.
             var state = states.Pop();
 
-            state.IsTopmost = isTopmost;
-            state.Update(updateTime);
+            state.Update(updateTime, isActive);
 
             if (state.HasExited)
                 RemoveState(state); // This is the typical path for a gracefully exiting state's removal from the manager.
-            else if (state.ActivationStatus is ActivationStatus.Activated or ActivationStatus.Activating)
+            else if (state.ActivationStatus is ActivationStatus.Activated or ActivationStatus.Activating && !state.IsModal)
             {
-                if (allowInput)
-                {
-                    state.ProcessInput();
-
-                    allowInput = false;
-                }
-
-                // All others below the first state not marked as a modal popup will be transitioned to a deactivated state temporarily.
-                if (!state.IsModal)
-                    isTopmost = false;
+                // All others below the first state not marked as a modal popup will be considered to not be active.
+                isActive = false;
             }
         }
     }

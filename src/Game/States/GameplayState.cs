@@ -11,6 +11,11 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Game.UI;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+
 namespace BadEcho.Game.States;
 
 /// <summary>
@@ -21,10 +26,31 @@ public abstract class GameplayState : GameState
     public bool IsPaused
     { get; protected set; }
 
-    public sealed override void Update(GameUpdateTime time, bool isTopmost)
+    protected float PauseAlpha
+    { get; set; } = 0.1f;
+
+    public sealed override void Update(GameUpdateTime time, bool isActive)
     {
         base.Update(time, true);
 
-        
+        IsPaused = !isActive;
+
+        if (!IsPaused)
+            UpdateGameplay(time);
     }
+
+    protected sealed override void DrawCore(ConfiguredSpriteBatch spriteBatch)
+    {
+        Require.NotNull(spriteBatch, nameof(spriteBatch));        
+
+        DrawGameplay(spriteBatch);        
+    }
+
+    /// <summary>
+    /// Performs any necessary updates to gameplay hosted by this state.
+    /// </summary>
+    /// <param name="time">The game timing configuration and state for this update.</param>
+    protected abstract void UpdateGameplay(GameUpdateTime time);
+
+    protected abstract void DrawGameplay(ConfiguredSpriteBatch spriteBatch);
 }

@@ -36,9 +36,9 @@ public abstract class LoadingScreenState : ScreenState
     }
 
     /// <inheritdoc/>
-    public override void Update(GameUpdateTime time)
+    public override void Update(GameUpdateTime time, bool isActive)
     {
-        base.Update(time);
+        base.Update(time, isActive);
 
         if (_otherStatesUnloaded)
         {

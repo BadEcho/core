@@ -52,13 +52,13 @@ public abstract class ScreenState : GameState
     { get; }
 
     /// <inheritdoc/>
-    public override void Update(GameUpdateTime time)
+    public override void Update(GameUpdateTime time, bool isActive)
     {
         _screen.Update();
 
         ContentOrigin = _screen.Content.LayoutBounds.Location;
 
-        base.Update(time);
+        base.Update(time, isActive);
     }
 
     /// <inheritdoc/>

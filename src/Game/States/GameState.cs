@@ -118,12 +118,15 @@ public abstract class GameState : IDisposable
     /// concerns.
     /// </summary>
     /// <param name="time">The game timing configuration and state for this update.</param>
-    /// <param name="isTopmost">Value indicating whether this state is the topmost in the z-order.</param>
+    /// <param name="isActive">
+    /// Value indicating whether this is the active state on top of all others in the z-order and, therefore, should be
+    /// visible on the screen.
+    /// </param>
     /// <remarks>
-    /// By default, a state will begin to deactivate if it is not the topmost in the z-order. To change this behavior,
-    /// override this method and pass <c>false</c> for <c>isTopmost</c> to the base method call.
+    /// By default, a state will begin to deactivate off the screen if it is not the active state. To change this behavior,
+    /// override this method and pass <c>true</c> for <c>isActive</c> to the base method call.
     /// </remarks>
-    public virtual void Update(GameUpdateTime time, bool isTopmost)
+    public virtual void Update(GameUpdateTime time, bool isActive)
     {
         Require.NotNull(time, nameof(time));
 
@@ -142,7 +145,7 @@ public abstract class GameState : IDisposable
 
         // If this game state is at the top of the z-order, we'll transition to a visible state.
         // Otherwise, we'll transition to a hidden one.
-        UpdateActivation(time, isTopmost);
+        UpdateActivation(time, isActive);
     }
 
     /// <summary>
@@ -277,24 +280,24 @@ public abstract class GameState : IDisposable
         _disposed = true;
     }
 
-    private void UpdateActivation(GameUpdateTime time, bool isActivating)
+    private void UpdateActivation(GameUpdateTime time, bool isActive)
     {
         float activationScale = ActivationTime != TimeSpan.Zero
             ? (float) (time.ElapsedGameTime.TotalMilliseconds / ActivationTime.TotalMilliseconds)
             : 1;
 
-        ActivationPercentage += activationScale * (isActivating ? 1 : -1);
+        ActivationPercentage += activationScale * (isActive ? 1 : -1);
 
-        if (!isActivating && ActivationPercentage <= 0 || isActivating && ActivationPercentage >= 1)
+        if (!isActive && ActivationPercentage <= 0 || isActive && ActivationPercentage >= 1)
         {   // Activation/deactivation of the game state has concluded.
             ActivationPercentage = Math.Clamp(ActivationPercentage, 0, 1);
 
-            ActivationStatus = isActivating ? ActivationStatus.Activated : ActivationStatus.Deactivated;
+            ActivationStatus = isActive ? ActivationStatus.Activated : ActivationStatus.Deactivated;
             return;
         }
 
         // We're still in the process of activating/deactivating the game state.
-        ActivationStatus = isActivating ? ActivationStatus.Activating : ActivationStatus.Deactivating;
+        ActivationStatus = isActive ? ActivationStatus.Activating : ActivationStatus.Deactivating;
     }
 
     private Matrix CreateMoveTransform(Viewport viewport)

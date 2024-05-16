@@ -43,13 +43,13 @@ public sealed class BackgroundState : GameState
     }
 
     /// <inheritdoc/>
-    public override void Update(GameUpdateTime time)
-    {   // States deactivate unless they are the topmost -- forcing this to true will prevent the background from deactivating.
-        IsTopmost = true;
+    /// <remarks>
+    /// Because this state is always meant to be visible in the background, this override prevents deactivation when another state
+    /// is added on top of it in the z-order.
+    /// </remarks>
+    public override void Update(GameUpdateTime time, bool isActive) 
+        => base.Update(time, true);
 
-        base.Update(time);
-    }
-    
     /// <inheritdoc/>
     protected override void LoadContent(ContentManager contentManager) 
         => _texture = contentManager.Load<Texture2D>(_backgroundAssetPath);
