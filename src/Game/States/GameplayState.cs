@@ -13,8 +13,6 @@
 
 using BadEcho.Game.UI;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.States;
 
@@ -23,34 +21,34 @@ namespace BadEcho.Game.States;
 /// </summary>
 public abstract class GameplayState : GameState
 {
+    private readonly Brush _pauseOverlay = new(Color.Black);
+
     public bool IsPaused
     { get; protected set; }
 
-    protected float PauseAlpha
-    { get; set; } = 0.1f;
+    /// <summary>
+    /// Gets or sets the transparency of the overlay that appears when the game is paused.
+    /// </summary>
+    public float PauseOverlayAlpha
+    { get; set; } = 0.5f;
 
-    public sealed override void Update(GameUpdateTime time, bool isActive)
-    {
-        base.Update(time, true);
+    /// <inheritdoc/>
+    protected override void UpdateCore(GameUpdateTime time, bool isActive) 
+        => IsPaused = !isActive;
 
-        IsPaused = !isActive;
-
-        if (!IsPaused)
-            UpdateGameplay(time);
-    }
-
+    /// <inheritdoc/>
     protected sealed override void DrawCore(ConfiguredSpriteBatch spriteBatch)
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));        
 
-        DrawGameplay(spriteBatch);        
-    }
+        DrawGameplay(spriteBatch);
 
-    /// <summary>
-    /// Performs any necessary updates to gameplay hosted by this state.
-    /// </summary>
-    /// <param name="time">The game timing configuration and state for this update.</param>
-    protected abstract void UpdateGameplay(GameUpdateTime time);
+        if (IsPaused)
+        {
+            _pauseOverlay.Color = Color.Black * PauseOverlayAlpha;
+            _pauseOverlay.Draw(spriteBatch, spriteBatch.GraphicsDevice.Viewport.Bounds);
+        }
+    }
 
     protected abstract void DrawGameplay(ConfiguredSpriteBatch spriteBatch);
 }

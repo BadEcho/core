@@ -130,7 +130,8 @@ public abstract class ViewModel<T> : ViewModel, IViewModel<T>
         => Unbind(ActiveModel);
 
     /// <summary>
-    /// Gets a value indicating if existing data must be explicitly unbound before the binding of new data.
+    /// Gets a value indicating if this type of <see cref="ViewModel{T}"/> requires existing data to be explicitly unbound before
+    /// new data is bound.
     /// </summary>
     protected virtual bool UnbindOnBind
         => false;

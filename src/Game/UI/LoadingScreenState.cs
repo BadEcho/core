@@ -12,7 +12,6 @@
 //-----------------------------------------------------------------------
 
 using BadEcho.Game.States;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.UI;
@@ -32,13 +31,13 @@ public abstract class LoadingScreenState : ScreenState
     protected LoadingScreenState(GraphicsDevice device)
         : base(device)
     {
-        ActivationTime = TimeSpan.FromSeconds(0.5);
+        TransitionTime = TimeSpan.FromSeconds(0.5);
     }
 
     /// <inheritdoc/>
-    public override void Update(GameUpdateTime time, bool isActive)
+    protected override void UpdateCore(GameUpdateTime time, bool isActive)
     {
-        base.Update(time, isActive);
+        base.UpdateCore(time, isActive);
 
         if (_otherStatesUnloaded)
         {
@@ -51,21 +50,21 @@ public abstract class LoadingScreenState : ScreenState
             Manager?.RemoveState(this);
         }
 
-        if (ActivationStatus == ActivationStatus.Activated && Manager?.States.Count == 1)
+        if (TransitionStatus == TransitionStatus.Entered && Manager?.States.Count == 1)
             _otherStatesUnloaded = true;
     }
 
     /// <inheritdoc/>
-    protected override void LoadContent(ContentManager contentManager)
+    protected override void OnLoad()
     {
-        base.LoadContent(contentManager);
+        base.OnLoad();
 
         if (Manager == null)
             return;
                 
         foreach (GameState state in Manager.States)
         {
-            state.Exit();
+            state.Close();
         }       
     }
 

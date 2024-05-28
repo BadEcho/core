@@ -39,20 +39,24 @@ public sealed class BackgroundState : GameState
     public BackgroundState(string backgroundAssetPath)
     {
         _backgroundAssetPath = backgroundAssetPath;
-        ActivationTime = TimeSpan.FromSeconds(1.0);
+        TransitionTime = TimeSpan.FromSeconds(1.0);
     }
 
     /// <inheritdoc/>
     /// <remarks>
-    /// Because this state is always meant to be visible in the background, this override prevents deactivation when another state
-    /// is added on top of it in the z-order.
+    /// We'll always be displayed on screen regardless of z-order position.
+    /// This class is named <see cref="BackgroundState"/>, after all.
     /// </remarks>
-    public override void Update(GameUpdateTime time, bool isActive) 
-        => base.Update(time, true);
+    protected override bool AlwaysDisplay 
+        => true;
 
     /// <inheritdoc/>
     protected override void LoadContent(ContentManager contentManager) 
         => _texture = contentManager.Load<Texture2D>(_backgroundAssetPath);
+
+    /// <inheritdoc/>
+    protected override void UpdateCore(GameUpdateTime time, bool isActive)
+    { }
 
     /// <inheritdoc/>
     protected override void DrawCore(ConfiguredSpriteBatch spriteBatch)

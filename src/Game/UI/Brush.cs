@@ -21,8 +21,6 @@ namespace BadEcho.Game.UI;
 /// </summary>
 public sealed class Brush : IVisual, IDisposable
 {
-    private readonly Color _color;
-
     private Texture2D? _palette;
     private bool _disposed;
 
@@ -32,7 +30,7 @@ public sealed class Brush : IVisual, IDisposable
     /// <param name="color">The color of the brush.</param>
     public Brush(Color color)
     {
-        _color = color;
+        Color = color;
     }
 
     /// <inheritdoc />
@@ -47,8 +45,14 @@ public sealed class Brush : IVisual, IDisposable
             _palette.SetData([Color.White]);
         }
         
-        spriteBatch.Draw(_palette, targetArea, _color);
+        spriteBatch.Draw(_palette, targetArea, Color);
     }
+
+    /// <summary>
+    /// Gets or sets the color of this brush.
+    /// </summary>
+    public Color Color
+    { get; set; }
 
     /// <inheritdoc/>
     public void Dispose()

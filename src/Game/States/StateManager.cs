@@ -60,9 +60,9 @@ public sealed class StateManager : DrawableGameComponent
 
             state.Update(updateTime, isActive);
 
-            if (state.HasExited)
+            if (state.HasClosed)
                 RemoveState(state); // This is the typical path for a gracefully exiting state's removal from the manager.
-            else if (state.ActivationStatus is ActivationStatus.Activated or ActivationStatus.Activating && !state.IsModal)
+            else if (state.TransitionStatus is TransitionStatus.Entered or TransitionStatus.Entering && !state.IsModal)
             {
                 // All others below the first state not marked as a modal popup will be considered to not be active.
                 isActive = false;
@@ -81,7 +81,7 @@ public sealed class StateManager : DrawableGameComponent
             throw new InvalidOperationException(Strings.UninitializedGraphicsDevice);
 
         IEnumerable<GameState> visibleStates 
-            = _states.Where(s => s.ActivationStatus != ActivationStatus.Deactivated);
+            = _states.Where(s => s.TransitionStatus != TransitionStatus.Exited);
 
         foreach (var visibleState in visibleStates)
         {

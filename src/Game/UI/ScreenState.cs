@@ -52,21 +52,15 @@ public abstract class ScreenState : GameState
     { get; }
 
     /// <inheritdoc/>
-    public override void Update(GameUpdateTime time, bool isActive)
+    protected sealed override void LoadContent(ContentManager contentManager)
+        => _screen.Content = LoadControls(contentManager);
+    
+    /// <inheritdoc/>
+    protected override void UpdateCore(GameUpdateTime time, bool isActive)
     {
         _screen.Update();
 
         ContentOrigin = _screen.Content.LayoutBounds.Location;
-
-        base.Update(time, isActive);
-    }
-
-    /// <inheritdoc/>
-    protected override void LoadContent(ContentManager contentManager)
-    {
-        LoadScreenContent(contentManager);
-
-        _screen.Content = LoadControls();
     }
 
     /// <inheritdoc/>
@@ -74,14 +68,9 @@ public abstract class ScreenState : GameState
         => _screen.Draw(spriteBatch);
 
     /// <summary>
-    /// Loads resources using the provided content manager that the user interface and its controls depend on.
-    /// </summary>
-    /// <param name="contentManager">The content manager to use to load this user interface's dependencies.</param>
-    protected abstract void LoadScreenContent(ContentManager contentManager);
-    
-    /// <summary>
     /// Initializes and returns a layout panel containing this user interface's controls.
     /// </summary>
+    /// <param name="contentManager">The content manager used to load any dependencies for the controls of this interface.</param>
     /// <returns>An <see cref="IPanel"/> instance containing this user interface's controls.</returns>
-    protected abstract IPanel LoadControls();
+    protected abstract IPanel LoadControls(ContentManager contentManager);
 }

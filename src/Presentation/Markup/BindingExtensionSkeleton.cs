@@ -144,13 +144,13 @@ public abstract class BindingExtensionSkeleton<TBinding, TValueConverter> : Mark
     { get; }
 
     /// <summary>
-    /// Gets a value that indicates if a binding's extension requires that a valid target dependency object be present.
+    /// Gets a value that indicates if this type of binding extension requires that a valid target dependency object be present.
     /// </summary>
     /// <remarks>
     /// <para>
     /// Data binding mechanisms will only be extended by this type if a target <see cref="DependencyObject"/> is found. Execution
     /// will be deferred to the built-in data binding routines of WPF for proper handling if no target object has been made available.
-    /// If, however, a derived class overrides this property to return true, the binding extension is allowed to continue, even if
+    /// If, however, a derived class overrides this property to return false, the binding extension is allowed to continue, even if
     /// no <see cref="DependencyObject"/> is present. This can be most useful when there is a need to fulfill an auxiliary type of
     /// function such as further configuration of the binder.
     /// </para>
