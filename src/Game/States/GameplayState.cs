@@ -23,6 +23,11 @@ public abstract class GameplayState : GameState
 {
     private readonly Brush _pauseOverlay = new(Color.Black);
 
+    private bool _disposed;
+
+    /// <summary>
+    /// Gets a value indicating if gameplay is paused.
+    /// </summary>
     public bool IsPaused
     { get; protected set; }
 
@@ -33,8 +38,13 @@ public abstract class GameplayState : GameState
     { get; set; } = 0.5f;
 
     /// <inheritdoc/>
-    protected override void UpdateCore(GameUpdateTime time, bool isActive) 
-        => IsPaused = !isActive;
+    protected override void UpdateCore(GameUpdateTime time, bool isActive)
+    {
+        IsPaused = !isActive;
+
+        if (!IsPaused)
+            UpdateGameplay(time);
+    }
 
     /// <inheritdoc/>
     protected sealed override void DrawCore(ConfiguredSpriteBatch spriteBatch)
@@ -50,5 +60,30 @@ public abstract class GameplayState : GameState
         }
     }
 
+    /// <summary>
+    /// Executes custom gameplay-specific update logic.
+    /// </summary>
+    /// <param name="time">The game timing configuration and state for this update.</param>
+    protected abstract void UpdateGameplay(GameUpdateTime time);
+
+    /// <summary>
+    /// Executes the custom rendering logic required to draw the gameplay to the screen.
+    /// </summary>
+    /// <param name="spriteBatch">
+    /// A <see cref="ConfiguredSpriteBatch"/> instance with an active batch operation to draw this state to.
+    /// </param>
     protected abstract void DrawGameplay(ConfiguredSpriteBatch spriteBatch);
+
+    /// <inheritdoc/>
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing && !_disposed)
+        {
+            _pauseOverlay.Dispose();
+
+            _disposed = true;
+        }
+
+        base.Dispose(disposing);
+    }
 }
