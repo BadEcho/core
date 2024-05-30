@@ -38,6 +38,10 @@ public abstract class GameplayState : GameState
     { get; set; } = 0.5f;
 
     /// <inheritdoc/>
+    protected override bool AlwaysDisplay 
+        => true;
+
+    /// <inheritdoc/>
     protected override void UpdateCore(GameUpdateTime time, bool isActive)
     {
         IsPaused = !isActive;
