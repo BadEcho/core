@@ -26,6 +26,14 @@ public abstract class GameplayState : GameState
     private bool _disposed;
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="GameplayState"/> class.
+    /// </summary>
+    /// <param name="game">The game this state is for.</param>
+    protected GameplayState(Microsoft.Xna.Framework.Game game)
+        : base(game)
+    { }
+
+    /// <summary>
     /// Gets a value indicating if gameplay is paused.
     /// </summary>
     public bool IsPaused

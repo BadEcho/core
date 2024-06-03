@@ -13,7 +13,6 @@
 
 using BadEcho.Game.Properties;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.States;
@@ -27,19 +26,21 @@ namespace BadEcho.Game.States;
 /// </remarks>
 public sealed class BackgroundState : GameState
 {
-    private readonly string _backgroundAssetPath;
+    private readonly Texture2D _texture;
 
-    private Texture2D? _texture;
     private bool _disposed;
       
     /// <summary>
     /// Initializes a new instance of the <see cref="BackgroundState"/> class.
     /// </summary>
+    /// <param name="game">The game this state is for.</param>
     /// <param name="backgroundAssetPath">The relative content path to the asset that will be loaded as the background's texture.</param>
-    public BackgroundState(string backgroundAssetPath)
+    public BackgroundState(Microsoft.Xna.Framework.Game game, string backgroundAssetPath)
+        : base(game)
     {
-        _backgroundAssetPath = backgroundAssetPath;
         TransitionTime = TimeSpan.FromSeconds(1.0);
+
+        _texture = Content.Load<Texture2D>(backgroundAssetPath);
     }
 
     /// <inheritdoc/>
@@ -49,10 +50,6 @@ public sealed class BackgroundState : GameState
     /// </remarks>
     protected override bool AlwaysDisplay 
         => true;
-
-    /// <inheritdoc/>
-    protected override void LoadContent(ContentManager contentManager) 
-        => _texture = contentManager.Load<Texture2D>(_backgroundAssetPath);
 
     /// <inheritdoc/>
     protected override void UpdateCore(GameUpdateTime time, bool isActive)
@@ -78,7 +75,7 @@ public sealed class BackgroundState : GameState
     {
         if (disposing && !_disposed)
         {
-            _texture?.Dispose();
+            _texture.Dispose();
 
             _disposed = true;
         }

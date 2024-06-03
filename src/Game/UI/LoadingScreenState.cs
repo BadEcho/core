@@ -12,7 +12,6 @@
 //-----------------------------------------------------------------------
 
 using BadEcho.Game.States;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.UI;
 
@@ -27,9 +26,9 @@ public abstract class LoadingScreenState : ScreenState
     /// <summary>
     /// Initializes a new instance of the <see cref="LoadingScreenState"/> class.
     /// </summary>
-    /// <param name="device">The graphics device that will power the rendering surface.</param>
-    protected LoadingScreenState(GraphicsDevice device)
-        : base(device)
+    /// <param name="game">The game this state is for.</param>
+    protected LoadingScreenState(Microsoft.Xna.Framework.Game game)
+        : base(game)
     {
         TransitionTime = TimeSpan.FromSeconds(0.5);
     }
@@ -55,17 +54,16 @@ public abstract class LoadingScreenState : ScreenState
     }
 
     /// <inheritdoc/>
-    protected override void OnLoad()
+    protected override void OnLoad(StateManager manager)
     {
-        base.OnLoad();
+        Require.NotNull(manager, nameof(manager));
 
-        if (Manager == null)
-            return;
-                
-        foreach (GameState state in Manager.States)
+        foreach (GameState state in manager.States)
         {
             state.Close();
         }       
+        
+        base.OnLoad(manager);
     }
 
     /// <summary>

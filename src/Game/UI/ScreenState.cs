@@ -12,7 +12,6 @@
 //-----------------------------------------------------------------------
 
 using BadEcho.Game.States;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.UI;
@@ -28,13 +27,11 @@ public abstract class ScreenState : GameState
     /// <summary>
     /// Initializes a new instance of the <see cref="ScreenState"/> class.
     /// </summary>
-    /// <param name="device">The graphics device that will power the rendering surface.</param>
-    protected ScreenState(GraphicsDevice device)
+    /// <param name="game">The game this state is for.</param>
+    protected ScreenState(Microsoft.Xna.Framework.Game game)
+        : base(game)
     {
-        Require.NotNull(device, nameof(device));
-
-        Device = device;
-        _screen = new Screen(device);
+        _screen = new Screen(game.GraphicsDevice);
     }
 
     /// <inheritdoc/>
@@ -45,16 +42,6 @@ public abstract class ScreenState : GameState
     protected override SpriteSortMode SortMode
         => SpriteSortMode.Immediate;
 
-    /// <summary>
-    /// Gets the graphics device powering the rendering surface.
-    /// </summary>
-    protected GraphicsDevice Device
-    { get; }
-
-    /// <inheritdoc/>
-    protected sealed override void LoadContent(ContentManager contentManager)
-        => _screen.Content = LoadControls(contentManager);
-    
     /// <inheritdoc/>
     protected override void UpdateCore(GameUpdateTime time, bool isActive)
     {
@@ -67,10 +54,18 @@ public abstract class ScreenState : GameState
     protected override void DrawCore(ConfiguredSpriteBatch spriteBatch)
         => _screen.Draw(spriteBatch);
 
+    /// <inheritdoc/>
+    protected override void OnLoad(StateManager manager)
+    {
+        _screen.Content = LoadControls(manager);
+
+        base.OnLoad(manager);
+    }
+
     /// <summary>
     /// Initializes and returns a layout panel containing this user interface's controls.
     /// </summary>
-    /// <param name="contentManager">The content manager used to load any dependencies for the controls of this interface.</param>
+    /// <param name="manager">The state manager this state is being loaded into.</param>
     /// <returns>An <see cref="IPanel"/> instance containing this user interface's controls.</returns>
-    protected abstract IPanel LoadControls(ContentManager contentManager);
+    protected abstract IPanel LoadControls(StateManager manager);
 }

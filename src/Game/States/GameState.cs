@@ -26,10 +26,21 @@ public abstract class GameState : IDisposable
     private const Transitions MOVEMENT_FLAGS =
         Transitions.MoveLeft | Transitions.MoveRight | Transitions.MoveUp | Transitions.MoveDown;
 
-    private ContentManager? _contentManager;
     private AlphaSpriteEffect? _alphaEffect;
     private bool _isClosing;
     private bool _disposed;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GameState"/> class.
+    /// </summary>
+    /// <param name="game">The game this state is for.</param>
+    protected GameState(Microsoft.Xna.Framework.Game game)
+    {
+        Require.NotNull(game, nameof(game));
+
+        Content = new ContentManager(game.Services, "Content");
+        Game = game;
+    }
 
     /// <summary>
     /// Gets a <see cref="TransitionStatus"/> value that specifies this state's current transition phase.
@@ -75,10 +86,22 @@ public abstract class GameState : IDisposable
         => false;
 
     /// <summary>
+    /// Gets this state's <see cref="ContentManager"/> instnace.
+    /// </summary>
+    protected ContentManager Content
+    { get; }
+
+    /// <summary>
+    /// Gets the game this state is for.
+    /// </summary>
+    protected Microsoft.Xna.Framework.Game Game
+    { get; }
+
+    /// <summary>
     /// Gets the state manager this state has been added to.
     /// </summary>
-    protected internal StateManager? Manager
-    { get; internal set; }
+    protected StateManager? Manager
+    { get; private set; }
 
     /// <summary>
     /// Gets or sets the coordinates to the upper-left corner of the state's content.
@@ -223,44 +246,18 @@ public abstract class GameState : IDisposable
     }
 
     /// <summary>
-    /// Loads resources needed by the state and prepares it to be drawn to the screen.
+    /// Associates this state with the provided state manager in preparation for being drawn to the screen.
     /// </summary>
-    /// <param name="game">
-    /// The game the state is being loaded for, which is used to acquire a <see cref="ContentManager"/> instance for
-    /// loading resources.
-    /// </param>
-    internal void Load(Microsoft.Xna.Framework.Game game)
+    /// <param name="manager">The state manager this state is being loaded into.</param>
+    internal void Load(StateManager manager)
     {
-        Require.NotNull(game, nameof(game));
+        Require.NotNull(manager, nameof(manager));
 
-        if (_contentManager != null)
-            return;
-        
-        OnLoad();
+        OnLoad(manager);
 
-        _contentManager = new ContentManager(game.Services, "Content");
-        LoadContent(_contentManager);
+        Manager = manager;
     }
 
-    /// <summary>
-    /// Unloads resources previously loaded by the state, called when the state no longer needs to be drawn
-    /// to the screen.
-    /// </summary>
-    internal void Unload()
-    {
-        if (_contentManager == null)
-            return;
-
-        _contentManager.Unload();
-        _contentManager = null;
-    }
-    
-    /// <summary>
-    /// Loads state-specific resources using the provided content manager.
-    /// </summary>
-    /// <param name="contentManager">The content manager to use to load the content.</param>
-    protected abstract void LoadContent(ContentManager contentManager);
-    
     /// <summary>
     /// Executes custom state-specific update logic.
     /// </summary>
@@ -279,15 +276,13 @@ public abstract class GameState : IDisposable
     protected abstract void DrawCore(ConfiguredSpriteBatch spriteBatch);
 
     /// <summary>
-    /// Called when this state is loading needed resources and being prepared to be drawn to screen.
+    /// Called when this state is being loaded into a state manager in preparation for being drawn to the screen.
     /// </summary>
-    /// <remarks>
-    /// This is called soon after <see cref="Manager"/> has been set to the <see cref="StateManager"/> instance owning
-    /// this state; accordingly, overriding this will allow access to the owning manager early on in the state initialization
-    /// process.
-    /// </remarks>
-    protected virtual void OnLoad()
-    { }
+    /// <param name="manager">The state manager this state is being loaded into.</param>
+    protected virtual void OnLoad(StateManager manager)
+    {
+        Require.NotNull(manager, nameof(manager));
+    }
 
     /// <summary>
     /// Releases unmanaged and (optionally) managed resources.
@@ -302,7 +297,7 @@ public abstract class GameState : IDisposable
 
         if (disposing)
         {
-            _contentManager?.Dispose();
+            Content.Dispose();
         }
 
         _disposed = true;

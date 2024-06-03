@@ -26,7 +26,6 @@ public sealed class StateManager : DrawableGameComponent
     private readonly List<GameState> _states = [];
 
     private SpriteBatch? _spriteBatch;
-    private bool _isLoaded;
     private bool _disposed;
 
     /// <summary>
@@ -96,11 +95,9 @@ public sealed class StateManager : DrawableGameComponent
     public void AddState(GameState state)
     {
         Require.NotNull(state, nameof(state));
-        state.Manager = this;
 
-        // If the game component has been loaded and a graphics device is available, we'll activate the states.
-        if (_isLoaded)
-            state.Load(Game);
+        // Associate this manager with the state.
+        state.Load(this);
 
         _states.Add(state);
     }
@@ -112,12 +109,8 @@ public sealed class StateManager : DrawableGameComponent
     public void RemoveState(GameState state)
     {
         Require.NotNull(state, nameof(state));
-        state.Manager = null;
-
-        // If the screen was added and then removed prior to the component's initialization, there won't be any graphics resources
-        // to unload.
-        if (_isLoaded)
-            state.Unload();
+        
+        state.Dispose();
 
         _states.Remove(state);
     }
@@ -128,24 +121,6 @@ public sealed class StateManager : DrawableGameComponent
         base.LoadContent();
 
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        _isLoaded = true;
-
-        // If any states were added prior to our initialization, we make sure they get loaded now.
-        foreach (GameState state in _states)
-        {
-            state.Load(Game);
-        }
-    }
-
-    /// <inheritdoc/>
-    protected override void UnloadContent()
-    {
-        base.UnloadContent();
-
-        foreach (GameState state in _states)
-        {
-            state.Unload();
-        }
     }
 
     /// <inheritdoc/>
@@ -154,6 +129,11 @@ public sealed class StateManager : DrawableGameComponent
         if (disposing && !_disposed)
         {
             _spriteBatch?.Dispose();
+            
+            foreach (GameState state in _states)
+            {   
+                state.Dispose();
+            }
 
             _disposed = true;
         }
