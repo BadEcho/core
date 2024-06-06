@@ -11,7 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Game.Properties;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -61,9 +60,6 @@ public sealed class BackgroundState : GameState
         Require.NotNull(spriteBatch, nameof(spriteBatch));
 
         Viewport viewport = spriteBatch.GraphicsDevice.Viewport;
-
-        if (_texture == null)
-            throw new InvalidOperationException(Strings.GameStateResourcesNotLoaded);
 
         spriteBatch.Draw(_texture,
                          new Rectangle(0, 0, viewport.Width, viewport.Height),

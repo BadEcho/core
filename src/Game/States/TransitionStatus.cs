@@ -19,13 +19,13 @@ namespace BadEcho.Game.States;
 public enum TransitionStatus
 {
     /// <summary>
-    /// The game state has fully transitioned onto the screen and is fully visible.
-    /// </summary>
-    Entered,
-    /// <summary>
     /// The game state is transitioning onto the screen.
     /// </summary>
     Entering,
+    /// <summary>
+    /// The game state has fully transitioned onto the screen and is fully visible.
+    /// </summary>
+    Entered,
     /// <summary>
     /// The game state is transitioning off the screen.
     /// </summary>
