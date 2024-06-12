@@ -46,8 +46,28 @@ public sealed class TileSetProcessor : ContentProcessor<TileSetContent, TileSetC
             input.AddReference<Texture2DContent>(context, asset.Image.Source, processorParameters);
         }
 
+        ProcessTiles(input, context);
+
         context.Log(Strings.ProcessingFinished.InvariantFormat(input.Identity.SourceFilename));
 
         return input;
+    }
+
+    private static void ProcessTiles(TileSetContent input, ContentProcessorContext context)
+    {
+        TileSetAsset asset = input.Asset;
+
+        IEnumerable<ImageAsset> tileImages = asset.Tiles.Select(t => t.Image).WhereNotNull();
+
+        foreach (ImageAsset tileImage in tileImages)
+        {
+            var processorParameters = new OpaqueDataDictionary
+                                      {
+                                          { nameof(TextureProcessor.ColorKeyColor), tileImage.ColorKey },
+                                          { nameof(TextureProcessor.ColorKeyEnabled), true }
+                                      };
+
+            input.AddReference<Texture2DContent>(context, tileImage.Source, processorParameters);
+        }
     }
 }

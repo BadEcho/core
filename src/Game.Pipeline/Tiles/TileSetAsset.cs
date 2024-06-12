@@ -25,6 +25,9 @@ public sealed class TileSetAsset : ExtensibleAsset
     private const string MARGIN_ATTRIBUTE = "margin";
     private const string FIRST_ID_ATTRIBUTE = "firstgid";
     private const string TILE_COUNT_ATTRIBUTE = "tilecount";
+    private const string TILE_ELEMENT = "tile";
+
+    private readonly List<TileAsset> _tiles = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TileSetAsset"/> class.
@@ -47,6 +50,11 @@ public sealed class TileSetAsset : ExtensibleAsset
 
         if (imageElement != null)
             Image = new ImageAsset(imageElement);
+
+        foreach (XElement tile in root.Elements(TILE_ELEMENT))
+        {
+            _tiles.Add(new TileAsset(tile));
+        }
     }
 
     /// <summary>
@@ -107,6 +115,20 @@ public sealed class TileSetAsset : ExtensibleAsset
     /// <summary>
     /// Gets the image data for the texture comprising all the tiles in this tile set.
     /// </summary>
+    /// <remarks>
+    /// This will be present if the tile set is based on a single image. If the tile set is based on a collection
+    /// of images, then the tile set's constituent tile assets will contain the image data.
+    /// </remarks>
     public ImageAsset? Image
     { get; }
+
+    /// <summary>
+    /// Gets the collection of explicitly configured tiles belonging to this tile set.
+    /// </summary>
+    /// <remarks>
+    /// Tile sets based on a single image do not require explicit configuration for their tiles, save for any
+    /// that have animation frames.
+    /// </remarks>
+    public IReadOnlyCollection<TileAsset> Tiles
+        => _tiles;
 }

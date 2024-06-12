@@ -34,19 +34,35 @@ public sealed class TileSetImporter : ContentImporter<TileSetContent>
 
         XElement assetRoot = XElement.Load(filename);
         var asset = new TileSetAsset(assetRoot);
+        string tileSetDirectory = Path.GetDirectoryName(filename) ?? string.Empty;
 
         if (asset.Image != null)
         {
             context.Log(Strings.ImportingDependency.InvariantFormat(asset.Image.Source));
 
-            asset.Image.Source
-                = Path.Combine(Path.GetDirectoryName(filename) ?? string.Empty, asset.Image.Source);
+            asset.Image.Source = Path.Combine(tileSetDirectory, asset.Image.Source);
 
             context.AddDependency(asset.Image.Source);
         }
 
+        ImportTiles(asset, tileSetDirectory, context);
+
         context.Log(Strings.ImportingFinished.InvariantFormat(filename));
 
         return new TileSetContent(asset) { Identity = new ContentIdentity(filename) };
+    }
+
+    private static void ImportTiles(TileSetAsset asset, string tileSetDirectory, ContentImporterContext context)
+    {
+        IEnumerable<ImageAsset> tileImages = asset.Tiles.Select(t => t.Image).WhereNotNull();
+
+        foreach (ImageAsset tileImage in tileImages)
+        {
+            context.Log(Strings.ImportingDependency.InvariantFormat(tileImage.Source));
+
+            tileImage.Source = Path.Combine(tileSetDirectory, tileImage.Source);
+
+            context.AddDependency(tileImage.Source);
+        }
     }
 }

@@ -30,7 +30,13 @@ public sealed class TileSetReader : ContentTypeReader<TileSet>
     {
         Require.NotNull(input, nameof(input));
 
-        var texture = input.ReadExternalReference<Texture2D>();
+        Texture2D? texture = null;
+
+        var hasImage = input.ReadBoolean();
+
+        if (hasImage)
+            texture = input.ReadExternalReference<Texture2D>();
+
         var tileWidth = input.ReadInt32();
         var tileHeight = input.ReadInt32();
         var tileCount = input.ReadInt32();
@@ -39,18 +45,42 @@ public sealed class TileSetReader : ContentTypeReader<TileSet>
         var margin = input.ReadInt32();
         var customProperties = input.ReadProperties();
 
-        return new TileSet(texture,
-                           new Size(tileWidth, tileHeight),
-                           tileCount,
-                           columns,
-                           customProperties)
-               {
-                   Spacing = spacing,
-                   Margin = margin
-               };
+        var tileSet = new TileSet(texture,
+                                  new Size(tileWidth, tileHeight),
+                                  tileCount,
+                                  columns,
+                                  customProperties)
+                      {
+                          Spacing = spacing,
+                          Margin = margin
+                      };
+
+        ReadTiles(input, tileSet);
+
+        return tileSet;
     }
 
     /// <inheritdoc />
     protected override TileSet Read(ContentReader input, TileSet existingInstance)
         => Read(input);
+
+    private static void ReadTiles(ContentReader input, TileSet tileSet)
+    {
+        var tilesToRead = input.ReadInt32();
+
+        while (tilesToRead > 0)
+        {
+            tilesToRead--;
+
+            var id = input.ReadInt32();
+            var hasImage = input.ReadBoolean();
+
+            if (!hasImage)
+                continue;
+
+            var texture = input.ReadExternalReference<Texture2D>();
+
+            tileSet.AddTile(id, texture);
+        }
+    }
 }

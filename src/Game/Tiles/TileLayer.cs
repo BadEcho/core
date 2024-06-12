@@ -57,12 +57,13 @@ public sealed class TileLayer : Layer
     /// Gets a range of tiles found within this tile layer.
     /// </summary>
     /// <param name="firstId">The global identifier of the tile at which the range starts.</param>
-    /// <param name="maxCount">The maximum number of elements in the range.</param>
-    /// <returns>A range of up to <c>maxCount</c> tiles starting at the tile identified by <c>firstId</c>.</returns>
-    public IEnumerable<Tile> GetRange(int firstId, int maxCount)
+    /// <param name="lastId">The global identifier of the tile at which the range ends.</param>
+    /// <returns>
+    /// A range of tiles starting at the tile identified by <c>firstId</c> and ending at the tile identified by
+    /// <c>lastId</c>.
+    /// </returns>
+    public IEnumerable<Tile> GetRange(int firstId, int lastId)
     {
-        int lastId = maxCount + firstId - 1;
-
         for (int i = firstId; i <= lastId; i++)
         {
             if (!_tileIdIndicesMap.TryGetValue(i, out List<int>? tileIndices))

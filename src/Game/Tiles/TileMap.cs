@@ -126,6 +126,8 @@ public sealed class TileMap : Extensible, IModelRenderer
     /// </param>
     public void AddTileSet(TileSet tileSet, int firstId)
     {
+        Require.NotNull(tileSet, nameof(tileSet));
+
         _tileSets.Add(tileSet);
         _tileSetFirstIdMap.Add(tileSet, firstId);
     }
@@ -136,6 +138,8 @@ public sealed class TileMap : Extensible, IModelRenderer
     /// <param name="layer">The layer to add to this map.</param>
     public void AddLayer(Layer layer)
     {
+        Require.NotNull(layer, nameof(layer));
+
         _layers.Add(layer);
     }
 
@@ -241,32 +245,55 @@ public sealed class TileMap : Extensible, IModelRenderer
         // Layer tile data must be processed tile set by tile set, as they provide the actual textures that individual tiles are sourced from.
         foreach (TileSet tileSet in TileSets)
         {
-            var tileData = new QuadTextureModelData();
             int firstId = _tileSetFirstIdMap[tileSet];
-            Texture2D texture = tileSet.Texture;
-            // Extract the tiles in the layer we're adding that belong to the current tile set.
-            foreach (Tile tile in layer.GetRange(firstId, tileSet.TileCount))
-            {   // Tile identifiers are normalized so that they're unique across the entire map that they're used in.
-                // In order to pull a tile's data from its tile set of origin, we'll need to revert its id back into its localized variant.
-                int localId = tile.Id - firstId;
-                Vector2 position = GetTilePosition(tile);
-                Rectangle sourceArea = tileSet.GetTileSourceArea(localId);
+            
+            // Extract the tiles in the layer we're adding that belong to the current tile set. We need to create model data for
+            // every texture belonging to the tile set. If the tile set is based on a single image, there will be only one texture;
+            // however, if it is composed of multiple images, we'll have multiple textures. So, we group the tiles by their
+            // associated textures and work from there.
+            var tilesByTexture = layer.GetRange(firstId, tileSet.LastId + firstId)
+                                      .GroupBy(t => tileSet.GetTileTexture(t.Id - firstId));
 
-                tileData.AddTexture(texture.Bounds, sourceArea, position);
+            foreach (IGrouping<Texture2D, Tile> tilesAndTexture in tilesByTexture)
+            {
+                IEnumerable<IPrimitiveModel> tileModels
+                    = CreateTileModels(tileSet, tilesAndTexture, tilesAndTexture.Key);
 
-                if (tileData.VertexCount + 4 > ushort.MaxValue)
-                {
-                    layerModels.Add(new StaticModel(_device, texture, tileData));
-                    
-                    tileData = new QuadTextureModelData();
-                }
+                layerModels.AddRange(tileModels);
             }
-
-            if (tileData.VertexCount > 0)
-                layerModels.Add(new StaticModel(_device, texture, tileData));
         }
 
         _layerModelMap.Add(layer, layerModels);
+    }
+
+    private List<IPrimitiveModel> CreateTileModels(TileSet tileSet, IEnumerable<Tile> tiles, Texture2D texture)
+    {
+        var tileModels = new List<IPrimitiveModel>();
+        var tileData = new QuadTextureModelData();
+        int firstId = _tileSetFirstIdMap[tileSet];
+
+        foreach (Tile tile in tiles)
+        {   // Tile identifiers are normalized so that they're unique across the entire map that they're used in.
+            // In order to pull a tile's data from its tile set of origin, we'll need to revert its id back into its
+            // localized variant.
+            int localId = tile.Id - firstId;
+            Vector2 position = GetTilePosition(tile);
+            Rectangle sourceArea = tileSet.GetTileSourceArea(localId);
+            
+            tileData.AddTexture(texture.Bounds, sourceArea, position);
+
+            if (tileData.VertexCount + 4 > ushort.MaxValue)
+            {
+                tileModels.Add(new StaticModel(_device, texture, tileData));
+                    
+                tileData = new QuadTextureModelData();
+            }
+        }
+
+        if (tileData.VertexCount > 0)
+            tileModels.Add(new StaticModel(_device, texture, tileData));
+
+        return tileModels;
     }
 
     private Vector2 GetTilePosition(Tile tile)

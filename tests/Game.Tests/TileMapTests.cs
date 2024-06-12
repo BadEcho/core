@@ -113,8 +113,10 @@ public class TileMapTests : IClassFixture<ContentManagerFixture>
 
         var tileLayer = map.Layers.OfType<TileLayer>().First();
 
-        IEnumerable<Tile> tiles = tileLayer.GetRange(0, 10);
+        Assert.Single(map.TileSets);
 
+        IEnumerable<Tile> tiles = tileLayer.GetRange(0, map.TileSets.First().LastId + 1);
+        
         Assert.Equal(3, tiles.GroupBy(t => t.Id).Count());
     }
 
