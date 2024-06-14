@@ -70,6 +70,29 @@ public class TileSetTests : IClassFixture<ContentManagerFixture>
     }
 
     [Fact]
+    public void Load_GrasslandsCustomProperties_TilePropertiesValid()
+    {
+        TileSet tileSet = _content.Load<TileSet>("Tiles\\GrasslandsCustomProperties");
+
+        var firstProperties = tileSet.GetTileCustomProperties(0);
+        var secondProperties = tileSet.GetTileCustomProperties(1);
+        var thirdProperties = tileSet.GetTileCustomProperties(2);
+        var fourthProperties = tileSet.GetTileCustomProperties(3);
+
+        Assert.NotNull(firstProperties);
+        Assert.NotNull(secondProperties);
+        Assert.NotNull(thirdProperties);
+        Assert.NotNull(thirdProperties);
+        Assert.NotNull(fourthProperties);
+
+        Assert.True(secondProperties.Strings.ContainsKey("Something"));
+        Assert.Equal("Hello", secondProperties.Strings["Something"]);
+
+        Assert.True(fourthProperties.Strings.ContainsKey("SomethingElse"));
+        Assert.Equal("Hmm?", fourthProperties.Strings["SomethingElse"]);
+    }
+
+    [Fact]
     public void Load_CompositeGrass_CountValid()
     {
         TileSet tileSet = _content.Load<TileSet>("Tiles\\CompositeGrass");

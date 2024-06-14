@@ -91,6 +91,8 @@ public sealed class TileSetWriter : ContentTypeWriter<TileSetContent>
             }
             else
                 output.Write(false);
+
+            output.WriteProperties(tile);
         }
     }
 }

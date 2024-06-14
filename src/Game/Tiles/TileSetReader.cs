@@ -70,17 +70,22 @@ public sealed class TileSetReader : ContentTypeReader<TileSet>
 
         while (tilesToRead > 0)
         {
-            tilesToRead--;
+            Texture2D? texture = null;
 
             var id = input.ReadInt32();
             var hasImage = input.ReadBoolean();
 
-            if (!hasImage)
-                continue;
+            if (hasImage)
+            {
+                texture = input.ReadExternalReference<Texture2D>();
+            }
 
-            var texture = input.ReadExternalReference<Texture2D>();
+            var customProperties = input.ReadProperties();
+            var tile = new TileData(id, texture, customProperties);
 
-            tileSet.AddTile(id, texture);
+            tileSet.AddTile(tile);
+            
+            tilesToRead--;
         }
     }
 }

@@ -11,6 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Extensions;
 using BadEcho.Game.Properties;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -22,7 +23,7 @@ namespace BadEcho.Game.Tiles;
 /// </summary>
 public sealed class TileSet : Extensible
 {
-    private readonly Dictionary<int, Texture2D> _tileTextures = [];
+    private readonly Dictionary<int, TileData> _idTileMap = [];
 
     private readonly int _columns;
 
@@ -50,6 +51,10 @@ public sealed class TileSet : Extensible
     /// <summary>
     ///  Gets the texture containing the individual tiles that compose this tile set, if one exists.
     /// </summary>
+    /// <remarks>
+    /// This will be present if the tile set is based on a single image. If a tile set is based on a collection
+    /// of images, then the tile set's constituent tile assets will contain the texture data.
+    /// </remarks>
     public Texture2D? Texture
     { get; } 
 
@@ -74,7 +79,7 @@ public sealed class TileSet : Extensible
     /// removed at a later date.
     /// </remarks>
     public int LastId
-        => Texture != null ? TileCount -1 : _tileTextures.Keys.Max();
+        => Texture != null ? TileCount -1 : _idTileMap.Keys.Max();
 
     /// <summary>
     /// Gets the space between the perimeter of the tiles composing this tile set and the edge of the texture.
@@ -89,16 +94,15 @@ public sealed class TileSet : Extensible
     { get; init; }
 
     /// <summary>
-    /// Adds a tile-specific texture to this tile set.
+    /// Adds explicitly configured tile data to this tile set.
     /// </summary>
-    /// <param name="localId">The tile identifier localized to the tile set.</param>
-    /// <param name="texture">The texture for the tile.</param>
-    public void AddTile(int localId, Texture2D texture)
+    /// <param name="tile">Data for the tile to add to this tile set.</param>
+    public void AddTile(TileData tile)
     {
-        Require.NotNull(texture, nameof(texture));
-
-        if (!_tileTextures.TryAdd(localId, texture))
-            throw new ArgumentException(Strings.TileAlreadyHasTexture, nameof(localId));
+        Require.NotNull(tile, nameof(tile));
+        
+        if (!_idTileMap.TryAdd(tile.Id, tile))
+            throw new ArgumentException(Strings.TileSetAlreadyHasTile.InvariantFormat(tile.Id));
     }
 
     /// <summary>
@@ -111,8 +115,11 @@ public sealed class TileSet : Extensible
     /// </returns>
     public Rectangle GetTileSourceArea(int localId)
     {
-        if (_tileTextures.TryGetValue(localId, out Texture2D? texture))
-            return texture.Bounds;
+        if (_idTileMap.TryGetValue(localId, out TileData? tile))
+        {
+            if (tile.Texture != null)
+                return tile.Texture.Bounds;
+        }
 
         int x = localId % _columns * (TileSize.Width + Spacing) + Margin;
         int y = localId / _columns * (TileSize.Height + Spacing) + Margin;
@@ -125,15 +132,25 @@ public sealed class TileSet : Extensible
     /// </summary>
     /// <param name="localId">The tile identifier localized to this tile set.</param>
     /// <returns>The texture to source when drawing the tile identified by <c>localId</c>.</returns>
-    /// <exception cref="ArgumentException">
-    /// The tile set is not based on a single image and <c>localId</c> has no texture associated with it.
-    /// </exception>
     public Texture2D GetTileTexture(int localId)
     {
         if (Texture != null)
             return Texture;
 
-        return _tileTextures.GetValueOrDefault(localId)
-               ?? throw new ArgumentException(Strings.TileHasNoTexture);
+        if (!_idTileMap.TryGetValue(localId, out TileData? tile))
+            throw new ArgumentException(Strings.TileSetMissingTile, nameof(localId));
+
+        return tile.Texture
+               ?? throw new InvalidOperationException(Strings.TileHasNoTexture);
     }
+
+    /// <summary>
+    /// Gets the custom properties associated with a tile.
+    /// </summary>
+    /// <param name="localId">The tile identifier localized to this tile set.</param>
+    /// <returns>
+    /// A <see cref="CustomProperties"/> instance containing custom properties for the tile identified by <c>localId</c>.
+    /// </returns>
+    public CustomProperties GetTileCustomProperties(int localId)
+        => !_idTileMap.TryGetValue(localId, out TileData? tile) ? new CustomProperties() : tile.CustomProperties;
 }

@@ -223,20 +223,29 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tile set already has a texture associated with the specified tile..
-        /// </summary>
-        internal static string TileAlreadyHasTexture {
-            get {
-                return ResourceManager.GetString("TileAlreadyHasTexture", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Tile set is not based on a single image and no tile-specific texture could be found for the specified tile..
         /// </summary>
         internal static string TileHasNoTexture {
             get {
                 return ResourceManager.GetString("TileHasNoTexture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tile set already has a tile with ID &apos;{0}&apos; added to it..
+        /// </summary>
+        internal static string TileSetAlreadyHasTile {
+            get {
+                return ResourceManager.GetString("TileSetAlreadyHasTile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tile set is not based on a single image and no configured data for the specified tile could be found..
+        /// </summary>
+        internal static string TileSetMissingTile {
+            get {
+                return ResourceManager.GetString("TileSetMissingTile", resourceCulture);
             }
         }
         

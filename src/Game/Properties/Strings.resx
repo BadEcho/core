@@ -158,10 +158,13 @@
 	<data name="StyleSetterNonLocalProperty" xml:space="preserve">
 		<value>Setter expression targets a property not belonging to the control type being styled.</value>
 	</data>
-	<data name="TileAlreadyHasTexture" xml:space="preserve">
-		<value>Tile set already has a texture associated with the specified tile.</value>
-	</data>
 	<data name="TileHasNoTexture" xml:space="preserve">
-		<value>Tile set is not based on a single image and no tile-specific texture could be found for the specified tile.</value>
+		<value>Tile set is not based on a single image and the specified tile lacks a texture.</value>
+	</data>
+	<data name="TileSetAlreadyHasTile" xml:space="preserve">
+		<value>A tile with the same ID of '{0}' already exists in this tile set.</value>
+	</data>
+	<data name="TileSetMissingTile" xml:space="preserve">
+		<value>No configured data for the specified tile could be found.</value>
 	</data>
 </root>
