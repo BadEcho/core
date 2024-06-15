@@ -92,6 +92,11 @@ $endif
 /processor:DistanceFieldFontProcessor
 /build:Fonts/Lato.sdfont
 
+#begin Fonts/SecondLato.sdfont
+/importer:DistanceFieldFontImporter
+/processor:DistanceFieldFontProcessor
+/build:Fonts/SecondLato.sdfont
+
 #begin Images/Circle.png
 /importer:TextureImporter
 /processor:TextureProcessor

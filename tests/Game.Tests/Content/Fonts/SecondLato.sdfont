@@ -1,0 +1,15 @@
+{
+  "fontPath": "Lato-Regular.ttf",
+  "characterSet": [
+    {
+      "start": 32,
+      "end": 127
+    },
+    {
+      "start": 128,
+      "end": 255
+    }
+  ],
+  "resolution": 64,
+  "range": 4
+}

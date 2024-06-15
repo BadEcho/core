@@ -31,6 +31,8 @@ namespace BadEcho.Game.Pipeline.Fonts;
 public sealed class DistanceFieldFontProcessor : ContentProcessor<DistanceFieldFontContent, DistanceFieldFontContent>
 {
     private const string UNICODE_PROPERTY_NAME = "unicode";
+
+    private static readonly List<string> _OutputPaths = [];
     
     private static readonly JsonSerializerOptions _OutputFileOptions
         = new()
@@ -73,7 +75,11 @@ public sealed class DistanceFieldFontProcessor : ContentProcessor<DistanceFieldF
 
         context.Log(Strings.ProcessingDistanceFieldFont.InvariantFormat(input.Identity.SourceFilename));
 
-        string intermediatePath = context.IntermediateDirectory;
+        string intermediatePath = ResolveIntermediatePath(input.Identity.SourceFilename, context);
+
+        if (!Directory.Exists(intermediatePath))
+            Directory.CreateDirectory(intermediatePath);
+
         string charsetPath = CreateCharacterSetFile(input.Asset, input.Name, intermediatePath);
         string atlasPath = Path.Combine(intermediatePath, $"{input.Name}-atlas.png");
         string jsonPath = Path.Combine(intermediatePath, $"{input.Name}-layout.json");
@@ -98,6 +104,10 @@ public sealed class DistanceFieldFontProcessor : ContentProcessor<DistanceFieldF
 
         DistanceFieldFontContent output = ProcessOutput(input, jsonPath);
 
+        // Because we've generated the atlas texture asset in an intermediate directory, we need to explicitly provide
+        // an output path and asset name, otherwise MonoGame will mangle the output path (i.e., the output path
+        // will end up being something like bin\Platform\obj\Platform\*\).
+        string outputPath = ResolveOutputPath(atlasPath, context);
         output.AtlasPath = atlasPath;
         output.AddReference<Texture2DContent>(context,
                                               atlasPath,
@@ -106,9 +116,45 @@ public sealed class DistanceFieldFontProcessor : ContentProcessor<DistanceFieldF
                                                   { nameof(TextureProcessor.ColorKeyEnabled), false },
                                                   // Our atlas image is already in a premultiplied format.
                                                   // Formatting it again would corrupt it.
-                                                  { nameof(TextureProcessor.PremultiplyAlpha), false}
-                                              });
+                                                  { nameof(TextureProcessor.PremultiplyAlpha), false }
+                                              },
+                                              outputPath);
+
+        context.Log(Strings.ProcessingFinished.InvariantFormat(input.Identity.SourceFilename));
+
         return output;
+    }
+
+    private static string ResolveIntermediatePath(string sourcePath, ContentProcessorContext context)
+    {
+        string basePath = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}";
+        sourcePath = $"{Path.GetDirectoryName(sourcePath) ?? string.Empty}{Path.DirectorySeparatorChar}";
+
+        if (!Uri.TryCreate(sourcePath, UriKind.Absolute, out Uri? uri))
+            return basePath;
+
+        uri = new Uri(basePath).MakeRelativeUri(uri);
+        string pathToSource = Uri.UnescapeDataString(uri.ToString());
+
+        return Path.Combine(context.IntermediateDirectory, pathToSource);
+    }
+
+    private static string ResolveOutputPath(string atlasPath, ContentProcessorContext context)
+    {
+        string baseOutputPath = Path.Combine(Path.GetDirectoryName(context.OutputFilename) ?? string.Empty,
+                                             Path.GetFileNameWithoutExtension(atlasPath));
+        int assetIndex = 0;
+        string outputPath;
+
+        do
+        {
+            outputPath = $"{baseOutputPath}_{assetIndex}";
+            assetIndex++;
+        } while (_OutputPaths.Contains(outputPath));
+
+        _OutputPaths.Add(outputPath);
+
+        return outputPath;
     }
 
     private static DistanceFieldFontContent ProcessOutput(DistanceFieldFontContent input, string jsonPath)

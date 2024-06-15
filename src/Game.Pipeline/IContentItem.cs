@@ -25,10 +25,22 @@ public interface IContentItem
     /// </summary>
     /// <typeparam name="TContent">The type of asset data being referenced by this content.</typeparam>
     /// <param name="context">The current content processing context.</param>
-    /// <param name="filename">The path to the asset file being referenced.</param>
+    /// <param name="sourcePath">The path to the asset file being referenced.</param>
     /// <param name="processorParameters">Optional parameters used during the building of the external asset.</param>
-    void AddReference<TContent>(ContentProcessorContext context, string filename, OpaqueDataDictionary processorParameters);
+    void AddReference<TContent>(ContentProcessorContext context, string sourcePath, OpaqueDataDictionary processorParameters);
 
+    /// <summary>
+    /// Builds the specified external asset and adds a reference to it from this content.
+    /// </summary>
+    /// <typeparam name="TContent">The type of asset data being referenced by this content.</typeparam>
+    /// <param name="context">The current content processing context.</param>
+    /// <param name="sourcePath">The path to the asset file being referenced.</param>
+    /// <param name="processorParameters">Optional parameters used during the building of the external asset.</param>
+    /// <param name="outputPath">The path to write the built asset to.</param>
+    void AddReference<TContent>(ContentProcessorContext context,
+                                string sourcePath,
+                                OpaqueDataDictionary processorParameters,
+                                string outputPath);
     /// <summary>
     /// Retrieves a previously referenced external asset from this content.
     /// </summary>

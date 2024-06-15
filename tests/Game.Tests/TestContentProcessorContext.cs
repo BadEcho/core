@@ -27,7 +27,14 @@ internal sealed class TestContentProcessorContext : ContentProcessorContext
     {
         if (!Directory.Exists(IntermediateDirectory))
             Directory.CreateDirectory(IntermediateDirectory);
+
+        Environment.CurrentDirectory = GetContentPath();
     }
+
+    /// <summary>
+    /// Occurs when an asset is built and provides the name of the asset.
+    /// </summary>
+    public event EventHandler<EventArgs<string>>? AssetBuilt;
 
     /// <inheritdoc />
     public override void AddDependency(string filename)
@@ -53,6 +60,8 @@ internal sealed class TestContentProcessorContext : ContentProcessorContext
                                                                            string importerName,
                                                                            string assetName)
     {
+        AssetBuilt?.Invoke(this, new EventArgs<string>(assetName));
+
         return new ExternalReference<TOutput>();
     }
 
@@ -68,7 +77,8 @@ internal sealed class TestContentProcessorContext : ContentProcessorContext
 
     /// <inheritdoc />
     public override string IntermediateDirectory
-        => Path.Combine(GetContentPath(), "obj\\tests");
+        => Path.Combine(GetContentPath(), "obj\\Tests")
+               .Replace(Path.DirectorySeparatorChar, '/');
 
     /// <inheritdoc />
     public override ContentBuildLogger Logger
@@ -80,11 +90,13 @@ internal sealed class TestContentProcessorContext : ContentProcessorContext
 
     /// <inheritdoc />
     public override string OutputDirectory
-        => "Content";
+        => Path.Combine(GetContentPath(), "bin\\Tests")
+               .Replace(Path.DirectorySeparatorChar, '/');
 
     /// <inheritdoc />
     public override string OutputFilename
-        => string.Empty;
+        => Path.Combine(OutputDirectory, AssetPathFromOutput)
+               .Replace(Path.DirectorySeparatorChar, '/');
 
     /// <inheritdoc />
     public override OpaqueDataDictionary Parameters
@@ -97,6 +109,12 @@ internal sealed class TestContentProcessorContext : ContentProcessorContext
     /// <inheritdoc />
     public override GraphicsProfile TargetProfile
         => GraphicsProfile.HiDef;
+
+    /// <summary>
+    /// Gets or sets the relative path from the output directory to the asset file.
+    /// </summary>
+    public string AssetPathFromOutput
+    { get; set; } = string.Empty;
 
     private static string GetContentPath([CallerFilePath] string rootPath = "")
         => $"{Path.GetDirectoryName(rootPath)}\\Content\\";
