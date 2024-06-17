@@ -20,15 +20,22 @@ namespace BadEcho.Game;
 /// </summary>
 public sealed class DynamicModel : PrimitiveModel<DynamicVertexBuffer, DynamicIndexBuffer>
 {
+    private readonly IModelData _modelData;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="DynamicModel"/> class.
     /// </summary>
     /// <param name="device">The graphics device to use when rendering the model.</param>
     /// <param name="texture">The texture to map onto the model.</param>
     /// <param name="modelData">The vertex data required to render the model.</param>
-    public DynamicModel(GraphicsDevice device, Texture2D texture, IModelData modelData) 
+    public DynamicModel(GraphicsDevice device, Texture2D texture, IModelData modelData)
         : base(device, texture, modelData)
-    { }
+    {
+        _modelData = modelData;
+    }
+
+    public void UpdateVertices() 
+        => _modelData.LoadVertices(VertexBuffer);
 
     /// <inheritdoc />
     protected override DynamicVertexBuffer CreateVertexBuffer(IModelData modelData)
@@ -37,7 +44,7 @@ public sealed class DynamicModel : PrimitiveModel<DynamicVertexBuffer, DynamicIn
             = new DynamicVertexBuffer(Device, modelData.VertexDeclaration, modelData.VertexCount, BufferUsage.WriteOnly);
 
         modelData.LoadVertices(vertexBuffer);
-
+        
         return vertexBuffer;
     }
 

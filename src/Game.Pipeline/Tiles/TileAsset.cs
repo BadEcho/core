@@ -12,6 +12,7 @@
 //-----------------------------------------------------------------------
 
 using System.Xml.Linq;
+using BadEcho.Game.Tiles;
 
 namespace BadEcho.Game.Pipeline.Tiles;
 
@@ -21,7 +22,13 @@ namespace BadEcho.Game.Pipeline.Tiles;
 public sealed class TileAsset : ExtensibleAsset
 {
     private const string ID_ATTRIBUTE = "id";
+    private const string ANIMATION_ELEMENT = "animation";
+    private const string FRAME_ELEMENT = "frame";
+    private const string TILE_ID_ATTRIBUTE = "tileid";
+    private const string DURATION_ATTRIBUTE = "duration";
 
+    private readonly List<TileAnimationFrame> _animationFrames = [];
+    
     /// <summary>
     /// Initializes a new instance of the <see cref="TileAsset"/> class.
     /// </summary>
@@ -37,6 +44,19 @@ public sealed class TileAsset : ExtensibleAsset
 
         if (imageElement != null)
             Image = new ImageAsset(imageElement);
+
+        XElement? animationElement = root.Element(ANIMATION_ELEMENT);
+
+        if (animationElement != null)
+        {
+            foreach (XElement frameElement in animationElement.Elements(FRAME_ELEMENT))
+            {
+                int tileId = (int?) frameElement.Attribute(TILE_ID_ATTRIBUTE) ?? default;
+                int duration = (int?) frameElement.Attribute(DURATION_ATTRIBUTE) ?? default;
+
+                _animationFrames.Add(new TileAnimationFrame(tileId, duration));
+            }
+        }
     }
 
     /// <summary>
@@ -54,4 +74,10 @@ public sealed class TileAsset : ExtensibleAsset
     /// </remarks>
     public ImageAsset? Image
     { get; }
+
+    /// <summary>
+    /// Gets a collection of animation frames in this tile's animation sequence, if one exists.
+    /// </summary>
+    public IReadOnlyCollection<TileAnimationFrame> AnimationFrames
+        => _animationFrames;
 }

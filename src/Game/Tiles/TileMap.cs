@@ -29,6 +29,7 @@ public sealed class TileMap : Extensible, IModelRenderer
 {
     private readonly Dictionary<Layer, IEnumerable<IPrimitiveModel>> _layerModelMap = [];
     private readonly Dictionary<TileSet, int> _tileSetFirstIdMap = [];
+    private readonly List<AnimatedTileModelData> _animatedTiles = [];
     private readonly List<TileSet> _tileSets = [];
     private readonly List<Layer> _layers = [];
     private readonly GraphicsDevice _device;
@@ -143,6 +144,21 @@ public sealed class TileMap : Extensible, IModelRenderer
         _layers.Add(layer);
     }
 
+    public void Update(GameUpdateTime time)
+    {
+        foreach (AnimatedTileModelData tileData in _animatedTiles)
+        {
+            tileData.Update(time);
+        }
+
+        foreach (var layer in Layers)
+        {i noti[layer].OfType<DynamicModel>())
+            {
+                animatedModel.UpdateVertices();
+            }
+        }
+    }
+
     /// <inheritdoc/>
     public void Draw()
         => Draw(Matrix.Identity);
@@ -252,12 +268,14 @@ public sealed class TileMap : Extensible, IModelRenderer
             // however, if it is composed of multiple images, we'll have multiple textures. So, we group the tiles by their
             // associated textures and work from there.
             var tilesByTexture = layer.GetRange(firstId, tileSet.LastId + firstId)
-                                      .GroupBy(t => tileSet.GetTileTexture(t.Id - firstId));
-
-            foreach (IGrouping<Texture2D, Tile> tilesAndTexture in tilesByTexture)
+                                      .GroupBy(t => (IsAnimated: tileSet.IsTileAnimated(t.Id),
+                                                     Texture: tileSet.GetTileTexture(t.Id - firstId)));
+                                      
+            foreach (var tilesAndTexture in tilesByTexture)
             {
-                IEnumerable<IPrimitiveModel> tileModels
-                    = CreateTileModels(tileSet, tilesAndTexture, tilesAndTexture.Key);
+                IEnumerable<IPrimitiveModel> tileModels = tilesAndTexture.Key.IsAnimated
+                    ? CreateAnimatedTileModels(tileSet, tilesAndTexture, tilesAndTexture.Key.Texture)
+                    : CreateTileModels(tileSet, tilesAndTexture, tilesAndTexture.Key.Texture);
 
                 layerModels.AddRange(tileModels);
             }
@@ -292,6 +310,39 @@ public sealed class TileMap : Extensible, IModelRenderer
 
         if (tileData.VertexCount > 0)
             tileModels.Add(new StaticModel(_device, texture, tileData));
+
+        return tileModels;
+    }
+
+    private List<IPrimitiveModel> CreateAnimatedTileModels(TileSet tileSet, IEnumerable<Tile> tiles, Texture2D texture)
+    {
+        var tileModels = new List<IPrimitiveModel>();
+        var tileData = new AnimatedTileModelData();
+        int firstId = _tileSetFirstIdMap[tileSet];
+
+        foreach (Tile tile in tiles)
+        {
+            int localId = tile.Id - firstId;
+            Vector2 position = GetTilePosition(tile);
+            Rectangle sourceArea = tileSet.GetTileSourceArea(localId);
+            
+            tileData.AddTexture(texture.Bounds, sourceArea, position);
+            tileData.Animations.Add(new TileAnimation(tileSet, localId));
+
+            if (tileData.VertexCount + 4 > ushort.MaxValue)
+            {
+                tileModels.Add(new DynamicModel(_device, texture, tileData));
+                _animatedTiles.Add(tileData);
+
+                tileData = new AnimatedTileModelData();
+            }
+        }
+
+        if (tileData.VertexCount > 0)
+        {
+            tileModels.Add(new DynamicModel(_device, texture, tileData));
+            _animatedTiles.Add(tileData);
+        }
 
         return tileModels;
     }

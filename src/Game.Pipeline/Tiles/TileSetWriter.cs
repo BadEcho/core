@@ -92,6 +92,14 @@ public sealed class TileSetWriter : ContentTypeWriter<TileSetContent>
             else
                 output.Write(false);
 
+            // The animation frame count, to guide the reader.
+            output.Write(tile.AnimationFrames.Count);
+
+            foreach (TileAnimationFrame frame in tile.AnimationFrames)
+            {
+                output.WriteObject(frame);
+            }
+
             output.WriteProperties(tile);
         }
     }

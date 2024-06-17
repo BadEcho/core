@@ -47,13 +47,13 @@ public abstract class ModelData<TVertex> : IModelData
     /// <summary>
     /// Gets the vertices composing the 3D model.
     /// </summary>
-    protected IList<TVertex> Vertices
+    public IList<TVertex> Vertices
     { get; } = new List<TVertex>();
 
     /// <summary>
     /// Gets indices pointing to distinct vertices within the vertex data.
     /// </summary>
-    protected IList<ushort> Indices
+    public IList<ushort> Indices
     { get; } = new List<ushort>();
 
     /// <inheritdoc/>

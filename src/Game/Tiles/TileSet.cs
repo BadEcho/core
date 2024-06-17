@@ -105,6 +105,12 @@ public sealed class TileSet : Extensible
             throw new ArgumentException(Strings.TileSetAlreadyHasTile.InvariantFormat(tile.Id));
     }
 
+    public bool IsTileAnimated(int localId)
+        => _idTileMap.TryGetValue(localId, out TileData? tile) && tile.AnimationFrames.Count > 0;
+
+    public IEnumerable<TileAnimationFrame> GetTileAnimationFrames(int localId)
+        => _idTileMap.TryGetValue(localId, out TileData? tile) ? tile.AnimationFrames : [];
+
     /// <summary>
     /// Gets the bounding rectangle of the region in the texture associated with a tile that will be rendered when
     /// drawing said tile.
@@ -139,7 +145,7 @@ public sealed class TileSet : Extensible
 
         if (!_idTileMap.TryGetValue(localId, out TileData? tile))
             throw new ArgumentException(Strings.TileSetMissingTile, nameof(localId));
-
+        
         return tile.Texture
                ?? throw new InvalidOperationException(Strings.TileHasNoTexture);
     }
@@ -152,5 +158,6 @@ public sealed class TileSet : Extensible
     /// A <see cref="CustomProperties"/> instance containing custom properties for the tile identified by <c>localId</c>.
     /// </returns>
     public CustomProperties GetTileCustomProperties(int localId)
-        => !_idTileMap.TryGetValue(localId, out TileData? tile) ? new CustomProperties() : tile.CustomProperties;
+        => _idTileMap.TryGetValue(localId, out TileData? tile) ? tile.CustomProperties : new CustomProperties();
+
 }

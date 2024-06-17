@@ -80,8 +80,17 @@ public sealed class TileSetReader : ContentTypeReader<TileSet>
                 texture = input.ReadExternalReference<Texture2D>();
             }
 
+            var animationFrames = new List<TileAnimationFrame>();
+            var framesToRead = input.ReadInt32();
+
+            while (framesToRead > 0)
+            {
+                animationFrames.Add(input.ReadObject<TileAnimationFrame>());
+                framesToRead--;
+            }
+
             var customProperties = input.ReadProperties();
-            var tile = new TileData(id, texture, customProperties);
+            var tile = new TileData(id, texture, animationFrames, customProperties);
 
             tileSet.AddTile(tile);
             

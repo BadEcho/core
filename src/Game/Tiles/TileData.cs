@@ -26,11 +26,14 @@ public sealed class TileData : Extensible
     /// <param name="id">The local identifier of this tile within its tile set.</param>
     /// <param name="texture">The texture for this tile, if one exists.</param>
     /// <param name="customProperties">The tile's custom properties.</param>
-    public TileData(int id, Texture2D? texture, CustomProperties customProperties)
+    public TileData(int id, Texture2D? texture, IReadOnlyCollection<TileAnimationFrame> animationFrames, CustomProperties customProperties)
         : base(customProperties)
     {
+        Require.NotNull(animationFrames, nameof(animationFrames));
+
         Id = id;
         Texture = texture;
+        AnimationFrames = animationFrames;
     }
 
     /// <summary>
@@ -47,5 +50,8 @@ public sealed class TileData : Extensible
     /// based on a single image.
     /// </remarks>
     public Texture2D? Texture
+    { get; }
+
+    public IReadOnlyCollection<TileAnimationFrame> AnimationFrames
     { get; }
 }

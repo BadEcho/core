@@ -20,7 +20,7 @@ namespace BadEcho.Game;
 /// Provides the vertex data required to render a 3D model of flat quadrilateral polygons using rectangular regions of
 /// a texture.
 /// </summary>
-public sealed class QuadTextureModelData : QuadModelData<VertexPositionTexture>
+public class QuadTextureModelData : QuadModelData<VertexPositionTexture>
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="QuadTextureModelData"/> class.
