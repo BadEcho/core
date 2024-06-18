@@ -274,7 +274,7 @@ public sealed class TileMap : Extensible, IModelRenderer
             // associated textures and work from there. We also need to distinguish between animated and non-animated tiles since they
             // are rendered differently.
             var tilesByTexture = layer.GetRange(firstId, tileSet.LastId + firstId)
-                                      .GroupBy(t => (IsAnimated: tileSet.IsTileAnimated(t.Id),
+                                      .GroupBy(t => (IsAnimated: tileSet.IsTileAnimated(t.Id - firstId),
                                                      Texture: tileSet.GetTileTexture(t.Id - firstId)));
                                       
             foreach (var tilesAndTexture in tilesByTexture)
