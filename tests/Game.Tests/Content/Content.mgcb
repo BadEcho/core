@@ -60,6 +60,11 @@ $endif
 /processor:TileMapProcessor
 /build:Tiles/GrassCustomProperties.tmx
 
+#begin Tiles/AnimatedGrasslands.tmx
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/build:Tiles/AnimatedGrasslands.tmx
+
 #begin Tiles/CompositeGrass.tsx
 /importer:TileSetImporter
 /processor:TileSetProcessor
@@ -74,6 +79,11 @@ $endif
 /importer:TileSetImporter
 /processor:TileSetProcessor
 /build:Tiles/GrasslandsCustomProperties.tsx
+
+#begin Tiles/AnimatedGrass.tsx
+/importer:TileSetImporter
+/processor:TileSetProcessor
+/build:Tiles/AnimatedGrass.tsx
 
 #begin Atlases/BlackShuttleGrass.atlas
 /importer:TextureAtlasImporter

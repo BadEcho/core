@@ -31,6 +31,7 @@ public class TileMapTests : IClassFixture<ContentManagerFixture>
     [InlineData("GrassTilesAndImage")]
     [InlineData("GrassTwoTileLayers")]
     [InlineData("GrassCustomProperties")]
+    [InlineData("AnimatedGrasslands")]
     public void Load_NotNull(string mapName)
     {
         TileMap map = _content.Load<TileMap>($"Tiles\\{mapName}");

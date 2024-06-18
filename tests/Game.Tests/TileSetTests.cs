@@ -147,8 +147,28 @@ public class TileSetTests : IClassFixture<ContentManagerFixture>
     public void Load_NonContiguous_CountAndLastIdValid()
     {
         TileSet tileSet = _content.Load<TileSet>("Tiles\\NonContiguousCompositeGrass");
-
+        
         Assert.Equal(3, tileSet.TileCount);
         Assert.Equal(3, tileSet.LastId);
+    }
+
+    [Fact]
+    public void GetTileAnimationFrames_Grasslands_IsEmpty()
+    {
+        TileSet tileSet = _content.Load<TileSet>("Tiles\\Grasslands");
+
+        var animationFrames = tileSet.GetTileAnimationFrames(0);
+
+        Assert.Empty(animationFrames);
+    }
+
+    [Fact]
+    public void GetTileAnimationFrames_AnimatedGrass_IsNotEmpty()
+    {
+        TileSet tileSet = _content.Load<TileSet>("Tiles\\AnimatedGrass");
+
+        var animationFrames = tileSet.GetTileAnimationFrames(0);
+
+        Assert.NotEmpty(animationFrames);
     }
 }
