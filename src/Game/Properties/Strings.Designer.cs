@@ -124,6 +124,15 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Index data has already been primed for loading into an index buffer and can no longer be added to..
+        /// </summary>
+        internal static string IndexDataAlreadyLoaded {
+            get {
+                return ResourceManager.GetString("IndexDataAlreadyLoaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid movement direction for scrolling region..
         /// </summary>
         internal static string InvalidScrollRegionDirection {
@@ -223,7 +232,7 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tile set is not based on a single image and no tile-specific texture could be found for the specified tile..
+        ///   Looks up a localized string similar to Tile set is not based on a single image and the specified tile lacks a texture..
         /// </summary>
         internal static string TileHasNoTexture {
             get {
@@ -232,7 +241,7 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tile set already has a tile with ID &apos;{0}&apos; added to it..
+        ///   Looks up a localized string similar to A tile with the same ID of &apos;{0}&apos; already exists in this tile set..
         /// </summary>
         internal static string TileSetAlreadyHasTile {
             get {
@@ -241,7 +250,7 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tile set is not based on a single image and no configured data for the specified tile could be found..
+        ///   Looks up a localized string similar to No configured data for the specified tile could be found..
         /// </summary>
         internal static string TileSetMissingTile {
             get {
@@ -255,6 +264,15 @@ namespace BadEcho.Game.Properties {
         internal static string UninitializedGraphicsDevice {
             get {
                 return ResourceManager.GetString("UninitializedGraphicsDevice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vertex data has already been primed for loading into a vertex buffer and can no longer be added to..
+        /// </summary>
+        internal static string VertexDataAlreadyLoaded {
+            get {
+                return ResourceManager.GetString("VertexDataAlreadyLoaded", resourceCulture);
             }
         }
         

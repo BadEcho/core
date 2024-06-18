@@ -167,4 +167,10 @@
 	<data name="TileSetMissingTile" xml:space="preserve">
 		<value>No configured data for the specified tile could be found.</value>
 	</data>
+	<data name="VertexDataAlreadyLoaded" xml:space="preserve">
+		<value>Vertex data has already been primed for loading into a vertex buffer and can no longer be added to.</value>
+	</data>
+	<data name="IndexDataAlreadyLoaded" xml:space="preserve">
+		<value>Index data has already been primed for loading into an index buffer and can no longer be added to.</value>
+	</data>
 </root>

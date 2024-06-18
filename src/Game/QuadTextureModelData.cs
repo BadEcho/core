@@ -71,6 +71,23 @@ public class QuadTextureModelData : QuadModelData<VertexPositionTexture>
         AddVertices(vertexTopLeft, vertexTopRight, vertexBottomLeft, vertexBottomRight);
     }
 
+    /// <summary>
+    /// Loads an array containing the vertex data's texture coordinates.
+    /// </summary>
+    /// <returns>An array of <see cref="Vector2"/> values representing the vertex data's texture coordinates.</returns>
+    public Vector2[] GetTextureCoordinates()
+    {
+        VertexPositionTexture[] vertices = GetVertexData();
+        Vector2[] textureCoordinates = new Vector2[vertices.Length];
+
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            textureCoordinates[i] = vertices[i].TextureCoordinate;
+        }
+
+        return textureCoordinates;
+    }
+
     /// <inheritdoc/>
     protected override Vector3 GetVertexPosition(VertexPositionTexture vertex)
         => vertex.Position;

@@ -40,15 +40,16 @@ public abstract class QuadModelData<TVertex> : ModelData<TVertex>
         float top = 0;
         float right = 0;
         float bottom = 0;
+        TVertex[] vertices = GetVertexData();
 
         for (int i = 0; i < IndexCount / 6; i++)
         {
-            TVertex topLeftVertex = Vertices[i * 4 + 0];
+            TVertex topLeftVertex = vertices[i * 4 + 0];
             
             Vector3 topLeft = GetVertexPosition(topLeftVertex);
-            Vector3 topRight = GetVertexPosition(Vertices[i * 4 + 1]);
-            Vector3 bottomLeft = GetVertexPosition(Vertices[i * 4 + 2]);
-            Vector3 bottomRight = GetVertexPosition(Vertices[i * 4 + 3]);
+            Vector3 topRight = GetVertexPosition(vertices[i * 4 + 1]);
+            Vector3 bottomLeft = GetVertexPosition(vertices[i * 4 + 2]);
+            Vector3 bottomRight = GetVertexPosition(vertices[i * 4 + 3]);
 
             float topY = Math.Min(topLeft.Y, topRight.Y);
             float bottomY = Math.Max(bottomLeft.Y, bottomRight.Y);
@@ -83,10 +84,10 @@ public abstract class QuadModelData<TVertex> : ModelData<TVertex>
     {
         AddIndices(VertexCount);
 
-        Vertices.Add(topLeft);
-        Vertices.Add(topRight);
-        Vertices.Add(bottomLeft);
-        Vertices.Add(bottomRight);
+        AddVertex(topLeft);
+        AddVertex(topRight);
+        AddVertex(bottomLeft);
+        AddVertex(bottomRight);
     }
 
     /// <summary>
@@ -109,11 +110,11 @@ public abstract class QuadModelData<TVertex> : ModelData<TVertex>
         // The triangles must be clockwise winding or else they will be automatically culled by MonoGame.
         // Therefore, the second triangle needs to have an entry for the vertex opposite of its hypotenuse (3) added before its leftmost
         // vertex (2), which is shared by both triangles, in order to establish a clockwise winding direction.
-        Indices.Add((ushort) (0 + offset));
-        Indices.Add((ushort) (1 + offset));
-        Indices.Add((ushort) (2 + offset));
-        Indices.Add((ushort) (1 + offset));
-        Indices.Add((ushort) (3 + offset));
-        Indices.Add((ushort) (2 + offset));
+        AddIndex((ushort) (0 + offset));
+        AddIndex((ushort) (1 + offset));
+        AddIndex((ushort) (2 + offset));
+        AddIndex((ushort) (1 + offset));
+        AddIndex((ushort) (3 + offset));
+        AddIndex((ushort) (2 + offset));
     }
 }

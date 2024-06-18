@@ -11,6 +11,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+
 namespace BadEcho.Game.Tiles;
 
 /// <summary>
@@ -28,20 +31,23 @@ public sealed class AnimatedTileModelData : QuadTextureModelData
     /// Advances the animations belonging to this model data.
     /// </summary>
     /// <param name="time">The game timing configuration and state for this update.</param>
-    public void Update(GameUpdateTime time)
+    public unsafe void Update(GameUpdateTime time)
     {
-        int vertexIndex = 0;
-
-        foreach (TileAnimation animation in Animations)
+        fixed (VertexPositionTexture* pFixedVertices = GetVertexData())
         {
-            animation.Update(time);
+            VertexPositionTexture* pVertices = pFixedVertices;
 
-            QuadTextureModelData currentFrameData = animation.CurrentFrameData;
+            foreach (TileAnimation animation in Animations)
+            {
+                animation.Update(time);
 
-            Vertices[vertexIndex++] = currentFrameData.Vertices[0];
-            Vertices[vertexIndex++] = currentFrameData.Vertices[1];
-            Vertices[vertexIndex++] = currentFrameData.Vertices[2];
-            Vertices[vertexIndex++] = currentFrameData.Vertices[3];
+                Vector2[] currentFrameCoordinates = animation.CurrentFrameData.GetTextureCoordinates();
+
+                (*pVertices++).TextureCoordinate = currentFrameCoordinates[0];
+                (*pVertices++).TextureCoordinate = currentFrameCoordinates[1];
+                (*pVertices++).TextureCoordinate = currentFrameCoordinates[2];
+                (*pVertices++).TextureCoordinate = currentFrameCoordinates[3];
+            }
         }
     }
 }
