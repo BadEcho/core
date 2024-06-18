@@ -34,6 +34,9 @@ public sealed class DynamicModel : PrimitiveModel<DynamicVertexBuffer, DynamicIn
         _modelData = modelData;
     }
 
+    /// <summary>
+    /// Updates this model's vertex buffer with any changes that have occurred in its vertex data.
+    /// </summary>
     public void UpdateVertices() 
         => _modelData.LoadVertices(VertexBuffer);
 

@@ -105,10 +105,20 @@ public sealed class TileSet : Extensible
             throw new ArgumentException(Strings.TileSetAlreadyHasTile.InvariantFormat(tile.Id));
     }
 
+    /// <summary>
+    /// Gets a value indicating if a tile is animated.
+    /// </summary>
+    /// <param name="localId">The tile identifier localized to this tile set.</param>
+    /// <returns>True if the tile identified by <c>localId</c> is animated; otherwise, false.</returns>
     public bool IsTileAnimated(int localId)
         => _idTileMap.TryGetValue(localId, out TileData? tile) && tile.AnimationFrames.Count > 0;
 
-    public IEnumerable<TileAnimationFrame> GetTileAnimationFrames(int localId)
+    /// <summary>
+    /// Gets the frames for a tile's animation, if any.
+    /// </summary>
+    /// <param name="localId">The tile identifier localized to this tile set.</param>
+    /// <returns>The animation frames for the tile identified by <c>localId</c>, if any.</returns>
+    public IReadOnlyList<TileAnimationFrame> GetTileAnimationFrames(int localId)
         => _idTileMap.TryGetValue(localId, out TileData? tile) ? tile.AnimationFrames : [];
 
     /// <summary>

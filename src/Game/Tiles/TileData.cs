@@ -25,15 +25,19 @@ public sealed class TileData : Extensible
     /// </summary>
     /// <param name="id">The local identifier of this tile within its tile set.</param>
     /// <param name="texture">The texture for this tile, if one exists.</param>
+    /// <param name="animationFrames">The frames in this tile's animation, if any.</param>
     /// <param name="customProperties">The tile's custom properties.</param>
-    public TileData(int id, Texture2D? texture, IReadOnlyCollection<TileAnimationFrame> animationFrames, CustomProperties customProperties)
+    public TileData(int id, 
+                    Texture2D? texture, 
+                    IEnumerable<TileAnimationFrame> animationFrames,
+                    CustomProperties customProperties)
         : base(customProperties)
     {
         Require.NotNull(animationFrames, nameof(animationFrames));
 
         Id = id;
         Texture = texture;
-        AnimationFrames = animationFrames;
+        AnimationFrames = [..animationFrames];
     }
 
     /// <summary>
@@ -52,6 +56,10 @@ public sealed class TileData : Extensible
     public Texture2D? Texture
     { get; }
 
-    public IReadOnlyCollection<TileAnimationFrame> AnimationFrames
+    /// <summary>
+    /// Gets the frames in this tile's animation, if any.
+    /// </summary>
+    /// <remarks>This will always be empty for tiles that are not animated.</remarks>
+    public IReadOnlyList<TileAnimationFrame> AnimationFrames
     { get; }
 }

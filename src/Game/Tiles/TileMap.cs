@@ -144,6 +144,10 @@ public sealed class TileMap : Extensible, IModelRenderer
         _layers.Add(layer);
     }
 
+    /// <summary>
+    /// Advances the state of any animated tiles on this tile map.
+    /// </summary>
+    /// <param name="time">The game timing configuration and state for this update.</param>
     public void Update(GameUpdateTime time)
     {
         foreach (AnimatedTileModelData tileData in _animatedTiles)
@@ -152,7 +156,8 @@ public sealed class TileMap : Extensible, IModelRenderer
         }
 
         foreach (var layer in Layers)
-        {i noti[layer].OfType<DynamicModel>())
+        {
+            foreach (var animatedModel in _layerModelMap[layer].OfType<DynamicModel>())
             {
                 animatedModel.UpdateVertices();
             }
@@ -266,7 +271,8 @@ public sealed class TileMap : Extensible, IModelRenderer
             // Extract the tiles in the layer we're adding that belong to the current tile set. We need to create model data for
             // every texture belonging to the tile set. If the tile set is based on a single image, there will be only one texture;
             // however, if it is composed of multiple images, we'll have multiple textures. So, we group the tiles by their
-            // associated textures and work from there.
+            // associated textures and work from there. We also need to distinguish between animated and non-animated tiles since they
+            // are rendered differently.
             var tilesByTexture = layer.GetRange(firstId, tileSet.LastId + firstId)
                                       .GroupBy(t => (IsAnimated: tileSet.IsTileAnimated(t.Id),
                                                      Texture: tileSet.GetTileTexture(t.Id - firstId)));

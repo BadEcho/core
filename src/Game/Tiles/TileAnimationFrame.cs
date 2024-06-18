@@ -1,10 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
+﻿//-----------------------------------------------------------------------
+// <copyright>
+//      Created by Matt Weber <matt@badecho.com>
+//      Copyright @ 2024 Bad Echo LLC. All rights reserved.
+//
+//      Bad Echo Technologies are licensed under the
+//      GNU Affero General Public License v3.0.
+//
+//      See accompanying file LICENSE.md or a copy at:
+//      https://www.gnu.org/licenses/agpl-3.0.html
+// </copyright>
+//-----------------------------------------------------------------------
 
 namespace BadEcho.Game.Tiles;
 
+/// <summary>
+/// Represents a frame in an animation sequence of a tile.
+/// </summary>
+/// <param name="TileId">
+/// The local identifier of the tile within a tile set to display when this frame is active.
+/// </param>
+/// <param name="Duration">The amount of time, in milliseconds, this frame should be displayed.</param>
 public record struct TileAnimationFrame(int TileId, int Duration);
