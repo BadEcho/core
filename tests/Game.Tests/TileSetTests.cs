@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------
 
 using BadEcho.Game.Tiles;
-using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 using Xunit;
 
 namespace BadEcho.Game.Tests;
@@ -109,38 +109,11 @@ public class TileSetTests : IClassFixture<ContentManagerFixture>
     }
 
     [Fact]
-    public void GetTileTexture_Grasslands_SameTextures()
-    {
-        TileSet tileSet = _content.Load<TileSet>("Tiles\\Grasslands");
-
-        List<Texture2D> textures = [
-            tileSet.GetTileTexture(0), 
-            tileSet.GetTileTexture(1), 
-            tileSet.GetTileTexture(2), 
-            tileSet.GetTileTexture(3),
-            tileSet.GetTileTexture(4), 
-            tileSet.GetTileTexture(5), 
-            tileSet.GetTileTexture(6), 
-            tileSet.GetTileTexture(7),
-            tileSet.GetTileTexture(8), 
-            tileSet.GetTileTexture(9)
-        ];
-
-        Assert.NotNull(tileSet.Texture);
-        Assert.All(textures, t => Assert.Equal(t, tileSet.Texture));
-    }
-
-    [Fact]
-    public void GetTileTexture_CompositeGrass_DifferentTextures()
+    public void Load_CompositeGrass_TextureSizeValid()
     {
         TileSet tileSet = _content.Load<TileSet>("Tiles\\CompositeGrass");
 
-        List<Texture2D> textures =
-        [
-            tileSet.GetTileTexture(0), tileSet.GetTileTexture(1), tileSet.GetTileTexture(2), tileSet.GetTileTexture(3)
-        ];
-
-        Assert.Distinct(textures);
+        Assert.Equal(32 * 32, tileSet.Texture.Width * tileSet.Texture.Height);
     }
 
     [Fact]
@@ -150,6 +123,17 @@ public class TileSetTests : IClassFixture<ContentManagerFixture>
         
         Assert.Equal(3, tileSet.TileCount);
         Assert.Equal(3, tileSet.LastId);
+    }
+
+    [Fact]
+    public void GetSourceArea_CompositeGrass_PackedTilesValid()
+    {
+        TileSet tileSet = _content.Load<TileSet>("Tiles\\CompositeGrass");
+
+        Assert.Equal(new Rectangle(0, 0, 16, 16), tileSet.GetTileSourceArea(0));
+        Assert.Equal(new Rectangle(16, 0, 16, 16), tileSet.GetTileSourceArea(1));
+        Assert.Equal(new Rectangle(0, 16, 16, 16), tileSet.GetTileSourceArea(2));
+        Assert.Equal(new Rectangle(16, 16, 16, 16), tileSet.GetTileSourceArea(3));
     }
 
     [Fact]

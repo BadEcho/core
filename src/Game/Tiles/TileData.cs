@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 
 namespace BadEcho.Game.Tiles;
 
@@ -24,11 +24,14 @@ public sealed class TileData : Extensible
     /// Initializes a new instance of the <see cref="TileData"/> class.
     /// </summary>
     /// <param name="id">The local identifier of this tile within its tile set.</param>
-    /// <param name="texture">The texture for this tile, if one exists.</param>
+    /// <param name="sourceArea">
+    /// The explicit bounding rectangle of the region of the texture associated with this tile that will be rendered
+    /// when drawing this tile, if one exists.
+    /// </param>
     /// <param name="animationFrames">The frames in this tile's animation, if any.</param>
     /// <param name="customProperties">The tile's custom properties.</param>
     public TileData(int id, 
-                    Texture2D? texture, 
+                    Rectangle? sourceArea,
                     IEnumerable<TileAnimationFrame> animationFrames,
                     CustomProperties customProperties)
         : base(customProperties)
@@ -36,7 +39,7 @@ public sealed class TileData : Extensible
         Require.NotNull(animationFrames, nameof(animationFrames));
 
         Id = id;
-        Texture = texture;
+        SourceArea = sourceArea;
         AnimationFrames = [..animationFrames];
     }
 
@@ -47,13 +50,21 @@ public sealed class TileData : Extensible
     { get; }
 
     /// <summary>
-    /// Gets the texture for this tile, if one exists.
+    /// Gets the explicit bounding rectangle of the region of the texture associated with this tile that will be rendered
+    /// when drawing this tile, if one exists.
     /// </summary>
     /// <remarks>
-    /// This will only be present here if the tile set this tile belongs to is a collection of images, as opposed to being
-    /// based on a single image.
+    /// <para>
+    /// This will only be present if the tile set this tile belongs to was originally designed to be based on a collection
+    /// of images.
+    /// </para>
+    /// <para>
+    /// If this is the case, then a packed texture will have been generated during the processing of the related
+    /// tile set asset data for the content pipeline. Texture packing is non-deterministic, so we require this extra bit of
+    /// metadata to locate the imaging data for the tile.
+    /// </para>
     /// </remarks>
-    public Texture2D? Texture
+    public Rectangle? SourceArea
     { get; }
 
     /// <summary>

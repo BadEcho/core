@@ -32,8 +32,6 @@ public sealed class DistanceFieldFontProcessor : ContentProcessor<DistanceFieldF
 {
     private const string UNICODE_PROPERTY_NAME = "unicode";
 
-    private static readonly List<string> _OutputPaths = [];
-    
     private static readonly JsonSerializerOptions _OutputFileOptions
         = new()
           {
@@ -75,7 +73,7 @@ public sealed class DistanceFieldFontProcessor : ContentProcessor<DistanceFieldF
 
         context.Log(Strings.ProcessingDistanceFieldFont.InvariantFormat(input.Identity.SourceFilename));
 
-        string intermediatePath = ResolveIntermediatePath(input.Identity.SourceFilename, context);
+        string intermediatePath = context.ResolveIntermediatePath(input.Identity.SourceFilename);
 
         if (!Directory.Exists(intermediatePath))
             Directory.CreateDirectory(intermediatePath);
@@ -107,7 +105,7 @@ public sealed class DistanceFieldFontProcessor : ContentProcessor<DistanceFieldF
         // Because we've generated the atlas texture asset in an intermediate directory, we need to explicitly provide
         // an output path and asset name, otherwise MonoGame will mangle the output path (i.e., the output path
         // will end up being something like bin\Platform\obj\Platform\*\).
-        string outputPath = ResolveOutputPath(atlasPath, context);
+        string outputPath = context.ResolveOutputPath(atlasPath);
         output.AtlasPath = atlasPath;
         output.AddReference<Texture2DContent>(context,
                                               atlasPath,
@@ -124,39 +122,7 @@ public sealed class DistanceFieldFontProcessor : ContentProcessor<DistanceFieldF
 
         return output;
     }
-
-    private static string ResolveIntermediatePath(string sourcePath, ContentProcessorContext context)
-    {
-        string basePath = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}";
-        sourcePath = $"{Path.GetDirectoryName(sourcePath) ?? string.Empty}{Path.DirectorySeparatorChar}";
-
-        if (!Uri.TryCreate(sourcePath, UriKind.Absolute, out Uri? uri))
-            return basePath;
-
-        uri = new Uri(basePath).MakeRelativeUri(uri);
-        string pathToSource = Uri.UnescapeDataString(uri.ToString());
-
-        return Path.Combine(context.IntermediateDirectory, pathToSource);
-    }
-
-    private static string ResolveOutputPath(string atlasPath, ContentProcessorContext context)
-    {
-        string baseOutputPath = Path.Combine(Path.GetDirectoryName(context.OutputFilename) ?? string.Empty,
-                                             Path.GetFileNameWithoutExtension(atlasPath));
-        int assetIndex = 0;
-        string outputPath;
-
-        do
-        {
-            outputPath = $"{baseOutputPath}_{assetIndex}";
-            assetIndex++;
-        } while (_OutputPaths.Contains(outputPath));
-
-        _OutputPaths.Add(outputPath);
-
-        return outputPath;
-    }
-
+    
     private static DistanceFieldFontContent ProcessOutput(DistanceFieldFontContent input, string jsonPath)
     {
         var layoutFileContents = File.ReadAllText(jsonPath);

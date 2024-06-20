@@ -11,8 +11,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Drawing;
 using BadEcho.Extensions;
 using BadEcho.Game.Pipeline.Properties;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 using Microsoft.Xna.Framework.Content.Pipeline.Processors;
@@ -34,40 +36,73 @@ public sealed class TileSetProcessor : ContentProcessor<TileSetContent, TileSetC
         context.Log(Strings.ProcessingTileSet.InvariantFormat(input.Identity.SourceFilename));
 
         TileSetAsset asset = input.Asset;
+        bool imageGenerated = false;
 
-        if (asset.Image != null)
+        if (asset.Image == null)
         {
-            var processorParameters = new OpaqueDataDictionary
-                                      {
-                                          { nameof(TextureProcessor.ColorKeyColor), asset.Image.ColorKey },
-                                          { nameof(TextureProcessor.ColorKeyEnabled), true }
-                                      };
-            
-            input.AddReference<Texture2DContent>(context, asset.Image.Source, processorParameters);
+            imageGenerated = true;
+            asset.Image = GeneratePackedTexture(input, context);
         }
 
-        ProcessTiles(input, context);
+        var processorParameters = new OpaqueDataDictionary
+                                  {
+                                      { nameof(TextureProcessor.ColorKeyColor), asset.Image.ColorKey },
+                                      { nameof(TextureProcessor.ColorKeyEnabled), true }
+                                  };
+
+        input.AddReference<Texture2DContent>(
+            context,
+            asset.Image.Source,
+            processorParameters,
+            imageGenerated ? context.ResolveOutputPath(asset.Image.Source) : string.Empty);
+
+        ProcessTiles(input);
 
         context.Log(Strings.ProcessingFinished.InvariantFormat(input.Identity.SourceFilename));
 
         return input;
     }
 
-    private static void ProcessTiles(TileSetContent input, ContentProcessorContext context)
+    private static void ProcessTiles(TileSetContent input)
     {
         TileSetAsset asset = input.Asset;
 
-        IEnumerable<ImageAsset> tileImages = asset.Tiles.Select(t => t.Image).WhereNotNull();
-
-        foreach (ImageAsset tileImage in tileImages)
+        foreach (TileAsset tile in asset.Tiles)
         {
-            var processorParameters = new OpaqueDataDictionary
-                                      {
-                                          { nameof(TextureProcessor.ColorKeyColor), tileImage.ColorKey },
-                                          { nameof(TextureProcessor.ColorKeyEnabled), true }
-                                      };
-
-            input.AddReference<Texture2DContent>(context, tileImage.Source, processorParameters);
+            if (tile.Image != null) 
+                tile.SourceArea = input.PackedSourceAreas[tile.Image.Source];
         }
+    }
+
+    private static ImageAsset GeneratePackedTexture(TileSetContent input, ContentProcessorContext context)
+    {
+        TileSetAsset asset = input.Asset;
+        IEnumerable<string> tileImagePaths = asset.Tiles.Select(t => t.Image?.Source).WhereNotNull();
+        
+        string intermediatePath = context.ResolveIntermediatePath(input.Identity.SourceFilename);
+        
+        if (!Directory.Exists(intermediatePath))
+            Directory.CreateDirectory(intermediatePath);
+
+        string packedTexturePath = Path.Combine(intermediatePath, $"{asset.Name}-packed.png");
+
+        var imagePacker = new ImagePacker();
+        
+        imagePacker.Pack(tileImagePaths, 4096, 4096);
+        imagePacker.Save(packedTexturePath);
+        
+        foreach (var outputPosition in imagePacker.PackedAreas)
+        {
+            input.PackedSourceAreas.Add(outputPosition.Key,
+                                        new Rectangle(outputPosition.Value.X,
+                                                      outputPosition.Value.Y,
+                                                      outputPosition.Value.Width,
+                                                      outputPosition.Value.Height));
+        }
+
+        return new ImageAsset(packedTexturePath,
+                              Color.Transparent,
+                              imagePacker.OutputSize.Width,
+                              imagePacker.OutputSize.Height);
     }
 }

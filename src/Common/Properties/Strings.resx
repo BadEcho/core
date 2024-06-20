@@ -323,4 +323,10 @@
 	<data name="UnhookMessageQueueFailed" xml:space="preserve">
 		<value>Failed to unregister message queue hook for thread with ID '{0}'.</value>
 	</data>
+	<data name="NoPackedImageGenerated" xml:space="preserve">
+		<value>No packed image has been generated.</value>
+	</data>
+	<data name="PackedImageSizeTooSmall" xml:space="preserve">
+		<value>The specified maximum packed image size isn't large enough to fit any of the the required images into.</value>
+	</data>
 </root>

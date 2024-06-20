@@ -11,6 +11,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using Microsoft.Xna.Framework;
+
 namespace BadEcho.Game.Pipeline.Tiles;
 
 /// <summary>
@@ -25,4 +27,11 @@ public sealed class TileSetContent : ContentItem<TileSetAsset>
     public TileSetContent(TileSetAsset asset) 
         : base(asset)
     { }
+
+    /// <summary>
+    /// Gets a mapping between tile image file paths and their source area in a generated packed
+    /// texture space.
+    /// </summary>
+    public IDictionary<string, Rectangle> PackedSourceAreas
+    { get; } = new Dictionary<string, Rectangle>();
 }

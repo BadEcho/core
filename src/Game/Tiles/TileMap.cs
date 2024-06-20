@@ -263,25 +263,25 @@ public sealed class TileMap : Extensible, IModelRenderer
     {
         var layerModels = new List<IPrimitiveModel>();
         
-        // Layer tile data must be processed tile set by tile set, as they provide the actual textures that individual tiles are sourced from.
+        // Layer tile data must be processed tile set by tile set, as they provide the actual textures that individual
+        // tiles are sourced from.
         foreach (TileSet tileSet in TileSets)
         {
             int firstId = _tileSetFirstIdMap[tileSet];
             
-            // Extract the tiles in the layer we're adding that belong to the current tile set. We need to create model data for
-            // every texture belonging to the tile set. If the tile set is based on a single image, there will be only one texture;
-            // however, if it is composed of multiple images, we'll have multiple textures. So, we group the tiles by their
-            // associated textures and work from there. We also need to distinguish between animated and non-animated tiles since they
-            // are rendered differently.
-            var tilesByTexture = layer.GetRange(firstId, tileSet.LastId + firstId)
-                                      .GroupBy(t => (IsAnimated: tileSet.IsTileAnimated(t.Id - firstId),
-                                                     Texture: tileSet.GetTileTexture(t.Id - firstId)));
+            // Extract the tiles in the layer we're adding that belong to the current tile set. Even if the tile set was
+            // designed to be based on multiple images, our content pipeline extension will have generated a packed texture
+            // comprising all tile-specific texture data. This allows us to render all the tile set's tiles with as little
+            // as one model. We only need to differentiate between animated and non-animated tiles, since they use different
+            // modeling data.
+            var tilesByIsAnimated = layer.GetRange(firstId, tileSet.LastId + firstId)
+                                         .GroupBy(t => tileSet.IsTileAnimated(t.Id - firstId));
                                       
-            foreach (var tilesAndTexture in tilesByTexture)
+            foreach (var tilesAndIsAnimated in tilesByIsAnimated)
             {
-                IEnumerable<IPrimitiveModel> tileModels = tilesAndTexture.Key.IsAnimated
-                    ? CreateAnimatedTileModels(tileSet, tilesAndTexture, tilesAndTexture.Key.Texture)
-                    : CreateTileModels(tileSet, tilesAndTexture, tilesAndTexture.Key.Texture);
+                IEnumerable<IPrimitiveModel> tileModels = tilesAndIsAnimated.Key
+                    ? CreateAnimatedTileModels(tileSet, tilesAndIsAnimated)
+                    : CreateTileModels(tileSet, tilesAndIsAnimated);
 
                 layerModels.AddRange(tileModels);
             }
@@ -290,16 +290,15 @@ public sealed class TileMap : Extensible, IModelRenderer
         _layerModelMap.Add(layer, layerModels);
     }
 
-    private List<IPrimitiveModel> CreateTileModels(TileSet tileSet, IEnumerable<Tile> tiles, Texture2D texture)
+    private List<IPrimitiveModel> CreateTileModels(TileSet tileSet, IEnumerable<Tile> tiles)
     {
         var tileModels = new List<IPrimitiveModel>();
         var tileData = new QuadTextureModelData();
         int firstId = _tileSetFirstIdMap[tileSet];
+        Texture2D texture = tileSet.Texture;
 
         foreach (Tile tile in tiles)
-        {   // Tile identifiers are normalized so that they're unique across the entire map that they're used in.
-            // In order to pull a tile's data from its tile set of origin, we'll need to revert its id back into its
-            // localized variant.
+        {   
             int localId = tile.Id - firstId;
             Vector2 position = GetTilePosition(tile);
             Rectangle sourceArea = tileSet.GetTileSourceArea(localId);
@@ -320,11 +319,12 @@ public sealed class TileMap : Extensible, IModelRenderer
         return tileModels;
     }
 
-    private List<IPrimitiveModel> CreateAnimatedTileModels(TileSet tileSet, IEnumerable<Tile> tiles, Texture2D texture)
+    private List<IPrimitiveModel> CreateAnimatedTileModels(TileSet tileSet, IEnumerable<Tile> tiles)
     {
         var tileModels = new List<IPrimitiveModel>();
         var tileData = new AnimatedTileModelData();
         int firstId = _tileSetFirstIdMap[tileSet];
+        Texture2D texture = tileSet.Texture;
 
         foreach (Tile tile in tiles)
         {

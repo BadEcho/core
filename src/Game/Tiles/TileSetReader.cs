@@ -11,6 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -30,12 +31,7 @@ public sealed class TileSetReader : ContentTypeReader<TileSet>
     {
         Require.NotNull(input, nameof(input));
 
-        Texture2D? texture = null;
-
-        var hasImage = input.ReadBoolean();
-
-        if (hasImage)
-            texture = input.ReadExternalReference<Texture2D>();
+        var texture = input.ReadExternalReference<Texture2D>();
 
         var tileWidth = input.ReadInt32();
         var tileHeight = input.ReadInt32();
@@ -70,15 +66,8 @@ public sealed class TileSetReader : ContentTypeReader<TileSet>
 
         while (tilesToRead > 0)
         {
-            Texture2D? texture = null;
-
             var id = input.ReadInt32();
-            var hasImage = input.ReadBoolean();
-
-            if (hasImage)
-            {
-                texture = input.ReadExternalReference<Texture2D>();
-            }
+            var sourceArea = input.ReadObject<Rectangle?>();
 
             var animationFrames = new List<TileAnimationFrame>();
             var framesToRead = input.ReadInt32();
@@ -90,7 +79,7 @@ public sealed class TileSetReader : ContentTypeReader<TileSet>
             }
 
             var customProperties = input.ReadProperties();
-            var tile = new TileData(id, texture, animationFrames, customProperties);
+            var tile = new TileData(id, sourceArea, animationFrames, customProperties);
 
             tileSet.AddTile(tile);
             

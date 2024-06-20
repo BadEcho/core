@@ -30,18 +30,23 @@ public sealed class TileSet : Extensible
     /// <summary>
     /// Initializes a new instance of the <see cref="TileSet"/> class.
     /// </summary>
-    /// <param name="texture">The texture containing the individual tiles that compose this tile set, if one exists.</param>
+    /// <param name="texture">The texture containing the individual tiles that compose this tile set.</param>
     /// <param name="tileSize">The size of an individual tile in this tile set.</param>
     /// <param name="tileCount">The number of tiles in this tile set.</param>
-    /// <param name="columns">The number of columns of tiles in this tile set.</param>
+    /// <param name="columns">
+    /// The number of columns of tiles in this tile set. This will be zero if the tile set was originally based
+    /// on a collection images, as editors do not treat the tile set as a grid in that case.
+    /// </param>
     /// <param name="customProperties">The tile set's custom properties.</param>
-    public TileSet(Texture2D? texture,
+    public TileSet(Texture2D texture,
                    Size tileSize,
                    int tileCount,
                    int columns,
                    CustomProperties customProperties)
         : base(customProperties)
     {
+        Require.NotNull(texture, nameof(texture));
+
         Texture = texture;
         TileSize = tileSize;
         TileCount = tileCount;
@@ -49,13 +54,19 @@ public sealed class TileSet : Extensible
     }   
 
     /// <summary>
-    ///  Gets the texture containing the individual tiles that compose this tile set, if one exists.
+    ///  Gets the texture containing the individual tiles that compose this tile set.
     /// </summary>
     /// <remarks>
-    /// This will be present if the tile set is based on a single image. If a tile set is based on a collection
-    /// of images, then the tile set's constituent tile assets will contain the texture data.
+    /// <para>
+    /// Tile sets can be designed to be either based on a single image, or a collection of images. In the
+    /// former case, this texture will reflect that single image.
+    /// </para>
+    /// <para>
+    /// In the latter case, this texture will instead be based on a packed texture that was generated during the
+    /// processing of this tile set's asset data for the content pipeline.
+    /// </para>
     /// </remarks>
-    public Texture2D? Texture
+    public Texture2D Texture
     { get; } 
 
     /// <summary>
@@ -75,11 +86,11 @@ public sealed class TileSet : Extensible
     /// </summary>
     /// <remarks>
     /// Identifiers for tiles will always be contiguous if the tile set is based on a single image;
-    /// however, tile sets that are a collection of images may be non-contiguous if existing tiles are
-    /// removed at a later date.
+    /// however, tile sets that are (at design-time) a collection of images may be non-contiguous if
+    /// existing tiles are removed at a later date.
     /// </remarks>
     public int LastId
-        => Texture != null ? TileCount -1 : _idTileMap.Keys.Max();
+        => _columns != 0 ? TileCount - 1 : _idTileMap.Keys.Max();
 
     /// <summary>
     /// Gets the space between the perimeter of the tiles composing this tile set and the edge of the texture.
@@ -133,31 +144,14 @@ public sealed class TileSet : Extensible
     {
         if (_idTileMap.TryGetValue(localId, out TileData? tile))
         {
-            if (tile.Texture != null)
-                return tile.Texture.Bounds;
+            if (tile.SourceArea != null)
+                return tile.SourceArea.Value;
         }
 
         int x = localId % _columns * (TileSize.Width + Spacing) + Margin;
         int y = localId / _columns * (TileSize.Height + Spacing) + Margin;
 
         return new Rectangle(x, y, TileSize.Width, TileSize.Height);
-    }
-
-    /// <summary>
-    /// Gets the texture to source when drawing a tile.
-    /// </summary>
-    /// <param name="localId">The tile identifier localized to this tile set.</param>
-    /// <returns>The texture to source when drawing the tile identified by <c>localId</c>.</returns>
-    public Texture2D GetTileTexture(int localId)
-    {
-        if (Texture != null)
-            return Texture;
-
-        if (!_idTileMap.TryGetValue(localId, out TileData? tile))
-            throw new ArgumentException(Strings.TileSetMissingTile, nameof(localId));
-        
-        return tile.Texture
-               ?? throw new InvalidOperationException(Strings.TileHasNoTexture);
     }
 
     /// <summary>
@@ -169,5 +163,4 @@ public sealed class TileSet : Extensible
     /// </returns>
     public CustomProperties GetTileCustomProperties(int localId)
         => _idTileMap.TryGetValue(localId, out TileData? tile) ? tile.CustomProperties : new CustomProperties();
-
 }

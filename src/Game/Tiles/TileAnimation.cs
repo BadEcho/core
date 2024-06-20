@@ -37,13 +37,13 @@ public sealed class TileAnimation
         Require.NotNull(tileSet, nameof(tileSet));
 
         _frames = tileSet.GetTileAnimationFrames(tileId);
+        Texture2D texture = tileSet.Texture;
 
         foreach (TileAnimationFrame frame in _frames)
         {
             var frameData = new QuadTextureModelData();
             int frameTileId = frame.TileId;
-
-            Texture2D texture = tileSet.GetTileTexture(frameTileId);
+            
             Rectangle sourceArea = tileSet.GetTileSourceArea(frameTileId);
 
             frameData.AddTexture(texture.Bounds, sourceArea, Vector2.Zero);

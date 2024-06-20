@@ -113,14 +113,24 @@ public sealed class TileSetAsset : ExtensibleAsset
     { get; }
 
     /// <summary>
-    /// Gets the image data for the texture comprising all the tiles in this tile set.
+    /// Gets or sets the image data for the texture comprising all the tiles in this tile set.
     /// </summary>
     /// <remarks>
-    /// This will be present if the tile set is based on a single image. If the tile set is based on a collection
-    /// of images, then the tile set's constituent tile assets will contain the image data.
+    /// <para>
+    /// This will be present at the time of loading this asset if the tile set is based on a single image.
+    /// If the tile set is based on a collection of images, then the tile set's constituent tile assets
+    /// will contain the image data.
+    /// </para>
+    /// <para>
+    /// In the latter case, the content processor for this asset will generate a new texture packed with
+    /// all the image data found in the individual tile assets. This property will then be set to point to the
+    /// generated texture. This is done both for performance reasons (since fewer textures will need to be loaded
+    /// into memory), in addition to being able to support otherwise problematic features (animated tiles that use
+    /// individual textures).
+    /// </para>
     /// </remarks>
     public ImageAsset? Image
-    { get; }
+    { get; set; }
 
     /// <summary>
     /// Gets the collection of explicitly configured tiles belonging to this tile set.

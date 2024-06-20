@@ -40,17 +40,13 @@ public sealed class TileSetWriter : ContentTypeWriter<TileSetContent>
         Require.NotNull(asset, nameof(asset));
         Require.NotNull(referenceSource, nameof(referenceSource));
 
-        if (asset.Image != null)
-        {
-            output.Write(true);
+        if (asset.Image == null)
+            throw new PipelineException();
 
-            ExternalReference<Texture2DContent> imageReference
-                = referenceSource.GetReference<Texture2DContent>(asset.Image.Source);
+        ExternalReference<Texture2DContent> imageReference
+            = referenceSource.GetReference<Texture2DContent>(asset.Image.Source);
 
-            output.WriteExternalReference(imageReference);
-        }
-        else
-            output.Write(false);
+        output.WriteExternalReference(imageReference);
 
         output.Write(asset.TileWidth);
         output.Write(asset.TileHeight);
@@ -60,7 +56,7 @@ public sealed class TileSetWriter : ContentTypeWriter<TileSetContent>
         output.Write(asset.Margin);
         output.WriteProperties(asset);
 
-        WriteTiles(output, asset, referenceSource);
+        WriteTiles(output, asset);
     }
 
     /// <inheritdoc />
@@ -71,7 +67,7 @@ public sealed class TileSetWriter : ContentTypeWriter<TileSetContent>
         Write(output, value.Asset, value);
     }
     
-    private static void WriteTiles(ContentWriter output, TileSetAsset asset, IContentItem referenceSource)
+    private static void WriteTiles(ContentWriter output, TileSetAsset asset)
     {
         // Record the number of tiles to guide the reader.
         output.Write(asset.Tiles.Count);
@@ -79,18 +75,7 @@ public sealed class TileSetWriter : ContentTypeWriter<TileSetContent>
         foreach (TileAsset tile in asset.Tiles)
         {
             output.Write(tile.Id);
-
-            if (tile.Image != null)
-            {
-                output.Write(true);
-
-                ExternalReference<Texture2DContent> imageReference
-                    = referenceSource.GetReference<Texture2DContent>(tile.Image.Source);
-
-                output.WriteExternalReference(imageReference);
-            }
-            else
-                output.Write(false);
+            output.WriteObject(tile.SourceArea);
 
             // The animation frame count, to guide the reader.
             output.Write(tile.AnimationFrames.Count);

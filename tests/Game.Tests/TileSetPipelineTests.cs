@@ -53,6 +53,7 @@ public class TileSetPipelineTests
 
         Assert.NotNull(content);
         Assert.NotNull(content.Asset);
+        // No tile set texture initially.
         Assert.Null(content.Asset.Image);
         Assert.NotEmpty(content.Asset.Tiles);
 
@@ -62,17 +63,16 @@ public class TileSetPipelineTests
                           t => Assert.NotNull(t.Image),
                           t => Assert.NotNull(t.Image));
 
+        _processorContext.AssetPathFromOutput = "Tiles\\CompositeGrass.xnb";
         content = _processor.Process(content, _processorContext);
+        
+        // Tile set texture should have been generated from tile textures.
+        Assert.NotNull(content.Asset.Image);
 
-        foreach (TileAsset tile in content.Asset.Tiles)
-        {
-            Assert.NotNull(tile.Image);
+        ExternalReference<Texture2DContent> imageReference
+            = content.GetReference<Texture2DContent>(content.Asset.Image.Source);
 
-            ExternalReference<Texture2DContent> imageReference
-                = content.GetReference<Texture2DContent>(tile.Image.Source);
-
-            Assert.NotNull(imageReference);
-        }
+        Assert.NotNull(imageReference);
     }
 
     private static string GetAssetPath(string assetName, [CallerFilePath] string rootPath = "")

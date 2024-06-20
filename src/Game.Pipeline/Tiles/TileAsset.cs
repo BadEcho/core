@@ -13,6 +13,7 @@
 
 using System.Xml.Linq;
 using BadEcho.Game.Tiles;
+using Microsoft.Xna.Framework;
 
 namespace BadEcho.Game.Pipeline.Tiles;
 
@@ -69,11 +70,30 @@ public sealed class TileAsset : ExtensibleAsset
     /// Gets the image data for this tile's texture.
     /// </summary>
     /// <remarks>
+    /// <para>
     /// Image data will only be present here if the tile set this tile belongs to is a collection
     /// of images, as opposed to being based on a single image.
+    /// </para>
+    /// <para>
+    /// Even if image data is present here, it will not be written to the content pipeline. Instead,
+    /// it will be used to generate an all-encompassing packed texture that will be associated with
+    /// the tile set itself.
+    /// </para>
     /// </remarks>
     public ImageAsset? Image
     { get; }
+
+    /// <summary>
+    /// Gets or sets the explicit bounding rectangle of the region of the texture associated with this tile that
+    /// will be rendered when drawing this tile.
+    /// </summary>
+    /// <remarks>
+    /// This will only be present if the tile belongs to a tile set based on a collection of images. This is because
+    /// a new (packed) texture will have been generated based on the individual images, and we require additional
+    /// guidance in determining what area of the new texture to source when rendering this tile.
+    /// </remarks>
+    public Rectangle? SourceArea
+    { get; set; }
 
     /// <summary>
     /// Gets a collection of animation frames in this tile's animation sequence, if one exists.

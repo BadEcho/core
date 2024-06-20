@@ -23,7 +23,7 @@ public static class DictionaryExtensions
     /// </summary>
     /// <typeparam name="TKey">The type of the key parameter.</typeparam>
     /// <typeparam name="TValue">The type of the value parameter.</typeparam>
-    /// <param name="dictionary">THe dictionary containing the specified key.</param>
+    /// <param name="dictionary">The dictionary containing the specified key.</param>
     /// <param name="key">The key whose value to get.</param>
     /// <param name="valueProvider">The value provider function, used if no value is associated with the key.</param>
     /// <returns>
