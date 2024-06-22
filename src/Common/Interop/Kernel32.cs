@@ -22,7 +22,16 @@ namespace BadEcho.Interop;
 internal static partial class Kernel32
 {
     private const string LIBRARY_NAME = "kernel32";
-    
+
+    /// <summary>
+    /// Loads the specified module into the address space of the calling process.
+    /// </summary>
+    /// <param name="lpLibFileName">The name of the module.</param>
+    /// <returns>If the function succeeds, a handle to the module; otherwise, <see cref="IntPtr.Zero"/>.</returns>
+    [LibraryImport(LIBRARY_NAME, EntryPoint = "LoadLibraryW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial IntPtr LoadLibrary(string lpLibFileName);
+
     /// <summary>
     /// Retrieves a module handle for the specified module. The module must have been loaded by the calling process.
     /// </summary>

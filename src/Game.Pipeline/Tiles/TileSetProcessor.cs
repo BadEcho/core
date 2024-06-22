@@ -11,9 +11,11 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Reflection;
 using BadEcho.Drawing;
 using BadEcho.Extensions;
 using BadEcho.Game.Pipeline.Properties;
+using BadEcho.Interop;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
@@ -27,6 +29,34 @@ namespace BadEcho.Game.Pipeline.Tiles;
 [ContentProcessor(DisplayName = "Tile Set Processor - Bad Echo")]
 public sealed class TileSetProcessor : ContentProcessor<TileSetContent, TileSetContent>
 {
+    /// <summary>
+    /// Initializes the <see cref="TileSetProcessor"/> class.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// This code, as with all other code in this assembly, is loaded and executed by MonoGame's
+    /// content builder (MGCB) as a pipeline extension at compile time.
+    /// </para>
+    /// <para>
+    /// The MGCB is an executable that is installed as a .NET tool, which means it is a NuGet package
+    /// that lives in the global packages folder along with all of its other brethren.
+    /// When executing, the <see cref="AppContext.BaseDirectory"/> will be the MGCB package folder.
+    /// </para>
+    /// <para>
+    /// Unfortunately, because of this, any platform-specific native libraries depended on by pipeline extensions
+    /// will fail to load, as MGCB's assembly resolver will be probing its own local runtime folder.
+    /// This extension uses SkiaSharp which relies on its own native library, so we help it out with a
+    /// custom native library resolver. 
+    /// </para>
+    /// </remarks>
+    static TileSetProcessor()
+    {
+        string extensionDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) 
+                                    ?? Path.DirectorySeparatorChar.ToString();
+
+        NativeLibraryTransposer.Create(typeof(SkiaSharp.SKBitmap).Assembly, extensionDirectory);
+    }
+
     /// <inheritdoc />
     public override TileSetContent Process(TileSetContent input, ContentProcessorContext context)
     {
@@ -37,7 +67,7 @@ public sealed class TileSetProcessor : ContentProcessor<TileSetContent, TileSetC
 
         TileSetAsset asset = input.Asset;
         bool imageGenerated = false;
-
+        
         if (asset.Image == null)
         {
             imageGenerated = true;

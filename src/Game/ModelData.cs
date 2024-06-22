@@ -75,7 +75,7 @@ public abstract class ModelData<TVertex> : IModelData
     /// <summary>
     /// Adds a vertex to the model's vertex data.
     /// </summary>
-    /// <param name="vertex">The <typeparam name="TVertex"/> value to add to the model's vertex data.</param>
+    /// <param name="vertex">The <typeparamref name="TVertex"/> value to add to the model's vertex data.</param>
     /// <exception cref="InvalidOperationException">
     /// <see cref="GetVertexData"/> has been invoked and no further vertex data can be added.
     /// </exception>

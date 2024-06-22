@@ -71,9 +71,5 @@
 			<UserProperties content_4fonts_4lato_1sdfont__JsonSchema="https://BadEcho.com/sdfont.json" />
 		</VisualStudio>
 	</ProjectExtensions>
-	<Target Name="PreBuild" BeforeTargets="PrepareContentBuilder">
-		<!--This is required as the platform-specific native library won't be copied to the output directory due to this being a class library and not an executable.-->
-		<Exec Command="xcopy $(OutDir)\runtimes\win-$(Platform)\native\libSkiaSharp.dll $(OutDir) /I /C /Y" />
-	</Target>
 
 </Project>

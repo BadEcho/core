@@ -327,6 +327,9 @@
 		<value>No packed image has been generated.</value>
 	</data>
 	<data name="PackedImageSizeTooSmall" xml:space="preserve">
-		<value>The specified maximum packed image size isn't large enough to fit any of the the required images into.</value>
+		<value>The specified maximum packed image size isn't large enough to fit any of the required images into.</value>
+	</data>
+	<data name="NativeResolvedLoadFailed" xml:space="preserve">
+		<value>Native library resolver failed to load library: {0}</value>
 	</data>
 </root>

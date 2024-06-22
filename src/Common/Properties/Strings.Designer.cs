@@ -502,6 +502,15 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Native library resolver failed to load library: {0}.
+        /// </summary>
+        public static string NativeResolvedLoadFailed {
+            get {
+                return ResourceManager.GetString("NativeResolvedLoadFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Extensibility configuration lacks registration for contract &apos;{0}&apos;..
         /// </summary>
         public static string NoContractInConfiguration {
@@ -601,7 +610,7 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The specified maximum packed image size isn&apos;t large enough to fit any of the the required images into..
+        ///   Looks up a localized string similar to The specified maximum packed image size isn&apos;t large enough to fit any of the required images into..
         /// </summary>
         public static string PackedImageSizeTooSmall {
             get {
