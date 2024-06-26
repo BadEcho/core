@@ -6,9 +6,6 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Presentation", "src\Presentation\BadEcho.Presentation.csproj", "{7E3F9A38-18A4-4F12-8CAA-298C004E4095}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadEcho.Common", "src\Common\BadEcho.Common.csproj", "{64BF491A-E05D-4623-BCA9-86F07AA9F9A1}"
-	ProjectSection(ProjectDependencies) = postProject
-		{AF92B5D1-9E02-413B-800D-90B87E59ED89} = {AF92B5D1-9E02-413B-800D-90B87E59ED89}
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A14098CE-C46F-4906-87ED-44DF6A81F3A7}"
 EndProject
