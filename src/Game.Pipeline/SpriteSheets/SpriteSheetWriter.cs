@@ -46,11 +46,12 @@ public sealed class SpriteSheetWriter : ContentTypeWriter<SpriteSheetContent>
         // Record the count to guide the reader.
         output.Write(asset.Animations.Count);
 
-        foreach (SpriteAnimationAsset animation in asset.Animations)
+        foreach (SpriteAnimationSequence animation in asset.Animations)
         {
             output.Write(animation.Name);
             output.Write(animation.StartFrame);
             output.Write(animation.EndFrame);
+            output.WriteObject(animation.Duration);
         }
     }
 }

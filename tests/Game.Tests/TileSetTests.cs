@@ -154,5 +154,10 @@ public class TileSetTests : IClassFixture<ContentManagerFixture>
         var animationFrames = tileSet.GetTileAnimationFrames(0);
 
         Assert.NotEmpty(animationFrames);
+        Assert.Collection(animationFrames,
+                          f => Assert.Equal(150, f.Duration.Milliseconds),
+                          f => Assert.Equal(150, f.Duration.Milliseconds),
+                          f => Assert.Equal(150, f.Duration.Milliseconds),
+                          f => Assert.Equal(150, f.Duration.Milliseconds));
     }
 }

@@ -11,33 +11,30 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Logging;
+
 namespace BadEcho.Game;
 
 /// <summary>
-/// Provides an animation timing sequence for a sprite.
+/// Provides a mechanism for animating sprites.
 /// </summary>
-public sealed class SpriteAnimation
+public class SpriteAnimation
 {
-    private readonly float _framesPerSecond;
-    private float _elapsedTime;
-    private bool _isPaused;
+    private readonly List<TimeSpan> _frames;
+
+    private TimeSpan _elapsedTime;
+    private bool _isPaused = true;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SpriteAnimation"/> class.
     /// </summary>
-    /// <param name="name">The name of the animation.</param>
-    /// <param name="framesPerSecond">The number of sprite frames to draw each second.</param>
-    public SpriteAnimation(string name, float framesPerSecond)
+    /// <param name="frames">The timing sequence for the animation's frames.</param>
+    public SpriteAnimation(IEnumerable<TimeSpan> frames)
     {
-        Name = name;
-        _framesPerSecond = framesPerSecond;
-    }
+        Require.NotNull(frames, nameof(frames));
 
-    /// <summary>
-    /// Gets the name of the animation.
-    /// </summary>
-    public string Name
-    { get; }
+        _frames = [..frames];
+    }
 
     /// <summary>
     /// Gets the current frame of the animation.
@@ -46,12 +43,39 @@ public sealed class SpriteAnimation
     { get; private set; }
 
     /// <summary>
-    /// Pauses the animation, resetting it to its initial state.
+    /// Plays the animation.
+    /// </summary>
+    public void Play() 
+        => _isPaused = false;
+
+    /// <summary>
+    /// Pauses the animation on its initial frame.
     /// </summary>
     public void Pause()
+        => Pause(true);
+
+    /// <summary>
+    /// Pauses the animation, optionally on its initial frame.
+    /// </summary>
+    /// <param name="reset">
+    /// Value indicating if animation should be paused on its initial frame, as opposed to the current frame.
+    /// </param>
+    public void Pause(bool reset)
+    {
+        if (reset)
+            CurrentFrame = 0;
+
+        _isPaused = true;
+    }
+
+    /// <summary>
+    /// Stops the animation from playing, resetting it to its default state.
+    /// </summary>
+    public void Stop()
     {
         CurrentFrame = 0;
         _isPaused = true;
+        _elapsedTime = TimeSpan.Zero;
     }
 
     /// <summary>
@@ -65,7 +89,15 @@ public sealed class SpriteAnimation
         if (_isPaused)
             return;
 
-        _elapsedTime += (float) time.ElapsedGameTime.TotalSeconds;
-        CurrentFrame = (int) Math.Floor(_elapsedTime * _framesPerSecond);
+        _elapsedTime += time.ElapsedGameTime;
+
+        if (_elapsedTime <= _frames[CurrentFrame])
+            return;
+
+        Logger.Debug(_elapsedTime.ToString());
+
+        // Prevent lag accumulation.
+        _elapsedTime -= _frames[CurrentFrame];
+        CurrentFrame = (CurrentFrame + 1) % _frames.Count;
     }
 }

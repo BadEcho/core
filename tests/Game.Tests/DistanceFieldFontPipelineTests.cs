@@ -14,6 +14,7 @@
 using BadEcho.Game.Pipeline.Fonts;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using BadEcho.Game.Fonts;
 using Xunit;
 
 namespace BadEcho.Game.Tests;
@@ -27,6 +28,23 @@ public class DistanceFieldFontPipelineTests
     private readonly TestContentImporterContext _importerContext = new();
     private readonly TestContentProcessorContext _processorContext = new();
 
+    [Fact]
+    public void Deserialize_LatoSdfont_ReturnsValid()
+    {
+        var fileContents = File.ReadAllText(GetAssetPath("Lato.sdfont"));
+        
+        var asset = JsonSerializer.Deserialize<DistanceFieldFontAsset>(fileContents,
+                                                                       new JsonSerializerOptions
+                                                                       {
+                                                                           PropertyNameCaseInsensitive = true
+                                                                       });
+        Assert.NotNull(asset);
+        Assert.Equal("Lato-Regular.ttf", asset.FontPath);
+        Assert.NotNull(asset.CharacterSet);
+        Assert.Equal(64, asset.Resolution);
+        Assert.Equal(4, asset.Range);
+    }
+    
     [Fact]
     public void ImportProcess_LatoFont_ReturnsValid()
     {
@@ -47,7 +65,13 @@ public class DistanceFieldFontPipelineTests
         Assert.Equal(1.2, content.Characteristics.LineHeight, 5);
 
         Assert.NotEmpty(content.Glyphs);
+        Assert.Equal('(', content.Glyphs['('].Character);
+
         Assert.NotEmpty(content.Kernings);
+        KerningPair pair = content.Kernings[new CharacterPair('F', 'J')];
+        Assert.Equal('F', pair.FirstCharacter);
+        Assert.Equal('J', pair.SecondCharacter);
+        Assert.Equal(-0.093f, pair.Advance);
     }
 
     [Fact]
@@ -95,23 +119,6 @@ public class DistanceFieldFontPipelineTests
         {
             Assert.EndsWith($"Lato-Regular-atlas_{_AssetCount++}", e.Data);
         }
-    }
-
-    [Fact]
-    public void Deserialize_LatoSdfont_ReturnsValid()
-    {
-        var fileContents = File.ReadAllText(GetAssetPath("Lato.sdfont"));
-        
-        var asset = JsonSerializer.Deserialize<DistanceFieldFontAsset>(fileContents,
-                                                                       new JsonSerializerOptions
-                                                                       {
-                                                                           PropertyNameCaseInsensitive = true
-                                                                       });
-        Assert.NotNull(asset);
-        Assert.Equal("Lato-Regular.ttf", asset.FontPath);
-        Assert.NotNull(asset.CharacterSet);
-        Assert.Equal(64, asset.Resolution);
-        Assert.Equal(4, asset.Range);
     }
 
     private static string GetAssetPath(string assetName, [CallerFilePath] string rootPath = "")

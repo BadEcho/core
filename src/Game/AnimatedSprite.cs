@@ -21,11 +21,8 @@ namespace BadEcho.Game;
 /// </summary>
 public sealed class AnimatedSprite : Sprite
 {
-    // TODO: Replace with configurable initial value.
-    private const float FRAMES_PER_SECOND = 5f;
-
     private readonly SpriteSheet _sheet;
-    private SpriteAnimation _currentAnimation = new(string.Empty, FRAMES_PER_SECOND);
+    private SpriteAnimation _currentAnimation;
     private MovementDirection _currentDirection; 
 
     /// <summary>
@@ -37,6 +34,7 @@ public sealed class AnimatedSprite : Sprite
         : base(GetSheetTexture(sheet), movementSystem)
     {
         _sheet = sheet;
+        _currentAnimation = sheet.GetAnimation(string.Empty);
     }
 
     /// <inheritdoc/>
@@ -51,7 +49,11 @@ public sealed class AnimatedSprite : Sprite
             if (newDirection == MovementDirection.None)
                 _currentAnimation.Pause();
             else
-                _currentAnimation = new SpriteAnimation(newDirection.ToString(), FRAMES_PER_SECOND);
+            {
+                _currentAnimation.Stop();
+                _currentAnimation = _sheet.GetAnimation(newDirection.ToString());
+                _currentAnimation.Play();
+            }
 
             _currentDirection = newDirection;
         }

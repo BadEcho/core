@@ -33,18 +33,20 @@ public sealed class SpriteSheetReader : ContentTypeReader<SpriteSheet>
 
         var spriteSheet = new SpriteSheet(texture, columnCount, rowCount);
 
-        spriteSheet.AddAnimation(string.Empty, initialFrame, initialFrame);
+        spriteSheet.AddAnimation(
+            new SpriteAnimationSequence(string.Empty, initialFrame, initialFrame, TimeSpan.Zero));
 
         var animationsToRead = input.ReadInt32();
 
         while (animationsToRead > 0)
         {
             var name = input.ReadString();
-            int startFrame = input.ReadInt32();
-            int endFrame = input.ReadInt32();
+            var startFrame = input.ReadInt32();
+            var endFrame = input.ReadInt32();
+            var duration = input.ReadObject<TimeSpan>();
+            var animation = new SpriteAnimationSequence(name, startFrame, endFrame, duration);
 
-            spriteSheet.AddAnimation(name, startFrame, endFrame);
-
+            spriteSheet.AddAnimation(animation);
             animationsToRead--;
         }
 

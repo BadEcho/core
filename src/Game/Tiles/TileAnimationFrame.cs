@@ -19,5 +19,5 @@ namespace BadEcho.Game.Tiles;
 /// <param name="TileId">
 /// The local identifier of the tile within a tile set to display when this frame is active.
 /// </param>
-/// <param name="Duration">The amount of time, in milliseconds, this frame should be displayed.</param>
-public record struct TileAnimationFrame(int TileId, int Duration);
+/// <param name="Duration">The amount of time this frame should be displayed.</param>
+public sealed record TileAnimationFrame(int TileId, TimeSpan Duration);

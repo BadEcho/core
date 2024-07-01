@@ -52,7 +52,7 @@ public sealed class SpriteSheetProcessor : ContentProcessor<SpriteSheetContent, 
         int finalFrame = 0;
         HashSet<string> animationNames = [];
 
-        foreach (SpriteAnimationAsset animation in asset.Animations)
+        foreach (SpriteAnimationSequence animation in asset.Animations)
         {
             if (animation.StartFrame > animation.EndFrame)
                 throw new PipelineException(Strings.SheetInvalidAnimationSequence);

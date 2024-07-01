@@ -55,7 +55,8 @@ public sealed class TileAsset : ExtensibleAsset
                 int tileId = (int?) frameElement.Attribute(TILE_ID_ATTRIBUTE) ?? default;
                 int duration = (int?) frameElement.Attribute(DURATION_ATTRIBUTE) ?? default;
 
-                _animationFrames.Add(new TileAnimationFrame(tileId, duration));
+                _animationFrames.Add(
+                    new TileAnimationFrame(tileId, TimeSpan.FromMilliseconds(duration)));
             }
         }
     }

@@ -22,24 +22,28 @@
     },
     "animations": {
       "type": "array",
-      "description": "The animations the sprite sheet contains.",
+      "description": "The animation sequences the sprite sheet contains.",
       "items": {
         "type": "object",
         "properties": {
           "name": {
             "type": "string",
-            "description": "The name of the animation."
+            "description": "The name of the animation sequence."
           },
           "startFrame": {
             "type": "integer",
-            "description": "The index of the first frame in the animation."
+            "description": "The index of the first frame in the animation sequence."
           },
           "endFrame": {
             "type": "integer",
-            "description": "The index of the last frame in the animation."
+            "description": "The index of the last frame in the animation sequence."
+          },
+          "duration": {
+            "type": "integer",
+            "description": "The amount of time, in milliseconds, each frame in the animation sequence should be displayed."
           }
         },
-        "required": ["name", "startFrame", "endFrame"],
+        "required": ["name", "startFrame", "endFrame", "duration"],
         "additionalProperties": false
       }
     }

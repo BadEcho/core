@@ -1,4 +1,4 @@
-﻿//-----------------------------------------------------------------------
+﻿ //-----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
 //      Copyright @ 2024 Bad Echo LLC. All rights reserved.
@@ -35,8 +35,11 @@ namespace BadEcho.Game;
 /// </remarks>
 public sealed class SpriteSheet
 {
-    private readonly Dictionary<string, (int StartFrame, int EndFrame)> _animations 
+    private readonly Dictionary<string, SpriteAnimation> _nameAnimationMap
         = new(StringComparer.OrdinalIgnoreCase);
+
+    private readonly Dictionary<SpriteAnimation, int> _animationStartFrameMap
+        = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SpriteSheet"/> class.
@@ -78,17 +81,33 @@ public sealed class SpriteSheet
     { get; }
 
     /// <summary>
-    /// Registers the named animation with the sprite sheet.
+    /// Registers an animation with the sprite sheet using the provided animation sequence.
     /// </summary>
-    /// <param name="name">The name of the animation.</param>
-    /// <param name="startFrame">The index of the first frame in the animation.</param>
-    /// <param name="endFrame">The index of the last frame in the animation.</param>
+    /// <param name="sequence">The frames in an animation sequence for a sprite.</param>
     /// <exception cref="ArgumentException"><c>name</c> is already associated with an existing registered animation.</exception>
-    public void AddAnimation(string name, int startFrame, int endFrame)
+    public void AddAnimation(SpriteAnimationSequence sequence)
     {
-        if (!_animations.TryAdd(name, (startFrame, endFrame)))
-            throw new ArgumentException(Strings.SheetAlreadyHasAnimation, nameof(name));
+        Require.NotNull(sequence, nameof(sequence));
+
+        var frames = Enumerable.Repeat(sequence.Duration,
+                                       sequence.EndFrame - sequence.StartFrame + 1);
+
+        var animation = new SpriteAnimation(frames);
+
+        if (!_nameAnimationMap.TryAdd(sequence.Name, animation))
+            throw new ArgumentException(Strings.SheetAlreadyHasAnimation, nameof(sequence));
+
+        _animationStartFrameMap.Add(animation, sequence.StartFrame);
     }
+
+    /// <summary>
+    /// Gets the named sprite animation.
+    /// </summary>
+    /// <param name="name">The name of the sprite animation.</param>
+    /// <returns>The animation for <c>name</c>.</returns>
+    public SpriteAnimation GetAnimation(string name)
+        => _nameAnimationMap.GetValueOrDefault(name)
+           ?? throw new ArgumentException(Strings.SheetNoFramesForAnimation, nameof(name));
 
     /// <summary>
     /// Gets the region of the sprite sheet's texture corresponding to the requested frame of the specified animation.
@@ -103,10 +122,10 @@ public sealed class SpriteSheet
     {
         Require.NotNull(animation, nameof(animation));
 
-        if (!_animations.TryGetValue(animation.Name, out var frames))
+        if (!_animationStartFrameMap.TryGetValue(animation, out int startFrame))
             throw new ArgumentException(Strings.SheetNoFramesForAnimation, nameof(animation));
 
-        int frameIndex = animation.CurrentFrame % (frames.EndFrame - frames.StartFrame + 1) + frames.StartFrame;
+        int frameIndex = animation.CurrentFrame + startFrame;
         Size frameLocation = new(frameIndex % ColumnCount, frameIndex / ColumnCount);
 
         return new Rectangle(frameLocation * FrameSize, FrameSize);

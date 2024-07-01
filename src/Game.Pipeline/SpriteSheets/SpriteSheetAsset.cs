@@ -43,8 +43,8 @@ public sealed class SpriteSheetAsset
     { get; init; }
 
     /// <summary>
-    /// Gets the animations the sprite sheet contains.
+    /// Gets the animation sequences the sprite sheet contains.
     /// </summary>
-    public IReadOnlyCollection<SpriteAnimationAsset> Animations
-    { get; init; } = new List<SpriteAnimationAsset>();
+    public IReadOnlyCollection<SpriteAnimationSequence> Animations
+    { get; init; } = new List<SpriteAnimationSequence>();
 }

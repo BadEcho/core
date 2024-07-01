@@ -67,9 +67,7 @@
 		<Exec Command="dotnet tool restore" />
 	</Target>
 	<ProjectExtensions>
-		<VisualStudio>
-			<UserProperties content_4fonts_4lato_1sdfont__JsonSchema="https://BadEcho.com/sdfont.json" />
-		</VisualStudio>
+		<VisualStudio><UserProperties content_4fonts_4lato_1sdfont__JsonSchema="https://BadEcho.com/sdfont.json" content_4images_4stickman_1spritesheet__JsonSchema="https://badecho.com/spritesheet.json" /></VisualStudio>
 	</ProjectExtensions>
 
 </Project>

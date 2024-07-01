@@ -48,7 +48,7 @@ public sealed class DistanceFieldFontProcessor : ContentProcessor<DistanceFieldF
           };
 
     /// <summary>
-    /// Acts as a modifier to the initial resolved <see cref="JsonTypeInfo"/> contract which normalizes the differences between
+    /// Acts as a modifier to the resolved initial <see cref="JsonTypeInfo"/> contract which normalizes the differences between
     /// the externally generated JSON layout file and our object model.
     /// </summary>
     private static Action<JsonTypeInfo> ConvertUnicodeProperties
@@ -56,10 +56,13 @@ public sealed class DistanceFieldFontProcessor : ContentProcessor<DistanceFieldF
         {
             foreach (var property in typeInfo.Properties)
             {   // "Unicode" would be a confusing property name for our character values.
+                // We don't care about the FontLayoutKerning.Unicode<1,2> properties, because the FontLayoutKerning type
+                // isn't present in the final output object model.
                 if (property.Name.Equals(nameof(FontGlyph.Character), StringComparison.OrdinalIgnoreCase))
                     property.Name = UNICODE_PROPERTY_NAME;
-                // Unicode character values are encoded as JSON numbers in the generated layout file; .NET's own data type for UTF-16 code
-                // values is more immediately useful to us.
+                // Unicode character values are encoded as JSON numbers in the generated layout file;
+                // .NET's own data type for UTF-16 code values is more immediately useful to us.
+                // This covers the FontGlyph.Character and FontLayoutKerning.Unicode<1,2> properties.
                 if (property.Name.Contains(UNICODE_PROPERTY_NAME, StringComparison.OrdinalIgnoreCase))
                     property.CustomConverter = new JsonIntFuncConverter<char>(i => (char) i, c => c);
             }

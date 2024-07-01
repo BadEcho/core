@@ -118,3 +118,8 @@ $endif
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Images/Circle.png
+
+#begin Images/StickMan.spritesheet
+/importer:SpriteSheetImporter
+/processor:SpriteSheetProcessor
+/build:Images/StickMan.spritesheet

@@ -82,7 +82,8 @@ public sealed class TileSetWriter : ContentTypeWriter<TileSetContent>
 
             foreach (TileAnimationFrame frame in tile.AnimationFrames)
             {
-                output.WriteObject(frame);
+                output.Write(frame.TileId);
+                output.WriteObject(frame.Duration);
             }
 
             output.WriteProperties(tile);

@@ -74,7 +74,11 @@ public sealed class TileSetReader : ContentTypeReader<TileSet>
 
             while (framesToRead > 0)
             {
-                animationFrames.Add(input.ReadObject<TileAnimationFrame>());
+                var tileId = input.ReadInt32();
+                var duration = input.ReadObject<TimeSpan>();
+                var animationFrame = new TileAnimationFrame(tileId, duration);
+
+                animationFrames.Add(animationFrame);
                 framesToRead--;
             }
 

@@ -1,0 +1,13 @@
+﻿{
+  "texturePath": "StickMan.png",
+  "columnCount": 4,
+  "rowCount": 1,
+  "animations": [
+    {
+      "name": "Idle",
+      "startFrame": 0,
+      "endFrame": 3,
+      "duration": 200
+    }
+  ]
+}
