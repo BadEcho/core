@@ -77,7 +77,7 @@ public sealed class TileLayer : Layer
     }
 
     /// <summary>
-    /// Gets the tile, if any, found at the specified position in the layer.
+    /// Gets the tile, if one exists, at the specified position in the layer.
     /// </summary>
     /// <param name="position">The drawing location of the tile to return.</param>
     /// <returns>The tile being drawn at <c>position</c>.</returns>
@@ -151,8 +151,13 @@ public sealed class TileLayer : Layer
         public IShape Bounds 
         { get; }
 
+        public IShape PreviousBounds
+            => Bounds;
+
         /// <inheritdoc />
-        public void ResolveCollision(IShape shape)
-        { }
+        public bool ResolveCollision(IShape shape)
+        {
+            return false;
+        }
     }
 }

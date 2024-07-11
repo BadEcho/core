@@ -27,9 +27,11 @@ public interface ISpatialEntity
     /// </remarks>
     IShape Bounds { get; }
 
+    IShape PreviousBounds { get; }
+
     /// <summary>
     /// Resolves a collision that has occurred with the entity and the provided collision boundary.
     /// </summary>
     /// <param name="shape">The boundary of the colliding entity.</param>
-    void ResolveCollision(IShape shape);
+    bool ResolveCollision(IShape shape);
 }

@@ -86,6 +86,10 @@ public class Sprite : IPositionalEntity, ISpatialEntity
     { get; set; }
 
     /// <inheritdoc/>
+    public float MaxSpeed
+    { get; set; }
+
+    /// <inheritdoc/>
     public float Angle
     { get; set; }
 
@@ -93,25 +97,38 @@ public class Sprite : IPositionalEntity, ISpatialEntity
     public float AngularVelocity
     { get; set; }
 
+    public ICollection<Component> Components
+    { get; } = [];
+
     /// <inheritdoc />
     public IShape Bounds 
         => _bounds.CenterAt(GetTargetArea().Center);
 
+    public IShape PreviousBounds
+        => _bounds.CenterAt(GetTargetArea().Center - LastMovement);
+
     /// <inheritdoc />
-    public void ResolveCollision(IShape shape)
+    public bool ResolveCollision(IShape shape)
     {
         Vector2 penetration = Bounds.CalculatePenetration(shape);
         
         _movementSystem.ApplyPenetration(this, penetration);
+
+        return true;
     }
 
     /// <summary>
-    /// Advances the movement of the sprite by one tick.
+    /// Executes associated components and advances the movement of the sprite by one tick.
     /// </summary>
     /// <param name="time">The game timing configuration and state for this update.</param>
     public virtual void Update(GameUpdateTime time)
     {
         Require.NotNull(time, nameof(time));
+
+        foreach (Component component in Components)
+        {
+            component.Update(this, time);
+        }
 
         _movementSystem.UpdateMovement(this);
 

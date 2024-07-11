@@ -38,6 +38,9 @@ public interface IPositionalEntity
     public Vector2 Velocity
     { get; set; }
 
+    public float MaxSpeed
+    { get; set; }
+
     /// <summary>
     /// Gets the amount that the entity is currently being rotated about its point of rotation.
     /// </summary>

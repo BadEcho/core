@@ -44,6 +44,8 @@ public sealed class TileAnimation : SpriteAnimation
 
             _frameData.Add(frameData);
         }
+
+        Play();
     }
 
     /// <summary>

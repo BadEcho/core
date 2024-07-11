@@ -150,8 +150,11 @@ public class QuadtreeTests
 
         public IShape Bounds { get; }
 
+        public IShape PreviousBounds
+            => Bounds;
+
         /// <inheritdoc />
-        public void ResolveCollision(IShape shape)
+        public bool ResolveCollision(IShape shape)
         {
             throw new NotImplementedException();
         }

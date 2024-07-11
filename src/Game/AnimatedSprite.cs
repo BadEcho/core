@@ -50,7 +50,6 @@ public sealed class AnimatedSprite : Sprite
                 _currentAnimation.Pause();
             else
             {
-                _currentAnimation.Stop();
                 _currentAnimation = _sheet.GetAnimation(newDirection.ToString());
                 _currentAnimation.Play();
             }

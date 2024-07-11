@@ -11,7 +11,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Game.Collisions;
+using BadEcho.Logging;
+
+namespace BadEcho.Game;
 
 /// <summary>
 /// Provides an engine for handling collisions between entities.
@@ -53,8 +55,18 @@ public sealed class CollisionEngine
     {
         if (!_collidables.Remove(collidable))
             return;
-
+        
         _collisionTree.Remove(collidable);
+    }
+
+    public void Clear()
+    {
+        foreach (ISpatialEntity collidable in _collidables)
+        {
+            _collisionTree.Remove(collidable);
+        }
+
+        _collidables.Clear();
     }
 
     /// <summary>
@@ -70,7 +82,21 @@ public sealed class CollisionEngine
 
             foreach (var collision in collisions)
             {
-                collidable.ResolveCollision(collision.Bounds);
+                ISpatialEntity resolver, collider;
+
+                if (collidable.PreviousBounds.Intersects(collision.Bounds))
+                {
+                    resolver = collision;
+                    collider = collidable;
+                }
+                else
+                {
+                    resolver = collidable;
+                    collider = collision;
+                }
+
+                if (!resolver.ResolveCollision(collider.Bounds))
+                    collider.ResolveCollision(resolver.Bounds);
             }
 
             _collisionTree.Insert(collidable);

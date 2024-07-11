@@ -12,7 +12,9 @@
 //-----------------------------------------------------------------------
 
 using BadEcho.Game.Properties;
+using BadEcho.Logging;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game;
 
@@ -22,12 +24,13 @@ namespace BadEcho.Game;
 public sealed class Camera : IPositionalEntity
 {
     private readonly ViewportConnector _viewportConnector;
+    private readonly CollisionEngine _deadZoneEngine;
 
     private float _zoom = 1f;
     private float _minimumZoom = 0.1f;
     private float _maximumZoom = float.MaxValue;
     private float _zoomSpeed = 0.3f;
-    
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Camera"/> class.   
     /// </summary>
@@ -36,8 +39,12 @@ public sealed class Camera : IPositionalEntity
     {
         Require.NotNull(viewportConnector, nameof(viewportConnector));
 
-        _viewportConnector = viewportConnector;
+        PresentationParameters parameters = viewportConnector.Device.PresentationParameters;
 
+        _viewportConnector = viewportConnector;
+        _deadZoneEngine = new CollisionEngine(
+            new RectangleF(PointF.Empty, new SizeF(parameters.BackBufferWidth, parameters.BackBufferHeight)));
+        
         Origin = new Vector2(_viewportConnector.VirtualSize.Width / 2f, _viewportConnector.VirtualSize.Height / 2f);
     }
 
@@ -51,6 +58,9 @@ public sealed class Camera : IPositionalEntity
 
     /// <inheritdoc />
     public Vector2 Velocity
+    { get; set; }
+
+    public float MaxSpeed 
     { get; set; }
 
     /// <inheritdoc />
@@ -160,6 +170,38 @@ public sealed class Camera : IPositionalEntity
         }
     }
 
+    private SizeF? ContentSize
+    { get; set; }
+
+    public void LockToContent(SizeF? contentSize)
+        => ContentSize = contentSize;
+
+    public void Follow(ISpatialEntity followTarget)
+    {
+        Require.NotNull(followTarget, nameof(followTarget));
+
+        SizeF cameraSize = Bounds.Size;
+        SizeF targetSize = followTarget.Bounds.Size;
+        
+        var deadZoneSize 
+            = new SizeF(cameraSize.Width / 2 - targetSize.Width, cameraSize.Height / 2 - targetSize.Height);
+        
+        Follow(followTarget, deadZoneSize);
+    }
+
+    public void Follow(ISpatialEntity followTarget, SizeF deadZoneSize)
+    {
+        Require.NotNull(followTarget, nameof(followTarget));
+
+        _deadZoneEngine.Clear();
+
+        _deadZoneEngine.AddCollidable(new ScrollRegion(this, MovementDirection.Up, deadZoneSize));
+        _deadZoneEngine.AddCollidable(new ScrollRegion(this, MovementDirection.Left, deadZoneSize));
+        _deadZoneEngine.AddCollidable(new ScrollRegion(this, MovementDirection.Right, deadZoneSize));
+        _deadZoneEngine.AddCollidable(new ScrollRegion(this, MovementDirection.Down, deadZoneSize));
+        _deadZoneEngine.AddCollidable(followTarget);
+    }
+
     /// <summary>
     /// Gets a matrix used to transform world-space coordinates into the camera's view-space coordinates.
     /// </summary>
@@ -211,6 +253,22 @@ public sealed class Camera : IPositionalEntity
         Require.NotNull(time, nameof(time));
 
         Zoom -= ZoomSpeed * (float) time.ElapsedGameTime.TotalSeconds;
+    }
+
+    public void Update()
+    {
+        _deadZoneEngine.Update();
+
+        if (ContentSize == null)
+            return;
+
+        SizeF contentSize = ContentSize.Value;
+
+        RectangleF bounds = Bounds;
+        var minimum = Vector2.Zero;
+        var maximum = new Vector2(contentSize.Width - bounds.Width, contentSize.Height - bounds.Height);
+
+        Position = Vector2.Clamp(Position, minimum, maximum);
     }
     
     /// <summary>
@@ -293,12 +351,33 @@ public sealed class Camera : IPositionalEntity
             }
         }
 
-        /// <inheritdoc/>
-        public void ResolveCollision(IShape shape)
-        {
-            Vector2 penetration = Bounds.CalculatePenetration(shape);
+        public IShape PreviousBounds
+            => RectangleF.Empty;
 
-            _camera.Position += penetration;
+        /// <inheritdoc/>
+        public bool ResolveCollision(IShape shape)
+        {
+            while (Bounds.Intersects(shape))
+            {
+                Vector2 penetration = Bounds.CalculatePenetration(shape);
+
+                Vector2 newPosition = _camera.Position + penetration;
+
+                if (_camera.ContentSize != null)
+                {
+                    SizeF contentSize = _camera.ContentSize.Value;
+                    RectangleF cameraBounds = _camera.Bounds;
+                    var minimum = Vector2.Zero;
+                    var maximum = new Vector2(contentSize.Width - cameraBounds.Width, contentSize.Height - cameraBounds.Height);
+                    
+                    if (newPosition.X < minimum.X || newPosition.Y < minimum.Y || newPosition.X > maximum.X || newPosition.Y > maximum.Y)
+                        return false;
+                }
+
+                _camera.Position = newPosition;
+            }
+
+            return true;
         }
     }
 }
