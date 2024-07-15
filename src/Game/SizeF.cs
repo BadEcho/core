@@ -13,6 +13,7 @@
 
 using Microsoft.Xna.Framework;
 using BadEcho.Extensions;
+using BadEcho.Game.Properties;
 
 namespace BadEcho.Game;
 
@@ -277,7 +278,7 @@ public readonly struct SizeF : IEquatable<SizeF>
     /// </returns>
     public static bool Equals(SizeF first, SizeF second)
         => first.Equals(second);
-
+    
     /// <inheritdoc/> 
     public override bool Equals(object? obj) 
         => obj is SizeF other && Equals(other);
@@ -293,7 +294,7 @@ public readonly struct SizeF : IEquatable<SizeF>
     /// <inheritdoc/>
     public bool Equals(SizeF other)
         => Width.ApproximatelyEquals(other.Width) && Height.ApproximatelyEquals(other.Height);
-
+    
     /// <summary>
     /// Adds this size with the specified <see cref="SizeF"/> value via vector addition to compute their sum.
     /// </summary>

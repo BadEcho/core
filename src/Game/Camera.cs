@@ -11,10 +11,14 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Numerics;
+using BadEcho.Extensions;
 using BadEcho.Game.Properties;
 using BadEcho.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Vector2 = Microsoft.Xna.Framework.Vector2;
+using Vector3 = Microsoft.Xna.Framework.Vector3;
 
 namespace BadEcho.Game;
 
@@ -43,7 +47,7 @@ public sealed class Camera : IPositionalEntity
 
         _viewportConnector = viewportConnector;
         _deadZoneEngine = new CollisionEngine(
-            new RectangleF(PointF.Empty, new SizeF(parameters.BackBufferWidth, parameters.BackBufferHeight)));
+            new RectangleF(new PointF(-parameters.BackBufferWidth, -parameters.BackBufferHeight), new SizeF(parameters.BackBufferWidth * 2, parameters.BackBufferHeight * 2)));
         
         Origin = new Vector2(_viewportConnector.VirtualSize.Width / 2f, _viewportConnector.VirtualSize.Height / 2f);
     }
@@ -171,6 +175,14 @@ public sealed class Camera : IPositionalEntity
     }
 
     private SizeF? ContentSize
+    { get; set; }
+
+    private Vector2 DeadZoneOffset
+    { get; set; }
+
+    private float DeadZoneXOffset
+    { get; set; }
+    private float DeadZoneYOffset
     { get; set; }
 
     public void LockToContent(SizeF? contentSize)
@@ -329,20 +341,20 @@ public sealed class Camera : IPositionalEntity
                 return _direction switch
                 {
                     MovementDirection.Up
-                        => new RectangleF(cameraBounds.X, cameraBounds.Y, cameraBounds.Width, _size.Height),
+                        => new RectangleF(cameraBounds.X, cameraBounds.Y + _camera.DeadZoneOffset.Y, cameraBounds.Width, _size.Height),
                     MovementDirection.Left
-                        => new RectangleF(cameraBounds.X,
+                        => new RectangleF(cameraBounds.X + _camera.DeadZoneOffset.X,
                                           cameraBounds.Y + _size.Height,
                                           _size.Width,
                                           cameraBounds.Height - _size.Height * 2),
                     MovementDirection.Right
-                        => new RectangleF(cameraBounds.Right - _size.Width,
+                        => new RectangleF(cameraBounds.Right - _size.Width + _camera.DeadZoneOffset.X,
                                           cameraBounds.Y + _size.Height,
                                           _size.Width,
                                           cameraBounds.Height - _size.Height * 2),
                     MovementDirection.Down
                         => new RectangleF(cameraBounds.X,
-                                          cameraBounds.Bottom - _size.Height,
+                                          cameraBounds.Bottom - _size.Height + _camera.DeadZoneOffset.Y,
                                           cameraBounds.Width,
                                           _size.Height),
                     MovementDirection.None => RectangleF.Empty,
@@ -353,28 +365,48 @@ public sealed class Camera : IPositionalEntity
 
         public IShape PreviousBounds
             => RectangleF.Empty;
-
+        
         /// <inheritdoc/>
-        public bool ResolveCollision(IShape shape)
+        public bool ResolveCollision(IShape shape) 
         {
             while (Bounds.Intersects(shape))
             {
+             //   _offset = SizeF.Empty;
                 Vector2 penetration = Bounds.CalculatePenetration(shape);
+                Vector2 normalizedPenetration = penetration.Normalized();
+                Vector2 normalizedDeadZoneOffset = _camera.DeadZoneOffset.Normalized();
 
-                Vector2 newPosition = _camera.Position + penetration;
+                if (Vector2.Dot(normalizedPenetration, normalizedDeadZoneOffset) < 0f)
+                {
+                    _camera.DeadZoneOffset += penetration;
+                    continue;
+                }
 
+                _camera.Position += penetration;
+                RectangleF cameraBounds = _camera.Bounds;
+                
                 if (_camera.ContentSize != null)
                 {
                     SizeF contentSize = _camera.ContentSize.Value;
-                    RectangleF cameraBounds = _camera.Bounds;
-                    var minimum = Vector2.Zero;
-                    var maximum = new Vector2(contentSize.Width - cameraBounds.Width, contentSize.Height - cameraBounds.Height);
                     
-                    if (newPosition.X < minimum.X || newPosition.Y < minimum.Y || newPosition.X > maximum.X || newPosition.Y > maximum.Y)
-                        return false;
-                }
+                    var minimum = Vector2.Zero;
+                    var maximum = contentSize - cameraBounds.Size;
 
-                _camera.Position = newPosition;
+                    if (_camera.Position.LessThanAny(minimum) || _camera.Position.GreaterThanAny(maximum))
+                    {
+                        Vector2 effectiveOffset = (_camera.DeadZoneOffset * normalizedPenetration).Abs();
+                        SizeF displacedSize = _size.Subtract(effectiveOffset); 
+
+                        if (displacedSize.Width <= 1f || displacedSize.Height <= 1f)
+                        {
+                            _camera.Position -= penetration;
+                            return false;
+                        }
+
+                        _camera.DeadZoneOffset += penetration;
+                        return true;
+                    }
+                }
             }
 
             return true;
