@@ -368,35 +368,41 @@ public sealed class Camera : IPositionalEntity
         
         /// <inheritdoc/>
         public bool ResolveCollision(IShape shape) 
-        {
+        {   // May take multiple passes as dead zone position is based on the effective bounding frustum, not the camera position.
             while (Bounds.Intersects(shape))
-            {
-             //   _offset = SizeF.Empty;
+            {   
                 Vector2 penetration = Bounds.CalculatePenetration(shape);
                 Vector2 normalizedPenetration = penetration.Normalized();
                 Vector2 normalizedDeadZoneOffset = _camera.DeadZoneOffset.Normalized();
 
+                // If penetration is pushing against an offset dead zone, we need to move the dead zone back to its "origin" before
+                // adjusting the camera position.
                 if (Vector2.Dot(normalizedPenetration, normalizedDeadZoneOffset) < 0f)
                 {
                     _camera.DeadZoneOffset += penetration;
                     continue;
                 }
 
+                // Move the camera by the amount of penetration into our dead zone.
                 _camera.Position += penetration;
                 RectangleF cameraBounds = _camera.Bounds;
                 
                 if (_camera.ContentSize != null)
-                {
+                {   // If dead zone penetration would result in the camera being pushed beyond content size limits, then we want
+                    // to instead move the dead zone, allowing the target to enter into it, until the dead zone is offscreen.
                     SizeF contentSize = _camera.ContentSize.Value;
                     
                     var minimum = Vector2.Zero;
                     var maximum = contentSize - cameraBounds.Size;
 
                     if (_camera.Position.LessThanAny(minimum) || _camera.Position.GreaterThanAny(maximum))
-                    {
+                    {   // We take into account the direction of penetration when calculating effective dead zone size.
                         Vector2 effectiveOffset = (_camera.DeadZoneOffset * normalizedPenetration).Abs();
                         SizeF displacedSize = _size.Subtract(effectiveOffset); 
 
+                        // If the effective dead zone size is almost nonexistent, then we return false to signal the collision
+                        // is not resolved. This should cause the target spatial entity to either "bump" into the border of
+                        // the camera, preventing traversal, or perhaps cause a transition to another screen to occur.
                         if (displacedSize.Width <= 1f || displacedSize.Height <= 1f)
                         {
                             _camera.Position -= penetration;

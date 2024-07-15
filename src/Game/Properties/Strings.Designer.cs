@@ -79,15 +79,6 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Comparison object type must be &apos;{0}&apos;..
-        /// </summary>
-        internal static string CompareToWrongType {
-            get {
-                return ResourceManager.GetString("CompareToWrongType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Derived control class must pass itself as the generic self-recurring type parameter..
         /// </summary>
         internal static string ControlNotSelfRecurring {
