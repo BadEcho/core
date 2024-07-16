@@ -151,13 +151,12 @@ public sealed class TileLayer : Layer
         public IShape Bounds 
         { get; }
 
-        public IShape PreviousBounds
-            => Bounds;
+        /// <inheritdoc/>
+        public bool CheckForCollisions
+            => false;
 
         /// <inheritdoc />
         public bool ResolveCollision(IShape shape)
-        {
-            return false;
-        }
+            => false;
     }
 }

@@ -150,8 +150,8 @@ public class QuadtreeTests
 
         public IShape Bounds { get; }
 
-        public IShape PreviousBounds
-            => Bounds;
+        public bool CheckForCollisions
+            => true;
 
         /// <inheritdoc />
         public bool ResolveCollision(IShape shape)

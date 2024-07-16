@@ -27,7 +27,11 @@ public interface ISpatialEntity
     /// </remarks>
     IShape Bounds { get; }
 
-    IShape PreviousBounds { get; }
+    /// <summary>
+    /// Gets a value indicating if the entity should be checked for collisions due to a change in state such
+    /// as movement.
+    /// </summary>
+    bool CheckForCollisions { get; }
 
     /// <summary>
     /// Resolves a collision that has occurred with the entity and the provided collision boundary.

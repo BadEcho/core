@@ -11,14 +11,11 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.Numerics;
 using BadEcho.Extensions;
 using BadEcho.Game.Properties;
 using BadEcho.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Vector2 = Microsoft.Xna.Framework.Vector2;
-using Vector3 = Microsoft.Xna.Framework.Vector3;
 
 namespace BadEcho.Game;
 
@@ -363,8 +360,9 @@ public sealed class Camera : IPositionalEntity
             }
         }
 
-        public IShape PreviousBounds
-            => RectangleF.Empty;
+        /// <inheritdoc/>
+        public bool CheckForCollisions
+            => true;
         
         /// <inheritdoc/>
         public bool ResolveCollision(IShape shape) 

@@ -104,8 +104,9 @@ public class Sprite : IPositionalEntity, ISpatialEntity
     public IShape Bounds 
         => _bounds.CenterAt(GetTargetArea().Center);
 
-    public IShape PreviousBounds
-        => _bounds.CenterAt(GetTargetArea().Center - LastMovement);
+    /// <inheritdoc/>
+    public bool CheckForCollisions
+    { get; private set; }
 
     /// <inheritdoc />
     public bool ResolveCollision(IShape shape)
@@ -138,6 +139,7 @@ public class Sprite : IPositionalEntity, ISpatialEntity
         Vector2 lastPosition = Position;
         
         Position += Vector2.Multiply(Velocity, timeScale);
+        CheckForCollisions = Velocity != Vector2.Zero;
         LastMovement = Position - lastPosition;
 
         Angle += AngularVelocity * timeScale;

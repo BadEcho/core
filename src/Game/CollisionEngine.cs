@@ -74,7 +74,10 @@ public sealed class CollisionEngine
     /// </summary>
     public void Update()
     {
-        foreach (ISpatialEntity collidable in _collidables)
+        IEnumerable<ISpatialEntity> collidablesToCheck
+            = _collidables.Where(c => c.CheckForCollisions);
+
+        foreach (ISpatialEntity collidable in collidablesToCheck)
         {
             _collisionTree.Remove(collidable);
 
@@ -82,21 +85,8 @@ public sealed class CollisionEngine
 
             foreach (var collision in collisions)
             {
-                ISpatialEntity resolver, collider;
-
-                if (collidable.PreviousBounds.Intersects(collision.Bounds))
-                {
-                    resolver = collision;
-                    collider = collidable;
-                }
-                else
-                {
-                    resolver = collidable;
-                    collider = collision;
-                }
-
-                if (!resolver.ResolveCollision(collider.Bounds))
-                    collider.ResolveCollision(resolver.Bounds);
+                if (!collidable.ResolveCollision(collision.Bounds))
+                    collision.ResolveCollision(collidable.Bounds);
             }
 
             _collisionTree.Insert(collidable);
