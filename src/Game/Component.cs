@@ -23,5 +23,5 @@ public abstract class Component
     /// </summary>
     /// <param name="entity">The entity to act on.</param>
     /// <param name="time">The game timing configuration and state for this update.</param>
-    public abstract void Update(IPositionalEntity entity, GameUpdateTime time);
+    public abstract void Update(IEntity entity, GameUpdateTime time);
 }

@@ -10,20 +10,22 @@ namespace BadEcho.Game.Routines;
 public sealed class MoveTo : Component
 {
     private readonly Vector2 _target;
+    private readonly float _maxSpeed;
 
     private float _speed;
 
-    public MoveTo(Vector2 target)
+    public MoveTo(Vector2 target, float maxSpeed)
     {
         _target = target;
+        _maxSpeed = maxSpeed;
     }
 
-    public override void Update(IPositionalEntity entity, GameUpdateTime time)
+    public override void Update(IEntity entity, GameUpdateTime time)
     {
         Require.NotNull(entity, nameof(entity));
 
-        _speed = Move.Approach(_speed, entity.MaxSpeed, time);
+        _speed = Move.Approach(_speed, _maxSpeed, time);
 
-        entity.Velocity = Move.Approach(entity.Position, _target, entity.MaxSpeed, time);
+        entity.Velocity = Move.Approach(entity.Position, _target, _maxSpeed, time);
     }
 }

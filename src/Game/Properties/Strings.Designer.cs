@@ -178,6 +178,15 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No entity has been associated with this collider..
+        /// </summary>
+        internal static string NoEntityAssociated {
+            get {
+                return ResourceManager.GetString("NoEntityAssociated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Control cannot process input without an input handler..
         /// </summary>
         internal static string NoInputHandler {

@@ -11,19 +11,21 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game;
 
 /// <summary>
-/// Provides a canvas for a texture able to be positioned and moved on the screen as a spatial entity in
-/// two dimensions.
+/// Provides a canvas for a texture able to be positioned and moved on the screen in two dimensions.
 /// </summary>
-public class Sprite : IPositionalEntity, ISpatialEntity
+public class Sprite : IEntity
 {
     private readonly IMovementSystem _movementSystem;
     private readonly IShape _bounds;
+
+    private EntityCollider _collider;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Sprite"/> class.
@@ -65,6 +67,7 @@ public class Sprite : IPositionalEntity, ISpatialEntity
         Texture = texture;
         _bounds = new RectangleF(PointF.Empty, Texture.Bounds.Size);
         _movementSystem = movementSystem;
+        Collider = new EntityCollider();
     }
 
     /// <summary>
@@ -72,7 +75,25 @@ public class Sprite : IPositionalEntity, ISpatialEntity
     /// </summary>
     public Texture2D Texture
     { get; }
+    
+    /// <summary>
+    /// Gets or sets the collider that manages collisions for this sprite.
+    /// </summary>
+    public EntityCollider Collider
+    {
+        get => _collider;
+        [MemberNotNull(nameof(_collider))]
+        set
+        {
+            _collider = value;
+            _collider.Entity = this;
+        }
+    }
 
+    /// <inheritdoc/>
+    public ICollection<Component> Components
+    { get; } = [];
+    
     /// <inheritdoc/>
     public Vector2 Position
     { get; set; }
@@ -86,10 +107,6 @@ public class Sprite : IPositionalEntity, ISpatialEntity
     { get; set; }
 
     /// <inheritdoc/>
-    public float MaxSpeed
-    { get; set; }
-
-    /// <inheritdoc/>
     public float Angle
     { get; set; }
 
@@ -97,26 +114,9 @@ public class Sprite : IPositionalEntity, ISpatialEntity
     public float AngularVelocity
     { get; set; }
 
-    public ICollection<Component> Components
-    { get; } = [];
-
     /// <inheritdoc />
     public IShape Bounds 
         => _bounds.CenterAt(GetTargetArea().Center);
-
-    /// <inheritdoc/>
-    public bool CheckForCollisions
-    { get; private set; }
-
-    /// <inheritdoc />
-    public bool ResolveCollision(IShape shape)
-    {
-        Vector2 penetration = Bounds.CalculatePenetration(shape);
-        
-        _movementSystem.ApplyPenetration(this, penetration);
-
-        return true;
-    }
 
     /// <summary>
     /// Executes associated components and advances the movement of the sprite by one tick.
@@ -139,7 +139,7 @@ public class Sprite : IPositionalEntity, ISpatialEntity
         Vector2 lastPosition = Position;
         
         Position += Vector2.Multiply(Velocity, timeScale);
-        CheckForCollisions = Velocity != Vector2.Zero;
+        Collider.IsDirty = Velocity != Vector2.Zero;
         LastMovement = Position - lastPosition;
 
         Angle += AngularVelocity * timeScale;

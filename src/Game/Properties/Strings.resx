@@ -173,4 +173,7 @@
 	<data name="IndexDataAlreadyLoaded" xml:space="preserve">
 		<value>Index data has already been primed for loading into an index buffer and can no longer be added to.</value>
 	</data>
+	<data name="NoEntityAssociated" xml:space="preserve">
+		<value>No entity has been associated with this collider.</value>
+	</data>
 </root>

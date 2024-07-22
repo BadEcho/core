@@ -16,8 +16,8 @@ using Microsoft.Xna.Framework;
 namespace BadEcho.Game;
 
 /// <summary>
-/// Provides a canvas for a texture containing multiple smaller images arranged tabularly, allowing for the animation of an entity
-/// via selective image drawing of the frames found on a provided sprite sheet.
+/// Provides a canvas for a texture containing multiple smaller images arranged tabularly, allowing for the animation of a
+/// sprite entity via selective image drawing of the frames found on a provided sprite sheet.
 /// </summary>
 public sealed class AnimatedSprite : Sprite
 {

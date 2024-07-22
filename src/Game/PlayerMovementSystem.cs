@@ -31,7 +31,7 @@ public sealed class PlayerMovementSystem : IMovementSystem
     private const float VELOCITY_MIN = -1.25f;
 
     /// <inheritdoc/>
-    public void UpdateMovement(IPositionalEntity entity)
+    public void UpdateMovement(IEntity entity)
     {
         Require.NotNull(entity, nameof(entity));
 
@@ -42,7 +42,7 @@ public sealed class PlayerMovementSystem : IMovementSystem
     }
 
     /// <inheritdoc />
-    public void ApplyPenetration(IPositionalEntity entity, Vector2 penetration)
+    public void ApplyPenetration(IEntity entity, Vector2 penetration)
     {
         Require.NotNull(entity, nameof(entity));
 

@@ -11,62 +11,63 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Logging;
-
 namespace BadEcho.Game;
 
 /// <summary>
-/// Provides an engine for handling collisions between entities.
+/// Provides an engine for handling collisions between colliders.
 /// </summary>
 public sealed class CollisionEngine
 {
-    private readonly List<ISpatialEntity> _collidables = [];
-    private readonly Quadtree _collisionTree;
+    private readonly List<Collider> _colliders = [];
+    private readonly Quadtree<Collider> _collisionTree;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CollisionEngine"/> class.
     /// </summary>
     /// <param name="bounds">
-    /// The bounding rectangle of the region that the collidables handled by this engine occupy.
+    /// The bounding rectangle of the region that the colliders handled by this engine occupy.
     /// </param>
     public CollisionEngine(RectangleF bounds)
-        => _collisionTree = new Quadtree(bounds);
+        => _collisionTree = new Quadtree<Collider>(bounds) { AllowOutOfBounds = true };
 
     /// <summary>
-    /// Adds the provided collidable entity into this engine's collision tree.
+    /// Adds the provided collider into this engine's collision tree.
     /// </summary>
-    /// <param name="collidable">The collidable entity to add to this engine's collision tree.</param>
-    public void AddCollidable(ISpatialEntity collidable)
+    /// <param name="collider">The collider to add to this engine's collision tree.</param>
+    public void Register(Collider collider)
     {
-        Require.NotNull(collidable, nameof(collidable));
+        Require.NotNull(collider, nameof(collider));
 
-        if (_collidables.Contains(collidable))
+        if (_colliders.Contains(collider))
             return;
 
-        _collidables.Add(collidable);
-        _collisionTree.Insert(collidable);
+        _colliders.Add(collider);
+        _collisionTree.Insert(collider);
     }
 
     /// <summary>
-    /// Removes the specified collidable entity from this engine's collision tree.
+    /// Removes the specified collider from this engine's collision tree.
     /// </summary>
-    /// <param name="collidable">The collidable entity to remove from this engine's collision tree.</param>
-    public void RemoveCollidable(ISpatialEntity collidable)
+    /// <param name="collider">The collider to remove from this engine's collision tree.</param>
+    public void Unregister(Collider collider)
     {
-        if (!_collidables.Remove(collidable))
+        if (!_colliders.Remove(collider))
             return;
         
-        _collisionTree.Remove(collidable);
+        _collisionTree.Remove(collider);
     }
 
-    public void Clear()
+    /// <summary>
+    /// Removes all registered colliders from this engine's collision tree.
+    /// </summary>
+    public void UnregisterAll()
     {
-        foreach (ISpatialEntity collidable in _collidables)
+        foreach (Collider collider in _colliders)
         {
-            _collisionTree.Remove(collidable);
+            _collisionTree.Remove(collider);
         }
 
-        _collidables.Clear();
+        _colliders.Clear();
     }
 
     /// <summary>
@@ -74,22 +75,22 @@ public sealed class CollisionEngine
     /// </summary>
     public void Update()
     {
-        IEnumerable<ISpatialEntity> collidablesToCheck
-            = _collidables.Where(c => c.CheckForCollisions);
+        IEnumerable<Collider> collidersToCheck
+            = _colliders.Where(c => c.IsDirty);
 
-        foreach (ISpatialEntity collidable in collidablesToCheck)
+        foreach (Collider collider in collidersToCheck)
         {
-            _collisionTree.Remove(collidable);
+            _collisionTree.Remove(collider);
 
-            IEnumerable<ISpatialEntity> collisions = _collisionTree.FindCollisions(collidable);
-
+            IEnumerable<Collider> collisions = _collisionTree.FindCollisions(collider)
+                                                             .Where(collider.CanCollideWith);
             foreach (var collision in collisions)
             {
-                if (!collidable.ResolveCollision(collision.Bounds))
-                    collision.ResolveCollision(collidable.Bounds);
+                if (!collider.ResolveCollision(collision) && collision.CanCollideWith(collider))
+                    collision.ResolveCollision(collider);
             }
 
-            _collisionTree.Insert(collidable);
+            _collisionTree.Insert(collider);
         }
     }
 }

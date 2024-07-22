@@ -24,7 +24,7 @@ public interface IMovementSystem
     /// Updates the movement of the provided entity.
     /// </summary>
     /// <param name="entity">The positional entity whose movement is to be updated.</param>
-    void UpdateMovement(IPositionalEntity entity);
+    void UpdateMovement(IEntity entity);
 
     /// <summary>
     /// Applies a penetration vector to the provided entity.
@@ -33,5 +33,5 @@ public interface IMovementSystem
     /// The positional entity that has formed a penetration vector by overlapping with another entity.
     /// </param>
     /// <param name="penetration">The penetration vector to apply.</param>
-    void ApplyPenetration(IPositionalEntity entity, Vector2 penetration);
+    void ApplyPenetration(IEntity entity, Vector2 penetration);
 }
