@@ -14,12 +14,12 @@
 namespace BadEcho.Game;
 
 /// <summary>
-/// Provides a process that acts on an associated entity.
+/// Provides an aspect or behavior ascribed to an entity.
 /// </summary>
 public abstract class Component
 {
     /// <summary>
-    /// Executes this component's process on the provided entity.
+    /// Applies this component to the provided entity.
     /// </summary>
     /// <param name="entity">The entity to act on.</param>
     /// <param name="time">The game timing configuration and state for this update.</param>

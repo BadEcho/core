@@ -22,8 +22,7 @@ namespace BadEcho.Game;
 public interface IEntity : ISpatial
 {
     /// <summary>
-    /// Gets the collection of game components, each characterizing this entity as possessing a particular
-    /// aspect.
+    /// Gets the collection of game components, each ascribing an aspect or behavior to this entity.
     /// </summary>
     ICollection<Component> Components { get; }
 

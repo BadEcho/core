@@ -11,8 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Logging;
-
 namespace BadEcho.Game;
 
 /// <summary>
@@ -103,8 +101,6 @@ public class SpriteAnimation
 
         if (_elapsedTime <= _frames[CurrentFrame])
             return;
-
-        Logger.Debug(_elapsedTime.ToString());
 
         // Prevent lag accumulation.
         _elapsedTime -= _frames[CurrentFrame];

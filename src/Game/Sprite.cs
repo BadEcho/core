@@ -22,7 +22,6 @@ namespace BadEcho.Game;
 /// </summary>
 public class Sprite : IEntity
 {
-    private readonly IMovementSystem _movementSystem;
     private readonly IShape _bounds;
 
     private EntityCollider _collider;
@@ -32,16 +31,7 @@ public class Sprite : IEntity
     /// </summary>
     /// <param name="boundedTexture">The texture of the sprite, with spatial boundaries defined.</param>
     public Sprite(BoundedTexture boundedTexture)
-        : this(boundedTexture, new NonMovementSystem())
-    { }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Sprite"/> class.
-    /// </summary>
-    /// <param name="boundedTexture">The texture of the sprite, with spatial boundaries defined.</param>
-    /// <param name="movementSystem">The movement system controlling the sprite's movement.</param>
-    public Sprite(BoundedTexture boundedTexture, IMovementSystem movementSystem)
-        : this(GetBoundedTexture(boundedTexture), movementSystem)
+        : this(GetBoundedTexture(boundedTexture))
     {
         _bounds = boundedTexture.Bounds;
     }
@@ -51,22 +41,11 @@ public class Sprite : IEntity
     /// </summary>
     /// <param name="texture">The texture of the sprite.</param>
     public Sprite(Texture2D texture)
-        : this(texture, new NonMovementSystem())
-    { }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Sprite"/> class.
-    /// </summary>
-    /// <param name="texture">The texture of the sprite.</param>
-    /// <param name="movementSystem">The movement system controlling the sprite's movement.</param>
-    public Sprite(Texture2D texture, IMovementSystem movementSystem)
     {
         Require.NotNull(texture, nameof(texture));
-        Require.NotNull(movementSystem, nameof(movementSystem));
         
         Texture = texture;
         _bounds = new RectangleF(PointF.Empty, Texture.Bounds.Size);
-        _movementSystem = movementSystem;
         Collider = new EntityCollider();
     }
 
@@ -131,18 +110,13 @@ public class Sprite : IEntity
             component.Update(this, time);
         }
 
-        _movementSystem.UpdateMovement(this);
-
-        float timeScale 
-            = (float) (time.ElapsedGameTime.TotalMilliseconds / time.TargetElapsedTime.TotalMilliseconds);
-        
         Vector2 lastPosition = Position;
-        
-        Position += Vector2.Multiply(Velocity, timeScale);
+
+        Position += Move.ScaleToTime(Velocity, time);
         Collider.IsDirty = Velocity != Vector2.Zero;
         LastMovement = Position - lastPosition;
 
-        Angle += AngularVelocity * timeScale;
+        Angle += Move.ScaleToTime(AngularVelocity, time);
     }
 
     /// <summary>
