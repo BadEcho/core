@@ -13,7 +13,6 @@
 
 using Microsoft.Xna.Framework;
 using BadEcho.Extensions;
-using BadEcho.Game.Properties;
 
 namespace BadEcho.Game;
 

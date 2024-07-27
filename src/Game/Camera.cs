@@ -11,9 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Extensions;
 using BadEcho.Game.Properties;
-using BadEcho.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -175,12 +173,16 @@ public sealed class Camera
     { get; set; }
 
     /// <summary>
-    /// Restricts the panning of this camera to the specified area.
+    /// Restricts the movement of this camera to the specified area.
     /// </summary>
-    /// <param name="contentSize">The area this camera can pan.</param>
+    /// <param name="contentSize">The area this camera can display.</param>
     public void LockToContent(SizeF? contentSize)
         => ContentSize = contentSize;
 
+    /// <summary>
+    /// Configures the camera to move with the target so that it is always at the center.
+    /// </summary>
+    /// <param name="followTarget">The target to follow with the camera.</param>
     public void Follow(Collider followTarget)
     {
         Require.NotNull(followTarget, nameof(followTarget));
@@ -194,6 +196,14 @@ public sealed class Camera
         Follow(followTarget, deadZoneSize);
     }
 
+    /// <summary>
+    /// Configures the camera to move with the target when it collides against one of the camera's bordering
+    /// dead zones.
+    /// </summary>
+    /// <param name="followTarget">The target to follow with the camera.</param>
+    /// <param name="deadZoneSize">
+    /// The size of the dead zones in relation to the edges of the camera they occupy.
+    /// </param>
     public void Follow(Collider followTarget, SizeF deadZoneSize)
     {
         Require.NotNull(followTarget, nameof(followTarget));
@@ -271,6 +281,9 @@ public sealed class Camera
         Zoom -= ZoomSpeed * (float) time.ElapsedGameTime.TotalSeconds;
     }
 
+    /// <summary>
+    /// Performs any necessary updates to the position and state of the camera.
+    /// </summary>
     public void Update()
     {
         _deadZoneEngine.Update();
@@ -298,7 +311,7 @@ public sealed class Camera
            * Matrix.CreateTranslation(new Vector3(Origin, 0f));
 
     /// <summary>
-    /// Provides a collider that will result in the camera scrolling in a specified direction when a
+    /// Provides a collider that will result in the camera moving in a specified direction when a
     /// follow target collides with it.
     /// </summary>
     private sealed class DeadZone : Collider
@@ -311,7 +324,7 @@ public sealed class Camera
         /// Initializes a new instance of the <see cref="DeadZone"/> class.
         /// </summary>
         /// <param name="camera">The camera this dead zone is for.</param>
-        /// <param name="direction">The direction the camera will scroll when colliding with this dead zone.</param>
+        /// <param name="direction">The direction the camera will move when colliding with this dead zone.</param>
         /// <param name="size">The size of the dead zone in relation to the edge of the camera it occupies.</param>
         public DeadZone(Camera camera, MovementDirection direction, SizeF size)
         {
@@ -353,7 +366,7 @@ public sealed class Camera
                                           cameraBounds.Width,
                                           _size.Height),
                     MovementDirection.None => RectangleF.Empty,
-                    _ => throw new InvalidOperationException(Strings.InvalidScrollRegionDirection)
+                    _ => throw new InvalidOperationException(Strings.InvalidDeadZoneDirection)
                 };
             }
         }

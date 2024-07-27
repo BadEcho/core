@@ -133,11 +133,11 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid movement direction for scrolling region..
+        ///   Looks up a localized string similar to Invalid movement direction for camera dead zone..
         /// </summary>
-        internal static string InvalidScrollRegionDirection {
+        internal static string InvalidDeadZoneDirection {
             get {
-                return ResourceManager.GetString("InvalidScrollRegionDirection", resourceCulture);
+                return ResourceManager.GetString("InvalidDeadZoneDirection", resourceCulture);
             }
         }
         

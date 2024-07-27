@@ -81,6 +81,9 @@ public sealed class Quadtree<T>
     public bool IsLeaf
         => _topLeft == null || _topRight == null || _bottomLeft == null || _bottomRight == null;
 
+    /// <summary>
+    /// Gets or sets a value if elements not fully contained with this quadtree's bounds are allowed.
+    /// </summary>
     public bool AllowOutOfBounds
     { get; set; }
     
