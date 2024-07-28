@@ -16,8 +16,8 @@ using Microsoft.Xna.Framework;
 namespace BadEcho.Game;
 
 /// <summary>
-/// Provides a canvas for a texture containing multiple smaller images arranged tabularly, allowing for the animation of an entity
-/// via selective image drawing of the frames found on a provided sprite sheet.
+/// Provides a canvas for a texture containing multiple smaller images arranged tabularly, allowing for the animation of a
+/// sprite entity via selective image drawing of the frames found on a provided sprite sheet.
 /// </summary>
 public sealed class AnimatedSprite : Sprite
 {
@@ -29,9 +29,8 @@ public sealed class AnimatedSprite : Sprite
     /// Initializes a new instance of the <see cref="AnimatedSprite"/> class.
     /// </summary>
     /// <param name="sheet">The sprite sheet containing the various animation frames of the sprite.</param>
-    /// <param name="movementSystem">The movement system controlling the sprite's movement.</param>
-    public AnimatedSprite(SpriteSheet sheet, IMovementSystem movementSystem)
-        : base(GetSheetTexture(sheet), movementSystem)
+    public AnimatedSprite(SpriteSheet sheet)
+        : base(GetSheetTexture(sheet))
     {
         _sheet = sheet;
         _currentAnimation = sheet.GetAnimation(string.Empty);
@@ -50,7 +49,6 @@ public sealed class AnimatedSprite : Sprite
                 _currentAnimation.Pause();
             else
             {
-                _currentAnimation.Stop();
                 _currentAnimation = _sheet.GetAnimation(newDirection.ToString());
                 _currentAnimation.Play();
             }

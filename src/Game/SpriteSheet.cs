@@ -35,11 +35,8 @@ namespace BadEcho.Game;
 /// </remarks>
 public sealed class SpriteSheet
 {
-    private readonly Dictionary<string, SpriteAnimation> _nameAnimationMap
+    private readonly Dictionary<string, SpriteAnimationSequence> _nameAnimationMap
         = new(StringComparer.OrdinalIgnoreCase);
-
-    private readonly Dictionary<SpriteAnimation, int> _animationStartFrameMap
-        = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SpriteSheet"/> class.
@@ -89,15 +86,8 @@ public sealed class SpriteSheet
     {
         Require.NotNull(sequence, nameof(sequence));
 
-        var frames = Enumerable.Repeat(sequence.Duration,
-                                       sequence.EndFrame - sequence.StartFrame + 1);
-
-        var animation = new SpriteAnimation(frames);
-
-        if (!_nameAnimationMap.TryAdd(sequence.Name, animation))
+        if (!_nameAnimationMap.TryAdd(sequence.Name, sequence))
             throw new ArgumentException(Strings.SheetAlreadyHasAnimation, nameof(sequence));
-
-        _animationStartFrameMap.Add(animation, sequence.StartFrame);
     }
 
     /// <summary>
@@ -106,8 +96,15 @@ public sealed class SpriteSheet
     /// <param name="name">The name of the sprite animation.</param>
     /// <returns>The animation for <c>name</c>.</returns>
     public SpriteAnimation GetAnimation(string name)
-        => _nameAnimationMap.GetValueOrDefault(name)
-           ?? throw new ArgumentException(Strings.SheetNoFramesForAnimation, nameof(name));
+    {
+        if (!_nameAnimationMap.TryGetValue(name, out SpriteAnimationSequence? sequence))
+            throw new ArgumentException(Strings.SheetNoFramesForAnimation, nameof(name));
+
+        var frames = Enumerable.Repeat(sequence.Duration,
+                                       sequence.EndFrame - sequence.StartFrame + 1);
+
+        return new SpriteAnimation(frames, sequence.Name);
+    }
 
     /// <summary>
     /// Gets the region of the sprite sheet's texture corresponding to the requested frame of the specified animation.
@@ -121,11 +118,11 @@ public sealed class SpriteSheet
     public Rectangle GetFrameRectangle(SpriteAnimation animation)
     {
         Require.NotNull(animation, nameof(animation));
-
-        if (!_animationStartFrameMap.TryGetValue(animation, out int startFrame))
+        
+        if (!_nameAnimationMap.TryGetValue(animation.Name, out SpriteAnimationSequence? sequence))
             throw new ArgumentException(Strings.SheetNoFramesForAnimation, nameof(animation));
 
-        int frameIndex = animation.CurrentFrame + startFrame;
+        int frameIndex = animation.CurrentFrame + sequence.StartFrame;
         Size frameLocation = new(frameIndex % ColumnCount, frameIndex / ColumnCount);
 
         return new Rectangle(frameLocation * FrameSize, FrameSize);

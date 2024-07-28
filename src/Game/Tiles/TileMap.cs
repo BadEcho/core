@@ -224,18 +224,18 @@ public sealed class TileMap : Extensible, IModelRenderer
     }
 
     /// <summary>
-    /// Converts this tile map into a sequence of space-occupying entities for every tile belonging to a tile layer
+    /// Converts this tile map into a sequence of space-occupying colliders for every tile belonging to a tile layer
     /// marked as collidable.
     /// </summary>
     /// <returns>
-    /// A sequence of <see cref="ISpatialEntity"/> instances for every tile in this map that belongs to a tile layer with
+    /// A sequence of <see cref="Collider"/> instances for every tile in this map that belongs to a tile layer with
     /// the <see cref="KnownProperties.Collidable"/> custom property set to <c>true</c>.
     /// </returns>
-    public IEnumerable<ISpatialEntity> ToSpatialMap()
+    public IEnumerable<Collider> ToCollidableMap()
         => Layers.OfType<TileLayer>()
                  .Where(l => l.CustomProperties.Booleans
                               .TryGetValue(KnownProperties.Collidable, out bool collidable) && collidable)
-                 .SelectMany(l => l.ToSpatialLayer());
+                 .SelectMany(l => l.ToCollidableLayer());
 
     private void ClearModels()
     {

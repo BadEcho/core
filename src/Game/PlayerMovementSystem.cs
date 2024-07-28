@@ -17,9 +17,9 @@ using Microsoft.Xna.Framework.Input;
 namespace BadEcho.Game;
 
 /// <summary>
-/// Provides a system for the player to exert control over a positional entity's movement.
+/// Provides a system for the player to exert control over an entity's movement.
 /// </summary>
-public sealed class PlayerMovementSystem : IMovementSystem
+public sealed class PlayerMovementSystem : Component
 {
     // TODO: These will be set via a hot pluggable config module in the future. This entire class will have a major refactor.
     private const Keys MOVEMENT_LEFT = Keys.A;
@@ -27,11 +27,11 @@ public sealed class PlayerMovementSystem : IMovementSystem
     private const Keys MOVEMENT_RIGHT = Keys.D;
     private const Keys MOVEMENT_DOWN = Keys.S;
     // TODO: Will be configurable based on entity.
-    private const float VELOCITY_MAX = 1.25f;
-    private const float VELOCITY_MIN = -1.25f;
+    private const float VELOCITY_MAX = 50f;
+    private const float VELOCITY_MIN = -50f;
 
     /// <inheritdoc/>
-    public void UpdateMovement(IPositionalEntity entity)
+    public override void Update(IEntity entity, GameUpdateTime time)
     {
         Require.NotNull(entity, nameof(entity));
 
@@ -40,15 +40,7 @@ public sealed class PlayerMovementSystem : IMovementSystem
 
         entity.Velocity = new Vector2(xVelocity, yVelocity);
     }
-
-    /// <inheritdoc />
-    public void ApplyPenetration(IPositionalEntity entity, Vector2 penetration)
-    {
-        Require.NotNull(entity, nameof(entity));
-
-        entity.Position += penetration;
-    }
-
+    
     private static float CalculateUpdatedVelocity(Keys positiveDirectionKey, Keys negativeDirectionKey)
     {
         KeyboardState keyboardState = Keyboard.GetState();
@@ -57,7 +49,7 @@ public sealed class PlayerMovementSystem : IMovementSystem
         bool negativeMovement = keyboardState.IsKeyDown(negativeDirectionKey);
 
         if (!positiveMovement && !negativeMovement)
-                return 0;
+            return 0;
 
         return positiveMovement ? VELOCITY_MAX : VELOCITY_MIN;
     }

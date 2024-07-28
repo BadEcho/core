@@ -3,7 +3,7 @@
 //      Created by Matt Weber <matt@badecho.com>
 //      Copyright @ 2024 Bad Echo LLC. All rights reserved.
 //
-//      Bad Echo Technologies are licensed under a
+//      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
 //
 //      See accompanying file LICENSE.md or a copy at:
@@ -11,20 +11,17 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using Microsoft.Xna.Framework;
-
 namespace BadEcho.Game;
 
 /// <summary>
-/// Provides a system that has no effect on a positional entity's movement.
+/// Provides an aspect or behavior ascribed to an entity.
 /// </summary>
-public sealed class NonMovementSystem : IMovementSystem
+public abstract class Component
 {
-    /// <inheritdoc />
-    public void UpdateMovement(IPositionalEntity entity)
-    { }
-
-    /// <inheritdoc />
-    public void ApplyPenetration(IPositionalEntity entity, Vector2 penetration)
-    { }
+    /// <summary>
+    /// Applies this component to the provided entity.
+    /// </summary>
+    /// <param name="entity">The entity to act on.</param>
+    /// <param name="time">The game timing configuration and state for this update.</param>
+    public abstract void Update(IEntity entity, GameUpdateTime time);
 }

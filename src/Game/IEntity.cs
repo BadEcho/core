@@ -16,37 +16,38 @@ using Microsoft.Xna.Framework;
 namespace BadEcho.Game;
 
 /// <summary>
-/// Defines an entity able to be positioned and moved on the screen in two dimensions.
+/// Defines a game object able to be positioned and moved on the screen in two dimensions as well as
+/// characterized with any number of game components.
 /// </summary>
-public interface IPositionalEntity
+public interface IEntity : ISpatial
 {
+    /// <summary>
+    /// Gets the collection of game components, each ascribing an aspect or behavior to this entity.
+    /// </summary>
+    ICollection<Component> Components { get; }
+
     /// <summary>
     /// Gets or sets the current drawing location of the entity.
     /// </summary>
-    public Vector2 Position
-    { get; set; }
+    Vector2 Position { get; set; }
 
     /// <summary>
     /// Gets the change to the entity's position that occurred from its last update.
     /// </summary>
-    public Vector2 LastMovement
-    { get; }
+    Vector2 LastMovement { get; }
 
     /// <summary>
     /// Gets or sets the rate of change of the entity's position.
     /// </summary>
-    public Vector2 Velocity
-    { get; set; }
+    Vector2 Velocity { get; set; }
 
     /// <summary>
     /// Gets the amount that the entity is currently being rotated about its point of rotation.
     /// </summary>
-    public float Angle
-    { get; }
+    float Angle { get; }
 
     /// <summary>
     /// Gets or sets the rate of change of the entity's angle.
     /// </summary>
-    public float AngularVelocity
-    { get; set; }
+    float AngularVelocity { get; set; }
 }

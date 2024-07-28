@@ -14,22 +14,16 @@
 namespace BadEcho.Game;
 
 /// <summary>
-/// Defines an entity that occupies space.
+/// Defines an object that occupies space.
 /// </summary>
-public interface ISpatialEntity
+public interface ISpatial
 {
     /// <summary>
-    /// Gets the spatial shape of the entity.
+    /// Gets the spatial shape of the object.
     /// </summary>
     /// <remarks>
-    /// The spatial shape of the entity acts as its boundary that, if crossed by another spatial entity, would
+    /// The spatial shape of the object acts as its boundary that, if crossed by another spatial object, could
     /// result in a collision between the two.
     /// </remarks>
     IShape Bounds { get; }
-
-    /// <summary>
-    /// Resolves a collision that has occurred with the entity and the provided collision boundary.
-    /// </summary>
-    /// <param name="shape">The boundary of the colliding entity.</param>
-    void ResolveCollision(IShape shape);
 }

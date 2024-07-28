@@ -77,7 +77,7 @@ public sealed class TileLayer : Layer
     }
 
     /// <summary>
-    /// Gets the tile, if any, found at the specified position in the layer.
+    /// Gets the tile, if one exists, at the specified position in the layer.
     /// </summary>
     /// <param name="position">The drawing location of the tile to return.</param>
     /// <returns>The tile being drawn at <c>position</c>.</returns>
@@ -108,10 +108,10 @@ public sealed class TileLayer : Layer
     }
 
     /// <summary>
-    /// Converts this tile layer into a sequence of space-occupying entities for all tiles.
+    /// Converts this tile layer into a sequence of space-occupying colliders for all tiles.
     /// </summary>
-    /// <returns>A sequence of <see cref="ISpatialEntity"/> instances for every tile in this layer.</returns>
-    internal IEnumerable<ISpatialEntity> ToSpatialLayer()
+    /// <returns>A sequence of <see cref="Collider"/> instances for every tile in this layer.</returns>
+    internal IEnumerable<Collider> ToCollidableLayer()
     {
         var validTiles = Tiles.Select((t, i) => new { Tile = t, Index = i })
                               .Where(ti => ti.Tile != default);
@@ -121,7 +121,7 @@ public sealed class TileLayer : Layer
             int row = validTile.Index / _size.Width;
             int column = row == 0 ? validTile.Index : validTile.Index % (row * _size.Width);
 
-            yield return new SpatialTile(column, row, _tileSize);
+            yield return new TileCollider(column, row, _tileSize);
         }
     }
 
@@ -129,17 +129,17 @@ public sealed class TileLayer : Layer
         => column + row * _size.Width;
 
     /// <summary>
-    /// Provides spatial boundaries for a collidable tile.
+    /// Provides a collider that manages collisions for a tile.
     /// </summary>
-    private sealed class SpatialTile : ISpatialEntity
+    private sealed class TileCollider : Collider
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SpatialTile"/> class.
+        /// Initializes a new instance of the <see cref="TileCollider"/> class.
         /// </summary>
         /// <param name="column">The index of the column within the tile layer that the tile occupies.</param>
         /// <param name="row">The index of the row within the tile layer that the tile occupies.</param>
         /// <param name="tileSize">The size of the tile.</param>
-        public SpatialTile(int column, int row, Size tileSize)
+        public TileCollider(int column, int row, Size tileSize)
         {
             float x = column * tileSize.Width;
             float y = row * tileSize.Height;
@@ -148,11 +148,11 @@ public sealed class TileLayer : Layer
         }
 
         /// <inheritdoc />
-        public IShape Bounds 
+        public override IShape Bounds 
         { get; }
 
         /// <inheritdoc />
-        public void ResolveCollision(IShape shape)
-        { }
+        public override bool ResolveCollision(Collider collider)
+            => false;
     }
 }

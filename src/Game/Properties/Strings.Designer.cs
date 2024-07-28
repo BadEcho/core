@@ -133,11 +133,11 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid movement direction for scrolling region..
+        ///   Looks up a localized string similar to Invalid movement direction for camera dead zone..
         /// </summary>
-        internal static string InvalidScrollRegionDirection {
+        internal static string InvalidDeadZoneDirection {
             get {
-                return ResourceManager.GetString("InvalidScrollRegionDirection", resourceCulture);
+                return ResourceManager.GetString("InvalidDeadZoneDirection", resourceCulture);
             }
         }
         
@@ -174,6 +174,15 @@ namespace BadEcho.Game.Properties {
         internal static string ModelNoVertexIndices {
             get {
                 return ResourceManager.GetString("ModelNoVertexIndices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No entity has been associated with this collider..
+        /// </summary>
+        internal static string NoEntityAssociated {
+            get {
+                return ResourceManager.GetString("NoEntityAssociated", resourceCulture);
             }
         }
         

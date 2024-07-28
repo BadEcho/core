@@ -163,7 +163,7 @@ public class TileMapTests : IClassFixture<ContentManagerFixture>
     {
         TileMap map = _content.Load<TileMap>("Tiles\\GrassAndCollidable");
 
-        Assert.Collection(map.ToSpatialMap(),
+        Assert.Collection(map.ToCollidableMap(),
                           e => Assert.Equal(new PointF(24, 24), e.Bounds.Center),
                           e => Assert.Equal(new PointF(72, 24), e.Bounds.Center),
                           e => Assert.Equal(new PointF(24, 56), e.Bounds.Center),

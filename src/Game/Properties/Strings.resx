@@ -137,9 +137,6 @@
 	<data name="EffectMissingResource" xml:space="preserve">
 		<value>Missing expected effect resource '{0}'.</value>
 	</data>
-	<data name="InvalidScrollRegionDirection" xml:space="preserve">
-		<value>Invalid movement direction for scrolling region.</value>
-	</data>
 	<data name="SheetAlreadyHasAnimation" xml:space="preserve">
 		<value>Sprite sheet already has an animation with the specified name.</value>
 	</data>
@@ -172,5 +169,11 @@
 	</data>
 	<data name="IndexDataAlreadyLoaded" xml:space="preserve">
 		<value>Index data has already been primed for loading into an index buffer and can no longer be added to.</value>
+	</data>
+	<data name="NoEntityAssociated" xml:space="preserve">
+		<value>No entity has been associated with this collider.</value>
+	</data>
+	<data name="InvalidDeadZoneDirection" xml:space="preserve">
+		<value>Invalid movement direction for camera dead zone.</value>
 	</data>
 </root>

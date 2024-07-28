@@ -19,17 +19,17 @@ public class QuadtreeTests
     private const int LARGE_BUCKET_CAPACITY = 32;
     private const int LARGE_MAX_DEPTH = 5;
 
-    private readonly Quadtree _quadtree;
+    private readonly Quadtree<SpatialStub> _quadtree;
     private readonly SpatialStub _upperLeft;
     private readonly SpatialStub _upperRight;
     private readonly SpatialStub _bottomRight;
 
-    private readonly Quadtree _largeQuadtree;
+    private readonly Quadtree<SpatialStub> _largeQuadtree;
     private readonly List<SpatialStub> _largeQuadtreeItems;
 
     public QuadtreeTests()
     {
-        _quadtree = new Quadtree(new RectangleF(0, 0, 100, 100), 3, 3);
+        _quadtree = new Quadtree<SpatialStub>(new RectangleF(0, 0, 100, 100), 3, 3);
         _upperLeft = new SpatialStub(20, 20, 10, 10);
         _upperRight = new SpatialStub(80, 20, 10, 10);
         _bottomRight = new SpatialStub(80, 80, 10, 10);
@@ -39,7 +39,7 @@ public class QuadtreeTests
         _quadtree.Insert(_bottomRight);
 
         _largeQuadtree 
-            = new Quadtree(new RectangleF(0, 0, 10000, 10000), LARGE_BUCKET_CAPACITY, LARGE_MAX_DEPTH);
+            = new Quadtree<SpatialStub>(new RectangleF(0, 0, 10000, 10000), LARGE_BUCKET_CAPACITY, LARGE_MAX_DEPTH);
 
         _largeQuadtreeItems = [];
         
@@ -141,7 +141,7 @@ public class QuadtreeTests
         Assert.True(_largeQuadtree.IsLeaf);
     }
 
-    private sealed class SpatialStub : ISpatialEntity
+    private sealed class SpatialStub : ISpatial
     {
         public SpatialStub(float x, float y, float width, float height)
         {
@@ -149,11 +149,5 @@ public class QuadtreeTests
         }
 
         public IShape Bounds { get; }
-
-        /// <inheritdoc />
-        public void ResolveCollision(IShape shape)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

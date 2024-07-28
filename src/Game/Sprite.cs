@@ -11,35 +11,27 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game;
 
 /// <summary>
-/// Provides a canvas for a texture able to be positioned and moved on the screen as a spatial entity in
-/// two dimensions.
+/// Provides a canvas for a texture able to be positioned and moved on the screen in two dimensions.
 /// </summary>
-public class Sprite : IPositionalEntity, ISpatialEntity
+public class Sprite : IEntity
 {
-    private readonly IMovementSystem _movementSystem;
     private readonly IShape _bounds;
+
+    private EntityCollider _collider;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Sprite"/> class.
     /// </summary>
     /// <param name="boundedTexture">The texture of the sprite, with spatial boundaries defined.</param>
     public Sprite(BoundedTexture boundedTexture)
-        : this(boundedTexture, new NonMovementSystem())
-    { }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Sprite"/> class.
-    /// </summary>
-    /// <param name="boundedTexture">The texture of the sprite, with spatial boundaries defined.</param>
-    /// <param name="movementSystem">The movement system controlling the sprite's movement.</param>
-    public Sprite(BoundedTexture boundedTexture, IMovementSystem movementSystem)
-        : this(GetBoundedTexture(boundedTexture), movementSystem)
+        : this(GetBoundedTexture(boundedTexture))
     {
         _bounds = boundedTexture.Bounds;
     }
@@ -49,22 +41,12 @@ public class Sprite : IPositionalEntity, ISpatialEntity
     /// </summary>
     /// <param name="texture">The texture of the sprite.</param>
     public Sprite(Texture2D texture)
-        : this(texture, new NonMovementSystem())
-    { }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Sprite"/> class.
-    /// </summary>
-    /// <param name="texture">The texture of the sprite.</param>
-    /// <param name="movementSystem">The movement system controlling the sprite's movement.</param>
-    public Sprite(Texture2D texture, IMovementSystem movementSystem)
     {
         Require.NotNull(texture, nameof(texture));
-        Require.NotNull(movementSystem, nameof(movementSystem));
         
         Texture = texture;
         _bounds = new RectangleF(PointF.Empty, Texture.Bounds.Size);
-        _movementSystem = movementSystem;
+        Collider = new EntityCollider();
     }
 
     /// <summary>
@@ -72,7 +54,25 @@ public class Sprite : IPositionalEntity, ISpatialEntity
     /// </summary>
     public Texture2D Texture
     { get; }
+    
+    /// <summary>
+    /// Gets or sets the collider that manages collisions for this sprite.
+    /// </summary>
+    public EntityCollider Collider
+    {
+        get => _collider;
+        [MemberNotNull(nameof(_collider))]
+        set
+        {
+            _collider = value;
+            _collider.Entity = this;
+        }
+    }
 
+    /// <inheritdoc/>
+    public ICollection<Component> Components
+    { get; } = [];
+    
     /// <inheritdoc/>
     public Vector2 Position
     { get; set; }
@@ -97,33 +97,26 @@ public class Sprite : IPositionalEntity, ISpatialEntity
     public IShape Bounds 
         => _bounds.CenterAt(GetTargetArea().Center);
 
-    /// <inheritdoc />
-    public void ResolveCollision(IShape shape)
-    {
-        Vector2 penetration = Bounds.CalculatePenetration(shape);
-        
-        _movementSystem.ApplyPenetration(this, penetration);
-    }
-
     /// <summary>
-    /// Advances the movement of the sprite by one tick.
+    /// Executes associated components and advances the movement of the sprite by one tick.
     /// </summary>
     /// <param name="time">The game timing configuration and state for this update.</param>
     public virtual void Update(GameUpdateTime time)
     {
         Require.NotNull(time, nameof(time));
 
-        _movementSystem.UpdateMovement(this);
+        foreach (Component component in Components)
+        {
+            component.Update(this, time);
+        }
 
-        float timeScale 
-            = (float) (time.ElapsedGameTime.TotalMilliseconds / time.TargetElapsedTime.TotalMilliseconds);
-        
         Vector2 lastPosition = Position;
-        
-        Position += Vector2.Multiply(Velocity, timeScale);
+
+        Position += Move.ScaleToTime(Velocity, time);
+        Collider.IsDirty = Velocity != Vector2.Zero;
         LastMovement = Position - lastPosition;
 
-        Angle += AngularVelocity * timeScale;
+        Angle += Move.ScaleToTime(AngularVelocity, time);
     }
 
     /// <summary>

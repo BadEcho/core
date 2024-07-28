@@ -11,8 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Logging;
-
 namespace BadEcho.Game;
 
 /// <summary>
@@ -30,10 +28,20 @@ public class SpriteAnimation
     /// </summary>
     /// <param name="frames">The timing sequence for the animation's frames.</param>
     public SpriteAnimation(IEnumerable<TimeSpan> frames)
+        : this(frames, string.Empty)
+    { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SpriteAnimation"/> class.
+    /// </summary>
+    /// <param name="frames">The timing sequence for the animation's frames.</param>
+    /// <param name="name">The name of the animation, if one exists.</param>
+    public SpriteAnimation(IEnumerable<TimeSpan> frames, string name)
     {
         Require.NotNull(frames, nameof(frames));
 
         _frames = [..frames];
+        Name = name;
     }
 
     /// <summary>
@@ -43,10 +51,20 @@ public class SpriteAnimation
     { get; private set; }
 
     /// <summary>
+    /// Gets the name of the animation, if one exists.
+    /// </summary>
+    public string Name
+    { get; }
+
+    /// <summary>
     /// Plays the animation.
     /// </summary>
-    public void Play() 
-        => _isPaused = false;
+    public void Play()
+    {
+        CurrentFrame = 0;
+        _elapsedTime = TimeSpan.Zero;
+        _isPaused = false;
+    }
 
     /// <summary>
     /// Pauses the animation on its initial frame.
@@ -69,16 +87,6 @@ public class SpriteAnimation
     }
 
     /// <summary>
-    /// Stops the animation from playing, resetting it to its default state.
-    /// </summary>
-    public void Stop()
-    {
-        CurrentFrame = 0;
-        _isPaused = true;
-        _elapsedTime = TimeSpan.Zero;
-    }
-
-    /// <summary>
     /// Updates the active frame in the animation.
     /// </summary>
     /// <param name="time">The game timing configuration and state for this update.</param>
@@ -93,8 +101,6 @@ public class SpriteAnimation
 
         if (_elapsedTime <= _frames[CurrentFrame])
             return;
-
-        Logger.Debug(_elapsedTime.ToString());
 
         // Prevent lag accumulation.
         _elapsedTime -= _frames[CurrentFrame];
