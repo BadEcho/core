@@ -59,7 +59,11 @@ public abstract class Collider : ISpatial
     /// <param name="collider">The collider to check for collidability.</param>
     /// <returns>True if <c>collider</c> can collide with this; otherwise, false.</returns>
     public bool CanCollideWith(Collider collider)
-        => (CollidableCategories & collider.Category) == collider.Category;
+    {
+        Require.NotNull(collider, nameof(collider));
+
+        return (CollidableCategories & collider.Category) == collider.Category;
+    }
 
     /// <summary>
     /// Resolves a collision that has occurred between this and the provided collider.
