@@ -72,22 +72,7 @@ public sealed class Camera
     /// which is its size prior to any scaling meant to fit it to the render-target surface is applied.
     /// </summary>
     public RectangleF Bounds
-    {
-        get
-        {
-            // The virtual view matrix will be free of any scaling used to fit the content to the render-target surface.
-            Matrix view = GetVirtualViewMatrix();
-            Matrix viewProjection = view.MultiplyBy2DProjection(_viewportConnector.VirtualSize);
-
-            // We can easily get our bounds by using the corners of a bounding frustum that uses our view * projection matrix.
-            var frustum = new BoundingFrustum(viewProjection);
-            Vector3[] corners = frustum.GetCorners();
-            Vector3 topLeft = corners[0];
-            Vector3 bottomRight = corners[2];
-
-            return new RectangleF(topLeft.X, topLeft.Y, bottomRight.X - topLeft.X, bottomRight.Y - topLeft.Y);
-        }
-    }
+        => GetBounds(Position);
 
     /// <summary>
     /// Gets the location in world-space where the coordinate axes intersect (i.e., the center).
@@ -172,6 +157,12 @@ public sealed class Camera
     private Vector2 DeadZoneOffset
     { get; set; }
 
+    private Vector2 DesiredPosition
+    { get; set; }
+
+    private RectangleF DesiredBounds
+        => GetBounds(DesiredPosition);
+
     /// <summary>
     /// Restricts the movement of this camera to the specified area.
     /// </summary>
@@ -246,7 +237,7 @@ public sealed class Camera
     /// to change at the same rate as the position of the camera.
     /// </remarks>
     public Matrix GetViewMatrix(Vector2 parallaxFactor)
-        => GetVirtualViewMatrix(parallaxFactor) * _viewportConnector.GetScaleMatrix();
+        => GetVirtualViewMatrix(Position * parallaxFactor) * _viewportConnector.GetScaleMatrix();
 
     /// <summary>
     /// Directly moves the camera to the specified position.
@@ -257,6 +248,7 @@ public sealed class Camera
         // We can offset the value provided to this function by the center of world-space to shift said
         // value to the center of the camera's view.
         Position = position - Origin;
+        DesiredPosition = Position;
     }
 
     /// <summary>
@@ -288,6 +280,11 @@ public sealed class Camera
     {
         _deadZoneEngine.Update();
 
+        float positionX = MathHelper.Lerp(Position.X, DesiredPosition.X, 0.1f);
+        float positionY = MathHelper.Lerp(Position.Y, DesiredPosition.Y, 0.1f);
+
+        Position = new Vector2(positionX, positionY);
+
         if (ContentSize == null)
             return;
 
@@ -299,12 +296,25 @@ public sealed class Camera
 
         Position = Vector2.Clamp(Position, minimum, maximum);
     }
-    
-    private Matrix GetVirtualViewMatrix()
-        => GetVirtualViewMatrix(Vector2.One);
 
-    private Matrix GetVirtualViewMatrix(Vector2 parallaxFactor)
-        => Matrix.CreateTranslation(new Vector3(-Position * parallaxFactor, 0f))
+    private RectangleF GetBounds(Vector2 position)
+    {
+        // The virtual view matrix will be free of any scaling used to fit the content to the render-target surface.
+        Matrix view = GetVirtualViewMatrix(position);
+
+        Matrix viewProjection = view.MultiplyBy2DProjection(_viewportConnector.VirtualSize);
+
+        // We can easily get our bounds by using the corners of a bounding frustum that uses our view * projection matrix.
+        var frustum = new BoundingFrustum(viewProjection);
+        Vector3[] corners = frustum.GetCorners();
+        Vector3 topLeft = corners[0];
+        Vector3 bottomRight = corners[2];
+
+        return new RectangleF(topLeft.X, topLeft.Y, bottomRight.X - topLeft.X, bottomRight.Y - topLeft.Y);
+    }
+    
+    private Matrix GetVirtualViewMatrix(Vector2 position)
+        => Matrix.CreateTranslation(new Vector3(-position, 0f))
            * Matrix.CreateTranslation(new Vector3(-Origin, 0f))
            * Matrix.CreateRotationZ(Angle)
            * Matrix.CreateScale(Zoom, Zoom, 1f)
@@ -341,7 +351,7 @@ public sealed class Camera
         {
             get
             {
-                RectangleF cameraBounds = _camera.Bounds;
+                RectangleF cameraBounds = _camera.DesiredBounds;
 
                 return _direction switch
                 {
@@ -389,7 +399,7 @@ public sealed class Camera
                 }
 
                 // Move the camera by the amount of penetration into our dead zone.
-                _camera.Position += penetration;
+                _camera.DesiredPosition += penetration;
                 RectangleF cameraBounds = _camera.Bounds;
                 
                 if (_camera.ContentSize != null)
@@ -410,7 +420,7 @@ public sealed class Camera
                         // the camera, preventing traversal, or perhaps cause a transition to another screen to occur.
                         if (displacedSize.Width <= 1f || displacedSize.Height <= 1f)
                         {
-                            _camera.Position -= penetration;
+                            _camera.DesiredPosition -= penetration;
                             return false;
                         }
 
