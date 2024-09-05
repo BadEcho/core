@@ -223,6 +223,24 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Entering state: {0}.
+        /// </summary>
+        internal static string StateEntering {
+            get {
+                return ResourceManager.GetString("StateEntering", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exiting state: {0}.
+        /// </summary>
+        internal static string StateExiting {
+            get {
+                return ResourceManager.GetString("StateExiting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to State model lacks an identifier..
         /// </summary>
         internal static string StateHasNoIdentifier {
@@ -237,6 +255,15 @@ namespace BadEcho.Game.Properties {
         internal static string StateMachineAlreadyHasState {
             get {
                 return ResourceManager.GetString("StateMachineAlreadyHasState", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The &apos;{0}&apos; state does not exist in this finite-state machine configuration..
+        /// </summary>
+        internal static string StateMachineMissingState {
+            get {
+                return ResourceManager.GetString("StateMachineMissingState", resourceCulture);
             }
         }
         

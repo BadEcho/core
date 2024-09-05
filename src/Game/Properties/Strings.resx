@@ -188,4 +188,13 @@
 	<data name="StateTransitionHasNoTargetIdentifier" xml:space="preserve">
 		<value>State transition model lacks a target identifier.</value>
 	</data>
+	<data name="StateMachineMissingState" xml:space="preserve">
+		<value>The '{0}' state does not exist in this finite-state machine configuration.</value>
+	</data>
+	<data name="StateEntering" xml:space="preserve">
+		<value>Entering state: {0}</value>
+	</data>
+	<data name="StateExiting" xml:space="preserve">
+		<value>Exiting state: {0}</value>
+	</data>
 </root>

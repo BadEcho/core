@@ -16,10 +16,14 @@ using BadEcho.Game.Properties;
 
 namespace BadEcho.Game.AI;
 
+/// <summary>
+/// Provides a builder for configuring finite-state machines.
+/// </summary>
+/// <typeparam name="T">Type used as the descriptor of states.</typeparam>
 public sealed class StateMachineBuilder<T> : IStateOrTransitionBuilder<T>
     where T : notnull
 {
-    private readonly Dictionary<T,StateModel<T>> _states = [];
+    private readonly HashSet<StateModel<T>> _states = [];
 
     private TransitionModel<T> _currentTransition = new();
     private StateModel<T> _currentState = new();
@@ -57,14 +61,13 @@ public sealed class StateMachineBuilder<T> : IStateOrTransitionBuilder<T>
 
         var newTransition = new TransitionModel<T> { Target = state };
         
-        if (_currentState.Transitions.Contains(newTransition))
+        if (!_currentState.Transitions.Add(newTransition))
         {
             throw new ArgumentException(
                 Strings.StateAlreadyHasTransition.InvariantFormat(_currentState.Identifier, state),
                 nameof(state));
         }
 
-        _currentState.Transitions.Add(newTransition);
         _currentTransition = newTransition;
 
         return this;
@@ -93,7 +96,7 @@ public sealed class StateMachineBuilder<T> : IStateOrTransitionBuilder<T>
 
         var newState = new StateModel<T> { Identifier = state };
 
-        if (!_states.TryAdd(state, newState))
+        if (!_states.Add(newState))
             throw new ArgumentException(Strings.StateMachineAlreadyHasState.InvariantFormat(state));
 
         _currentState = newState;
@@ -102,8 +105,10 @@ public sealed class StateMachineBuilder<T> : IStateOrTransitionBuilder<T>
     }
 
     /// <inheritdoc/>
-    public StateMachine<T> Build()
+    public StateMachine<T> Build(T initialState)
     {
+        var states = _states.Select(stateModel => new State<T>(stateModel));
 
+        return new StateMachine<T>(states, initialState);
     }
 }

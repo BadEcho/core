@@ -18,6 +18,7 @@ namespace BadEcho.Game.AI;
 /// </summary>
 /// <typeparam name="T">Type used as the descriptor of the state.</typeparam>
 public interface IStateBuilder<T> : IStateMachineBuilder<T>
+    where T : notnull
 {
     /// <summary>
     /// Registers a callback that runs when the state becomes active.

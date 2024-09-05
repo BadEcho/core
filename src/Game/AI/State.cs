@@ -11,7 +11,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Extensions;
 using BadEcho.Game.Properties;
+using BadEcho.Logging;
 
 namespace BadEcho.Game.AI;
 
@@ -30,6 +32,8 @@ public sealed class State<T>
     private readonly List<Action<T>> _exitActions;
     private readonly List<Action<GameUpdateTime>> _updateActions;
 
+    private TimeSpan _timeRunning;
+
     internal State(StateModel<T> model)
     {
         Require.NotNull(model, nameof(model));
@@ -38,6 +42,7 @@ public sealed class State<T>
             throw new InvalidOperationException(Strings.StateHasNoIdentifier);
 
         Identifier = model.Identifier;
+        Next = model.Identifier;
 
         _enterActions = [..model.EnterActions];
         _exitActions = [..model.ExitActions];
@@ -63,8 +68,75 @@ public sealed class State<T>
     public T Identifier
     { get; }
 
-    public void Update(GameUpdateTime time)
-    {
+    /// <summary>
+    /// Gets a descriptor for the state that the finite-state machine should transition to next.
+    /// </summary>
+    public T Next
+    { get; private set; }
 
+    /// <summary>
+    /// Activates the state, executing all configured enter actions.
+    /// </summary>
+    public void Enter()
+    {
+        _timeRunning = TimeSpan.Zero;
+
+        Logger.Debug(Strings.StateEntering.InvariantFormat(Identifier));
+
+        foreach (Action<T> enterAction in _enterActions)
+        {
+            enterAction(Identifier);
+        }
+    }
+
+    /// <summary>
+    /// Deactivates the state, executing all configured exit actions.
+    /// </summary>
+    public void Exit()
+    {
+        Logger.Debug(Strings.StateExiting.InvariantFormat(Identifier));
+
+        foreach (Action<T> exitAction in _exitActions)
+        {
+            exitAction(Identifier);
+        }
+    }
+
+    /// <summary>
+    /// Called while the state is active to execute all configured update actions and to check if a state transition
+    /// is to occur. 
+    /// </summary>
+    /// <param name="time">The game timing configuration and state for this update.</param>
+    /// <returns>True if a transition to the next state should occur; otherwise, false.</returns>
+    public bool Update(GameUpdateTime time)
+    {
+        Require.NotNull(time, nameof(time));
+        
+        _timeRunning += time.ElapsedGameTime;
+
+        foreach (Action<GameUpdateTime> updateAction in _updateActions)
+        {
+            updateAction(time);
+        }
+
+        foreach (T transitionTarget in _transitionTargets)
+        {
+            if (_transitionDurations.TryGetValue(transitionTarget, out TimeSpan duration))
+            {
+                if (_timeRunning < duration)
+                    continue;
+            }
+
+            if (_transitionConditions.TryGetValue(transitionTarget, out List<Func<bool>>? conditions))
+            {
+                if (conditions.Any(condition => !condition()))
+                    continue;
+            }
+
+            Next = transitionTarget;
+            return true;
+        }
+
+        return false;
     }
 }

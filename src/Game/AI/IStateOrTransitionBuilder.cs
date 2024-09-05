@@ -18,4 +18,5 @@ namespace BadEcho.Game.AI;
 /// </summary>
 /// <typeparam name="T">Type used as the descriptor of the state.</typeparam>
 public interface IStateOrTransitionBuilder<T> : IStateBuilder<T>,
-                                                IStateTransitionBuilder<T>;
+                                                IStateTransitionBuilder<T>
+    where T : notnull;

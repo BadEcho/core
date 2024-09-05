@@ -18,6 +18,7 @@ namespace BadEcho.Game.AI;
 /// </summary>
 /// <typeparam name="T">Type used as the descriptor of the finite-state machine's states.</typeparam>
 public interface IStateMachineBuilder<T>
+    where T : notnull
 {
     /// <summary>
     /// Registers a new state.
@@ -29,6 +30,7 @@ public interface IStateMachineBuilder<T>
     /// <summary>
     /// Generates a new finite-state machine from this configuration.
     /// </summary>
+    /// <param name="initialState">Descriptor for the initial state of the finite-state machine.</param>
     /// <returns>A <see cref="StateMachine{T}"/> instance based on this configuration.</returns>
-    StateMachine<T> Build();
+    StateMachine<T> Build(T initialState);
 }
