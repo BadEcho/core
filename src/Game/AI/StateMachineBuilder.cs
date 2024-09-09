@@ -54,6 +54,15 @@ public sealed class StateMachineBuilder<T> : IStateOrTransitionBuilder<T>
 
         return this;
     }
+
+    IStateBuilder<T> IStateBuilder<T>.Executes(Func<Component> factory)
+    {
+        Require.NotNull(factory, nameof(factory));
+
+        _currentState.ComponentFactories.Add(factory);
+
+        return this;
+    }
     
     IStateTransitionBuilder<T> IStateBuilder<T>.TransitionTo(T state)
     {

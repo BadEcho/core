@@ -31,6 +31,7 @@ public sealed class State<T>
     private readonly List<Action<T>> _enterActions;
     private readonly List<Action<T>> _exitActions;
     private readonly List<Action<GameUpdateTime>> _updateActions;
+    private readonly List<Component> _updateComponents;
 
     private TimeSpan _timeRunning;
 
@@ -47,6 +48,12 @@ public sealed class State<T>
         _enterActions = [..model.EnterActions];
         _exitActions = [..model.ExitActions];
         _updateActions = [..model.UpdateActions];
+        _updateComponents = model.ComponentFactories.Select(f => f()).ToList();
+
+        foreach (Func<Component> factory in model.ComponentFactories)
+        {
+            _updateComponents.Add(factory());
+        }
 
         foreach (TransitionModel<T> transitionModel in model.Transitions)
         {

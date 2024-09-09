@@ -41,7 +41,13 @@ internal sealed class StateModel<T>
     /// </summary>
     public ICollection<Action<GameUpdateTime>> UpdateActions
     { get; } = [];
-    
+
+    /// <summary>
+    /// Gets a collection of factories used to create the components executed by the state when active.
+    /// </summary>
+    public ICollection<Func<Component>> ComponentFactories
+    { get; } = [];
+
     /// <inheritdoc/>
     public override bool Equals(object? obj)
         => obj is StateModel<T> otherModel && otherModel.Identifier.Equals<T>(Identifier);

@@ -46,6 +46,13 @@ public interface IStateBuilder<T> : IStateMachineBuilder<T>
     IStateBuilder<T> Executes(Action<GameUpdateTime> action);
 
     /// <summary>
+    /// Registers a component to execute if this is the active state when <see cref="StateMachine{T}.Update"/> is called.
+    /// </summary>
+    /// <param name="factory">A delegate that is used to create an instance of the component.</param>
+    /// <returns>A <see cref="IStateBuilder{T}"/> instance that can be used to further configure the state.</returns>
+    IStateBuilder<T> Executes(Func<Component> factory);
+
+    /// <summary>
     /// Adds a transition to another state.
     /// </summary>
     /// <param name="state">The state to transition to.</param>
