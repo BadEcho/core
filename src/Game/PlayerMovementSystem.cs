@@ -31,7 +31,7 @@ public sealed class PlayerMovementSystem : Component
     private const float VELOCITY_MIN = -50f;
 
     /// <inheritdoc/>
-    public override void Update(IEntity entity, GameUpdateTime time)
+    public override bool Update(IEntity entity, GameUpdateTime time)
     {
         Require.NotNull(entity, nameof(entity));
 
@@ -39,6 +39,8 @@ public sealed class PlayerMovementSystem : Component
         float yVelocity = CalculateUpdatedVelocity(MOVEMENT_DOWN, MOVEMENT_UP);
 
         entity.Velocity = new Vector2(xVelocity, yVelocity);
+
+        return true;
     }
     
     private static float CalculateUpdatedVelocity(Keys positiveDirectionKey, Keys negativeDirectionKey)

@@ -34,6 +34,7 @@ public sealed class State<T>
     private readonly List<Component> _updateComponents;
 
     private TimeSpan _timeRunning;
+    private bool _componentsComplete;
 
     internal State(StateModel<T> model)
     {
@@ -49,11 +50,6 @@ public sealed class State<T>
         _exitActions = [..model.ExitActions];
         _updateActions = [..model.UpdateActions];
         _updateComponents = model.ComponentFactories.Select(f => f()).ToList();
-
-        foreach (Func<Component> factory in model.ComponentFactories)
-        {
-            _updateComponents.Add(factory());
-        }
 
         foreach (TransitionModel<T> transitionModel in model.Transitions)
         {
@@ -107,6 +103,23 @@ public sealed class State<T>
         {
             exitAction(Identifier);
         }
+    }
+
+    /// <summary>
+    /// Called if the state machine a component for an entity while the state is active to execute all configured
+    /// component actions and to check if a state transition is to occur.
+    /// </summary>
+    /// <param name="entity">The entity to act on.</param>
+    /// <param name="time">The game timing configuration and state for this update.</param>
+    /// <returns>True if a transition to the next state should occur; otherwise, false.</returns>
+    public bool Update(IEntity entity, GameUpdateTime time)
+    {
+        foreach (Component component in _updateComponents)
+        {
+            component.Update(entity, time);
+        }
+
+        return Update(time);
     }
 
     /// <summary>

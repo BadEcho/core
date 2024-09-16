@@ -23,5 +23,6 @@ public abstract class Component
     /// </summary>
     /// <param name="entity">The entity to act on.</param>
     /// <param name="time">The game timing configuration and state for this update.</param>
-    public abstract void Update(IEntity entity, GameUpdateTime time);
+    /// <returns>True if the component can continue processing; otherwise, false.</returns>
+    public abstract bool Update(IEntity entity, GameUpdateTime time);
 }

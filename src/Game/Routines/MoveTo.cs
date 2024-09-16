@@ -35,10 +35,12 @@ public sealed class MoveTo : Component
     }
 
     /// <inheritdoc/>
-    public override void Update(IEntity entity, GameUpdateTime time)
+    public override bool Update(IEntity entity, GameUpdateTime time)
     {
         Require.NotNull(entity, nameof(entity));
 
         entity.Velocity = Move.Approach(entity.Position, _target, _maxSpeed, time);
+
+        return entity.Velocity != Vector2.Zero;
     }
 }

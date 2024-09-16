@@ -20,7 +20,7 @@ namespace BadEcho.Game.AI;
 /// Provides a finite-state machine.
 /// </summary>
 /// <typeparam name="T">Type used as the descriptor of states.</typeparam>
-public sealed class StateMachine<T>
+public sealed class StateMachine<T> : Component
     where T : notnull
 {
     private readonly Dictionary<T, State<T>> _states = [];
@@ -52,21 +52,33 @@ public sealed class StateMachine<T>
     public State<T> CurrentState
     { get; private set; }
 
+    /// <inheritdoc/>
+    public override bool Update(IEntity entity, GameUpdateTime time)
+    {
+        bool shouldTransition = CurrentState.Update(entity, time);
+
+        if (shouldTransition)
+            TransitionToNext();
+
+        return true;
+    }
+
     /// <summary>
     /// Executes logic related to the current state and any pending transitions.
     /// </summary>
     /// <param name="time">The game timing configuration and state for this update.</param>
     public void Update(GameUpdateTime time)
     {
-        Require.NotNull(time, nameof(time));
-
         bool shouldTransition = CurrentState.Update(time);
 
         if (shouldTransition)
-        {
-            CurrentState.Exit();
-            CurrentState = _states[CurrentState.Next];
-            CurrentState.Enter();
-        }
+            TransitionToNext();
+    }
+    
+    private void TransitionToNext()
+    {
+        CurrentState.Exit();
+        CurrentState = _states[CurrentState.Next];
+        CurrentState.Enter();
     }
 }

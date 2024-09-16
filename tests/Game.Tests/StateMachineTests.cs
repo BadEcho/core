@@ -141,6 +141,25 @@ public class StateMachineTests
     }
 
     [Fact]
+    public void Update_Component_ExecutesComponents()
+    {
+        bool firstCalled = false;
+        bool secondCalled = false;
+
+        StateMachine<TestState> fsm
+            = _builder.Add(TestState.That)
+                      .Executes(() => new ComponentStub(() => firstCalled = true))
+                      .Executes(() => new ComponentStub(() => secondCalled = true))
+                      .Build(TestState.That);
+        
+        var entity = new EntityStub();
+        fsm.Update(entity, new GameUpdateTime(_game, new GameTime(TimeSpan.Zero, TimeSpan.Zero)));
+
+        Assert.True(firstCalled);
+        Assert.True(secondCalled);
+    }
+
+    [Fact]
     public void Init_InitialStateNotRegistered_ThrowsException()
     {
         Assert.Throws<ArgumentException>(() => _builder.Add(TestState.That).Build(TestState.This));
@@ -201,5 +220,46 @@ public class StateMachineTests
         This,
         That,
         ThisAndThat
+    }
+
+    private sealed class EntityStub : IEntity
+    {
+        public IShape Bounds
+            => RectangleF.Empty;
+
+        public ICollection<Component> Components 
+        { get; } = [];
+
+        public Vector2 Position 
+        { get; set; }
+
+        public Vector2 LastMovement 
+            => Vector2.Zero;
+
+        public Vector2 Velocity 
+        { get; set; }
+
+        public float Angle 
+            => 0f;
+
+        public float AngularVelocity 
+        { get; set; }
+    }
+
+    private sealed class ComponentStub : Component
+    {
+        private readonly Action _action;
+        
+        public ComponentStub(Action action)
+        {
+            _action = action;
+        }
+
+        public override bool Update(IEntity entity, GameUpdateTime time)
+        {
+            _action();
+
+            return true;
+        }
     }
 }
