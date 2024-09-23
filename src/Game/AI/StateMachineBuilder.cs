@@ -63,8 +63,15 @@ public sealed class StateMachineBuilder<T> : IStateOrTransitionBuilder<T>
 
         return this;
     }
-    
-    IStateTransitionBuilder<T> IStateBuilder<T>.TransitionTo(T state)
+
+    IStateBuilder<T> IStateBuilder<T>.Executes<TComponent>()
+    {
+        _currentState.ComponentFactories.Add(() => new TComponent());
+
+        return this;
+    }
+
+    IStateTransitionBuilder<T> IStateBuilder<T>.TransitionsTo(T state)
     {
         Require.NotNull(state, nameof(state));
 
@@ -82,13 +89,18 @@ public sealed class StateMachineBuilder<T> : IStateOrTransitionBuilder<T>
         return this;
     }
 
-    IStateOrTransitionBuilder<T> IStateTransitionBuilder<T>.IfTrue(Func<bool> condition)
+    IStateOrTransitionBuilder<T> IStateTransitionBuilder<T>.WhenTrue(Func<bool> condition)
     {
         Require.NotNull(condition, nameof(condition));
 
         _currentTransition.Conditions.Add(condition);
 
         return this;
+    }
+
+    IStateOrTransitionBuilder<T> IStateTransitionBuilder<T>.WhenComponentsDone()
+    {
+        
     }
 
     IStateOrTransitionBuilder<T> IStateTransitionBuilder<T>.After(TimeSpan duration)

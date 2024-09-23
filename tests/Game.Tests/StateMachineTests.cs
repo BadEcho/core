@@ -39,7 +39,7 @@ public class StateMachineTests
     public void Update_ThatOneCondition_TransitionsToThis()
     {
         StateMachine<TestState> fsm
-            = _builder.Add(TestState.That).TransitionTo(TestState.This).IfTrue(() => true)
+            = _builder.Add(TestState.That).TransitionsTo(TestState.This).WhenTrue(() => true)
                       .Add(TestState.This)
                       .Build(TestState.That);
 
@@ -54,7 +54,7 @@ public class StateMachineTests
     public void Update_ThatOneTimedCondition_TransitionsToThisAfterTime()
     {
         StateMachine<TestState> fsm
-            = _builder.Add(TestState.That).TransitionTo(TestState.This).IfTrue(() => true).After(TimeSpan.FromSeconds(3.0))
+            = _builder.Add(TestState.That).TransitionsTo(TestState.This).WhenTrue(() => true).After(TimeSpan.FromSeconds(3.0))
                       .Add(TestState.This)
                       .Build(TestState.That);
 
@@ -78,7 +78,7 @@ public class StateMachineTests
     {
         StateMachine<TestState> fsm 
             = _builder.Add(TestState.That)
-                     .TransitionTo(TestState.This).IfTrue(() => false).After(TimeSpan.FromSeconds(3.0))
+                     .TransitionsTo(TestState.This).WhenTrue(() => false).After(TimeSpan.FromSeconds(3.0))
                      .Add(TestState.This)
                      .Build(TestState.That);
 
@@ -101,11 +101,23 @@ public class StateMachineTests
         bool firstCalled = false, secondCalled = false, thirdCalled = false, fourthCalled = false;
 
         StateMachine<TestState> fsm
-            = _builder.Add(TestState.Nothing).Executes(_ => firstCalled = true).TransitionTo(TestState.This).IfTrue(() => true)
-                     .Add(TestState.This).Executes(_ => secondCalled = true).TransitionTo(TestState.That).IfTrue(() => true)
-                     .Add(TestState.That).Executes(_ => thirdCalled = true).TransitionTo(TestState.ThisAndThat).IfTrue(() => true)
-                     .Add(TestState.ThisAndThat).Executes(_ => fourthCalled = true).TransitionTo(TestState.Nothing).IfTrue(() => true)
-                     .Build(TestState.That);
+            = _builder.Add(TestState.Nothing)
+                        .Executes(_ => firstCalled = true)
+                        .TransitionsTo(TestState.This)
+                            .WhenTrue(() => true)
+                      .Add(TestState.This)
+                        .Executes(_ => secondCalled = true)
+                        .TransitionsTo(TestState.That)
+                            .WhenTrue(() => true)
+                      .Add(TestState.That)
+                        .Executes(_ => thirdCalled = true)
+                        .TransitionsTo(TestState.ThisAndThat)
+                            .WhenTrue(() => true)
+                      .Add(TestState.ThisAndThat)
+                        .Executes(_ => fourthCalled = true)
+                        .TransitionsTo(TestState.Nothing)
+                            .WhenTrue(() => true)
+                      .Build(TestState.That);
 
         var time = new GameUpdateTime(_game, new GameTime(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)));
 
@@ -125,9 +137,9 @@ public class StateMachineTests
     {
         StateMachine<TestState> fsm
             = _builder.Add(TestState.That)
-                      .TransitionTo(TestState.This).IfTrue(() => false)
-                      .TransitionTo(TestState.ThisAndThat).IfTrue(() => true)
-                      .TransitionTo(TestState.Nothing).IfTrue(() => false)
+                        .TransitionsTo(TestState.This).WhenTrue(() => false)
+                        .TransitionsTo(TestState.ThisAndThat).WhenTrue(() => true)
+                        .TransitionsTo(TestState.Nothing).WhenTrue(() => false)
                       .Add(TestState.This)
                       .Add(TestState.ThisAndThat)
                       .Add(TestState.Nothing)
@@ -148,8 +160,8 @@ public class StateMachineTests
 
         StateMachine<TestState> fsm
             = _builder.Add(TestState.That)
-                      .Executes(() => new ComponentStub(() => firstCalled = true))
-                      .Executes(() => new ComponentStub(() => secondCalled = true))
+                        .Executes(() => new ComponentStub(() => firstCalled = true))
+                        .Executes(() => new ComponentStub(() => secondCalled = true))
                       .Build(TestState.That);
         
         var entity = new EntityStub();
@@ -157,6 +169,26 @@ public class StateMachineTests
 
         Assert.True(firstCalled);
         Assert.True(secondCalled);
+    }
+
+    [Fact]
+    public void Update_ThisComponent_TransitionsToThat()
+    {
+        StateMachine<TestState> fsm
+            = _builder.Add(TestState.This)
+                          .Executes<DeadComponentStub>()
+                          .TransitionsTo(TestState.That)
+                            .WhenComponentsDone()
+                      .Add(TestState.That)
+                      .Build(TestState.This);
+
+        var entity = new EntityStub();
+
+        Assert.Equal(TestState.This, fsm.CurrentState.Identifier);
+
+        fsm.Update(entity, new GameUpdateTime(_game, new GameTime(TimeSpan.Zero, TimeSpan.Zero)));
+
+        Assert.Equal(TestState.That, fsm.CurrentState.Identifier);
     }
 
     [Fact]
@@ -187,9 +219,9 @@ public class StateMachineTests
         bool enterCalled = false, exitCalled = false;
 
         StateMachine<TestState> fsm = _builder.Add(TestState.This)
-                                              .OnEnter(_ => enterCalled = true)
-                                              .OnExit(_ => exitCalled = true)
-                                              .TransitionTo(TestState.That).IfTrue(() => true)
+                                                .OnEnter(_ => enterCalled = true)
+                                                .OnExit(_ => exitCalled = true)
+                                              .TransitionsTo(TestState.That).WhenTrue(() => true)
                                               .Add(TestState.That)
                                               .Build(TestState.This);
 
@@ -209,8 +241,8 @@ public class StateMachineTests
     public void Add_DuplicateTransitions_ThrowsException()
     {
         Assert.Throws<ArgumentException>(() => _builder.Add(TestState.That)
-                                                       .TransitionTo(TestState.This).IfTrue(() => true)
-                                                       .TransitionTo(TestState.This).IfTrue(() => true)
+                                                       .TransitionsTo(TestState.This).WhenTrue(() => true)
+                                                       .TransitionsTo(TestState.This).WhenTrue(() => true)
                                                        .Build(TestState.That));
     }
 
@@ -261,5 +293,11 @@ public class StateMachineTests
 
             return true;
         }
+    }
+
+    private sealed class DeadComponentStub : Component
+    {
+        public override bool Update(IEntity entity, GameUpdateTime time)
+            => false;
     }
 }

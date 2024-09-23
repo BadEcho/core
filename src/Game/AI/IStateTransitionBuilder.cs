@@ -25,7 +25,9 @@ public interface IStateTransitionBuilder<T>
     /// </summary>
     /// <param name="condition">A method that will return true if the transition should proceed.</param>
     /// <returns>A <see cref="IStateBuilder{T}"/> instance that can be used to further configure the state.</returns>
-    IStateOrTransitionBuilder<T> IfTrue(Func<bool> condition);
+    IStateOrTransitionBuilder<T> WhenTrue(Func<bool> condition);
+    
+    IStateOrTransitionBuilder<T> WhenComponentsDone();
 
     /// <summary>
     /// Defines the amount of time that must pass before a transition can proceed.

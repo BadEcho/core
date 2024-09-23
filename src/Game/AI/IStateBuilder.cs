@@ -52,6 +52,8 @@ public interface IStateBuilder<T> : IStateMachineBuilder<T>
     /// <returns>A <see cref="IStateBuilder{T}"/> instance that can be used to further configure the state.</returns>
     IStateBuilder<T> Executes(Func<Component> factory);
 
+    IStateBuilder<T> Executes<TComponent>() where TComponent : Component, new();
+
     /// <summary>
     /// Adds a transition to another state.
     /// </summary>
@@ -59,5 +61,5 @@ public interface IStateBuilder<T> : IStateMachineBuilder<T>
     /// <returns>
     /// A <see cref="IStateTransitionBuilder{T}"/> instance that can be used to further configure the transition.
     /// </returns>
-    IStateTransitionBuilder<T> TransitionTo(T state);
+    IStateTransitionBuilder<T> TransitionsTo(T state);
 }
