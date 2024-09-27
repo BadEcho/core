@@ -39,19 +39,27 @@ public interface IStateBuilder<T> : IStateMachineBuilder<T>
     IStateBuilder<T> OnExit(Action<T> exitAction);
     
     /// <summary>
-    /// Registers a callback that runs if this is the active state when <see cref="StateMachine{T}.Update"/> is called.
+    /// Registers a callback that runs if this is the active state when <see cref="StateMachine{T}.Update(GameUpdateTime)"/>
+    /// is called.
     /// </summary>
     /// <param name="action">The method executed by this state at the time of update.</param>
     /// <returns>A <see cref="IStateBuilder{T}"/> instance that can be used to further configure the state.</returns>
     IStateBuilder<T> Executes(Action<GameUpdateTime> action);
 
     /// <summary>
-    /// Registers a component to execute if this is the active state when <see cref="StateMachine{T}.Update"/> is called.
+    /// Registers a component to execute if this is the active state when <see cref="StateMachine{T}.Update(IEntity,GameUpdateTime)"/>
+    /// is called.
     /// </summary>
     /// <param name="factory">A delegate that is used to create an instance of the component.</param>
     /// <returns>A <see cref="IStateBuilder{T}"/> instance that can be used to further configure the state.</returns>
     IStateBuilder<T> Executes(Func<Component> factory);
 
+    /// <summary>
+    /// Registers a component to execute if this is the active state when <see cref="StateMachine{T}.Update(IEntity,GameUpdateTime)"/>
+    /// is called.
+    /// </summary>
+    /// <typeparam name="TComponent">The type of component to execute.</typeparam>
+    /// <returns>A <see cref="IStateBuilder{T}"/> instance that can be used to further configure the state.</returns>
     IStateBuilder<T> Executes<TComponent>() where TComponent : Component, new();
 
     /// <summary>
@@ -63,3 +71,4 @@ public interface IStateBuilder<T> : IStateMachineBuilder<T>
     /// </returns>
     IStateTransitionBuilder<T> TransitionsTo(T state);
 }
+    

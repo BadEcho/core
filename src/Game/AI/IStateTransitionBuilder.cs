@@ -27,6 +27,10 @@ public interface IStateTransitionBuilder<T>
     /// <returns>A <see cref="IStateBuilder{T}"/> instance that can be used to further configure the state.</returns>
     IStateOrTransitionBuilder<T> WhenTrue(Func<bool> condition);
     
+    /// <summary>
+    /// Specifies that the transition will occur when registered components can no longer continue processing.
+    /// </summary>
+    /// <returns>A <see cref="IStateBuilder{T}"/> instance that can be used to further configure the state.</returns>
     IStateOrTransitionBuilder<T> WhenComponentsDone();
 
     /// <summary>

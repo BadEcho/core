@@ -100,7 +100,9 @@ public sealed class StateMachineBuilder<T> : IStateOrTransitionBuilder<T>
 
     IStateOrTransitionBuilder<T> IStateTransitionBuilder<T>.WhenComponentsDone()
     {
-        
+        _currentTransition.OnComponentsDone = true;
+
+        return this;
     }
 
     IStateOrTransitionBuilder<T> IStateTransitionBuilder<T>.After(TimeSpan duration)

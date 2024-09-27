@@ -34,6 +34,13 @@ internal sealed class TransitionModel<T>
     { get; } = [];
 
     /// <summary>
+    /// Gets or sets a value indicating if the transition will occur when registered components can no longer
+    /// continue processing.
+    /// </summary>
+    public bool OnComponentsDone 
+    { get; set; }
+
+    /// <summary>
     /// Gets the amount of time a state must be running before a transition can proceed.
     /// </summary>
     public TimeSpan Duration 

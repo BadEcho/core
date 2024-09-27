@@ -26,7 +26,8 @@ public sealed class State<T>
 {
     private readonly List<T> _transitionTargets = [];
     private readonly Dictionary<T, TimeSpan> _transitionDurations = [];
-    private readonly Dictionary<T, List<Func<bool>>> _transitionConditions = []; 
+    private readonly Dictionary<T, List<Func<bool>>> _transitionConditions = [];
+    private readonly List<T> _transitionOnComponentsDone = [];
 
     private readonly List<Action<T>> _enterActions;
     private readonly List<Action<T>> _exitActions;
@@ -34,7 +35,7 @@ public sealed class State<T>
     private readonly List<Component> _updateComponents;
 
     private TimeSpan _timeRunning;
-    private bool _componentsComplete;
+    private bool _componentsDone;
 
     internal State(StateModel<T> model)
     {
@@ -62,6 +63,9 @@ public sealed class State<T>
                 _transitionDurations.Add(transitionModel.Target, transitionModel.Duration);
 
             _transitionConditions.Add(transitionModel.Target, [..transitionModel.Conditions]);
+
+            if (transitionModel.OnComponentsDone)
+                _transitionOnComponentsDone.Add(transitionModel.Target);
         }
     }
 
@@ -113,12 +117,9 @@ public sealed class State<T>
     /// <param name="time">The game timing configuration and state for this update.</param>
     /// <returns>True if a transition to the next state should occur; otherwise, false.</returns>
     public bool Update(IEntity entity, GameUpdateTime time)
-    {
-        foreach (Component component in _updateComponents)
-        {
-            component.Update(entity, time);
-        }
-
+    {   // We're done when all components can process no more.
+        _componentsDone = _updateComponents.All(c => !c.Update(entity, time));
+        
         return Update(time);
     }
 
@@ -150,6 +151,12 @@ public sealed class State<T>
             if (_transitionConditions.TryGetValue(transitionTarget, out List<Func<bool>>? conditions))
             {
                 if (conditions.Any(condition => !condition()))
+                    continue;
+            }
+
+            if (_transitionOnComponentsDone.Contains(transitionTarget))
+            {
+                if (!_componentsDone)
                     continue;
             }
 
