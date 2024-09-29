@@ -30,7 +30,7 @@ internal sealed class TransitionModel<T>
     /// <summary>
     /// Gets a collection of conditions that must be satisfied for the transition to occur.
     /// </summary>
-    public ICollection<Func<bool>> Conditions
+    public ICollection<Func<T, bool>> Conditions
     { get; } = [];
 
     /// <summary>

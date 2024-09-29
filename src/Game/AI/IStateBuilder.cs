@@ -23,18 +23,14 @@ public interface IStateBuilder<T> : IStateMachineBuilder<T>
     /// <summary>
     /// Registers a callback that runs when the state becomes active.
     /// </summary>
-    /// <param name="enterAction">
-    /// The method executed by the state when activated, providing it with the state identifier.
-    /// </param>
+    /// <param name="enterAction">The method executed by the state when activated.</param>
     /// <returns>A <see cref="IStateBuilder{T}"/> instance that can be used to further configure the state.</returns>
     IStateBuilder<T> OnEnter(Action<T> enterAction);
 
     /// <summary>
     /// Registers a callback that runs when the state is no longer active.
     /// </summary>
-    /// <param name="exitAction">
-    /// The method executed by the state when deactivated, providing it with the state identifier.
-    /// </param>
+    /// <param name="exitAction">The method executed by the state when deactivated.</param>
     /// <returns>A <see cref="IStateBuilder{T}"/> instance that can be used to further configure the state.</returns>
     IStateBuilder<T> OnExit(Action<T> exitAction);
     

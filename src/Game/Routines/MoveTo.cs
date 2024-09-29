@@ -41,6 +41,7 @@ public sealed class MoveTo : Component
 
         entity.Velocity = Move.Approach(entity.Position, _target, _speed, time);
 
-        return entity.Velocity != Vector2.Zero;
+        return entity.Velocity != Vector2.Zero
+               && entity.Position + Move.ScaleToTime(entity.Velocity, time) != _target;
     }
 }

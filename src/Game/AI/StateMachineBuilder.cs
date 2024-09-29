@@ -89,7 +89,7 @@ public sealed class StateMachineBuilder<T> : IStateOrTransitionBuilder<T>
         return this;
     }
 
-    IStateOrTransitionBuilder<T> IStateTransitionBuilder<T>.WhenTrue(Func<bool> condition)
+    IStateOrTransitionBuilder<T> IStateTransitionBuilder<T>.WhenTrue(Func<T, bool> condition)
     {
         Require.NotNull(condition, nameof(condition));
 

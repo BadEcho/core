@@ -26,7 +26,7 @@ public sealed class State<T>
 {
     private readonly List<T> _transitionTargets = [];
     private readonly Dictionary<T, TimeSpan> _transitionDurations = [];
-    private readonly Dictionary<T, List<Func<bool>>> _transitionConditions = [];
+    private readonly Dictionary<T, List<Func<T, bool>>> _transitionConditions = [];
     private readonly List<T> _transitionOnComponentsDone = [];
 
     private readonly List<Action<T>> _enterActions;
@@ -118,7 +118,10 @@ public sealed class State<T>
     /// <returns>True if a transition to the next state should occur; otherwise, false.</returns>
     public bool Update(IEntity entity, GameUpdateTime time)
     {   // We're done when all components can process no more.
-        _componentsDone = _updateComponents.All(c => !c.Update(entity, time));
+        // A count is taken to avoid short-circuiting with Any/All. We want all components to execute.
+        int componentsProcessing = _updateComponents.Count(c => c.Update(entity, time));
+
+        _componentsDone = componentsProcessing == 0;
         
         return Update(time);
     }
@@ -148,9 +151,9 @@ public sealed class State<T>
                     continue;
             }
 
-            if (_transitionConditions.TryGetValue(transitionTarget, out List<Func<bool>>? conditions))
+            if (_transitionConditions.TryGetValue(transitionTarget, out List<Func<T, bool>>? conditions))
             {
-                if (conditions.Any(condition => !condition()))
+                if (conditions.Any(condition => !condition(Identifier)))
                     continue;
             }
 
