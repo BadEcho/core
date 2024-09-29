@@ -25,16 +25,16 @@ public static class Move
     /// </summary>
     /// <param name="position">The base position being moved from.</param>
     /// <param name="target">The target position to move to.</param>
-    /// <param name="maxChange">The maximum change to <c>position</c> permitted.</param>
+    /// <param name="speed">The permitted change to <c>position</c> per tick.</param>
     /// <param name="time">The game timing configuration and state.</param>
     /// <returns>A movement velocity that can be applied to <c>position</c> to approach <c>target</c>.</returns>
-    public static Vector2 Approach(Vector2 position, Vector2 target, float maxChange, GameUpdateTime time)
+    public static Vector2 Approach(Vector2 position, Vector2 target, float speed, GameUpdateTime time)
     {
-        if (maxChange == 0f || position == target)
+        if (speed == 0f || position == target)
             return Vector2.Zero;
 
         Vector2 difference = target - position;
-        Vector2 velocity= difference.Normalized() * maxChange;
+        Vector2 velocity= difference.Normalized() * speed;
         
         float differenceLength = difference.Length();
         float scaledVelocityLength =  ScaleToTime(velocity, time).Length();

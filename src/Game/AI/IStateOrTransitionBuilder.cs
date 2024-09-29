@@ -11,18 +11,12 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Game;
+namespace BadEcho.Game.AI;
 
 /// <summary>
-/// Provides an aspect or behavior ascribed to an entity.
+/// Defines a fluent interface for configuring either a state or a state's transition.
 /// </summary>
-public abstract class Component
-{
-    /// <summary>
-    /// Applies this component to the provided entity.
-    /// </summary>
-    /// <param name="entity">The entity to act on.</param>
-    /// <param name="time">The game timing configuration and state for this update.</param>
-    /// <returns>True if the component can continue processing; otherwise, false.</returns>
-    public abstract bool Update(IEntity entity, GameUpdateTime time);
-}
+/// <typeparam name="T">Type used as the descriptor of the state.</typeparam>
+public interface IStateOrTransitionBuilder<T> : IStateBuilder<T>,
+                                                IStateTransitionBuilder<T>
+    where T : notnull;

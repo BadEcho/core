@@ -1,5 +1,13 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+#if RELEASE
+using BadEcho.Game.Properties;
+
+[assembly: InternalsVisibleTo("BadEcho.Game.Tests, PublicKey="+BuildInfo.PublicKey)]
+#else
+[assembly: InternalsVisibleTo("BadEcho.Game.Tests")]
+#endif
 
 [assembly: ComVisible(false)]
 [assembly: Guid("19d8e431-bf6c-46bd-ac7b-4195fa909ea4")]

@@ -21,24 +21,27 @@ namespace BadEcho.Game.Routines;
 public sealed class MoveTo : Component
 {
     private readonly Vector2 _target;
-    private readonly float _maxSpeed;
+    private readonly float _speed;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MoveTo"/> class.
     /// </summary>
     /// <param name="target">The target position to move to.</param>
-    /// <param name="maxSpeed">The maximum speed to move at.</param>
-    public MoveTo(Vector2 target, float maxSpeed)
+    /// <param name="speed">The permitted positional change per tick.</param>
+    public MoveTo(Vector2 target, float speed)
     {
         _target = target;
-        _maxSpeed = maxSpeed;
+        _speed = speed;
     }
 
     /// <inheritdoc/>
-    public override void Update(IEntity entity, GameUpdateTime time)
+    public override bool Update(IEntity entity, GameUpdateTime time)
     {
         Require.NotNull(entity, nameof(entity));
 
-        entity.Velocity = Move.Approach(entity.Position, _target, _maxSpeed, time);
+        entity.Velocity = Move.Approach(entity.Position, _target, _speed, time);
+
+        return entity.Velocity != Vector2.Zero
+               && entity.Position + Move.ScaleToTime(entity.Velocity, time) != _target;
     }
 }

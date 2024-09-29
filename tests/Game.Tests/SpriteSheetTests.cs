@@ -12,13 +12,14 @@
 //-----------------------------------------------------------------------
 
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Xunit;
 
 namespace BadEcho.Game.Tests;
 
 public class SpriteSheetTests : IClassFixture<ContentManagerFixture>
 {
-    private readonly Microsoft.Xna.Framework.Content.ContentManager _content;
+    private readonly ContentManager _content;
 
     public SpriteSheetTests(ContentManagerFixture contentFixture)
         => _content = contentFixture.Content;

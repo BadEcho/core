@@ -214,6 +214,69 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The &apos;{0}&apos; state already has a transition to the &apos;{1}&apos; state defined..
+        /// </summary>
+        internal static string StateAlreadyHasTransition {
+            get {
+                return ResourceManager.GetString("StateAlreadyHasTransition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Entering state: {0}.
+        /// </summary>
+        internal static string StateEntering {
+            get {
+                return ResourceManager.GetString("StateEntering", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exiting state: {0}.
+        /// </summary>
+        internal static string StateExiting {
+            get {
+                return ResourceManager.GetString("StateExiting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to State model lacks an identifier..
+        /// </summary>
+        internal static string StateHasNoIdentifier {
+            get {
+                return ResourceManager.GetString("StateHasNoIdentifier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The &apos;{0}&apos; state already exists in this finite-state machine configuration..
+        /// </summary>
+        internal static string StateMachineAlreadyHasState {
+            get {
+                return ResourceManager.GetString("StateMachineAlreadyHasState", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The &apos;{0}&apos; state does not exist in this finite-state machine configuration..
+        /// </summary>
+        internal static string StateMachineMissingState {
+            get {
+                return ResourceManager.GetString("StateMachineMissingState", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to State transition model lacks a target identifier..
+        /// </summary>
+        internal static string StateTransitionHasNoTargetIdentifier {
+            get {
+                return ResourceManager.GetString("StateTransitionHasNoTargetIdentifier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Setter expression targets a property not belonging to the control type being styled..
         /// </summary>
         internal static string StyleSetterNonLocalProperty {
