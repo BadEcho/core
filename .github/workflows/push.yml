@@ -24,7 +24,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 9.0.x
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
     - name: Add VSTest to PATH
@@ -44,8 +44,8 @@ jobs:
       run: .\build\build.ps1 $(git rev-parse --short HEAD) $(git rev-list --count "$(git log -1 --pretty=format:"%H" version.json)..HEAD") Package
     - name: Push to MyGet
       env:
-        PKG_URL: https://www.myget.org/F/bad-echo/api/v3/index.json
-        PKG_API_KEY: ${{ secrets.MYGET_API_KEY }}
+        PKG_URL: https://api.nuget.org/v3/index.json
+        PKG_API_KEY: ${{ secrets.NUGET_API_KEY }}
       run: .\build\push.ps1
       shell: pwsh
     - name: Build Artifacts
