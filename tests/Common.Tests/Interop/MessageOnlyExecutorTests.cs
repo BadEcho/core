@@ -46,7 +46,7 @@ public class MessageOnlyExecutorTests
     }
 
     [Fact]
-    public async void Await_RunningAsync_WindowInitialized()
+    public async Task Await_RunningAsync_WindowInitialized()
     {
         using var executor = new MessageOnlyExecutor();
 
@@ -78,7 +78,7 @@ public class MessageOnlyExecutorTests
     }
 
     [Fact]
-    public async void RunAsync_Running_ThrowsException()
+    public async Task RunAsync_Running_ThrowsException()
     {
         using var executor = new MessageOnlyExecutor();
         bool caughtException = false;
@@ -98,7 +98,7 @@ public class MessageOnlyExecutorTests
     }
 
     [Fact]
-    public async void RunAsync_RequestsDisabled_ThrowsCatchableExecutorException()
+    public async Task RunAsync_RequestsDisabled_ThrowsCatchableExecutorException()
     {
         using var executor = new MessageOnlyExecutor();
         bool caughtException = false;
@@ -118,27 +118,17 @@ public class MessageOnlyExecutorTests
     }
 
     [Fact]
-    public void Run_RunningThenDisposed_ThrowsException()
+    public async Task Run_RunningThenDisposed_ThrowsException()
     {
-        var executor = CreateExecutor();
+        var executor = new MessageOnlyExecutor();
+
+        await executor.RunAsync();
 
         executor.Dispose();
 
         while (!executor.IsShutdownComplete) { }
 
         Assert.Throws<ObjectDisposedException>(executor.Run);
-    }
-
-    [Fact]
-    public void RunAsync_RunningThenDisposed_ThrowsException()
-    {
-        var executor = CreateExecutor();
-
-        executor.Dispose();
-
-        while (!executor.IsShutdownComplete) { }
-
-        Assert.ThrowsAsync<ObjectDisposedException>(async () => await executor.RunAsync());
     }
 
     [Fact]
@@ -150,7 +140,7 @@ public class MessageOnlyExecutorTests
     }
 
     [Fact]
-    public async void InvokeAction_RunningAsyncFromCallingThread_RunsOnExecutorThread()
+    public async Task InvokeAction_RunningAsyncFromCallingThread_RunsOnExecutorThread()
     {
         using var executor = new MessageOnlyExecutor();
 
@@ -193,7 +183,7 @@ public class MessageOnlyExecutorTests
     }
 
     [Fact]
-    public async void InvokeAsync_FromCallingThread_RunsOnExecutorThread()
+    public async Task InvokeAsync_FromCallingThread_RunsOnExecutorThread()
     {
         using var executor = CreateExecutor();
 
@@ -204,7 +194,7 @@ public class MessageOnlyExecutorTests
     }
 
     [Fact]
-    public async void InvokeAsync_FromExecutorThread_RunsOnExecutorThread()
+    public async Task InvokeAsync_FromExecutorThread_RunsOnExecutorThread()
     {
         using var executor = CreateExecutor();
 

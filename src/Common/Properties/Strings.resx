@@ -224,9 +224,6 @@
 	<data name="SubclassDetachmentFailed" xml:space="preserve">
 		<value>Unable to detach a subclassed window's WndProc from the window's message chain.</value>
 	</data>
-	<data name="ExecutorDisabledByQueuePumping" xml:space="preserve">
-		<value>Message queue still pumping for executor that is in a disabled state.</value>
-	</data>
 	<data name="ExecutorCannotDisableOnOtherThread" xml:space="preserve">
 		<value>An executor can only be disabled on the thread which the executor was created on.</value>
 	</data>

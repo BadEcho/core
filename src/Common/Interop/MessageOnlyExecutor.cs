@@ -41,7 +41,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
 
     private ExecutionContext? _shutdownContext;
     private int _framesRunning;
-    private bool _disposed;
+    private bool _hasStarted;
     private bool _disposeQueued;
 
     /// <summary>
@@ -296,6 +296,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
             throw new InvalidOperationException(Strings.ExecutorFramesRequireRun);
 
         _framesRunning++;
+        _hasStarted = true;
 
         try
         {
@@ -322,7 +323,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     /// <inheritdoc />
     public void Run()
     {
-        if (_disposed)
+        if (IsShutdownComplete)
             throw new ObjectDisposedException(GetType().FullName, Strings.ExecutorIsDisposed);
 
         lock (Lock)
@@ -407,12 +408,12 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     /// <inheritdoc/>
     public void Dispose()
     {
-        if (_disposed)
+        if (IsShutdownComplete)
             return;
         
         lock (Lock)
         {
-            if (!_running.IsSet)
+            if (!_hasStarted)
             {   // The executor isn't running yet. Setting this flag here will ensure that disposal will happen even if Run() is
                 // executing concurrent to this.
                 _disposeQueued = true;
@@ -432,8 +433,6 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
         {
             _Executors.Remove(_thisExecutor);
         }
-
-        _disposed = true;
     }
 
     private static void LoopMessages(IThreadExecutorFrame frame)
@@ -505,18 +504,18 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     {
         var message = (WindowMessage) msg;
 
-        if (DisableRequests > 0)
-            throw new InvalidOperationException(Strings.ExecutorDisabledByQueuePumping);
-
-        if (WindowMessage.Destroy == message)
+        if (DisableRequests <= 0)
         {
-            if (!IsShutdownStarted && !IsShutdownComplete)
-                Shutdown();
-        }
+            if (WindowMessage.Destroy == message)
+            {
+                if (!IsShutdownStarted && !IsShutdownComplete)
+                    Shutdown();
+            }
 
-        else if (_ProcessOperation == message)
-        {
-            ProcessOperation();
+            else if (_ProcessOperation == message)
+            {
+                ProcessOperation();
+            }
         }
 
         return new HookResult(IntPtr.Zero, false);
@@ -545,7 +544,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     {
         if (Window == null || _operationQueue.Count == 0)
             return false;
-
+       
         return User32.PostMessage(Window.Handle, _ProcessOperation, IntPtr.Zero, IntPtr.Zero);
     }
 

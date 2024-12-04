@@ -187,15 +187,6 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Message queue still pumping for executor that is in a disabled state..
-        /// </summary>
-        public static string ExecutorDisabledByQueuePumping {
-            get {
-                return ResourceManager.GetString("ExecutorDisabledByQueuePumping", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Executor operation must either be complete or canceled prior to finalizing completion..
         /// </summary>
         public static string ExecutorFinalizedBeforeDone {
