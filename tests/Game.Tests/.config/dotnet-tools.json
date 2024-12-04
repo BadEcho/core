@@ -3,13 +3,13 @@
   "isRoot": true,
   "tools": {
     "bad-echo-mgcb": {
-      "version": "3.8.2.5-develop",
+      "version": "3.8.2.6-develop",
       "commands": [
         "mgcb"
       ]
     },
     "bad-echo-mgcb-editor": {
-      "version": "3.8.2.5-develop",
+      "version": "3.8.2.6-develop",
       "commands": [
         "mgcb-editor"
       ]
@@ -21,7 +21,7 @@
       ]
     },
     "bad-echo-mgcb-editor-windows": {
-      "version": "3.8.2.5-develop",
+      "version": "3.8.2.6-develop",
       "commands": [
         "mgcb-editor-windows"
       ]
