@@ -35,8 +35,8 @@ jobs:
       uses: dawidd6/action-download-artifact@v3
       continue-on-error: true
       with:
-        name: vcpkg-artifacts
-        commit: ${{ vars.VCPKG_ARTIFACT_SHA }}
+        name: vcpkg-binaries
+        commit: ${{ vars.VCPKG_BINARIES_SHA }}
         path: src/MsdfGenerator/vcpkg_installed/
       # If we don't generate the following *.stamp file, C++ dependencies will be recompiled regardless of existing artifacts.
     - name: Update vcpkg Output Timestamp
@@ -50,26 +50,26 @@ jobs:
       if: steps.download-vcpkg.outcome == 'failure'
       uses: actions/upload-artifact@v4
       with:
-        name: vcpkg-artifacts
+        name: vcpkg-binaries
         path: src/MsdfGenerator/vcpkg_installed/**/*      
     - name: Record vcpkg Artifact Commit Hash
       if: steps.download-vcpkg.outcome == 'failure'
-      run: gh variable set VCPKG_ARTIFACT_SHA ${{ github.event.workflow_run.head_sha }}
+      run: gh variable set VCPKG_BINARIES_SHA ${{ github.event.workflow_run.head_sha }}
       # Store our compiled assets for subsequent jobs.
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: binary-artifacts
+        name: binaries
         path: bin/rel/
-    - name: Upload Game Test Artifacts
+    - name: Upload Game Test Content Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: game-test-artifacts
+        name: game-test-content
         path: tests/Game.Tests/Content/
     - name: Upload Package Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: package-artifacts
+        name: packages
         path: artifacts/
   test:
     name: Run Unit Tests
@@ -85,12 +85,12 @@ jobs:
     - name: Download Build Artifacts
       uses: actions/download-artifact@v4
       with:
-        name: binary-artifacts
+        name: binaries
         path: bin/rel/
-    - name: Download Game Test Artifacts
+    - name: Download Game Test Content Artifacts
       uses: actions/download-artifact@v4
       with:
-        name: game-test-artifacts
+        name: game-test-content
         path: tests/Game.Tests/Content/
     - name: Execute Test Runner
       shell: pwsh
@@ -98,7 +98,7 @@ jobs:
     - name: Upload Test Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: test-artifacts
+        name: test-results
         path: testResults/
   deploy:
     name: Deploy Packages
@@ -112,7 +112,7 @@ jobs:
     - name: Download Package Artifacts
       uses: actions/download-artifact@v4
       with:
-        name: package-artifacts
+        name: packages
         path: artifacts/
     - name: Push to NuGet
       shell: pwsh
