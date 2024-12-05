@@ -94,6 +94,7 @@ jobs:
     name: Deploy Packages
     needs: [build, test]
     runs-on: windows-2022
+    steps:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -113,4 +114,3 @@ jobs:
             throw ("Push command errored with exit code: " + $lastexitcode)
           }
         }
-    
