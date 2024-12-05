@@ -57,12 +57,12 @@ jobs:
       run: gh variable set VCPKG_ARTIFACT_SHA ${{ github.event.workflow_run.head_sha }}
       # Store our compiled assets for subsequent jobs.
     - name: Upload Build Artifacts
-      uses: actions/upload-artifact@4
+      uses: actions/upload-artifact@v4
       with:
         name: binary-artifacts
         path: bin/rel/
     - name: Upload Package Artifacts
-      uses: actions/upload-artifact@4
+      uses: actions/upload-artifact@v4
       with:
         name: package-artifacts
         path: artifacts/
@@ -78,7 +78,7 @@ jobs:
     - name: Add VSTest to PATH
       uses: darenm/Setup-VSTest@v1.3
     - name: Download Build Artifacts
-      uses: actions/download-artifact@4
+      uses: actions/download-artifact@v4
       with:
         name: binary-artifacts
         path: bin/rel/
@@ -86,7 +86,7 @@ jobs:
       shell: pwsh
       run: vstest.console /Logger:trx /ResultsDirectory:testResults (Get-ChildItem bin\rel\*.Tests.dll).FullName
     - name: Upload Test Artifacts
-      uses: actions/upload-artifact@4
+      uses: actions/upload-artifact@v4
       with:
         name: test-artifacts
         path: testResults/
@@ -100,7 +100,7 @@ jobs:
       with:
         dotnet-version: 9.0.x
     - name: Download Package Artifacts
-      uses: actions/download-artifact@4
+      uses: actions/download-artifact@v4
       with:
         name: package-artifacts
         path: artifacts/
