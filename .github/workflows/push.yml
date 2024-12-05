@@ -12,11 +12,19 @@ on:
   pull_request:
     branches:
       - master
+permissions:
+ actions: write
 jobs:
   build:
     name: Fetch and Build Source
     runs-on: windows-2022
     steps:
+    - name: Test Set Var
+      run: gh variable set VCPKG_BINARIES_SHA ${{ github.event.workflow_run.head_sha }}
+      env:
+        GH_TOKEN: ${{ github.token }}
+    - name: Fail
+      run: exit 1
     - name: Checkout
       uses: actions/checkout@v4
       with:
