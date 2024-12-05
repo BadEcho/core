@@ -13,7 +13,8 @@ on:
     branches:
       - master
 jobs:
-  build:  
+  build:
+    name: Fetch and Build Source
     runs-on: windows-2022
     steps:
     - name: Checkout
@@ -26,37 +27,90 @@ jobs:
       with:
         dotnet-version: 9.0.x
     - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v2
-    - name: Add VSTest to PATH
-      uses: darenm/Setup-VSTest@v1.3
-    - name: Acquire vcpkg Artifacts
-      if: ${{ vars.DOWNLOAD_VCPKG == 'true' }}
+      uses: microsoft/setup-msbuild@v2    
+      # GitHub artifacts expire after 90 days, so this will fail every 90 days.
+      # We cache vcpkg build artifacts, as their compilation requires an inordinate amount of time.
+    - name: Download vcpkg Artifacts
+      id: download-vcpkg
       uses: dawidd6/action-download-artifact@v3
+      continue-on-error: true
       with:
         name: vcpkg-artifacts
         commit: ${{ vars.VCPKG_ARTIFACT_SHA }}
         path: src/MsdfGenerator/vcpkg_installed/
+      # If we don't generate the following *.stamp file, C++ dependencies will be recompiled regardless of existing artifacts.
     - name: Update vcpkg Output Timestamp
-      if: ${{ vars.DOWNLOAD_VCPKG == 'true' }}
+      if: steps.download-vcpkg.outcome == 'success'
       run: touch src/MsdfGenerator/vcpkg_installed/x64-windows-static-md/.msbuildstamp-x64-windows-static-md.stamp
     - name: Build
       shell: pwsh      
       run: .\build\build.ps1 $(git rev-parse --short HEAD) $(git rev-list --count "$(git log -1 --pretty=format:"%H" version.json)..HEAD") Package
-    - name: Push to MyGet
-      env:
-        PKG_URL: https://api.nuget.org/v3/index.json
-        PKG_API_KEY: ${{ secrets.NUGET_API_KEY }}
-      run: .\build\push.ps1
-      shell: pwsh
-    - name: Build Artifacts
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: artifacts
-        path: artifacts/**/*
-    - name: vcpkg Artifacts
-      if: ${{ vars.UPLOAD_VCPKG == 'true' }}
+      # If vcpkg artifact aquisition failed earlier, we upload our freshly compiled dependencies and record the commit hash for future retrieval.
+    - name: Upload vcpkg Artifacts
+      if: steps.download-vcpkg.outcome == 'failure'
       uses: actions/upload-artifact@v4
       with:
         name: vcpkg-artifacts
-        path: src/MsdfGenerator/vcpkg_installed/**/*
+        path: src/MsdfGenerator/vcpkg_installed/**/*      
+    - name: Record vcpkg Artifact Commit Hash
+      if: steps.download-vcpkg.outcome == 'failure'
+      run: gh variable set VCPKG_ARTIFACT_SHA ${{ github.event.workflow_run.head_sha }}
+      # Store our compiled assets for subsequent jobs.
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@4
+      with:
+        name: binary-artifacts
+        path: bin/rel/
+    - name: Upload Package Artifacts
+      uses: actions/upload-artifact@4
+      with:
+        name: package-artifacts
+        path: artifacts/
+  test:
+    name: Run Unit Tests
+    needs: build
+    runs-on: windows-2022
+    steps:
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+    - name: Add VSTest to PATH
+      uses: darenm/Setup-VSTest@v1.3
+    - name: Download Build Artifacts
+      uses: actions/download-artifact@4
+      with:
+        name: binary-artifacts
+        path: bin/rel/
+    - name: Execute Test Runner
+      shell: pwsh
+      run: vstest.console /Logger:trx /ResultsDirectory:testResults (Get-ChildItem bin\rel\*.Tests.dll).FullName
+    - name: Upload Test Artifacts
+      uses: actions/upload-artifact@4
+      with:
+        name: test-artifacts
+        path: testResults/
+  deploy:
+    name: Deploy Packages
+    needs: [build, test]
+    runs-on: windows-2022
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+    - name: Download Package Artifacts
+      uses: actions/download-artifact@4
+      with:
+        name: package-artifacts
+        path: artifacts/
+    - name: Push to NuGet
+      shell: pwsh
+      run: |
+        Get-ChildItem .\artifacts -Filter "*.nupkg" | ForEach-Object {
+          Write-Host "$($scriptName): Pushing $($_.Name) to repository."
+          dotnet nuget push $_.FullName --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
+          if ($lastexitcode -ne 0) {
+            throw ("Push command errored with exit code: " + $lastexitcode)
+          }
+        }
+    
