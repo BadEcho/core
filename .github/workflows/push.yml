@@ -22,13 +22,6 @@ jobs:
       with:
         submodules: recursive
         fetch-depth: 0
-    - name: Test Set Var
-      run: gh variable set VCPKG_BINARIES_SHA -b $(git rev-parse HEAD)
-      shell: pwsh
-      env:
-        GH_TOKEN: ${{ secrets.REPO_TOKEN }}
-    - name: Fail
-      run: exit 1
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -61,9 +54,10 @@ jobs:
         path: src/MsdfGenerator/vcpkg_installed/**/*      
     - name: Record vcpkg Artifact Commit Hash
       if: steps.download-vcpkg.outcome == 'failure'
-      run: gh variable set VCPKG_BINARIES_SHA ${{ github.event.workflow_run.head_sha }}
+      run: gh variable set VCPKG_BINARIES_SHA -b $(git rev-parse HEAD)
+      shell: pwsh
       env:
-        GH_TOKEN: ${{ github.token }}
+        GH_TOKEN: ${{ secrets.REPO_TOKEN }}
       # Store our compiled assets for subsequent jobs.
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v4
