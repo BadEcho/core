@@ -55,6 +55,8 @@ jobs:
     - name: Record vcpkg Artifact Commit Hash
       if: steps.download-vcpkg.outcome == 'failure'
       run: gh variable set VCPKG_BINARIES_SHA ${{ github.event.workflow_run.head_sha }}
+      env:
+        GH_TOKEN: ${{ github.token }}
       # Store our compiled assets for subsequent jobs.
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v4
