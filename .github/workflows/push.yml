@@ -24,6 +24,7 @@ jobs:
         fetch-depth: 0
     - name: Test Set Var
       run: gh variable set VCPKG_BINARIES_SHA -b $(git rev-parse HEAD)
+      shell: pwsh
       env:
         GH_TOKEN: ${{ secrets.REPO_TOKEN }}
     - name: Fail
