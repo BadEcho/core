@@ -51,7 +51,7 @@ jobs:
       shell: pwsh      
       run: $scriptArgs = $ExecutionContext.InvokeCommand.ExpandString($Env:BUILD_SCRIPT_ARGS).split(); .\build\build.ps1 @scriptArgs
       env:
-        BUILD_SCRIPT_ARGS: ${{ github.event_name == 'workflow_call' && github.event.inputs.build-script-args || '-CommitId $(git rev-parse --short HEAD) -VersionDistance $(git rev-list --count "$(git log -1 --pretty=format:"%H" version.json)..HEAD") -PackageConfiguration Package' }}
+        BUILD_SCRIPT_ARGS: ${{ github.event_name == 'workflow_call' && github.event.inputs.build-script-args || '$(git rev-parse --short HEAD) $(git rev-list --count "$(git log -1 --pretty=format:"%H" version.json)..HEAD") Package' }}
       # If vcpkg artifact aquisition failed earlier, we upload our freshly compiled dependencies and record the commit hash for future retrieval.
     - name: Upload vcpkg Artifacts
       if: steps.download-vcpkg.outcome == 'failure'
