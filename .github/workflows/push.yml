@@ -49,9 +49,9 @@ jobs:
       run: touch src/MsdfGenerator/vcpkg_installed/x64-windows-static-md/.msbuildstamp-x64-windows-static-md.stamp
     - name: Build
       shell: pwsh      
-      run: .\build\build.ps1 "$Env:BUILD_SCRIPT_ARGS"
+      run: .\build\build.ps1 $ExecutionContext.InvokeCommand.ExpandString($Env:BUILD_SCRIPT_ARGS)
       env:
-        BUILD_SCRIPT_ARGS: ${{ github.event_name == 'workflow_call' && github.event.inputs.build-script-args || $(git rev-parse --short HEAD) $(git rev-list --count "$(git log -1 --pretty=format:"%H" version.json)..HEAD") Package }}
+        BUILD_SCRIPT_ARGS: ${{ github.event_name == 'workflow_call' && github.event.inputs.build-script-args || '$(git rev-parse --short HEAD) $(git rev-list --count "$(git log -1 --pretty=format:"%H" version.json)..HEAD") Package' }}
       # If vcpkg artifact aquisition failed earlier, we upload our freshly compiled dependencies and record the commit hash for future retrieval.
     - name: Upload vcpkg Artifacts
       if: steps.download-vcpkg.outcome == 'failure'
