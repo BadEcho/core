@@ -52,7 +52,7 @@ jobs:
       shell: pwsh      
       run: $scriptArgs = $ExecutionContext.InvokeCommand.ExpandString($Env:BUILD_SCRIPT_ARGS) | ConvertFrom-StringData; .\build\Build.ps1 @scriptArgs
       env:
-        BUILD_SCRIPT_ARGS: ${{ inputs.build-script-args !+ '' && inputs.build-script-args || 'CommitId = $(git rev-parse --short HEAD) `nVersionDistance = $(git rev-list --count "$(git log -1 --pretty=format:"%H" version.json)..HEAD") `nPackageConfiguration = Package' }}
+        BUILD_SCRIPT_ARGS: ${{ inputs.build-script-args != '' && inputs.build-script-args || 'CommitId = $(git rev-parse --short HEAD) `nVersionDistance = $(git rev-list --count "$(git log -1 --pretty=format:"%H" version.json)..HEAD") `nPackageConfiguration = Package' }}
       # If vcpkg artifact aquisition failed earlier, we upload our freshly compiled dependencies and record the commit hash for future retrieval.
     - name: Upload vcpkg Artifacts
       if: steps.download-vcpkg.outcome == 'failure'
