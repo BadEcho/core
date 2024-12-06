@@ -34,26 +34,7 @@ jobs:
     - run: git config --global user.name "Echo Chamber"
     - name: Increment Version File
       shell: pwsh
-      run: |
-        $versionSettings = Get-Content version.json | ConvertFrom-Json
-
-        switch (${{ github.event.inputs.component-to-increment }}) {
-            Major {
-                $versionSettings[0].majorVersion++
-            }
-            Minor {
-                $versionSettings[0].minorVersion++
-            }
-            Patch {
-                $versionSettings[0].patchVersion++
-            }
-        }
-
-        ConvertTo-Json $versionSettings | Set-Content version1.json
-
-        git add version1.json
-        git commit -m "Bumping version" 
-        git push origin
+      run: .\build\Bump-Version.ps1 ${{ github.event.inputs.component-to-increment }}
   # publish:
   #   name: Publish
   #   runs-on: windows-2022
