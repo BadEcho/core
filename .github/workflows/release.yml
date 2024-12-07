@@ -20,6 +20,9 @@ jobs:
     with:
       build-script-args: 'PackageConfiguration = Package'
       skip-tests: true
+    secrets:
+      REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
+      NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
   create-release:
     name: Create Release
     needs: build

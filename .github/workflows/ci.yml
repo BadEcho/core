@@ -21,6 +21,11 @@ on:
         required: false
         type: boolean
         default: false
+    secrets:
+      REPO_TOKEN:
+        required: true
+      NUGET_API_KEY:
+        required: true      
 jobs:
   build:
     name: Fetch and Build Source
