@@ -1,6 +1,6 @@
-# On a push to source control, this compiles a release build for the repository's code, runs tests, and then publishes new development builds to MyGet.
+# Reusable workflow that builds the repository's code, executes tests, and then deploys the packages to NuGet when a push is made to the default branch.
 
-name: CI on Push
+name: CI
  
 on:
   push:
@@ -8,7 +8,7 @@ on:
       - master
     paths-ignore:
       - '.github/workflows/**'
-      - '!.github/workflows/push.yml'
+      - '!.github/workflows/ci.yml'
   pull_request:
     branches:
       - master
@@ -40,7 +40,7 @@ jobs:
       uses: dawidd6/action-download-artifact@v3
       continue-on-error: true
       with:
-        workflow: push.yml
+        workflow: ci.yml
         name: vcpkg-binaries
         commit: ${{ vars.VCPKG_BINARIES_SHA }}
         path: src/MsdfGenerator/vcpkg_installed/
@@ -50,7 +50,7 @@ jobs:
       run: touch src/MsdfGenerator/vcpkg_installed/x64-windows-static-md/.msbuildstamp-x64-windows-static-md.stamp
     - name: Build
       shell: pwsh      
-      run: $scriptArgs = $ExecutionContext.InvokeCommand.ExpandString($Env:BUILD_SCRIPT_ARGS) | ConvertFrom-StringData; .\build\Build.ps1 @scriptArgs
+      run: $scriptArgs = $ExecutionContext.InvokeCommand.ExpandString($Env:BUILD_SCRIPT_ARGS) | ConvertFrom-StringData; .\build\Invoke-Build.ps1 @scriptArgs
       env:
         BUILD_SCRIPT_ARGS: ${{ inputs.build-script-args != '' && inputs.build-script-args || 'CommitId = $(git rev-parse --short HEAD) `nVersionDistance = $(git rev-list --count "$(git log -1 --pretty=format:"%H" version.json)..HEAD") `nPackageConfiguration = Package' }}
       # If vcpkg artifact aquisition failed earlier, we upload our freshly compiled dependencies and record the commit hash for future retrieval.

@@ -1,7 +1,6 @@
-# Publishes a new release of Bad Echo software to official NuGet feeds.
-# To configure this workflow, replace variables with their correct values in the "env" section below.
+# Create a new stable release of Bad Echo software.
 
-name: Publish Release
+name: Create Stable Release
 
 on:
   workflow_dispatch:
@@ -33,12 +32,8 @@ jobs:
     - run: git config --global user.email "chamber@badecho.com"
     - run: git config --global user.name "Echo Chamber"
     - name: Create Release Tag
-      shell: pwsh
-      run: |
-        $versionSettings = Get-Content version.json | ConvertFrom-Json
-        $versionTag = "v{0}.{1}.{2}" -f $versionSettings.majorVersion, $versionSettings.minorVersion, $versionSettings.patchVersion
-        git tag -a $versionTag HEAD -m "${{ env.product-name }} $versionTag"
-        git push origin $versionTag
+      shell: pwsh      
+      run: .\build\New-ReleaseTag.ps1 ${{ env.product-name }}      
     - name: Increment Version File
       shell: pwsh
       run: .\build\Bump-Version.ps1 ${{ github.event.inputs.component-to-increment }}
