@@ -17,6 +17,10 @@ on:
       build-script-args:
         required: true
         type: string
+      skip-tests:
+        required: false
+        type: boolean
+        default: false
 jobs:
   build:
     name: Fetch and Build Source
@@ -85,6 +89,7 @@ jobs:
   test:
     name: Run Unit Tests
     needs: build
+    if: inputs.skip-tests != true
     runs-on: windows-2022
     steps:
     - name: Setup .NET

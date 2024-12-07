@@ -18,9 +18,10 @@ jobs:
     name: Execute Build Workflow
     uses: ./.github/workflows/push.yml
     with:
-      build-script-args: 'PackageConfiguration = Package `nSkipTests = true'
-  bump-version:
-    name: Bump Version
+      build-script-args: 'PackageConfiguration = Package'
+      skip-tests: true
+  create-release:
+    name: Create Release
     needs: build
     runs-on: windows-2022
     steps:
@@ -29,62 +30,12 @@ jobs:
       with:
         submodules: recursive
         fetch-depth: 0      
-    - run: git config --global user.email "chamber@badecho.com"
-    - run: git config --global user.name "Echo Chamber"
+    - name: Setup Git User
+      shell: pwsh
+      run: git config --global user.email "chamber@badecho.com"; git config --global user.name "Echo Chamber"
     - name: Create Release Tag
       shell: pwsh      
       run: .\build\New-ReleaseTag.ps1 ${{ env.product-name }}      
-    - name: Increment Version File
+    - name: Bump Version
       shell: pwsh
       run: .\build\Bump-Version.ps1 ${{ github.event.inputs.component-to-increment }}
-  # publish:
-  #   name: Publish
-  #   runs-on: windows-2022
-  #   env:
-  #     product-Name: Bad Echo Core Technologies
-  #   steps:
-  #   - name: Checkout
-  #     uses: actions/checkout@v4
-  #     with:
-  #       submodules: recursive
-  #       fetch-depth: 0      
-  #   - run: git config --global user.email "chamber@badecho.com"
-  #   - run: git config --global user.name "Echo Chamber"
-  #   - name: Create Echo Version
-  #     run: |
-  #       git tag -a ${{ github.event.inputs.echo-version }} HEAD -m "${{ env.product-name }} ${{ github.event.inputs.echo-version }}"
-  #       git push origin ${{ github.event.inputs.echo-version }}
-  #   - name: Setup .NET
-  #     uses: actions/setup-dotnet@v4
-  #     with:
-  #       dotnet-version: 9.0.x      
-  #   - name: Add MSBuild to PATH
-  #     uses: microsoft/setup-msbuild@v2
-  #   - name: Add VSTest to PATH
-  #     uses: darenm/Setup-VSTest@v1.3
-  #   - name: Acquire vcpkg Artifacts
-  #     if: ${{ vars.DOWNLOAD_VCPKG == 'true' }}
-  #     uses: dawidd6/action-download-artifact@v3
-  #     with:
-  #       workflow: push.yml
-  #       name: vcpkg-artifacts
-  #       commit: ${{ vars.VCPKG_ARTIFACT_SHA }}
-  #       path: src/MsdfGenerator/vcpkg_installed/
-  #   - name: Update vcpkg Output Timestamp
-  #     if: ${{ vars.DOWNLOAD_VCPKG == 'true' }}
-  #     run: touch src/MsdfGenerator/vcpkg_installed/x64-windows-static-md/.msbuildstamp-x64-windows-static-md.stamp
-  #   - name: Build
-  #     shell: pwsh
-  #     run: .\build\build.ps1 -PackageConfiguration Package -SkipTests
-  #   - name: Push to NuGet
-  #     env:
-  #       PKG_URL: https://api.nuget.org/v3/index.json
-  #       PKG_API_KEY: ${{ secrets.NUGET_API_KEY }}
-  #     run: .\build\push.ps1
-  #     shell: pwsh
-  #   - name: Build Artifacts
-  #     if: always()
-  #     uses: actions/upload-artifact@v4
-  #     with:
-  #       name: artifacts
-  #       path: artifacts/**/*
