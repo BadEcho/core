@@ -16,7 +16,7 @@ on:
 jobs:
   build:
     name: Execute Build Workflow
-    uses: ./.github/workflows/push.yml
+    uses: ./.github/workflows/ci.yml
     with:
       build-script-args: 'PackageConfiguration = Package'
       skip-tests: true
