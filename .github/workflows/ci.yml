@@ -119,8 +119,12 @@ jobs:
   deploy:
     name: Deploy Packages
     needs: [build, test]
+    if: always()
     runs-on: windows-2022
     steps:
+    - name: Check Test Results
+      if: needs.test.result == 'failure'
+      run: exit 1
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
