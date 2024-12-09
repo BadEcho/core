@@ -26,7 +26,7 @@ on:
       REPO_TOKEN:
         required: true
       NUGET_API_KEY:
-        required: true      
+        required: true
 
 env:
   package-configuration: 'Package'
@@ -37,7 +37,7 @@ jobs:
     runs-on: windows-2022
     outputs:
       BUILD_SUBMODULE_SHA: ${{ steps.submodule-status.outputs.BUILD_SUBMODULE_SHA }}
-    steps:    
+    steps:
     - name: Checkout
       uses: actions/checkout@v4
       with:
@@ -138,8 +138,8 @@ jobs:
     if: always()
     runs-on: windows-2022
     steps:
-    - name: Check Previous Job Results
-      if: needs.build.result == 'failure' || needs.test.result == 'failure'
+    - name: Check Previous Jobs' Results
+      if: needs.build.result != 'success' || (needs.test.result != 'success' && inputs.skip-tests != true)
       run: exit 1
     - name: Checkout Build Submodule
       uses: actions/checkout@v4
