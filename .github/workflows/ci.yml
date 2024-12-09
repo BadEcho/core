@@ -45,7 +45,7 @@ jobs:
         fetch-depth: 0
     - name: Get Build Submodule Hash
       shell: pwsh
-      run: Write-Output $($(git submodule status vcpkg) -split ' ')[1] >> $ENV:GITHUB_OUTPUT
+      run: Write-Output "BUILD_SUBMODULE_SHA = $($(-split $(git submodule status build))[0])" >> $ENV:GITHUB_OUTPUT
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -138,8 +138,8 @@ jobs:
     if: always()
     runs-on: windows-2022
     steps:
-    - name: Check Test Results
-      if: needs.test.result == 'failure'
+    - name: Check Previous Job Results
+      if: needs.build.result == 'failure' || needs.test.result == 'failure'
       run: exit 1
     - name: Checkout Build Submodule
       uses: actions/checkout@v4
