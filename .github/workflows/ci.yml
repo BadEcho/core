@@ -35,12 +35,17 @@ jobs:
   build:
     name: Fetch and Build Source
     runs-on: windows-2022
+    outputs:
+      BUILD_SUBMODULE_SHA: ${{ steps.submodule-status.outputs.BUILD_SUBMODULE_SHA }}
     steps:    
     - name: Checkout
       uses: actions/checkout@v4
       with:
         submodules: recursive
         fetch-depth: 0
+    - name: Get Build Submodule Hash
+      shell: pwsh
+      run: Write-Output $($(git submodule status vcpkg) -split ' ')[1] >> $ENV:GITHUB_OUTPUT
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -136,6 +141,12 @@ jobs:
     - name: Check Test Results
       if: needs.test.result == 'failure'
       run: exit 1
+    - name: Checkout Build Submodule
+      uses: actions/checkout@v4
+      with:
+        repository: BadEcho/build
+        ref: ${{ needs.build.outputs.BUILD_SUBMODULE_SHA }}
+        path: build        
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
