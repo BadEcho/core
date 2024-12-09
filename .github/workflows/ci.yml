@@ -132,6 +132,11 @@ jobs:
       with:
         name: test-results
         path: testResults/
+    - name: Generate Report
+      uses: NasAmin/trx-parser@v0.1
+      with:
+        TRX_PATH: testResults/
+        REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
   deploy:
     name: Deploy Packages
     needs: [build, test]
