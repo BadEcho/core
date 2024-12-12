@@ -134,9 +134,10 @@ jobs:
         path: testResults/
     - name: Generate Report
       if: always()
-      uses: EnricoMi/publish-unit-test-result-action/windows@v2
+      uses: NasAmin/trx-parser@v0.6.0
       with:
-        files: testResults/**/*.trx
+        TRX-PATH: testResults/
+        REPO_TOKEN: ${{ github.token }}
   deploy:
     name: Deploy Packages
     needs: [build, test]
