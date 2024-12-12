@@ -133,10 +133,10 @@ jobs:
         name: test-results
         path: testResults/
     - name: Generate Report
-      uses: NasAmin/trx-parser@v0.6.0
+      if: always()
+      uses: EnricoMi/publish-unit-test-result-action@v2.18.0
       with:
-        TRX_PATH: testResults/
-        REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
+        files: testResults/**/*.trx
   deploy:
     name: Deploy Packages
     needs: [build, test]
