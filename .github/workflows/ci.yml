@@ -126,7 +126,7 @@ jobs:
         path: tests/Game.Tests/Content/
     - name: Execute Test Runner
       shell: pwsh
-      run: vstest.console /Logger:trx /ResultsDirectory:testResults (Get-ChildItem bin\rel\*.Tests.dll).FullName
+      run: Get-ChildItem bin\rel\*.Tests.dll | ForEach-Object {vstest.console /Logger:trx`;LogFileName="$($_.BaseName).trx" /ResultsDirectory:testResults $_.FullName}
     - name: Upload Test Artifacts
       uses: actions/upload-artifact@v4
       with:
@@ -134,10 +134,10 @@ jobs:
         path: testResults/
     - name: Generate Report
       if: always()
-      uses: NasAmin/trx-parser@v0.6.0
+      uses: EnricoMi/publish-unit-test-result-action/windows@v2
       with:
-        TRX_PATH: testResults/
-        REPO_TOKEN: ${{ github.token }}
+        check_name: Unit Test Results
+        files: testResults/**/*.trx
   deploy:
     name: Deploy Packages
     needs: [build, test]
