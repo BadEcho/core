@@ -136,7 +136,7 @@ jobs:
       if: always()
       uses: NasAmin/trx-parser@v0.6.0
       with:
-        TRX-PATH: testResults/
+        TRX_PATH: testResults/
         REPO_TOKEN: ${{ github.token }}
   deploy:
     name: Deploy Packages
