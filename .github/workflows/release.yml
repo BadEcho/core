@@ -16,10 +16,39 @@ on:
 
 env:
   PRODUCT_NAME: Bad Echo Core Technologies
+  LAST_RUN_CONCLUSION:
 
 jobs:
+  validate-release:
+    name: Validate Release Candidate
+    runs-on: windows-2022
+    steps:
+    - name: Fail If Not Default Branch
+      if: github.ref_name != github.event.repository.default_branch
+      uses: actions/github-script@v7.0.1
+      with:
+        script: core.setfailed('Can only create stable releases from the repository\'s default branch.')
+    - name: Shallow Checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: Fetch Last CI/CD Run Conclusion
+      id: check-last-run
+      run: |
+        Write-Output "LAST_RUN_CONCLUSION=$(.\build\Get-LatestWorkflowConclusion.ps1 -Repository:$Env:REPOSITORY -Branch:$Env:BRANCH -WorkflowPath:$Env:WORKFLOW_PATH)" >> $Env:GITHUB_ENV
+      env:
+        REPOSITORY: ${{ github.repository }}
+        BRANCH: ${{ github.ref_name }}
+        WORKFLOW_PATH: .github/workflows/ci.yml
+        GH_TOKEN: ${{ secrets.REPO_TOKEN }}
+    - name: Fail If Last Run Unsuccessful
+      if: env.LAST_RUN_CONCLUSION != 'success'
+      uses: actions/github-script@v7.0.1
+      with:
+        script: core.setFailed('Cannot create a stable release for a commit that resulted in a failed CI/CD run.')
   build:
     name: Execute Build Workflow
+    needs: validate-release
     uses: ./.github/workflows/ci.yml
     with:
       release-build: true
@@ -29,13 +58,13 @@ jobs:
       NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
   create-release:
     name: Create Release
-    needs: build
+    needs: [validate-release, build]
     runs-on: windows-2022
     steps:
     - name: Checkout
       uses: actions/checkout@v4
       with:
-        submodules: recursive
+        submodules: true
         fetch-depth: 0      
     - name: Setup Git User
       run: git config --global user.email "chamber@badecho.com"; git config --global user.name "Echo Chamber"
