@@ -29,14 +29,14 @@ on:
         required: true
 
 env:
-  package-configuration: 'Package'
+  PACKAGE_CONFIGURATION: 'Package'
   
 jobs:
   build:
     name: Fetch and Build Source
     runs-on: windows-2022
     outputs:
-      BUILD_SUBMODULE_SHA: ${{ steps.submodule-status.outputs.BUILD_SUBMODULE_SHA }}
+      build-submodule-sha: ${{ steps.submodule-status.outputs.BUILD_SUBMODULE_SHA }}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -71,7 +71,7 @@ jobs:
       run: .\build\Invoke-Build.ps1 -ReleaseBuild:$([System.Convert]::ToBoolean($Env:RELEASE_BUILD)) -PackageConfiguration:$Env:PACKAGE_CONFIGURATION
       env:
         RELEASE_BUILD: ${{ inputs.release-build != '' && inputs.release-build || 'false' }}
-        PACKAGE_CONFIGURATION: ${{ env.package-configuration }}
+        PACKAGE_CONFIGURATION: ${{ env.PACKAGE_CONFIGURATION }}
       # If vcpkg artifact aquisition failed earlier, we upload our freshly compiled dependencies and record the commit hash for future retrieval.
     - name: Upload vcpkg Artifacts
       if: steps.download-vcpkg.outcome == 'failure'
@@ -148,7 +148,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: BadEcho/build
-        ref: ${{ needs.build.outputs.BUILD_SUBMODULE_SHA }}
+        ref: ${{ needs.build.outputs.build-submodule-sha }}
         path: build        
     - name: Setup .NET
       uses: actions/setup-dotnet@v4

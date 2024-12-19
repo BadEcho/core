@@ -15,7 +15,7 @@ on:
         - Patch
 
 env:
-  product-name: Bad Echo Core Technologies
+  PRODUCT_NAME: Bad Echo Core Technologies
 
 jobs:
   build:
@@ -40,6 +40,6 @@ jobs:
     - name: Setup Git User
       run: git config --global user.email "chamber@badecho.com"; git config --global user.name "Echo Chamber"
     - name: Create Release Tag
-      run: .\build\New-ReleaseTag.ps1 "${{ env.product-name }}"
+      run: .\build\New-ReleaseTag.ps1 "${{ env.PRODUCT_NAME }}"
     - name: Bump Version
       run: .\build\Bump-Version.ps1 ${{ github.event.inputs.component-to-increment }}
