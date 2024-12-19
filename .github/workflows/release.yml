@@ -38,11 +38,8 @@ jobs:
         submodules: recursive
         fetch-depth: 0      
     - name: Setup Git User
-      shell: pwsh
       run: git config --global user.email "chamber@badecho.com"; git config --global user.name "Echo Chamber"
     - name: Create Release Tag
-      shell: pwsh      
       run: .\build\New-ReleaseTag.ps1 "${{ env.product-name }}"
     - name: Bump Version
-      shell: pwsh
       run: .\build\Bump-Version.ps1 ${{ github.event.inputs.component-to-increment }}

@@ -45,7 +45,6 @@ jobs:
         fetch-depth: 0
     - name: Get Build Submodule Hash
       id: submodule-status
-      shell: pwsh
       run: Write-Output "BUILD_SUBMODULE_SHA = $($(-split $(git submodule status build))[0])" >> $ENV:GITHUB_OUTPUT
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -69,7 +68,6 @@ jobs:
       if: steps.download-vcpkg.outcome == 'success'
       run: touch src/MsdfGenerator/vcpkg_installed/x64-windows-static-md/.msbuildstamp-x64-windows-static-md.stamp
     - name: Build
-      shell: pwsh      
       run: .\build\Invoke-Build.ps1 -ReleaseBuild:$([System.Convert]::ToBoolean($Env:RELEASE_BUILD)) -PackageConfiguration:$Env:PACKAGE_CONFIGURATION
       env:
         RELEASE_BUILD: ${{ inputs.release-build != '' && inputs.release-build || 'false' }}
@@ -84,7 +82,6 @@ jobs:
     - name: Record vcpkg Artifact Commit Hash
       if: steps.download-vcpkg.outcome == 'failure'
       run: gh variable set VCPKG_BINARIES_SHA -b $(git rev-parse HEAD)
-      shell: pwsh
       env:
         GH_TOKEN: ${{ secrets.REPO_TOKEN }}
       # Store our compiled assets for subsequent jobs.
@@ -126,7 +123,6 @@ jobs:
         name: game-test-content
         path: tests/Game.Tests/Content/
     - name: Execute Test Runner
-      shell: pwsh
       run: Get-ChildItem bin\rel\*.Tests.dll | ForEach-Object {vstest.console /Logger:trx`;LogFileName="$($_.BaseName).trx" /ResultsDirectory:testResults $_.FullName}
     - name: Upload Test Artifacts
       uses: actions/upload-artifact@v4
@@ -164,5 +160,4 @@ jobs:
         name: packages
         path: artifacts/
     - name: Push to NuGet
-      shell: pwsh
       run: .\build\Publish-Packages.ps1 ${{ secrets.NUGET_API_KEY }}
