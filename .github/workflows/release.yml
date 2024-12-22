@@ -20,7 +20,7 @@ env:
 jobs:
   create-release:
     name: Execute Release Workflow
-    uses: BadEcho/build/.github/workflows/release.yml
+    uses: BadEcho/build/.github/workflows/release.yml@master
     with:
       product-name: Bad Echo Core Technologies
       component-to-increment: ${{ github.event.inputs.component-to-increment }}
