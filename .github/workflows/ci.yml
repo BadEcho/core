@@ -123,7 +123,10 @@ jobs:
         name: game-test-content
         path: tests/Game.Tests/Content/
     - name: Execute Test Runner
-      run: Get-ChildItem bin\rel\*.Tests.dll | ForEach-Object {vstest.console /Logger:trx`;LogFileName="$($_.BaseName).trx" /ResultsDirectory:testResults $_.FullName}
+      run: |
+        Get-ChildItem bin\rel\*.Tests.dll | `
+        ForEach-Object {vstest.console /Logger:trx`;LogFileName="$($_.BaseName).trx" /ResultsDirectory:testResults $_.FullName; if ($LASTEXITCODE -eq 1) {$failWhenDone = $true} }; `
+        if ($failWhenDone -eq $true) { exit 1 }
     - name: Upload Test Artifacts
       uses: actions/upload-artifact@v4
       with:
