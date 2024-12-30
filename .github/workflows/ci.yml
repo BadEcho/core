@@ -22,6 +22,10 @@ on:
         required: false
         type: boolean
         default: false
+    outputs:
+      build-artifact-name:
+        description: Build output artifact name
+        value: ${{ jobs.build.outputs.build-artifact-name }}
     secrets:
       REPO_TOKEN:
         required: true
@@ -30,6 +34,7 @@ on:
 
 env:
   PACKAGE_CONFIGURATION: 'Package'
+  BUILD_ARTIFACT_NAME: 'binaries'
   
 jobs:
   build:
@@ -37,6 +42,7 @@ jobs:
     runs-on: windows-2022
     outputs:
       build-submodule-sha: ${{ steps.submodule-status.outputs.BUILD_SUBMODULE_SHA }}
+      build-artifact-name: ${{ env.BUILD_ARTIFACT_NAME }}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -54,7 +60,7 @@ jobs:
       uses: microsoft/setup-msbuild@v2    
       # GitHub artifacts expire after 90 days, so this will fail every 90 days.
       # We cache vcpkg build artifacts, as their compilation requires an inordinate amount of time.
-    - name: Download vcpkg Artifacts
+    - name: Download vcpkg Artifact
       id: download-vcpkg
       uses: dawidd6/action-download-artifact@v3
       continue-on-error: true
@@ -73,7 +79,7 @@ jobs:
         RELEASE_BUILD: ${{ inputs.release-build != '' && inputs.release-build || 'false' }}
         PACKAGE_CONFIGURATION: ${{ env.PACKAGE_CONFIGURATION }}
       # If vcpkg artifact aquisition failed earlier, we upload our freshly compiled dependencies and record the commit hash for future retrieval.
-    - name: Upload vcpkg Artifacts
+    - name: Upload vcpkg Artifact
       if: steps.download-vcpkg.outcome == 'failure'
       uses: actions/upload-artifact@v4
       with:
@@ -85,17 +91,17 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.REPO_TOKEN }}
       # Store our compiled assets for subsequent jobs.
-    - name: Upload Build Artifacts
+    - name: Upload Build Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: binaries
+        name: ${{ env.BUILD_ARTIFACT_NAME }}
         path: bin/rel/
-    - name: Upload Game Test Content Artifacts
+    - name: Upload Game Test Content Artifact
       uses: actions/upload-artifact@v4
       with:
         name: game-test-content
         path: tests/Game.Tests/Content/
-    - name: Upload Package Artifacts
+    - name: Upload Package Artifact
       uses: actions/upload-artifact@v4
       with:
         name: packages
@@ -112,12 +118,12 @@ jobs:
         dotnet-version: 9.0.x
     - name: Add VSTest to PATH
       uses: darenm/Setup-VSTest@v1.3
-    - name: Download Build Artifacts
+    - name: Download Build Artifact
       uses: actions/download-artifact@v4
       with:
-        name: binaries
+        name: ${{ env.BUILD_ARTIFACT_NAME }}
         path: bin/rel/
-    - name: Download Game Test Content Artifacts
+    - name: Download Game Test Content Artifact
       uses: actions/download-artifact@v4
       with:
         name: game-test-content
@@ -127,7 +133,7 @@ jobs:
         Get-ChildItem bin\rel\*.Tests.dll | `
         ForEach-Object {vstest.console /Logger:trx`;LogFileName="$($_.BaseName).trx" /ResultsDirectory:testResults $_.FullName; if ($LASTEXITCODE -eq 1) {$failWhenDone = $true} }; `
         if ($failWhenDone -eq $true) { exit 1 }
-    - name: Upload Test Artifacts
+    - name: Upload Test Artifact
       uses: actions/upload-artifact@v4
       with:
         name: test-results
@@ -157,7 +163,7 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 9.0.x
-    - name: Download Package Artifacts
+    - name: Download Package Artifact
       uses: actions/download-artifact@v4
       with:
         name: packages
