@@ -73,7 +73,7 @@ jobs:
         path: bin\rel
     - name: Setup Git User
       run: git config --global user.email "chamber@badecho.com"; git config --global user.name "Echo Chamber"
-    - name: Create Release Tag
+    - name: Create GitHub Release
       run: .\build\New-GitHubRelease.ps1 "${{ env.PRODUCT_NAME }}" "${{ github.repository }}"
       env:
         GH_TOKEN: ${{ secrets.REPO_TOKEN }}
