@@ -51,10 +51,10 @@ public class JsonRangeConverterTests
     {
         var rangeObject = new RangeFakeJsonObject
                           {
-                              Ranges = new[]
-                                       {
-                                           5, 6, 7, 8, 12, 13, 14, 15, 16, 17, 18, 19, 20
-                                       }
+                              Ranges =
+                              [
+                                  5, 6, 7, 8, 12, 13, 14, 15, 16, 17, 18, 19, 20
+                              ]
                           };
 
         var rangeJson = JsonSerializer.Serialize(rangeObject,

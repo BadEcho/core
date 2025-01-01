@@ -33,7 +33,7 @@ internal static unsafe class WindowClassMarshaller
 
         return new WNDCLASSEX
                {
-                   cbSize = Marshal.SizeOf(typeof(WNDCLASSEX)),
+                   cbSize = Marshal.SizeOf<WNDCLASSEX>(),
                    style = managed.Style,
                    lpfnWndProc = Marshal.GetFunctionPointerForDelegate(managed.WindowProc),
                    cbClsExtra = managed.ClassExtraBytes,

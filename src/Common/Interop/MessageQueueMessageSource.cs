@@ -39,7 +39,12 @@ public sealed class MessageQueueMessageSource : IMessageSource<GetMessageHookPro
     public MessageQueueMessageSource(int threadId)
     {
         _threadId = threadId;
+
+        HookAdded += async (_,_) 
+            => await HandleHookAdded().ConfigureAwait(false);
     }
+
+    private event EventHandler HookAdded;
 
     /// <inheritdoc/>
     public void AddHook(GetMessageHookProc hook)
@@ -48,7 +53,7 @@ public sealed class MessageQueueMessageSource : IMessageSource<GetMessageHookPro
 
         _hooks.Add(hook);
 
-        InitializeHook();
+        HookAdded.Invoke(this, EventArgs.Empty);
     }
 
     /// <inheritdoc/>
@@ -77,8 +82,8 @@ public sealed class MessageQueueMessageSource : IMessageSource<GetMessageHookPro
 
         _disposed = true;
     }
-
-    private async void InitializeHook()
+    
+    private async Task HandleHookAdded()
     {
         if (_hookExecutor.Window != null)
             return;

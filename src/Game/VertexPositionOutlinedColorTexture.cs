@@ -123,6 +123,6 @@ public readonly struct VertexPositionOutlinedColorTexture : IVertexType, IEquata
         var strokeColor = new VertexElement(16, VertexElementFormat.Color, VertexElementUsage.Color, 1);
         var textureCoordinate = new VertexElement(20, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0);
 
-        return new VertexDeclaration([position, fillColor, strokeColor, textureCoordinate]);
+        return new VertexDeclaration(position, fillColor, strokeColor, textureCoordinate);
     }
 }

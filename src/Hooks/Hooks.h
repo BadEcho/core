@@ -19,7 +19,7 @@
 /**
  * Specifies a type of hook procedure.
  */
-enum HookType
+enum HookType : unsigned char
 {	
 	/**
 	 * Monitors \c WH_CALLWNDPROC messages before the system sends them to a destination window
@@ -37,7 +37,7 @@ enum HookType
 	GetMessages
 };
 
-enum
+enum : unsigned short
 {
 	SharedMemorySize = 1120,
 	MaxThreads = 20

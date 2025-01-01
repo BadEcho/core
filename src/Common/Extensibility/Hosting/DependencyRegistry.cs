@@ -23,7 +23,7 @@ namespace BadEcho.Extensibility.Hosting;
 /// <typeparam name="T">The type of object depended upon by a pluggable part.</typeparam>
 public abstract class DependencyRegistry<T> : IConventionProvider
 {
-    private static readonly object _ArmedLock = new();
+    private static readonly Lock _ArmedLock = new();
     private static T? _ArmedDependency;
 
     private readonly string _contractName;

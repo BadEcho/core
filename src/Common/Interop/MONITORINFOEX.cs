@@ -57,7 +57,7 @@ internal unsafe struct MONITORINFOEX
     public static MONITORINFOEX CreateWritable()
         => new()
            {
-               cbSize = Marshal.SizeOf(typeof(MONITORINFOEX)),
+               cbSize = Marshal.SizeOf<MONITORINFOEX>(),
                rcMonitor = new RECT(),
                rcWork = new RECT(),
                dwFlags = 0

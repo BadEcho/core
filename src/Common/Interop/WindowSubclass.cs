@@ -41,7 +41,7 @@ internal sealed class WindowSubclass : IDisposable
         = User32.RegisterWindowMessage("WindowSubclass.DetachMessage");
 
     private static readonly List<WindowSubclass> _Subclasses = [];
-    private static readonly object _SubclassesLock = new();
+    private static readonly Lock _SubclassesLock = new();
 
     private static readonly IntPtr _DefaultWindowProc 
         = GetDefaultWindowProc();

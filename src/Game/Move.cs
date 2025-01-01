@@ -41,7 +41,7 @@ public static class Move
 
         // If the rate of movement, scaled by time, exceeds the distance then we need to cap it so that we don't overshoot.
         if (scaledVelocityLength > differenceLength)
-            velocity *= (differenceLength / scaledVelocityLength);
+            velocity *= differenceLength / scaledVelocityLength;
 
         return velocity;
     }

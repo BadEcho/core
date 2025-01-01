@@ -94,3 +94,9 @@ using BadEcho.Properties;
                            Scope = "member",
                            Target = "~M:BadEcho.Presentation.PackUri.MakePackUri(System.Reflection.Assembly,System.String,System.Boolean)~System.String",
                            Justification = "Simplifying this null check makes the code harder to read (nested ternary operators).")]
+
+[assembly: SuppressMessage("Performance",
+                           "CA1859:Use concrete types when possible for improved performance",
+                           Scope = "member",
+                           Target = "~M:BadEcho.Presentation.SteppedBinder.GetNextWritableValue(System.Object,System.String,System.Double)",
+                           Justification = "This method is meant to return values that are sometimes integers and sometimes doubles. Forcing the method to always cast to double would break SteppingOptions.IsInteger functionality.")]

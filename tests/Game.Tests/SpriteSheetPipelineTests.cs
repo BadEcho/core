@@ -46,14 +46,15 @@ public class SpriteSheetPipelineTests
         Assert.Equal(4, asset.ColumnCount);
         Assert.Equal(1, asset.RowCount);
         Assert.NotEmpty(asset.Animations);
-        Assert.Collection(asset.Animations,
-                          s =>
-                          {
-                              Assert.Equal("Idle", s.Name);
-                              Assert.Equal(0, s.StartFrame);
-                              Assert.Equal(3, s.EndFrame);
-                              Assert.Equal(200, s.Duration.Milliseconds);
-                          });
+        Assert.Collection(asset.Animations, Inspect);
+
+        static void Inspect(SpriteAnimationSequence s)
+        {
+            Assert.Equal("Idle", s.Name);
+            Assert.Equal(0, s.StartFrame);
+            Assert.Equal(3, s.EndFrame);
+            Assert.Equal(200, s.Duration.Milliseconds);
+        }
     }
     
     [Fact]

@@ -16,6 +16,9 @@ using Xunit;
 
 namespace BadEcho.Tests.Extensions;
 
+/// <suppressions>
+/// ReSharper disable UsageOfDefaultStructEquality
+/// </suppressions>
 public class MetadataExtensionsTests
 {
     [Fact]

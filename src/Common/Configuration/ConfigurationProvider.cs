@@ -33,7 +33,7 @@ public abstract class ConfigurationProvider : IConfigurationProvider, IDisposabl
                                                   };
 
     private readonly ConcurrentDictionary<Type, object> _cachedSections = new();
-    private readonly object _isMonitoringLock = new();
+    private readonly Lock _isMonitoringLock = new();
     
     private bool _isMonitoring;
     private bool _disposed;

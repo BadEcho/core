@@ -6,6 +6,7 @@
 		<Title>$(Product)</Title>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
 		<IsPackable>$(CoreIsPackable)</IsPackable>
+		<NoWarn>8002</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

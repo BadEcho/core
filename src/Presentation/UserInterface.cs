@@ -28,7 +28,7 @@ public static class UserInterface
 {
     private const int HRESULT_DISPATCHER_SHUTDOWN = unchecked((int) 0x80131509);
 
-    private static readonly object _ApplicationLock 
+    private static readonly Lock _ApplicationLock 
         = new();
 
     private static App? _Application;

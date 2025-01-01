@@ -79,6 +79,8 @@ public class HostAdapterTests
         var configurationRoot = builder.Build();
 
         var configuration = configurationRoot.Get<ExtensibilityConfiguration>();
+        Assert.NotNull(configuration);
+
         var context = new PluginContext(_strategy);
         var hostAdapter = new HostAdapter<ISegmentedContract>(context, configuration);
 

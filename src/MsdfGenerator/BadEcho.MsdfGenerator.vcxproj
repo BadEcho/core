@@ -45,7 +45,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" Label="Configuration">
     <UseDebugLibraries>false</UseDebugLibraries>
-    <OutDir>$(SolutionDir)\bin\rel\</OutDir>
+    <OutDir>$(SolutionDir)\bin\rel\</OutDir>    
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)\bin\rel\x86\</OutDir>
@@ -134,11 +134,13 @@
     <ClCompile>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <IntrinsicFunctions>true</IntrinsicFunctions>      
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)\build\strongNaming.snk</AssemblyOriginatorKeyFile>
+      <AdditionalOptions>%(AdditionalOptions) /keyfile:$(AssemblyOriginatorKeyFile)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

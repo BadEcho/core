@@ -62,6 +62,7 @@ public class PluginHostTests
         var configurationRoot = builder.Build();
 
         var configuration = configurationRoot.Get<ExtensibilityConfiguration>();
+        Assert.NotNull(configuration);
 
         PluginHost.UpdateConfiguration(configuration);
 

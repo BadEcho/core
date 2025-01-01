@@ -66,7 +66,12 @@ public sealed class GlobalWindowWrapper : WindowWrapper, IDisposable
 
         if (_threadId == 0)
             throw new Win32Exception(Marshal.GetLastWin32Error());
+
+        HookAdded += async (_,_) 
+            => await HandleHookAdded().ConfigureAwait(false);
     }
+
+    private event EventHandler HookAdded;
 
     /// <inheritdoc/>
     public void Dispose()
@@ -86,7 +91,7 @@ public sealed class GlobalWindowWrapper : WindowWrapper, IDisposable
     {
         base.OnHookAdded(addedHook);
 
-        InitializeHook();
+        HookAdded.Invoke(this, EventArgs.Empty);
     }
 
     /// <inheritdoc/>
@@ -97,7 +102,18 @@ public sealed class GlobalWindowWrapper : WindowWrapper, IDisposable
         CloseHook();
     }
 
-    private async void InitializeHook()
+    private void CloseHook()
+    {
+        if (!_windowHooked)
+            return;
+
+        _windowHooked = !Hooks.RemoveHook(HookType.CallWindowProcedure, _threadId);
+
+        if (_windowHooked)
+            Logger.Warning(Strings.UnhookWindowFailed.InvariantFormat(_threadId));
+    }
+
+    private async Task HandleHookAdded()
     {
         if (_hookExecutor.Window != null)
             return;
@@ -112,16 +128,5 @@ public sealed class GlobalWindowWrapper : WindowWrapper, IDisposable
         _windowHooked = Hooks.AddHook(HookType.CallWindowProcedure,
                                       _threadId,
                                       _hookExecutor.Window.Handle);
-    }
-
-    private void CloseHook()
-    {
-        if (!_windowHooked)
-            return;
-
-        _windowHooked = !Hooks.RemoveHook(HookType.CallWindowProcedure, _threadId);
-
-        if (_windowHooked)
-            Logger.Warning(Strings.UnhookWindowFailed.InvariantFormat(_threadId));
     }
 }

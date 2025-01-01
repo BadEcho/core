@@ -390,7 +390,7 @@ public sealed class Grid : Panel<Grid>, ISelectable
         return remainder < 0 ? dimensionalMax - 1 : remainder;
     }
 
-    private static void ArrangeDimension(int availableSpace, IList<int> measurements, Func<int, GridDimension> dimensionSelector)
+    private static void ArrangeDimension(int availableSpace, List<int> measurements, Func<int, GridDimension> dimensionSelector)
     {
         float totalProportions = 0.0f;
         var proportionalMeasurements = new List<(int Index, GridDimension Dimension)>();

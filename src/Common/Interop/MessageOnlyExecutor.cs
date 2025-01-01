@@ -26,7 +26,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
         = User32.RegisterWindowMessage("MessageOnlyExecutor.ProcessOperation");
     
     private static readonly List<WeakReference<IThreadExecutor>> _Executors = [];
-    private static readonly object _ExecutorsLock = new();
+    private static readonly Lock _ExecutorsLock = new();
 
     private static WeakReference<IThreadExecutor>? _LastExecutor;
 

@@ -22,7 +22,7 @@ public static class ReflectionExtensions
 {
     private static readonly Dictionary<Type, ConstructorInfo> _TypeConstructorMap = [];
 
-    private static readonly object _ConstructorLock 
+    private static readonly Lock _ConstructorLock 
         = new();
 
     /// <summary>
@@ -109,7 +109,7 @@ public static class ReflectionExtensions
 
         return
             type.GetInterfaces()
-                .Concat(new[] {type})
+                .Concat([type])
                 .SelectMany(x => x.GetProperties());
     }
 

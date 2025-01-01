@@ -25,7 +25,7 @@ namespace BadEcho.Extensibility.Hosting;
 /// </summary>
 public static class PluginHost
 {
-    private static readonly object _StoreLock = new();
+    private static readonly Lock _StoreLock = new();
 
     private static readonly MalleableLazy<PluginStore> _Store
         = new(InitializeStore, LazyThreadSafetyMode.ExecutionAndPublication);

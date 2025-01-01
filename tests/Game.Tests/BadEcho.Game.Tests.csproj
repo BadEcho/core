@@ -6,7 +6,7 @@
 		<IsPackable>false</IsPackable>
 		<Platforms>x64;x86</Platforms>
 		<DefineConstants>DX11</DefineConstants>
-		<NoWarn>$(NoWarn);NETSDK1206</NoWarn>
+		<NoWarn>$(NoWarn);NETSDK1206;8002</NoWarn>
 	</PropertyGroup>
 
 	<PropertyGroup Condition=" '$(Configuration)' == 'Debug'">

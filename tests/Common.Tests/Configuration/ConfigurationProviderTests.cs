@@ -30,6 +30,7 @@ public class ConfigurationProviderTests
         var configuration = builder.Build();
 
         var extensibility = configuration.Get<ExtensibilityConfiguration>();
+        Assert.NotNull(extensibility);
 
         ValidateConfiguration(extensibility);
     }
@@ -45,7 +46,7 @@ public class ConfigurationProviderTests
 
         var contracts = configuration.GetSection("segmentedContracts")
                                      .Get<IEnumerable<ContractConfiguration>>();
-
+        Assert.NotNull(contracts);
         Assert.Single(contracts);
     }
 

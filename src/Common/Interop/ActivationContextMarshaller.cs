@@ -33,7 +33,7 @@ internal static unsafe class ActivationContextMarshaller
 
         return new ACTCTX
                {
-                   cbSize = Marshal.SizeOf(typeof(ACTCTX)),
+                   cbSize = Marshal.SizeOf<ACTCTX>(),
                    dwFlags = (uint) managed.Flags,
                    lpSource = Utf16StringMarshaller.ConvertToUnmanaged(managed.Source),
                    wProcessorArchitecture  = (ushort) managed.ProcessorArchitecture,

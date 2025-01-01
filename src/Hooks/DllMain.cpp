@@ -13,7 +13,44 @@
 
 #include "Hooks.h"
 
-BOOL APIENTRY DllMain(HINSTANCE instance, DWORD reason, LPVOID)
+namespace {
+    ThreadData* GetLocalData(int threadId, bool addEntry)
+    {
+        int index;
+
+        for (index = 0; index < ThreadCount; index++)
+        {
+            if (SharedData[index].ThreadId == threadId)
+                break;
+        }
+
+        // Thread not registered -- attempt to initialize data.
+        if (index == ThreadCount)
+        {
+            if (!addEntry || ThreadCount == MaxThreads)
+                return nullptr;
+
+            SharedData[index].ThreadId = threadId;
+
+            SharedData[index].CallWndProcHook.Handle = nullptr;
+            SharedData[index].CallWndProcHook.Destination = nullptr;
+            SharedData[index].CallWndProcRetHook.Handle = nullptr;
+            SharedData[index].CallWndProcRetHook.Destination = nullptr;
+            SharedData[index].GetMessageHook.Handle = nullptr;
+            SharedData[index].GetMessageHook.Destination = nullptr;
+
+            // Synchronization is required as multiple processes may be attempting to increment the
+            // thread count.
+            WaitForSingleObject(SharedSectionMutex, INFINITE);
+            ThreadCount++;
+            ReleaseMutex(SharedSectionMutex);
+        }
+
+        return &SharedData[index];
+    }
+}
+
+BOOL APIENTRY DllMain(HINSTANCE instance, DWORD reason, LPVOID)  // NOLINT(misc-use-internal-linkage) 'static' is ignored for DllMain by compiler
 {
     BOOL init;
 
@@ -65,41 +102,6 @@ BOOL APIENTRY DllMain(HINSTANCE instance, DWORD reason, LPVOID)
     }
 
 	return TRUE;    
-}
-
-ThreadData *GetLocalData(int threadId, bool addEntry)
-{
-    int index;
-
-	for (index = 0; index < ThreadCount; index++)
-    {
-        if (SharedData[index].ThreadId == threadId)
-            break;
-    }
-
-    // Thread not registered -- attempt to initialize data.
-    if (index == ThreadCount)
-    {
-        if (!addEntry || ThreadCount == MaxThreads)
-            return nullptr;
-
-        SharedData[index].ThreadId = threadId;
-
-        SharedData[index].CallWndProcHook.Handle = nullptr;
-        SharedData[index].CallWndProcHook.Destination = nullptr;
-        SharedData[index].CallWndProcRetHook.Handle = nullptr;
-        SharedData[index].CallWndProcRetHook.Destination = nullptr;
-        SharedData[index].GetMessageHook.Handle = nullptr;
-        SharedData[index].GetMessageHook.Destination = nullptr;
-
-        // Synchronization is required as multiple processes may be attempting to increment the
-        // thread count.
-        WaitForSingleObject(SharedSectionMutex, INFINITE);
-        ThreadCount++;
-        ReleaseMutex(SharedSectionMutex);
-    }
-
-    return &SharedData[index];
 }
 
 bool __cdecl AddHook(HookType hookType, int threadId, HWND destination)

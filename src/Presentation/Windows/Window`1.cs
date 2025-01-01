@@ -82,7 +82,7 @@ public class Window<T> : Window, IComponentConnector
     /// Constructs the data context for this window using the provided context assembler.
     /// </summary>
     /// <param name="contextAssembler">An assembler of the data context used by this window.</param>
-    public async void AssembleContext(IContextAssembler<T> contextAssembler)
+    public async Task AssembleContext(IContextAssembler<T> contextAssembler)
     {
         VerifyAccess();
         Require.NotNull(contextAssembler, nameof(contextAssembler));

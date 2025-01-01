@@ -100,7 +100,7 @@ public sealed class Display
     /// <para>
     /// The value for this is never cached because, although <see cref="DpiAwareness.SystemAware"/> specifies that
     /// the application does not receive changes made to the system DPI, the DPI awareness context for the process
-    /// itself can change at anytime, which can influence the effective DPI.
+    /// itself can change at any time, which can influence the effective DPI.
     /// </para>
     /// </remarks>
     public static int SystemDpi

@@ -31,7 +31,7 @@ public static class EnumerableExtensions
     /// as that is a bit more complicated since it involves the use of compiler generated lambda expression enumerators.
     /// </remarks>
     public static IEnumerable<T> AsEnumerable<T>(this T source) 
-        => new[] {source};
+        => [source];
 
     /// <summary>
     /// Checks if the provided sequence is empty.

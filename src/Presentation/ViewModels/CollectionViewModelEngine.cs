@@ -38,8 +38,8 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
 {
     private readonly ConcurrentQueue<TChildViewModel> _bindingQueue = [];
     private readonly List<TModel> _processedModels = [];
-    private readonly object _processedModelsLock = new();
-    private readonly object _capacityEnforcementLock = new();
+    private readonly Lock _processedModelsLock = new();
+    private readonly Lock _capacityEnforcementLock = new();
 
     private readonly ICollectionViewModel<TModel, TChildViewModel> _viewModel;
     private readonly ICollectionChangeStrategy<TChildViewModel> _changeStrategy;
@@ -368,10 +368,10 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
         if (newChildrenModels.Count == 0 && existingChildrenModels.Count == 0)
             return;
 
-        IReadOnlyCollection<TChildViewModel> createdChildren = BindNewChildren(newChildrenModels);
+        TChildViewModel[] createdChildren = BindNewChildren(newChildrenModels);
         BindExistingChildren(existingChildrenModels);
 
-        if (!DelayBindings && createdChildren.Count > 0)
+        if (!DelayBindings && createdChildren.Length > 0)
         {   // Batch insertions may be affected by capacity enforcement, so we make sure the two operations are synchronized.
             // This will also ensure that any concurrent batch bindings are synchronized.
             lock (_capacityEnforcementLock)
@@ -393,7 +393,7 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
         }
     }
 
-    private TChildViewModel[] BindNewChildren(IList<TModel> models)
+    private TChildViewModel[] BindNewChildren(List<TModel> models)
     {
         TChildViewModel[] createdChildren = new TChildViewModel[models.Count];
         if (models.Count >= _options.BindingParallelizationThreshold)
@@ -411,7 +411,7 @@ internal sealed class CollectionViewModelEngine<TModel, TChildViewModel> : ViewM
         return createdChildren;
     }
 
-    private void BindExistingChildren(IList<TModel> models)
+    private void BindExistingChildren(List<TModel> models)
     {
         if (models.Count >= _options.BindingParallelizationThreshold)
         {
