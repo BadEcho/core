@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------
 
 using BadEcho.Extensions;
-using BadEcho.Properties;
+using BadEcho.Extensibility.Properties;
 
 namespace BadEcho.Extensibility.Configuration;
 
@@ -81,7 +81,7 @@ public interface IExtensibilityConfiguration
         }
 
         string path = Path.GetFullPath(PluginDirectory, AppContext.BaseDirectory);
-
+        
         if (!Directory.Exists(path))
         {
             throw new DirectoryNotFoundException(Strings.ExtensibilityConfigurationDirectoryNotFound

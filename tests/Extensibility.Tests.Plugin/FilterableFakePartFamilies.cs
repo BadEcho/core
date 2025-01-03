@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------
 
 using BadEcho.Extensibility;
-using BadEcho.Tests.Extensibility;
+using BadEcho.Extensibility.Tests;
 
 namespace BadEcho.Tests.Plugin;
 

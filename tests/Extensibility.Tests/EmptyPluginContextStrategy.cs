@@ -14,7 +14,7 @@
 using System.Composition.Hosting;
 using BadEcho.Extensibility.Hosting;
 
-namespace BadEcho.Tests.Extensibility;
+namespace BadEcho.Extensibility.Tests;
 
 internal class EmptyPluginContextStrategy : IPluginContextStrategy
 {

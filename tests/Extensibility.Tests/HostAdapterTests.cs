@@ -17,7 +17,7 @@ using BadEcho.XmlConfiguration.Extensibility;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 
-namespace BadEcho.Tests.Extensibility;
+namespace BadEcho.Extensibility.Tests;
 
 /// <suppressions>
 /// ReSharper disable UnusedVariable

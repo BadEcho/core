@@ -13,7 +13,7 @@
 
 using System.Composition;
 
-namespace BadEcho.Tests.Extensibility;
+namespace BadEcho.Extensibility.Tests;
 
 public sealed class PluggablePart
 {

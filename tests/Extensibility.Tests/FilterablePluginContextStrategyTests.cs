@@ -12,10 +12,10 @@
 //-----------------------------------------------------------------------
 
 using BadEcho.Extensibility.Hosting;
-using BadEcho.Tests.ExtensibilityPoint;
+using BadEcho.Extensibility.Tests.ExtensibilityPoint;
 using Xunit;
 
-namespace BadEcho.Tests.Extensibility;
+namespace BadEcho.Extensibility.Tests;
 
 public class FilterablePluginContextStrategyTests
 {

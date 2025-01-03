@@ -19,27 +19,9 @@ using BadEcho.Properties;
                            Justification = "System.Text.Json.Serialization.JsonConverter design is centered around the use of the System.Text.Json.Utf8JsonReader being passed around by reference.")]
 
 [assembly: SuppressMessage("Style", 
-                           "IDE0060:Remove unused parameter", 
-                           Scope = "member",
-                           Target = "~M:BadEcho.Extensibility.Hosting.PluginContextStrategyExtensions.LoadConventions(BadEcho.Extensibility.Hosting.IPluginContextStrategy,System.Composition.Hosting.ContainerConfiguration)",
-                           Justification = "This is an extension method for an interface that provides code useful to all said interface's implementations. Whether or not the parameter is used is moot, it is very much required to be here.")]
-
-[assembly: SuppressMessage("Style", 
-                           "IDE0016:Use 'throw' expression",                            
-                           Scope = "member", 
-                           Target = "~M:BadEcho.Extensibility.Hosting.RoutableProxy.Create``1(BadEcho.Extensibility.Hosting.IHostAdapter)~``0",
-                           Justification = "If method info is null, I rather an exception be thrown prior to dynamic proxy creation.")]
-
-[assembly: SuppressMessage("Style", 
                            "IDE0022:Use expression body for methods",
                            Scope = "member", 
                            Target = "~M:BadEcho.Extensions.ReflectionExtensions.GetAttribute``1(System.Reflection.ICustomAttributeProvider)~``0",
-                           Justification = "Rather disgusting when a generic type constraint is involved.")]
-
-[assembly: SuppressMessage("Style",
-                           "IDE0022:Use expression body for methods",
-                           Scope = "member",
-                           Target = "~M:BadEcho.Extensibility.Hosting.PluginHost.LoadAdapter``1~BadEcho.Extensibility.Hosting.HostAdapter{``0}",
                            Justification = "Rather disgusting when a generic type constraint is involved.")]
 
 [assembly: SuppressMessage("Style", 
@@ -47,24 +29,6 @@ using BadEcho.Properties;
                            Scope = "type", 
                            Target = "~T:BadEcho.Collections.LazyConcurrentDictionary`2",
                            Justification = "All the constructors make calls to base constructors, and expression bodies don't look appetizing at all next to such invocations.")]
-
-[assembly: SuppressMessage("Design", 
-                           "CA1019:Define accessors for attribute arguments", 
-                           Scope = "member", 
-                           Target = "~M:BadEcho.Extensibility.FilterableAttribute.#ctor(System.String,System.Type)",
-                           Justification = "Accessors are available for processed constructor input, which is an acceptable reason to suppress this warning as evidenced by several of Microsoft's own attributes that build non-primitive typed properties from primitive typed parameters. Performing validation of the string to ensure it is a valid GUID saves us loads of effort down the road when dealing with imported metadata. Implementing the property explicitly and creating a string property in order to satisfy this rule does not work as it breaks MEF's MetadataViewProvider.")]
-
-[assembly: SuppressMessage("Design", 
-                           "CA1019:Define accessors for attribute arguments",
-                           Scope = "member", 
-                           Target = "~M:BadEcho.Extensibility.FilterableFamilyAttribute.#ctor(System.String,System.String)",
-                           Justification = "Accessors are available for processed constructor input, which is an acceptable reason to suppress this warning as evidenced by several of Microsoft's own attributes that build non-primitive typed properties from primitive typed parameters. Performing validation of the string to ensure it is a valid GUID saves us loads of effort down the road when dealing with imported metadata. Implementing the property explicitly and creating a string property in order to satisfy this rule does not work as it breaks MEF's MetadataViewProvider.")]
-
-[assembly: SuppressMessage("Design", 
-                           "CA1019:Define accessors for attribute arguments",
-                           Scope = "member", 
-                           Target = "~M:BadEcho.Extensibility.RoutableAttribute.#ctor(System.String,System.Type)",
-                           Justification = "Accessors are available for processed constructor input, which is an acceptable reason to suppress this warning as evidenced by several of Microsoft's own attributes that build non-primitive typed properties from primitive typed parameters. Performing validation of the string to ensure it is a valid GUID saves us loads of effort down the road when dealing with imported metadata. Implementing the property explicitly and creating a string property in order to satisfy this rule does not work as it breaks MEF's MetadataViewProvider. The segmented contract type parameter is also processed by the constructor, and accessors for it are available in the form of the base ExportAttribute class's ContractType property, which the segmented type influences.")]
 
 [assembly: SuppressMessage("Performance", 
                            "CA1810:Initialize reference type static fields inline", 

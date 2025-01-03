@@ -1,103 +1,122 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-	<!-- 
-		Microsoft ResX Schema
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
 
-		Version 1.3
-
-		The primary goals of this format is to allow a simple XML format 
-		that is mostly human readable. The generation and parsing of the 
-		various data types are done through the TypeConverter classes 
-		associated with the data types.
-
-		Example:
-
-		... ado.net/XML headers & schema ...
-		<resheader name="resmimetype">text/microsoft-resx</resheader>
-		<resheader name="version">1.3</resheader>
-		<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-		<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-		<data name="Name1">this is my long string</data>
-		<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-		<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-			[base64 mime encoded serialized .NET Framework object]
-		</data>
-		<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-			[base64 mime encoded string representing a byte array form of the .NET Framework object]
-		</data>
-
-		There are any number of "resheader" rows that contain simple 
-		name/value pairs.
-
-		Each data row contains a name, and value. The row also contains a 
-		type or mimetype. Type corresponds to a .NET class that support 
-		text/value conversion through the TypeConverter architecture. 
-		Classes that don't support this are serialized and stored with the 
-		mimetype set.
-
-		The mimetype is used for serialized objects, and tells the 
-		ResXResourceReader how to depersist the object. This is currently not 
-		extensible. For a given mimetype the value must be set accordingly:
-
-		Note - application/x-microsoft.net.object.binary.base64 is the format 
-		that the ResXResourceWriter will generate, however the reader can 
-		read any of the formats listed below.
-
-		mimetype: application/x-microsoft.net.object.binary.base64
-		value   : The object must be serialized with 
-			: System.Serialization.Formatters.Binary.BinaryFormatter
-			: and then encoded with base64 encoding.
-
-		mimetype: application/x-microsoft.net.object.soap.base64
-		value   : The object must be serialized with 
-			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-			: and then encoded with base64 encoding.
-
-		mimetype: application/x-microsoft.net.object.bytearray.base64
-		value   : The object must be serialized into a byte array 
-			: using a System.ComponentModel.TypeConverter
-			: and then encoded with base64 encoding.
-	-->
-	
-	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-		<xsd:element name="root" msdata:IsDataSet="true">
-			<xsd:complexType>
-				<xsd:choice maxOccurs="unbounded">
-					<xsd:element name="data">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-								<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-							</xsd:sequence>
-							<xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
-							<xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-							<xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-						</xsd:complexType>
-					</xsd:element>
-					<xsd:element name="resheader">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-							</xsd:sequence>
-							<xsd:attribute name="name" type="xsd:string" use="required" />
-						</xsd:complexType>
-					</xsd:element>
-				</xsd:choice>
-			</xsd:complexType>
-		</xsd:element>
-	</xsd:schema>
-	<resheader name="resmimetype">
-		<value>text/microsoft-resx</value>
-	</resheader>
-	<resheader name="version">
-		<value>1.3</value>
-	</resheader>
-	<resheader name="reader">
-		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</resheader>
-	<resheader name="writer">
-		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</resheader>
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
   <data name="EnumIntegralTypeNotInteger" xml:space="preserve">
     <value>The enumeration type's underlying integral numeric type is not an integer.</value>
   </data>
@@ -110,7 +129,7 @@
   <data name="JsonInvalidTypeName" xml:space="preserve">
     <value>The '{0}' property found on the provided JSON object is not the expected type descriptor property '{1}'.</value>
   </data>
-	<data name="JsonTypeValueNotNumber" xml:space="preserve">
+  <data name="JsonTypeValueNotNumber" xml:space="preserve">
     <value>The provided JSON object's type descriptor property is not a number.</value>
   </data>
   <data name="JsonDataValueNotObject" xml:space="preserve">
@@ -128,59 +147,11 @@
   <data name="LoggingMissingException" xml:space="preserve">
     <value>Missing exception payload.</value>
   </data>
-	<data name="PluginFileLoadException" xml:space="preserve">
-    <value>The file '{0}' being scanned for pluggable exports failed to load.</value>
-  </data>
-	<data name="PluginBadImageException" xml:space="preserve">
-    <value>The file '{0}' being scanned for pluggable exports failed to load due to most likely not being a valid .NET assembly.</value>
-  </data>
-  <data name="RoutableProxyNotInitializedCorrectly" xml:space="preserve">
-    <value>RoutableProxy was not provided a IHostAdapter due to improper initialization. Use a static factory method such as RoutableProxy.Create instead to initialize the proxy properly.</value>
-  </data>
-  <data name="RoutableProxyNullMethodInfo" xml:space="preserve">
-    <value>RouteProxy instance was somehow invoked with null method information.</value>
-  </data>
-  <data name="HostAdapterUnregisteredMethod" xml:space="preserve">
-    <value>No routable plugin has been registered to handle calls made to '{0}'.</value>
-  </data>
   <data name="EnumerationNotStarted" xml:space="preserve">
     <value>Enumeration has not started. A call to MoveNext() must occur at least once prior to reading the Current object.</value>
   </data>
   <data name="EnumerationAtEnd" xml:space="preserve">
     <value>Enumeration has already finished; no more objects exist in the sequence.</value>
-  </data>
-  <data name="FamilyIdNotValid" xml:space="preserve">
-    <value>'{0}' is not a valid filterable family identity value. Values must be parseable as standard globally unique identifiers.</value>
-  </data>
-  <data name="RoutablePluginIdNotValid" xml:space="preserve">
-    <value>'{0}' is not a valid call-routable plugin identity value. Values must be parseable as standard globally unique identifiers.</value>
-  </data>
-  <data name="NoContractInConfiguration" xml:space="preserve">
-    <value>Extensibility configuration lacks registration for contract '{0}'.</value>
-  </data>
-  <data name="FamilyIdNotRegistered" xml:space="preserve">
-    <value>'{0}' is not a registered filterable family identity value. Registration of a filterable family requires a FilterableFamily export action.</value>
-  </data>
-  <data name="NoExportFoundForFamily" xml:space="preserve">
-    <value>No export for contract type '{0}' belongs to the '{1}' filterable family.</value>
-  </data>
-  <data name="MultipleExportsFoundForFamily" xml:space="preserve">
-    <value>Multiple exports for contract type '{0}' belong to the '{1}' filterable family; any part beyond the first of its type from a filterable context is ignored.</value>
-  </data>
-	<data name="ProcessCannotExportContracts" xml:space="preserve">
-		<value>The executing process is unmanaged; therefore, no contract implementation is able to be exported by it.</value>
-	</data>
-  <data name="MultipleExportsFoundForLocalContract" xml:space="preserve">
-    <value>Multiple exports for the locally exported contract type '{0}' were found. Only a single provider should ever be available for contract types meant to be loaded from a local context.</value>
-  </data>
-  <data name="NoExportFoundForLocalContract" xml:space="preserve">
-    <value>No local export for the contract type '{0}' was found. If this is an expected contract, then it should be exported within the consuming component's own assembly. If expectancy is tenuous, check for support via the appropriate methods provided by the plugin host system first.</value>
-  </data>
-  <data name="IncompatibleDependencyTypeForInjection" xml:space="preserve">
-    <value>Injection of exported parts into an attributed pluggable part of type '{0}' within a self-armed context requires said part to be assignable to the specified dependency value of type '{1}'.</value>
-  </data>
-  <data name="ExtensibilityConfigurationDirectoryNotFound" xml:space="preserve">
-    <value>A plugin directory was explicitly specified in this application's configuration, however '{0}' does not exist. Please ensure that a desired plugin directory exists when configuring its use, or simply forego specifying an explicit plugin directory name if its existence cannot be guaranteed.</value>
   </data>
   <data name="BadINotifyPropertyChangedImplementation" xml:space="preserve">
     <value>'{0}' is not a valid INotifyPropertyChanged implementation; event data is missing property name information.</value>
@@ -191,9 +162,9 @@
   <data name="DisplayGetDpiForMonitorFailed" xml:space="preserve">
     <value>HRESULT of {0} returned when attempting to query for a monitor's DPI. Because of this, display device will default to using the system-wide DPI.</value>
   </data>
-	<data name="DisplayGetScaleFactorForMonitorFailed" xml:space="preserve">
-		<value>HRESULT of {0} returned when attempting to query for a monitor's scale factor. Because of this, display device will default to using a default scale factor of 100 percent.</value>
-	</data>
+  <data name="DisplayGetScaleFactorForMonitorFailed" xml:space="preserve">
+    <value>HRESULT of {0} returned when attempting to query for a monitor's scale factor. Because of this, display device will default to using a default scale factor of 100 percent.</value>
+  </data>
   <data name="DisplayEnumDisplayMonitorsFailed" xml:space="preserve">
     <value>EnumDisplayMonitors failed unexpectedly.</value>
   </data>
@@ -203,130 +174,124 @@
   <data name="WindowHotKeyDuplicateId" xml:space="preserve">
     <value>A hot key has already been registered with the identifier '{0}'.</value>
   </data>
-	<data name="ThreadExecutorSourceNotInitialized" xml:space="preserve">
-		<value>ThreadExecutorOperationTaskSource has not been initialized.</value>
-	</data>
-	<data name="ThreadExecutorSourceAlreadyInitialized" xml:space="preserve">
-		<value>Cannot load an operation into an already initialized ThreadExecutorOperationTaskSource.</value>
-	</data>
-	<data name="ExecutorWaitOperationSameThread" xml:space="preserve">
-		<value>Executor may not wait on an operation executing on the same thread.</value>
-	</data>
-	<data name="ExecutorFinalizedBeforeDone" xml:space="preserve">
-		<value>Executor operation must either be complete or canceled prior to finalizing completion.</value>
-	</data>
-	<data name="SubclassDetachedWndProc" xml:space="preserve">
-		<value>Subclass message processing procedure invoked while in a detached state.</value>
-	</data>
-	<data name="SubclassForcibleDetachmentFailed" xml:space="preserve">
-		<value>Unable to forcibly detach a subclassed window's WndProc from the window's message chain.</value>
-	</data>
-	<data name="SubclassDetachmentFailed" xml:space="preserve">
-		<value>Unable to detach a subclassed window's WndProc from the window's message chain.</value>
-	</data>
-	<data name="ExecutorCannotDisableOnOtherThread" xml:space="preserve">
-		<value>An executor can only be disabled on the thread which the executor was created on.</value>
-	</data>
-	<data name="ExecutorCannotEnableOnOtherThread" xml:space="preserve">
-		<value>An executor can only be re-enabled on the thread which the executor was created on.</value>
-	</data>
-	<data name="ExecutorShutdown" xml:space="preserve">
-		<value>The executor has been shutdown and cannot execute any further operations.</value>
-	</data>
-	<data name="ExecutorProcessingDisabled" xml:space="preserve">
-		<value>The executor's ability to process operations is currently disabled.</value>
-	</data>
-	<data name="ExtensibilityPointMissingDependency" xml:space="preserve">
-		<value>Cannot check if assembly '{0}' is an extensibility point because it is missing the following dependency: '{1}'</value>
-	</data>
-	<data name="NoDependencyArmed" xml:space="preserve">
-		<value>Registry was not armed with an expected dependency.</value>
-	</data>
-	<data name="ExecutorAlreadyRunning" xml:space="preserve">
-		<value>The executor is already running on a thread.</value>
-	</data>
-	<data name="ExecutorIsDisposed" xml:space="preserve">
-		<value>Executor is disposed and cannot be run again.</value>
-	</data>
-	<data name="IconNoEntries" xml:space="preserve">
-		<value>The icon file has no image entries.</value>
-	</data>
-	<data name="IconTooSmallForEntries" xml:space="preserve">
-		<value>The size of the icon file isn't large enough to describe the number of images it says it contains.</value>
-	</data>
-	<data name="IconImageOffsetOverflow" xml:space="preserve">
-		<value>Calculating the ending offset for the best-fitting image described by the icon file resulted in an overflow.</value>
-	</data>
-	<data name="IconImageExceedsFile" xml:space="preserve">
-		<value>The best-fitting image's specified amount of data exceeds the total length of the icon file.</value>
-	</data>
-	<data name="IconImageTooLarge" xml:space="preserve">
-		<value>The best-fitting image described by the icon file is too large for realignment and loading.</value>
-	</data>
-	<data name="IconFileTooLarge" xml:space="preserve">
-		<value>Attempting to create a pointer pointed at the best-fitting image resulted in a pointer overflow due to the icon file itself containing too much data.</value>
-	</data>
-	<data name="HandleCannotChangeDuringMarshalling" xml:space="preserve">
-		<value>Changing a SafeHandle's underlying handle value during marshalling is not supported.</value>
-	</data>
-	<data name="NotifyIconAddModifyFailed" xml:space="preserve">
-		<value>Failed to send a message adding or modifying an icon to the taskbar's notification area.</value>
-	</data>
-	<data name="NotifyIconDeleteFailed" xml:space="preserve">
-		<value>Failed to send a message deleting an icon from the taskbar's notification area.</value>
-	</data>
-	<data name="NotifyIconBalloonFailed" xml:space="preserve">
-		<value>Failed to send a message requesting a balloon notification to the taskbar's notification area.</value>
-	</data>
-	<data name="NotifyIconNoCustomBalloonIconLoaded" xml:space="preserve">
-		<value>Cannot send a balloon notification using a custom icon without a custom balloon icon being loaded first.</value>
-	</data>
-	<data name="NotifyIconBalloonRequiresTaskbar" xml:space="preserve">
-		<value>Cannot send a balloon notification until the icon has been added to the taskbar's notification area.</value>
-	</data>
-	<data name="PopupNotInForeground" xml:space="preserve">
-		<value>Unable to set popup as the foreground window. The menu will not disappear if the user clicks outside of it.</value>
-	</data>
-	<data name="ExecutorFramesRequireRun" xml:space="preserve">
-		<value>The executor needs to be running before frames can be pushed to it.</value>
-	</data>
-	<data name="ActivationContextModuleNotFound" xml:space="preserve">
-		<value>A handle to the module containing an embedded manifest resource could not be loaded. If this is a single-file packaged, the resource name for the manifest file must be provided instead.</value>
-	</data>
-	<data name="ActivationContextManifestResourceNotFound" xml:space="preserve">
-		<value>Could not load manifest resource from the Bad Echo Core Framework's assembly.</value>
-	</data>
-	<data name="JsonNotStartArray" xml:space="preserve">
-		<value>The provided JSON text does not begin with the start of a JSON array.</value>
-	</data>
-	<data name="JsonExtremumValueNotNumber" xml:space="preserve">
-		<value>The provided JSON object's extremum property is not a number.</value>
-	</data>
-	<data name="JsonNodeIsNull" xml:space="preserve">
-		<value>Unexpected 'null' literal token encountered in JSON when an object was expected.</value>
-	</data>
-	<data name="JsonNotNumber" xml:space="preserve">
-		<value>The provided JSON text is not a JSON number.</value>
-	</data>
-	<data name="GlyphNotInFont" xml:space="preserve">
-		<value>A glyph for the character '{0}' could not be found, most likely because it was not part of the character set used to generate the font's atlas.</value>
-	</data>
-	<data name="MessageQueueForHookFailed" xml:space="preserve">
-		<value>Failed to create global hook message queue.</value>
-	</data>
-	<data name="UnhookWindowFailed" xml:space="preserve">
-		<value>Failed to unregister window hook for thread with ID '{0}'.</value>
-	</data>
-	<data name="UnhookMessageQueueFailed" xml:space="preserve">
-		<value>Failed to unregister message queue hook for thread with ID '{0}'.</value>
-	</data>
-	<data name="NoPackedImageGenerated" xml:space="preserve">
-		<value>No packed image has been generated.</value>
-	</data>
-	<data name="PackedImageSizeTooSmall" xml:space="preserve">
-		<value>The specified maximum packed image size isn't large enough to fit any of the required images into.</value>
-	</data>
-	<data name="NativeResolvedLoadFailed" xml:space="preserve">
-		<value>Native library resolver failed to load library: {0}</value>
-	</data>
+  <data name="ThreadExecutorSourceNotInitialized" xml:space="preserve">
+    <value>ThreadExecutorOperationTaskSource has not been initialized.</value>
+  </data>
+  <data name="ThreadExecutorSourceAlreadyInitialized" xml:space="preserve">
+    <value>Cannot load an operation into an already initialized ThreadExecutorOperationTaskSource.</value>
+  </data>
+  <data name="ExecutorWaitOperationSameThread" xml:space="preserve">
+    <value>Executor may not wait on an operation executing on the same thread.</value>
+  </data>
+  <data name="ExecutorFinalizedBeforeDone" xml:space="preserve">
+    <value>Executor operation must either be complete or canceled prior to finalizing completion.</value>
+  </data>
+  <data name="SubclassDetachedWndProc" xml:space="preserve">
+    <value>Subclass message processing procedure invoked while in a detached state.</value>
+  </data>
+  <data name="SubclassForcibleDetachmentFailed" xml:space="preserve">
+    <value>Unable to forcibly detach a subclassed window's WndProc from the window's message chain.</value>
+  </data>
+  <data name="SubclassDetachmentFailed" xml:space="preserve">
+    <value>Unable to detach a subclassed window's WndProc from the window's message chain.</value>
+  </data>
+  <data name="ExecutorCannotDisableOnOtherThread" xml:space="preserve">
+    <value>An executor can only be disabled on the thread which the executor was created on.</value>
+  </data>
+  <data name="ExecutorCannotEnableOnOtherThread" xml:space="preserve">
+    <value>An executor can only be re-enabled on the thread which the executor was created on.</value>
+  </data>
+  <data name="ExecutorShutdown" xml:space="preserve">
+    <value>The executor has been shutdown and cannot execute any further operations.</value>
+  </data>
+  <data name="ExecutorProcessingDisabled" xml:space="preserve">
+    <value>The executor's ability to process operations is currently disabled.</value>
+  </data>
+  <data name="ExecutorAlreadyRunning" xml:space="preserve">
+    <value>The executor is already running on a thread.</value>
+  </data>
+  <data name="ExecutorIsDisposed" xml:space="preserve">
+    <value>Executor is disposed and cannot be run again.</value>
+  </data>
+  <data name="IconNoEntries" xml:space="preserve">
+    <value>The icon file has no image entries.</value>
+  </data>
+  <data name="IconTooSmallForEntries" xml:space="preserve">
+    <value>The size of the icon file isn't large enough to describe the number of images it says it contains.</value>
+  </data>
+  <data name="IconImageOffsetOverflow" xml:space="preserve">
+    <value>Calculating the ending offset for the best-fitting image described by the icon file resulted in an overflow.</value>
+  </data>
+  <data name="IconImageExceedsFile" xml:space="preserve">
+    <value>The best-fitting image's specified amount of data exceeds the total length of the icon file.</value>
+  </data>
+  <data name="IconImageTooLarge" xml:space="preserve">
+    <value>The best-fitting image described by the icon file is too large for realignment and loading.</value>
+  </data>
+  <data name="IconFileTooLarge" xml:space="preserve">
+    <value>Attempting to create a pointer pointed at the best-fitting image resulted in a pointer overflow due to the icon file itself containing too much data.</value>
+  </data>
+  <data name="HandleCannotChangeDuringMarshalling" xml:space="preserve">
+    <value>Changing a SafeHandle's underlying handle value during marshalling is not supported.</value>
+  </data>
+  <data name="NotifyIconAddModifyFailed" xml:space="preserve">
+    <value>Failed to send a message adding or modifying an icon to the taskbar's notification area.</value>
+  </data>
+  <data name="NotifyIconDeleteFailed" xml:space="preserve">
+    <value>Failed to send a message deleting an icon from the taskbar's notification area.</value>
+  </data>
+  <data name="NotifyIconBalloonFailed" xml:space="preserve">
+    <value>Failed to send a message requesting a balloon notification to the taskbar's notification area.</value>
+  </data>
+  <data name="NotifyIconNoCustomBalloonIconLoaded" xml:space="preserve">
+    <value>Cannot send a balloon notification using a custom icon without a custom balloon icon being loaded first.</value>
+  </data>
+  <data name="NotifyIconBalloonRequiresTaskbar" xml:space="preserve">
+    <value>Cannot send a balloon notification until the icon has been added to the taskbar's notification area.</value>
+  </data>
+  <data name="PopupNotInForeground" xml:space="preserve">
+    <value>Unable to set popup as the foreground window. The menu will not disappear if the user clicks outside of it.</value>
+  </data>
+  <data name="ExecutorFramesRequireRun" xml:space="preserve">
+    <value>The executor needs to be running before frames can be pushed to it.</value>
+  </data>
+  <data name="ActivationContextModuleNotFound" xml:space="preserve">
+    <value>A handle to the module containing an embedded manifest resource could not be loaded. If this is a single-file packaged, the resource name for the manifest file must be provided instead.</value>
+  </data>
+  <data name="ActivationContextManifestResourceNotFound" xml:space="preserve">
+    <value>Could not load manifest resource from the Bad Echo Core Framework's assembly.</value>
+  </data>
+  <data name="JsonNotStartArray" xml:space="preserve">
+    <value>The provided JSON text does not begin with the start of a JSON array.</value>
+  </data>
+  <data name="JsonExtremumValueNotNumber" xml:space="preserve">
+    <value>The provided JSON object's extremum property is not a number.</value>
+  </data>
+  <data name="JsonNodeIsNull" xml:space="preserve">
+    <value>Unexpected 'null' literal token encountered in JSON when an object was expected.</value>
+  </data>
+  <data name="JsonNotNumber" xml:space="preserve">
+    <value>The provided JSON text is not a JSON number.</value>
+  </data>
+  <data name="GlyphNotInFont" xml:space="preserve">
+    <value>A glyph for the character '{0}' could not be found, most likely because it was not part of the character set used to generate the font's atlas.</value>
+  </data>
+  <data name="MessageQueueForHookFailed" xml:space="preserve">
+    <value>Failed to create global hook message queue.</value>
+  </data>
+  <data name="UnhookWindowFailed" xml:space="preserve">
+    <value>Failed to unregister window hook for thread with ID '{0}'.</value>
+  </data>
+  <data name="UnhookMessageQueueFailed" xml:space="preserve">
+    <value>Failed to unregister message queue hook for thread with ID '{0}'.</value>
+  </data>
+  <data name="NoPackedImageGenerated" xml:space="preserve">
+    <value>No packed image has been generated.</value>
+  </data>
+  <data name="PackedImageSizeTooSmall" xml:space="preserve">
+    <value>The specified maximum packed image size isn't large enough to fit any of the required images into.</value>
+  </data>
+  <data name="NativeResolvedLoadFailed" xml:space="preserve">
+    <value>Native library resolver failed to load library: {0}</value>
+  </data>
 </root>

@@ -13,7 +13,7 @@
 
 using System.Composition;
 using BadEcho.Extensions;
-using BadEcho.Properties;
+using BadEcho.Extensibility.Properties;
 
 namespace BadEcho.Extensibility;
 

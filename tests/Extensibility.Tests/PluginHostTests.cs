@@ -16,7 +16,7 @@ using BadEcho.Extensibility.Hosting;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 
-namespace BadEcho.Tests.Extensibility;
+namespace BadEcho.Extensibility.Tests;
 
 /// <suppressions>
 /// ReSharper disable AssignNullToNotNullAttribute

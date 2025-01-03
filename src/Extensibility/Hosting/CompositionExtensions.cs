@@ -16,7 +16,7 @@ using System.Reflection;
 using System.Runtime.Loader;
 using BadEcho.Logging;
 using BadEcho.Extensions;
-using BadEcho.Properties;
+using BadEcho.Extensibility.Properties;
 
 namespace BadEcho.Extensibility.Hosting;
 

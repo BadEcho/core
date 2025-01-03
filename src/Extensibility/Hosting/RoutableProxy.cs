@@ -13,7 +13,7 @@
 
 using System.Reflection;
 using BadEcho.Logging;
-using BadEcho.Properties;
+using BadEcho.Extensibility.Properties;
 
 namespace BadEcho.Extensibility.Hosting;
 

@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\BadEcho.Common.csproj" />
+    <ProjectReference Include="..\Extensibility\BadEcho.Extensibility.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,7 +30,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-	  <None Include="README.md" Pack="true" PackagePath=""/>
+	  <None Include="README.md" Pack="true" PackagePath="" />
   </ItemGroup>
 
 </Project>

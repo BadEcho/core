@@ -14,7 +14,7 @@
 using System.Composition;
 using System.Composition.Convention;
 using BadEcho.Extensibility.Hosting;
-using BadEcho.Tests.Extensibility;
+using BadEcho.Extensibility.Tests;
 
 namespace BadEcho.Tests.Plugin;
 

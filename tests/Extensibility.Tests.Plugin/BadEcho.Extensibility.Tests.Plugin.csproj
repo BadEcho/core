@@ -7,11 +7,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="System.Composition" Version="7.0.0" />
+		<PackageReference Include="System.Composition" Version="9.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Common.Tests\BadEcho.Common.Tests.csproj" />
+		<ProjectReference Include="..\..\src\Extensibility\BadEcho.Extensibility.csproj" />
+		<ProjectReference Include="..\Extensibility.Tests\BadEcho.Extensibility.Tests.csproj" />
 	</ItemGroup>
 
 	<Target Name="CopyPlugin" AfterTargets="Build">

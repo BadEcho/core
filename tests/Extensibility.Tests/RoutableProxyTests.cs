@@ -14,7 +14,7 @@
 using BadEcho.Extensibility.Hosting;
 using Xunit;
 
-namespace BadEcho.Tests.Extensibility;
+namespace BadEcho.Extensibility.Tests;
 
 public class RoutableProxyTests
 {

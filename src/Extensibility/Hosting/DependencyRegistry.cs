@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------
 
 using System.Composition.Convention;
-using BadEcho.Properties;
+using BadEcho.Extensibility.Properties;
 
 namespace BadEcho.Extensibility.Hosting;
 

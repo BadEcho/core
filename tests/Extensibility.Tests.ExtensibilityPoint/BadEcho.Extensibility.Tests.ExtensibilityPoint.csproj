@@ -2,10 +2,15 @@
 
 	<PropertyGroup>
 		<IsPackable>false</IsPackable>
-		<RootNamespace>BadEcho.Tests.ExtensibilityPoint</RootNamespace>
+		<RootNamespace>BadEcho.Extensibility.Tests.ExtensibilityPoint</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\Common\BadEcho.Common.csproj" />
+		<ProjectReference Include="..\..\src\Extensibility\BadEcho.Extensibility.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="System.Composition" Version="9.0.0" />
+	</ItemGroup>
+
 </Project>

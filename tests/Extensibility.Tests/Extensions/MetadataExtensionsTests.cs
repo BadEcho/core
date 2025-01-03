@@ -11,10 +11,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Extensibility;
 using Xunit;
 
-namespace BadEcho.Tests.Extensions;
+namespace BadEcho.Extensibility.Tests.Extensions;
 
 /// <suppressions>
 /// ReSharper disable UsageOfDefaultStructEquality

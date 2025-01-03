@@ -16,7 +16,7 @@ using System.Runtime.CompilerServices;
 using BadEcho.Extensibility.Configuration;
 using BadEcho.Logging;
 using BadEcho.Extensions;
-using BadEcho.Properties;
+using BadEcho.Extensibility.Properties;
 
 namespace BadEcho.Extensibility.Hosting;
 
@@ -158,7 +158,7 @@ public static class PluginHost
         {
             throw new ArgumentException(
                 Strings.NoExportFoundForFamily
-                       .InvariantFormat(typeof(TContract), Store.FilterableFamilies[familyId].Name),
+                          .InvariantFormat(typeof(TContract), Store.FilterableFamilies[familyId].Name),
                 nameof(familyId));
         }
 
@@ -166,7 +166,7 @@ public static class PluginHost
         {
             Logger.Warning(
                 Strings.MultipleExportsFoundForFamily
-                       .InvariantFormat(typeof(TContract), Store.FilterableFamilies[familyId].Name));
+                          .InvariantFormat(typeof(TContract), Store.FilterableFamilies[familyId].Name));
         }
 
         return parts[0];

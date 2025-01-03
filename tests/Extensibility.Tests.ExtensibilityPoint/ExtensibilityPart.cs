@@ -13,7 +13,7 @@
 
 using System.Composition;
 
-namespace BadEcho.Tests.ExtensibilityPoint;
+namespace BadEcho.Extensibility.Tests.ExtensibilityPoint;
 
 [Export(typeof(IExtensibilityPart))]
 public sealed class ExtensibilityPart : IExtensibilityPart;

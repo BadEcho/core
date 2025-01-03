@@ -241,42 +241,6 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A plugin directory was explicitly specified in this application&apos;s configuration, however &apos;{0}&apos; does not exist. Please ensure that a desired plugin directory exists when configuring its use, or simply forego specifying an explicit plugin directory name if its existence cannot be guaranteed..
-        /// </summary>
-        public static string ExtensibilityConfigurationDirectoryNotFound {
-            get {
-                return ResourceManager.GetString("ExtensibilityConfigurationDirectoryNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot check if assembly &apos;{0}&apos; is an extensibility point because it is missing the following dependency: &apos;{1}&apos;.
-        /// </summary>
-        public static string ExtensibilityPointMissingDependency {
-            get {
-                return ResourceManager.GetString("ExtensibilityPointMissingDependency", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &apos;{0}&apos; is not a registered filterable family identity value. Registration of a filterable family requires a FilterableFamily export action..
-        /// </summary>
-        public static string FamilyIdNotRegistered {
-            get {
-                return ResourceManager.GetString("FamilyIdNotRegistered", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid filterable family identity value. Values must be parseable as standard globally unique identifiers..
-        /// </summary>
-        public static string FamilyIdNotValid {
-            get {
-                return ResourceManager.GetString("FamilyIdNotValid", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to A glyph for the character &apos;{0}&apos; could not be found, most likely because it was not part of the character set used to generate the font&apos;s atlas..
         /// </summary>
         public static string GlyphNotInFont {
@@ -291,15 +255,6 @@ namespace BadEcho.Properties {
         public static string HandleCannotChangeDuringMarshalling {
             get {
                 return ResourceManager.GetString("HandleCannotChangeDuringMarshalling", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No routable plugin has been registered to handle calls made to &apos;{0}&apos;..
-        /// </summary>
-        public static string HostAdapterUnregisteredMethod {
-            get {
-                return ResourceManager.GetString("HostAdapterUnregisteredMethod", resourceCulture);
             }
         }
         
@@ -354,15 +309,6 @@ namespace BadEcho.Properties {
         public static string IconTooSmallForEntries {
             get {
                 return ResourceManager.GetString("IconTooSmallForEntries", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Injection of exported parts into an attributed pluggable part of type &apos;{0}&apos; within a self-armed context requires said part to be assignable to the specified dependency value of type &apos;{1}&apos;..
-        /// </summary>
-        public static string IncompatibleDependencyTypeForInjection {
-            get {
-                return ResourceManager.GetString("IncompatibleDependencyTypeForInjection", resourceCulture);
             }
         }
         
@@ -475,24 +421,6 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Multiple exports for contract type &apos;{0}&apos; belong to the &apos;{1}&apos; filterable family; any part beyond the first of its type from a filterable context is ignored..
-        /// </summary>
-        public static string MultipleExportsFoundForFamily {
-            get {
-                return ResourceManager.GetString("MultipleExportsFoundForFamily", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Multiple exports for the locally exported contract type &apos;{0}&apos; were found. Only a single provider should ever be available for contract types meant to be loaded from a local context..
-        /// </summary>
-        public static string MultipleExportsFoundForLocalContract {
-            get {
-                return ResourceManager.GetString("MultipleExportsFoundForLocalContract", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Native library resolver failed to load library: {0}.
         /// </summary>
         public static string NativeResolvedLoadFailed {
@@ -502,47 +430,11 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Extensibility configuration lacks registration for contract &apos;{0}&apos;..
-        /// </summary>
-        public static string NoContractInConfiguration {
-            get {
-                return ResourceManager.GetString("NoContractInConfiguration", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Registry was not armed with an expected dependency..
-        /// </summary>
-        public static string NoDependencyArmed {
-            get {
-                return ResourceManager.GetString("NoDependencyArmed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to No comparable exception class can be mapped to the provided HRESULT as it does not represent a failed operation..
         /// </summary>
         public static string NoExceptionFromSuccessfulResult {
             get {
                 return ResourceManager.GetString("NoExceptionFromSuccessfulResult", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No export for contract type &apos;{0}&apos; belongs to the &apos;{1}&apos; filterable family..
-        /// </summary>
-        public static string NoExportFoundForFamily {
-            get {
-                return ResourceManager.GetString("NoExportFoundForFamily", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No local export for the contract type &apos;{0}&apos; was found. If this is an expected contract, then it should be exported within the consuming component&apos;s own assembly. If expectancy is tenuous, check for support via the appropriate methods provided by the plugin host system first..
-        /// </summary>
-        public static string NoExportFoundForLocalContract {
-            get {
-                return ResourceManager.GetString("NoExportFoundForLocalContract", resourceCulture);
             }
         }
         
@@ -610,65 +502,11 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The file &apos;{0}&apos; being scanned for pluggable exports failed to load due to most likely not being a valid .NET assembly..
-        /// </summary>
-        public static string PluginBadImageException {
-            get {
-                return ResourceManager.GetString("PluginBadImageException", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The file &apos;{0}&apos; being scanned for pluggable exports failed to load..
-        /// </summary>
-        public static string PluginFileLoadException {
-            get {
-                return ResourceManager.GetString("PluginFileLoadException", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Unable to set popup as the foreground window. The menu will not disappear if the user clicks outside of it..
         /// </summary>
         public static string PopupNotInForeground {
             get {
                 return ResourceManager.GetString("PopupNotInForeground", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The executing process is unmanaged; therefore, no contract implementation is able to be exported by it..
-        /// </summary>
-        public static string ProcessCannotExportContracts {
-            get {
-                return ResourceManager.GetString("ProcessCannotExportContracts", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid call-routable plugin identity value. Values must be parseable as standard globally unique identifiers..
-        /// </summary>
-        public static string RoutablePluginIdNotValid {
-            get {
-                return ResourceManager.GetString("RoutablePluginIdNotValid", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to RoutableProxy was not provided a IHostAdapter due to improper initialization. Use a static factory method such as RoutableProxy.Create instead to initialize the proxy properly..
-        /// </summary>
-        public static string RoutableProxyNotInitializedCorrectly {
-            get {
-                return ResourceManager.GetString("RoutableProxyNotInitializedCorrectly", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to RouteProxy instance was somehow invoked with null method information..
-        /// </summary>
-        public static string RoutableProxyNullMethodInfo {
-            get {
-                return ResourceManager.GetString("RoutableProxyNullMethodInfo", resourceCulture);
             }
         }
         
