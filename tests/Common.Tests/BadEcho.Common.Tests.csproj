@@ -21,7 +21,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\XmlConfiguration\BadEcho.XmlConfiguration.csproj" />
 		<ProjectReference Include="..\..\src\Common\BadEcho.Common.csproj" />
 	</ItemGroup>
 
@@ -29,16 +28,6 @@
 		<None Update="testProvider.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="test.config">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Update="test.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
 	</ItemGroup>
-
-	<Target Name="BuildPlugin" AfterTargets="Build">
-		<Copy SourceFiles="test.config" DestinationFiles="$(OutputPath)\ReSharperTestRunner.dll.config" />
-		<Copy SourceFiles="test.config" DestinationFiles="$(OutputPath)\testhost.dll.config" />
-	</Target>
+	
 </Project>
