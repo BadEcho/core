@@ -120,10 +120,10 @@ struct ThreadData
 inline ThreadData* SharedData;
 inline LPVOID SharedMemory = nullptr;
 inline HANDLE FileMapping = nullptr;
+// A mutex synchronizes writes to shared memory, particularly for message parameter modification by message queue hook procedures.
 inline HANDLE SharedSectionMutex = nullptr;
 
-// Add a data section to our binary file for variables we want shared across all injected
-// processes.
+// Adds a data section to our binary file for variables we want shared across all processes.
 // The variables that are shared mainly deal with the number of active hooks and message
 // parameters up for modification.
 #pragma data_seg(".shared")
