@@ -6,6 +6,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-    <ProjectReference Include="..\..\src\Common\BadEcho.Common.csproj" />
-  </ItemGroup>
+		<ProjectReference Include="..\..\src\Common\BadEcho.Common.csproj" />
+	</ItemGroup>
 </Project>

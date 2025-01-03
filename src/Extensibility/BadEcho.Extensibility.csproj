@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Product>Bad Echo Extensibility Framework</Product>
+		<Description>Bad Echo plugin framework for creating and hosting plugins.</Description>
+		<Title>$(Product)</Title>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="System.Composition" Version="9.0.0" />
+	</ItemGroup>
+
+</Project>
