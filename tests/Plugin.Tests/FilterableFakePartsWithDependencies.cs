@@ -16,7 +16,7 @@ using BadEcho.Extensibility;
 using BadEcho.Extensibility.Hosting;
 using BadEcho.Extensibility.Tests;
 
-namespace BadEcho.Tests.Plugin;
+namespace BadEcho.Plugin.Tests;
 
 [Export(typeof(IFilterableFakeDependency))]
 [Filterable(AlphaFamily.FamilyIdValue, typeof(AlphaFakeDependency))]

@@ -14,7 +14,7 @@
 using BadEcho.Extensibility;
 using BadEcho.Extensibility.Tests;
 
-namespace BadEcho.Tests.Plugin;
+namespace BadEcho.Plugin.Tests;
 
 [FilterableFamily(FamilyIdValue, NAME)]
 public class AlphaFamily : IFilterableFamily

@@ -13,7 +13,7 @@
 
 using System.Composition.Hosting;
 using BadEcho.Extensibility.Hosting;
-using BadEcho.Extensibility.Tests.ExtensibilityPoint;
+using BadEcho.ExtensibilityPoint.Tests;
 using Xunit;
 
 namespace BadEcho.Extensibility.Tests;

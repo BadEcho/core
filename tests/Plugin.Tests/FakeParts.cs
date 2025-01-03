@@ -16,7 +16,7 @@ using System.Composition.Convention;
 using BadEcho.Extensibility.Hosting;
 using BadEcho.Extensibility.Tests;
 
-namespace BadEcho.Tests.Plugin;
+namespace BadEcho.Plugin.Tests;
 
 [Export(typeof(IFakePart))]
 public sealed class FakePart : IFakePart

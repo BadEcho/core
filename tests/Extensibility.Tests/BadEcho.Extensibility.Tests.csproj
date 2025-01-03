@@ -23,7 +23,7 @@
 	  <ProjectReference Include="..\..\src\Common\BadEcho.Common.csproj" />
 	  <ProjectReference Include="..\..\src\Extensibility\BadEcho.Extensibility.csproj" />
 	  <ProjectReference Include="..\..\src\XmlConfiguration\BadEcho.XmlConfiguration.csproj" />
-	  <ProjectReference Include="..\Extensibility.Tests.ExtensibilityPoint\BadEcho.Extensibility.Tests.ExtensibilityPoint.csproj" />
+	  <ProjectReference Include="..\ExtensibilityPoint.Tests\BadEcho.ExtensibilityPoint.Tests.csproj" />
 	</ItemGroup>
 
 </Project>

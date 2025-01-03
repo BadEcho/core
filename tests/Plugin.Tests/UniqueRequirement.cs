@@ -12,8 +12,9 @@
 //-----------------------------------------------------------------------
 
 using System.Composition;
+using BadEcho.Extensibility.Tests;
 
-namespace BadEcho.Extensibility.Tests.ExtensibilityPoint;
+namespace BadEcho.Plugin.Tests;
 
-[Export(typeof(IExtensibilityPart))]
-public sealed class ExtensibilityPart : IExtensibilityPart;
+[Export(typeof(IUniqueRequirement))]
+public sealed class UniqueRequirement : IUniqueRequirement;

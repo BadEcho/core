@@ -11,10 +11,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.Composition;
-using BadEcho.Extensibility.Tests;
+namespace BadEcho.ExtensibilityPoint.Tests;
 
-namespace BadEcho.Tests.Plugin;
-
-[Export(typeof(IUniqueRequirement))]
-public sealed class UniqueRequirement : IUniqueRequirement;
+public interface IExtensibilityPart;

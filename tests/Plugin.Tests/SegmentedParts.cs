@@ -14,7 +14,7 @@
 using BadEcho.Extensibility;
 using BadEcho.Extensibility.Tests;
 
-namespace BadEcho.Tests.Plugin;
+namespace BadEcho.Plugin.Tests;
 
 [Routable(FakeAdapterIds.AlphaFakeIdValue, typeof(ISegmentedContract))]
 public class AlphaFakeAdapter : IPluginAdapter<ISegmentedContract>
