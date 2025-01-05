@@ -1,71 +1,13 @@
 <Project>
 	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
-		<PackageId>$(MSBuildProjectName)</PackageId>
-		<RepositoryType>git</RepositoryType>
-		<RepositoryUrl>https://github.com/BadEcho/core</RepositoryUrl>
-		<PackageProjectUrl>https://badecho.com</PackageProjectUrl>
-		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-		<Authors>Matt Weber</Authors>
-		<Company>Bad Echo LLC</Company>
-		<Copyright>© Bad Echo LLC. All rights reserved.</Copyright>
-		<PackageLicenseExpression>AGPL-3.0-only</PackageLicenseExpression>
-		<PackageIcon>Icon.png</PackageIcon>
-		<NeutralLanguage>en-US</NeutralLanguage>
-		<RootNamespace>$(MSBuildProjectName)</RootNamespace>
-		<AssemblyName>$(MSBuildProjectName)</AssemblyName>
-		<Nullable>enable</Nullable>
-		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<CLSCompliant>true</CLSCompliant>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<WarningsAsErrors>CS8600;CS8601;CS8602;CS8603;CS8604;CS8605;CS8613;CS8625;CS8629;CS8614;CS8618;CS8619;CS8633</WarningsAsErrors>
-		<UseCommonOutputDirectory>false</UseCommonOutputDirectory>
-		<IncludePackageReferencesDuringMarkupCompilation>false</IncludePackageReferencesDuringMarkupCompilation>
-		<ImplicitUsings>true</ImplicitUsings>
-		<DefineConstants>$(DefineConstants);CODE_ANALYSIS</DefineConstants>
-		<AnalysisMode>All</AnalysisMode>
+		<RootProperties>$([MSBuild]::GetPathOfFileAbove('Root.build.props', '$(MSBuildThisFileDirectory)..\'))</RootProperties>
+		<BuildProperties Condition="Exists($(RootProperties))">$(RootProperties)</BuildProperties>
+		<BuildProperties Condition="'$(BuildProperties)' == ''">build\Build.props</BuildProperties>
 	</PropertyGroup>
-
-  <!--Versioning.-->
+	<Import Project="$(BuildProperties)"/>
 	<PropertyGroup>
-		<MajorVersion>0</MajorVersion>
-		<MinorVersion>1</MinorVersion>
-		<PatchVersion>0</PatchVersion>
-		<VersionPrefix>$(MajorVersion).$(MinorVersion).$(PatchVersion)</VersionPrefix>
-		<AssemblyVersion>$(MajorVersion).0.0.0</AssemblyVersion>
+		<RepositoryUrl>https://github.com/BadEcho/core</RepositoryUrl>
 	</PropertyGroup>
-
-	<Choose>
-		<When Condition=" '$(BuildMetadata)' != '' AND '$(PrereleaseId)' != '' AND '$(BuildNumber)' != ''">
-			<PropertyGroup>
-				<VersionSuffix>$(PrereleaseId).$(BuildNumber)</VersionSuffix>
-				<InformationalVersion>$(VersionPrefix)-$(VersionSuffix)+$(BuildMetadata)</InformationalVersion>
-				<FileVersion>$(MajorVersion).$(MinorVersion).$(PatchVersion).$(BuildNumber)</FileVersion>
-			</PropertyGroup>
-		</When>
-		<Otherwise>
-			<PropertyGroup>
-				<FileVersion>$(MajorVersion).$(MinorVersion).$(PatchVersion).0</FileVersion>
-			</PropertyGroup>
-		</Otherwise>
-	</Choose>
-
-	<ItemGroup>
-		<None Include="$(SolutionDir)media\Icon.png" Pack="true" PackagePath="">
-			<Link>Properties\Icon.png</Link>
-		</None>
-	</ItemGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <OutputPath>$(SolutionDir)\bin\dbg</OutputPath>
-    <DocumentationFile>$(SolutionDir)\bin\dbg\$(AssemblyName).xml</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <OutputPath>$(SolutionDir)\bin\rel</OutputPath>
-    <DocumentationFile>$(SolutionDir)\bin\rel\$(AssemblyName).xml</DocumentationFile>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)\build\strongNaming.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
 
   <!--This is needed in order to prevent inaccurate errors from being displayed during design-time.-->
   <Target Name="DisableDesignTimeCompileCheck" AfterTargets="_CheckCompileDesignTimePrerequisite">
