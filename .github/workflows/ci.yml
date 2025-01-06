@@ -47,7 +47,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
       with:
-        submodules: recursive
+        submodules: true
         fetch-depth: 0
     - name: Get Build Submodule Hash
       id: submodule-status
