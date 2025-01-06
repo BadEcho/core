@@ -58,49 +58,17 @@ jobs:
         dotnet-version: 9.0.x
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2    
-      # GitHub artifacts expire after 90 days, so this will fail every 90 days.
-      # We cache vcpkg build artifacts, as their compilation requires an inordinate amount of time.
-    - name: Download vcpkg Artifact
-      id: download-vcpkg
-      uses: dawidd6/action-download-artifact@v3
-      continue-on-error: true
-      with:
-        workflow: ci.yml
-        name: vcpkg-binaries
-        commit: ${{ vars.VCPKG_BINARIES_SHA }}
-        path: src/MsdfGenerator/vcpkg_installed/
-      # If we don't generate the following *.stamp file, C++ dependencies will be recompiled regardless of existing artifacts.
-    - name: Update vcpkg Output Timestamp
-      if: steps.download-vcpkg.outcome == 'success'
-      run: touch src/MsdfGenerator/vcpkg_installed/x64-windows-static-md/.msbuildstamp-x64-windows-static-md.stamp
     - name: Build
       run: .\build\Invoke-Build.ps1 -ReleaseBuild:$([System.Convert]::ToBoolean($Env:RELEASE_BUILD)) -PackageConfiguration:$Env:PACKAGE_CONFIGURATION
       env:
         RELEASE_BUILD: ${{ inputs.release-build != '' && inputs.release-build || 'false' }}
         PACKAGE_CONFIGURATION: ${{ env.PACKAGE_CONFIGURATION }}
-      # If vcpkg artifact aquisition failed earlier, we upload our freshly compiled dependencies and record the commit hash for future retrieval.
-    - name: Upload vcpkg Artifact
-      if: steps.download-vcpkg.outcome == 'failure'
-      uses: actions/upload-artifact@v4
-      with:
-        name: vcpkg-binaries
-        path: src/MsdfGenerator/vcpkg_installed/**/*      
-    - name: Record vcpkg Artifact Commit Hash
-      if: steps.download-vcpkg.outcome == 'failure'
-      run: gh variable set VCPKG_BINARIES_SHA -b $(git rev-parse HEAD)
-      env:
-        GH_TOKEN: ${{ secrets.REPO_TOKEN }}
       # Store our compiled assets for subsequent jobs.
     - name: Upload Build Artifact
       uses: actions/upload-artifact@v4
       with:
         name: ${{ env.BUILD_ARTIFACT_NAME }}
         path: bin/rel/
-    - name: Upload Game Test Content Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: game-test-content
-        path: tests/Game.Tests/Content/
     - name: Upload Package Artifact
       uses: actions/upload-artifact@v4
       with:
@@ -123,11 +91,6 @@ jobs:
       with:
         name: ${{ env.BUILD_ARTIFACT_NAME }}
         path: bin/rel/
-    - name: Download Game Test Content Artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: game-test-content
-        path: tests/Game.Tests/Content/
     - name: Execute Test Runner
       run: |
         Get-ChildItem bin\rel\*.Tests.dll | `
