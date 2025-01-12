@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Product>Bad Echo Hooks Framework</Product>
+    <Description>Bad Echo framework for installing out-of-process and global hook procedures from managed code.</Description>
+    <Title>$(Product)</Title>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <IsPackable>$(CoreIsPackable)</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="" />
+    <None Include="$(OutputPath)\BadEcho.Hooks.Native.dll" Link="x64\BadEcho.Hooks.Native.dll" Pack="true" PackagePath="runtimes\win-x64\native" />
+    <None Include="$(OutputPath)\x86\BadEcho.Hooks.Native.dll" Link="x86\BadEcho.Hooks.Native.dll" Pack="true" PackagePath="runtimes\win-x86\native" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Common\BadEcho.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Strings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

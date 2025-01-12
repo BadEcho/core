@@ -19,7 +19,7 @@ namespace BadEcho.Interop;
 /// <remarks>
 /// Because this wrapper intercepts window messages by subclassing the provided window, the window being wrapped must be 
 /// local to the same process hosting the .NET runtime that is executing this code. If the window was created in another 
-/// process, you'll need to use the <see cref="GlobalWindowWrapper"/> type instead.
+/// process, you'll need to make use of the <c>BadEcho.Hooks</c> library instead.
 /// </remarks>
 public sealed class LocalWindowWrapper : WindowWrapper, IDisposable
 {

@@ -14,7 +14,8 @@
 using BadEcho.Collections;
 using BadEcho.Extensions;
 using BadEcho.Logging;
-using BadEcho.Properties;
+using BadEcho.Interop;
+using BadEcho.Hooks.Properties;
 
 namespace BadEcho.Hooks;
 
@@ -72,7 +73,7 @@ public sealed class MessageQueueMessageSource : IMessageSource<GetMessageHookPro
 
         if (_queueHooked)
         {
-            _queueHooked = !Hooks.RemoveHook(HookType.GetMessage, _threadId);
+            _queueHooked = !Native.RemoveHook(HookType.GetMessage, _threadId);
 
             if (_queueHooked)
                 Logger.Warning(Strings.UnhookMessageQueueFailed.InvariantFormat(_threadId));
@@ -95,9 +96,9 @@ public sealed class MessageQueueMessageSource : IMessageSource<GetMessageHookPro
 
         _hookExecutor.Window.AddHook(GetMessageProcedure);
 
-        _queueHooked = Hooks.AddHook(HookType.GetMessage,
-                                     _threadId,
-                                     _hookExecutor.Window.Handle);
+        _queueHooked = Native.AddHook(HookType.GetMessage,
+                                      _threadId,
+                                      _hookExecutor.Window.Handle);
     }
 
     private HookResult GetMessageProcedure(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
@@ -115,7 +116,7 @@ public sealed class MessageQueueMessageSource : IMessageSource<GetMessageHookPro
         }
         
         if (localMsg != msg || localWParam != wParam || localLParam != lParam)
-            Hooks.ChangeMessageDetails(localMsg, localWParam, localLParam);
+            Native.ChangeMessageDetails(localMsg, localWParam, localLParam);
 
         // We always mark it as handled, we don't want further processing by any supporting
         // infrastructure.

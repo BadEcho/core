@@ -31,16 +31,6 @@
 			<LogicalName>BadEcho.Properties.app.manifest</LogicalName>
 		</EmbeddedResource>
     <None Include="README.md" Pack="true" PackagePath="" />
-    <None Include="$(OutputPath)\BadEcho.Hooks.dll"
-					Link="x64\BadEcho.Hooks.dll"
-					Pack="true"
-					PackagePath="runtimes\win-x64\native"
-					/>
-    <None Include="$(OutputPath)\x86\BadEcho.Hooks.dll"
-					Link="x86\BadEcho.Hooks.dll"
-					Pack="true"
-					PackagePath="runtimes\win-x86\native"
-					/>
   </ItemGroup>
   
 </Project>

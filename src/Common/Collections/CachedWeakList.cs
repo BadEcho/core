@@ -21,7 +21,7 @@ namespace BadEcho.Collections;
 /// that require such a collection.
 /// </summary>
 /// <typeparam name="T">The type of items in the list.</typeparam>
-internal sealed class CachedWeakList<T> : CopyUponWriteList<WeakReference<T>>, IEnumerable<T>
+public sealed class CachedWeakList<T> : CopyUponWriteList<WeakReference<T>>, IEnumerable<T>
     where T : class
 {
     IEnumerator IEnumerable.GetEnumerator()
@@ -167,7 +167,7 @@ internal sealed class CachedWeakList<T> : CopyUponWriteList<WeakReference<T>>, I
             return;
 
         items.RemoveRange(destinationIndex, count - destinationIndex);
-
+        
         int newCapacity = destinationIndex << 1;
 
         if (newCapacity < items.Capacity)

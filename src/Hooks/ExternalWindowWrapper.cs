@@ -1,11 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿//-----------------------------------------------------------------------
+// <copyright>
+//      Created by Matt Weber <matt@badecho.com>
+//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//
+//      Bad Echo Technologies are licensed under the
+//      GNU Affero General Public License v3.0.
+//
+//      See accompanying file LICENSE.md or a copy at:
+//      https://www.gnu.org/licenses/agpl-3.0.html
+// </copyright>
+//-----------------------------------------------------------------------
+
 using System.ComponentModel;
-using System.Linq;
-using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using BadEcho.Extensions;
 using BadEcho.Hooks.Properties;
 using BadEcho.Interop;
@@ -22,26 +29,29 @@ namespace BadEcho.Hooks;
 /// possible to subclass a window created by and running on another process.
 /// </para>
 /// <para>
-/// Instead, several global hook procedures are installed and associated with the thread owning the wrapped window. This
+/// Instead, several hook procedures are installed and associated with the thread owning the wrapped window. This
 /// provides us with all pertinent window message traffic, even across process boundaries. Registering a callback for a
-/// global hook procedure requires more than just a function pointer to a managed delegate, however. Global hooks require
-/// the injection of a native, standard Windows DLL containing the hook procedure into a target process.
+/// non-local hook procedure requires more than just a function pointer to a managed delegate, however. Hooks for threads outside
+/// our active process require the injection of a native Windows DLL containing the hook procedure into the target process.
 /// </para>
 /// <para> 
-/// Self-injection of this assembly isn't going to cut it, as a managed DLL simply cannot be loaded in an unmanaged environment,
-/// which will fail to load our not-so-standard DLLs due to the lack of a DllMain entry point. 
+/// Self-injection of this assembly isn't going to cut it, as a managed DLL cannot be loaded in an unmanaged environment;
+/// our not-so-standard DLLs will fail to load due to the lack of a DllMain entry point. 
 /// </para>
 /// <para>
 /// Luckily for us, or maybe just me, we have the native BadEcho.Hooks.Native library, written in C++ and super injectable! If this DLL
-/// can be located for the necessary platform invokes, the necessary hooks are established and instances of said native DLL
-/// are loaded into the address space of our target processes.
+/// can be located for the necessary platform invokes, then instances of our native DLL will be loaded into the address space of the target
+/// processes, effectively installing the desired hook procedures.
 /// </para>
 /// <para>
 /// In order for our hooking DLL to be able to communicate back to our managed code, we create a message-only window that is
 /// set up to receive messages from unmanaged-land. So...there you go. Spy away!
 /// </para>
+/// <para>
+/// See https://badecho.com/index.php/2024/01/13/external-window-messages/ for more information on the topic.
+/// </para>
 /// </remarks>
-public sealed class GlobalWindowWrapper : WindowWrapper, IDisposable
+public sealed class ExternalWindowWrapper : WindowWrapper, IDisposable
 {
     private readonly MessageOnlyExecutor _hookExecutor = new();
     private readonly int _threadId;
@@ -50,13 +60,13 @@ public sealed class GlobalWindowWrapper : WindowWrapper, IDisposable
     private bool _windowHooked;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="GlobalWindowWrapper"/> class.
+    /// Initializes a new instance of the <see cref="ExternalWindowWrapper"/> class.
     /// </summary>
     /// <param name="handle">A handle to the window being wrapped.</param>
-    public GlobalWindowWrapper(WindowHandle handle)
+    public ExternalWindowWrapper(WindowHandle handle)
         : base(handle)
     {
-        _threadId = (int) User32.GetWindowThreadProcessId(Handle, IntPtr.Zero);
+        _threadId = Handle.GetThreadId();
 
         if (_threadId == 0)
             throw new Win32Exception(Marshal.GetLastWin32Error());
@@ -101,7 +111,7 @@ public sealed class GlobalWindowWrapper : WindowWrapper, IDisposable
         if (!_windowHooked)
             return;
 
-        _windowHooked = !Hooks.RemoveHook(HookType.CallWindowProcedure, _threadId);
+        _windowHooked = !Native.RemoveHook(HookType.CallWindowProcedure, _threadId);
 
         if (_windowHooked)
             Logger.Warning(Strings.UnhookWindowFailed.InvariantFormat(_threadId));
@@ -119,8 +129,8 @@ public sealed class GlobalWindowWrapper : WindowWrapper, IDisposable
 
         _hookExecutor.Window.AddHook(WindowProcedure);
 
-        _windowHooked = Hooks.AddHook(HookType.CallWindowProcedure,
-                                      _threadId,
-                                      _hookExecutor.Window.Handle);
+        _windowHooked = Native.AddHook(HookType.CallWindowProcedure,
+                                       _threadId,
+                                       _hookExecutor.Window.Handle);
     }
 }

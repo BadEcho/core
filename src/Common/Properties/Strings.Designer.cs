@@ -412,15 +412,6 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to create global hook message queue..
-        /// </summary>
-        public static string MessageQueueForHookFailed {
-            get {
-                return ResourceManager.GetString("MessageQueueForHookFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Native library resolver failed to load library: {0}.
         /// </summary>
         public static string NativeResolvedLoadFailed {
@@ -552,24 +543,6 @@ namespace BadEcho.Properties {
         public static string ThreadExecutorSourceNotInitialized {
             get {
                 return ResourceManager.GetString("ThreadExecutorSourceNotInitialized", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to unregister message queue hook for thread with ID &apos;{0}&apos;..
-        /// </summary>
-        public static string UnhookMessageQueueFailed {
-            get {
-                return ResourceManager.GetString("UnhookMessageQueueFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to unregister window hook for thread with ID &apos;{0}&apos;..
-        /// </summary>
-        public static string UnhookWindowFailed {
-            get {
-                return ResourceManager.GetString("UnhookWindowFailed", resourceCulture);
             }
         }
         

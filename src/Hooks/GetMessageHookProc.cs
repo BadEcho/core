@@ -11,7 +11,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Interop;
+using BadEcho.Interop;
+
+namespace BadEcho.Hooks;
 
 /// <summary>
 /// Represents a callback that receives messages about to be returned from a message queue.

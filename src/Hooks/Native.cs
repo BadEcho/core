@@ -11,18 +11,19 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using BadEcho.Interop;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace BadEcho.Interop;
+namespace BadEcho.Hooks;
 
 /// <summary>
-/// Provides interoperability with the Bad Echo Win32 hooks API.
+/// Provides interoperability with the BadEcho.Hooks native API.
 /// </summary>
-internal static partial class Hooks
+internal static partial class Native
 {
-    private const string LIBRARY_NAME = "BadEcho.Hooks";
-    
+    private const string LIBRARY_NAME = "BadEcho.Hooks.Native";
+
     /// <summary>
     /// Installs a new Win32 hook procedure into the specified thread.
     /// </summary>

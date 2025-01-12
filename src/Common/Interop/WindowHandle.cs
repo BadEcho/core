@@ -11,6 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace BadEcho.Interop;
@@ -58,6 +59,21 @@ public sealed class WindowHandle : SafeHandle
     /// <inheritdoc/>
     public override bool IsInvalid
         => handle == IntPtr.Zero;
+
+    /// <summary>
+    /// Retrieves the identifier of the thread that created the window.
+    /// </summary>
+    /// <returns>The identifier of the thread that created the window.</returns>
+    /// <exception cref="Win32Exception">The unmanaged function used to retrieve the thread identifier failed.</exception>
+    public int GetThreadId()
+    {
+        var threadId = (int) User32.GetWindowThreadProcessId(this, IntPtr.Zero);
+        
+        if (threadId == 0)
+            throw new Win32Exception(Marshal.GetLastWin32Error());
+
+        return threadId;
+    }
     
     /// <inheritdoc/>
     protected override bool ReleaseHandle()

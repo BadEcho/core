@@ -18,7 +18,7 @@ namespace BadEcho.Collections;
 /// various sensitive operations that require such a collection.
 /// </summary>
 /// <typeparam name="T">The type of items in the list.</typeparam>
-internal class CopyUponWriteList<T>
+public class CopyUponWriteList<T>
 {
     private IReadOnlyList<T>? _readonlyWrapper;
 
@@ -41,7 +41,7 @@ internal class CopyUponWriteList<T>
             return readonlyItems;
         }
     }
-
+    
     /// <summary>
     /// Gets the actual inner list which lacks any copy-on-write protection.
     /// </summary>
@@ -49,7 +49,7 @@ internal class CopyUponWriteList<T>
     /// The methods that modify the <see cref="CopyUponWriteList{T}"/> are responsible for checking this and copying it before
     /// modifying it, as well as clearing it when necessary.
     /// </remarks>
-    protected List<T> Items
+    internal List<T> Items
     { get; private set; } = [];
 
     /// <summary>
