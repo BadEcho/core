@@ -16,7 +16,7 @@ using BadEcho.Extensions;
 using BadEcho.Logging;
 using BadEcho.Properties;
 
-namespace BadEcho.Interop;
+namespace BadEcho.Hooks;
 
 /// <summary>
 /// Provides a publisher of messages being read from a message queue.

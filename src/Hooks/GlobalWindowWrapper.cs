@@ -1,23 +1,17 @@
-﻿//-----------------------------------------------------------------------
-// <copyright>
-//      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
-//
-//      Bad Echo Technologies are licensed under the
-//      GNU Affero General Public License v3.0.
-//
-//      See accompanying file LICENSE.md or a copy at:
-//      https://www.gnu.org/licenses/agpl-3.0.html
-// </copyright>
-//-----------------------------------------------------------------------
-
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
 using BadEcho.Extensions;
+using BadEcho.Hooks.Properties;
+using BadEcho.Interop;
 using BadEcho.Logging;
-using BadEcho.Properties;
 
-namespace BadEcho.Interop;
+namespace BadEcho.Hooks;
 
 /// <summary>
 /// Provides a wrapper around an <c>HWND</c> of a provided out-of-process window and the messages it receives.
@@ -38,7 +32,7 @@ namespace BadEcho.Interop;
 /// which will fail to load our not-so-standard DLLs due to the lack of a DllMain entry point. 
 /// </para>
 /// <para>
-/// Luckily for us, or maybe just me, we have the native BadEcho.Hooks library, written in C++ and super injectable! If this DLL
+/// Luckily for us, or maybe just me, we have the native BadEcho.Hooks.Native library, written in C++ and super injectable! If this DLL
 /// can be located for the necessary platform invokes, the necessary hooks are established and instances of said native DLL
 /// are loaded into the address space of our target processes.
 /// </para>
@@ -51,7 +45,7 @@ public sealed class GlobalWindowWrapper : WindowWrapper, IDisposable
 {
     private readonly MessageOnlyExecutor _hookExecutor = new();
     private readonly int _threadId;
-    
+
     private bool _disposed;
     private bool _windowHooked;
 
@@ -59,7 +53,7 @@ public sealed class GlobalWindowWrapper : WindowWrapper, IDisposable
     /// Initializes a new instance of the <see cref="GlobalWindowWrapper"/> class.
     /// </summary>
     /// <param name="handle">A handle to the window being wrapped.</param>
-    public GlobalWindowWrapper(WindowHandle handle) 
+    public GlobalWindowWrapper(WindowHandle handle)
         : base(handle)
     {
         _threadId = (int) User32.GetWindowThreadProcessId(Handle, IntPtr.Zero);
@@ -67,7 +61,7 @@ public sealed class GlobalWindowWrapper : WindowWrapper, IDisposable
         if (_threadId == 0)
             throw new Win32Exception(Marshal.GetLastWin32Error());
 
-        HookAdded += async (_,_) 
+        HookAdded += async (_, _)
             => await HandleHookAdded().ConfigureAwait(false);
     }
 
@@ -82,7 +76,7 @@ public sealed class GlobalWindowWrapper : WindowWrapper, IDisposable
         CloseHook();
 
         _hookExecutor.Dispose();
-        
+
         _disposed = true;
     }
 
@@ -117,9 +111,9 @@ public sealed class GlobalWindowWrapper : WindowWrapper, IDisposable
     {
         if (_hookExecutor.Window != null)
             return;
-         
+
         await _hookExecutor.RunAsync();
-            
+
         if (_hookExecutor.Window == null)
             throw new InvalidOperationException(Strings.MessageQueueForHookFailed);
 
