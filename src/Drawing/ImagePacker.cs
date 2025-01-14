@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------
 
 using System.Drawing;
-using BadEcho.Properties;
+using BadEcho.Drawing.Properties;
 using SkiaSharp;
 
 namespace BadEcho.Drawing;

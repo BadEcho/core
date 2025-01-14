@@ -430,15 +430,6 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No packed image has been generated..
-        /// </summary>
-        public static string NoPackedImageGenerated {
-            get {
-                return ResourceManager.GetString("NoPackedImageGenerated", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Failed to send a message adding or modifying an icon to the taskbar&apos;s notification area..
         /// </summary>
         public static string NotifyIconAddModifyFailed {
@@ -480,15 +471,6 @@ namespace BadEcho.Properties {
         public static string NotifyIconNoCustomBalloonIconLoaded {
             get {
                 return ResourceManager.GetString("NotifyIconNoCustomBalloonIconLoaded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The specified maximum packed image size isn&apos;t large enough to fit any of the required images into..
-        /// </summary>
-        public static string PackedImageSizeTooSmall {
-            get {
-                return ResourceManager.GetString("PackedImageSizeTooSmall", resourceCulture);
             }
         }
         

@@ -276,12 +276,6 @@
   <data name="GlyphNotInFont" xml:space="preserve">
     <value>A glyph for the character '{0}' could not be found, most likely because it was not part of the character set used to generate the font's atlas.</value>
   </data>
-  <data name="NoPackedImageGenerated" xml:space="preserve">
-    <value>No packed image has been generated.</value>
-  </data>
-  <data name="PackedImageSizeTooSmall" xml:space="preserve">
-    <value>The specified maximum packed image size isn't large enough to fit any of the required images into.</value>
-  </data>
   <data name="NativeResolvedLoadFailed" xml:space="preserve">
     <value>Native library resolver failed to load library: {0}</value>
   </data>
