@@ -122,10 +122,13 @@
   <ItemGroup>
     <ClInclude Include="Hooks.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <Target Name="Build32Bit" AfterTargets="Build">
-    <MSBuild Condition="'$(Platform)' == 'x64'" Projects="$(MSBuildProjectFile)" Properties="Platform=Win32" RunEachTargetSeparately="true"/>    
+    <MSBuild Condition="'$(Platform)' == 'x64'" Projects="$(MSBuildProjectFile)" Properties="Platform=Win32" RunEachTargetSeparately="true" />
   </Target>
 </Project>
