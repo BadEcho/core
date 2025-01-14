@@ -35,7 +35,7 @@ internal static unsafe class WindowClassMarshaller
                {
                    cbSize = Marshal.SizeOf<WNDCLASSEX>(),
                    style = managed.Style,
-                   lpfnWndProc = Marshal.GetFunctionPointerForDelegate(managed.WindowProc),
+                   lpfnWndProc = Marshal.GetFunctionPointerForDelegate(managed.WndProc),
                    cbClsExtra = managed.ClassExtraBytes,
                    cbWndExtra = managed.WindowExtraBytes,
                    hInstance = managed.Instance,
@@ -55,9 +55,9 @@ internal static unsafe class WindowClassMarshaller
     /// <returns>A <see cref="WindowClass"/> equivalent of <c>unmanaged</c>.</returns>
     public static WindowClass ConvertToManaged(WNDCLASSEX unmanaged)
     {
-        var windowProc = Marshal.GetDelegateForFunctionPointer<WindowProc>(unmanaged.lpfnWndProc);
+        var wndProc = Marshal.GetDelegateForFunctionPointer<WNDPROC>(unmanaged.lpfnWndProc);
 
-        return new WindowClass(windowProc)
+        return new WindowClass(wndProc)
                {
                    Style = unmanaged.style,
                    ClassExtraBytes = unmanaged.cbClsExtra,

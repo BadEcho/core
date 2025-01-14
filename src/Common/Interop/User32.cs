@@ -37,12 +37,6 @@ internal static partial class User32
         => new(-3);
 
     /// <summary>
-    /// A hook code indicating that the hook procedure was provided with valid data and may process it.
-    /// </summary>
-    public static int HookCodeAction
-        => 0;
-
-    /// <summary>
     /// Creates an overlapped, pop-up, or child window with an extended window style.
     /// </summary>
     /// <param name="dwExStyle">The extended window style of the window being created.</param>
@@ -529,43 +523,6 @@ internal static partial class User32
     [LibraryImport(LIBRARY_NAME, EntryPoint = "CallWindowProcW")]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial IntPtr CallWindowProc(IntPtr wndProc, IntPtr hWnd, WindowMessage msg, IntPtr wParam, IntPtr lParam);
-
-    /// <summary>
-    /// Installs an application-defined hook procedure into a hook chain, used to monitor the system for certain
-    /// types of events.
-    /// </summary>
-    /// <param name="hookId">The type of hook procedure to be installed.</param>
-    /// <param name="lpfn">The hook procedure to install in the chain.</param>
-    /// <param name="hMod">A handle to the DLL containing the hook procedure.</param>
-    /// <param name="dwThreadId">
-    /// The identifier of the thread with which the hook procedure is to be associated. For desktop apps, this should be zero.
-    /// </param>
-    /// <returns>The handle to the hook procedure if successful; otherwise, zero.</returns>
-    [LibraryImport(LIBRARY_NAME, EntryPoint = "SetWindowsHookExW", SetLastError = true)]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    public static partial IntPtr SetWindowsHookEx(WindowsHook hookId, HookProc lpfn, IntPtr hMod, uint dwThreadId);
-
-    /// <summary>
-    /// Removes a hook procedure installed in a hook chain.
-    /// </summary>
-    /// <param name="hhk">A handle to the hook to be removed.</param>
-    /// <returns>A nonzero value if the function succeeds; otherwise, zero.</returns>
-    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    public static partial bool UnhookWindowsHookEx(IntPtr hhk);
-
-    /// <summary>
-    /// Passes the hook information to the next hook procedure in the current hook chain.
-    /// </summary>
-    /// <param name="hhk">This parameter is ignored.</param>
-    /// <param name="nCode">The hook code passed to the current hook procedure.</param>
-    /// <param name="wParam">The <paramref name="wParam"/> value passed to the current hook procedure.</param>
-    /// <param name="lParam">The <paramref name="lParam"/> value passed to the current hook procedure.</param>
-    /// <returns>The value returned by the next hook procedure in the chain.</returns>
-    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    public static partial IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
 
     /// <summary>
     /// Adds the specified window to the chain of clipboard viewers.

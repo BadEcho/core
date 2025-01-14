@@ -14,20 +14,8 @@
 namespace BadEcho.Interop;
 
 /// <summary>
-/// Specifies a type of hook procedure to install.
+/// Provides the result of a procedure's processing of a message.
 /// </summary>
-internal enum WindowsHook
-{
-    /// <summary>
-    /// A hook procedure that records input messages posted to the system message queue.
-    /// </summary>
-    JournalRecord = 0,
-    /// <summary>
-    /// A hook procedure that receives notifications useful to shell applications.
-    /// </summary>
-    Shell,
-    /// <summary>
-    /// A hook procedure that monitors low-level keyboard input events.
-    /// </summary>
-    KeyboardLowLevel = 13
-}
+/// <param name="LResult">The response to the particular message.</param>
+/// <param name="Handled">A value that indicates whether the message was handled.</param>
+public sealed record ProcedureResult(IntPtr LResult, bool Handled);

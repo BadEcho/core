@@ -3,7 +3,9 @@
 
 The `BadEcho.Hooks` library contains code allowing for the installation of out-of-process and global hook procedures from managed code.
 
-While the `BadEcho.Common` library provides functionality for creating in-process hooks, the `BadEcho.Hooks` library allows us to create both hooks for threads belonging to external processes as well as global hooks through the injection of the native `BadEcho.Hooks.Native` DLL.
+While the `BadEcho.Common` library lays the groundwork for message interception, it does not provide functionality for installing hooks, only in-process window message interception via subclassing. 
+
+The `BadEcho.Hooks` library, on the other hand, provides message interception via hook procedure installation and can create both hooks for threads belonging to external processes as well as global hooks through the injection of the native `BadEcho.Hooks.Native` DLL.
 
 This package exists to be used by specific Bad Echo applications, but is licensed under the GNU Affero General Public License so that others may enjoy it as well; see the accompanying [license](https://github.com/BadEcho/core/blob/master/LICENSE.md) for details.
 

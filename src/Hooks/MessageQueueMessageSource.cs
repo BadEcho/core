@@ -16,15 +16,16 @@ using BadEcho.Extensions;
 using BadEcho.Logging;
 using BadEcho.Interop;
 using BadEcho.Hooks.Properties;
+using BadEcho.Hooks.Interop;
 
 namespace BadEcho.Hooks;
 
 /// <summary>
 /// Provides a publisher of messages being read from a message queue.
 /// </summary>
-public sealed class MessageQueueMessageSource : IMessageSource<GetMessageHookProc>, IDisposable
+public sealed class MessageQueueMessageSource : IMessageSource<GetMessageProcedure>, IDisposable
 {
-    private readonly CachedWeakList<GetMessageHookProc> _hooks = [];
+    private readonly CachedWeakList<GetMessageProcedure> _callbacks = [];
     private readonly MessageOnlyExecutor _hookExecutor = new();
     private readonly int _threadId;
 
@@ -41,28 +42,28 @@ public sealed class MessageQueueMessageSource : IMessageSource<GetMessageHookPro
     {
         _threadId = threadId;
 
-        HookAdded += async (_,_) 
-            => await HandleHookAdded().ConfigureAwait(false);
+        CallbackAdded += async (_,_) 
+            => await HandleCallbackAdded().ConfigureAwait(false);
     }
 
-    private event EventHandler HookAdded;
+    private event EventHandler CallbackAdded;
 
     /// <inheritdoc/>
-    public void AddHook(GetMessageHookProc hook)
+    public void AddCallback(GetMessageProcedure callback)
     {
-        Require.NotNull(hook, nameof(hook));
+        Require.NotNull(callback, nameof(callback));
 
-        _hooks.Add(hook);
+        _callbacks.Add(callback);
 
-        HookAdded.Invoke(this, EventArgs.Empty);
+        CallbackAdded.Invoke(this, EventArgs.Empty);
     }
 
     /// <inheritdoc/>
-    public void RemoveHook(GetMessageHookProc hook)
+    public void RemoveCallback(GetMessageProcedure callback)
     {
-        Require.NotNull(hook, nameof(hook));
+        Require.NotNull(callback, nameof(callback));
 
-        _hooks.Remove(hook);
+        _callbacks.Remove(callback);
     }
 
     /// <inheritdoc/>
@@ -84,7 +85,7 @@ public sealed class MessageQueueMessageSource : IMessageSource<GetMessageHookPro
         _disposed = true;
     }
     
-    private async Task HandleHookAdded()
+    private async Task HandleCallbackAdded()
     {
         if (_hookExecutor.Window != null)
             return;
@@ -94,20 +95,20 @@ public sealed class MessageQueueMessageSource : IMessageSource<GetMessageHookPro
         if (_hookExecutor.Window == null)
             throw new InvalidOperationException(Strings.MessageQueueForHookFailed);
 
-        _hookExecutor.Window.AddHook(GetMessageProcedure);
+        _hookExecutor.Window.AddCallback(GetMessageProcedure);
 
         _queueHooked = Native.AddHook(HookType.GetMessage,
                                       _threadId,
                                       _hookExecutor.Window.Handle);
     }
 
-    private HookResult GetMessageProcedure(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+    private ProcedureResult GetMessageProcedure(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
     {
         uint localMsg = msg;
         IntPtr localWParam = wParam;
         IntPtr localLParam = lParam;
 
-        foreach (GetMessageHookProc hook in _hooks)
+        foreach (GetMessageProcedure hook in _callbacks)
         {
             var result = hook(hWnd, ref localMsg, ref localWParam, ref localLParam);
 
@@ -120,6 +121,6 @@ public sealed class MessageQueueMessageSource : IMessageSource<GetMessageHookPro
 
         // We always mark it as handled, we don't want further processing by any supporting
         // infrastructure.
-        return new HookResult(IntPtr.Zero, true);
+        return new ProcedureResult(IntPtr.Zero, true);
     }
 }

@@ -61,7 +61,7 @@ namespace BadEcho.Hooks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to create hook for message queue..
+        ///   Looks up a localized string similar to Failed to create message queue for receiving hook events..
         /// </summary>
         internal static string MessageQueueForHookFailed {
             get {

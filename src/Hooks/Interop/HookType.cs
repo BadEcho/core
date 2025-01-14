@@ -11,7 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Hooks;
+namespace BadEcho.Hooks.Interop;
 
 /// <summary>
 /// Specifies a type of hook procedure.

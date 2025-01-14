@@ -21,18 +21,18 @@ internal sealed class WindowClass
     /// <summary>
     /// Initializes a new instance of the <see cref="WindowClass"/> class.
     /// </summary>
-    /// <param name="windowProc">The window procedure delegate.</param>
-    public WindowClass(WindowProc windowProc)
+    /// <param name="wndProc">The window procedure delegate that will be invoked by the operating system.</param>
+    public WindowClass(WNDPROC wndProc)
     {
-        Require.NotNull(windowProc, nameof(windowProc));
+        Require.NotNull(wndProc, nameof(wndProc));
 
-        WindowProc = windowProc;
+        WndProc = wndProc;
     }
 
     /// <summary>
-    /// The window procedure delegate.
+    /// Gets the window procedure delegate that will be invoked by the operating system.
     /// </summary>
-    public WindowProc WindowProc
+    public WNDPROC WndProc
     { get; }
 
     /// <summary>

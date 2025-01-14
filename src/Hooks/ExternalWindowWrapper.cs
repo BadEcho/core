@@ -11,9 +11,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.ComponentModel;
-using System.Runtime.InteropServices;
 using BadEcho.Extensions;
+using BadEcho.Hooks.Interop;
 using BadEcho.Hooks.Properties;
 using BadEcho.Interop;
 using BadEcho.Logging;
@@ -29,14 +28,14 @@ namespace BadEcho.Hooks;
 /// possible to subclass a window created by and running on another process.
 /// </para>
 /// <para>
-/// Instead, several hook procedures are installed and associated with the thread owning the wrapped window. This
+/// Instead, several hook procedures need to be installed and associated with the thread owning the wrapped window. This
 /// provides us with all pertinent window message traffic, even across process boundaries. Registering a callback for a
 /// non-local hook procedure requires more than just a function pointer to a managed delegate, however. Hooks for threads outside
 /// our active process require the injection of a native Windows DLL containing the hook procedure into the target process.
 /// </para>
 /// <para> 
 /// Self-injection of this assembly isn't going to cut it, as a managed DLL cannot be loaded in an unmanaged environment;
-/// our not-so-standard DLLs will fail to load due to the lack of a DllMain entry point. 
+/// native code has no idea how to load and execute the code in our managed assemblies.
 /// </para>
 /// <para>
 /// Luckily for us, or maybe just me, we have the native BadEcho.Hooks.Native library, written in C++ and super injectable! If this DLL
@@ -68,14 +67,11 @@ public sealed class ExternalWindowWrapper : WindowWrapper, IDisposable
     {
         _threadId = Handle.GetThreadId();
 
-        if (_threadId == 0)
-            throw new Win32Exception(Marshal.GetLastWin32Error());
-
-        HookAdded += async (_, _)
-            => await HandleHookAdded().ConfigureAwait(false);
+        CallbackAdded += async (_, _)
+            => await HandleCallbackAdded().ConfigureAwait(false);
     }
 
-    private event EventHandler HookAdded;
+    private event EventHandler CallbackAdded;
 
     /// <inheritdoc/>
     public void Dispose()
@@ -91,11 +87,11 @@ public sealed class ExternalWindowWrapper : WindowWrapper, IDisposable
     }
 
     /// <inheritdoc/>
-    protected override void OnHookAdded(WindowHookProc addedHook)
+    protected override void OnCallbackAdded(WindowProcedure addedCallback)
     {
-        base.OnHookAdded(addedHook);
+        base.OnCallbackAdded(addedCallback);
 
-        HookAdded.Invoke(this, EventArgs.Empty);
+        CallbackAdded.Invoke(this, EventArgs.Empty);
     }
 
     /// <inheritdoc/>
@@ -117,7 +113,7 @@ public sealed class ExternalWindowWrapper : WindowWrapper, IDisposable
             Logger.Warning(Strings.UnhookWindowFailed.InvariantFormat(_threadId));
     }
 
-    private async Task HandleHookAdded()
+    private async Task HandleCallbackAdded()
     {
         if (_hookExecutor.Window != null)
             return;
@@ -127,7 +123,7 @@ public sealed class ExternalWindowWrapper : WindowWrapper, IDisposable
         if (_hookExecutor.Window == null)
             throw new InvalidOperationException(Strings.MessageQueueForHookFailed);
 
-        _hookExecutor.Window.AddHook(WindowProcedure);
+        _hookExecutor.Window.AddCallback(WindowProcedure);
 
         _windowHooked = Native.AddHook(HookType.CallWindowProcedure,
                                        _threadId,

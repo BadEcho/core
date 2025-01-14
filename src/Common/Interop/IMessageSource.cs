@@ -14,20 +14,20 @@
 namespace BadEcho.Interop;
 
 /// <summary>
-/// Defines a publisher of messages sent through a hook chain.
+/// Defines a publisher of intercepted messages.
 /// </summary>
-/// <typeparam name="THookProc">The type of hook procedure used by the hook type.</typeparam>
-public interface IMessageSource<in THookProc> where THookProc : Delegate
+/// <typeparam name="TProcedure">The type of procedure (callback function) used to process messages.</typeparam>
+public interface IMessageSource<in TProcedure> where TProcedure : Delegate
 {
     /// <summary>
-    /// Adds a hook that will receive messages sent to the hook chain.
+    /// Adds a callback function that will receive intercepted messages.
     /// </summary>
-    /// <param name="hook">The hook to invoke when messages are sent to the associated hook chain.</param>
-    void AddHook(THookProc hook);
+    /// <param name="callback">The callback function to invoke when publishing intercepted messages.</param>
+    void AddCallback(TProcedure callback);
 
     /// <summary>
-    /// Removes a hook previously receiving messages sent to the hook chain.
+    /// Removes a callback function previously receiving intercepted messages.
     /// </summary>
-    /// <param name="hook">The hook to remove.</param>
-    void RemoveHook(THookProc hook);
+    /// <param name="callback">The callback function to remove.</param>
+    void RemoveCallback(TProcedure callback);
 }

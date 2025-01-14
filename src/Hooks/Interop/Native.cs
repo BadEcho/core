@@ -15,7 +15,7 @@ using BadEcho.Interop;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace BadEcho.Hooks;
+namespace BadEcho.Hooks.Interop;
 
 /// <summary>
 /// Provides interoperability with the BadEcho.Hooks native API.

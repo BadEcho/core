@@ -36,7 +36,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
     // The window wrapper this is provided to will store it in a weak list,
     // so we need to keep a reference to it to keep it alive.
-    private readonly WindowHookProc _hook;
+    private readonly WindowProcedure _callback;
     private readonly WeakReference<IThreadExecutor> _thisExecutor;
 
     private ExecutionContext? _shutdownContext;
@@ -56,7 +56,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
         }
 
         Thread = Thread.CurrentThread;
-        _hook = WndProc;
+        _callback = WindowProcedure;
     }
 
     /// <inheritdoc/>
@@ -334,7 +334,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
             Thread = Thread.CurrentThread;
             Window = new MessageOnlyWindowWrapper(this);
 
-            Window.AddStartingHook(_hook);
+            Window.AddStartingCallback(_callback);
 
             _running.Set();
             // A call to Dispose() may have been made (either deliberately or due to a using statement/declaration) before
@@ -500,7 +500,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
         }
     }
 
-    private HookResult WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+    private ProcedureResult WindowProcedure(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
     {
         var message = (WindowMessage) msg;
 
@@ -518,7 +518,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
             }
         }
 
-        return new HookResult(IntPtr.Zero, false);
+        return new ProcedureResult(IntPtr.Zero, false);
     }
 
     private void ProcessOperation()

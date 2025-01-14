@@ -23,4 +23,8 @@ namespace BadEcho.Interop;
 /// <returns>
 /// The result of the message processing, which of course depends on the message being processed.
 /// </returns>
-public delegate IntPtr WindowProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+/// <remarks>
+/// This variant of the window procedure delegate is meant to be invoked from unmanaged code; it acts as the first
+/// point of contact between our code and Windows.
+/// </remarks>
+public delegate IntPtr WNDPROC(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);

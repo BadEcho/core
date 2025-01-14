@@ -43,9 +43,8 @@ public sealed class MessageOnlyWindowWrapper : WindowWrapper, IDisposable
 
         var subclass = new WindowSubclass(WindowProcedure, executor);
 
-        // We store a reference to the initial WndProc so that it isn't garbage collected before our subclass replaces the WndProc with its
-        // own following the first message it receives after our call to CreateWindowEx.
-        WindowProc initialCallback = subclass.WndProc;
+        // Our window procedure delegate must be kept alive through the call to CreateWindowEx.
+        WNDPROC initialCallback = subclass.WndProc;
         string className = CreateClassName();
 
         _classAtom = RegisterClass(initialCallback, className);
@@ -76,7 +75,7 @@ public sealed class MessageOnlyWindowWrapper : WindowWrapper, IDisposable
             }
         }
 
-        // This is required to guarantee that the initial WindowProc delegate callback is kept alive throughout the method.
+        // This is required to guarantee that the initial WNDPROC delegate callback is kept alive throughout the method.
         GC.KeepAlive(initialCallback);
     }
 
@@ -163,7 +162,7 @@ public sealed class MessageOnlyWindowWrapper : WindowWrapper, IDisposable
         return $"{applicationName}.{threadName}.{Guid.NewGuid()}";
     }
 
-    private static ushort RegisterClass(WindowProc initialCallback, string className)
+    private static ushort RegisterClass(WNDPROC initialCallback, string className)
     {
         IntPtr hNullBrush = Gdi32.GetStockObject(Gdi32.StockObjectBrushNull);
 

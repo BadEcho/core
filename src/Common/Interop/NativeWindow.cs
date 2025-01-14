@@ -44,7 +44,7 @@ public sealed class NativeWindow
         if (!User32.GetWindowRect(Handle, out RECT rect))
             throw ((ResultHandle)Marshal.GetHRForLastWin32Error()).GetException();
         
-        windowWrapper.AddHook(WndProc);
+        windowWrapper.AddCallback(WindowProcedure);
 
         Left = rect.Left;
         Top = rect.Top;
@@ -193,7 +193,7 @@ public sealed class NativeWindow
             throw ((ResultHandle) Marshal.GetHRForLastWin32Error()).GetException();
     }
 
-    private HookResult WndProc(IntPtr hWnd, uint msg, nint wParam, nint lParam)
+    private ProcedureResult WindowProcedure(IntPtr hWnd, uint msg, nint wParam, nint lParam)
     {
         var lResult = IntPtr.Zero;
         var message = (WindowMessage) msg;
@@ -287,7 +287,7 @@ public sealed class NativeWindow
                         = (WindowStyles) User32.SetWindowLongPtr(Handle, WindowAttribute.Style, popupStyle);
 
                     // We can't set the width and length to 0...they have to be at least 1. A single pixel window with no title bar is basically
-                    // invisible. We temporarily disable our size monitoring hook so that we don't update our size properties with bunk values.
+                    // invisible. We temporarily disable the monitoring of size in our callback so that we don't update our size properties with bunk values.
                     _ignoreSizeChanges = true;
 
                     bool resized = User32.SetWindowPos(Handle,
@@ -306,6 +306,6 @@ public sealed class NativeWindow
                 break;
         }
 
-        return new HookResult(lResult, handled);
+        return new ProcedureResult(lResult, handled);
     }
 }

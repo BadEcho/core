@@ -11,32 +11,34 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Interop;
+using System.Runtime.InteropServices;
+
+namespace BadEcho.Hooks.Interop;
 
 /// <summary>
-/// Specifies additional information provided to a low-level keyboard hook procedure.
+/// Represents a low-level keyboard input event.
 /// </summary>
-[Flags]
-internal enum KBDLLHOOKSTRUCTFlags
+[StructLayout(LayoutKind.Sequential)]
+internal struct KBDLLHOOKSTRUCT
 {
     /// <summary>
-    /// An extended key was pressed.
+    /// A virtual-key code.
     /// </summary>
-    Extended = 0x1,
+    public uint vkCode;
     /// <summary>
-    /// The input event was synthesized.
+    /// A hardware scan code for the key.
     /// </summary>
-    Injected = 0x10,
+    public uint scanCode;
     /// <summary>
-    /// The input event was synthesized from a process running at a lower integrity level than this one.
+    /// Flags containing additional information for the event.
     /// </summary>
-    InjectedLowerIntegrity = 0x2,
+    public KBDLLHOOKSTRUCTFlags flags;
     /// <summary>
-    /// The ALT key is being held down at the time of the hook event.
+    /// The timestamp for this message.
     /// </summary>
-    AltDown = 0x20,
+    public uint time;
     /// <summary>
-    /// The transition-state (i.e., this will be 0 if the key is pressed or 1 if it is being released).
+    /// Additional information associated with the message.
     /// </summary>
-    KeyUp = 0x80
+    public UIntPtr dwExtraInfo;
 }

@@ -51,7 +51,7 @@ internal sealed class WindowSubclass : IDisposable
     private static int _ShutdownHandled;
 
     private readonly IThreadExecutor? _executor;
-    private readonly WeakReference _hook;
+    private readonly WeakReference _callback;
 
     /// <summary>
     /// <para>
@@ -68,7 +68,7 @@ internal sealed class WindowSubclass : IDisposable
     private GCHandle _gcHandle;
     private WindowHandle? _window;
     private AttachmentState _state;
-    private WindowProc? _wndProcCallback;
+    private WNDPROC? _wndProcCallback;
     private IntPtr _wndProc;
     private IntPtr _oldWndProc;
     private bool _disposed;
@@ -89,10 +89,10 @@ internal sealed class WindowSubclass : IDisposable
     /// <summary>
     /// Initializes a new instance of the <see cref="WindowSubclass"/> class.
     /// </summary>
-    /// <param name="hook">The delegate that will be executed to process messages that are sent or posted to the window.</param>
+    /// <param name="callback">The delegate that will be executed to process messages that are sent or posted to the window.</param>
     /// <param name="executor">The executor that will power the subclass.</param>
-    public WindowSubclass(WindowHookProc hook, IThreadExecutor executor)
-        : this(hook)
+    public WindowSubclass(WindowProcedure callback, IThreadExecutor executor)
+        : this(callback)
     {
         Require.NotNull(executor, nameof(executor));
 
@@ -102,16 +102,16 @@ internal sealed class WindowSubclass : IDisposable
     /// <summary>
     /// Initializes a new instance of the <see cref="WindowSubclass"/> class.
     /// </summary>
-    /// <param name="hook">The delegate that will be executed to process messages that are sent or posted to the window.</param>
+    /// <param name="callback">The delegate that will be executed to process messages that are sent or posted to the window.</param>
     /// <remarks>
     /// Subclassing without the use of a <see cref="IThreadExecutor"/> will result in direct invocation of the message processing
-    /// hook. Use of an executor is recommended if support for more complex functionality such as async operations is desired.
+    /// callback. Use of an executor is recommended if support for more complex functionality such as async operations is desired.
     /// </remarks>
-    public WindowSubclass(WindowHookProc hook)
+    public WindowSubclass(WindowProcedure callback)
     {
-        Require.NotNull(hook, nameof(hook));
+        Require.NotNull(callback, nameof(callback));
         
-        _hook = new WeakReference(hook);
+        _callback = new WeakReference(callback);
 
         _gcHandle = GCHandle.Alloc(this);
     }
@@ -136,7 +136,7 @@ internal sealed class WindowSubclass : IDisposable
         if (_disposed)
             return;
 
-        Unhook(false);
+        RemoveCallback(false);
 
         // If somehow we're still pinned, unpin ourselves so that we can get garbage collected.
         // This should only occur if attachment never occurred due to an error occurring
@@ -157,9 +157,9 @@ internal sealed class WindowSubclass : IDisposable
     /// <returns>Value indicating the success of the operation.</returns>
     /// <remarks>
     /// <para>
-    /// Attachment and thus the subclassing of the window is performed here if <see cref="Attach(WindowHandle)"/> has not
-    /// already been called. This sort of scenario is possible if a window class was manually registered, with its
-    /// <see cref="WindowClass.WindowProc"/> set to this method.
+    /// Attachment to the window (which finalizes required initialization logic) is performed here if <see cref="Attach(WindowHandle)"/>
+    /// has not already been called. This sort of scenario will occur if a window class was manually registered, with its
+    /// <see cref="WindowClass.WndProc"/> set to this method.
     /// </para>
     /// <para>
     /// Otherwise, this method will only begin to process messages once <see cref="Attach(WindowHandle)"/> has been executed.
@@ -198,7 +198,7 @@ internal sealed class WindowSubclass : IDisposable
         {
             if (_executor is not { IsShutdownComplete: true })
             {
-                HookResult? result = SendOperation(hWnd, msg, wParam, lParam);
+                ProcedureResult? result = SendOperation(hWnd, msg, wParam, lParam);
 
                 if (result != null)
                 {
@@ -281,7 +281,7 @@ internal sealed class WindowSubclass : IDisposable
         }
     }
 
-    private void Attach(WindowHandle window, WindowProc newWndProcCallback, IntPtr oldWndProc)
+    private void Attach(WindowHandle window, WNDPROC newWndProcCallback, IntPtr oldWndProc)
     {
         _window = window;
         _state = AttachmentState.Attached;
@@ -301,14 +301,14 @@ internal sealed class WindowSubclass : IDisposable
     /// <remarks>
     /// <para>
     /// The <c>forcibly</c> parameter exists because, due to how subclassing works, it is not always possible to safely remove
-    /// a particular window procedure from a <see cref="WindowProc"/> chain. "Safely", used in this context, means in a way that
+    /// a particular window procedure from a <see cref="WNDPROC"/> chain. "Safely", used in this context, means in a way that
     /// limits the amount of disruption caused to other subclasses that may have contributed to the WndProc chain.
     /// </para>
     /// <para>
-    /// If we are not in a position to unhook from the window's message chain with <c>forcibly</c> set to false, then we essentially
-    /// leave everything untouched. If instead we force the detachment, then it is guaranteed that <see cref="WndProc"/> and the hook supplied
+    /// If we are not in a position to remove our callback from the window's message chain with <c>forcibly</c> set to false, then we essentially
+    /// leave everything untouched. If instead we force the detachment, then it is guaranteed that <see cref="WndProc"/> and the callback supplied
     /// at initialization will no longer be executed; unfortunately, this guarantee extends to all subclasses appearing before this one
-    /// on the <see cref="WindowProc"/> chain as well (bad).
+    /// on the <see cref="WNDPROC"/> chain as well (bad).
     /// </para>
     /// </remarks>
     private bool Detach(bool forcibly)
@@ -321,7 +321,7 @@ internal sealed class WindowSubclass : IDisposable
         {
             _state = AttachmentState.Detaching;
 
-            detached = Unhook(forcibly);
+            detached = RemoveCallback(forcibly);
         }
 
         if (!detached)
@@ -332,15 +332,15 @@ internal sealed class WindowSubclass : IDisposable
 
     /// <remarks>
     /// <para>
-    /// If the current <see cref="WindowProc"/> assigned to the window subclassed by this type is something other than our own,
-    /// then that means the window has been subclassed by some other code and our <see cref="WindowProc"/> is no longer at the head.
-    /// This also means that we are unable to unhook our own <see cref="WindowProc"/> from the chain without causing disruption to
+    /// If the current <see cref="WNDPROC"/> assigned to the window subclassed by this type is something other than our own,
+    /// then that means the window has been subclassed by some other code and our <see cref="WNDPROC"/> is no longer at the head.
+    /// This also means that we are unable to remove our own <see cref="WNDPROC"/> from the chain without causing disruption to
     /// the other subclasses.
     /// </para>
     /// <para>
-    /// Setting <c>forcibly</c> to false will result in our <see cref="WindowProc"/> only being removed if the current <see cref="WindowProc"/>
+    /// Setting <c>forcibly</c> to false will result in our <see cref="WNDPROC"/> only being removed if the current <see cref="WNDPROC"/>
     /// points to <see cref="WndProc"/>. If this is the case, or if <c>forcibly</c> is true (and we're going to go ahead with a detachment
-    /// whether it's disruptive or not), then we restore the original <see cref="WindowProc"/> function that was stored previously during
+    /// whether it's disruptive or not), then we restore the original <see cref="WNDPROC"/> function that was stored previously during
     /// this subclass's attachment phase.
     /// </para>
     /// <para>
@@ -348,7 +348,7 @@ internal sealed class WindowSubclass : IDisposable
     /// eligible for garbage collection.
     /// </para>
     /// </remarks>
-    private bool Unhook(bool forcibly)
+    private bool RemoveCallback(bool forcibly)
     {
         if (_state is AttachmentState.Unattached or AttachmentState.Detached || _window == null)
             return true;
@@ -383,26 +383,26 @@ internal sealed class WindowSubclass : IDisposable
         return true;
     }
 
-    private HookResult? SendOperation(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+    private ProcedureResult? SendOperation(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
     {
         SubclassOperationParameters parameters = new (hWnd, msg, wParam, lParam);
         
         object? operationResult = _executor != null
-            ? _executor.Invoke(ExecuteHook, null)
-            : ExecuteHook();
+            ? _executor.Invoke(ExecuteCallback, null)
+            : ExecuteCallback();
 
-        return operationResult as HookResult;
+        return operationResult as ProcedureResult;
 
-        HookResult? ExecuteHook()
+        ProcedureResult? ExecuteCallback()
         {
-            HookResult? result = null;
+            ProcedureResult? result = null;
 
             if (_state == AttachmentState.Attached)
             {   // The message received by our subclass shall now be passed to the entry point for our
-                // registered window message hooks.
-                if (_hook is { Target: WindowHookProc hook })
+                // registered window message callbacks.
+                if (_callback is { Target: WindowProcedure callback })
                 {
-                    result = hook(parameters.HWnd, parameters.Msg, parameters.WParam, parameters.LParam);
+                    result = callback(parameters.HWnd, parameters.Msg, parameters.WParam, parameters.LParam);
                 }
             }
 

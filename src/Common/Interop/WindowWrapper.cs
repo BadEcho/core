@@ -18,9 +18,9 @@ namespace BadEcho.Interop;
 /// <summary>
 /// Provides a wrapper around an <c>HWND</c> of a provided window and the messages it receives.
 /// </summary>
-public abstract class WindowWrapper : IMessageSource<WindowHookProc>
+public abstract class WindowWrapper : IMessageSource<WindowProcedure>
 {
-    private readonly CachedWeakList<WindowHookProc> _hooks = [];
+    private readonly CachedWeakList<WindowProcedure> _callbacks = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WindowWrapper"/> class.
@@ -40,46 +40,46 @@ public abstract class WindowWrapper : IMessageSource<WindowHookProc>
     { get; init; }
 
     /// <summary>
-    /// Adds a hook that will receive messages prior to any existing hooks receiving them.
+    /// Adds a callback function that will receive intercepted messages prior to any existing callbacks receiving them.
     /// </summary>
-    /// <param name="hook">The hook to invoke when messages are sent to the wrapped window.</param>
-    public void AddStartingHook(WindowHookProc hook)
+    /// <param name="callback">The callback function to invoke first when messages are sent to the wrapped window.</param>
+    public void AddStartingCallback(WindowProcedure callback)
     {
-        _hooks.Insert(0, hook);
+        _callbacks.Insert(0, callback);
     }
 
     /// <inheritdoc/>
-    public void AddHook(WindowHookProc hook)
+    public void AddCallback(WindowProcedure callback)
     {
-        Require.NotNull(hook, nameof(hook));
+        Require.NotNull(callback, nameof(callback));
 
-        _hooks.Add(hook);
+        _callbacks.Add(callback);
 
-        OnHookAdded(hook);
+        OnCallbackAdded(callback);
     }
 
     /// <inheritdoc/>
-    public void RemoveHook(WindowHookProc hook)
+    public void RemoveCallback(WindowProcedure callback)
     {
-        Require.NotNull(hook, nameof(hook));
+        Require.NotNull(callback, nameof(callback));
 
-        _hooks.Remove(hook);
+        _callbacks.Remove(callback);
 
-        OnHookRemoved(hook);
+        OnCallbackRemoved(callback);
     }
     
     /// <summary>
-    /// Called when a hook has been added to the wrapped window.
+    /// Called when a callback function has been added to the wrapped window.
     /// </summary>
-    /// <param name="addedHook">The hook that was added.</param>
-    protected virtual void OnHookAdded(WindowHookProc addedHook)
+    /// <param name="addedCallback">The callback function that was added.</param>
+    protected virtual void OnCallbackAdded(WindowProcedure addedCallback)
     { }
 
     /// <summary>
-    /// Called when a hook has been removed from the wrapped window.
+    /// Called when a callback function has been removed from the wrapped window.
     /// </summary>
-    /// <param name="removedHook">The hook that was removed.</param>
-    protected virtual void OnHookRemoved(WindowHookProc removedHook)
+    /// <param name="removedCallback">The callback function that was removed.</param>
+    protected virtual void OnCallbackRemoved(WindowProcedure removedCallback)
     { }
 
     /// <summary>
@@ -90,7 +90,7 @@ public abstract class WindowWrapper : IMessageSource<WindowHookProc>
     { }
     
     /// <summary>
-    /// The callback, or window procedure, that processes messages sent to the wrapped window by calling any registered hooks.
+    /// The callback, or window procedure, that processes messages sent to the wrapped window by calling any registered callbacks.
     /// </summary>
     /// <param name="hWnd">A handle to the window.</param>
     /// <param name="msg">The message.</param>
@@ -99,15 +99,15 @@ public abstract class WindowWrapper : IMessageSource<WindowHookProc>
     /// <returns>
     /// The result of the message processing, which of course depends on the message being processed.
     /// </returns>
-    protected HookResult WindowProcedure(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+    protected ProcedureResult WindowProcedure(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
     {
         bool forceUnhandled = false;
-        var result = new HookResult(IntPtr.Zero, false);
+        var result = new ProcedureResult(IntPtr.Zero, false);
         var message = (WindowMessage) msg;
 
-        foreach (WindowHookProc hook in _hooks)
+        foreach (WindowProcedure callback in _callbacks)
         {
-            result = hook(hWnd, msg, wParam, lParam);
+            result = callback(hWnd, msg, wParam, lParam);
                     
             if (result.Handled)
                 break;

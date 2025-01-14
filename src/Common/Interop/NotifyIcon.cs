@@ -71,7 +71,7 @@ public sealed class NotifyIcon : IDisposable
                                      User32.GetSystemMetrics(SystemMetric.SmallIconWidth),
                                      User32.GetSystemMetrics(SystemMetric.SmallIconHeight));
 
-        _windowWrapper.AddHook(WndProc);
+        _windowWrapper.AddCallback(WindowProcedure);
     }
 
     /// <summary>
@@ -231,7 +231,7 @@ public sealed class NotifyIcon : IDisposable
 
         Hide();
 
-        _windowWrapper.RemoveHook(WndProc);
+        _windowWrapper.RemoveCallback(WindowProcedure);
         _iconHandle.Dispose();
         _balloonIconHandle?.Dispose();
 
@@ -396,7 +396,7 @@ public sealed class NotifyIcon : IDisposable
         } 
     }
 
-    private HookResult WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+    private ProcedureResult WindowProcedure(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
     {
         IntPtr lResult = IntPtr.Zero;
         var message = (WindowMessage) msg;
@@ -420,6 +420,6 @@ public sealed class NotifyIcon : IDisposable
         else if (WindowMessage.Destroy == message) 
             Dispose();
 
-        return new HookResult(lResult, handled);
+        return new ProcedureResult(lResult, handled);
     }
 }

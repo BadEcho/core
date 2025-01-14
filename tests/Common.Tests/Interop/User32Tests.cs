@@ -159,7 +159,7 @@ public class User32Tests
     public void CallWindowProc_ReturnsValid()
     {
         WindowHandle handle = CreateWindow("CallWindowProc_ReturnsValid");
-        WindowProc wndProc = WndProc;
+        WNDPROC wndProc = WndProc;
 
         Assert.NotEqual(IntPtr.Zero,
                         User32.CallWindowProc(Marshal.GetFunctionPointerForDelegate(wndProc),

@@ -36,7 +36,7 @@ public sealed class ClipboardNotifier
         if (!User32.AddClipboardFormatListener(_windowWrapper.Handle))
             throw new Win32Exception(Marshal.GetLastWin32Error());
 
-        _windowWrapper.AddHook(WndProc);
+        _windowWrapper.AddCallback(WindowProcedure);
     }
 
     /// <summary>
@@ -44,7 +44,7 @@ public sealed class ClipboardNotifier
     /// </summary>
     public event EventHandler? ClipboardChanged; 
 
-    private HookResult WndProc(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam)
+    private ProcedureResult WindowProcedure(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam)
     {
         var message = (WindowMessage) msg;
 
@@ -52,7 +52,7 @@ public sealed class ClipboardNotifier
         {
             case WindowMessage.ClipboardUpdate:
                 ClipboardChanged?.Invoke(this, EventArgs.Empty);
-                return new HookResult(IntPtr.Zero, true);
+                return new ProcedureResult(IntPtr.Zero, true);
 
             case WindowMessage.Destroy:
                 if (!User32.RemoveClipboardFormatListener(_windowWrapper.Handle))
@@ -61,6 +61,6 @@ public sealed class ClipboardNotifier
                 break;
         }
 
-        return new HookResult(IntPtr.Zero, false);
+        return new ProcedureResult(IntPtr.Zero, false);
     }
 }

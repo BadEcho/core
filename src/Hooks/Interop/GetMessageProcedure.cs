@@ -11,10 +11,12 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace BadEcho.Interop;
+using BadEcho.Interop;
+
+namespace BadEcho.Hooks.Interop;
 
 /// <summary>
-/// Represents a callback that processes messages sent to a window hook procedure.
+/// Represents a callback that processes messages about to be returned from a message queue.
 /// </summary>
 /// <param name="hWnd">A handle to the window.</param>
 /// <param name="msg">The message.</param>
@@ -23,4 +25,4 @@ namespace BadEcho.Interop;
 /// <returns>
 /// The result of the message processing, which of course depends on the message being processed.
 /// </returns>
-public delegate HookResult WindowHookProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+public delegate ProcedureResult GetMessageProcedure(nint hWnd, ref uint msg, ref nint wParam, ref nint lParam);

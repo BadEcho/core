@@ -11,12 +11,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using BadEcho.Interop;
-
-namespace BadEcho.Hooks;
+namespace BadEcho.Interop;
 
 /// <summary>
-/// Represents a callback that receives messages about to be returned from a message queue.
+/// Represents a callback that processes messages sent to a window.
 /// </summary>
 /// <param name="hWnd">A handle to the window.</param>
 /// <param name="msg">The message.</param>
@@ -25,4 +23,9 @@ namespace BadEcho.Hooks;
 /// <returns>
 /// The result of the message processing, which of course depends on the message being processed.
 /// </returns>
-public delegate HookResult GetMessageHookProc(IntPtr hWnd, ref uint msg, ref IntPtr wParam, ref IntPtr lParam);
+/// <remarks>
+/// This variant of the window procedure delegate is meant to be invoked from managed code, it cannot be invoked
+/// directly from unmanaged code. Instead, register a <see cref="WNDPROC"/> delegate as the native callback, which can
+/// then invoke managed callbacks that use this delegate.
+/// </remarks>
+public delegate ProcedureResult WindowProcedure(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
