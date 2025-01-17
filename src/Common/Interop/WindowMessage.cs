@@ -16,7 +16,7 @@ namespace BadEcho.Interop;
 /// <summary>
 /// Specifies a type of standard message value used when sending or posting messages to windows.
 /// </summary>
-internal enum WindowMessage
+public enum WindowMessage
 {
     /// <summary>
     /// A window message corresponding to WM_NULL, posted when...absolutely nothing is happening.
