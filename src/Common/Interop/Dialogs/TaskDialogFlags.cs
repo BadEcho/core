@@ -14,7 +14,7 @@
 namespace BadEcho.Interop.Dialogs;
 
 /// <summary>
-/// Specifies the behavior of the task dialog.
+/// Specifies flags that control the behavior of the task dialog.
 /// </summary>
 [Flags]
 internal enum TaskDialogFlags
@@ -24,11 +24,11 @@ internal enum TaskDialogFlags
     /// </summary>
     EnableHyperlinks = 0x1,
     /// <summary>
-    /// The dialog's main icon is used as the primary icon.
+    /// The dialog will use the icon referenced by the configured main icon handle as the primary icon.
     /// </summary>
     UseMainIcon = 0x2,
     /// <summary>
-    /// The dialog's footer icon is used as the primary icon.
+    /// The dialog will use the icon referenced by the configured footer icon handle as the footer icon.
     /// </summary>
     UseFooterIcon = 0x4,
     /// <summary>
@@ -53,7 +53,7 @@ internal enum TaskDialogFlags
     /// </summary>
     ExpandedByDefault = 0x80,
     /// <summary>
-    /// The verification checkbox in the dialog is checked when the dialog is initially displayed.
+    /// The verification check box in the dialog is checked when the dialog is initially displayed.
     /// </summary>
     CheckVerificationFlag = 0x100,
     /// <summary>
@@ -85,7 +85,7 @@ internal enum TaskDialogFlags
     /// </summary>
     CanBeMinimized = 0x8000,
     /// <summary>
-    /// The width of the task dialog is determined by the width of its content area
+    /// The width of the task dialog is determined by the width of its content area.
     /// </summary>
     SizeToContent = 0x1000000
 }

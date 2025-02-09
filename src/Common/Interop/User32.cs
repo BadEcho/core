@@ -21,8 +21,11 @@ namespace BadEcho.Interop;
 /// </summary>
 internal static partial class User32
 {
-    private const string LIBRARY_NAME = "user32";
-
+    /// <summary>
+    /// The name of the core user interface library for Windows.
+    /// </summary>
+    internal const string LibraryName = "user32";
+    
     /// <summary>
     /// Gets the name for the exported <c>DefWindowProcW</c> function, which is the default window procedure for processing
     /// messages.
@@ -52,7 +55,7 @@ internal static partial class User32
     /// <param name="hInstance">A handle to the instance of the module to be associated with the window.</param>
     /// <param name="lpParam">Pointer to a value to be passed to the window.</param>
     /// <returns>A handle to the new window if successful; otherwise, an invalid handle.</returns>
-    [LibraryImport(LIBRARY_NAME, EntryPoint = "CreateWindowExW", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
+    [LibraryImport(LibraryName, EntryPoint = "CreateWindowExW", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static unsafe partial WindowHandle CreateWindowEx(int dwExStyle,
                                                              string lpClassName,
@@ -71,7 +74,7 @@ internal static partial class User32
     /// </summary>
     /// <param name="hWnd">A handle to the window to be destroyed.</param>
     /// <returns>If successful, true; otherwise, false.</returns>
-    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [LibraryImport(LibraryName, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool DestroyWindow(IntPtr hWnd);
@@ -84,7 +87,7 @@ internal static partial class User32
     /// <suppressions>
     /// ReSharper disable InconsistentNaming
     /// </suppressions>
-    [LibraryImport(LIBRARY_NAME, EntryPoint = "RegisterClassExW", SetLastError = true)]
+    [LibraryImport(LibraryName, EntryPoint = "RegisterClassExW", SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial ushort RegisterClassEx([MarshalUsing(typeof(WindowClassMarshaller))] ref WindowClass wc_d);
 
@@ -95,7 +98,7 @@ internal static partial class User32
     /// <param name="hInstance">A handle to the instance of the module that created the class.</param>
     /// <returns>If successful, a nonzero value; otherwise, zero.</returns>
     /// <remarks>Before unregistering a window class, ensure all windows created with said class have been destroyed.</remarks>
-    [LibraryImport(LIBRARY_NAME, EntryPoint = "UnregisterClassW", SetLastError = true)]
+    [LibraryImport(LibraryName, EntryPoint = "UnregisterClassW", SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial int UnregisterClass(IntPtr classAtom, IntPtr hInstance);
 
@@ -103,7 +106,7 @@ internal static partial class User32
     /// Creates an empty drop-down menu, submenu, or shortcut menu.
     /// </summary>
     /// <returns>A handle to the new menu if successful; otherwise, null.</returns>
-    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [LibraryImport(LibraryName, SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial MenuHandle CreatePopupMenu();
 
@@ -115,7 +118,7 @@ internal static partial class User32
     /// <param name="uIdNewItem">The identifier of the new menu item.</param>
     /// <param name="lpNewItem">The content of the new menu item.</param>
     /// <returns>True if the function succeeds; otherwise, false.</returns>
-    [LibraryImport(LIBRARY_NAME, EntryPoint = "AppendMenuW", SetLastError = true)]
+    [LibraryImport(LibraryName, EntryPoint = "AppendMenuW", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool AppendMenu(MenuHandle hMenu,
@@ -132,7 +135,7 @@ internal static partial class User32
     /// identifier, or 0x400 to interpret it as the zero-based relative position of the menu item.
     /// </param>
     /// <returns>True if the function succeeds; otherwise, false.</returns>
-    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [LibraryImport(LibraryName, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool RemoveMenu(MenuHandle hMenu,
@@ -153,7 +156,7 @@ internal static partial class User32
     /// The selected menu-item identifier if <see cref="TrackMenuFlags.ReturnCommand"/> is specified and a
     /// selection made; otherwise, a nonzero value if successful or zero if unsuccessful.
     /// </returns>
-    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [LibraryImport(LibraryName, SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial int TrackPopupMenu(MenuHandle hMenu,
                                              TrackMenuFlags uFlags,
@@ -167,7 +170,7 @@ internal static partial class User32
     /// </summary>
     /// <param name="hMenu">A handle to the menu being destroyed.</param>
     /// <returns>True if successful; otherwise, false.</returns>
-    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [LibraryImport(LibraryName, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool DestroyMenu(IntPtr hMenu);
@@ -176,7 +179,7 @@ internal static partial class User32
     /// Gets the DPI awareness context for the current thread.
     /// </summary>
     /// <returns>The current DPI awareness context for the thread.</returns>
-    [LibraryImport(LIBRARY_NAME)]
+    [LibraryImport(LibraryName)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial IntPtr GetThreadDpiAwarenessContext();
 
@@ -185,7 +188,7 @@ internal static partial class User32
     /// </summary>
     /// <param name="value">The DPI awareness context you want to examine.</param>
     /// <returns>The <see cref="DpiAwareness"/> value from <c>value</c>.</returns>
-    [LibraryImport(LIBRARY_NAME)]
+    [LibraryImport(LibraryName)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial DpiAwareness GetAwarenessFromDpiAwarenessContext(IntPtr value);
 
@@ -198,7 +201,7 @@ internal static partial class User32
     /// <param name="lpfnEnum">Callback invoked by this method with monitor information.</param>
     /// <param name="lParam">Application-defined data that is passed to the provided callback.</param>
     /// <returns>True if successful; otherwise, false.</returns>
-    [LibraryImport(LIBRARY_NAME)]
+    [LibraryImport(LibraryName)]
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool EnumDisplayMonitors(DeviceContextHandle hdc, IntPtr lprcClip, MonitorEnumProc lpfnEnum, IntPtr lParam);
@@ -211,7 +214,7 @@ internal static partial class User32
     /// A <see cref="MONITORINFOEX"/> value, which is written to by this function.
     /// </param>
     /// <returns>True if successful; otherwise, false.</returns>
-    [LibraryImport(LIBRARY_NAME, EntryPoint = "GetMonitorInfoW", SetLastError = true)]
+    [LibraryImport(LibraryName, EntryPoint = "GetMonitorInfoW", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFOEX lpmi);
@@ -223,7 +226,7 @@ internal static partial class User32
     /// <param name="hWnd">A handle to the window of interest.</param>
     /// <param name="dwFlags">Determines the function's return value if the window does not intersect any display monitor.</param>
     /// <returns>The handle to the display monitor that has the largest area of intersection with the window.</returns>
-    [LibraryImport(LIBRARY_NAME)]
+    [LibraryImport(LibraryName)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial IntPtr MonitorFromWindow(WindowHandle hWnd, uint dwFlags);
 
@@ -232,7 +235,7 @@ internal static partial class User32
     /// </summary>
     /// <param name="nIndex">An enumeration value that specifies the system metric or configuration setting to retrieve.</param>
     /// <returns>If successful, the request system metric or configuration setting; otherwise, zero.</returns>
-    [LibraryImport(LIBRARY_NAME)]
+    [LibraryImport(LibraryName)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial int GetSystemMetrics(SystemMetric nIndex);
 
@@ -245,7 +248,7 @@ internal static partial class User32
     /// the window.
     /// </param>
     /// <returns>True if the function succeeds; otherwise, false.</returns>
-    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [LibraryImport(LibraryName, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool GetWindowRect(WindowHandle hWnd, out RECT lpRect);
@@ -263,7 +266,7 @@ internal static partial class User32
     /// Specifies whether the background within the update region is to be erased when the update region is processed.
     /// </param>
     /// <returns>A nonzero value if successful; otherwise, zero.</returns>
-    [LibraryImport(LIBRARY_NAME)]
+    [LibraryImport(LibraryName)]
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static unsafe partial bool InvalidateRect(WindowHandle hWnd, RECT* lpRect, [MarshalAs(UnmanagedType.Bool)] bool bErase);
@@ -273,7 +276,7 @@ internal static partial class User32
     /// </summary>
     /// <param name="hWnd">A handle to the window that should be activated and brought to the foreground.</param>
     /// <returns>True if the window was brought to the foreground; otherwise, false.</returns>
-    [LibraryImport(LIBRARY_NAME)]
+    [LibraryImport(LibraryName)]
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool SetForegroundWindow(WindowHandle hWnd);
@@ -285,7 +288,7 @@ internal static partial class User32
     /// <param name="hWnd">A handle to the window.</param>
     /// <param name="lpdwProcessId">A point to a variable that receives the process identifier.</param>
     /// <returns>If successful, the identifier of the thread that created the window; otherwise, zero.</returns>
-    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [LibraryImport(LibraryName, SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial uint GetWindowThreadProcessId(WindowHandle hWnd, IntPtr lpdwProcessId);
 
@@ -293,7 +296,7 @@ internal static partial class User32
     /// Returns the system DPI.
     /// </summary>
     /// <returns>The system DPI value.</returns>
-    [LibraryImport(LIBRARY_NAME)]
+    [LibraryImport(LibraryName)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial uint GetDpiForSystem();
 
@@ -305,7 +308,7 @@ internal static partial class User32
     /// DC for the entire screen.
     /// </param>
     /// <returns>If successful, a handle to the DC; otherwise, null.</returns>
-    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [LibraryImport(LibraryName, SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial DeviceContextHandle GetDC(WindowHandle hWnd);
 
@@ -315,7 +318,7 @@ internal static partial class User32
     /// <param name="hWnd">A handle to the window whose DC is to be released.</param>
     /// <param name="hdc">A handle to the DC to be released.</param>
     /// <returns>A return value of one if successful; otherwise, zero.</returns>
-    [LibraryImport(LIBRARY_NAME)]
+    [LibraryImport(LibraryName)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial int ReleaseDC(IntPtr hWnd, IntPtr hdc);
 
@@ -332,7 +335,7 @@ internal static partial class User32
     /// <param name="uMsgFilterMin">The integer value of the lowest message value to be retrieved.</param>
     /// <param name="uMsgFilterMax">The integer value of the highest message value to be retrieved.</param>
     /// <returns>If successful, true; otherwise, false.</returns>
-    [LibraryImport(LIBRARY_NAME, EntryPoint = "GetMessageW")]
+    [LibraryImport(LibraryName, EntryPoint = "GetMessageW")]
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool GetMessage(ref MSG lpMsg, IntPtr hWnd, uint uMsgFilterMin, uint uMsgFilterMax);
@@ -340,12 +343,24 @@ internal static partial class User32
     /// <summary>
     /// Sends the specified message to one or more window.
     /// </summary>
-    /// <param name="hWnd">A handle to the window whose window procedure will receive the message. If</param>
+    /// <param name="hWnd">A handle to the window whose window procedure will receive the message.</param>
     /// <param name="msg">The message to be sent.</param>
     /// <param name="wParam">Additional message-specific information.</param>
     /// <param name="lParam">Additional message-specific information.</param>
     /// <returns>The result of the message processing, which depends on the message sent.</returns>
-    [LibraryImport(LIBRARY_NAME, EntryPoint = "SendMessageW")]
+    [LibraryImport(LibraryName, EntryPoint = "SendMessageW")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial IntPtr SendMessage(IntPtr hWnd, WindowMessage msg, IntPtr wParam, IntPtr lParam);
+
+    /// <summary>
+    /// Sends the specified message to one or more window.
+    /// </summary>
+    /// <param name="hWnd">A handle to the window whose window procedure will receive the message.</param>
+    /// <param name="msg">The message to be sent.</param>
+    /// <param name="wParam">Additional message-specific information.</param>
+    /// <param name="lParam">Additional message-specific information.</param>
+    /// <returns>The result of the message processing, which depends on the message sent.</returns>
+    [LibraryImport(LibraryName, EntryPoint = "SendMessageW")]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial IntPtr SendMessage(WindowHandle hWnd, WindowMessage msg, IntPtr wParam, IntPtr lParam);
 
@@ -356,7 +371,7 @@ internal static partial class User32
     /// A pointer to a <see cref="MSG"/> structure that contains message information retrieved from the calling thread's message queue.
     /// </param>
     /// <returns>True if the message is translated; otherwise, false.</returns>
-    [LibraryImport(LIBRARY_NAME)]
+    [LibraryImport(LibraryName)]
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool TranslateMessage(ref MSG lpMsg);
@@ -366,7 +381,7 @@ internal static partial class User32
     /// </summary>
     /// <param name="lpMsg">A pointer to a <see cref="MSG"/> structure that contains the message.</param>
     /// <returns>Value returned by the window procedure.</returns>
-    [LibraryImport(LIBRARY_NAME, EntryPoint = "DispatchMessageW")]
+    [LibraryImport(LibraryName, EntryPoint = "DispatchMessageW")]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial IntPtr DispatchMessage(ref MSG lpMsg);
 
@@ -375,7 +390,7 @@ internal static partial class User32
     /// </summary>
     /// <returns>A handle to the user32.dll module.</returns>
     public static IntPtr GetModuleHandle()
-        => Kernel32.GetModuleHandle($"{LIBRARY_NAME}.dll");
+        => Kernel32.GetModuleHandle($"{LibraryName}.dll");
 
     /// <summary>
     /// Retrieves information about a specified window.
@@ -432,7 +447,7 @@ internal static partial class User32
     /// <param name="cy">THe new height of the window, in pixels.</param>
     /// <param name="uFlags">The window sizing and positioning flags.</param>
     /// <returns>True if the function succeeds; otherwise, false.</returns>
-    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [LibraryImport(LibraryName, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool SetWindowPos(WindowHandle hWnd,
@@ -443,6 +458,30 @@ internal static partial class User32
                                             int cy,
                                             WindowPositionFlags uFlags);
     /// <summary>
+    /// Changes the text of the specified window's title bar. If the specified window is a control, then the text of the control
+    /// is changed.
+    /// </summary>
+    /// <param name="hWnd">A handle to a window or control.</param>
+    /// <param name="lpString">The new title or control text.</param>
+    /// <returns>True if the function succeeds; otherwise, false.</returns>
+    [LibraryImport(LibraryName, EntryPoint = "SetWindowTextW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool SetWindowText(IntPtr hWnd, string lpString);
+
+    /// <summary>
+    /// Changes the text of the specified window's title bar. If the specified window is a control, then the text of the control
+    /// is changed.
+    /// </summary>
+    /// <param name="hWnd">A handle to a window or control.</param>
+    /// <param name="lpString">The new title or control text.</param>
+    /// <returns>True if the function succeeds; otherwise, false.</returns>
+    [LibraryImport(LibraryName, EntryPoint = "SetWindowTextW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool SetWindowText(WindowHandle hWnd, string lpString);
+
+    /// <summary>
     /// Defines a system-wide hot key.
     /// </summary>
     /// <param name="hWnd">
@@ -452,7 +491,7 @@ internal static partial class User32
     /// <param name="fsModifiers">The keys that must be pressed in combination with the specified virtual key.</param>
     /// <param name="vk">The virtual-key code of the hot key.</param>
     /// <returns>If successful, true; otherwise, false.</returns>
-    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [LibraryImport(LibraryName, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool RegisterHotKey(WindowHandle hWnd, int id, ModifierKeys fsModifiers, VirtualKey vk);
@@ -463,7 +502,7 @@ internal static partial class User32
     /// <param name="hWnd">A handle to the window associated with the hot key to be freed.</param>
     /// <param name="id">The identifier of the hot key to be freed.</param>
     /// <returns>If successful, true; otherwise, false.</returns>
-    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [LibraryImport(LibraryName, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool UnregisterHotKey(WindowHandle hWnd, int id);
@@ -479,7 +518,7 @@ internal static partial class User32
     ///         <item>If the low-order bit is 1, <c>key</c> is toggled on; otherwise, it is toggled off.</item>
     ///     </list>
     /// </returns>
-    [LibraryImport(LIBRARY_NAME)]
+    [LibraryImport(LibraryName)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial short GetKeyState(VirtualKey key);
 
@@ -488,7 +527,7 @@ internal static partial class User32
     /// </summary>
     /// <param name="msg">The message to be registered.</param>
     /// <returns>The message identifier if successful; otherwise, zero.</returns>
-    [LibraryImport(LIBRARY_NAME, EntryPoint = "RegisterWindowMessageW", StringMarshalling = StringMarshalling.Utf16)]
+    [LibraryImport(LibraryName, EntryPoint = "RegisterWindowMessageW", StringMarshalling = StringMarshalling.Utf16)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial WindowMessage RegisterWindowMessage(string msg);
 
@@ -506,7 +545,26 @@ internal static partial class User32
     /// <param name="lParam">Specifies additional message-specific information.</param>
     /// <returns>Value indicating the success of the operation.</returns>
     /// <returns>If successful, true; otherwise, false.</returns>
-    [LibraryImport(LIBRARY_NAME, EntryPoint = "PostMessageW", SetLastError = true)]
+    [LibraryImport(LibraryName, EntryPoint = "PostMessageW", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool PostMessage(IntPtr hWnd, WindowMessage msg, IntPtr wParam, IntPtr lParam);
+
+    /// <summary>
+    /// Places (posts) a message in the message queue associated with the thread that created the specified window and returns
+    /// without waiting for the thread to process the message.
+    /// </summary>
+    /// <param name="hWnd">
+    /// Handle to the window whose window procedure will receive the message. If this parameter is HWND_BROADCAST, 
+    /// the message is sent to all top-level windows in the system, including disabled or invisible unowned windows, 
+    /// overlapped windows, and pop-up windows; but, the message is not sent to child windows.
+    /// </param>
+    /// <param name="msg">Specifies the message to be sent.</param>
+    /// <param name="wParam">Specifies additional message-specific information.</param>
+    /// <param name="lParam">Specifies additional message-specific information.</param>
+    /// <returns>Value indicating the success of the operation.</returns>
+    /// <returns>If successful, true; otherwise, false.</returns>
+    [LibraryImport(LibraryName, EntryPoint = "PostMessageW", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool PostMessage(WindowHandle hWnd, WindowMessage msg, IntPtr wParam, IntPtr lParam);
@@ -520,7 +578,7 @@ internal static partial class User32
     /// <param name="wParam">Additional message-specific information.</param>
     /// <param name="lParam">Additional message-specific information.</param>
     /// <returns>The result of the message processing.</returns>
-    [LibraryImport(LIBRARY_NAME, EntryPoint = "CallWindowProcW")]
+    [LibraryImport(LibraryName, EntryPoint = "CallWindowProcW")]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial IntPtr CallWindowProc(IntPtr wndProc, IntPtr hWnd, WindowMessage msg, IntPtr wParam, IntPtr lParam);
 
@@ -529,7 +587,7 @@ internal static partial class User32
     /// </summary>
     /// <param name="hWndNewViewer">A handle to the window to be added to the clipboard chain.</param>
     /// <returns>If successful, the handle to the next window in the clipboard viewer chain; otherwise zero.</returns>
-    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [LibraryImport(LibraryName, SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial IntPtr SetClipboardViewer(WindowHandle hWndNewViewer);
 
@@ -538,7 +596,7 @@ internal static partial class User32
     /// </summary>
     /// <param name="hWnd">A handle to the window to be placed in the clipboard format list.</param>
     /// <returns>True if successful; otherwise, false.</returns>
-    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [LibraryImport(LibraryName, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool AddClipboardFormatListener(WindowHandle hWnd);
@@ -548,7 +606,7 @@ internal static partial class User32
     /// </summary>
     /// <param name="hWnd">A handle to the window to remove from the clipboard format listener list.</param>
     /// <returns>True if successful; otherwise, false.</returns>
-    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [LibraryImport(LibraryName, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool RemoveClipboardFormatListener(WindowHandle hWnd);
@@ -561,7 +619,7 @@ internal static partial class User32
     /// <returns>
     /// The result of passing <see cref="WindowMessage.ChangeClipboardChain"/> to the windows in the clipboard viewer chain.
     /// </returns>
-    [LibraryImport(LIBRARY_NAME)]
+    [LibraryImport(LibraryName)]
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool ChangeClipboardChain(WindowHandle hWndRemove, IntPtr hWndNewNext);
@@ -580,7 +638,7 @@ internal static partial class User32
     /// <param name="cyDesired">The desired height, in pixels, of the icon or cursor.</param>
     /// <param name="flags">Additional information for the resource loader.</param>
     /// <returns>A handle to the icon or cursor.</returns>
-    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [LibraryImport(LibraryName, SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static unsafe partial IconHandle CreateIconFromResourceEx(byte* pResBits,
                                                                      uint dwResSize,
@@ -594,7 +652,7 @@ internal static partial class User32
     /// </summary>
     /// <param name="hIcon">A handle to the icon to be destroyed. The icon must not be in use.</param>
     /// <returns>If successful, true; otherwise, false.</returns>
-    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [LibraryImport(LibraryName, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool DestroyIcon(IntPtr hIcon);
@@ -606,7 +664,7 @@ internal static partial class User32
     /// A pointer to a <see cref="POINT"/> structure that receives the screen coordinates of the cursor.
     /// </param>
     /// <returns>True if successful; otherwise, false.</returns>
-    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [LibraryImport(LibraryName, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool GetCursorPos(out POINT lpPoint);
@@ -618,7 +676,7 @@ internal static partial class User32
     /// <param name="nIndex">The zero-based offset to the value to be retrieved.</param>
     /// <returns>The requested value if successful; otherwise, zero.</returns>
     /// <remarks>This should only ever be called from a 32-bit process.</remarks>
-    [LibraryImport(LIBRARY_NAME, EntryPoint = "GetWindowLong")]
+    [LibraryImport(LibraryName, EntryPoint = "GetWindowLong")]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static partial IntPtr GetWindowLongPtr32(WindowHandle hWnd, int nIndex);
 
@@ -629,7 +687,7 @@ internal static partial class User32
     /// <param name="nIndex">The zero-based offset to the value to be retrieved.</param>
     /// <returns>The requested value if successful; otherwise, zero.</returns>
     /// <remarks>This should only ever be called from a 64-bit process.</remarks>
-    [LibraryImport(LIBRARY_NAME, EntryPoint = "GetWindowLongPtrW")]
+    [LibraryImport(LibraryName, EntryPoint = "GetWindowLongPtrW")]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static partial IntPtr GetWindowLongPtr64(WindowHandle hWnd, int nIndex);
 
@@ -641,7 +699,7 @@ internal static partial class User32
     /// <param name="dwNewLong">The replacement value.</param>
     /// <returns>The previous value of the specified offset if successful; otherwise, zero.</returns>
     /// <remarks>This should only ever be called from a 32-bit process.</remarks>
-    [LibraryImport(LIBRARY_NAME, EntryPoint = "SetWindowLong")]
+    [LibraryImport(LibraryName, EntryPoint = "SetWindowLong")]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static partial IntPtr SetWindowLongPtr32(WindowHandle hWnd, int nIndex, IntPtr dwNewLong);
 
@@ -653,7 +711,7 @@ internal static partial class User32
     /// <param name="dwNewLong">The replacement value.</param>
     /// <returns>The previous value of the specified offset if successful; otherwise, zero.</returns>
     /// <remarks>This should only ever be called from a 64-bit process.</remarks>
-    [LibraryImport(LIBRARY_NAME, EntryPoint = "SetWindowLongPtrW")]
+    [LibraryImport(LibraryName, EntryPoint = "SetWindowLongPtrW")]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static partial IntPtr SetWindowLongPtr64(WindowHandle hWnd, int nIndex, IntPtr dwNewLong);
 
@@ -664,7 +722,7 @@ internal static partial class User32
     /// <param name="nIndex">The zero-based offset to the value to be retrieved.</param>
     /// <returns>The requested value if successful; otherwise, zero.</returns>
     /// <remarks>This should only ever be called from a 32-bit process.</remarks>
-    [LibraryImport(LIBRARY_NAME, EntryPoint = "GetClassLong")]
+    [LibraryImport(LibraryName, EntryPoint = "GetClassLong")]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static partial IntPtr GetClassLongPtr32(WindowHandle hWnd, int nIndex);
 
@@ -675,7 +733,7 @@ internal static partial class User32
     /// <param name="nIndex">The zero-based offset to the value to be retrieved.</param>
     /// <returns>The requested value if successful; otherwise, zero.</returns>
     /// <remarks>This should only ever be called from a 64-bit process.</remarks>
-    [LibraryImport(LIBRARY_NAME, EntryPoint = "GetClassLongPtrW")]
+    [LibraryImport(LibraryName, EntryPoint = "GetClassLongPtrW")]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static partial IntPtr GetClassLongPtr64(WindowHandle hWnd, int nIndex);
     
@@ -687,7 +745,7 @@ internal static partial class User32
     /// <param name="dwNewLong">The replacement value.</param>
     /// <returns>The previous value of the specified offset if successful; otherwise, zero.</returns>
     /// <remarks>This should only ever be called from a 32-bit process.</remarks>
-    [LibraryImport(LIBRARY_NAME, EntryPoint = "SetClassLong")]
+    [LibraryImport(LibraryName, EntryPoint = "SetClassLong")]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static partial IntPtr SetClassLongPtr32(WindowHandle hWnd, int nIndex, IntPtr dwNewLong);
 
@@ -699,7 +757,7 @@ internal static partial class User32
     /// <param name="dwNewLong">The replacement value.</param>
     /// <returns>The previous value of the specified offset if successful; otherwise, zero.</returns>
     /// <remarks>This should only ever be called from a 64-bit process.</remarks>
-    [LibraryImport(LIBRARY_NAME, EntryPoint = "SetClassLongPtrW")]
+    [LibraryImport(LibraryName, EntryPoint = "SetClassLongPtrW")]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static partial IntPtr SetClassLongPtr64(WindowHandle hWnd, int nIndex, IntPtr dwNewLong);
 }

@@ -91,5 +91,9 @@ public enum WindowMessage
     /// <summary>
     /// A window message corresponding to WM_CLIPBOARDUPDATE, indicating the contents of the clipboard have changed.
     /// </summary>
-    ClipboardUpdate = 0x31D
+    ClipboardUpdate = 0x31D,
+    /// <summary>
+    /// A window message corresponding to WM_USER, used as a basis for messages for private window classes.
+    /// </summary>
+    User = 0x400
 }
