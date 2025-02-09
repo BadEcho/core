@@ -279,4 +279,61 @@
   <data name="NativeResolvedLoadFailed" xml:space="preserve">
     <value>Native library resolver failed to load library: {0}</value>
   </data>
+  <data name="NoTaskDialogWindowListening" xml:space="preserve">
+	  <value>Can't send messages to a task dialog window...without a window. The dialog must be shown before its state can be updated.</value>
+  </data>
+  <data name="TaskDialogChangeRequiresDetachment" xml:space="preserve">
+	  <value>Property cannot be changed while the task dialog is shown.</value>
+  </data>
+  <data name="TaskDialogChangeRequiresAttachment" xml:space="preserve">
+	  <value>Property can only be changed while the task dialog is shown.</value>
+  </data>
+  <data name="TaskDialogCannotChangeStandardButtonText" xml:space="preserve">
+	  <value>Cannot change a standard task dialog button's text.</value>
+  </data>
+  <data name="TaskDialogNoFlagForCustomButton" xml:space="preserve">
+	  <value>Task dialog custom buttons do not have a corresponding standard button flag.</value>
+  </data>
+  <data name="TaskDialogCannotUncheckRadioButton" xml:space="preserve">
+	  <value>Cannot directly uncheck a radio button while task dialog is showing.</value>
+  </data>
+  <data name="TaskDialogCannotSetCheckedWhileHandlingClick" xml:space="preserve">
+	  <value>Cannot change task dialog radio button's checked state while already handling a radio button click event.</value>
+  </data>
+  <data name="TaskDialogNavigateRequiresAttachment" xml:space="preserve">
+	  <value>Can only navigate while the task dialog is shown.</value>
+  </data>
+  <data name="TaskDialogCannotMixCustomButtonsAndLinks" xml:space="preserve">
+	  <value>Task dialog configuration cannot contain a mix of custom push buttons and command links.</value>
+  </data>
+  <data name="TaskDialogCannotCheckMultipleRadioButtons" xml:space="preserve">
+	  <value>Task dialog configuration cannot have more than one radio button checked.</value>
+  </data>
+  <data name="TaskDialogDefaultButtonNotInCollection" xml:space="preserve">
+	  <value>Task dialog configuration has a default button set that wasn't added to its controls collection.</value>
+  </data>
+  <data name="TaskDialogCannotNavigateWhileHandlingClicked" xml:space="preserve">
+	  <value>Cannot navigate a task dialog while handling a radio button clicked notification.</value>
+  </data>
+  <data name="TaskDialogCannotNavigateWhileClosed" xml:space="preserve">
+	  <value>Cannot navigate a task dialog that is closing or has already closed. That's just weird!</value>
+  </data>
+  <data name="TaskDialogPrematureDetachmentDuringCallback" xml:space="preserve">
+	  <value>Cannot process task dialog notification due to premature configuration detachment -- an embarrassing malady.</value>
+  </data>
+  <data name="TaskDialogUnknownRadioButtonClicked" xml:space="preserve">
+	  <value>An unknown task dialog radio button was clicked on. This is very strange, my friend.</value>
+  </data>
+  <data name="TaskDialogCannotModifyUninitializedProgressBar" xml:space="preserve">
+	  <value>Cannot change a task dialog progress bar's properties when it has an uninitialized state.</value>
+  </data>
+  <data name="TaskDialogProgressBarMaximumOutOfRange" xml:space="preserve">
+	  <value>Task dialog progress bar maximum value cannot be negative and must be greater than the minimum value.</value>
+  </data>
+  <data name="TaskDialogProgressBarMinimumOutOfRange" xml:space="preserve">
+	  <value>Task dialog progress bar minimum value cannot be negative and must be less than the maximum value.</value>
+  </data>
+  <data name="TaskDialogProgressBarInvalidState" xml:space="preserve">
+	  <value>Invalid state to set an attached task dialog progress bar to.</value>
+  </data>
 </root>

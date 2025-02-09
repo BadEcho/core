@@ -430,6 +430,15 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Can&apos;t send messages to a task dialog window...without a window. The dialog must be shown before its state can be updated..
+        /// </summary>
+        public static string NoTaskDialogWindowListening {
+            get {
+                return ResourceManager.GetString("NoTaskDialogWindowListening", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to send a message adding or modifying an icon to the taskbar&apos;s notification area..
         /// </summary>
         public static string NotifyIconAddModifyFailed {
@@ -507,6 +516,168 @@ namespace BadEcho.Properties {
         public static string SubclassForcibleDetachmentFailed {
             get {
                 return ResourceManager.GetString("SubclassForcibleDetachmentFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot change a standard task dialog button&apos;s text..
+        /// </summary>
+        public static string TaskDialogCannotChangeStandardButtonText {
+            get {
+                return ResourceManager.GetString("TaskDialogCannotChangeStandardButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Task dialog configuration cannot have more than one radio button checked..
+        /// </summary>
+        public static string TaskDialogCannotCheckMultipleRadioButtons {
+            get {
+                return ResourceManager.GetString("TaskDialogCannotCheckMultipleRadioButtons", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Task dialog configuration cannot contain a mix of custom push buttons and command links..
+        /// </summary>
+        public static string TaskDialogCannotMixCustomButtonsAndLinks {
+            get {
+                return ResourceManager.GetString("TaskDialogCannotMixCustomButtonsAndLinks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot change a task dialog progress bar&apos;s properties when it has an uninitialized state..
+        /// </summary>
+        public static string TaskDialogCannotModifyUninitializedProgressBar {
+            get {
+                return ResourceManager.GetString("TaskDialogCannotModifyUninitializedProgressBar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot navigate a task dialog that is closing or has already closed. That&apos;s just weird!.
+        /// </summary>
+        public static string TaskDialogCannotNavigateWhileClosed {
+            get {
+                return ResourceManager.GetString("TaskDialogCannotNavigateWhileClosed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot navigate a task dialog while handling a radio button clicked notification..
+        /// </summary>
+        public static string TaskDialogCannotNavigateWhileHandlingClicked {
+            get {
+                return ResourceManager.GetString("TaskDialogCannotNavigateWhileHandlingClicked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot change task dialog radio button&apos;s checked state while already handling a radio button click event..
+        /// </summary>
+        public static string TaskDialogCannotSetCheckedWhileHandlingClick {
+            get {
+                return ResourceManager.GetString("TaskDialogCannotSetCheckedWhileHandlingClick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot directly uncheck a radio button while task dialog is showing..
+        /// </summary>
+        public static string TaskDialogCannotUncheckRadioButton {
+            get {
+                return ResourceManager.GetString("TaskDialogCannotUncheckRadioButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property can only be changed while the task dialog is shown..
+        /// </summary>
+        public static string TaskDialogChangeRequiresAttachment {
+            get {
+                return ResourceManager.GetString("TaskDialogChangeRequiresAttachment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property cannot be changed while the task dialog is shown..
+        /// </summary>
+        public static string TaskDialogChangeRequiresDetachment {
+            get {
+                return ResourceManager.GetString("TaskDialogChangeRequiresDetachment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Task dialog configuration has a default button set that wasn&apos;t added to its controls collection..
+        /// </summary>
+        public static string TaskDialogDefaultButtonNotInCollection {
+            get {
+                return ResourceManager.GetString("TaskDialogDefaultButtonNotInCollection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Can only navigate while the task dialog is shown..
+        /// </summary>
+        public static string TaskDialogNavigateRequiresAttachment {
+            get {
+                return ResourceManager.GetString("TaskDialogNavigateRequiresAttachment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Task dialog custom buttons do not have a corresponding standard button flag..
+        /// </summary>
+        public static string TaskDialogNoFlagForCustomButton {
+            get {
+                return ResourceManager.GetString("TaskDialogNoFlagForCustomButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot process task dialog notification due to premature configuration detachment -- an embarrassing malady..
+        /// </summary>
+        public static string TaskDialogPrematureDetachmentDuringCallback {
+            get {
+                return ResourceManager.GetString("TaskDialogPrematureDetachmentDuringCallback", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid state to set an attached task dialog progress bar to..
+        /// </summary>
+        public static string TaskDialogProgressBarInvalidState {
+            get {
+                return ResourceManager.GetString("TaskDialogProgressBarInvalidState", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Task dialog progress bar maximum value cannot be negative and must be greater than the minimum value..
+        /// </summary>
+        public static string TaskDialogProgressBarMaximumOutOfRange {
+            get {
+                return ResourceManager.GetString("TaskDialogProgressBarMaximumOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Task dialog progress bar minimum value cannot be negative and must be less than the maximum value..
+        /// </summary>
+        public static string TaskDialogProgressBarMinimumOutOfRange {
+            get {
+                return ResourceManager.GetString("TaskDialogProgressBarMinimumOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An unknown task dialog radio button was clicked on. This is very strange, my friend..
+        /// </summary>
+        public static string TaskDialogUnknownRadioButtonClicked {
+            get {
+                return ResourceManager.GetString("TaskDialogUnknownRadioButtonClicked", resourceCulture);
             }
         }
         

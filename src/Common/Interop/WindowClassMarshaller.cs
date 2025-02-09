@@ -73,6 +73,16 @@ internal static unsafe class WindowClassMarshaller
     }
 
     /// <summary>
+    /// Releases all resources that were allocated during marshalling.
+    /// </summary>
+    /// <param name="unmanaged">An unmanaged instance of window class information.</param>
+    public static void Free(WNDCLASSEX unmanaged)
+    {
+        Utf16StringMarshaller.Free(unmanaged.lpszMenuName);
+        Utf16StringMarshaller.Free(unmanaged.lpszClassName);
+    }
+
+    /// <summary>
     /// Represents a window class.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]

@@ -98,7 +98,7 @@ internal sealed class NotifyIconData
     { get; set; }
 
     /// <summary>
-    /// Gets or sets Flags that can be set to modify the behavior and appearance of a
+    /// Gets or sets flags that can be set to modify the behavior and appearance of a
     /// balloon notification.
     /// </summary>
     public NotifyIconInfoFlags InfoFlags

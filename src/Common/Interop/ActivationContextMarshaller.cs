@@ -39,7 +39,7 @@ internal static unsafe class ActivationContextMarshaller
                    wProcessorArchitecture  = (ushort) managed.ProcessorArchitecture,
                    wLangId = managed.LanguageId,
                    lpAssemblyDirectory = Utf16StringMarshaller.ConvertToUnmanaged(managed.AssemblyDirectory),
-                   lpResourceName = managed .ResourceName,
+                   lpResourceName = managed.ResourceName,
                    lpApplicationName = Utf16StringMarshaller.ConvertToUnmanaged(managed.ApplicationName),
                    hModule = managed.Module 
                };
