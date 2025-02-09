@@ -96,12 +96,12 @@ internal static unsafe class NotifyIconDataMarshaller
         /// <summary>
         /// Loads the provided unmanaged notification area information into the marshaller.
         /// </summary>
-        /// <param name="unmanaged">The unmanaged instance of notification area information.</param>
+        /// <param name="unmanaged">The unmanaged notification area information.</param>
         public void FromUnmanaged(NOTIFYICONDATAW unmanaged)
             => _unmanaged = unmanaged;
 
         /// <summary>
-        /// Converts the unmanaged <see cref="NOTIFYICONDATAW"/> instance currently loaded into the marshaller
+        /// Converts the unmanaged <see cref="NOTIFYICONDATAW"/> value currently loaded into the marshaller
         /// into its managed counterpart, returning the result.
         /// </summary>
         /// <returns>The converted <see cref="NotifyIconData"/> instance.</returns>

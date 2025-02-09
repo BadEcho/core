@@ -65,7 +65,7 @@ internal sealed class WindowSubclass : IDisposable
     /// managed memory, which would cause us quite a nasty program crash.
     /// </para>
     /// </summary>
-    private GCHandle _gcHandle;
+    private GCHandle _handle;
     private WindowHandle? _window;
     private AttachmentState _state;
     private WNDPROC? _wndProcCallback;
@@ -113,9 +113,9 @@ internal sealed class WindowSubclass : IDisposable
         
         _callback = new WeakReference(callback);
 
-        _gcHandle = GCHandle.Alloc(this);
+        _handle = GCHandle.Alloc(this);
     }
-    
+
     /// <summary>
     /// Attaches to and effectively subclasses the provided window by changing the address of its
     /// <see cref="WindowAttribute.WindowProcedure"/>.
@@ -141,8 +141,8 @@ internal sealed class WindowSubclass : IDisposable
         // If somehow we're still pinned, unpin ourselves so that we can get garbage collected.
         // This should only occur if attachment never occurred due to an error occurring
         // with the creation of the window which we intended to subclass.
-        if (_gcHandle.IsAllocated)
-            _gcHandle.Free();
+        if (_handle.IsAllocated)
+            _handle.Free();
 
         _disposed = true;
     }
@@ -186,7 +186,7 @@ internal sealed class WindowSubclass : IDisposable
 
         if (_DetachMessage == message)
         {
-            if (IntPtr.Zero == wParam || wParam == (IntPtr) _gcHandle)
+            if (IntPtr.Zero == wParam || wParam == (IntPtr) _handle)
             {
                 bool forcibly = lParam > 0;
 
@@ -377,8 +377,8 @@ internal sealed class WindowSubclass : IDisposable
         _wndProcCallback = null;
         _wndProc = IntPtr.Zero;
 
-        if (_gcHandle.IsAllocated)
-            _gcHandle.Free();
+        if (_handle.IsAllocated)
+            _handle.Free();
 
         return true;
     }

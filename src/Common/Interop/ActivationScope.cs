@@ -96,9 +96,9 @@ public sealed class ActivationScope : IDisposable
         Require.NotNull(manifestStream, nameof(manifestStream));
 
         // Activation contexts are sourced from either a native embedded manifest resource, or an external XML file.
-        // Creating an activation scope using a manifest resource stream means the former option is not available,
-        // therefore we need to write the contents of the stream out into an external XML file so that it can then be
-        // processed by the Activation Context API.
+        // If we can't get a native handle to this module, then the former option is not available.
+        // Therefore, we need to write the contents of the resource stream for our SxS assembly manifest out into an external XML file
+        // so that it can then be processed by the Activation Context API.
         string tempManifestPath = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
 
         using (var tempManifestStream = new FileStream(tempManifestPath,
