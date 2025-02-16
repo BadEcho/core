@@ -118,3 +118,9 @@ using BadEcho.Properties;
                            Scope = "member", 
                            Target = "~M:BadEcho.Serialization.JsonFlattenedObjectConverter`1.Read(System.Text.Json.Utf8JsonReader@,System.Type,System.Text.Json.JsonSerializerOptions)~`0",
                            Justification = "Using a cached JsonSerializerOptions is not possible here as we need to base the options do use off of what is passed in as a parameter, as there's a good chance the options that are passed in will change across invocations.")]
+
+[assembly: SuppressMessage("Design",
+                           "CA1031:Modify 'TaskDialogCallbackProc' to catch a more specific allowed exception type, or rethrow the exception",
+                           Scope = "member",
+                           Target = "~M:BadEcho.Interop.Dialogs.TaskDialog.TaskDialogCallbackProc(System.IntPtr,BadEcho.Interop.Dialogs.TaskDialogNotification,System.IntPtr,System.IntPtr)~BadEcho.Interop.ResultHandle",
+                           Justification = "All exceptions caught here are rethrown, with the exception state preserved. However, we have to hold off rethrowing the exception until the dialog is closed, otherwise the exception will bubble up to native code and get wrapped in an SEHException.")]

@@ -13,6 +13,7 @@
 
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
+using BadEcho.Properties;
 
 namespace BadEcho.Interop.Dialogs;
 
@@ -255,6 +256,7 @@ internal static unsafe class TaskDialogConfigurationMarshaller
             if (_ownerHandle != null && _ownerHandleAddRefd)
                 _ownerHandle.DangerousRelease();
         }
+
         private static byte* CalculateSizeToAllocate(TaskDialogConfiguration managed, List<TaskDialogButton> customButtons)
         {   // Start with the size of the config struct itself.
             var sizeToAllocate = (byte*) sizeof(TASKDIALOGCONFIG);
@@ -316,7 +318,7 @@ internal static unsafe class TaskDialogConfigurationMarshaller
                                               IntPtr lpRefData)
         {
             if (((GCHandle) lpRefData).Target is not TaskDialog taskDialog)
-                throw new InvalidOperationException();
+                throw new InvalidOperationException(Strings.TaskDialogCallbackHandleNotSet);
 
             return (int) taskDialog.TaskDialogCallbackProc(hWnd, msg, wParam, lParam);
         }

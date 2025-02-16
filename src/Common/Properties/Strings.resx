@@ -336,4 +336,10 @@
   <data name="TaskDialogProgressBarInvalidState" xml:space="preserve">
 	  <value>Invalid state to set an attached task dialog progress bar to.</value>
   </data>
+  <data name="TaskDialogOperationRequiresAttachmentInitialization" xml:space="preserve">
+	  <value>Operation can only occur if control is initialized and attached to a visible task dialog.</value>
+  </data>
+  <data name="TaskDialogCallbackHandleNotSet" xml:space="preserve">
+	  <value>Handle to task dialog instance wasn't set as callback data.</value>
+  </data>
 </root>

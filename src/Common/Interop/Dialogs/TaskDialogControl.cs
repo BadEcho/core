@@ -104,6 +104,17 @@ public abstract class TaskDialogControl
     }
 
     /// <summary>
+    /// Throws an exception if this control isn't attached to a task dialog and initialized.
+    /// </summary>
+    /// <exception cref="InvalidOperationException"></exception>
+    [MemberNotNull(nameof(Host), nameof(HostConfiguration))]
+    protected void EnsureAttachedAndInitialized()
+    {
+        if (!Attached || !IsInitialized)
+            throw new InvalidOperationException(Strings.TaskDialogOperationRequiresAttachmentInitialization);
+    }
+
+    /// <summary>
     /// Throws an exception if this control is attached to a task dialog.
     /// </summary>
     /// <exception cref="InvalidOperationException"></exception>

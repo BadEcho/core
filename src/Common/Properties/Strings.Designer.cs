@@ -520,6 +520,15 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Handle to task dialog instance wasn&apos;t set as callback data..
+        /// </summary>
+        public static string TaskDialogCallbackHandleNotSet {
+            get {
+                return ResourceManager.GetString("TaskDialogCallbackHandleNotSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot change a standard task dialog button&apos;s text..
         /// </summary>
         public static string TaskDialogCannotChangeStandardButtonText {
@@ -633,6 +642,15 @@ namespace BadEcho.Properties {
         public static string TaskDialogNoFlagForCustomButton {
             get {
                 return ResourceManager.GetString("TaskDialogNoFlagForCustomButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Operation can only occur if control is initialized and attached to a visible task dialog..
+        /// </summary>
+        public static string TaskDialogOperationRequiresAttachmentInitialization {
+            get {
+                return ResourceManager.GetString("TaskDialogOperationRequiresAttachmentInitialization", resourceCulture);
             }
         }
         

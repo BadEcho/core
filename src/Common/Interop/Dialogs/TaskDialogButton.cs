@@ -191,12 +191,22 @@ public class TaskDialogButton : TaskDialogControl
             _text = value;
         }
     }
+
+    /// <summary>
+    /// Forces the button to be clicked from code.
+    /// </summary>
+    public void Click()
+    {
+        EnsureAttachedAndInitialized();
+
+        Host.ClickButton(this);
+    }
     
     /// <summary>
-    /// Generates a <see cref="Clicked"/> event for the button.
+    /// Process a click on the button, generating a <see cref="Clicked"/> event.
     /// </summary>
     /// <returns>Value indicating if the dialog should be closed and this button be returned as the dialog's result.</returns>
-    internal bool Click()
+    internal bool ProcessClick()
     {
         OnClicked(EventArgs.Empty);
 

@@ -11,6 +11,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using BadEcho.Properties;
 
@@ -30,9 +31,12 @@ public sealed class TaskDialog : IDisposable
 
     private TaskDialogButton? _selectedButton;
     private bool _ignoreButtonClicks;
+    private bool _buttonClickedFromCode;
     private bool _isBeingDestroyed;
     private IntPtr _window;
     private GCHandle _handle;
+
+    private Exception? _callbackException;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TaskDialog"/> class.
@@ -113,6 +117,9 @@ public sealed class TaskDialog : IDisposable
             if (hResult.Failed())
                 throw hResult.GetException();
 
+            if (_callbackException != null)
+                ExceptionDispatchInfo.Throw(_callbackException);
+
             if (selectedButtonId == _selectedButton?.Id)
                 return _selectedButton;
 
@@ -167,6 +174,17 @@ public sealed class TaskDialog : IDisposable
         _pendingNavigations.Enqueue(configuration);
 
         SendTaskDialogMessage(TaskDialogMessage.NavigatePage, 0, configuration);
+    }
+
+    /// <summary>
+    /// Simulates the action of a push button click in the dialog.
+    /// </summary>
+    /// <param name="button">The button to click.</param>
+    internal void ClickButton(TaskDialogButton button)
+    {
+        _buttonClickedFromCode = true;
+
+        SendTaskDialogMessage(TaskDialogMessage.ClickButton, button.Id, IntPtr.Zero);
     }
 
     /// <summary>
@@ -292,118 +310,138 @@ public sealed class TaskDialog : IDisposable
                                                  IntPtr wParam,
                                                  IntPtr lParam)
     {
-        // We go ahead and subclass the window as early as possible, which will be following the first notification received.
-        if (_window == IntPtr.Zero)
+        try
         {
-            _subclass.Attach(new WindowHandle(hWnd, false));
-            _window = hWnd;
-        }
+            // We go ahead and subclass the window as early as possible, which will be following the first notification received.
+            if (_window == IntPtr.Zero)
+            {
+                _subclass.Attach(new WindowHandle(hWnd, false));
+                _window = hWnd;
+            }
 
-        if (AttachedConfiguration == null)
-            throw new InvalidOperationException(Strings.TaskDialogPrematureDetachmentDuringCallback);
+            if (AttachedConfiguration == null)
+                throw new InvalidOperationException(Strings.TaskDialogPrematureDetachmentDuringCallback);
 
-        switch (notification)
-        {
-            case TaskDialogNotification.Created:
-                // Now that the dialog has been created, we can complete initialization of the various control settings
-                // that cannot be committed prior to an active dialog instance being displayed.
-                AttachedConfiguration.Initialize();
-                AttachedConfiguration.OnCreated(EventArgs.Empty);
+            switch (notification)
+            {
+                case TaskDialogNotification.Created:
+                    // Now that the dialog has been created, we can complete initialization of the various control settings
+                    // that cannot be committed prior to an active dialog instance being displayed.
+                    AttachedConfiguration.Initialize();
+                    AttachedConfiguration.OnCreated(EventArgs.Empty);
 
-                break;
+                    break;
 
-            case TaskDialogNotification.Navigated:
-                // With navigation complete, we can detach from our previous configured content and initialize the now active configuration.
-                AttachedConfiguration.Detach();
-                AttachedConfiguration = _pendingNavigations.Dequeue();
+                case TaskDialogNotification.Navigated:
+                    // With navigation complete, we can detach from our previous configured content and initialize the now active configuration.
+                    AttachedConfiguration.Detach();
+                    AttachedConfiguration = _pendingNavigations.Dequeue();
 
-                AttachedConfiguration.Initialize();
-                AttachedConfiguration.OnCreated(EventArgs.Empty);
-                break;
+                    AttachedConfiguration.Initialize();
+                    AttachedConfiguration.OnCreated(EventArgs.Empty);
+                    break;
 
-            case TaskDialogNotification.ButtonClicked:
+                case TaskDialogNotification.ButtonClicked:
 
-                if (_ignoreButtonClicks)
-                    return ResultHandle.False;
-
-                // Workaround for behavior where a click notification is sent twice when pressing a button's access key.
-                if (User32.PostMessage(_window, _ButtonClickContinuationEvent, IntPtr.Zero, IntPtr.Zero)) 
-                    _ignoreButtonClicks = true;
-
-                int buttonId = wParam.ToInt32();
-                TaskDialogButton? button = AttachedConfiguration.PushButtons.FirstOrDefault(b => b.Id == buttonId);
-
-                if (button == null)
-                {   // Someone needs to settle down with their configuration voodoo if a button not in our configuration was clicked.
-                    _selectedButton = new TaskDialogButton((TaskDialogResult) buttonId);
-                }
-                else
-                {
-                    // This will be false if the button isn't configured to close the dialog.
-                    bool applyButtonAsResult = button.Click(); 
-
-                    if (applyButtonAsResult)
-                        _selectedButton = button;
+                    if (_buttonClickedFromCode)
+                        _buttonClickedFromCode = false;                    
                     else
-                        return ResultHandle.False; // This will prevent the dialog from closing.
-                }
+                    {
+                        if (_ignoreButtonClicks)
+                            return ResultHandle.False;
 
-                break;
+                        // Workaround for behavior where a click notification is sent twice when pressing a button's access key.
+                        if (User32.PostMessage(_window, _ButtonClickContinuationEvent, IntPtr.Zero, IntPtr.Zero))
+                            _ignoreButtonClicks = true;
+                    }
 
-            case TaskDialogNotification.RadioButtonClicked:
+                    int buttonId = wParam.ToInt32();
+                    TaskDialogButton? button = AttachedConfiguration.PushButtons.FirstOrDefault(b => b.Id == buttonId);
 
-                int radioButtonId = wParam.ToInt32();
-                TaskDialogRadioButton? radioButton = AttachedConfiguration.RadioButtons.FirstOrDefault(b => b.Id == radioButtonId);
+                    if (button == null)
+                    {
+                        // Someone needs to settle down with their configuration voodoo if a button not in our configuration was clicked.
+                        _selectedButton = new TaskDialogButton((TaskDialogResult) buttonId);
+                    }
+                    else
+                    {
+                        // This will be false if the button isn't configured to close the dialog.
+                        bool applyButtonAsResult = button.ProcessClick();
 
-                if (radioButton == null)
-                    throw new InvalidOperationException(Strings.TaskDialogUnknownRadioButtonClicked);
+                        if (applyButtonAsResult)
+                            _selectedButton = button;
+                        else
+                            return ResultHandle.False; // This will prevent the dialog from closing.
+                    }
 
-                RadioButtonClicksBeingHandled++;
+                    break;
 
-                try
-                {
-                    radioButton.Click();
-                }
-                finally
-                {
-                    RadioButtonClicksBeingHandled--;
-                }
+                case TaskDialogNotification.RadioButtonClicked:
 
-                break;
+                    int radioButtonId = wParam.ToInt32();
+                    
+                    TaskDialogRadioButton radioButton =
+                        AttachedConfiguration.RadioButtons.FirstOrDefault(b => b.Id == radioButtonId)
+                        ?? throw new InvalidOperationException(Strings.TaskDialogUnknownRadioButtonClicked);
 
-            case TaskDialogNotification.Destroyed:
-                _isBeingDestroyed = true;
-                AttachedConfiguration.OnClosed(EventArgs.Empty);
+                    RadioButtonClicksBeingHandled++;
 
-                _subclass.Dispose();
-                
-                // Prevent the sending of any more messages to the dialog after receiving the Destroyed notification.
-                _window = IntPtr.Zero;
+                    try
+                    {
+                        radioButton.ProcessClick();
+                    }
+                    finally
+                    {
+                        RadioButtonClicksBeingHandled--;
+                    }
 
-                break;
+                    break;
 
-            case TaskDialogNotification.Help:
-                AttachedConfiguration.OnHelpRequested(EventArgs.Empty);
+                case TaskDialogNotification.Destroyed:
+                    _isBeingDestroyed = true;
+                    AttachedConfiguration.OnClosed(EventArgs.Empty);
 
-                break;
+                    _subclass.Dispose();
 
-            case TaskDialogNotification.HyperlinkClicked:
-                string? url = Marshal.PtrToStringUni(lParam);
+                    // Prevent the sending of any more messages to the dialog after receiving the Destroyed notification.
+                    _window = IntPtr.Zero;
 
-                if (!string.IsNullOrEmpty(url))
-                    AttachedConfiguration.OnHyperlinkClicked(new EventArgs<string>(url));
+                    break;
 
-                break;
+                case TaskDialogNotification.Help:
+                    AttachedConfiguration.OnHelpRequested(EventArgs.Empty);
 
-            case TaskDialogNotification.Timer:
-                AttachedConfiguration.OnTicked(new EventArgs<int>(wParam.ToInt32()));
+                    break;
 
-                break;
+                case TaskDialogNotification.HyperlinkClicked:
+                    string? url = Marshal.PtrToStringUni(lParam);
 
-            case TaskDialogNotification.VerificationClicked:
-                AttachedConfiguration.OnVerificationCheckedChange(new EventArgs<bool>(wParam != IntPtr.Zero));
+                    if (!string.IsNullOrEmpty(url))
+                        AttachedConfiguration.OnHyperlinkClicked(new EventArgs<string>(url));
 
-                break;
+                    break;
+
+                case TaskDialogNotification.Timer:
+                    AttachedConfiguration.OnTicked(new EventArgs<int>(wParam.ToInt32()));
+
+                    break;
+
+                case TaskDialogNotification.VerificationClicked:
+                    AttachedConfiguration.OnVerificationCheckedChange(new EventArgs<bool>(wParam != IntPtr.Zero));
+                    
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {   // This callback is indirectly called from native code; we don't want exceptions to bubble back up to the native
+            // code, otherwise we'll get an SEHException due to being inside an activation context. This obfuscates the error and can
+            // lead to other issues. So, we capture the exception's state, store the exception, close the dialog, and then throw it
+            // after release the activation context.
+            ExceptionDispatchInfo.Capture(ex);
+            
+            _callbackException = ex;
+
+            ClickButton(TaskDialogButton.Cancel);
         }
 
         return ResultHandle.Success;

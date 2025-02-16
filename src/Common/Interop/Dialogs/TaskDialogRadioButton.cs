@@ -114,7 +114,7 @@ public sealed class TaskDialogRadioButton : TaskDialogControl
 
             try
             {
-                Click();
+                ProcessClick();
             }
             finally
             {
@@ -124,9 +124,9 @@ public sealed class TaskDialogRadioButton : TaskDialogControl
     }
 
     /// <summary>
-    /// Checks the radio button, generating a <see cref="CheckedChanged"/> event.
+    /// Processes a click on the radio button, generating a <see cref="CheckedChanged"/> event.
     /// </summary>
-    internal void Click()
+    internal void ProcessClick()
     {
         EnsureAttached();
 
