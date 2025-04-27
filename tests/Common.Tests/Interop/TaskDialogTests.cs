@@ -230,10 +230,8 @@ public class TaskDialogTests
     }
     
     [Fact]
-    public void Text_ChangeStandard_ThrowsException()
-    {
-        Assert.Throws<InvalidOperationException>(() => _okButton.Text = "Hello");
-    }
+    public void Text_ChangeStandard_ThrowsException() 
+        => Assert.Throws<InvalidOperationException>(() => _okButton.Text = "Hello");
 
     [Fact]
     public void Text_ChangeRadio_IsValid()
