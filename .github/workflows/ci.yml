@@ -110,7 +110,7 @@ jobs:
   deploy:
     name: Deploy Packages
     needs: [build, test]
-    if: always()
+    if: always() && github.event_name != 'pull_request'
     runs-on: windows-2022
     steps:
     - name: Check Previous Jobs' Results
