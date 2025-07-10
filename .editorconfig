@@ -853,3 +853,5 @@ dotnet_style_operator_placement_when_wrapping = beginning_of_line
 tab_width = 4
 indent_size = 4
 end_of_line = crlf
+
+file_header_template =-----------------------------------------------------------------------\n<copyright>\n     Created by Matt Weber <matt@badecho.com>\n     Copyright @ 2025 Bad Echo LLC. All rights reserved.\n\n     Bad Echo Technologies are licensed under the\n     GNU Affero General Public License v3.0.\n\n     See accompanying file LICENSE.md or a copy at:\n     https://www.gnu.org/licenses/agpl-3.0.html\n</copyright>\n-----------------------------------------------------------------------

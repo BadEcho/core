@@ -1,5 +1,5 @@
 ﻿#pragma warning disable IDE0060
-//-----------------------------------------------------------------------
+// -----------------------------------------------------------------------
 // <copyright>
 //		Created by Matt Weber <matt@badecho.com>
 //		Copyright @ 2024 Bad Echo LLC. All rights reserved.
@@ -10,7 +10,7 @@
 //		See accompanying file LICENSE.md or a copy at:
 //		https://www.gnu.org/licenses/agpl-3.0.html
 // </copyright>
-//-----------------------------------------------------------------------
+// -----------------------------------------------------------------------
 
 using BadEcho.Interop;
 

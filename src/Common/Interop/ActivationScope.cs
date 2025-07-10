@@ -1,4 +1,4 @@
-﻿//-----------------------------------------------------------------------
+﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
 //      Copyright @ 2025 Bad Echo LLC. All rights reserved.
@@ -9,7 +9,7 @@
 //      See accompanying file LICENSE.md or a copy at:
 //      https://www.gnu.org/licenses/agpl-3.0.html
 // </copyright>
-//-----------------------------------------------------------------------
+// -----------------------------------------------------------------------
 
 using System.ComponentModel;
 using System.Reflection;
