@@ -112,7 +112,7 @@ internal static unsafe class DeviceModeMarshaller
     internal struct DEVMODEW
     {
         /// <summary>
-        /// A null-terminated character array that specifies the "friendly" name of the printer or display device.
+        /// A null-terminated string that specifies the "friendly" name of the printer or display device.
         /// </summary>
         public fixed char dmDeviceName[32];
         /// <summary>
@@ -172,7 +172,7 @@ internal static unsafe class DeviceModeMarshaller
         /// </summary>
         public short dmCollate;
         /// <summary>
-        /// A null-terminated character array that specifies the name of the form to use.
+        /// A null-terminated string that specifies the name of the form to use.
         /// </summary>
         public fixed char dmFormName[32];
         /// <summary>

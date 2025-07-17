@@ -12,6 +12,7 @@
 // -----------------------------------------------------------------------
 
 using System.Runtime.InteropServices;
+using BadEcho.Extensions;
 
 namespace BadEcho.Interop;
 
@@ -28,7 +29,7 @@ internal unsafe struct MONITORINFOEX
     /// <summary>
     /// The size, in bytes, of the structure.
     /// </summary>
-    public int cbSize;
+    public uint cbSize;
 
     /// <summary>
     /// The display monitor rectangle, expressed in virtual-screen coordinates.
@@ -46,9 +47,23 @@ internal unsafe struct MONITORINFOEX
     public int dwFlags;
 
     /// <summary>
-    /// The device name of the monitor.
+    /// A null-terminated string specifying the device name of the monitor.
     /// </summary>
     public fixed char szDevice[32];
+
+    /// <summary>
+    /// Gets a string specifying the device name of the monitor.
+    /// </summary>
+    public readonly ReadOnlySpan<char> Device
+    {
+        get
+        {
+            fixed (char* c = szDevice)
+            {
+                return new Span<char>(c, 32).SliceAtFirstNull();
+            }
+        }
+    }
 
     /// <summary>
     /// Creates a <see cref="MONITORINFOEX"/> value that can be written to by unmanaged functions.
@@ -57,9 +72,6 @@ internal unsafe struct MONITORINFOEX
     public static MONITORINFOEX CreateWritable()
         => new()
            {
-               cbSize = Marshal.SizeOf<MONITORINFOEX>(),
-               rcMonitor = new RECT(),
-               rcWork = new RECT(),
-               dwFlags = 0
+               cbSize = (uint) sizeof(MONITORINFOEX)
            };
 }

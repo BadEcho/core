@@ -70,11 +70,11 @@ internal static unsafe class DisplayDeviceMarshaller
         /// </summary>
         public uint cb;
         /// <summary>
-        /// A null-terminated character array identifying the adapter or monitor device name.
+        /// A null-terminated string identifying the adapter or monitor device name.
         /// </summary>
         public fixed char szDeviceName[32];
         /// <summary>
-        /// A null-terminated character array specifying the device context string, typically a description of the
+        /// A null-terminated string specifying the device context string, typically a description of the
         /// display adapter or monitor.
         /// </summary>
         public fixed char szDeviceString[128];
@@ -83,11 +83,11 @@ internal static unsafe class DisplayDeviceMarshaller
         /// </summary>
         public DisplayDeviceStateFlags StateFlags;
         /// <summary>
-        /// A null-terminated character array specifying the device interface name, usable with SetupAPI functions.
+        /// A null-terminated string specifying the device interface name, usable with SetupAPI functions.
         /// </summary>
         public fixed char szDeviceID[128];
         /// <summary>
-        /// A null-terminated character array specifying the registry key containing the settings for this display device.
+        /// A null-terminated string specifying the registry key containing the settings for this display device.
         /// </summary>
         public fixed char szDeviceKey[128];
 

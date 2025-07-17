@@ -57,10 +57,7 @@ public sealed class Display
 
         _isPrimary = (info.dwFlags & MONITORINFOF_PRIMARY) != 0;
 
-        unsafe
-        {
-            DeviceName = Marshal.PtrToStringUni((IntPtr) info.szDevice);
-        }
+        Name = new string(info.Device);
 
         WorkingArea 
             = Rectangle.FromLTRB(info.rcWork.Left, info.rcWork.Top, info.rcWork.Right, info.rcWork.Bottom);
