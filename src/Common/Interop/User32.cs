@@ -40,6 +40,19 @@ internal static partial class User32
         => new(-3);
 
     /// <summary>
+    /// Causes <see cref="EnumDisplaySettings"/> to retrieve the current settings for the display device.
+    /// </summary>
+    public static uint EnumCurrentSettings
+        => unchecked((uint) -1);
+
+    /// <summary>
+    /// Causes <see cref="EnumDisplaySettings"/> to retrieve the settings for the display device that are
+    /// currently stored in the registry.
+    /// </summary>
+    public static uint EnumRegistrySettings
+        => unchecked((uint) -2);
+
+    /// <summary>
     /// Creates an overlapped, pop-up, or child window with an extended window style.
     /// </summary>
     /// <param name="dwExStyle">The extended window style of the window being created.</param>
@@ -193,6 +206,15 @@ internal static partial class User32
     public static partial DpiAwareness GetAwarenessFromDpiAwarenessContext(IntPtr value);
 
     /// <summary>
+    /// Sets the process-default DPI awareness to system-DPI awareness.
+    /// </summary>
+    /// <returns>True if successful, otherwise false.</returns>
+    [LibraryImport(LibraryName)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool SetProcessDPIAware();
+
+    /// <summary>
     /// Enumerates display monitors (including invisible pseudo-monitors associated with the mirroring drivers) that intersect
     /// a region formed by the intersection of a specified clipping rectangle and the visible region of a device context.
     /// </summary>
@@ -206,6 +228,67 @@ internal static partial class User32
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool EnumDisplayMonitors(DeviceContextHandle hdc, IntPtr lprcClip, MonitorEnumProc lpfnEnum, IntPtr lParam);
 
+    /// <summary>
+    /// Obtains information about display devices in the current session.
+    /// </summary>
+    /// <param name="lpDevice">
+    /// The name of the display device to obtain information about. If null, <paramref name="iDevNum"/> is used instead.
+    /// </param>
+    /// <param name="iDevNum">An index value that specifies the display device of interest.</param>
+    /// <param name="lpDisplayDevice">
+    /// A pointer to a <see cref="DisplayDevice"/> instance which receives information about the specified display device.
+    /// </param>
+    /// <param name="dwFlags">
+    /// Documentation indicates that this should be set to 1 in order to retrieve the device interface name, however my own
+    /// testing indicates this only occurs if this is set to 0.
+    /// </param>
+    /// <returns>True if successful; otherwise, false.</returns>
+    [LibraryImport(LibraryName, EntryPoint = "EnumDisplayDevicesW")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool EnumDisplayDevices([MarshalUsing(typeof(Utf16StringMarshaller))] string? lpDevice, 
+                                                  uint iDevNum, 
+                                                  ref DisplayDevice lpDisplayDevice, 
+                                                  uint dwFlags);
+
+    /// <summary>
+    /// Retrieves information about one of the graphics modes for a display device.
+    /// </summary>
+    /// <param name="lpDeviceName">
+    /// The name of the display device to obtain information about. If null, information for the current display device is retrieved.
+    /// </param>
+    /// <param name="iModeNum">
+    /// The type of information to be retrieved. Can be either <see cref="EnumCurrentSettings"/>, <see cref="EnumRegistrySettings"/>,
+    /// or the graphics mode index.
+    /// </param>
+    /// <param name="lpDevMode">
+    /// A pointer to a <see cref="DeviceMode"/> instance which receives information about the specified graphics mode.
+    /// </param>
+    /// <returns>True if successful; otherwise, false.</returns>
+    [LibraryImport(LibraryName, EntryPoint = "EnumDisplaySettingsW")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool EnumDisplaySettings([MarshalUsing(typeof(Utf16StringMarshaller))] string? lpDeviceName,
+                                                   uint iModeNum,
+                                                   ref DeviceMode lpDevMode);
+
+    /// <summary>
+    /// Changes the settings of the specified display device to the specified graphics mode.
+    /// </summary>
+    /// <param name="lpszDeviceName">The name of the display device whose graphics mode will change.</param>
+    /// <param name="lpDevMode">A pointer to a <see cref="DeviceMode"/> instance that describes the new graphics mode.</param>
+    /// <param name="hwnd">reserved; must be null.</param>
+    /// <param name="dwFlags">Indicates how the graphics mode should be changed.</param>
+    /// <param name="lParam">
+    /// Null, unless <see cref="ChangeDisplaySettingsFlags.VideoParameters"/> is set for <paramref name="dwFlags"/>, in which case
+    /// this should point to a structure containing information for a video connection.
+    /// </param>
+    /// <returns>A <see cref="ChangeDisplaySettingsResult"/> value indicating the result of the operation.</returns>
+    [LibraryImport(LibraryName, EntryPoint = "ChangeDisplaySettingsExW", StringMarshalling = StringMarshalling.Utf16)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static unsafe partial ChangeDisplaySettingsResult ChangeDisplaySettingsEx(
+        string? lpszDeviceName, ref DeviceMode lpDevMode, IntPtr hwnd, ChangeDisplaySettingsFlags dwFlags, void* lParam);
+    
     /// <summary>
     /// Retrieves information about a display monitor.
     /// </summary>
