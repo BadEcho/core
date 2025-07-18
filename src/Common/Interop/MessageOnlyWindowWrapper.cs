@@ -175,7 +175,7 @@ public sealed class MessageOnlyWindowWrapper : WindowWrapper, IDisposable
                           {
                               BackgroundBrush = hNullBrush,
                               ClassExtraBytes = 0,
-                              ClassName = className,
+                              Name = className,
                               Cursor = IntPtr.Zero,
                               Icon = IntPtr.Zero,
                               Instance = hInstance,

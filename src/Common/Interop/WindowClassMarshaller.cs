@@ -33,8 +33,8 @@ internal static unsafe class WindowClassMarshaller
 
         return new WNDCLASSEX
                {
-                   cbSize = Marshal.SizeOf<WNDCLASSEX>(),
-                   style = managed.Style,
+                   cbSize = (uint) sizeof(WNDCLASSEX),
+                   style = (uint) managed.Style,
                    lpfnWndProc = Marshal.GetFunctionPointerForDelegate(managed.WndProc),
                    cbClsExtra = managed.ClassExtraBytes,
                    cbWndExtra = managed.WindowExtraBytes,
@@ -43,7 +43,7 @@ internal static unsafe class WindowClassMarshaller
                    hCursor = managed.Cursor,
                    hbrBackground = managed.BackgroundBrush,
                    lpszMenuName = Utf16StringMarshaller.ConvertToUnmanaged(managed.MenuName),
-                   lpszClassName = Utf16StringMarshaller.ConvertToUnmanaged(managed.ClassName),
+                   lpszClassName = Utf16StringMarshaller.ConvertToUnmanaged(managed.Name),
                    hIconSm = managed.SmallIcon
                };
     }
@@ -56,10 +56,10 @@ internal static unsafe class WindowClassMarshaller
     public static WindowClass ConvertToManaged(WNDCLASSEX unmanaged)
     {
         var wndProc = Marshal.GetDelegateForFunctionPointer<WNDPROC>(unmanaged.lpfnWndProc);
-
+        
         return new WindowClass(wndProc)
                {
-                   Style = unmanaged.style,
+                   Style = (int) unmanaged.style,
                    ClassExtraBytes = unmanaged.cbClsExtra,
                    WindowExtraBytes = unmanaged.cbWndExtra,
                    Instance = unmanaged.hInstance,
@@ -67,7 +67,7 @@ internal static unsafe class WindowClassMarshaller
                    Cursor = unmanaged.hCursor,
                    BackgroundBrush = unmanaged.hbrBackground,
                    MenuName = Utf16StringMarshaller.ConvertToManaged(unmanaged.lpszMenuName),
-                   ClassName = Utf16StringMarshaller.ConvertToManaged(unmanaged.lpszClassName),
+                   Name = Utf16StringMarshaller.ConvertToManaged(unmanaged.lpszClassName),
                    SmallIcon = unmanaged.hIconSm
                };
     }
@@ -91,13 +91,11 @@ internal static unsafe class WindowClassMarshaller
         /// <summary>
         /// The size, in bytes, of this structure.
         /// </summary>
-        [MarshalAs(UnmanagedType.U4)]
-        public int cbSize;
+        public uint cbSize;
         /// <summary>
         /// The class style(s).
         /// </summary>
-        [MarshalAs(UnmanagedType.U4)]
-        public int style;
+        public uint style;
         /// <summary>
         /// A pointer to the window procedure.
         /// </summary>

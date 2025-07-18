@@ -151,7 +151,7 @@ public sealed class NotifyIcon : IDisposable
     /// 48x48 pixel size, with the relevant display's scaling applied.
     /// </para>
     /// <para>
-    /// Balloon notifications seem to only ever displayed on the primary display (regardless of whether
+    /// Balloon notifications seem to only ever displayed on the primary display device (regardless of whether
     /// the taskbar is on that display or another), so we refer to the scale factor of the primary
     /// display during our calculations.
     /// </para>

@@ -19,7 +19,7 @@ namespace BadEcho.Interop;
 internal enum SystemMetric
 {
     /// <summary>
-    /// The width of the screen of the primary display monitor.
+    /// The width of the screen of the primary display device.
     /// </summary>
     PrimaryScreenWidth = 0,
     /// <summary>

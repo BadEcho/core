@@ -25,7 +25,7 @@ internal sealed class WindowClass
     public WindowClass(WNDPROC wndProc)
     {
         Require.NotNull(wndProc, nameof(wndProc));
-
+        
         WndProc = wndProc;
     }
 
@@ -86,7 +86,7 @@ internal sealed class WindowClass
     /// <summary>
     /// Gets or sets either the window class name or its unique atom.
     /// </summary>
-    public string? ClassName
+    public string? Name
     { get; set; }
 
     /// <summary>
