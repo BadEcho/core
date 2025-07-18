@@ -11,23 +11,23 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using BadEcho.Extensions;
+using BadEcho.Logging;
+using BadEcho.Properties;
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using BadEcho.Logging;
-using BadEcho.Extensions;
-using BadEcho.Properties;
 
 namespace BadEcho.Interop;
 
 /// <summary>
-/// Provides a representation of a display device connected to the computer.
+/// Provides a representation of a display monitor connected to the computer.
 /// </summary>
 public sealed class Display
 {
     /// <summary>
     /// Apparently the only defined flag that can be set in a <see cref="MONITORINFOEX"/> structure, which indicates that
-    /// the monitor is the primary display.
+    /// the monitor is the primary display device.
     /// </summary>
     private const int MONITORINFOF_PRIMARY = 0x1;
 
@@ -38,29 +38,26 @@ public sealed class Display
 
     private static readonly Lazy<IEnumerable<Display>> _Displays
         = new(LoadDisplays, LazyThreadSafetyMode.ExecutionAndPublication);
-
-    private readonly bool _isPrimary;
+    
     private readonly IntPtr _monitor;
+
+    private DeviceMode _currentMode = new();
+    private bool _isPrimary;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Display"/> class.
     /// </summary>
-    /// <param name="monitor">A handle to the display device this instance will encapsulate.</param>
+    /// <param name="monitor">A handle to the display monitor this instance will encapsulate.</param>
     internal Display(IntPtr monitor)
     {
         _monitor = monitor;
 
-        var info = MONITORINFOEX.CreateWritable();
-            
-        if (!User32.GetMonitorInfo(monitor, ref info))
-            throw ((ResultHandle) Marshal.GetHRForLastWin32Error()).GetException();
+        LoadInfo();
 
-        _isPrimary = (info.dwFlags & MONITORINFOF_PRIMARY) != 0;
-
-        Name = new string(info.Device);
-
-        WorkingArea 
-            = Rectangle.FromLTRB(info.rcWork.Left, info.rcWork.Top, info.rcWork.Right, info.rcWork.Bottom);
+        // EnumDisplaySettings doesn't support GetLastError, so we can't get any meaningful error data.
+        // Regardless, we want to fail since we may introduce problems trying to commit an uninitialized DEVMODE when changing settings.
+        if (!User32.EnumDisplaySettings(Name, User32.EnumCurrentSettings, ref _currentMode))
+            throw new Win32Exception(Strings.DisplayEnumDisplaySettingsFailed.InvariantFormat(Name));
     }
 
     /// <summary>
@@ -71,17 +68,17 @@ public sealed class Display
         => GetDpiAwareness() == DpiAwareness.PerMonitorAware;
 
     /// <summary>
-    /// Gets the display devices in use by the system.
+    /// Gets the display monitors in use by the system.
     /// </summary>
     /// <remarks>
-    /// The display devices are ordered based on where each lives in the arrangement defined in the user's display settings, with
-    /// the first item being the leftmost device, and the last item being the right most device.
+    /// The display monitors are ordered based on where each lives in the arrangement defined in the user's display settings, with
+    /// the first item being the leftmost monitor, and the last item being the right most monitor.
     /// </remarks>
     public static IEnumerable<Display> Devices
         => _Displays.Value;
 
     /// <summary>
-    /// Gets the display device designated as the primary monitor.
+    /// Gets the monitor designated as the primary display device.
     /// </summary>
     public static Display Primary
         => Devices.First(d => d._isPrimary);
@@ -104,13 +101,13 @@ public sealed class Display
         => (int) User32.GetDpiForSystem();
 
     /// <summary>
-    /// Gets the name of this display device.
+    /// Gets the name of this display monitor.
     /// </summary>
-    public string? DeviceName
-    { get; }
+    public string? Name
+    { get; private set; }
 
     /// <summary>
-    /// Gets the DPI specific to this display device.
+    /// Gets the DPI specific to this display monitor.
     /// </summary>
     /// <remarks>
     /// <para>
@@ -184,10 +181,10 @@ public sealed class Display
     /// Gets a representation of the working area (the area available for use by applications) of the display.
     /// </summary>
     public Rectangle WorkingArea
-    { get; }
+    { get; private set; }
 
     /// <summary>
-    /// Retrieves the display device containing the largest area of intersection with the bounding rectangle of a specified
+    /// Retrieves the display monitor containing the largest area of intersection with the bounding rectangle of a specified
     /// window.
     /// </summary>
     /// <param name="window">A handle to the window of interest.</param>
@@ -196,8 +193,58 @@ public sealed class Display
     {
         Require.NotNull(window, nameof(window));
 
-        // Default to the nearest device if the window is not intersecting any display monitor.
+        // Default to the nearest monitor if the window is not intersecting any display monitor.
         return new Display(User32.MonitorFromWindow(window, 0x2));
+    }
+
+    /// <summary>
+    /// Makes this monitor the primary display device.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Setting a monitor as the new primary display device is a more complex process than one might initially assume.
+    /// It involves more than just specifying <see cref="ChangeDisplaySettingsFlags.SetPrimary"/> when updating the graphics mode.
+    /// </para>
+    /// <para>
+    /// In addition to this, the new primary display device must be positioned such that its upper-left corner is on the origin
+    /// of the coordinate plane. This means all other display devices must be adjusted as well in order to maintain their layout.
+    /// </para>
+    /// <para>
+    /// Since this requires updating the graphics modes of multiple devices, we stage the individual positional changes and then bring
+    /// them all into effect at once by calling <c>ChangeDisplaySettingsEx</c> with a null device. None of the changes get committed
+    /// to the registry until this final call, so there is no need to worry about an inconsistent registry state should any of these
+    /// steps fail.
+    /// </para>
+    /// </remarks>
+    public unsafe void MakePrimary()
+    {
+        if (_isPrimary)
+            return;
+
+        IEnumerable<Display> otherDisplays = Devices.Where(d => d != this);
+
+        int xOffset = 0 - _currentMode.PositionX;
+        int yOffset = 0 - _currentMode.PositionY;
+
+        Move(xOffset, yOffset, false);
+
+        var result = User32.ChangeDisplaySettingsEx(Name,
+                                                    ref _currentMode,
+                                                    IntPtr.Zero,
+                                                    ChangeDisplaySettingsFlags.SetPrimary |
+                                                    ChangeDisplaySettingsFlags.UpdateRegistry |
+                                                    ChangeDisplaySettingsFlags.NoReset,
+                                                    null);
+
+        if (result != ChangeDisplaySettingsResult.Successful)
+            throw new Win32Exception(Strings.DisplayChangePrimaryFailed.InvariantFormat(result));
+        
+        foreach (var otherDisplay in otherDisplays)
+        {
+            otherDisplay.Move(xOffset, yOffset, true);
+        }
+
+        ApplyChanges(true);
     }
 
     private static List<Display> LoadDisplays()
@@ -233,6 +280,56 @@ public sealed class Display
         IntPtr awarenessContext = User32.GetThreadDpiAwarenessContext();
 
         return User32.GetAwarenessFromDpiAwarenessContext(awarenessContext);
+    }
+
+    private void LoadInfo()
+    {
+        var info = MONITORINFOEX.CreateWritable();
+
+        if (!User32.GetMonitorInfo(_monitor, ref info))
+            throw ((ResultHandle)Marshal.GetHRForLastWin32Error()).GetException();
+
+        Name = new string(info.Device);
+
+        _isPrimary = (info.dwFlags & MONITORINFOF_PRIMARY) != 0;
+
+        WorkingArea
+            = Rectangle.FromLTRB(info.rcWork.Left, info.rcWork.Top, info.rcWork.Right, info.rcWork.Bottom);
+    }
+
+    private unsafe void ApplyChanges(bool allDisplays)
+    {
+        var result = allDisplays
+            ? User32.ChangeDisplaySettingsEx(null, IntPtr.Zero, IntPtr.Zero, ChangeDisplaySettingsFlags.ApplyChanges, null)
+            : User32.ChangeDisplaySettingsEx(Name, ref _currentMode, IntPtr.Zero, ChangeDisplaySettingsFlags.ApplyChanges, null);
+
+        if (result != ChangeDisplaySettingsResult.Successful)
+            throw new Win32Exception(Strings.DisplayApplyDisplaySettingsFailed.InvariantFormat(result));
+
+        foreach (var display in Devices)
+        {
+            display.LoadInfo();
+        }
+    }
+
+    private unsafe void Move(int xOffset, int yOffset, bool stage)
+    {
+        _currentMode.PositionX += xOffset;
+        _currentMode.PositionY += yOffset;
+        _currentMode.Fields = DeviceModeFields.Position;
+
+        if (!stage)
+            return;
+        
+        var result = User32.ChangeDisplaySettingsEx(Name,
+                                                    ref _currentMode,
+                                                    IntPtr.Zero,
+                                                    ChangeDisplaySettingsFlags.NoReset |
+                                                    ChangeDisplaySettingsFlags.UpdateRegistry,
+                                                    null);
+
+        if (result != ChangeDisplaySettingsResult.Successful)
+            throw new Win32Exception(Strings.DisplayChangePositionFailed.InvariantFormat(result));
     }
 
     /// <summary>

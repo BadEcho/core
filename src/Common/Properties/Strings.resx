@@ -342,4 +342,16 @@
   <data name="TaskDialogCallbackHandleNotSet" xml:space="preserve">
 	  <value>Handle to task dialog instance wasn't set as callback data.</value>
   </data>
+  <data name="DisplayEnumDisplaySettingsFailed" xml:space="preserve">
+	  <value>Failed to retrieve the current graphics mode for {0}.</value>
+  </data>
+  <data name="DisplayChangePositionFailed" xml:space="preserve">
+	  <value>{0} returned when attempting to adjust the monitor's position.</value>
+  </data>
+  <data name="DisplayChangePrimaryFailed" xml:space="preserve">
+	  <value>{0} returned when attempting to set the monitor as the primary display device.</value>
+  </data>
+  <data name="DisplayApplyDisplaySettingsFailed" xml:space="preserve">
+	  <value>{0} returned when attempting to apply staged display settings.</value>
+  </data>
 </root>

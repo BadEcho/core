@@ -277,7 +277,7 @@ internal static partial class User32
     /// </summary>
     /// <param name="lpszDeviceName">The name of the display device whose graphics mode will change.</param>
     /// <param name="lpDevMode">A pointer to a <see cref="DeviceMode"/> instance that describes the new graphics mode.</param>
-    /// <param name="hwnd">reserved; must be null.</param>
+    /// <param name="hwnd">Reserved; must be null.</param>
     /// <param name="dwFlags">Indicates how the graphics mode should be changed.</param>
     /// <param name="lParam">
     /// Null, unless <see cref="ChangeDisplaySettingsFlags.VideoParameters"/> is set for <paramref name="dwFlags"/>, in which case
@@ -288,7 +288,24 @@ internal static partial class User32
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static unsafe partial ChangeDisplaySettingsResult ChangeDisplaySettingsEx(
         string? lpszDeviceName, ref DeviceMode lpDevMode, IntPtr hwnd, ChangeDisplaySettingsFlags dwFlags, void* lParam);
-    
+
+    /// <summary>
+    /// Changes the settings of the specified display device to the specified graphics mode.
+    /// </summary>
+    /// <param name="lpszDeviceName">The name of the display device whose graphics mode will change.</param>
+    /// <param name="lpDevMode">A pointer to a device mode structure that describes the new graphics mode, or null.</param>
+    /// <param name="hwnd">Reserved; must be null.</param>
+    /// <param name="dwFlags">Indicates how the graphics mode should be changed.</param>
+    /// <param name="lParam">
+    /// Null, unless <see cref="ChangeDisplaySettingsFlags.VideoParameters"/> is set for <paramref name="dwFlags"/>, in which case
+    /// this should point to a structure containing information for a video connection.
+    /// </param>
+    /// <returns>A <see cref="ChangeDisplaySettingsResult"/> value indicating the result of the operation.</returns>
+    [LibraryImport(LibraryName, EntryPoint = "ChangeDisplaySettingsExW", StringMarshalling = StringMarshalling.Utf16)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static unsafe partial ChangeDisplaySettingsResult ChangeDisplaySettingsEx(
+        string? lpszDeviceName, IntPtr lpDevMode, IntPtr hwnd, ChangeDisplaySettingsFlags dwFlags, void* lParam);
+
     /// <summary>
     /// Retrieves information about a display monitor.
     /// </summary>

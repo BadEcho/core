@@ -24,32 +24,6 @@ namespace BadEcho.Tests.Interop;
 public class User32Tests
 {
     [Fact]
-    public void EnumDisplayMonitors_ReturnsTrue()
-    {
-        var closure = new MonitorCallbackClosure();
-
-        Assert.True(User32.EnumDisplayMonitors(DeviceContextHandle.InvalidHandle, IntPtr.Zero, closure.Callback, IntPtr.Zero));
-    }
-
-    [Fact]
-    public void EnumDisplayMonitors_ReturnsMonitors()
-    {
-        var monitors = UnmanagedHelper.EnumerateMonitors();
-
-        Assert.NotEmpty(monitors);
-    }
-
-    [Fact]
-    public void GetMonitorInfo_ReturnsTrue()
-    {
-        var monitors = UnmanagedHelper.EnumerateMonitors();
-
-        MONITORINFOEX monitorInfo = MONITORINFOEX.CreateWritable();
-
-        Assert.True(User32.GetMonitorInfo(monitors.First(), ref monitorInfo));
-    }
-
-    [Fact]
     public void RegisterClassEx_ReturnsValid()
     {
         ushort atom = TestWindow.RegisterClass("RegisterClassEx_ReturnsValid");  

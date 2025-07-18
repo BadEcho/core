@@ -24,7 +24,7 @@ internal enum DisplayDeviceStateFlags
     /// </summary>
     Active = 0x1,
     /// <summary>
-    /// The primary desktop is on the device.
+    /// The device is the primary display device.
     /// </summary>
     Primary = 0x4,
     /// <summary>

@@ -22,7 +22,7 @@ internal enum ChangeDisplaySettingsFlags
     /// <summary>
     /// Causes any staged settings to be applied to the specified device.
     /// </summary>
-    Commit = 0x0,
+    ApplyChanges = 0x0,
     /// <summary>
     /// The graphics mode for the specified device will be changed dynamically and the graphics mode will be
     /// updated in the registry.
@@ -42,7 +42,7 @@ internal enum ChangeDisplaySettingsFlags
     /// </summary>
     Global = 0x8,
     /// <summary>
-    /// The specified device will become the primary device.
+    /// The specified device will become the primary display device.
     /// </summary>
     SetPrimary = 0x10,
     /// <summary>
