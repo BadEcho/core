@@ -89,20 +89,20 @@ using BadEcho.Properties;
                            Target = "~T:BadEcho.Interop.WindowStyles",
                            Justification = "Not possible, window style flags use values that exceed the maximum value of a signed integer.")]
 
-[assembly: SuppressMessage("Style", 
-                           "IDE0251:Make member 'readonly'", 
+[assembly: SuppressMessage("Style",
+                           "IDE0251:Member can be made 'readonly'", 
                            Scope = "member", 
                            Target = "~P:BadEcho.Interop.NotifyIconDataMarshaller.ManagedToUnmanagedRef.NOTIFYICONDATAW.Tip",
                            Justification = "This is technically an incorrect recommendation. Although, at the time of writing, a readonly modifier here would compile fine, this setter is in fact modifying the state of this struct. The state is being modified through the copying of the input value's contents into a fixed buffer, whose location in memory is being pointed to by the Span<T> returned by the SzTip property.")]
 
-[assembly: SuppressMessage("Style", 
-                           "IDE0251:Make member 'readonly'", 
+[assembly: SuppressMessage("Style",
+                           "IDE0251:Member can be made 'readonly'", 
                            Scope = "member", 
                            Target = "~P:BadEcho.Interop.NotifyIconDataMarshaller.ManagedToUnmanagedRef.NOTIFYICONDATAW.Info",
                            Justification = "This is technically an incorrect recommendation. Although, at the time of writing, a readonly modifier here would compile fine, this setter is in fact modifying the state of this struct. The state is being modified through the copying of the input value's contents into a fixed buffer, whose location in memory is being pointed to by the Span<T> returned by the SzInfo property.")]
 
 [assembly: SuppressMessage("Style",
-                           "IDE0251:Make member 'readonly'",
+                           "IDE0251:Member can be made 'readonly'",
                            Scope = "member",
                            Target = "~P:BadEcho.Interop.NotifyIconDataMarshaller.ManagedToUnmanagedRef.NOTIFYICONDATAW.InfoTitle",
                            Justification = "This is technically an incorrect recommendation. Although, at the time of writing, a readonly modifier here would compile fine, this setter is in fact modifying the state of this struct. The state is being modified through the copying of the input value's contents into a fixed buffer, whose location in memory is being pointed to by the Span<T> returned by the SzInfoTitle property.")]
@@ -124,3 +124,15 @@ using BadEcho.Properties;
                            Scope = "member",
                            Target = "~M:BadEcho.Interop.Dialogs.TaskDialog.TaskDialogCallbackProc(System.IntPtr,BadEcho.Interop.Dialogs.TaskDialogNotification,System.IntPtr,System.IntPtr)~BadEcho.Interop.ResultHandle",
                            Justification = "All exceptions caught here are rethrown, with the exception state preserved. However, we have to hold off rethrowing the exception until the dialog is closed, otherwise the exception will bubble up to native code and get wrapped in an SEHException.")]
+
+[assembly: SuppressMessage("Style",
+                           "IDE0251:Member can be made 'readonly'",
+                           Scope = "member",
+                           Target = "~P:BadEcho.Interop.DeviceModeMarshaller.DEVMODEW.DeviceName",
+                           Justification = "This is technically an incorrect recommendation. Although, at the time of writing, a readonly modifier here would compile fine, this setter is in fact modifying the state of this struct. The state is being modified through the copying of the input value's contents into a fixed buffer, whose location in memory is being pointed to by the Span<T> returned by the SzDeviceName property.")]
+
+[assembly: SuppressMessage("Style",
+                           "IDE0251:Member can be made 'readonly'",
+                           Scope = "member",
+                           Target = "~P:BadEcho.Interop.DeviceModeMarshaller.DEVMODEW.FormName",
+                           Justification = "This is technically an incorrect recommendation. Although, at the time of writing, a readonly modifier here would compile fine, this setter is in fact modifying the state of this struct. The state is being modified through the copying of the input value's contents into a fixed buffer, whose location in memory is being pointed to by the Span<T> returned by the SzFormName property.")]
