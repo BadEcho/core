@@ -35,6 +35,15 @@ internal static partial class ShellScaling
     public static partial ResultHandle GetDpiForMonitor(IntPtr hMonitor, MonitorDpiType dpiType, out uint dpiX, out uint dpiY);
 
     /// <summary>
+    /// Sets the process-default DPI awareness level.
+    /// </summary>
+    /// <param name="value">The DPI awareness value to set.</param>
+    /// <returns>The result of the operation.</returns>
+    [LibraryImport(LIBRARY_NAME)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial ResultHandle SetProcessDpiAwareness(DpiAwareness value);
+
+    /// <summary>
     /// Gets the scale factor of a specific monitor.
     /// </summary>
     /// <param name="hMonitor">The monitor's handle.</param>
