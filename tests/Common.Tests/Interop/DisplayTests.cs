@@ -43,7 +43,7 @@ public class DisplayTests
 
         Assert.True(User32.GetMonitorInfo(monitors.First(), ref monitorInfo));
     }
-
+    
     [Fact]
     public void EnumDisplayDevices_FirstDevice_ReturnsValid()
     {
@@ -70,5 +70,15 @@ public class DisplayTests
         var displays = Display.Devices;
         
         Assert.NotEmpty(displays);
+    }
+
+    [SkipOnGitHubFact]
+    public void MakePrimary_LastDisplay_ReturnsValid()
+    {
+        var displays = Display.Devices;
+
+        var lastDisplay = displays.Skip(2).First();
+
+        lastDisplay.MakePrimary();
     }
 }
