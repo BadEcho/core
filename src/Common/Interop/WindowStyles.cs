@@ -18,7 +18,7 @@ namespace BadEcho.Interop;
 /// been created.
 /// </summary>
 [Flags]
-public enum WindowStyles : uint
+internal enum WindowStyles : uint
 {
     /// <summary>
     /// The window is an overlapped window, meaning that it has a title bar and a border.
