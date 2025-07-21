@@ -1,38 +1,39 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <Product>Bad Echo Drawing Framework</Product>
-	  <Description>Bad Echo framework for drawing and manipulating images.</Description>
-    <Title>$(Product)</Title>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <IsPackable>$(CoreIsPackable)</IsPackable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<Title>Bad Echo Drawing Framework</Title>
+		<AssemblyTitle>$(Title)</AssemblyTitle>
+		<Product>$(Title)</Product>
+		<Description>Bad Echo framework for drawing and manipulating images.</Description>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<IsPackable>$(CoreIsPackable)</IsPackable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Include="README.md" Pack="true" PackagePath="" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="SkiaSharp" Version="3.116.1" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="SkiaSharp" Version="3.116.1" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Common\BadEcho.Common.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Common\BadEcho.Common.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Properties\Strings.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Strings.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Update="Properties\Strings.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Strings.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Strings.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-	
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Strings.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Strings.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+
 </Project>

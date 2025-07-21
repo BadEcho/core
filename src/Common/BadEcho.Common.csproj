@@ -1,32 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <Product>Bad Echo Core Frameworks</Product>
-	  <Description>Bad Echo core frameworks containing technologies applicable to many domains.</Description>
-    <Title>$(Product)</Title>
+	<PropertyGroup>
+		<Title>Bad Echo Core Frameworks</Title>
+		<AssemblyTitle>$(Title)</AssemblyTitle>
+		<Product>$(Title)</Product>
+		<Description>Bad Echo core frameworks containing technologies applicable to many domains.</Description>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RootNamespace>BadEcho</RootNamespace>
 		<ApplicationManifest>Properties\app.manifest</ApplicationManifest>
-		<IsPackable>$(CoreIsPackable)</IsPackable>  
-  </PropertyGroup>
+		<IsPackable>$(CoreIsPackable)</IsPackable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Update="Properties\Strings.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Strings.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Update="Properties\Strings.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Strings.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Strings.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Strings.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Strings.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
 		<EmbeddedResource Include="Properties\app.manifest">
 			<LogicalName>BadEcho.Properties.app.manifest</LogicalName>
 		</EmbeddedResource>
-    <None Include="README.md" Pack="true" PackagePath="" />
-  </ItemGroup>
-  
+		<None Include="README.md" Pack="true" PackagePath="" />
+	</ItemGroup>
+
 </Project>
