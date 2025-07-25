@@ -19,10 +19,10 @@ namespace BadEcho.Extensions;
 public static class ExceptionExtensions
 {
     /// <summary>
-    /// Finds and returns the deepest inner exception found in the provided exception object.
+    /// Finds and returns the deepest inner exception found in the provided exception.
     /// </summary>
-    /// <param name="exception">A <see cref="Exception"/> object to retrieve the innermost exception from.</param>
-    /// <returns>The innermost <see cref="Exception"/> object found in <c>exception</c>.</returns>
+    /// <param name="exception">The <see cref="Exception"/> instance to retrieve the innermost exception from.</param>
+    /// <returns>The innermost <see cref="Exception"/> instance found in <c>exception</c>.</returns>
     public static Exception FindInnermostException(this Exception exception)
     {
         Require.NotNull(exception, nameof(exception));
@@ -35,5 +35,24 @@ public static class ExceptionExtensions
                 
             return innerException == null ? Bounce.Finish(currentException) : Bounce.Continue(innerException);
         }
+    }
+
+    /// <summary>
+    /// Gets the fully qualified name of the method that threw the exception.
+    /// </summary>
+    /// <param name="exception">The <see cref="Exception"/> instance to retrieve the full target site name for.</param>
+    /// <returns>The fully qualified name of the method that threw <c>exception</c>.</returns>
+    public static string GetTargetSiteFullName(this Exception exception)
+    {
+        Require.NotNull(exception, nameof(exception));
+
+        if (exception.TargetSite == null)
+            return string.Empty;
+
+        string typeNamePrefix = exception.TargetSite.ReflectedType != null
+            ? $"{exception.TargetSite.ReflectedType.FullName}."
+            : string.Empty;
+
+        return $"{typeNamePrefix}{exception.TargetSite.Name}";
     }
 }

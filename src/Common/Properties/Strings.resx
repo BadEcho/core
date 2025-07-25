@@ -354,4 +354,7 @@
   <data name="DisplayApplyDisplaySettingsFailed" xml:space="preserve">
 	  <value>{0} returned when attempting to apply staged display settings.</value>
   </data>
+  <data name="NoFirstLetterToUppercase" xml:space="preserve">
+	  <value>There is no first letter to convert to uppercase.</value>
+  </data>
 </root>

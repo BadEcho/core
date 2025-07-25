@@ -19,16 +19,16 @@ namespace BadEcho.Logging;
 /// </summary>
 public static class Logger
 {
-    private static readonly DefaultEventListener _Listener;
+    private static readonly BadEchoEventListener _Listener;
 
     /// <summary>
     /// Initializes static members of the <see cref="Logger"/> class.
     /// </summary>
     static Logger() 
-        => _Listener = new DefaultEventListener();
+        => _Listener = new BadEchoEventListener();
 
-    private static LogSource Source
-        => LogSource.Instance;
+    private static BadEchoEventSource Source
+        => BadEchoEventSource.Instance;
 
     /// <summary>
     /// Logs the provided message as a debug statement.

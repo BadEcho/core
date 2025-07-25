@@ -12,6 +12,7 @@
 // -----------------------------------------------------------------------
 
 using System.Globalization;
+using BadEcho.Properties;
 
 namespace BadEcho.Extensions;
 
@@ -45,4 +46,34 @@ public static class StringExtensions
     /// </returns>
     public static string InvariantFormat(this string format, params object?[] args) 
         => string.Format(CultureInfo.InvariantCulture, format, args);
+
+    /// <summary>
+    /// Returns a copy of this string with its first character converted to uppercase.
+    /// </summary>
+    /// <param name="source">A nonempty string.</param>
+    /// <param name="culture">An object that supplies culture-specific casing rules.</param>
+    /// <returns><c>source</c> with its first character converted to uppercase.</returns>
+    public static string ToUpperFirst(this string source, CultureInfo culture)
+    {
+        if (string.IsNullOrEmpty(source))
+            throw new ArgumentException(Strings.NoFirstLetterToUppercase);
+        
+        return string.Create(source.Length, source, InitializeString);
+        
+        void InitializeString(Span<char> characters, string state)
+        {
+            state.AsSpan().CopyTo(characters);
+
+            characters[0] = char.ToUpper(characters[0], culture);
+        }
+    }
+
+    /// <summary>
+    /// Returns a copy of this string with its first character converted to uppercase using the casing rules of the
+    /// invariant culture.
+    /// </summary>
+    /// <param name="source">A nonempty string.</param>
+    /// <returns><c>source</c> with its first character converted to uppercase.</returns>
+    public static string ToUpperFirstInvariant(this string source)
+        => ToUpperFirst(source, CultureInfo.InvariantCulture);
 }

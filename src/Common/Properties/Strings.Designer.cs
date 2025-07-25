@@ -466,6 +466,15 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There is no first letter to convert to uppercase..
+        /// </summary>
+        public static string NoFirstLetterToUppercase {
+            get {
+                return ResourceManager.GetString("NoFirstLetterToUppercase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Can&apos;t send messages to a task dialog window...without a window. The dialog must be shown before its state can be updated..
         /// </summary>
         public static string NoTaskDialogWindowListening {

@@ -29,7 +29,7 @@ public class LoggerTests : IDisposable
     {
         _listener = new EventListenerStub();
 
-        _listener.EnableEvents(LogSource.Instance, EventLevel.LogAlways);
+        _listener.EnableEvents(BadEchoEventSource.Instance, EventLevel.LogAlways);
     }
         
     public void Dispose()
@@ -93,11 +93,15 @@ public class LoggerTests : IDisposable
     [Fact]
     public void Error_ArgumentException()
     {
-        var argumentException =
-            new ArgumentException("The specified identifier does not exist. What kind of IDIOT are you? IDIOT!",
-                                  "identifierValue");
-
-        AssertEventWritten(() => Logger.Error("We messed up.", argumentException));
+        try
+        {
+            throw new ArgumentException("The specified identifier does not exist. What kind of IDIOT are you? IDIOT!",
+                                        "identifierValue");
+        }
+        catch (ArgumentException ex)
+        {
+            AssertEventWritten(() => Logger.Error("We messed up.", ex));
+        }
     }
 
     [Fact]
@@ -123,11 +127,16 @@ public class LoggerTests : IDisposable
     [Fact]
     public void Critical_ArgumentException()
     {
-        var argumentException =
-            new ArgumentException("The specified identifier exists, but you were supposed to get it wrong! IDIOT!",
-                                  "identifierValue");
-
-        AssertEventWritten(() => Logger.Critical("We're doomed.", argumentException));
+        try
+        {
+            throw new ArgumentException(
+                "The specified identifier exists, but you were supposed to get it wrong! IDIOT!",
+                "identifierValue");
+        }
+        catch (ArgumentException ex)
+        {
+            AssertEventWritten(() => Logger.Critical("We're doomed.", ex));
+        }
     }
 
     [Fact]
@@ -164,7 +173,7 @@ public class LoggerTests : IDisposable
 
     private void DisableEventSource()
     {
-        _listener.DisableEvents(LogSource.Instance);
+        _listener.DisableEvents(BadEchoEventSource.Instance);
         Logger.DisableDefaultListener();
     }
 

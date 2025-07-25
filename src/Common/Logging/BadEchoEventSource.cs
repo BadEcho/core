@@ -13,34 +13,29 @@
 
 using System.Diagnostics.Tracing;
 using System.Runtime.CompilerServices;
+using BadEcho.Extensions;
 
 namespace BadEcho.Logging;
 
 /// <summary>
-/// Provides a source for diagnostic messages from Bad Echo technologies to external listeners.
+/// Provides an event source for diagnostic messages pertaining to Bad Echo technologies.
 /// </summary>
-[EventSource(Name = EVENT_SOURCE_NAME)]
-internal sealed class LogSource : EventSource
+[EventSource(Name = "BadEcho-Diagnostics")]
+internal sealed class BadEchoEventSource : EventSource
 {
-    private const string EVENT_SOURCE_NAME = "BadEcho";
-
     /// <summary>
-    /// Initializes a new instance of the <see cref="LogSource"/> class.
+    /// Initializes a new instance of the <see cref="BadEchoEventSource"/> class.
     /// </summary>
-    private LogSource()
-        : base(EventSourceSettings.EtwSelfDescribingEventFormat)
+    private BadEchoEventSource()
+        : base(EventSourceSettings.EtwSelfDescribingEventFormat, 
+               BadEchoEventListener.TraitName, 
+               BadEchoEventListener.TraitValue)
     { }
-
+    
     /// <summary>
-    /// Gets the name of the <see cref="EventSource"/> registered for this type.
+    /// Gets the singular instance of <see cref="BadEchoEventSource"/>.
     /// </summary>
-    public static string EventSourceName
-        => EVENT_SOURCE_NAME;
-
-    /// <summary>
-    /// Gets the singular instance of <see cref="LogSource"/>.
-    /// </summary>
-    public static LogSource Instance
+    public static BadEchoEventSource Instance
     { get; } = new();
 
     /// <summary>
@@ -104,7 +99,7 @@ internal sealed class LogSource : EventSource
     {
         if (!IsEnabled())
             return;
-
+        
         WriteEvent(5, message);
     }
 
@@ -119,9 +114,11 @@ internal sealed class LogSource : EventSource
         if (!IsEnabled())
             return;
 
+        Require.NotNull(exception, nameof(exception));
+
         ErrorException(message,
                        exception.GetType().FullName ?? string.Empty,
-                       exception.Message,
+                       exception.GetTargetSiteFullName(),
                        exception.HResult,
                        exception.ToString());
     }
@@ -138,9 +135,11 @@ internal sealed class LogSource : EventSource
         if (!IsEnabled())
             return;
 
+        Require.NotNull(exception, nameof(exception));
+
         CriticalException(message,
                           exception.GetType().FullName ?? string.Empty,
-                          exception.Message,
+                          exception.GetTargetSiteFullName(),
                           exception.HResult,
                           exception.ToString());
     }
@@ -148,23 +147,23 @@ internal sealed class LogSource : EventSource
     [Event(6, Level = EventLevel.Error, Keywords = Keywords.MessageKeywordValue | Keywords.ExceptionKeywordValue)]
     private unsafe void ErrorException(string? message,
                                        string exceptionType,
-                                       string exceptionMessage,
-                                       int exceptionHResult,
-                                       string exceptionVerboseMessage)
+                                       string targetSite,
+                                       int hResult,
+                                       string exception)
     {
         fixed (char* pMessage = message)
         fixed (char* pExceptionType = exceptionType)
-        fixed (char* pExceptionMessage = exceptionMessage)
-        fixed (char* pExceptionVerboseMessage = exceptionVerboseMessage)
+        fixed (char* pTargetSite = targetSite)
+        fixed (char* pException = exception)
         {
             const int eventDataCount = 5;
             EventData* eventData = stackalloc EventData[eventDataCount];
 
             SetEventData(ref eventData[0], ref message, pMessage);
             SetEventData(ref eventData[1], ref exceptionType, pExceptionType);
-            SetEventData(ref eventData[2], ref exceptionMessage, pExceptionMessage);
-            SetEventData(ref eventData[3], ref exceptionHResult);
-            SetEventData(ref eventData[4], ref exceptionVerboseMessage, pExceptionVerboseMessage);
+            SetEventData(ref eventData[2], ref targetSite, pTargetSite);
+            SetEventData(ref eventData[3], ref hResult);
+            SetEventData(ref eventData[4], ref exception, pException);
 
             WriteEventCore(6, eventDataCount, eventData);
         }
@@ -173,23 +172,23 @@ internal sealed class LogSource : EventSource
     [Event(7, Level = EventLevel.Critical, Keywords = Keywords.MessageKeywordValue | Keywords.ExceptionKeywordValue)]
     private unsafe void CriticalException(string? message,
                                           string exceptionType,
-                                          string exceptionMessage,
-                                          int exceptionHResult,
-                                          string exceptionVerboseMessage)
+                                          string targetSite,
+                                          int hResult,
+                                          string exception)
     {
         fixed (char* pMessage = message)
         fixed (char* pExceptionType = exceptionType)
-        fixed (char* pExceptionMessage = exceptionMessage)
-        fixed (char* pExceptionVerboseMessage = exceptionVerboseMessage)
+        fixed (char* pTargetSite = targetSite)
+        fixed (char* pException = exception)
         {
             const int eventDataCount = 5;
             EventData* eventData = stackalloc EventData[eventDataCount];
 
             SetEventData(ref eventData[0], ref message, pMessage);
             SetEventData(ref eventData[1], ref exceptionType, pExceptionType);
-            SetEventData(ref eventData[2], ref exceptionMessage, pExceptionMessage);
-            SetEventData(ref eventData[3], ref exceptionHResult);
-            SetEventData(ref eventData[4], ref exceptionVerboseMessage, pExceptionVerboseMessage);
+            SetEventData(ref eventData[2], ref targetSite, pTargetSite);
+            SetEventData(ref eventData[3], ref hResult);
+            SetEventData(ref eventData[4], ref exception, pException);
 
             WriteEventCore(7, eventDataCount, eventData);
         }
