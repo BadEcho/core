@@ -219,11 +219,11 @@ public class MessageOnlyExecutorTests
     }
 
     [Fact]
-    public void InvokeAsync_ExceptionThrown_RaisedOnCallingThread()
+    public async Task InvokeAsync_ExceptionThrown_RaisedOnCallingThread()
     {
         using var executor = CreateExecutor();
 
-        Assert.ThrowsAsync<BadImageFormatException>(
+        await Assert.ThrowsAsync<BadImageFormatException>(
             async () => await executor.InvokeAsync(() => throw new BadImageFormatException("Holy cow!")));
     }
 
