@@ -27,8 +27,10 @@ public class JsonConfigurationProviderTests
     public void GetConfiguration_RootSection()
     {
         var configurationProvider = new FakeProvider();
+        var root = configurationProvider.GetConfiguration<FakeData>();
 
-        Assert.NotNull(configurationProvider.GetConfiguration<FakeData>());
+        Assert.NotNull(root);
+        Assert.Equal("hi", root.SomeData);
     }
 
     [Fact]
@@ -38,6 +40,8 @@ public class JsonConfigurationProviderTests
         var single = configurationProvider.GetConfiguration<FakeExtensionData>("single");
 
         Assert.NotNull(single);
+        Assert.Equal("two", single.One);
+        Assert.Equal("eighty", single.Three);
     }
 
     [Fact]
@@ -46,12 +50,17 @@ public class JsonConfigurationProviderTests
         var configurationProvider = new FakeExtensionProvider();
         var extensibleData = configurationProvider.GetConfiguration<FakeData>();
         var firstGroup = extensibleData.Group?.GetConfiguration<FakeExtensionData>("first");
-
+        
         Assert.NotNull(firstGroup);
+        Assert.Equal("forty", firstGroup.One);
+        Assert.Equal("eighty", firstGroup.Three);
 
         var secondGroup = extensibleData.Group?.GetConfiguration<FakeExtensionDataImpl>("second");
 
         Assert.NotNull(secondGroup);
+        Assert.Equal("two", secondGroup.One);
+        Assert.Equal("one", secondGroup.Three);
+        Assert.Equal("three", secondGroup.Eight);
     }
 
     private class FakeProvider : JsonConfigurationProvider
@@ -68,9 +77,19 @@ public class JsonConfigurationProviderTests
 
     private class FakeData
     {
+        public string? SomeData { get; init; }
+
         public ExtensionDataStore<FakeExtensionData>? Group { get; set; }
     }
 
-    private class FakeExtensionData;
-    private class FakeExtensionDataImpl : FakeExtensionData;
+    private class FakeExtensionData
+    {
+        public string? One { get; init; }
+        public string? Three { get; init; }
+    }
+
+    private class FakeExtensionDataImpl : FakeExtensionData
+    {
+        public string? Eight { get; init; }
+    }
 }

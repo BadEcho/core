@@ -19,11 +19,6 @@ namespace BadEcho.Configuration;
 public interface IConfigurationReader
 {
     /// <summary>
-    /// Gets the raw text of the configuration source to parse.
-    /// </summary>
-    internal string ConfigurationText { get; }
-
-    /// <summary>
     /// Gets the root of the configuration as an instance of type <typeparamref name="T"/>.
     /// </summary>
     /// <typeparam name="T">The type of object to parse the configuration as.</typeparam>

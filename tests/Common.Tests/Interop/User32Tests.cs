@@ -97,7 +97,7 @@ public class User32Tests
     }
 
     [Fact]
-    public void GetMessage_PostMessage_ReturnsTrue()
+    public async Task GetMessage_PostMessage_ReturnsTrue()
     {
         var msg = new MSG();
 
@@ -110,7 +110,7 @@ public class User32Tests
 
         User32.SendMessage(WindowHandle.InvalidHandle, (WindowMessage) 1, IntPtr.Zero, IntPtr.Zero);
 
-        getMessage.Wait();
+        await getMessage.WaitAsync(TimeSpan.FromMinutes(1.0));
     }
 
     [Fact]

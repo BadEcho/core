@@ -19,7 +19,7 @@ namespace BadEcho.Configuration;
 /// <summary>
 /// Provides a JSON-based source for hot-pluggable configuration data.
 /// </summary>
-public abstract class JsonConfigurationProvider : ConfigurationProvider
+public abstract class JsonConfigurationProvider : FileConfigurationProvider
 {
     /// <inheritdoc/>
     [return: NotNull]
@@ -51,7 +51,7 @@ public abstract class JsonConfigurationProvider : ConfigurationProvider
     /// <summary>
     /// Provides a reader of JSON configuration data based on a provided configuration text.
     /// </summary>
-    protected sealed class JsonConfigurationReader : IConfigurationReader
+    protected sealed class JsonConfigurationReader : IFileConfigurationReader
     {
         private readonly string _configurationText;
         private readonly JsonConfigurationProvider _configurationProvider;
@@ -69,7 +69,7 @@ public abstract class JsonConfigurationProvider : ConfigurationProvider
             _configurationProvider = configurationProvider;
         }
 
-        string IConfigurationReader.ConfigurationText 
+        string IFileConfigurationReader.ConfigurationText 
             => _configurationText;
 
         /// <inheritdoc/>

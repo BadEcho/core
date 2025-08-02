@@ -20,12 +20,12 @@ namespace BadEcho.Configuration;
 public sealed class ExtensionDataStore<T>
     where T : new()
 {
-    private readonly IConfigurationReader? _configurationReader;
+    private readonly IFileConfigurationReader? _configurationReader;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ExtensionDataStore{T}"/> class.
     /// </summary>
-    public ExtensionDataStore(IConfigurationReader configurationReader)
+    public ExtensionDataStore(IFileConfigurationReader configurationReader)
         => _configurationReader = configurationReader;
 
     /// <summary>
