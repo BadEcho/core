@@ -12,29 +12,27 @@
 // -----------------------------------------------------------------------
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Logger = BadEcho.Logging.Logger;
 
 namespace BadEcho.Extensions.Logging;
 
 /// <summary>
-/// Provides extension methods for adding Bad Echo event support to an <see cref="ILoggingBuilder"/> instance.
+/// Provides extension methods for setting up services that add Bad Echo event support to configured logger providers.
 /// </summary>
-public static class LoggingBuilderExtensions
+public static class ServiceCollectionExtensions
 {
     /// <summary>
-    /// Adds support for forwarding Bad Echo diagnostic events to configured logger providers.
+    /// Adds a service that will forward Bad Echo diagnostic events to configured logger providers.
     /// </summary>
-    /// <param name="builder">The <see cref="ILoggingBuilder"/> to use.</param>
-    /// <returns>The current <see cref="ILoggingBuilder"/> instance so that additional calls can be chained.</returns>
-    public static ILoggingBuilder ForwardBadEchoEvents(this ILoggingBuilder builder)
+    /// <param name="services">The <see cref="IServiceCollection"/> instance to add services to.</param>
+    /// <returns>The current <see cref="IServiceCollection"/> instance so that additional calls can be chained.</returns>
+    public static IServiceCollection AddBadEchoEventForwarder(this IServiceCollection services)
     {
-        Require.NotNull(builder, nameof(builder));
-        
+        Require.NotNull(services, nameof(services));
         Logger.DisableDefaultListener();
 
-        builder.Services.AddHostedService<BadEchoEventSourceLogForwarder>();
+        services.AddHostedService<BadEchoEventSourceLogForwarder>();
         
-        return builder;
+        return services;
     }
 }

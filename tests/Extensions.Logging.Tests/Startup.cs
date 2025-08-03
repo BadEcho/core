@@ -27,8 +27,9 @@ public class Startup
         {
             l.AddDebug();
             l.AddConfiguration(configuration.GetSection("Logging"));
-            l.ForwardBadEchoEvents();
             l.AddProvider(new TestLoggerProvider());
         });
+
+        services.AddBadEchoEventForwarder();
     }
 }
