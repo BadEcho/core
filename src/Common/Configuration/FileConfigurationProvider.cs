@@ -18,7 +18,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace BadEcho.Configuration;
 
 /// <summary>
-/// Provides hot-pluggable configuration data for an application sourced from a file.
+/// Provides hot-pluggable configuration data sourced from a file.
 /// </summary>
 public abstract class FileConfigurationProvider : ConfigurationProvider, IFileConfigurationReader, IDisposable
 {

@@ -14,7 +14,7 @@
 namespace BadEcho.Configuration;
 
 /// <summary>
-/// Defines a provider for a format-neutral source of hot-pluggable configuration data for an application.
+/// Defines a provider for a format-neutral source of hot-pluggable configuration data.
 /// </summary>
 public interface IConfigurationProvider : IConfigurationReader
 {
