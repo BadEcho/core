@@ -117,8 +117,8 @@ public interface IThreadExecutor
     void Run();
 
     /// <summary>
-    /// Begins initialization of the executor to process requests on another thread, resuming execution of
-    /// the calling <c>async</c> method once the executor is running and ready to receive requests.
+    /// Initializes the executor to process requests on another thread as an asynchronous operation, which, once complete,
+    /// indicates that the executor is running and ready to receive requests.
     /// </summary>
     /// <returns>
     /// A <see cref="ThreadExecutorOperation"/> representing the asynchronous initialization operation that
@@ -126,16 +126,16 @@ public interface IThreadExecutor
     /// </returns>
     /// <remarks>
     /// <para>
-    /// This call offloads the initialization to another thread because not doing so would result in the
-    /// executor processing requests for the current thread until its explicit shutdown. Because of this, it
-    /// would never release control back to the caller.
+    /// Once started, an executor will continuously process requests on its thread until it is explicitly shut down.
+    /// Because of this, we need to offload its initialization to another thread, otherwise we'll end up blocking till kingdom
+    /// come.
     /// </para>
     /// <para> 
-    /// A direct call to <see cref="Run"/> can be made in order start the executor on the current thread instead
-    /// (which will, of course, not return until the executor is shutdown).
+    /// If running the executor on the current thread is desired, then a direct call to <see cref="Run"/> can be made instead
+    /// (which will, of course, not return until the executor is shut down).
     /// </para>
     /// </remarks>
-    ThreadExecutorOperation RunAsync();
+    ThreadExecutorOperation StartAsync();
 
     /// <summary>
     /// Switches the current synchronization context to that executor's own.

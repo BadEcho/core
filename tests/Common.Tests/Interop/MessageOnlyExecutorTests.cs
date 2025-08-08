@@ -46,29 +46,29 @@ public class MessageOnlyExecutorTests
     }
 
     [Fact]
-    public async Task Await_RunningAsync_WindowInitialized()
+    public async Task Window_StartAsyncAwaited_WindowInitialized()
     {
         using var executor = new MessageOnlyExecutor();
 
         Assert.Null(executor.Window);
 
-        await executor.RunAsync();
+        await executor.StartAsync();
 
         Assert.NotNull(executor.Window);
     }
 
     [Fact]
-    public void OperationStatus_RunningAsync_IsPending()
+    public void OperationStatus_StartAsyncNotAwaited_IsPending()
     {
         using var executor = new MessageOnlyExecutor();
 
-        var operation = executor.RunAsync();
+        var operation = executor.StartAsync();
 
         Assert.Equal(ThreadExecutorOperationStatus.Pending, operation.Status);
     }
 
     [Fact]
-    public void Run_Running_ThrowsException()
+    public void Run_AlreadyRunning_ThrowsException()
     {
         using var executor = CreateExecutor();
 
@@ -78,16 +78,16 @@ public class MessageOnlyExecutorTests
     }
 
     [Fact]
-    public async Task RunAsync_Running_ThrowsException()
+    public async Task StartAsync_AlreadyRunning_ThrowsException()
     {
         using var executor = new MessageOnlyExecutor();
         bool caughtException = false;
 
-        await executor.RunAsync();
+        await executor.StartAsync();
 
         try
         {
-            await executor.RunAsync();
+            await executor.StartAsync();
         }
         catch (InvalidOperationException)
         {
@@ -98,7 +98,7 @@ public class MessageOnlyExecutorTests
     }
 
     [Fact]
-    public async Task RunAsync_RequestsDisabled_ThrowsCatchableExecutorException()
+    public async Task StartAsync_WithRequestsDisabled_ThrowsCatchableExecutorException()
     {
         using var executor = new MessageOnlyExecutor();
         bool caughtException = false;
@@ -107,7 +107,7 @@ public class MessageOnlyExecutorTests
         {
             executor.Disable();
 
-            await executor.RunAsync();
+            await executor.StartAsync();
         }
         catch (InvalidOperationException)
         {   // This is thrown by the offloaded Run task. We need to see if it is still catchable in the current context.
@@ -122,7 +122,7 @@ public class MessageOnlyExecutorTests
     {
         var executor = new MessageOnlyExecutor();
 
-        await executor.RunAsync();
+        await executor.StartAsync();
 
         executor.Dispose();
 
@@ -140,11 +140,11 @@ public class MessageOnlyExecutorTests
     }
 
     [Fact]
-    public async Task InvokeAction_RunningAsyncFromCallingThread_RunsOnExecutorThread()
+    public async Task InvokeAction_FromCallingThreadAfterStartAsync_RunsOnExecutorThread()
     {
         using var executor = new MessageOnlyExecutor();
 
-        await executor.RunAsync();
+        await executor.StartAsync();
 
         int currentThreadId = 0;
 

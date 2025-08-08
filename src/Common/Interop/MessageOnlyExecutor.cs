@@ -348,7 +348,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     }
 
     /// <inheritdoc/>
-    public ThreadExecutorOperation RunAsync()
+    public ThreadExecutorOperation StartAsync()
     {   
         if (Window != null)
         {   // We fail immediately if the executor is already running; as it becomes difficult to report errors to awaiting callers.

@@ -118,7 +118,7 @@ public sealed class ExternalWindowWrapper : WindowWrapper, IDisposable
         if (_hookExecutor.Window != null)
             return;
 
-        await _hookExecutor.RunAsync();
+        await _hookExecutor.StartAsync();
 
         if (_hookExecutor.Window == null)
             throw new InvalidOperationException(Strings.MessageQueueForHookFailed);
