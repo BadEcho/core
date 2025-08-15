@@ -40,7 +40,6 @@ internal sealed class BadEchoEventSourceLogForwarder : IHostedService, IDisposab
     public BadEchoEventSourceLogForwarder(ILoggerFactory factory)
     {
         _factory = factory;
-        
     }
 
     /// <inheritdoc/>
