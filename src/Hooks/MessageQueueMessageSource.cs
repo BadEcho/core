@@ -25,7 +25,7 @@ namespace BadEcho.Hooks;
 /// </summary>
 public sealed class MessageQueueMessageSource : IMessageSource<GetMessageProcedure>, IDisposable
 {
-    private readonly CachedWeakList<GetMessageProcedure> _callbacks = [];
+    private readonly DelegateInvocationList<GetMessageProcedure> _callbacks = [];
     private readonly MessageOnlyExecutor _hookExecutor = new();
     private readonly int _threadId;
 

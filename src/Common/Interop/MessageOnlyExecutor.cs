@@ -334,7 +334,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
             Thread = Thread.CurrentThread;
             Window = new MessageOnlyWindowWrapper(this);
 
-            Window.AddStartingCallback(_callback);
+            Window.AddCallback(_callback);
 
             _running.Set();
             // A call to Dispose() may have been made (either deliberately or due to a using statement/declaration) before

@@ -20,7 +20,7 @@ namespace BadEcho.Interop;
 /// </summary>
 public abstract class WindowWrapper : IMessageSource<WindowProcedure>
 {
-    private readonly CachedWeakList<WindowProcedure> _callbacks = [];
+    private readonly DelegateInvocationList<WindowProcedure> _callbacks = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WindowWrapper"/> class.
@@ -29,7 +29,7 @@ public abstract class WindowWrapper : IMessageSource<WindowProcedure>
     protected WindowWrapper(WindowHandle handle)
     {
         Require.NotNull(handle, nameof(handle));
-
+        
         Handle = handle;
     }
 
@@ -38,15 +38,6 @@ public abstract class WindowWrapper : IMessageSource<WindowProcedure>
     /// </summary>
     public WindowHandle Handle 
     { get; init; }
-
-    /// <summary>
-    /// Adds a callback function that will receive intercepted messages prior to any existing callbacks receiving them.
-    /// </summary>
-    /// <param name="callback">The callback function to invoke first when messages are sent to the wrapped window.</param>
-    public void AddStartingCallback(WindowProcedure callback)
-    {
-        _callbacks.Insert(0, callback);
-    }
 
     /// <inheritdoc/>
     public void AddCallback(WindowProcedure callback)
@@ -108,7 +99,7 @@ public abstract class WindowWrapper : IMessageSource<WindowProcedure>
         foreach (WindowProcedure callback in _callbacks)
         {
             result = callback(hWnd, msg, wParam, lParam);
-                    
+
             if (result.Handled)
                 break;
         }

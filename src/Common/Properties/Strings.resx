@@ -168,9 +168,6 @@
   <data name="DisplayEnumDisplayMonitorsFailed" xml:space="preserve">
     <value>EnumDisplayMonitors failed unexpectedly.</value>
   </data>
-  <data name="WeakListEnumeratorNoReference" xml:space="preserve">
-    <value>Weak list enumerator requires a strong reference to enumerate.</value>
-  </data>
   <data name="WindowHotKeyDuplicateId" xml:space="preserve">
     <value>A hot key has already been registered with the identifier '{0}'.</value>
   </data>
@@ -356,5 +353,8 @@
   </data>
   <data name="NoFirstLetterToUppercase" xml:space="preserve">
 	  <value>There is no first letter to convert to uppercase.</value>
+  </data>
+  <data name="InvocationListEnumeratorUndefinedCurrent" xml:space="preserve">
+	  <value>The delegate invocation list enumerator is positioned before the first element of the collection or after the last element.</value>
   </data>
 </root>

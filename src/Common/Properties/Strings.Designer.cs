@@ -349,6 +349,15 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The delegate invocation list enumerator is positioned before the first element of the collection or after the last element..
+        /// </summary>
+        public static string InvocationListEnumeratorUndefinedCurrent {
+            get {
+                return ResourceManager.GetString("InvocationListEnumeratorUndefinedCurrent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The provided JSON object&apos;s data property is not a JSON object..
         /// </summary>
         public static string JsonDataValueNotObject {
@@ -759,15 +768,6 @@ namespace BadEcho.Properties {
         public static string ThreadExecutorSourceNotInitialized {
             get {
                 return ResourceManager.GetString("ThreadExecutorSourceNotInitialized", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Weak list enumerator requires a strong reference to enumerate..
-        /// </summary>
-        public static string WeakListEnumeratorNoReference {
-            get {
-                return ResourceManager.GetString("WeakListEnumeratorNoReference", resourceCulture);
             }
         }
         
