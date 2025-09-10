@@ -12,8 +12,10 @@
 // -----------------------------------------------------------------------
 
 using System.ComponentModel;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using BadEcho.Extensions;
+using BadEcho.Logging;
 using BadEcho.Properties;
 
 namespace BadEcho.Interop;
@@ -86,6 +88,24 @@ public sealed class NativeWindow
     /// </summary>
     public int Height
     { get; private set; }
+    
+    /// <summary>
+    /// Gets the bounds of the caption button area for this window.
+    /// </summary>
+    public unsafe Rectangle CaptionButtonBounds
+    {
+        get
+        {
+            ResultHandle hResult = DesktopWindowManager.DwmGetWindowAttribute(Handle,
+                                                                              DwmWindowAttribute.CaptionButtonBounds,
+                                                                              out RECT bounds,
+                                                                              sizeof(RECT));
+            if (hResult == ResultHandle.Failure) 
+                Logger.Error(Strings.WindowCaptionBoundsFailure, hResult.GetException());
+
+            return Rectangle.FromLTRB(bounds.Left, bounds.Top, bounds.Right, bounds.Bottom);
+        }
+    }
 
     /// <summary>
     /// Gets a value indicating if techniques intended to eliminate the possibility of a flickering background during the initial
@@ -113,7 +133,7 @@ public sealed class NativeWindow
         
         Gdi32.DeleteObject(oldBrush);
     }
-
+    
     /// <summary>
     /// Invalidates the client area of the window, causing it to eventually be redrawn.
     /// </summary>

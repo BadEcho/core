@@ -772,6 +772,15 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to get bounds for the window&apos;s caption button area..
+        /// </summary>
+        public static string WindowCaptionBoundsFailure {
+            get {
+                return ResourceManager.GetString("WindowCaptionBoundsFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A hot key has already been registered with the identifier &apos;{0}&apos;..
         /// </summary>
         public static string WindowHotKeyDuplicateId {

@@ -357,4 +357,7 @@
   <data name="InvocationListEnumeratorUndefinedCurrent" xml:space="preserve">
 	  <value>The delegate invocation list enumerator is positioned before the first element of the collection or after the last element.</value>
   </data>
+  <data name="WindowCaptionBoundsFailure" xml:space="preserve">
+	  <value>Failed to get bounds for the window's caption button area.</value>
+  </data>
 </root>
