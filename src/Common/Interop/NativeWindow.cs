@@ -268,10 +268,11 @@ public sealed class NativeWindow
                                                        uFlags);
                     if (!resized)
                         throw new Win32Exception(Marshal.GetLastWin32Error());
+                    
+                    handled = true;
+                    lResult = new IntPtr(1);
                 }
 
-                handled = true;
-                lResult = new IntPtr(1);
                 break;
 
             case WindowMessage.ShowWindow when wParam == 1: // Ignore windows becoming hidden
