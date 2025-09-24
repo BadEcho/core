@@ -20,6 +20,7 @@ namespace BadEcho.Tests.Interop;
 /// <suppressions>
 /// ReSharper disable AccessToDisposedClosure
 /// </suppressions>
+[Collection("MessageOnlyExecutor")]
 public class MessageOnlyExecutorTests
 {
     [Fact]
