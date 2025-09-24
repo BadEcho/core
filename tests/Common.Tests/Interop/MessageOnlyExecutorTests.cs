@@ -17,6 +17,9 @@ using Xunit;
 
 namespace BadEcho.Tests.Interop;
 
+[CollectionDefinition("MessageOnlyExecutor", DisableParallelization = true)]
+public class MessageOnlyExecutorTestsDefinition;
+
 /// <suppressions>
 /// ReSharper disable AccessToDisposedClosure
 /// </suppressions>
