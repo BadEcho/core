@@ -54,6 +54,8 @@ public class WritableOptionsTests : IDisposable
               OptionB = "Second secondary one"
           };
 
+    private readonly ManualResetEventSlim _mre = new();
+
     private readonly IWritableOptions<PrimaryFirstOptions> _primaryFirstOptions;
     private readonly IWritableOptions<PrimarySecondOptions> _primarySecondOptions;
     private readonly IWritableOptions<PrimaryNoSectionOptions> _primaryNoSectionOptions;
@@ -63,24 +65,22 @@ public class WritableOptionsTests : IDisposable
     private readonly IDisposable? _primaryNoSectionChange;
     private readonly IDisposable? _secondaryChange;
 
-    private bool _calledUpdate;
-
     public WritableOptionsTests(IWritableOptions<PrimaryFirstOptions> primaryFirstOptions, 
                                 IWritableOptions<PrimarySecondOptions> primarySecondOptions,
                                 IWritableOptions<PrimaryNoSectionOptions> primaryNoSectionOptions,
                                 IWritableOptions<SecondaryOptions> secondaryOptions)
     {
         _primaryFirstOptions = primaryFirstOptions;
-        _primaryFirstChange = _primaryFirstOptions.OnChange(OnPrimaryFirstChange);
+        _primaryFirstChange = _primaryFirstOptions.OnChange((_,_) => _mre.Set());
 
         _primarySecondOptions = primarySecondOptions;
-        _primarySecondChange = _primarySecondOptions.OnChange(OnPrimarySecondChange);
+        _primarySecondChange = _primarySecondOptions.OnChange((_, _) => _mre.Set());
 
         _primaryNoSectionOptions = primaryNoSectionOptions;
-        _primaryNoSectionChange = _primaryNoSectionOptions.OnChange(OnPrimaryNoSectionChange);
+        _primaryNoSectionChange = _primaryNoSectionOptions.OnChange((_, _) => _mre.Set());
 
         _secondaryOptions = secondaryOptions;
-        _secondaryChange = _secondaryOptions.OnChange(OnSecondaryChange);
+        _secondaryChange = _secondaryOptions.OnChange((_, _) => _mre.Set());
     }
 
     [Fact]
@@ -122,6 +122,8 @@ public class WritableOptionsTests : IDisposable
     [Fact]
     public async Task Save_PrimaryFirst_UpdatesFile()
     {
+        Assert.NotNull(_primaryFirstChange);
+
         await ValidateUpdatedOptions(_primaryFirstOptions,
                                      "appsettings.primary.json",
                                      "PrimaryFirst");
@@ -166,6 +168,7 @@ public class WritableOptionsTests : IDisposable
         _primarySecondChange?.Dispose();
         _primaryNoSectionChange?.Dispose();
         _secondaryChange?.Dispose();
+        _mre.Dispose();
     }
 
     private static string GetConfigPath(string config, [CallerFilePath] string rootPath = "")
@@ -198,7 +201,7 @@ public class WritableOptionsTests : IDisposable
         
         options.Save(name);
 
-        string filePath = Path.Combine(Directory.GetCurrentDirectory(), fileName);
+        string filePath = Path.Combine(AppContext.BaseDirectory, fileName);
 
         string updatedFile = await File.ReadAllTextAsync(filePath);
 
@@ -217,27 +220,6 @@ public class WritableOptionsTests : IDisposable
 
         await File.WriteAllTextAsync(filePath, originalFile);
 
-        await Task.Run(() => { while (!_calledUpdate) { }})
-                  .WaitAsync(TimeSpan.FromSeconds(3));
-    }
-
-    private void OnPrimaryFirstChange(PrimaryFirstOptions arg1, string? arg2)
-    {
-        _calledUpdate = true;
-    }
-
-    private void OnPrimaryNoSectionChange(PrimaryNoSectionOptions arg1, string? arg2)
-    {
-        _calledUpdate = true;
-    }
-
-    private void OnPrimarySecondChange(PrimarySecondOptions arg1, string? arg2)
-    {
-        _calledUpdate = true;
-    }
-
-    private void OnSecondaryChange(SecondaryOptions arg1, string? arg2)
-    {
-        _calledUpdate = true;
+        _mre.Wait(TimeSpan.FromSeconds(3));
     }
 }
