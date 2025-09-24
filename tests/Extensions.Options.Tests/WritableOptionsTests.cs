@@ -11,12 +11,12 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
 namespace BadEcho.Extensions.Options.Tests;
 
+[Collection("WritableTests")]
 public class WritableOptionsTests : IDisposable
 {
     private static readonly TestOptions _ExpectedPrimaryFirst
@@ -171,9 +171,6 @@ public class WritableOptionsTests : IDisposable
         _mre.Dispose();
     }
 
-    private static string GetConfigPath(string config, [CallerFilePath] string rootPath = "")
-        => $"{Path.GetDirectoryName(rootPath)}\\{config}";
-    
     private static void ValidateOptions<TOptions>(IWritableOptions<TOptions> options, 
                                                   TestOptions expected,
                                                   string? name = null)
@@ -196,12 +193,16 @@ public class WritableOptionsTests : IDisposable
     {
         TestOptions actual = options.Get(name);
         Assert.NotNull(actual);
+        
+        string filePath = Path.Combine(Directory.GetCurrentDirectory(), fileName);
+        string id = Guid.NewGuid().ToString();
+        string backupFilePath = $"{filePath}-{id}";
+
+        File.Copy(filePath, backupFilePath, true);
 
         actual.OptionA = "Changed";
         
         options.Save(name);
-
-        string filePath = Path.Combine(AppContext.BaseDirectory, fileName);
 
         string updatedFile = await File.ReadAllTextAsync(filePath);
 
@@ -216,7 +217,7 @@ public class WritableOptionsTests : IDisposable
         Assert.NotNull(updated);
         Assert.Equal("Changed", updated.OptionA);
 
-        string originalFile = await File.ReadAllTextAsync(GetConfigPath(fileName));
+        string originalFile = await File.ReadAllTextAsync(backupFilePath);
 
         await File.WriteAllTextAsync(filePath, originalFile);
 
