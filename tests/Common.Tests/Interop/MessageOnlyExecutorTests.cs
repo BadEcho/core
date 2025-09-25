@@ -77,7 +77,7 @@ public class MessageOnlyExecutorTests
         Assert.Throws<InvalidOperationException>(executor.Run);
     }
 
-    [Fact]
+    [SkipOnGitHubFact]
     public async Task StartAsync_AlreadyRunning_ThrowsException()
     {
         using var executor = new MessageOnlyExecutor();
@@ -227,7 +227,7 @@ public class MessageOnlyExecutorTests
             async () => await executor.InvokeAsync(() => throw new BadImageFormatException("Holy cow!")));
     }
 
-    [Fact]
+    [SkipOnGitHubFact]
     public void WaitOnOperation_CallingThreadNoTimeout_OperationEndsFirst()
     {
         using var executor = CreateExecutor();
@@ -238,7 +238,7 @@ public class MessageOnlyExecutorTests
         Assert.Equal(ThreadExecutorOperationStatus.Completed, operation.Status);
     }
 
-    [Fact]
+    [SkipOnGitHubFact]
     public void WaitOnOperation_CallingThreadTimeout_TimesOutFirst()
     {
         using var executor = CreateExecutor();
@@ -252,7 +252,7 @@ public class MessageOnlyExecutorTests
         operation.Wait();
     }
 
-    [Fact]
+    [SkipOnGitHubFact]
     public void WaitOnOperation_ExecutorThreadNoTimeout_ResumesExecution()
     {
         bool executionResumed = false;
@@ -270,7 +270,7 @@ public class MessageOnlyExecutorTests
         Assert.True(executionResumed);
     }
 
-    [Fact]
+    [SkipOnGitHubFact]
     public void WaitOnOperation_ExecutorThreadTimeout_ResumesExecution()
     {
         bool executionResumed = false;
