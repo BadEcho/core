@@ -17,13 +17,9 @@ using Xunit;
 
 namespace BadEcho.Tests.Interop;
 
-[CollectionDefinition("MessageOnlyExecutor", DisableParallelization = true)]
-public class MessageOnlyExecutorTestsDefinition;
-
 /// <suppressions>
 /// ReSharper disable AccessToDisposedClosure
 /// </suppressions>
-[Collection("MessageOnlyExecutor")]
 public class MessageOnlyExecutorTests
 {
     [Fact]
@@ -231,7 +227,7 @@ public class MessageOnlyExecutorTests
             async () => await executor.InvokeAsync(() => throw new BadImageFormatException("Holy cow!")));
     }
 
-    [SkipOnGitHubFact]
+    [Fact]
     public void WaitOnOperation_CallingThreadNoTimeout_OperationEndsFirst()
     {
         using var executor = CreateExecutor();
@@ -242,7 +238,7 @@ public class MessageOnlyExecutorTests
         Assert.Equal(ThreadExecutorOperationStatus.Completed, operation.Status);
     }
 
-    [SkipOnGitHubFact]
+    [Fact]
     public void WaitOnOperation_CallingThreadTimeout_TimesOutFirst()
     {
         using var executor = CreateExecutor();
@@ -256,7 +252,7 @@ public class MessageOnlyExecutorTests
         operation.Wait();
     }
 
-    [SkipOnGitHubFact]
+    [Fact]
     public void WaitOnOperation_ExecutorThreadNoTimeout_ResumesExecution()
     {
         bool executionResumed = false;
@@ -274,7 +270,7 @@ public class MessageOnlyExecutorTests
         Assert.True(executionResumed);
     }
 
-    [SkipOnGitHubFact]
+    [Fact]
     public void WaitOnOperation_ExecutorThreadTimeout_ResumesExecution()
     {
         bool executionResumed = false;
