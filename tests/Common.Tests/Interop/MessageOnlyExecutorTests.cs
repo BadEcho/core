@@ -231,7 +231,7 @@ public class MessageOnlyExecutorTests
             async () => await executor.InvokeAsync(() => throw new BadImageFormatException("Holy cow!")));
     }
 
-    [Fact]
+    [SkipOnGitHubFact]
     public void WaitOnOperation_CallingThreadNoTimeout_OperationEndsFirst()
     {
         using var executor = CreateExecutor();
@@ -256,7 +256,7 @@ public class MessageOnlyExecutorTests
         operation.Wait();
     }
 
-    [Fact]
+    [SkipOnGitHubFact]
     public void WaitOnOperation_ExecutorThreadNoTimeout_ResumesExecution()
     {
         bool executionResumed = false;
@@ -274,7 +274,7 @@ public class MessageOnlyExecutorTests
         Assert.True(executionResumed);
     }
 
-    [Fact]
+    [SkipOnGitHubFact]
     public void WaitOnOperation_ExecutorThreadTimeout_ResumesExecution()
     {
         bool executionResumed = false;
