@@ -93,9 +93,8 @@ jobs:
         path: bin/rel/
     - name: Execute Test Runner
       run: |
-        '<RunSettings><RunConfiguration><TestSessionTimeout>120000</TestSessionTimeout></RunConfiguration></RunSettings>' | Out-File temp.runsettings
         Get-ChildItem bin\rel\*.Tests.dll | `
-        ForEach-Object {vstest.console /Settings:temp.runsettings /Logger:trx`;LogFileName="$($_.BaseName).trx" /ResultsDirectory:testResults $_.FullName; if ($LASTEXITCODE -eq 1) {$failWhenDone = $true} }; `
+        ForEach-Object {vstest.console /Logger:trx`;LogFileName="$($_.BaseName).trx" /ResultsDirectory:testResults $_.FullName; if ($LASTEXITCODE -eq 1) {$failWhenDone = $true} }; `
         if ($failWhenDone -eq $true) { exit 1 }
     - name: Upload Test Artifact
       uses: actions/upload-artifact@v4
