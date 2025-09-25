@@ -111,8 +111,8 @@ public sealed class WritableOptions<TOptions> : IWritableOptions<TOptions>, IDis
 
         if (string.IsNullOrEmpty(path))
             throw new InvalidOperationException(Strings.OptionsFileNotAccessible);
-        
-        var optionsFileNode = JsonNode.Parse(File.ReadAllText(path));
+
+        var optionsFileNode = File.Exists(path) ? JsonNode.Parse(File.ReadAllText(path)) : null;
         var options = Get(name);
 
         string updateSection = JsonSerializer.Serialize(options);

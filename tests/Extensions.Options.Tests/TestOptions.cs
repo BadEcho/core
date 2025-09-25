@@ -63,3 +63,9 @@ public class SecondaryOptions : TestOptions
     public static string SectionName
         => "Secondary";
 }
+
+public class NonexistentOptions : TestOptions
+{
+    public static string SectionName
+        => "Nonexistent";
+}

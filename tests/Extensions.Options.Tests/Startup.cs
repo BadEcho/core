@@ -21,10 +21,12 @@ public class Startup
     {
         const string appSettingsPrimary = "appsettings.primary.json";
         const string appSettingsSecondary= "appsettings.secondary.json";
+        const string appSettingsNonexistent = "appsettings.nonexistent.json";
 
         IConfiguration configuration = new ConfigurationBuilder()
                                        .AddJsonFile(appSettingsPrimary, optional: false, reloadOnChange: true)
                                        .AddJsonFile(appSettingsSecondary, optional: false, reloadOnChange : true)
+                                       .AddJsonFile(appSettingsNonexistent, optional: true, reloadOnChange: true)
                                        .Build();
         
         services.Configure<PrimaryFirstOptions>(configuration.GetSection(PrimaryFirstOptions.SectionName), appSettingsPrimary);
@@ -32,5 +34,7 @@ public class Startup
         services.Configure<PrimaryNoSectionOptions>(configuration, appSettingsPrimary);
         services.Configure<PrimarySecondOptions>(configuration.GetSection(PrimarySecondOptions.SectionName), appSettingsPrimary);
         services.Configure<SecondaryOptions>(configuration.GetSection(SecondaryOptions.SectionName), appSettingsSecondary);
+        services.Configure<NonexistentOptions>(configuration.GetSection(NonexistentOptions.SectionName),
+                                               appSettingsNonexistent);
     }
 }

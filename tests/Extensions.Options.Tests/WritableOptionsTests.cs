@@ -60,6 +60,7 @@ public class WritableOptionsTests : IDisposable
     private readonly IWritableOptions<PrimarySecondOptions> _primarySecondOptions;
     private readonly IWritableOptions<PrimaryNoSectionOptions> _primaryNoSectionOptions;
     private readonly IWritableOptions<SecondaryOptions> _secondaryOptions;
+    private readonly IWritableOptions<NonexistentOptions> _nonexistentOptions;
     private readonly IDisposable? _primaryFirstChange;
     private readonly IDisposable? _primarySecondChange;
     private readonly IDisposable? _primaryNoSectionChange;
@@ -68,7 +69,8 @@ public class WritableOptionsTests : IDisposable
     public WritableOptionsTests(IWritableOptions<PrimaryFirstOptions> primaryFirstOptions, 
                                 IWritableOptions<PrimarySecondOptions> primarySecondOptions,
                                 IWritableOptions<PrimaryNoSectionOptions> primaryNoSectionOptions,
-                                IWritableOptions<SecondaryOptions> secondaryOptions)
+                                IWritableOptions<SecondaryOptions> secondaryOptions,
+                                IWritableOptions<NonexistentOptions> nonexistentOptions)
     {
         _primaryFirstOptions = primaryFirstOptions;
         _primaryFirstChange = _primaryFirstOptions.OnChange((_,_) => _mre.Set());
@@ -81,6 +83,8 @@ public class WritableOptionsTests : IDisposable
 
         _secondaryOptions = secondaryOptions;
         _secondaryChange = _secondaryOptions.OnChange((_, _) => _mre.Set());
+
+        _nonexistentOptions = nonexistentOptions;
     }
 
     [Fact]
@@ -162,6 +166,25 @@ public class WritableOptionsTests : IDisposable
                                      "Secondary");
     }
 
+    [Fact]
+    public async Task Save_Nonexistent_CreateFile()
+    {
+        const string appSettingsNonexistent = "appsettings.nonexistent.json";
+        
+        string filePath = Path.Combine(Directory.GetCurrentDirectory(), appSettingsNonexistent);
+
+        Assert.False(File.Exists(filePath));
+
+        await ValidateUpdatedOptions(_nonexistentOptions,
+                                     appSettingsNonexistent,
+                                     NonexistentOptions.SectionName,
+                                     backupFile: false);
+
+        Assert.True(File.Exists(filePath));
+
+        File.Delete(filePath);
+    }
+
     public void Dispose()
     {
         _primaryFirstChange?.Dispose();
@@ -188,7 +211,8 @@ public class WritableOptionsTests : IDisposable
     private async Task ValidateUpdatedOptions<TOptions>(IWritableOptions<TOptions> options,
                                                         string fileName,
                                                         string sectionName,
-                                                        string? name = null)
+                                                        string? name = null,
+                                                        bool backupFile = true)
         where TOptions : TestOptions
     {
         TestOptions actual = options.Get(name);
@@ -198,7 +222,8 @@ public class WritableOptionsTests : IDisposable
         string id = Guid.NewGuid().ToString();
         string backupFilePath = $"{filePath}-{id}";
 
-        File.Copy(filePath, backupFilePath, true);
+        if (backupFile)
+            File.Copy(filePath, backupFilePath, true);
 
         actual.OptionA = "Changed";
         
@@ -217,9 +242,12 @@ public class WritableOptionsTests : IDisposable
         Assert.NotNull(updated);
         Assert.Equal("Changed", updated.OptionA);
 
-        string originalFile = await File.ReadAllTextAsync(backupFilePath);
+        if (backupFile)
+        {
+            string originalFile = await File.ReadAllTextAsync(backupFilePath);
 
-        await File.WriteAllTextAsync(filePath, originalFile);
+            await File.WriteAllTextAsync(filePath, originalFile);
+        }
 
         _mre.Wait(TimeSpan.FromSeconds(3));
     }
