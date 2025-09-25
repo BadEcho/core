@@ -252,6 +252,8 @@ public class MessageOnlyExecutorTests
         operation.Wait(TimeSpan.FromSeconds(1));
 
         Assert.Equal(ThreadExecutorOperationStatus.Running, operation.Status);
+
+        operation.Wait();
     }
 
     [Fact]
