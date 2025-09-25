@@ -1,6 +1,0 @@
-<RunSettings>
-  <RunConfiguration>
-     <!-- Specify timeout in milliseconds. A valid value should be greater than 0 -->
-     <TestSessionTimeout>120000</TestSessionTimeout>
-  </RunConfiguration>
-</RunSettings>
