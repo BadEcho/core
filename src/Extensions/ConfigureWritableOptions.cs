@@ -14,7 +14,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace BadEcho.Extensions.Options;
+namespace BadEcho.Extensions;
 
 /// <summary>
 /// Provides configuration for a writable <typeparamref name="TOptions"/> type.

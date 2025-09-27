@@ -17,9 +17,9 @@ using System.Text.Json.Nodes;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Primitives;
-using BadEcho.Extensions.Options.Properties;
+using BadEcho.Extensions.Properties;
 
-namespace BadEcho.Extensions.Options;
+namespace BadEcho.Extensions;
 
 /// <summary>
 /// Provides configured <typeparamref name="TOptions"/> instances that allow for changes to be persisted.

@@ -11,18 +11,34 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Configuration;
+using Logger = BadEcho.Logging.Logger;
 
-namespace BadEcho.Extensions.Options;
+namespace BadEcho.Extensions;
 
 /// <summary>
-/// Provides extension methods for setting up services that add enhancements to options.
+/// Provides extension methods for setting up services that integrate Bad Echo core frameworks with a hosted application.
 /// </summary>
 public static class ServiceCollectionExtensions
 {
+    /// <summary>
+    /// Adds a service that will forward Bad Echo diagnostic events to configured logger providers.
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/> instance to add services to.</param>
+    /// <returns>The current <see cref="IServiceCollection"/> instance so that additional calls can be chained.</returns>
+    public static IServiceCollection AddEventSourceLogForwarder(this IServiceCollection services)
+    {
+        Require.NotNull(services, nameof(services));
+        Logger.DisableDefaultListener();
+
+        services.AddHostedService<EventSourceLogForwarder>();
+        
+        return services;
+    }
+
     /// <summary>
     /// Registers a configuration instance that writable <typeparamref name="TOptions"/> instances will bind against.
     /// </summary>
@@ -31,7 +47,7 @@ public static class ServiceCollectionExtensions
     /// <param name="configuration">The configuration being bound.</param>
     /// <param name="fileName">The name of the file to write to when changes are saved.</param>
     /// <returns>The current <see cref="IServiceCollection"/> instance so that additional calls can be chained.</returns>
-    public static IServiceCollection Configure<TOptions>(this IServiceCollection services, 
+    public static IServiceCollection Configure<TOptions>(this IServiceCollection services,
                                                          IConfiguration configuration,
                                                          string fileName)
         where TOptions : class
@@ -52,8 +68,8 @@ public static class ServiceCollectionExtensions
     /// <param name="configuration">The configuration section being bound.</param>
     /// <param name="fileName">The name of the file to write to when changes are saved.</param>
     /// <returns>The current <see cref="IServiceCollection"/> instance so that additional calls can be chained.</returns>
-    public static IServiceCollection Configure<TOptions>(this IServiceCollection services, 
-                                                         IConfigurationSection configuration, 
+    public static IServiceCollection Configure<TOptions>(this IServiceCollection services,
+                                                         IConfigurationSection configuration,
                                                          string fileName)
         where TOptions : class
     {
@@ -75,7 +91,7 @@ public static class ServiceCollectionExtensions
     /// <param name="fileName">The name of the file to write to when changes are saved.</param>
     /// <returns>The current <see cref="IServiceCollection"/> instance so that additional calls can be chained.</returns>
     public static IServiceCollection Configure<TOptions>(this IServiceCollection services,
-                                                         string name, 
+                                                         string name,
                                                          IConfiguration configuration,
                                                          string fileName)
         where TOptions : class
@@ -97,9 +113,9 @@ public static class ServiceCollectionExtensions
     /// <param name="configuration">The configuration section being bound.</param>
     /// <param name="fileName">The name of the file to write to when changes are saved.</param>
     /// <returns>The current <see cref="IServiceCollection"/> instance so that additional calls can be chained.</returns>
-    public static IServiceCollection Configure<TOptions>(this IServiceCollection services, 
-                                                         string name, 
-                                                         IConfigurationSection configuration, 
+    public static IServiceCollection Configure<TOptions>(this IServiceCollection services,
+                                                         string name,
+                                                         IConfigurationSection configuration,
                                                          string fileName)
         where TOptions : class
     {

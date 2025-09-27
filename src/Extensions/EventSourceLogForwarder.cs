@@ -18,7 +18,7 @@ using BadEcho.Logging;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace BadEcho.Extensions.Logging;
+namespace BadEcho.Extensions;
 
 /// <summary>
 /// Providers a forwarder of Bad Echo diagnostic events to configured logger providers.

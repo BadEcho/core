@@ -14,7 +14,7 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace BadEcho.Extensions.Options.Tests;
+namespace BadEcho.Extensions.Tests;
 
 [Collection("WritableTests")]
 public class WritableOptionsTests : IDisposable

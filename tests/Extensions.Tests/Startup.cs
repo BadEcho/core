@@ -12,23 +12,34 @@
 // -----------------------------------------------------------------------
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
-namespace BadEcho.Extensions.Options.Tests;
+namespace BadEcho.Extensions.Tests;
 
 public class Startup
 {
-    public void ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection services)
+    public void ConfigureServices(IServiceCollection services)
     {
         const string appSettingsPrimary = "appsettings.primary.json";
-        const string appSettingsSecondary= "appsettings.secondary.json";
+        const string appSettingsSecondary = "appsettings.secondary.json";
         const string appSettingsNonexistent = "appsettings.nonexistent.json";
 
         IConfiguration configuration = new ConfigurationBuilder()
+                                       .AddJsonFile("appsettings.json")
                                        .AddJsonFile(appSettingsPrimary, optional: false, reloadOnChange: true)
-                                       .AddJsonFile(appSettingsSecondary, optional: false, reloadOnChange : true)
+                                       .AddJsonFile(appSettingsSecondary, optional: false, reloadOnChange: true)
                                        .AddJsonFile(appSettingsNonexistent, optional: true, reloadOnChange: true)
                                        .Build();
-        
+        services.AddLogging(l =>
+        {
+            l.AddDebug();
+            l.AddConfiguration(configuration.GetSection("Logging"));
+            l.AddProvider(new TestLoggerProvider());
+        });
+
+        services.AddEventSourceLogForwarder();
+
         services.Configure<PrimaryFirstOptions>(configuration.GetSection(PrimaryFirstOptions.SectionName), appSettingsPrimary);
         services.Configure<PrimaryFirstOptions>("Two", configuration.GetSection("PrimaryFirst2"), appSettingsPrimary);
         services.Configure<PrimaryNoSectionOptions>(configuration, appSettingsPrimary);

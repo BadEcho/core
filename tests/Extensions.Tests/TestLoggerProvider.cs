@@ -13,7 +13,7 @@
 
 using Microsoft.Extensions.Logging;
 
-namespace BadEcho.Extensions.Logging.Tests;
+namespace BadEcho.Extensions.Tests;
 
 internal sealed class TestLoggerProvider : ILoggerProvider
 {

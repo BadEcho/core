@@ -13,7 +13,7 @@
 
 using Logger = BadEcho.Logging.Logger;
 
-namespace BadEcho.Extensions.Logging.Tests;
+namespace BadEcho.Extensions.Tests;
 
 public class LogForwarderTests
 {

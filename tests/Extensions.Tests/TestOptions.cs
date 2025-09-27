@@ -12,7 +12,7 @@
 // -----------------------------------------------------------------------
 
 
-namespace BadEcho.Extensions.Options.Tests;
+namespace BadEcho.Extensions.Tests;
 
 /// <suppressions>
 /// ReSharper disable NonReadonlyMemberInGetHashCode

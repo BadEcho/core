@@ -13,7 +13,7 @@
 
 using Microsoft.Extensions.Options;
 
-namespace BadEcho.Extensions.Options;
+namespace BadEcho.Extensions;
 
 /// <summary>
 /// Defines a provider of configured <typeparamref name="TOptions"/> instances that allow for changes to be persisted.

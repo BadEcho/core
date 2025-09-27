@@ -17,7 +17,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Common\BadEcho.Common.csproj" />
-		<ProjectReference Include="..\..\src\Extensions.Logging\BadEcho.Extensions.Logging.csproj" />
+		<ProjectReference Include="..\..\src\Extensions\BadEcho.Extensions.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -27,6 +27,12 @@
 	<ItemGroup>
 		<None Update="appsettings.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="appsettings.primary.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="appsettings.secondary.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 
