@@ -195,22 +195,6 @@ public class ThreadExecutorOperation
         => Executor.Lock;
 
     /// <summary>
-    /// Creates an operation that has completed with a specific exception.
-    /// </summary>
-    /// <param name="executor">The executor powering the operation.</param>
-    /// <param name="exception">The exception resulting in the faulted operation.</param>
-    /// <returns>The faulted operation.</returns>
-    public static ThreadExecutorOperation CreateFaulted(IThreadExecutor executor, Exception exception)
-    { 
-        var taskSource = new ThreadExecutorOperationTaskSource<object>();
-        var operation = new ThreadExecutorOperation(executor, () => { }, false, null, taskSource);
-
-        taskSource.SetException(exception);
-
-        return operation;
-    }
-
-    /// <summary>
     /// Gets an awaiter for awaiting the completion of the operation.
     /// </summary>
     /// <returns>A <see cref="TaskAwaiter"/> value for awaiting the completion of the operation.</returns>

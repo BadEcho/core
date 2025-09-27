@@ -349,11 +349,10 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
 
     /// <inheritdoc/>
     public ThreadExecutorOperation StartAsync()
-    {   
+    {
         if (Window != null)
         {   // We fail immediately if the executor is already running; as it becomes difficult to report errors to awaiting callers.
-            return ThreadExecutorOperation
-                .CreateFaulted(this, new InvalidOperationException(Strings.ExecutorAlreadyRunning));
+            throw new InvalidOperationException(Strings.ExecutorAlreadyRunning);
         }
 
         // Run() blocks the calling thread until the executor is shut down, so we must offload to another thread in order
