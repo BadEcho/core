@@ -192,9 +192,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
             var operation = new ThreadExecutorOperation(this, method);
             
             InvokeAsync(operation);
-            Console.WriteLine($"Waiting on operation with method: {method.Method.Name}");
             operation.Wait();
-            Console.WriteLine($"Done waiting on {method.Method.Name}");
         }
     }
 
@@ -423,7 +421,6 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
             }
         }
 
-        Console.WriteLine($"Dispose: {_framesRunning} frames");
         if (_framesRunning == 0)
             StartShutdown();
         else
@@ -568,7 +565,6 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
 
     private void StartShutdown()
     {
-        Console.WriteLine($"Started shutdown with {_framesRunning} frames");
         if (IsShutdownStarted)
             return;
 
@@ -595,7 +591,6 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
 
     private void ShutdownContextCallback(object? state)
     {
-        Console.WriteLine("Doing actual shutdown");
         MessageOnlyWindowWrapper? window;
 
         lock (Lock)
