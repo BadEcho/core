@@ -31,6 +31,6 @@ public class Startup
             l.AddProvider(new TestLoggerProvider());
         });
 
-        services.AddBadEchoEventForwarder();
+        services.AddEventSourceLogForwarder();
     }
 }

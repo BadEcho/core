@@ -26,12 +26,12 @@ public static class ServiceCollectionExtensions
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/> instance to add services to.</param>
     /// <returns>The current <see cref="IServiceCollection"/> instance so that additional calls can be chained.</returns>
-    public static IServiceCollection AddBadEchoEventForwarder(this IServiceCollection services)
+    public static IServiceCollection AddEventSourceLogForwarder(this IServiceCollection services)
     {
         Require.NotNull(services, nameof(services));
         Logger.DisableDefaultListener();
 
-        services.AddHostedService<BadEchoEventSourceLogForwarder>();
+        services.AddHostedService<EventSourceLogForwarder>();
         
         return services;
     }

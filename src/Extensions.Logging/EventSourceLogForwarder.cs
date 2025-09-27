@@ -26,7 +26,7 @@ namespace BadEcho.Extensions.Logging;
 /// <suppressions>
 /// Resharper disable NonStaticLoggerTemplate
 /// </suppressions>
-internal sealed class BadEchoEventSourceLogForwarder : IHostedService, IDisposable
+internal sealed class EventSourceLogForwarder : IHostedService, IDisposable
 {
     private readonly ConcurrentDictionary<string, ILogger> _loggers = new();
     private readonly ILoggerFactory _factory;
@@ -35,9 +35,9 @@ internal sealed class BadEchoEventSourceLogForwarder : IHostedService, IDisposab
     private bool _disposed;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="BadEchoEventSourceLogForwarder"/> class.
+    /// Initializes a new instance of the <see cref="EventSourceLogForwarder"/> class.
     /// </summary>
-    public BadEchoEventSourceLogForwarder(ILoggerFactory factory)
+    public EventSourceLogForwarder(ILoggerFactory factory)
     {
         _factory = factory;
     }
