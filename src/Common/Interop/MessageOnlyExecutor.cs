@@ -192,7 +192,9 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
             var operation = new ThreadExecutorOperation(this, method);
             
             InvokeAsync(operation);
+            Console.WriteLine($"Waiting on operation with method: {method.Method.Name}");
             operation.Wait();
+            Console.WriteLine($"Done waiting on {method.Method.Name}");
         }
     }
 
