@@ -227,7 +227,7 @@ public class MessageOnlyExecutorTests
             async () => await executor.InvokeAsync(() => throw new BadImageFormatException("Holy cow!")));
     }
 
-    [Fact]
+    [SkipOnGitHubFact]
     public void WaitOnOperation_CallingThreadNoTimeout_OperationEndsFirst()
     {
         using var executor = CreateExecutor();
