@@ -47,5 +47,9 @@ public class Startup
         services.Configure<SecondaryOptions>(configuration.GetSection(SecondaryOptions.SectionName), appSettingsSecondary);
         services.Configure<NonexistentOptions>(configuration.GetSection(NonexistentOptions.SectionName),
                                                appSettingsNonexistent);
+        services.Configure<MissingOptions>(configuration.GetSection(MissingOptions.SectionName),
+                                           appSettingsPrimary);
+        services.Configure<ArrayOptions>(configuration.GetSection(ArrayOptions.SectionName),
+                                         appSettingsPrimary);
     }
 }

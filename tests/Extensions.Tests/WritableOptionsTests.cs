@@ -19,11 +19,12 @@ namespace BadEcho.Extensions.Tests;
 [Collection("WritableTests")]
 public class WritableOptionsTests : IDisposable
 {
-    private static readonly TestOptions _ExpectedPrimaryFirst
+    private static readonly PrimaryFirstOptions _ExpectedPrimaryFirst
         = new()
           {
               OptionA = "First one",
-              OptionB = "Second one"
+              OptionB = "Second one",
+              OptionNumber = 2
           };
 
     private static readonly TestOptions _ExpectedNamedPrimaryFirst
@@ -54,6 +55,9 @@ public class WritableOptionsTests : IDisposable
               OptionB = "Second secondary one"
           };
 
+    private static readonly ArrayOptions _ExpectedArray
+        = [new ArrayItem { OptionA = "Item1a", OptionB = "Item1b" }, new ArrayItem { OptionA = "Item2a", OptionB = "Item2b" }];
+
     private readonly ManualResetEventSlim _mre = new();
 
     private readonly IWritableOptions<PrimaryFirstOptions> _primaryFirstOptions;
@@ -61,6 +65,8 @@ public class WritableOptionsTests : IDisposable
     private readonly IWritableOptions<PrimaryNoSectionOptions> _primaryNoSectionOptions;
     private readonly IWritableOptions<SecondaryOptions> _secondaryOptions;
     private readonly IWritableOptions<NonexistentOptions> _nonexistentOptions;
+    private readonly IWritableOptions<MissingOptions> _missingOptions;
+    private readonly IWritableOptions<ArrayOptions> _arrayOptions;
     private readonly IDisposable? _primaryFirstChange;
     private readonly IDisposable? _primarySecondChange;
     private readonly IDisposable? _primaryNoSectionChange;
@@ -70,7 +76,9 @@ public class WritableOptionsTests : IDisposable
                                 IWritableOptions<PrimarySecondOptions> primarySecondOptions,
                                 IWritableOptions<PrimaryNoSectionOptions> primaryNoSectionOptions,
                                 IWritableOptions<SecondaryOptions> secondaryOptions,
-                                IWritableOptions<NonexistentOptions> nonexistentOptions)
+                                IWritableOptions<NonexistentOptions> nonexistentOptions,
+                                IWritableOptions<MissingOptions> missingOptions,
+                                IWritableOptions<ArrayOptions> arrayOptions)
     {
         _primaryFirstOptions = primaryFirstOptions;
         _primaryFirstChange = _primaryFirstOptions.OnChange((_,_) => _mre.Set());
@@ -85,6 +93,8 @@ public class WritableOptionsTests : IDisposable
         _secondaryChange = _secondaryOptions.OnChange((_, _) => _mre.Set());
 
         _nonexistentOptions = nonexistentOptions;
+        _missingOptions = missingOptions;
+        _arrayOptions = arrayOptions;
     }
 
     [Fact]
@@ -124,9 +134,22 @@ public class WritableOptionsTests : IDisposable
     }
 
     [Fact]
+    public void Load_Array_ReturnsValid()
+    {
+        ArrayOptions actual = _arrayOptions.Get(null);
+
+        Assert.NotNull(actual);
+
+        ValidateArrays(_ExpectedArray, actual);
+    }
+
+    [Fact]
     public async Task Save_PrimaryFirst_UpdatesFile()
     {
         Assert.NotNull(_primaryFirstChange);
+
+        var options = _primaryFirstOptions.Get(null);
+        options.OptionNumber = 3;
 
         await ValidateUpdatedOptions(_primaryFirstOptions,
                                      "appsettings.primary.json",
@@ -185,6 +208,42 @@ public class WritableOptionsTests : IDisposable
         File.Delete(filePath);
     }
 
+    [Fact]
+    public async Task Save_InitiallyMissingTwice_UpdatesFile()
+    {
+        const string fileName = "appsettings.primary.json";
+
+        string filePath = Path.Combine(Directory.GetCurrentDirectory(), fileName);
+        string id = Guid.NewGuid().ToString();
+        string backupFilePath = $"{filePath}-{id}";
+
+        File.Copy(filePath, backupFilePath, true);
+
+        await ValidateUpdatedOptions(_missingOptions,
+                                     fileName,
+                                     "Missing",
+                                     backupFile: false);
+
+        await ValidateUpdatedOptions(_missingOptions,
+                                     fileName,
+                                     "Missing",
+                                     backupFile: false);
+
+        string originalFile = await File.ReadAllTextAsync(backupFilePath);
+
+        await File.WriteAllTextAsync(filePath, originalFile);
+    }
+
+    [Fact]
+    public async Task Save_Array_UpdatesFile()
+    {
+        await ValidateUpdatedOptions(_arrayOptions,
+                                     "appsettings.primary.json",
+                                     "Array",
+                                     propertyChanger: o => o[0].OptionA = "Changed",
+                                     changedPropertySelector: o => o[0].OptionA);
+    }
+
     public void Dispose()
     {
         _primaryFirstChange?.Dispose();
@@ -204,6 +263,14 @@ public class WritableOptionsTests : IDisposable
         Assert.NotNull(actual);
         Assert.Equal(expected, actual);
     }
+    
+    private static void ValidateArrays(ArrayOptions expected, ArrayOptions actual)
+    {
+        for (int i = 0; i < expected.Count; i++)
+        {
+            Assert.Equal(expected[i], actual[i]);
+        }
+    }
 
     /// <suppression>
     /// ReSharper disable ParameterOnlyUsedForPreconditionCheck.Local
@@ -212,10 +279,15 @@ public class WritableOptionsTests : IDisposable
                                                         string fileName,
                                                         string sectionName,
                                                         string? name = null,
-                                                        bool backupFile = true)
-        where TOptions : TestOptions
+                                                        bool backupFile = true,
+                                                        Action<TOptions>? propertyChanger = null,
+                                                        Func<TOptions, string>? changedPropertySelector = null)
+        where TOptions : class, ITestOptions
     {
-        TestOptions actual = options.Get(name);
+        propertyChanger ??= o => o.OptionA = "Changed";
+        changedPropertySelector ??= o => o.OptionA;
+
+        TOptions actual = options.Get(name);
         Assert.NotNull(actual);
         
         string filePath = Path.Combine(Directory.GetCurrentDirectory(), fileName);
@@ -225,7 +297,7 @@ public class WritableOptionsTests : IDisposable
         if (backupFile)
             File.Copy(filePath, backupFilePath, true);
 
-        actual.OptionA = "Changed";
+        propertyChanger(actual);
         
         options.Save(name);
 
@@ -234,13 +306,13 @@ public class WritableOptionsTests : IDisposable
         JsonNode? updatedNode = JsonNode.Parse(updatedFile);
         Assert.NotNull(updatedNode);
 
-        JsonNode? updatedSectionNode = updatedNode[sectionName];
+        JsonNode? updatedSectionNode = string.IsNullOrEmpty(sectionName) ? updatedNode : updatedNode[sectionName];
         Assert.NotNull(updatedSectionNode);
 
         var updated = updatedSectionNode.Deserialize<TOptions>();
 
         Assert.NotNull(updated);
-        Assert.Equal("Changed", updated.OptionA);
+        Assert.Equal("Changed", changedPropertySelector(updated));
 
         if (backupFile)
         {

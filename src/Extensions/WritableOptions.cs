@@ -103,26 +103,21 @@ public sealed class WritableOptions<TOptions> : IWritableOptions<TOptions>, IDis
     {
         name ??= string.Empty;
 
-        string fileName = _fileNameMap[name];
-        string sectionName = _sectionNameMap[name];
+        JsonNode updateSection = JsonSerializer.SerializeToNode(Get(name)) ?? new JsonObject();
+        string path = GetOptionsPath(_fileNameMap[name]);
 
-        IFileInfo info = _environment.ContentRootFileProvider.GetFileInfo(fileName);
-        string? path = info.PhysicalPath;
+        JsonNode? optionsFileNode = null;
 
-        if (string.IsNullOrEmpty(path))
-            throw new InvalidOperationException(Strings.OptionsFileNotAccessible);
+        if (File.Exists(path))
+            optionsFileNode = JsonNode.Parse(File.ReadAllText(path));
 
-        var optionsFileNode = File.Exists(path) ? JsonNode.Parse(File.ReadAllText(path)) : null;
-        var options = Get(name);
-
-        string updateSection = JsonSerializer.Serialize(options);
-
-        optionsFileNode ??= string.IsNullOrEmpty(sectionName) ? updateSection : new JsonObject();
-        optionsFileNode[sectionName] = JsonNode.Parse(updateSection);
-
-        var updatedOptionsFile = optionsFileNode.ToJsonString(new JsonSerializerOptions{WriteIndented = true});
-
-        File.WriteAllText(path, updatedOptionsFile);
+        optionsFileNode = optionsFileNode.MergeNodes(updateSection, _sectionNameMap[name]);
+      
+        File.WriteAllText(path,
+                          optionsFileNode.ToJsonString(new JsonSerializerOptions
+                                                       {
+                                                           WriteIndented = true
+                                                       }));
     }
 
     /// <inheritdoc/>
@@ -141,23 +136,45 @@ public sealed class WritableOptions<TOptions> : IWritableOptions<TOptions>, IDis
         _disposed = true;
     }
 
+    private string GetOptionsPath(string fileName)
+    {
+        IFileInfo info = _environment.ContentRootFileProvider.GetFileInfo(fileName);
+        string? path;
+
+        if (info is NotFoundFileInfo)
+        {
+            string? directoryName = Path.GetDirectoryName(fileName);
+
+            if (!string.IsNullOrEmpty(directoryName) && !Directory.Exists(directoryName))
+                Directory.CreateDirectory(directoryName);
+
+            path = fileName;
+        }
+        else
+            path = info.PhysicalPath;            
+
+        if (string.IsNullOrEmpty(path))
+            throw new InvalidOperationException(Strings.OptionsFileNotAccessible);
+        return path;
+    }
+
     private void RegisterSource(IOptionsChangeTokenSource<TOptions> source)
     {
         IDisposable registration = ChangeToken.OnChange(source.GetChangeToken,
                                                         ConsumeChange,
                                                         source.Name);
         _registrations.Add(registration);
-    }
 
-    private void ConsumeChange(string? name)
-    {
-        name ??= string.Empty;
+        void ConsumeChange(string? name)
+        {
+            name ??= string.Empty;
 
-        _cache.TryRemove(name);
+            _cache.TryRemove(name);
 
-        TOptions options = Get(name);
-        
-        Changed?.Invoke(this, new EventArgs<(TOptions options, string Name)>((options, name)));
+            TOptions options = Get(name);
+
+            Changed?.Invoke(this, new EventArgs<(TOptions options, string Name)>((options, name)));
+        }
     }
 
     /// <summary>
