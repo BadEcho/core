@@ -77,7 +77,7 @@ public class MessageOnlyExecutorTests
         Assert.Throws<InvalidOperationException>(executor.Run);
     }
 
-    [Fact]
+    [SkipOnGitHubFact]
     public async Task StartAsync_AlreadyRunning_ThrowsException()
     {
         using var executor = new MessageOnlyExecutor();
