@@ -81,7 +81,7 @@ public class MessageOnlyExecutorTests
         Assert.Throws<InvalidOperationException>(executor.Run);
     }
 
-    [SkipOnGitHubFact]
+    [Fact]
     public async Task StartAsync_AlreadyRunning_ThrowsException()
     {
         using var executor = new MessageOnlyExecutor();
@@ -231,7 +231,7 @@ public class MessageOnlyExecutorTests
             async () => await executor.InvokeAsync(() => throw new BadImageFormatException("Holy cow!")));
     }
 
-    [SkipOnGitHubFact]
+    [Fact]
     public void WaitOnOperation_CallingThreadNoTimeout_OperationEndsFirst()
     {
         using var executor = CreateExecutor();
