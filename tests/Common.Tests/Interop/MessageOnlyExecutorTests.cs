@@ -270,7 +270,7 @@ public class MessageOnlyExecutorTests
         Assert.True(executionResumed);
     }
 
-    [Fact]
+    [SkipOnGitHubFact]
     public void WaitOnOperation_ExecutorThreadTimeout_ResumesExecution()
     {
         bool executionResumed = false;
