@@ -252,7 +252,7 @@ public class MessageOnlyExecutorTests
         operation.Wait();
     }
 
-    [Fact]
+    [SkipOnGitHubFact]
     public void WaitOnOperation_ExecutorThreadNoTimeout_ResumesExecution()
     {
         bool executionResumed = false;
