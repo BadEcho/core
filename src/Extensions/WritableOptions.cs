@@ -155,6 +155,7 @@ public sealed class WritableOptions<TOptions> : IWritableOptions<TOptions>, IDis
 
         if (string.IsNullOrEmpty(path))
             throw new InvalidOperationException(Strings.OptionsFileNotAccessible);
+
         return path;
     }
 
