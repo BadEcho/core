@@ -238,7 +238,7 @@ public class MessageOnlyExecutorTests
         Assert.Equal(ThreadExecutorOperationStatus.Completed, operation.Status);
     }
 
-    [SkipOnGitHubFact]
+    [Fact]
     public void WaitOnOperation_CallingThreadTimeout_TimesOutFirst()
     {
         using var executor = CreateExecutor();
@@ -252,7 +252,7 @@ public class MessageOnlyExecutorTests
         operation.Wait();
     }
 
-    [SkipOnGitHubFact]
+    [Fact]
     public void WaitOnOperation_ExecutorThreadNoTimeout_ResumesExecution()
     {
         bool executionResumed = false;
@@ -270,7 +270,7 @@ public class MessageOnlyExecutorTests
         Assert.True(executionResumed);
     }
 
-    [SkipOnGitHubFact]
+    [Fact]
     public void WaitOnOperation_ExecutorThreadTimeout_ResumesExecution()
     {
         bool executionResumed = false;
