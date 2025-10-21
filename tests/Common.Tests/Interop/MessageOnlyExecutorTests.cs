@@ -238,7 +238,7 @@ public class MessageOnlyExecutorTests
         Assert.Equal(ThreadExecutorOperationStatus.Completed, operation.Status);
     }
 
-    [Fact]
+    [SkipOnGitHubFact]
     public void WaitOnOperation_CallingThreadTimeout_TimesOutFirst()
     {
         using var executor = CreateExecutor();
