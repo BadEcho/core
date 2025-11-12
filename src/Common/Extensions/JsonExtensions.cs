@@ -152,8 +152,13 @@ public static class JsonExtensions
 
         if (targetProperty == null) 
             target[property] = targetProperty = new JsonObject();
+        
+        JsonNode? sourceProperty = source[property];
+        object? sourcePropertyValue = sourceProperty?.GetValueKind() == JsonValueKind.Object
+            ? sourceProperty.DeepClone()
+            // The underlying value type of the property is preserved when using GetValue like this.
+            : sourceProperty?.GetValue<object>();
 
-        // The underlying value type of the property is preserved when using GetValue like this.
-        targetProperty.ReplaceWith(source[property]?.GetValue<object>());
+        targetProperty.ReplaceWith(sourcePropertyValue);
     }
 }
