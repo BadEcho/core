@@ -87,9 +87,10 @@ internal sealed class EventSourceLogForwarder : IHostedService, IDisposable
                                            name => _factory.CreateLogger(name.Replace('-', '.')));
 
         string message = EventDataFormatting.Format(eventData, false);
+        LogLevel logLevel = EventToLogLevel(eventData.Level);
         
         // It's not possible to make use of LoggerMessage delegates or static message templates here due to the forwarded messages
         // having a number of varying formats. Microsoft also does not use either of these in their log forwarders.
-        logger.Log(EventToLogLevel(eventData.Level), new EventId(eventData.EventId, eventData.EventName), message);
+        logger.Log(logLevel, new EventId(eventData.EventId, eventData.EventName), message);
     }
 }

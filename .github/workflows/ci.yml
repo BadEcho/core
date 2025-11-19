@@ -55,7 +55,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: 10.0.x
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2    
     - name: Build
@@ -83,7 +83,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: 10.0.x
     - name: Add VSTest to PATH
       uses: darenm/Setup-VSTest@v1.3
     - name: Download Build Artifact
@@ -125,7 +125,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: 10.0.x
     - name: Download Package Artifact
       uses: actions/download-artifact@v4
       with:
