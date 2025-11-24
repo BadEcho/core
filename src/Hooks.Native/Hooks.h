@@ -37,11 +37,8 @@ enum HookType : unsigned char
 	GetMessages
 };
 
-enum : unsigned short
-{
-	SharedMemorySize = 1120,
-	MaxThreads = 20
-};
+constexpr int MaxThreads = 20;
+constexpr int SharedMemorySize = 1120;
 
 #define HOOKS_API extern "C" __declspec(dllexport)
 
