@@ -14,6 +14,25 @@
 #include "Hooks.h"
 
 namespace {
+#pragma data_seg(".shared")
+    // Adds a data section to our binary file for variables we want shared across all processes.
+    // The variables that are shared mainly deal with the number of active hooks and message
+    // parameters up for modification.
+    bool ChangeMessage = false;
+    UINT ChangedMessage = 0;
+    WPARAM ChangedWParam = 0;
+    LPARAM ChangedLParam = 0;
+    int ThreadCount = 0;
+#pragma data_seg()
+#pragma comment(linker, "/SECTION:.shared,RWS") 
+
+    HINSTANCE Instance;
+    ThreadData* SharedData;
+    LPVOID SharedMemory = nullptr;
+    HANDLE FileMapping = nullptr;
+    // Mutex for synchronizing writes to shared memory, particularly for message parameter modification by message queue hook procedures.
+    HANDLE SharedSectionMutex = nullptr; 
+
     ThreadData* GetLocalData(int threadId, bool addEntry)
     {
         int index;
