@@ -103,7 +103,7 @@ struct ThreadData
 	/**
 	 * The installed \c WH_CALLWNDPROC hook procedure for the thread, if one exists.
 	 */
-	HookData CallWndProcHook;
+	HookData CallWndProcHook;  // NOLINT(clang-diagnostic-padded) Compiler will do the padding for us.
 	/**
 	 * The installed \c WH_CALLWNDPROCRET hook procedure for the thread, if one exists.
 	 */
