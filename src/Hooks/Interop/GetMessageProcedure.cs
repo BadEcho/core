@@ -25,4 +25,8 @@ namespace BadEcho.Hooks.Interop;
 /// <returns>
 /// The result of the message processing, which of course depends on the message being processed.
 /// </returns>
+/// <remarks>
+/// Like the <c>GetMsgProc</c> callback function this is based on, this callback allows you to modify the message
+/// before the requesting application receives it.
+/// </remarks>
 public delegate ProcedureResult GetMessageProcedure(nint hWnd, ref uint msg, ref nint wParam, ref nint lParam);

@@ -110,7 +110,7 @@ public sealed class ExternalWindowWrapper : WindowWrapper, IDisposable
         _windowHooked = !Native.RemoveHook(HookType.CallWindowProcedure, _threadId);
 
         if (_windowHooked)
-            Logger.Warning(Strings.UnhookWindowFailed.InvariantFormat(_threadId));
+            Logger.Warning(Strings.UnhookFailed.InvariantFormat(_threadId));
     }
 
     private async Task HandleCallbackAdded()
@@ -121,7 +121,7 @@ public sealed class ExternalWindowWrapper : WindowWrapper, IDisposable
         await _hookExecutor.StartAsync();
 
         if (_hookExecutor.Window == null)
-            throw new InvalidOperationException(Strings.MessageQueueForHookFailed);
+            throw new InvalidOperationException(Strings.MessagingForHookFailed);
 
         _hookExecutor.Window.AddCallback(WindowProcedure);
 

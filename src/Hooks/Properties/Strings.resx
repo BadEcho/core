@@ -117,13 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="UnhookWindowFailed" xml:space="preserve">
-    <value>Failed to unregister window hook for thread with ID '{0}'.</value>
+  <data name="UnhookFailed" xml:space="preserve">
+    <value>Failed to unregister hook for thread with ID '{0}'.</value>
   </data>
-  <data name="MessageQueueForHookFailed" xml:space="preserve">
-    <value>Failed to create message queue for receiving hook events.</value>
-  </data>
-  <data name="UnhookMessageQueueFailed" xml:space="preserve">
-    <value>Failed to unregister message queue hook for thread with ID '{0}'.</value>
+  <data name="MessagingForHookFailed" xml:space="preserve">
+	  <value>Failed to start a message loop for receiving hook events.</value>
   </data>
 </root>

@@ -23,7 +23,7 @@ namespace BadEcho.Hooks;
 /// <summary>
 /// Provides a publisher of messages being read from a message queue.
 /// </summary>
-public sealed class MessageQueueMessageSource : IMessageSource<GetMessageProcedure>, IDisposable
+public sealed class MessageQueueSource : IMessageSource<GetMessageProcedure>, IDisposable
 {
     private readonly DelegateInvocationList<GetMessageProcedure> _callbacks = [];
     private readonly MessageOnlyExecutor _hookExecutor = new();
@@ -33,12 +33,12 @@ public sealed class MessageQueueMessageSource : IMessageSource<GetMessageProcedu
     private bool _queueHooked;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MessageQueueMessageSource"/> class.
+    /// Initializes a new instance of the <see cref="MessageQueueSource"/> class.
     /// </summary>
     /// <param name="threadId">
     /// The identifier for the thread whose message pump we're hooking.
     /// </param>
-    public MessageQueueMessageSource(int threadId)
+    public MessageQueueSource(int threadId)
     {
         _threadId = threadId;
 
@@ -77,7 +77,7 @@ public sealed class MessageQueueMessageSource : IMessageSource<GetMessageProcedu
             _queueHooked = !Native.RemoveHook(HookType.GetMessage, _threadId);
 
             if (_queueHooked)
-                Logger.Warning(Strings.UnhookMessageQueueFailed.InvariantFormat(_threadId));
+                Logger.Warning(Strings.UnhookFailed.InvariantFormat(_threadId));
         }
 
         _hookExecutor.Dispose();
@@ -93,7 +93,7 @@ public sealed class MessageQueueMessageSource : IMessageSource<GetMessageProcedu
         await _hookExecutor.StartAsync();
             
         if (_hookExecutor.Window == null)
-            throw new InvalidOperationException(Strings.MessageQueueForHookFailed);
+            throw new InvalidOperationException(Strings.MessagingForHookFailed);
 
         _hookExecutor.Window.AddCallback(GetMessageProcedure);
 
