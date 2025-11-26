@@ -33,10 +33,6 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     private readonly List<ThreadExecutorOperation> _operationQueue = [];
     private readonly ManualResetEventSlim _running = new();
     
-    // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
-    // The window wrapper this is provided to will store it in a weak list,
-    // so we need to keep a reference to it to keep it alive.
-    private readonly WindowProcedure _callback;
     private readonly WeakReference<IThreadExecutor> _thisExecutor;
 
     private ExecutionContext? _shutdownContext;
@@ -56,7 +52,6 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
         }
 
         Thread = Thread.CurrentThread;
-        _callback = WindowProcedure;
     }
 
     /// <inheritdoc/>
@@ -334,7 +329,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
             Thread = Thread.CurrentThread;
             Window = new MessageOnlyWindowWrapper(this);
 
-            Window.AddCallback(_callback);
+            Window.AddCallback(WindowProcedure);
 
             _running.Set();
             // A call to Dispose() may have been made (either deliberately or due to a using statement/declaration) before
