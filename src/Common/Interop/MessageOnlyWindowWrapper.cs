@@ -108,32 +108,13 @@ public sealed class MessageOnlyWindowWrapper : WindowWrapper, IDisposable
     /// </remarks>
     ~MessageOnlyWindowWrapper()
     {
-        Dispose();
+        DisposeCore();
     }
 
     /// <inheritdoc/>
     public void Dispose()
-    {   // Since WM_NCDESTROY messages are propagated, there is a chance this method will be invoked multiple times.
-        if (_disposed)
-            return;
-
-        _disposed = true;
-
-        if (_windowIsBeingDestroyed)
-        {   // Since the window is in the process of being destroyed, we can't call UnregisterClass yet. So, we basically
-            // post it to the executor for it to happen later, once the window is closed.
-            _executor.BeginInvoke(() => UnregisterClass(_classAtom), null);
-        }
-        else if (!Handle.IsInvalid)
-        {   // Actions such as destroying the window and unregistering its class should only be done on the window's own thread.
-            if (Environment.CurrentManagedThreadId == _ownerThreadId)
-                DestroyWindow(Handle, _classAtom);
-            else
-                _executor.BeginInvoke(() => DestroyWindow(Handle, _classAtom), null);
-        }
-
-        _classAtom = 0;
-
+    {
+        DisposeCore();
         GC.SuppressFinalize(this);
     }
 
@@ -204,5 +185,36 @@ public sealed class MessageOnlyWindowWrapper : WindowWrapper, IDisposable
 
         if (User32.UnregisterClass(new IntPtr(classAtom), hInstance) == 0)
             throw new Win32Exception(Marshal.GetLastWin32Error());
+    }
+
+    private void DisposeCore()
+    {   // Reentrancy is prevented here. If this method invokes DestroyWindow, a WM_NCDESTROY message will be sent which
+        // may result in this method being called again before the original invocation is done executing. 
+        if (_disposed)
+            return;
+
+        _disposed = true;
+
+        // If the window is in the process of being destroyed, we can't call UnregisterClass yet. So, we basically
+        // post it to the executor for it to happen later, once the window is closed.
+        if (_windowIsBeingDestroyed)
+            _executor.BeginInvoke(() => UnregisterClass(_classAtom), null);
+
+        // Normally, you should never access reference types when Dispose is called from a finalizer, but the following
+        // code will run even during finalization. If we don't do this, the window class will never get unregistered.
+        // This may cause an exception to be thrown if we access a member that has already been finalized, causing the
+        // process to crash. However, this is still preferable to making no attempt to unregister the window class, as
+        // that could lead to a leak, causing an oversaturation of dead window classes in the User Atom Table, which
+        // would be cleaned up automatically once the process ends.
+        else if (!Handle.IsInvalid)
+        {   // Destroying the window needs to be done on the window's on thread. The class registration can be done
+            // on any thread, but it's simpler to just do it all in one go.
+            if (Environment.CurrentManagedThreadId == _ownerThreadId)
+                DestroyWindow(Handle, _classAtom);
+            else
+                _executor.BeginInvoke(() => DestroyWindow(Handle, _classAtom), null);
+        }
+
+        _classAtom = 0;
     }
 }
