@@ -82,7 +82,24 @@ public abstract class FileConfigurationProvider : ConfigurationProvider, IFileCo
         Dispose(true);
         GC.SuppressFinalize(this);
     }
-    
+
+    /// <summary>
+    /// Releases unmanaged and (optionally) managed resources.
+    /// </summary>
+    /// <param name="disposing">
+    /// <c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only managed resources.
+    /// </param>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_disposed)
+            return;
+
+        if (disposing)
+            _watcher.Dispose();
+
+        _disposed = true;
+    }
+
     /// <summary>
     /// Gets an instance of an optionally named configuration section described by the provided text.
     /// </summary>
@@ -117,22 +134,5 @@ public abstract class FileConfigurationProvider : ConfigurationProvider, IFileCo
         _cachedSections.Clear();
 
         OnConfigurationChanged();
-    }
-    
-    /// <summary>
-    /// Releases unmanaged and (optionally) managed resources.
-    /// </summary>
-    /// <param name="disposing">
-    /// <c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only managed resources.
-    /// </param>
-    protected virtual void Dispose(bool disposing)
-    {
-        if (_disposed)
-            return;
-
-        if (disposing)
-            _watcher.Dispose();
-
-        _disposed = true;
     }
 }
