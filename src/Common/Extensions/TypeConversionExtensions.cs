@@ -56,7 +56,7 @@ public static class TypeConversionExtensions
     /// An <see cref="IFormatProvider"/> interface implementation that supplies culture-specific formatting information.
     /// </param>
     /// <param name="style">
-    /// A bitwise combination of enumeration values that indicates the style elements that can be present.
+    /// A bitwise combination of enumeration values that specify the style elements that can be present.
     /// </param>
     /// <returns>A 32-bit signed integer equivalent to the number specified in <c>convertible</c>.</returns>
     public static int ToInt32(this IConvertible convertible, IFormatProvider? formatProvider, NumberStyles style)
