@@ -136,3 +136,8 @@ using BadEcho.Properties;
                            Scope = "member",
                            Target = "~P:BadEcho.Interop.DeviceModeMarshaller.DEVMODEW.FormName",
                            Justification = "This is technically an incorrect recommendation. Although, at the time of writing, a readonly modifier here would compile fine, this setter is in fact modifying the state of this struct. The state is being modified through the copying of the input value's contents into a fixed buffer, whose location in memory is being pointed to by the Span<T> returned by the SzFormName property.")]
+
+[assembly: SuppressMessage("Naming",
+                           "CA1720",
+                           Scope = "member",
+                           Target = "~F:BadEcho.Interop.VirtualKey.Decimal")]

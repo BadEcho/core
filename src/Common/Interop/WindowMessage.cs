@@ -65,6 +65,21 @@ public enum WindowMessage
     /// </summary>
     KeyDown = 0x100,
     /// <summary>
+    /// A window message corresponding to a nonsystem key being released (WM_KEYUP). A nonsystem key is a key that is pressed
+    /// when the ALT key is not pressed.
+    /// </summary>
+    KeyUp = 0x101,
+    /// <summary>
+    /// A window message corresponding to either the F10 being pressed or the ALT key being held down at the same time another
+    /// key is pressed (WM_SYSKEYDOWN).
+    /// </summary>
+    SystemKeyDown = 0x104,
+    /// <summary>
+    /// A window message corresponding to the user releasing a key that was pressed while the ALT key was held down
+    /// (WM_SYSKEYUP).
+    /// </summary>
+    SystemKeyUp = 0x105,
+    /// <summary>
     /// A window message corresponding to WM_LBUTTONUP, posted when the user releases the left mouse button while the cursor
     /// is in the client area of a window.
     /// </summary>
