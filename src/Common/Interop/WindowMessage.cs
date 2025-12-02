@@ -31,6 +31,10 @@ public enum WindowMessage
     /// </summary>
     Size = 0x5,
     /// <summary>
+    /// A window message corresponding to a window being activated (WM_ACTIVATE).
+    /// </summary>
+    Activate = 0x6,
+    /// <summary>
     /// A window message corresponding to WM_CLOSE.
     /// </summary>
     Close = 0x10,
@@ -69,6 +73,11 @@ public enum WindowMessage
     /// when the ALT key is not pressed.
     /// </summary>
     KeyUp = 0x101,
+    /// <summary>
+    /// A window message corresponding to a <see cref="KeyDown"/> message being translated by the <c>TranslateMessage</c> function
+    /// (<c>WM_CHAR</c>).
+    /// </summary>
+    Character = 0x102,
     /// <summary>
     /// A window message corresponding to either the F10 being pressed or the ALT key being held down at the same time another
     /// key is pressed (WM_SYSKEYDOWN).
