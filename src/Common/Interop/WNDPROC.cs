@@ -21,7 +21,7 @@ namespace BadEcho.Interop;
 /// <param name="wParam">Additional message-specific information.</param>
 /// <param name="lParam">Additional message-specific information.</param>
 /// <returns>
-/// The result of the message processing, which of course depends on the message being processed.
+/// The result of the message processing, which of course depends on the type of message being processed.
 /// </returns>
 /// <remarks>
 /// This variant of the window procedure delegate is meant to be invoked from unmanaged code; it acts as the first

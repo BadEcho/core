@@ -23,7 +23,7 @@ namespace BadEcho.Hooks.Interop;
 /// <param name="wParam">Additional message-specific information.</param>
 /// <param name="lParam">Additional message-specific information.</param>
 /// <returns>
-/// The result of the message processing, which of course depends on the message being processed.
+/// The result of the message processing, which of course depends on the type of message being processed.
 /// </returns>
 /// <remarks>
 /// Like the <c>GetMsgProc</c> callback function this is based on, this callback allows you to modify the message

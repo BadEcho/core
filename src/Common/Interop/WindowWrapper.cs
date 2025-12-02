@@ -88,7 +88,7 @@ public abstract class WindowWrapper : IMessageSource<WindowProcedure>
     /// <param name="wParam">Additional message-specific information.</param>
     /// <param name="lParam">Additional message-specific information.</param>
     /// <returns>
-    /// The result of the message processing, which of course depends on the message being processed.
+    /// The result of the message processing, which of course depends on the type of message being processed.
     /// </returns>
     protected ProcedureResult WindowProcedure(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
     {
