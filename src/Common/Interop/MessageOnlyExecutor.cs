@@ -497,6 +497,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     private ProcedureResult WindowProcedure(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
     {
         var message = (WindowMessage) msg;
+        bool handled = false;
 
         if (DisableRequests <= 0)
         {
@@ -509,10 +510,11 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
             else if (_ProcessOperation == message)
             {
                 ProcessOperation();
+                handled = true;
             }
         }
 
-        return new ProcedureResult(IntPtr.Zero, false);
+        return new ProcedureResult(IntPtr.Zero, handled);
     }
 
     private void ProcessOperation()
