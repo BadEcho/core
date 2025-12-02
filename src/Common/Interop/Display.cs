@@ -251,18 +251,20 @@ public sealed class Display
     {
         var displays = new List<Display>();
 
-        var closure = new CallbackClosure();
-
         // EnumDisplayMonitors doesn't support GetLastError, so there is unfortunately no way to get more information if this fails.
-        if (!User32.EnumDisplayMonitors(DeviceContextHandle.InvalidHandle, IntPtr.Zero, closure.Callback, IntPtr.Zero))
+        if (!User32.EnumDisplayMonitors(DeviceContextHandle.InvalidHandle, IntPtr.Zero, Callback, IntPtr.Zero))
             throw new Win32Exception(Strings.DisplayEnumDisplayMonitorsFailed);
 
-        var displaysByArrangement = closure.RetrievedDisplays
-                                           .OrderBy(d => d.WorkingArea.Left);
+        return displays.OrderBy(d => d.WorkingArea.Left).ToList();
 
-        displays.AddRange(displaysByArrangement);
+        bool Callback(IntPtr hMonitor, IntPtr hdcMonitor, IntPtr lprcMonitor, IntPtr lParam)
+        {
+            var display = new Display(hMonitor);
 
-        return displays;
+            displays.Add(display);
+
+            return true;
+        }
     }
 
     /// <summary>
@@ -330,37 +332,5 @@ public sealed class Display
 
         if (result != ChangeDisplaySettingsResult.Successful)
             throw new Win32Exception(Strings.DisplayChangePositionFailed.InvariantFormat(result));
-    }
-
-    /// <summary>
-    /// Provides a referencing environment for a <see cref="MonitorEnumProc"/> callback.
-    /// </summary>
-    private sealed class CallbackClosure
-    {
-        private readonly List<Display> _retrievedDisplays = [];
-
-        /// <summary>
-        /// Gets the <see cref="Display"/> instances provided to the callback.
-        /// </summary>
-        public IEnumerable<Display> RetrievedDisplays
-            => _retrievedDisplays;
-
-        /// <summary>
-        /// Processes <see cref="User32.EnumDisplayMonitors"/> results by storing the returned display information.
-        /// </summary>
-        /// <returns>Value indicating whether enumeration should continue.</returns>
-        /// <remarks>
-        /// The parameters consisting of a discard symbol followed by an integer are named so in order to tell Microsoft's various
-        /// code analyzers that this signature is required in order to be able to use this method as a delegate.
-        /// </remarks>
-        /// <seealso cref="MonitorEnumProc"/>
-        public bool Callback(IntPtr hMonitor, IntPtr _0, IntPtr _1, IntPtr _2)
-        {
-            var display = new Display(hMonitor);
-
-            _retrievedDisplays.Add(display);
-
-            return true;
-        }
     }
 }
