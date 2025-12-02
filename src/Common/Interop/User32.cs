@@ -93,6 +93,29 @@ internal static partial class User32
     public static partial bool DestroyWindow(IntPtr hWnd);
 
     /// <summary>
+    /// Enumerates all top-level windows on the screen by passing the handle to each window, in turn, to an
+    /// application-defined callback function.
+    /// </summary>
+    /// <param name="lpEnumFunc">A pointer to an application-defined callback function.</param>
+    /// <param name="lParam">An application-defined value to be passed to the callback function.</param>
+    /// <returns>True if the function succeeds; otherwise, false.</returns>
+    [LibraryImport(LibraryName, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool EnumWindows(EnumWindowsProc lpEnumFunc, nint lParam);
+
+    /// <summary>
+    /// Retrieves the identifier of the thread that created the specified window and, optionally, the identifier
+    /// of the process that created the window.
+    /// </summary>
+    /// <param name="hWnd">A handle to the window.</param>
+    /// <param name="lpdwProcessId">A pointer to a variable that receives the process identifier.</param>
+    /// <returns>If successful, the identifier of the thread that created the window; otherwise, zero.</returns>
+    [LibraryImport(LibraryName, SetLastError = true)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial uint GetWindowThreadProcessId(nint hWnd, out uint lpdwProcessId);
+
+    /// <summary>
     /// Registers a window class for subsequent use.
     /// </summary>
     /// <param name="wc_d">A <see cref="WindowClass"/> instance containing window class information.</param>
