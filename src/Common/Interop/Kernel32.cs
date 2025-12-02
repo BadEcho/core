@@ -24,6 +24,30 @@ internal static partial class Kernel32
     private const string LIBRARY_NAME = "kernel32";
 
     /// <summary>
+    /// Adds a directory to the process DLL search path.
+    /// </summary>
+    /// <param name="newDirectory">An absolute path to the directory to add to the search path.</param>
+    /// <returns>
+    /// If successful, an opaque pointer that can be passed to <see cref="RemoveDllDirectory"/> to remove the directory
+    /// from the search path; otherwise, zero.
+    /// </returns>
+    [LibraryImport(LIBRARY_NAME, SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial nint AddDllDirectory(string newDirectory);
+
+    /// <summary>
+    /// Removes a directory that was added to the process DLL search path by using <see cref="AddDllDirectory"/>.
+    /// </summary>
+    /// <param name="cookie">
+    /// The cookie returned by <see cref="AddDllDirectory"/> when the directory was added to the search path.
+    /// </param>
+    /// <returns>True if successful; otherwise, false.</returns>
+    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool RemoveDllDirectory(nint cookie);
+
+    /// <summary>
     /// Loads the specified module into the address space of the calling process.
     /// </summary>
     /// <param name="lpLibFileName">The name of the module.</param>
@@ -66,6 +90,14 @@ internal static partial class Kernel32
     [LibraryImport(LIBRARY_NAME, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
+
+    /// <summary>
+    /// Retrieves the thread identifier of the calling thread.
+    /// </summary>
+    /// <returns>The thread identifier of the calling thread.</returns>
+    [LibraryImport(LIBRARY_NAME)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial int GetCurrentThreadId();
 
     /// <summary>
     /// Creates an activation context.
