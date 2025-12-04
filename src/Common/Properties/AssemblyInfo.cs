@@ -5,8 +5,10 @@ using System.Runtime.InteropServices;
 using BadEcho.Properties;
 
 [assembly: InternalsVisibleTo("BadEcho.Common.Tests,PublicKey="+BuildInfo.PublicKey)]
+[assembly: InternalsVisibleTo("BadEcho.Hooks.Tests,PublicKey="+BuildInfo.PublicKey)]
 #else
 [assembly: InternalsVisibleTo("BadEcho.Common.Tests")]
+[assembly: InternalsVisibleTo("BadEcho.Hooks.Tests")]
 #endif
 
 [assembly: ComVisible(false)]

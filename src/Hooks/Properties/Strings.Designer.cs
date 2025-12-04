@@ -70,6 +70,15 @@ namespace BadEcho.Hooks.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Keyboard input listener was sent an non-input related message..
+        /// </summary>
+        internal static string NonKeyboardMessageReceived {
+            get {
+                return ResourceManager.GetString("NonKeyboardMessageReceived", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to unregister hook for thread with ID &apos;{0}&apos;..
         /// </summary>
         internal static string UnhookFailed {

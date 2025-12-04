@@ -16,19 +16,29 @@ namespace BadEcho.Hooks.Interop;
 /// <summary>
 /// Specifies a type of hook procedure.
 /// </summary>
-internal enum HookType
+public enum HookType
 {
     /// <summary>
-    /// Monitors <c>WH_CALLWNDPROC</c> messages before the system sends them to a destination window procedure.
+    /// A hook procedure whose type corresponds to <c>WH_CALLWNDPROC</c> that monitors messages before
+    /// the system sends them to the destination window procedure.
     /// </summary>
     CallWindowProcedure,
     /// <summary>
-    /// Monitors <c>WH_CALLWNDPROCRET</c> messages after they have been processed by the destination window
-    /// procedure.
+    /// A hook procedure whose type corresponds to <c>WH_CALLWNDPROCRET</c> that monitors messages after they
+    /// have been processed by the destination window procedure.
     /// </summary>
     CallWindowProcedureReturn,
     /// <summary>
-    /// Monitors <c>WH_GETMESSAGE</c> messages posted to a message queue prior to their retrieval.
+    /// A hook procedure whose type corresponds to <c>WH_GETMESSAGE</c> that monitors messages posted to a message queue prior to
+    /// their retrieval.
     /// </summary>
-    GetMessage
+    GetMessage,
+    /// <summary>
+    /// A hook procedure whose type corresponds to <c>WH_KEYBOARD</c> that monitors keystroke messages.
+    /// </summary>
+    Keyboard,
+    /// <summary>
+    /// A hook procedure whose type corresponds to <c>WH_KEYBOARD_LL</c> that monitors low-level keyboard input events.
+    /// </summary>
+    LowLevelKeyboard
 }

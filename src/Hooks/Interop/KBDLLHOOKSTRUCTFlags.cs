@@ -24,13 +24,13 @@ internal enum KBDLLHOOKSTRUCTFlags
     /// </summary>
     Extended = 0x1,
     /// <summary>
-    /// The input event was synthesized.
-    /// </summary>
-    Injected = 0x10,
-    /// <summary>
     /// The input event was synthesized from a process running at a lower integrity level than this one.
     /// </summary>
     InjectedLowerIntegrity = 0x2,
+    /// <summary>
+    /// The input event was synthesized.
+    /// </summary>
+    Injected = 0x10,
     /// <summary>
     /// The ALT key is being held down at the time of the hook event.
     /// </summary>

@@ -18,7 +18,6 @@ namespace BadEcho.Hooks.Interop;
 /// <summary>
 /// Represents a callback that processes messages about to be returned from a message queue.
 /// </summary>
-/// <param name="hWnd">A handle to the window.</param>
 /// <param name="msg">The message.</param>
 /// <param name="wParam">Additional message-specific information.</param>
 /// <param name="lParam">Additional message-specific information.</param>
@@ -29,4 +28,4 @@ namespace BadEcho.Hooks.Interop;
 /// Like the <c>GetMsgProc</c> callback function this is based on, this callback allows you to modify the message
 /// before the requesting application receives it.
 /// </remarks>
-public delegate ProcedureResult GetMessageProcedure(nint hWnd, ref uint msg, ref nint wParam, ref nint lParam);
+public delegate ProcedureResult GetMessageProcedure(ref uint msg, ref nint wParam, ref nint lParam);

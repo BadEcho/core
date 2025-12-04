@@ -22,7 +22,7 @@
 enum HookType : unsigned char
 {	
 	/**
-	 * Monitors \c WH_CALLWNDPROC messages before the system sends them to a destination window
+	 * Monitors \c WH_CALLWNDPROC messages before the system sends them to the destination window
 	 * procedure.
 	 */
 	CallWindowProcedure,
@@ -33,12 +33,18 @@ enum HookType : unsigned char
 	CallWindowProcedureReturn,
 	/**
 	 * Monitors \c WH_GETMESSAGE messages posted to a message queue prior to their retrieval.
+	 * @remarks This is named \c GetMessages to avoid conflicting with the ever-present \c GetMessage Win32 macro.
 	 */
-	GetMessages
+	GetMessages,
+	/**
+	 * Monitors \c WH_KEYBOARD keystroke messages.
+	 */
+	Keyboard,
+	/**
+	 * Monitors \c WH_KEYBOARD_LL low-level keyboard input events.
+	 */
+	LowLevelKeyboard
 };
-
-constexpr int MaxThreads = 20;
-constexpr int SharedMemorySize = 1120;
 
 #define HOOKS_API extern "C" __declspec(dllexport)
 
@@ -74,46 +80,16 @@ HOOKS_API void __cdecl ChangeMessageDetails(UINT message, WPARAM wParam, LPARAM 
 
 LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK CallWndProcRet(int nCode, WPARAM wParam, LPARAM lParam);
-LRESULT CALLBACK GetMsgProc(int code, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam);
 
 /**
- * Represents configurations settings for a hook procedure.
+ * Interprets the data at a specified address (which is typically what is provided by LPARAM in window messages) as a type.
+ * @tparam T The type to interpret the data as.
+ * @param address The address in memory where the data being interpreted resides.
+ * @return A value of type \c T.
  */
-struct HookData
-{
-	/**
-	 * A handle to the hook procedure.
-	 */
-	HHOOK Handle;
-	/**
-	 * A handle to the window that hook messages will be sent to.
-	 */
-	HWND Destination;
-};
-
-/**
- * Represents shared hook data specific to a thread.
- */
-struct ThreadData
-{
-	/**
-	 * The thread the data is associated with.
-	 */
-	int ThreadId;
-	/**
-	 * The installed \c WH_CALLWNDPROC hook procedure for the thread, if one exists.
-	 */
-	HookData CallWndProcHook;  // NOLINT(clang-diagnostic-padded) Compiler will do the padding for us.
-	/**
-	 * The installed \c WH_CALLWNDPROCRET hook procedure for the thread, if one exists.
-	 */
-	HookData CallWndProcRetHook;
-	/**
-	 * The installed \c WH_GETMESSAGE hook procedure for the thread, if one exists.
-	 */
-	HookData GetMessageHook;
-};
-
 template<typename T>
 T* PointTo(uintptr_t address)
 {

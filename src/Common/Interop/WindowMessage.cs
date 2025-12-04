@@ -79,13 +79,13 @@ public enum WindowMessage
     /// </summary>
     Character = 0x102,
     /// <summary>
-    /// A window message corresponding to either the F10 being pressed or the ALT key being held down at the same time another
+    /// A window message corresponding to either the F10 or ALT keys being pressed or the ALT key being held down at the same time another
     /// key is pressed (WM_SYSKEYDOWN).
     /// </summary>
     SystemKeyDown = 0x104,
     /// <summary>
-    /// A window message corresponding to the user releasing a key that was pressed while the ALT key was held down
-    /// (WM_SYSKEYUP).
+    /// A window message corresponding to either the F10 or ALT keys being released or the ALT key being held down at the same time another
+    /// key is released (WM_SYSKEYUP).
     /// </summary>
     SystemKeyUp = 0x105,
     /// <summary>

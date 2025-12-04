@@ -11,11 +11,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using BadEcho.Collections;
-using BadEcho.Extensions;
-using BadEcho.Logging;
 using BadEcho.Interop;
-using BadEcho.Hooks.Properties;
 using BadEcho.Hooks.Interop;
 
 namespace BadEcho.Hooks;
@@ -23,99 +19,31 @@ namespace BadEcho.Hooks;
 /// <summary>
 /// Provides a publisher of messages being read from a message queue.
 /// </summary>
-public sealed class MessageQueueSource : IMessageSource<GetMessageProcedure>, IDisposable
+public sealed class MessageQueueSource : HookSource<GetMessageProcedure>
 {
-    private readonly DelegateInvocationList<GetMessageProcedure> _callbacks = [];
-    private readonly MessageOnlyExecutor _hookExecutor = new();
-    private readonly int _threadId;
-
-    private bool _disposed;
-    private bool _queueHooked;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="MessageQueueSource"/> class.
     /// </summary>
-    /// <param name="threadId">
-    /// The identifier for the thread whose message pump we're hooking.
-    /// </param>
+    /// <param name="threadId">The identifier for the thread whose message queue we're hooking into.</param>
     public MessageQueueSource(int threadId)
-    {
-        _threadId = threadId;
-
-        CallbackAdded += async (_,_) 
-            => await HandleCallbackAdded().ConfigureAwait(false);
-    }
-
-    private event EventHandler CallbackAdded;
+        : base(HookType.GetMessage, threadId)
+    { }
 
     /// <inheritdoc/>
-    public void AddCallback(GetMessageProcedure callback)
-    {
-        Require.NotNull(callback, nameof(callback));
-
-        _callbacks.Add(callback);
-
-        CallbackAdded.Invoke(this, EventArgs.Empty);
-    }
-
-    /// <inheritdoc/>
-    public void RemoveCallback(GetMessageProcedure callback)
-    {
-        Require.NotNull(callback, nameof(callback));
-
-        _callbacks.Remove(callback);
-    }
-
-    /// <inheritdoc/>
-    public void Dispose()
-    {
-        if (_disposed)
-            return;
-
-        if (_queueHooked)
-        {
-            _queueHooked = !Native.RemoveHook(HookType.GetMessage, _threadId);
-
-            if (_queueHooked)
-                Logger.Warning(Strings.UnhookFailed.InvariantFormat(_threadId));
-        }
-
-        _hookExecutor.Dispose();
-
-        _disposed = true;
-    }
-    
-    private async Task HandleCallbackAdded()
-    {
-        if (_hookExecutor.Window != null)
-            return;
-         
-        await _hookExecutor.StartAsync();
-            
-        if (_hookExecutor.Window == null)
-            throw new InvalidOperationException(Strings.MessagingForHookFailed);
-
-        _hookExecutor.Window.AddCallback(GetMessageProcedure);
-
-        _queueHooked = Native.AddHook(HookType.GetMessage,
-                                      _threadId,
-                                      _hookExecutor.Window.Handle);
-    }
-
-    private ProcedureResult GetMessageProcedure(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+    protected override ProcedureResult OnHookEvent(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
     {
         uint localMsg = msg;
         IntPtr localWParam = wParam;
         IntPtr localLParam = lParam;
 
-        foreach (GetMessageProcedure hook in _callbacks)
+        foreach (GetMessageProcedure callback in Callbacks)
         {
-            var result = hook(hWnd, ref localMsg, ref localWParam, ref localLParam);
+            var result = callback(ref localMsg, ref localWParam, ref localLParam);
 
             if (result.Handled)
                 break;
         }
-        
+
         if (localMsg != msg || localWParam != wParam || localLParam != lParam)
             Native.ChangeMessageDetails(localMsg, localWParam, localLParam);
 

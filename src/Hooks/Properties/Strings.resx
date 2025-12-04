@@ -123,4 +123,7 @@
   <data name="MessagingForHookFailed" xml:space="preserve">
 	  <value>Failed to start a message loop for receiving hook events.</value>
   </data>
+  <data name="NonKeyboardMessageReceived" xml:space="preserve">
+	  <value>Keyboard input listener was sent an non-input related message.</value>
+  </data>
 </root>
