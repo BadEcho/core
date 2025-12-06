@@ -21,7 +21,7 @@ env:
 jobs:
   validate-release:
     name: Validate Release Candidate
-    runs-on: windows-2022
+    runs-on: windows-latest
     steps:
     - name: Fail If Not Default Branch
       if: github.ref_name != github.event.repository.default_branch
@@ -59,7 +59,7 @@ jobs:
   create-release:
     name: Create Release
     needs: [validate-release, build]
-    runs-on: windows-2022
+    runs-on: windows-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v4
