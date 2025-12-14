@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 #if RELEASE
 using BadEcho.Properties;
 
-[assembly: InternalsVisibleTo("BadEcho.Hooks.Tests,PublicKeys="+BuildInfo.PublicKey)]
+[assembly: InternalsVisibleTo("BadEcho.Hooks.Tests,PublicKey="+BuildInfo.PublicKey)]
 #else
 [assembly: InternalsVisibleTo("BadEcho.Hooks.Tests")]
 #endif
