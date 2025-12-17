@@ -111,6 +111,10 @@ public enum VirtualKey
     /// </summary>
     Left,
     /// <summary>
+    /// The Up arrow key.
+    /// </summary>
+    Up,
+    /// <summary>
     /// The Right arrow key.
     /// </summary>
     Right,
