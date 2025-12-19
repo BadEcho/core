@@ -137,6 +137,9 @@ public static class JsonExtensions
             if (sourceItem == null)
                 sourceArray[i] = sourceItem = new JsonObject();
 
+            if (i == targetArray.Count) 
+                targetArray.Add(new JsonObject());
+            
             JsonNode? targetItem = targetArray[i];
 
             if (targetItem == null)
@@ -154,7 +157,7 @@ public static class JsonExtensions
             target[property] = targetProperty = new JsonObject();
         
         JsonNode? sourceProperty = source[property];
-        object? sourcePropertyValue = sourceProperty?.GetValueKind() == JsonValueKind.Object
+        object? sourcePropertyValue = sourceProperty?.GetValueKind() is JsonValueKind.Object or JsonValueKind.Array
             ? sourceProperty.DeepClone()
             // The underlying value type of the property is preserved when using GetValue like this.
             : sourceProperty?.GetValue<object>();
