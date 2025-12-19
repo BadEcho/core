@@ -13,9 +13,6 @@
 
 using System.Collections.Specialized;
 using System.ComponentModel;
-using BadEcho.Logging;
-using BadEcho.Extensions;
-using BadEcho.Properties;
 
 namespace BadEcho.Collections;
 
@@ -44,9 +41,14 @@ public sealed class CollectionPropertyChangePublisher<T>
     }
 
     /// <summary>
-    /// Occurs when a change in either the collection's composition or a property value of one of its items occurs.
+    /// Occurs when there's a change in the collection's composition.
     /// </summary>
-    public event EventHandler<CollectionPropertyChangedEventArgs>? Changed;
+    public event EventHandler<NotifyCollectionChangedEventArgs>? CollectionChanged;
+
+    /// <summary>
+    /// Occurs when there's a change in a property value of one of the collection's items.
+    /// </summary>
+    public event EventHandler<PropertyChangedEventArgs>? ItemChanged;
 
     private void HandleCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
@@ -55,7 +57,7 @@ public sealed class CollectionPropertyChangePublisher<T>
         {
             foreach (INotifyPropertyChanged newItem in e.NewItems)
             {
-                newItem.PropertyChanged += HandleItemPropertyChanged;
+                newItem.PropertyChanged += HandleItemChanged;
             }
         }
 
@@ -63,27 +65,13 @@ public sealed class CollectionPropertyChangePublisher<T>
         {
             foreach (INotifyPropertyChanged oldItem in e.OldItems)
             {
-                oldItem.PropertyChanged -= HandleItemPropertyChanged;
+                oldItem.PropertyChanged -= HandleItemChanged;
             }
         }
 
-        var changedArgs =
-            new CollectionPropertyChangedEventArgs((CollectionPropertyChangedAction) e.Action, e.NewItems, e.OldItems);
-
-        Changed?.Invoke(this, changedArgs);
+        CollectionChanged?.Invoke(sender, e);
     }
 
-    private void HandleItemPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == null)
-        {
-            Logger.Warning(Strings.BadINotifyPropertyChangedImplementation
-                                  .InvariantFormat(typeof(T)));
-            return;
-        }
-            
-        var changedArgs = new CollectionPropertyChangedEventArgs(e.PropertyName);
-
-        Changed?.Invoke(this, changedArgs);
-    }
+    private void HandleItemChanged(object? sender, PropertyChangedEventArgs e) 
+        => ItemChanged?.Invoke(sender, e);
 }
