@@ -43,7 +43,7 @@ public sealed class CollectionPropertyChangePublisher<T>
     /// <summary>
     /// Occurs when there's a change in the collection's composition.
     /// </summary>
-    public event EventHandler<NotifyCollectionChangedEventArgs>? CollectionChanged;
+    public event EventHandler<CollectionChangedEventArgs>? CollectionChanged;
 
     /// <summary>
     /// Occurs when there's a change in a property value of one of the collection's items.
@@ -69,7 +69,9 @@ public sealed class CollectionPropertyChangePublisher<T>
             }
         }
 
-        CollectionChanged?.Invoke(sender, e);
+        var changedArgs = new CollectionChangedEventArgs(e.Action, e.NewItems, e.OldItems);
+
+        CollectionChanged?.Invoke(sender, changedArgs);
     }
 
     private void HandleItemChanged(object? sender, PropertyChangedEventArgs e) 
