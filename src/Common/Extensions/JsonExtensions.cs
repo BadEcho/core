@@ -130,6 +130,13 @@ public static class JsonExtensions
         JsonArray targetArray = target.AsArray();
         JsonArray sourceArray = source.AsArray();
 
+        if (targetArray.Count > sourceArray.Count)
+        {
+            int difference = targetArray.Count - sourceArray.Count;
+
+            targetArray.RemoveRange(sourceArray.Count, difference);
+        }
+
         for (int i = 0; i < sourceArray.Count; i++)
         {
             JsonNode? sourceItem = sourceArray[i];
