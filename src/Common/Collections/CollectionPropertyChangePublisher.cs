@@ -11,6 +11,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
 
@@ -52,11 +53,24 @@ public sealed class CollectionPropertyChangePublisher<T>
 
     private void HandleCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        // These collections are null when they are considered invalid for whatever reason.
-        if (e.NewItems != null)
+        // NotifyCollectionChangedEventArgs annoyingly does not provide item information via NewItems/OldItems for Reset actions.
+        // Treat any items present on the collection after a Reset action as new items.
+        IList? newItems = e.NewItems;
+
+        if (e.Action == NotifyCollectionChangedAction.Reset)
         {
-            foreach (INotifyPropertyChanged newItem in e.NewItems)
-            {
+            var collection = (IEnumerable<T>?) sender;
+
+            if (collection != null)
+                newItems = collection.ToList();
+        }
+
+        // These collections are null when they are considered invalid for whatever reason.
+        if (newItems != null)
+        {
+            foreach (INotifyPropertyChanged newItem in newItems)
+            {   // Attempt an unsubscribe first in case this is a Reset and the items were present previously.
+                newItem.PropertyChanged -= HandleItemChanged;
                 newItem.PropertyChanged += HandleItemChanged;
             }
         }
