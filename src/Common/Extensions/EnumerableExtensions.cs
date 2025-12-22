@@ -48,6 +48,26 @@ public static class EnumerableExtensions
         => !source.Any();
 
     /// <summary>
+    /// Checks if the provided sequence is em pty.
+    /// </summary>
+    /// <param name="source">The sequence to check for emptiness.</param>
+    /// <returns>True if <c>source</c> is empty; otherwise, false.</returns>
+    public static bool IsEmpty(this IEnumerable source)
+    {
+        Require.NotNull(source, nameof(source));
+
+        // The simplest way. This will call Dispose if the enumerator implements IDisposable. The non-generic interfaces
+        // do not inherit from IDisposable, but many enumerator implementations do behind the scenes, which is why the compiler generates
+        // a check for IDisposable even if the interface type doesn't implement it.
+        foreach (object _ in source)    
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
     /// Determines if the sequence consists of only a single item.
     /// </summary>
     /// <typeparam name="T">The type of items enumerated.</typeparam>
