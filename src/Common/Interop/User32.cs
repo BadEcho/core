@@ -105,6 +105,17 @@ internal static partial class User32
     public static partial bool EnumWindows(EnumWindowsProc lpEnumFunc, nint lParam);
 
     /// <summary>
+    /// Sets the specified window's show state.
+    /// </summary>
+    /// <param name="hWnd">A handle to the window.</param>
+    /// <param name="nCmdShow">A value that controls how the window is to be shown.</param>
+    /// <returns>Nonzero if the window was previously visible; otherwise, zero.</returns>
+    [LibraryImport(LibraryName)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool ShowWindow(nint hWnd, int nCmdShow);
+
+    /// <summary>
     /// Retrieves the identifier of the thread that created the specified window and, optionally, the identifier
     /// of the process that created the window.
     /// </summary>
