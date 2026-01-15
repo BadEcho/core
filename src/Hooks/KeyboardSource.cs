@@ -39,7 +39,7 @@ public sealed class KeyboardSource : HookSource<KeyboardProcedure>
     { }
 
     /// <inheritdoc/>
-    protected override ProcedureResult OnHookEvent(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+    protected override void OnHookEvent(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
     {
         VirtualKey key = (VirtualKey) wParam;
         KeyState state = (WindowMessage) msg switch
@@ -56,7 +56,5 @@ public sealed class KeyboardSource : HookSource<KeyboardProcedure>
             if (result.Handled)
                 break;
         }
-
-        return new ProcedureResult(IntPtr.Zero, true);
     }
 }

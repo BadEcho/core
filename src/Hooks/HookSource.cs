@@ -128,10 +128,7 @@ public abstract class HookSource<TProcedure> : IMessageSource<TProcedure>, IDisp
     /// <param name="msg">The message.</param>
     /// <param name="wParam">Additional message-specific information.</param>
     /// <param name="lParam">Additional message-specific information.</param>
-    /// <returns>
-    /// The result of the message processing, which of course depends on the message being processed.
-    /// </returns>
-    protected abstract ProcedureResult OnHookEvent(nint hWnd, uint msg, nint wParam, nint lParam);
+    protected abstract void OnHookEvent(nint hWnd, uint msg, nint wParam, nint lParam);
 
     private async Task HandleCallbackAdded()
     {
@@ -163,6 +160,11 @@ public abstract class HookSource<TProcedure> : IMessageSource<TProcedure>, IDisp
 
         msg -= (int) WindowMessage.User;
 
-        return OnHookEvent(hWnd, msg, wParam, lParam);
+        OnHookEvent(hWnd, msg, wParam, lParam);
+
+        // We always mark our hook messages as handled; we don't want further processing by any supporting
+        // infrastructure. This has no bearing on whether or not the next hook procedure in the current hook
+        // chain is called, which our hook DLL will always do.
+        return new ProcedureResult(IntPtr.Zero, true);
     }
 }

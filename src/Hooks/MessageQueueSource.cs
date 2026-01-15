@@ -30,7 +30,7 @@ public sealed class MessageQueueSource : HookSource<GetMessageProcedure>
     { }
 
     /// <inheritdoc/>
-    protected override ProcedureResult OnHookEvent(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+    protected override void OnHookEvent(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
     {
         uint localMsg = msg;
         IntPtr localWParam = wParam;
@@ -46,9 +46,5 @@ public sealed class MessageQueueSource : HookSource<GetMessageProcedure>
 
         if (localMsg != msg || localWParam != wParam || localLParam != lParam)
             Native.ChangeMessageDetails(localMsg, localWParam, localLParam);
-
-        // We always mark it as handled, we don't want further processing by any supporting
-        // infrastructure.
-        return new ProcedureResult(IntPtr.Zero, true);
     }
 }

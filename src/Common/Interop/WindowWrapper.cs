@@ -45,8 +45,6 @@ public abstract class WindowWrapper : IMessageSource<WindowProcedure>
         Require.NotNull(callback, nameof(callback));
 
         _callbacks.Add(callback);
-
-        OnCallbackAdded(callback);
     }
 
     /// <inheritdoc/>
@@ -55,24 +53,8 @@ public abstract class WindowWrapper : IMessageSource<WindowProcedure>
         Require.NotNull(callback, nameof(callback));
 
         _callbacks.Remove(callback);
-
-        OnCallbackRemoved(callback);
     }
     
-    /// <summary>
-    /// Called when a callback function has been added to the wrapped window.
-    /// </summary>
-    /// <param name="addedCallback">The callback function that was added.</param>
-    protected virtual void OnCallbackAdded(WindowProcedure addedCallback)
-    { }
-
-    /// <summary>
-    /// Called when a callback function has been removed from the wrapped window.
-    /// </summary>
-    /// <param name="removedCallback">The callback function that was removed.</param>
-    protected virtual void OnCallbackRemoved(WindowProcedure removedCallback)
-    { }
-
     /// <summary>
     /// Called when the wrapped window is in the process of being destroyed.
     /// </summary>

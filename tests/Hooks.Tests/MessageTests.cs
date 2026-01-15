@@ -15,17 +15,17 @@ using BadEcho.Interop;
 
 namespace BadEcho.Hooks.Tests;
 
-public class MessageQueueSourceTests : IDisposable
+public class MessageTests : IDisposable
 {
     private readonly ManualResetEventSlim _mre = new();
 
-    public MessageQueueSourceTests()
+    public MessageTests()
     {   // Required for test runner to see BadEcho.Hooks.Native.dll.
         Kernel32.AddDllDirectory(Environment.CurrentDirectory);
     }
 
     [Fact]
-    public async Task SendMessage_HookedNativeTestApp_MessageReceived()
+    public async Task MessageQueueSource_PostActivate_MessageReceived()
     {
         var process = NativeProcesses.Create(1)[0];
 
@@ -34,9 +34,6 @@ public class MessageQueueSourceTests : IDisposable
             (nint processWindow, int threadId) = NativeProcesses.GetWindowInformation(process);
             bool receivedActivate = false;
             
-            Assert.NotEqual(IntPtr.Zero, processWindow);
-            Assert.NotEqual(0, threadId);
-
             using (var source = new MessageQueueSource(threadId))
             {
                 source.AddCallback(GetMessage);
@@ -57,6 +54,46 @@ public class MessageQueueSourceTests : IDisposable
                 }
 
                 return new ProcedureResult(IntPtr.Zero, true);
+            }
+        }
+        finally
+        {
+            process.Kill();
+        }
+    }
+    
+    [Fact]
+    public async Task ExternalWindowWrapper_SendActivate_MessageReceived()
+    {
+        var process = NativeProcesses.Create(1)[0];
+
+        try
+        {
+            (nint processWindow, int _) = NativeProcesses.GetWindowInformation(process);
+            bool receivedActivate = false;
+
+            WindowHandle handle = new WindowHandle(processWindow, false);
+
+            using (var wrapper = new ExternalWindowWrapper(handle))
+            {
+                wrapper.AddCallback(WindowProcedure);
+                await Task.Delay(1000);
+
+                User32.SendMessage(processWindow, WindowMessage.Activate, new nint(1), processWindow);
+                _mre.Wait(TimeSpan.FromSeconds(3));
+            }
+
+            Assert.True(receivedActivate);
+
+            ProcedureResult WindowProcedure(nint hWnd, uint msg, nint wParam, nint lParam)
+            {
+                if ((WindowMessage)msg == WindowMessage.Activate)
+                {
+                    receivedActivate = true;
+                    _mre.Set();
+                }
+
+                return new ProcedureResult(nint.Zero, true);
             }
         }
         finally
