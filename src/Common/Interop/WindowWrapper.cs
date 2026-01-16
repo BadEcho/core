@@ -18,7 +18,7 @@ namespace BadEcho.Interop;
 /// <summary>
 /// Provides a wrapper around an <c>HWND</c> of a provided window and the messages it receives.
 /// </summary>
-public abstract class WindowWrapper : IMessageSource<WindowProcedure>
+public abstract class WindowWrapper
 {
     private readonly DelegateInvocationList<WindowProcedure> _callbacks = [];
 
@@ -39,7 +39,10 @@ public abstract class WindowWrapper : IMessageSource<WindowProcedure>
     public WindowHandle Handle 
     { get; init; }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Adds a callback function that will receive intercepted messages.
+    /// </summary>
+    /// <param name="callback">The callback function to invoke when publishing intercepted messages.</param>
     public void AddCallback(WindowProcedure callback)
     {
         Require.NotNull(callback, nameof(callback));
@@ -47,7 +50,10 @@ public abstract class WindowWrapper : IMessageSource<WindowProcedure>
         _callbacks.Add(callback);
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Removes a callback function previously receiving intercepted messages.
+    /// </summary>
+    /// <param name="callback">The callback function to remove.</param>
     public void RemoveCallback(WindowProcedure callback)
     {
         Require.NotNull(callback, nameof(callback));

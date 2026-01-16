@@ -23,7 +23,7 @@ namespace BadEcho.Hooks;
 /// <summary>
 /// Provides a publisher of messages from hook events.
 /// </summary>
-public abstract class HookSource<TProcedure> : IMessageSource<TProcedure>, IDisposable
+public abstract class HookSource<TProcedure> : IDisposable
     where TProcedure : Delegate
 {
     private readonly DelegateInvocationList<TProcedure> _callbacks = [];
@@ -69,7 +69,10 @@ public abstract class HookSource<TProcedure> : IMessageSource<TProcedure>, IDisp
     protected IEnumerable<TProcedure> Callbacks
         => _callbacks;
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Adds a callback function that will receive intercepted messages.
+    /// </summary>
+    /// <param name="callback">The callback function to invoke when publishing intercepted messages.</param>
     public void AddCallback(TProcedure callback)
     {
         Require.NotNull(callback, nameof(callback));
@@ -79,7 +82,10 @@ public abstract class HookSource<TProcedure> : IMessageSource<TProcedure>, IDisp
         CallbackAdded.Invoke(this, EventArgs.Empty);
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Removes a callback function previously receiving intercepted messages.
+    /// </summary>
+    /// <param name="callback">The callback function to remove.</param>
     public void RemoveCallback(TProcedure callback)
     {
         Require.NotNull(callback, nameof(callback));
