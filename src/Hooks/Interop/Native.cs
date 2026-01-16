@@ -28,14 +28,14 @@ internal static partial class Native
     /// Installs a new Win32 hook procedure into the specified thread.
     /// </summary>
     /// <param name="hookType">The type of hook procedure to install.</param>
-    /// <param name="threadId">The identifier of the thread with which the hook procedure is to be associated.</param>
     /// <param name="destination">A handle to the window that will receive messages sent to the hook procedure.</param>
+    /// <param name="threadId">The identifier of the thread with which the hook procedure is to be associated.</param>
     /// <returns>True if successful; otherwise, false.</returns>
     [LibraryImport(LIBRARY_NAME, SetLastError = true)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.U1)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
-    public static partial bool AddHook(HookType hookType, int threadId, WindowHandle destination);
+    public static partial bool AddHook(HookType hookType, WindowHandle destination, int threadId);
 
     /// <summary>
     /// Uninstalls a Win32 hook procedure from the specified thread.

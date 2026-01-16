@@ -51,11 +51,11 @@ enum HookType : unsigned char
 /**
  * Installs a new Win32 hook procedure into the specified thread.
  * @param hookType The type of hook procedure to install.
- * @param threadId The identifier of the thread with which the hook procedure is to be associated.
  * @param destination A handle to the window that will receive messages sent to the hook procedure.
+ * @param threadId The identifier of the thread with which the hook procedure is to be associated.
  * @return True if successful; otherwise, false.
  */
-HOOKS_API bool __cdecl AddHook(HookType hookType, int threadId, HWND destination);
+HOOKS_API bool __cdecl AddHook(HookType hookType, HWND destination, int threadId);
 
 /**
  * Uninstalls a Win32 hook procedure from the specified thread.

@@ -50,7 +50,7 @@ BOOL APIENTRY DllMain(HINSTANCE instance, DWORD reason, LPVOID)  // NOLINT(misc-
 	return TRUE;    
 }
 
-bool __cdecl AddHook(HookType hookType, int threadId, HWND destination)
+bool __cdecl AddHook(HookType hookType, HWND destination, int threadId)
 {
     HookData* hookData = AddHookData(hookType, threadId);
 
