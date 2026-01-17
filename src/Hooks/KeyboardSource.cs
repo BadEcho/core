@@ -20,23 +20,35 @@ namespace BadEcho.Hooks;
 /// <summary>
 /// Provides a publisher of keyboard input.
 /// </summary>
-public sealed class KeyboardSource : HookSource<KeyboardProcedure>
+public sealed class KeyboardSource : HookSource
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="KeyboardSource"/> class.
-    /// </summary>
-    /// <param name="threadId">The identifier of the thread whose message queue will be monitored for keyboard input.</param>
-    public KeyboardSource(int threadId)
-        : base(HookType.Keyboard, threadId)
-    { }
+    private readonly KeyboardProcedure _callback;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="KeyboardSource"/> class.
     /// </summary>
+    /// <param name="callback">The delegate that will be executed when a hook event has occured.</param>
+    /// <param name="threadId">The identifier of the thread whose message queue will be monitored for keyboard input.</param>
+    public KeyboardSource(KeyboardProcedure callback, int threadId)
+        : base(HookType.Keyboard, threadId)
+    {
+        Require.NotNull(callback, nameof(callback));
+
+        _callback = callback;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="KeyboardSource"/> class.
+    /// </summary>
+    /// <param name="callback">The delegate that will be executed when a hook event has occured.</param>
     /// <remarks>This will install a global keyboard hook, capturing keyboard input across all processes.</remarks>
-    public KeyboardSource()
+    public KeyboardSource(KeyboardProcedure callback)
         : base(HookType.LowLevelKeyboard)
-    { }
+    {
+        Require.NotNull(callback, nameof(callback));
+
+        _callback = callback;
+    }
 
     /// <inheritdoc/>
     protected override void OnHookEvent(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
@@ -49,12 +61,6 @@ public sealed class KeyboardSource : HookSource<KeyboardProcedure>
             _ => throw new ArgumentException(Strings.NonKeyboardMessageReceived)
         };
 
-        foreach (KeyboardProcedure callback in Callbacks)
-        {
-            var result = callback(state, key);
-
-            if (result.Handled)
-                break;
-        }
+        _callback(state, key);
     }
 }

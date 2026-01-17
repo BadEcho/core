@@ -11,7 +11,6 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using BadEcho.Interop;
 using BadEcho.Hooks.Interop;
 
 namespace BadEcho.Hooks;
@@ -19,15 +18,22 @@ namespace BadEcho.Hooks;
 /// <summary>
 /// Provides a publisher of messages being read from a message queue.
 /// </summary>
-public sealed class MessageQueueSource : HookSource<GetMessageProcedure>
+public sealed class MessageQueueSource : HookSource
 {
+    private readonly GetMessageProcedure _callback;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="MessageQueueSource"/> class.
     /// </summary>
+    /// <param name="callback">The delegate that will be executed when a hook event has occured.</param>
     /// <param name="threadId">The identifier for the thread whose message queue we're hooking into.</param>
-    public MessageQueueSource(int threadId)
+    public MessageQueueSource(GetMessageProcedure callback, int threadId)
         : base(HookType.GetMessage, threadId)
-    { }
+    {
+        Require.NotNull(callback, nameof(callback));
+
+        _callback = callback;
+    }
 
     /// <inheritdoc/>
     protected override void OnHookEvent(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
@@ -36,13 +42,7 @@ public sealed class MessageQueueSource : HookSource<GetMessageProcedure>
         IntPtr localWParam = wParam;
         IntPtr localLParam = lParam;
 
-        foreach (GetMessageProcedure callback in Callbacks)
-        {
-            var result = callback(ref localMsg, ref localWParam, ref localLParam);
-
-            if (result.Handled)
-                break;
-        }
+        _callback(ref localMsg, ref localWParam, ref localLParam);
 
         if (localMsg != msg || localWParam != wParam || localLParam != lParam)
             Native.ChangeMessageDetails(localMsg, localWParam, localLParam);

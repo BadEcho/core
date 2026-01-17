@@ -205,13 +205,23 @@ public class ThreadExecutorOperation
         => Task.GetAwaiter();
 
     /// <summary>
+    /// Configures an awaiter used to await this operation.
+    /// </summary>
+    /// <param name="continueOnCapturedContext">
+    /// True to attempt to marshal continuation back to the original context captured; otherwise, false.
+    /// </param>
+    /// <returns>An object used to await this operation.</returns>
+    public ConfiguredTaskAwaitable ConfigureAwait(bool continueOnCapturedContext) 
+        => Task.ConfigureAwait(continueOnCapturedContext);
+
+    /// <summary>
     /// Cancels the operation.
     /// </summary>
     /// <returns>Value indicating if the operation was removed from processing.</returns>
     public bool Cancel()
     {
         bool removed = Executor.Cancel(this);
-
+        
         if (removed)
         {
             TaskSource.SetCanceled();

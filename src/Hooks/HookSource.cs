@@ -11,7 +11,6 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using BadEcho.Collections;
 using BadEcho.Extensions;
 using BadEcho.Hooks.Interop;
 using BadEcho.Hooks.Properties;
@@ -23,10 +22,8 @@ namespace BadEcho.Hooks;
 /// <summary>
 /// Provides a publisher of messages from hook events.
 /// </summary>
-public abstract class HookSource<TProcedure> : IDisposable
-    where TProcedure : Delegate
+public abstract class HookSource : IDisposable
 {
-    private readonly DelegateInvocationList<TProcedure> _callbacks = [];
     private readonly MessageOnlyExecutor _hookExecutor = new();
     private readonly HookType _hookType;
     private readonly int _threadId;
@@ -35,7 +32,7 @@ public abstract class HookSource<TProcedure> : IDisposable
     private bool _disposed;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="HookSource{T}"/> class.
+    /// Initializes a new instance of the <see cref="HookSource"/> class.
     /// </summary>
     /// <param name="hookType">An enumeration value specifying the type of hook procedure to install.</param>
     /// <param name="threadId">The identifier of the thread with which the hook procedure is to be associated.</param>
@@ -46,7 +43,7 @@ public abstract class HookSource<TProcedure> : IDisposable
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="HookSource{T}"/> class.
+    /// Initializes a new instance of the <see cref="HookSource"/> class.
     /// </summary>
     /// <param name="hookType">An enumeration value specifying the type of hook procedure to install.</param>
     /// <remarks>
@@ -56,41 +53,55 @@ public abstract class HookSource<TProcedure> : IDisposable
     protected HookSource(HookType hookType)
     {
         _hookType = hookType;
-
-        CallbackAdded += async (_, _)
-            => await HandleCallbackAdded().ConfigureAwait(false);
-    }
-
-    private event EventHandler CallbackAdded;
-
-    /// <summary>
-    /// Gets the callbacks registered to receive intercepted messages.
-    /// </summary>
-    protected IEnumerable<TProcedure> Callbacks
-        => _callbacks;
-
-    /// <summary>
-    /// Adds a callback function that will receive intercepted messages.
-    /// </summary>
-    /// <param name="callback">The callback function to invoke when publishing intercepted messages.</param>
-    public void AddCallback(TProcedure callback)
-    {
-        Require.NotNull(callback, nameof(callback));
-
-        _callbacks.Add(callback);
-
-        CallbackAdded.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
-    /// Removes a callback function previously receiving intercepted messages.
+    /// Initializes the message loop that facilitates the receiving of hook messages, and then installs the hook procedure.
     /// </summary>
-    /// <param name="callback">The callback function to remove.</param>
-    public void RemoveCallback(TProcedure callback)
+    /// <returns>A <see cref="Task"/> that represents the asynchronous Start operation.</returns>
+    public async Task StartAsync()
     {
-        Require.NotNull(callback, nameof(callback));
+        if (_hookExecutor.Window == null)
+        {
+            await _hookExecutor.StartAsync().ConfigureAwait(false);
 
-        _callbacks.Remove(callback);
+            if (_hookExecutor.Window == null)
+                throw new InvalidOperationException(Strings.MessagingForHookFailed);
+
+            _hookExecutor.Window.AddCallback(HandleHookEvent);
+        }
+
+        if (_hooked)
+            return;
+
+        // Some hook procedures, when installed at a global scope, are called in the context of the thread that installed them.
+        // This sort of voodoo requires said thread to be pumping a message loop. So, to cover all possible cases, we make sure
+        // to install the hook procedure using the local message-only window thread.
+        await _hookExecutor.InvokeAsync(() =>
+        {
+            _hooked = Native.AddHook(_hookType,
+                                     _hookExecutor.Window.Handle, 
+                                     _threadId);
+        });
+    }
+
+    /// <summary>
+    /// Uninstalls the hook procedure, preventing any more messages from being received.
+    /// </summary>
+    /// <remarks>
+    /// This method is synchronous since uninstalling a hook procedure is a non-blocking operation. The hook procedure
+    /// can be reinstalled by calling <see cref="StartAsync"/>, as the message loop running in the background isn't
+    /// shut down until <see cref="Dispose()"/> is called.
+    /// </remarks>
+    public void Stop()
+    {
+        if (!_hooked)
+            return;
+
+        _hooked = !Native.RemoveHook(_hookType, _threadId);
+
+        if (_hooked)
+            Logger.Warning(Strings.UnhookFailed.InvariantFormat(_threadId));
     }
 
     /// <inheritdoc/>
@@ -113,14 +124,7 @@ public abstract class HookSource<TProcedure> : IDisposable
 
         if (disposing)
         {
-            if (_hooked)
-            {
-                _hooked = !Native.RemoveHook(_hookType, _threadId);
-
-                if (_hooked)
-                    Logger.Warning(Strings.UnhookFailed.InvariantFormat(_threadId));
-            }
-
+            Stop();
             _hookExecutor.Dispose();
         }
 
@@ -135,29 +139,6 @@ public abstract class HookSource<TProcedure> : IDisposable
     /// <param name="wParam">Additional message-specific information.</param>
     /// <param name="lParam">Additional message-specific information.</param>
     protected abstract void OnHookEvent(nint hWnd, uint msg, nint wParam, nint lParam);
-
-    private async Task HandleCallbackAdded()
-    {
-        if (_hookExecutor.Window != null)
-            return;
-
-        await _hookExecutor.StartAsync();
-
-        if (_hookExecutor.Window == null)
-            throw new InvalidOperationException(Strings.MessagingForHookFailed);
-
-        _hookExecutor.Window.AddCallback(HandleHookEvent);
-
-        // Some hook procedures, when installed at a global scope, are called in the context of the thread that installed them.
-        // This sort of voodoo requires said thread to be pumping a message loop. So, to cover all possible cases, we make sure
-        // to install the hook procedure using the local message-only window thread.
-        await _hookExecutor.InvokeAsync(() =>
-        {
-            _hooked = Native.AddHook(_hookType,
-                                     _threadId,
-                                     _hookExecutor.Window.Handle);
-        });
-    }
 
     private ProcedureResult HandleHookEvent(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
     {   // Ignore all system messages; we're only interested in messages sent by our hook DLL.

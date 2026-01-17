@@ -38,13 +38,26 @@ public sealed class ExternalWindowWrapper : WindowWrapper, IDisposable
     /// Initializes a new instance of the <see cref="ExternalWindowWrapper"/> class.
     /// </summary>
     /// <param name="handle">A handle to the window being wrapped.</param>
-    public ExternalWindowWrapper(WindowHandle handle)
+    private ExternalWindowWrapper(WindowHandle handle)
         : base(handle)
     {
         int threadId = Handle.GetThreadId();
 
-        _source = new WindowSource(threadId);
-        _source.AddCallback(WindowProcedure);
+        _source = new WindowSource(WindowProcedure, threadId);
+    }
+
+    /// <summary>
+    /// Creates a wrapper around the specified out-of-process window.
+    /// </summary>
+    /// <param name="handle">A handle to the window being wrapped.</param>
+    /// <returns>A <see cref="Task"/> that represents the asynchronous Create operation.</returns>
+    public static async Task<ExternalWindowWrapper> CreateAsync(WindowHandle handle)
+    {
+        var wrapper = new ExternalWindowWrapper(handle);
+        
+        await wrapper._source.StartAsync().ConfigureAwait(false);
+
+        return wrapper;
     }
 
     /// <inheritdoc/>

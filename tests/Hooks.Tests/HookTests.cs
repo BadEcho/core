@@ -44,7 +44,7 @@ public class HookTests
         {
             int threadId = process.Threads[0].Id;
 
-            Assert.True(Native.AddHook(HOOK_TYPE, threadId, pump.Window.Handle));
+            Assert.True(Native.AddHook(HOOK_TYPE, pump.Window.Handle, threadId));
             Assert.True(Native.RemoveHook(HOOK_TYPE, threadId));
         }
         finally
@@ -69,12 +69,12 @@ public class HookTests
             {
                 int threadId = processes[i].Threads[0].Id;
 
-                Assert.True(Native.AddHook(HOOK_TYPE, threadId, pump.Window.Handle));
+                Assert.True(Native.AddHook(HOOK_TYPE, pump.Window.Handle, threadId));
             }
 
             int lastThreadId = processes[MAX_THREADS].Threads[0].Id;
 
-            Assert.False(Native.AddHook(HOOK_TYPE, lastThreadId, pump.Window.Handle));
+            Assert.False(Native.AddHook(HOOK_TYPE, pump.Window.Handle, lastThreadId));
         }
         finally
         {
@@ -103,12 +103,12 @@ public class HookTests
             {
                 int threadId = processes[i].Threads[0].Id;
 
-                Assert.True(Native.AddHook(HOOK_TYPE, threadId, pump.Window.Handle));
+                Assert.True(Native.AddHook(HOOK_TYPE, pump.Window.Handle, threadId));
                 Assert.True(Native.RemoveHook(HOOK_TYPE, threadId));
 
             }
 
-            Assert.True(Native.AddHook(HOOK_TYPE, lastThreadId, pump.Window.Handle));
+            Assert.True(Native.AddHook(HOOK_TYPE, pump.Window.Handle, lastThreadId));
         }
         finally
         {

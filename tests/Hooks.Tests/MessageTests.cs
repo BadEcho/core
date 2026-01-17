@@ -34,10 +34,9 @@ public class MessageTests : IDisposable
             (nint processWindow, int threadId) = NativeProcesses.GetWindowInformation(process);
             bool receivedActivate = false;
             
-            using (var source = new MessageQueueSource(threadId))
+            using (var source = new MessageQueueSource(GetMessage, threadId))
             {
-                source.AddCallback(GetMessage);
-                await Task.Delay(1000);
+                await source.StartAsync();
                 
                 User32.PostMessage(processWindow, WindowMessage.Activate, new IntPtr(1), processWindow);
                 _mre.Wait(TimeSpan.FromSeconds(3));
@@ -72,12 +71,11 @@ public class MessageTests : IDisposable
             (nint processWindow, int _) = NativeProcesses.GetWindowInformation(process);
             bool receivedActivate = false;
 
-            WindowHandle handle = new WindowHandle(processWindow, false);
+            var handle = new WindowHandle(processWindow, false);
 
-            using (var wrapper = new ExternalWindowWrapper(handle))
+            using (var wrapper = await ExternalWindowWrapper.CreateAsync(handle))
             {
                 wrapper.AddCallback(WindowProcedure);
-                await Task.Delay(1000);
 
                 User32.SendMessage(processWindow, WindowMessage.Activate, new nint(1), processWindow);
                 _mre.Wait(TimeSpan.FromSeconds(3));
