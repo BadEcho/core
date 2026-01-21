@@ -111,6 +111,8 @@ internal sealed class WindowSubclass : IDisposable
     {
         Require.NotNull(callback, nameof(callback));
         
+        // This class, due to the GCHandle, won't be collectible as long as it's in the WNDPROC chain, which will keep consumers of this
+        // class alive longer than they need to be. A weak reference prevents this from happening.
         _callback = new WeakReference(callback);
 
         _handle = GCHandle.Alloc(this);

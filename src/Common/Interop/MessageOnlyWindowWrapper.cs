@@ -20,11 +20,15 @@ namespace BadEcho.Interop;
 /// <summary>
 /// Provides a disposable wrapper around an <c>HWND</c> of a self-generated message-only window and the messages it receives.
 /// </summary>
+/// <suppressions>
+/// ReSharper disable PrivateFieldCanBeConvertedToLocalVariable
+/// </suppressions>
 public sealed class MessageOnlyWindowWrapper : WindowWrapper, IDisposable
 {
     private readonly int _ownerThreadId = Environment.CurrentManagedThreadId;
 
     private readonly IThreadExecutor _executor;
+    private readonly WindowProcedure _callback;
 
     private bool _windowIsBeingDestroyed; 
     private ushort _classAtom;
@@ -40,8 +44,10 @@ public sealed class MessageOnlyWindowWrapper : WindowWrapper, IDisposable
         Require.NotNull(executor, nameof(executor));
 
         _executor = executor;
+        // We need to store a reference to this since WindowSubclass stores it as a weak reference.
+        _callback = WindowProcedure;
 
-        var subclass = new WindowSubclass(WindowProcedure, executor);
+        var subclass = new WindowSubclass(_callback, executor);
 
         // Our window procedure delegate must be kept alive through the call to CreateWindowEx.
         WNDPROC initialCallback = subclass.WndProc;

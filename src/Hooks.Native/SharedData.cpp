@@ -201,6 +201,9 @@ HookData* AddHookData(HookType hookType, int threadId)
 
 HookData* GetHookData(HookType hookType, int threadId)
 {    
+    if (threadId == 0)
+        threadId = static_cast<int>(GetCurrentThreadId());
+
     ThreadData* threadData = GetThreadData(hookType, threadId);
 
     return GetThreadHookData(hookType, threadData);

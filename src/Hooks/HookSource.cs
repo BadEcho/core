@@ -22,7 +22,7 @@ namespace BadEcho.Hooks;
 /// <summary>
 /// Provides a publisher of messages from hook events.
 /// </summary>
-public abstract class HookSource : IDisposable
+public abstract class HookSource : IDisposable, IAsyncDisposable
 {
     private readonly MessageOnlyExecutor _hookExecutor = new();
     private readonly HookType _hookType;
@@ -58,7 +58,7 @@ public abstract class HookSource : IDisposable
     /// <summary>
     /// Initializes the message loop that facilitates the receiving of hook messages, and then installs the hook procedure.
     /// </summary>
-    /// <returns>A <see cref="Task"/> that represents the asynchronous Start operation.</returns>
+    /// <returns>A <see cref="Task"/> that represents the asynchronous start operation.</returns>
     public async Task StartAsync()
     {
         if (_hookExecutor.Window == null)
@@ -89,19 +89,24 @@ public abstract class HookSource : IDisposable
     /// Uninstalls the hook procedure, preventing any more messages from being received.
     /// </summary>
     /// <remarks>
-    /// This method is synchronous since uninstalling a hook procedure is a non-blocking operation. The hook procedure
-    /// can be reinstalled by calling <see cref="StartAsync"/>, as the message loop running in the background isn't
-    /// shut down until <see cref="Dispose()"/> is called.
+    /// This only uninstalls the hook procedure; the message loop running in the background isn't shut down until
+    /// <see cref="DisposeAsync"/> is called.
     /// </remarks>
-    public void Stop()
-    {
-        if (!_hooked)
+    /// <returns>A <see cref="Task"/> that represents the asynchronous stop operation.</returns>
+    public async Task StopAsync()
+    {   // We can only stop asynchronously if our message pump is running...if it isn't then StartAsync was probably never called.
+        if (_hookExecutor.Window == null)
             return;
 
-        _hooked = !Native.RemoveHook(_hookType, _threadId);
+        // Execute in the context of our message pump, in case the hook was installed at a global scope.
+        await _hookExecutor.InvokeAsync(RemoveHook);
+    }
 
-        if (_hooked)
-            Logger.Warning(Strings.UnhookFailed.InvariantFormat(_threadId));
+    /// <inheritdoc/>
+    public async ValueTask DisposeAsync()
+    {
+        await DisposeAsyncCore().ConfigureAwait(false);
+        GC.SuppressFinalize(this);
     }
 
     /// <inheritdoc/>
@@ -109,6 +114,21 @@ public abstract class HookSource : IDisposable
     {
         Dispose(true);
         GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Releases unmanaged and managed resources asynchronously.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous dispose operation.</returns>
+    protected virtual async ValueTask DisposeAsyncCore()
+    {
+        if (_disposed)
+            return;
+
+        await StopAsync().ConfigureAwait(false);
+        _hookExecutor.Dispose();
+        
+        _disposed = true;
     }
 
     /// <summary>
@@ -124,7 +144,7 @@ public abstract class HookSource : IDisposable
 
         if (disposing)
         {
-            Stop();
+            RemoveHook();
             _hookExecutor.Dispose();
         }
 
@@ -153,5 +173,16 @@ public abstract class HookSource : IDisposable
         // infrastructure. This has no bearing on whether or not the next hook procedure in the current hook
         // chain is called, which our hook DLL will always do.
         return new ProcedureResult(IntPtr.Zero, true);
+    }
+
+    private void RemoveHook()
+    {
+        if (!_hooked)
+            return;
+
+        _hooked = !Native.RemoveHook(_hookType, _threadId);
+
+        if (_hooked)
+            Logger.Warning(Strings.UnhookFailed.InvariantFormat(_threadId));
     }
 }

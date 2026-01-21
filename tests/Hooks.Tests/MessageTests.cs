@@ -34,7 +34,7 @@ public class MessageTests : IDisposable
             (nint processWindow, int threadId) = NativeProcesses.GetWindowInformation(process);
             bool receivedActivate = false;
             
-            using (var source = new MessageQueueSource(GetMessage, threadId))
+            await using (var source = new MessageQueueSource(GetMessage, threadId))
             {
                 await source.StartAsync();
                 
