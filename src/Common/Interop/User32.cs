@@ -177,7 +177,7 @@ internal static partial class User32
     /// </summary>
     /// <param name="hMenu">A handle to the menu containing the item to receive new check-mark bitmaps.</param>
     /// <param name="uPosition">THe menu item to be changed, as determined by the <c>uFlags</c> parameter.</param>
-    /// <param name="uFlags">Specifies how the <see cref="uPosition"/> parameter is to be interpreted.</param>
+    /// <param name="uFlags">Specifies how the <c>uPosition</c> parameter is to be interpreted.</param>
     /// <param name="hBitmapUnchecked">A handle to the bitmap displayed when the menu item is not selected.</param>
     /// <param name="hBitmapChecked">A handle to the bitmap displayed when the menu item is selected.</param>
     /// <returns>True if the function succeeds; otherwise, false.</returns>
@@ -194,10 +194,10 @@ internal static partial class User32
     /// </summary>
     /// <param name="hMenu">A handle to the menu.</param>
     /// <param name="uIdEnableItem">
-    /// The menu item to eb enabled, disabled, or grayed, as determined by the <see cref="uEnable"/> parameter.
+    /// The menu item to eb enabled, disabled, or grayed, as determined by the <c>uEnable</c> parameter.
     /// </param>
     /// <param name="uEnable">
-    /// Controls the interpretation of the <see cref="uIdEnableItem"/> parameter and indicates whether the menu item
+    /// Controls the interpretation of the <c>uIdEnableItem</c> parameter and indicates whether the menu item
     /// is enabled, disabled, or grayed.
     /// </param>
     /// <returns>
