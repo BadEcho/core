@@ -22,5 +22,5 @@ public static class Theming
     /// Enables dark mode for context menus if configured by the user.
     /// </summary>
     public static void EnableDarkMenus() 
-        => UxTheme.SetPreferredAppMode(PreferredAppMode.Max);
+        => UxTheme.SetPreferredAppMode(PreferredAppMode.AllowDark);
 }
