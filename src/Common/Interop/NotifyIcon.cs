@@ -63,8 +63,23 @@ public sealed class NotifyIcon : IDisposable
         Require.NotNull(data, nameof(data));
 
         _windowWrapper = windowWrapper;
-         
-        _id = Guid.NewGuid();
+
+        // We're going to base our icon GUID off of the content of the icon itself. We want it unique and consistent to the icon.
+        byte[] idBuffer = ArrayPool<byte>.Shared.Rent(16);
+
+        // Grab the first non-zero data from halfway into the icon data, where the image data should actually reside.
+        int nonZeroIndex = data.Length / 2;
+
+        for (; nonZeroIndex < data.Length; nonZeroIndex++)
+        {
+            if (data[nonZeroIndex] != 0)
+                break;
+        }
+        
+        Array.Copy(data, nonZeroIndex, idBuffer, 0, 16);
+
+        // Can't guarantee uniqueness across all possible icons, but this should be sufficient for our purposes.
+        _id = new Guid(idBuffer);
 
         _tooltip = tooltip;
         _iconHandle = LoadIconHandle(data,
