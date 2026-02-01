@@ -47,6 +47,16 @@ public enum WindowMessage
     /// </summary>
     ShowWindow = 0x18,
     /// <summary>
+    /// A window message corresponding to WM_DRAWITEM, posted when a visual aspect of an owner-drawn button, combo box, list box,
+    /// or menu has changed.
+    /// </summary>
+    DrawItem = 0x2B,
+    /// <summary>
+    /// A window message corresponding to WM_MEASUREITEM, posted when a combo box, list box, list-view control, or menu item has been
+    /// created.
+    /// </summary>
+    MeasureItem = 0x2C,
+    /// <summary>
     /// A window message corresponding to WM_WINDOWPOSCHANGING, posted when the window's size, position, or place in the
     /// Z order is about to change.
     /// </summary>

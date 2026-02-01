@@ -46,24 +46,49 @@ public sealed class PopupMenu : IDisposable
     }
 
     /// <summary>
+    /// Adds a separator to this menu.
+    /// </summary>
+    /// <returns>A <see cref="MenuItem"/> representing the newly added separator.</returns>
+    public MenuItem AddSeparator() 
+        => AddItem(string.Empty, MenuFlags.Separator);
+
+    /// <summary>
     /// Adds a new menu item to this menu using the provided text as its label.
     /// </summary>
     /// <param name="label">The text of the new menu item.</param>
     /// <returns>A <see cref="MenuItem"/> instance representing the newly added menu item.</returns>
-    public MenuItem AddItem(string label)
+    public MenuItem AddItem(string label) 
+        => AddItem(label, MenuFlags.String);
+
+    /// <summary>
+    /// Adds a new menu item to this menu using the provided text as its label and bitmap handle as its icon.
+    /// </summary>
+    /// <param name="label">The text of the new menu item.</param>
+    /// <param name="bitmap">A handle to the bitmap to display alongside the label.</param>
+    /// <returns>A <see cref="MenuItem"/> instance representing the newly added menu item.</returns>
+    public MenuItem AddItem(string label, IntPtr bitmap)
+    {
+        var newItem = AddItem(label);
+
+        SetItemBitmap(newItem, bitmap);
+        
+        return newItem;
+    }
+
+    private MenuItem AddItem(string label, MenuFlags flags)
     {
         // The menu item identifier must at least be 1, as a value of 0 is returned in the event nothing is clicked on
         // the menu (or if an error occurs).
         var newItem = new MenuItem(_items.Count + 1, label);
 
-        if (!User32.AppendMenu(_menu, MenuFlags.String, (uint) newItem.Id, newItem.Label))
+        if (!User32.AppendMenu(_menu, flags, (uint)newItem.Id, newItem.Label))
             throw new Win32Exception(Marshal.GetLastWin32Error());
 
         _items.Add(newItem);
 
         return newItem;
     }
-
+    
     /// <summary>
     /// Removes a previously added menu item from this menu.
     /// </summary>
@@ -76,6 +101,34 @@ public sealed class PopupMenu : IDisposable
             throw new Win32Exception(Marshal.GetLastWin32Error());
 
         _items.Remove(menuItem);
+    }
+
+    /// <summary>
+    /// Enables the provided menu item, allowing the user to select it.
+    /// </summary>
+    /// <param name="menuItem">The menu item to enable.</param>
+    public void EnableItem(MenuItem menuItem)
+    {
+        Require.NotNull(menuItem, nameof(menuItem));
+
+        User32.EnableMenuItem(_menu, (uint) menuItem.Id, MenuFlags.Enabled);
+    }
+
+    /// <summary>
+    /// Disables the provided menu item, preventing the user from selecting it.
+    /// </summary>
+    /// <param name="menuItem">The menu item to disable.</param>
+    /// <remarks>
+    /// The Win32 menu API is supposed to allow us to disable a menu item without graying it out by specifying
+    /// <see cref="MenuFlags.Disabled"/> instead of <see cref="MenuFlags.Grayed"/>; however, from my observations,
+    /// both of these flags result in the same outcome: the item is disabled AND grayed out. So, there's no way
+    /// to disable without also graying the menu item out as well.
+    /// </remarks>
+    public void DisableItem(MenuItem menuItem)
+    {
+        Require.NotNull(menuItem, nameof(menuItem));
+
+        User32.EnableMenuItem(_menu, (uint) menuItem.Id, MenuFlags.Grayed);
     }
 
     /// <summary>
@@ -135,5 +188,11 @@ public sealed class PopupMenu : IDisposable
         _menu.Dispose();
 
         _disposed = true;
+    }
+
+    private void SetItemBitmap(MenuItem menuItem, IntPtr bitmap)
+    {
+        if (!User32.SetMenuItemBitmaps(_menu, (uint) menuItem.Id, 0, bitmap, bitmap))
+            throw new Win32Exception(Marshal.GetLastWin32Error());
     }
 }

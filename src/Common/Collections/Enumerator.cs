@@ -30,7 +30,7 @@ namespace BadEcho.Collections;
 /// Other derivations of this type are responsible for replicating this behavior.
 /// </suppressions>
 public abstract class Enumerator : IEnumerator
-{
+{   // TODO: nuke, don't like
     private bool _endOfSequence;
 
     /// <summary>

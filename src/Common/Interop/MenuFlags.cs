@@ -20,9 +20,13 @@ namespace BadEcho.Interop;
 internal enum MenuFlags
 {
     /// <summary>
+    /// The menu item is enabled.
+    /// </summary>
+    Enabled = 0,
+    /// <summary>
     /// The menu item is a text string.
     /// </summary>
-    String = 0,
+    String = Enabled,
     /// <summary>
     /// The menu item is disabled and grayed out so that it cannot be selected.
     /// </summary>

@@ -58,7 +58,7 @@ internal static partial class User32
     /// <param name="dwExStyle">The extended window style of the window being created.</param>
     /// <param name="lpClassName">String or class atom created by a previous call to the <see cref="RegisterClassEx"/> function.</param>
     /// <param name="lpWindowName">The window name.</param>
-    /// <param name="style">The style of the window being created.</param>
+     /// <param name="style">The style of the window being created.</param>
     /// <param name="x">The initial horizontal position of the window.</param>
     /// <param name="y">The initial vertical position of the window.</param>
     /// <param name="width">The width, in device units, of the window.</param>
@@ -172,6 +172,44 @@ internal static partial class User32
                                           MenuFlags uFlags,
                                           uint uIdNewItem,
                                           [MarshalUsing(typeof(Utf16StringMarshaller))] string lpNewItem);
+    /// <summary>
+    /// Associates the specified bitmap with a menu item.
+    /// </summary>
+    /// <param name="hMenu">A handle to the menu containing the item to receive new check-mark bitmaps.</param>
+    /// <param name="uPosition">THe menu item to be changed, as determined by the <c>uFlags</c> parameter.</param>
+    /// <param name="uFlags">Specifies how the <see cref="uPosition"/> parameter is to be interpreted.</param>
+    /// <param name="hBitmapUnchecked">A handle to the bitmap displayed when the menu item is not selected.</param>
+    /// <param name="hBitmapChecked">A handle to the bitmap displayed when the menu item is selected.</param>
+    /// <returns>True if the function succeeds; otherwise, false.</returns>
+    [LibraryImport(LibraryName, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool SetMenuItemBitmaps(MenuHandle hMenu,
+                                                  uint uPosition,
+                                                  uint uFlags,
+                                                  IntPtr hBitmapUnchecked,
+                                                  IntPtr hBitmapChecked);
+    /// <summary>
+    /// Enables, disables, or grays, the specified menu item.
+    /// </summary>
+    /// <param name="hMenu">A handle to the menu.</param>
+    /// <param name="uIdEnableItem">
+    /// The menu item to eb enabled, disabled, or grayed, as determined by the <see cref="uEnable"/> parameter.
+    /// </param>
+    /// <param name="uEnable">
+    /// Controls the interpretation of the <see cref="uIdEnableItem"/> parameter and indicates whether the menu item
+    /// is enabled, disabled, or grayed.
+    /// </param>
+    /// <returns>
+    /// The return value specifies the previous state of the menu item (true if it was previously enabled, false otherwise).
+    /// </returns>
+    [LibraryImport(LibraryName, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool EnableMenuItem(MenuHandle hMenu,
+                                              uint uIdEnableItem,
+                                              MenuFlags uEnable);
+
     /// <summary>
     /// Deletes a menu item or detaches a submenu from the specified menu.
     /// </summary>
