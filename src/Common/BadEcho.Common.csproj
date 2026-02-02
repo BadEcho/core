@@ -9,6 +9,7 @@
 		<RootNamespace>BadEcho</RootNamespace>
 		<ApplicationManifest>Properties\app.manifest</ApplicationManifest>
 		<IsPackable>$(CoreIsPackable)</IsPackable>
+		<NoWarn>SYSLIB1092</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>

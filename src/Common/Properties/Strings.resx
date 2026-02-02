@@ -360,4 +360,7 @@
   <data name="WindowCaptionBoundsFailure" xml:space="preserve">
 	  <value>Failed to get bounds for the window's caption button area.</value>
   </data>
+  <data name="CannotConvertComToManaged" xml:space="preserve">
+	  <value>Unable to convert COM interface pointer to a managed object.</value>
+  </data>
 </root>
