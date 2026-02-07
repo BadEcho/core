@@ -39,7 +39,7 @@ env:
 jobs:
   build:
     name: Fetch and Build Source
-    runs-on: windows-latest
+    runs-on: windows-2025-vs2026
     outputs:
       build-submodule-sha: ${{ steps.submodule-status.outputs.BUILD_SUBMODULE_SHA }}
       build-artifact-name: ${{ env.BUILD_ARTIFACT_NAME }}
@@ -78,7 +78,7 @@ jobs:
     name: Run Unit Tests
     needs: build
     if: inputs.skip-tests != true
-    runs-on: windows-latest
+    runs-on: windows-2025-vs2026
     steps:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -111,7 +111,7 @@ jobs:
     name: Deploy Packages
     needs: [build, test]
     if: always() && github.event_name != 'pull_request'
-    runs-on: windows-latest
+    runs-on: windows-2025-vs2026
     steps:
     - name: Check Previous Jobs' Results
       if: needs.build.result != 'success' || (needs.test.result != 'success' && inputs.skip-tests != true)
