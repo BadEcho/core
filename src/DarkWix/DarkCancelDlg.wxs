@@ -1,0 +1,24 @@
+﻿<!--Created by Matt Weber <matt@badecho.com>
+    Copyright @ 2026 Bad Echo LLC. All rights reserved.
+
+    Bad Echo Technologies are licensed under the
+    GNU Affero General Public License v3.0.
+
+    See accompanying file LICENSE.md or a copy at:
+    https://www.gnu.org/licenses/agpl-3.0.html-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+    <Fragment>
+        <UI>
+            <Dialog Id="DarkCancelDlg" Width="260" Height="85" Title="!(loc.CancelDlg_Title)">
+                <Control Id="Bitmap" X="0" Y="0" Type="Bitmap" Width="260" Height="85" Text="!(loc.DarkCancelDlgBitmap)" TabSkip="no" />
+                <Control Id="No" Type="PushButton" X="132" Y="57" Width="56" Height="17" Default="yes" Cancel="yes" Text="!(loc.WixUINo)">
+                    <Publish Event="EndDialog" Value="Return" />
+                </Control>
+                <Control Id="Yes" Type="PushButton" X="72" Y="57" Width="56" Height="17" Text="!(loc.WixUIYes)">
+                    <Publish Event="EndDialog" Value="Exit" />
+                </Control>
+                <Control Id="Text" Type="Text" X="48" Y="15" Width="194" Height="30" NoPrefix="yes" Text="!(loc.CancelDlgText)" Transparent="yes" />
+            </Dialog>
+        </UI>
+    </Fragment>
+</Wix>

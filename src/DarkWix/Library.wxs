@@ -1,0 +1,68 @@
+﻿<!--Created by Matt Weber <matt@badecho.com>
+    Copyright @ 2026 Bad Echo LLC. All rights reserved.
+
+    Bad Echo Technologies are licensed under the
+    GNU Affero General Public License v3.0.
+
+    See accompanying file LICENSE.md or a copy at:
+    https://www.gnu.org/licenses/agpl-3.0.html-->
+<?include Defines.wxi?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+    <Fragment>
+        <WixVariable Id="WixUIDialogBmp" Overridable="yes" Value="$(Media)\InstallerBackground.png" />
+        <Binary Id="DarkDialogBitmap" SourceFile="$(Media)\InstallerBackground.png" />
+        <Binary Id="DarkCancelBitmap" SourceFile="$(Media)InstallerCancelBackground.png" />
+        <UI Id="DarkUI">
+            <TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" Red="255" Blue="255" Green="255" />
+            <TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="12" Red="255" Blue="255" Green="255" />
+            <TextStyle Id="WixUI_Font_Title" FaceName="Tahoma" Size="9" Bold="yes" Red="255" Blue="255" Green="255" />
+            <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
+
+            <DialogRef Id="BrowseDlg" />
+            <DialogRef Id="DiskCostDlg" />
+            <DialogRef Id="ErrorDlg" />
+            <DialogRef Id="FatalError" />
+            <DialogRef Id="FilesInUse" />
+            <DialogRef Id="MsiRMFilesInUse" />
+            <DialogRef Id="PrepareDlg" />
+            <DialogRef Id="ProgressDlg" />
+            <DialogRef Id="ResumeDlg" />
+            <DialogRef Id="WelcomeDlg" />
+            <DialogRef Id="UserExit" />
+            <DialogRef Id="DarkProgressDlg" />
+            <DialogRef Id="DarkInstallDirDlg" />
+            <DialogRef Id="DarkMaintenanceTypeDlg" />
+            <DialogRef Id="DarkVerifyReadyDlg" />
+            <DialogRef Id="DarkCancelDlg" />
+
+            <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999" />
+
+            <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="DarkInstallDirDlg" Condition="NOT Installed" />
+            <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="DarkVerifyReadyDlg" Condition="Installed AND PATCH" />
+
+            <Publish Dialog="WelcomeDlg" Control="Cancel" Event="SpawnDialog" Value="DarkCancelDlg" Order="5" />
+            <Publish Dialog="BrowseDlg" Control="OK" Event="CheckTargetPath" Value="[WIXUI_INSTALLDIR]" Order="1" />
+
+            <Publish Dialog="DarkInstallDirDlg" Control="Next" Event="CheckTargetPath" Value="[WIXUI_INSTALLDIR]" Order="1" />
+            <Publish Dialog="DarkInstallDirDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" />
+            <Publish Dialog="DarkInstallDirDlg" Control="Next" Event="SetTargetPath" Value="[WIXUI_INSTALLDIR]" Order="3" />
+            <Publish Dialog="DarkInstallDirDlg" Control="Next" Event="NewDialog" Value="DarkVerifyReadyDlg" Order="4" />
+            <Publish Dialog="DarkInstallDirDlg" Control="ChangeFolder" Property="_BrowseProperty" Value="[WIXUI_INSTALLDIR]" Order="1" />
+            <Publish Dialog="DarkInstallDirDlg" Control="ChangeFolder" Event="SpawnDialog" Value="BrowseDlg" Order="2" />
+
+            <Publish Dialog="BrowseDlg" Control="OK" Event="SetTargetPath" Value="[_BrowseProperty]" Order="3" />
+            <Publish Dialog="BrowseDlg" Control="OK" Event="EndDialog" Value="Return" Order="4" />
+
+            <Publish Dialog="DarkVerifyReadyDlg" Control="Back" Event="NewDialog" Value="DarkInstallDirDlg" Order="1" Condition="NOT Installed" />
+            <Publish Dialog="DarkVerifyReadyDlg" Control="Back" Event="NewDialog" Value="DarkMaintenanceTypeDlg" Order="2" Condition="Installed AND NOT PATCH" />
+            <Publish Dialog="DarkVerifyReadyDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2" Condition="Installed AND PATCH" />
+
+            <Publish Dialog="MaintenanceWelcomeDlg" Control="Next" Event="NewDialog" Value="DarkMaintenanceTypeDlg" />
+
+            <Publish Dialog="DarkMaintenanceTypeDlg" Control="RepairButton" Event="NewDialog" Value="DarkVerifyReadyDlg" />
+            <Publish Dialog="DarkMaintenanceTypeDlg" Control="RemoveButton" Event="NewDialog" Value="DarkVerifyReadyDlg" />
+            <Publish Dialog="DarkMaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg" />
+            <UIRef Id="WixUI_Common" />
+        </UI>
+    </Fragment>
+</Wix>
