@@ -11,7 +11,7 @@
     <Fragment>
         <WixVariable Id="WixUIDialogBmp" Overridable="yes" Value="$(Media)\InstallerBackground.png" />
         <Binary Id="DarkDialogBitmap" SourceFile="$(Media)\InstallerBackground.png" />
-        <Binary Id="DarkCancelBitmap" SourceFile="$(Media)InstallerCancelBackground.png" />
+        <Binary Id="DarkCancelBitmap" SourceFile="$(Media)\InstallerCancelBackground.png" />
         <UI Id="DarkUI">
             <TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" Red="255" Blue="255" Green="255" />
             <TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="12" Red="255" Blue="255" Green="255" />

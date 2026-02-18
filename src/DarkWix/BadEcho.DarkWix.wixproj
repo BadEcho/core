@@ -1,13 +1,13 @@
 ﻿<Project Sdk="WixToolset.Sdk/6.0.2">
-  <PropertyGroup>
-    <OutputType>Library</OutputType>
-    <BindFiles>true</BindFiles>
-    <IsPackable>$(CoreIsPackable)</IsPackable>
-  </PropertyGroup>
-  <ItemGroup>
-    <Content Include="Defines.wxi" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="README.md" Pack="true" PackagePath="" />
-  </ItemGroup>
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <BindFiles>true</BindFiles>
+        <DebugType>full</DebugType>
+    </PropertyGroup>
+    <ItemGroup>
+        <Content Include="Defines.wxi" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="" />
+    </ItemGroup>
 </Project>
