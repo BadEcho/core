@@ -115,6 +115,13 @@ public sealed class NativeWindow
     { get; init; }
 
     /// <summary>
+    /// Gets or sets a value indicating if the window's context menu (normally opened by left-clicking the top-left corner of the window
+    /// where its icon normally is, or by Alt + Spacebar) should be disabled.
+    /// </summary>
+    public bool DisableContextMenu 
+    { get; set; }
+
+    /// <summary>
     /// Applies a brush of the specified color as the background for this window's class.
     /// </summary>
     /// <param name="r">The intensity of the red color.</param>
@@ -133,7 +140,7 @@ public sealed class NativeWindow
         
         Gdi32.DeleteObject(oldBrush);
     }
-    
+
     /// <summary>
     /// Invalidates the client area of the window, causing it to eventually be redrawn.
     /// </summary>
@@ -322,6 +329,17 @@ public sealed class NativeWindow
                         throw new Win32Exception(Marshal.GetLastWin32Error());
 
                     _ignoreSizeChanges = false;
+                }
+
+                break;
+
+            case WindowMessage.SystemCommand:
+                if (DisableContextMenu)
+                {   // The lower 4 bits of wParam are for internal use and should be disregarded.
+                    var systemCommand = (SystemCommand) (wParam.ToInt32() & 0xFFF0);
+
+                    if (systemCommand is SystemCommand.MouseMenu or SystemCommand.KeyMenu)
+                        handled = true;
                 }
 
                 break;

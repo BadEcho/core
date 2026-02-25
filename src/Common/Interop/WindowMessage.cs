@@ -99,6 +99,10 @@ public enum WindowMessage
     /// </summary>
     SystemKeyUp = 0x105,
     /// <summary>
+    /// A window message corresponding to WM_SYSCOMMAND, sent when the user has chosen a command from a window menu.
+    /// </summary>
+    SystemCommand = 0x112,
+    /// <summary>
     /// A window message corresponding to WM_LBUTTONUP, posted when the user releases the left mouse button while the cursor
     /// is in the client area of a window.
     /// </summary>
@@ -108,6 +112,11 @@ public enum WindowMessage
     /// is in the client area of a window.
     /// </summary>
     RightButtonUp = 0x205,
+    /// <summary>
+    /// A window message corresponding to WM_EXITSIZEMOVE, sent one time to a window after it has exited the moving or sizing modal
+    /// loop.
+    /// </summary>
+    ExitSizeMove = 0x0232,
     /// <summary>
     /// A window message corresponding to WM_DRAWCLIPBOARD, sent to windows in the clipboard viewer chain when the content of
     /// the clipboard changes.
