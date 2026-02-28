@@ -1,0 +1,55 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Package" />
+    <BuildType Name="Release" />
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/src/">
+    <Project Path="src/Common/BadEcho.Common.csproj">
+      <BuildType Solution="Package|*" Project="Release" />
+    </Project>
+    <Project Path="src/DarkWix/BadEcho.DarkWix.wixproj" Type="b7dd6f7e-def8-4e67-b5b7-07ef123db6f0">
+      <BuildType Solution="Package|Any CPU" Project="Release" />
+      <BuildType Solution="Package|x64" Project="Debug" />
+      <BuildType Solution="Package|x86" Project="Release" />
+      <Platform Solution="*|Any CPU" Project="x64" />
+      <Build Solution="Package|*" Project="false" />
+    </Project>
+    <Project Path="src/Drawing/BadEcho.Drawing.csproj">
+      <BuildType Solution="Package|*" Project="Release" />
+    </Project>
+    <Project Path="src/Extensions/BadEcho.Extensions.csproj">
+      <BuildType Solution="Package|*" Project="Release" />
+    </Project>
+    <Project Path="src/Hooks.Native/BadEcho.Hooks.Native.vcxproj" Id="af92b5d1-9e02-413b-800d-90b87e59ed89">
+      <BuildType Solution="Package|*" Project="Release" />
+      <Build Solution="Package|*" Project="false" />
+    </Project>
+    <Project Path="src/Hooks/BadEcho.Hooks.csproj">
+      <BuildType Solution="Package|*" Project="Release" />
+    </Project>
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Common.Tests/BadEcho.Common.Tests.csproj">
+      <BuildType Solution="Package|*" Project="Release" />
+      <Build Solution="Package|*" Project="false" />
+    </Project>
+    <Project Path="tests/Extensions.Tests/BadEcho.Extensions.Tests.csproj">
+      <BuildType Solution="Package|*" Project="Release" />
+      <Build Solution="Package|*" Project="false" />
+    </Project>
+    <Project Path="tests/Hooks.Tests/BadEcho.Hooks.Tests.csproj">
+      <BuildDependency Project="src/Hooks.Native/BadEcho.Hooks.Native.vcxproj" />
+      <BuildDependency Project="tests/NativeTestApp/BadEcho.NativeTestApp.vcxproj" />
+      <BuildType Solution="Package|*" Project="Debug" />
+      <Build Solution="Package|*" Project="false" />
+    </Project>
+    <Project Path="tests/NativeTestApp/BadEcho.NativeTestApp.vcxproj" Id="8aad12e6-8942-4a44-93bf-bf7855e1923b">
+      <BuildType Solution="Package|*" Project="Debug" />
+      <Build Solution="Package|*" Project="false" />
+    </Project>
+  </Folder>
+</Solution>
