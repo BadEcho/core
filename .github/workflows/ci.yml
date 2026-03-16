@@ -34,6 +34,7 @@ on:
 
 env:
   PACKAGE_CONFIGURATION: 'Package'
+  ADDITIONAL_RESTORE_PROPERTIES:
   BUILD_ARTIFACT_NAME: 'binaries'
   
 jobs:
@@ -59,10 +60,11 @@ jobs:
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2    
     - name: Build
-      run: .\build\Invoke-Build.ps1 -ReleaseBuild:$([System.Convert]::ToBoolean($Env:RELEASE_BUILD)) -PackageConfiguration:$Env:PACKAGE_CONFIGURATION
+      run: .\build\Invoke-Build.ps1 -ReleaseBuild:$([System.Convert]::ToBoolean($Env:RELEASE_BUILD)) -PackageConfiguration:$Env:PACKAGE_CONFIGURATION -AdditionalRestoreProperties:@($Env:ADDITIONAL_RESTORE_PROPERTIES)
       env:
         RELEASE_BUILD: ${{ inputs.release-build != '' && inputs.release-build || 'false' }}
         PACKAGE_CONFIGURATION: ${{ env.PACKAGE_CONFIGURATION }}
+        ADDITIONAL_RESTORE_PROPERTIES: ${{ env.ADDITIONAL_RESTORE_PROPERTIES }} 
       # Store our compiled assets for subsequent jobs.
     - name: Upload Build Artifact
       uses: actions/upload-artifact@v4

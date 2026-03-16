@@ -16,6 +16,7 @@ on:
 
 env:
   PRODUCT_NAME: Bad Echo Core Technologies
+  ASSET: 'Binaries.zip \#Binaries (zip)'
   LAST_RUN_CONCLUSION:
 
 jobs:
@@ -71,11 +72,15 @@ jobs:
       with:
         name: ${{ needs.build.outputs.build-artifact-name }}
         path: bin\rel
+    - name: Compress Build Artifact
+      run: Compress-Archive -Path bin\rel\* -DestinationPath Binaries.zip
     - name: Setup Git User
       run: git config --global user.email "chamber@badecho.com"; git config --global user.name "Echo Chamber"
     - name: Create GitHub Release
-      run: .\build\New-GitHubRelease.ps1 "${{ env.PRODUCT_NAME }}" "${{ github.repository }}"
+      run: .\build\New-GitHubRelease.ps1 -ProductName:$Env:PRODUCT_NAME -Repository:"${{ github.repository }}" -Asset:$Env:ASSET
       env:
         GH_TOKEN: ${{ secrets.REPO_TOKEN }}
+        PRODUCT_NAME: ${{ env.PRODUCT_NAME }}
+        ASSET: ${{ env.ASSET }}
     - name: Bump Version
       run: .\build\Bump-Version.ps1 ${{ github.event.inputs.component-to-increment }}
