@@ -16,7 +16,7 @@ on:
 
 env:
   PRODUCT_NAME: Bad Echo Core Technologies
-  ASSET: 'Binaries.zip \#Binaries (zip)'
+  ASSET: 'Binaries.zip #Binaries (zip)'
   LAST_RUN_CONCLUSION:
 
 jobs:
