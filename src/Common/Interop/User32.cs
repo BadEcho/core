@@ -113,7 +113,17 @@ internal static partial class User32
     [LibraryImport(LibraryName)]
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    public static partial bool ShowWindow(nint hWnd, int nCmdShow);
+    public static partial bool ShowWindow(WindowHandle hWnd, ShowWindowCommand nCmdShow);
+
+    /// <summary>
+    /// Determines the visibility of the specified window.
+    /// </summary>
+    /// <param name="hWnd">A handle to the window to be tested.</param>
+    /// <returns>True if the window has the visible style; otherwise, false.</returns>
+    [LibraryImport(LibraryName)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool IsWindowVisible(WindowHandle hWnd);
 
     /// <summary>
     /// Retrieves the identifier of the thread that created the specified window and, optionally, the identifier

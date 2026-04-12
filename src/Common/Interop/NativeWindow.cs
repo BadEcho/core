@@ -30,7 +30,7 @@ public sealed class NativeWindow
 
     private bool _displayingWithoutFlicker;
     private bool _ignoreSizeChanges;
-    
+
     private WindowStyles _displayStyles;
     
     /// <summary>
@@ -38,15 +38,23 @@ public sealed class NativeWindow
     /// </summary>
     /// <param name="windowWrapper">A wrapper around a window and the messages it receives.</param>
     public NativeWindow(WindowWrapper windowWrapper)
+        : this (ValidateWrapper(windowWrapper))
     {
         Require.NotNull(windowWrapper, nameof(windowWrapper));
 
-        Handle = windowWrapper.Handle;
-        
+        windowWrapper.AddCallback(WindowProcedure);
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NativeWindow"/> class.
+    /// </summary>
+    /// <param name="handle">The handle to the window.</param>
+    public NativeWindow(WindowHandle handle)
+    {
+        Handle = handle;
+
         if (!User32.GetWindowRect(Handle, out RECT rect))
             throw ((ResultHandle)Marshal.GetHRForLastWin32Error()).GetException();
-        
-        windowWrapper.AddCallback(WindowProcedure);
 
         Left = rect.Left;
         Top = rect.Top;
@@ -88,7 +96,7 @@ public sealed class NativeWindow
     /// </summary>
     public int Height
     { get; private set; }
-    
+
     /// <summary>
     /// Gets the bounds of the caption button area for this window.
     /// </summary>
@@ -108,6 +116,13 @@ public sealed class NativeWindow
     }
 
     /// <summary>
+    /// Gets a value indicating if this window has the visible style, that is, whether it can be drawn onto and displayed.
+    /// This will return true for any window with the visible style, even if said window is minimized or obscured by other windows.
+    /// </summary>
+    public bool IsVisible
+        => User32.IsWindowVisible(Handle);
+
+    /// <summary>
     /// Gets a value indicating if techniques intended to eliminate the possibility of a flickering background during the initial
     /// display of the window should be employed.
     /// </summary>
@@ -120,6 +135,33 @@ public sealed class NativeWindow
     /// </summary>
     public bool DisableContextMenu 
     { get; set; }
+
+    /// <summary>
+    /// Retrieves all windows created by the specified process.
+    /// </summary>
+    /// <param name="processId">The identifier of the process to retrieve windows for.</param>
+    /// <returns>
+    /// <see cref="NativeWindow"/> instances for every window created by the process identified by <c>processId</c>.
+    /// </returns>
+    public static IEnumerable<NativeWindow> FromProcessId(int processId)
+    {
+        List<NativeWindow> windows = [];
+
+        if (!User32.EnumWindows(Callback, processId))
+            throw new Win32Exception(Marshal.GetLastWin32Error());
+
+        return windows;
+
+        bool Callback(nint hWnd, nint _)
+        {
+            User32.GetWindowThreadProcessId(hWnd, out uint windowProcessId);
+
+            if (windowProcessId == processId) 
+                windows.Add(new NativeWindow(new WindowHandle(hWnd, false)));
+
+            return true;
+        }
+    }
 
     /// <summary>
     /// Applies a brush of the specified color as the background for this window's class.
@@ -218,6 +260,19 @@ public sealed class NativeWindow
     {
         if (!User32.UnregisterHotKey(Handle, id))
             throw ((ResultHandle) Marshal.GetHRForLastWin32Error()).GetException();
+    }
+
+    /// <summary>
+    /// Minimizes the window.
+    /// </summary>
+    public void Minimize() 
+        => User32.ShowWindow(Handle, ShowWindowCommand.Minimize);
+
+    private static WindowHandle ValidateWrapper(WindowWrapper windowWrapper)
+    {
+        Require.NotNull(windowWrapper, nameof(windowWrapper));
+
+        return windowWrapper.Handle;
     }
 
     private ProcedureResult WindowProcedure(IntPtr hWnd, uint msg, nint wParam, nint lParam)
