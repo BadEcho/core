@@ -47,6 +47,14 @@ public enum WindowMessage
     /// </summary>
     ShowWindow = 0x18,
     /// <summary>
+    /// A window message corresponding to WM_SETTINGCHANGE, sent when a system-wide setting has changed.
+    /// </summary>
+    SettingChange = 0x1A,
+    /// <summary>
+    /// A window message corresponding to WM_SYSCOLORCHANGE, sent when a change is made to a system color setting.
+    /// </summary>
+    SystemColorChange = 0x21,
+    /// <summary>
     /// A window message corresponding to WM_DRAWITEM, posted when a visual aspect of an owner-drawn button, combo box, list box,
     /// or menu has changed.
     /// </summary>
@@ -131,6 +139,10 @@ public enum WindowMessage
     /// A window message corresponding to WM_HOTKEY, indicating a hot key has been pressed.
     /// </summary>
     HotKey = 0x312,
+    /// <summary>
+    /// A window message corresponding to WM_THEMECHANGED, indicating a theme change event.
+    /// </summary>
+    ThemeChanged = 0x31A,
     /// <summary>
     /// A window message corresponding to WM_CLIPBOARDUPDATE, indicating the contents of the clipboard have changed.
     /// </summary>
