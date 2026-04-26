@@ -119,7 +119,7 @@ internal sealed class BadEchoEventSource : EventSource
         ErrorException(message,
                        exception.GetType().FullName ?? string.Empty,
                        exception.GetTargetSiteFullName(),
-                       exception.HResult,
+                       $"0x{exception.HResult:x}",
                        exception.ToString());
     }
 
@@ -140,7 +140,7 @@ internal sealed class BadEchoEventSource : EventSource
         CriticalException(message,
                           exception.GetType().FullName ?? string.Empty,
                           exception.GetTargetSiteFullName(),
-                          exception.HResult,
+                          $"0x{exception.HResult:x}",
                           exception.ToString());
     }
 
@@ -148,12 +148,13 @@ internal sealed class BadEchoEventSource : EventSource
     private unsafe void ErrorException(string? message,
                                        string exceptionType,
                                        string targetSite,
-                                       int hResult,
+                                       string hResult,
                                        string exception)
     {
         fixed (char* pMessage = message)
         fixed (char* pExceptionType = exceptionType)
         fixed (char* pTargetSite = targetSite)
+        fixed (char* pHResult = hResult)
         fixed (char* pException = exception)
         {
             const int eventDataCount = 5;
@@ -162,7 +163,7 @@ internal sealed class BadEchoEventSource : EventSource
             SetEventData(ref eventData[0], ref message, pMessage);
             SetEventData(ref eventData[1], ref exceptionType, pExceptionType);
             SetEventData(ref eventData[2], ref targetSite, pTargetSite);
-            SetEventData(ref eventData[3], ref hResult);
+            SetEventData(ref eventData[3], ref hResult, pHResult);
             SetEventData(ref eventData[4], ref exception, pException);
 
             WriteEventCore(6, eventDataCount, eventData);
@@ -173,12 +174,13 @@ internal sealed class BadEchoEventSource : EventSource
     private unsafe void CriticalException(string? message,
                                           string exceptionType,
                                           string targetSite,
-                                          int hResult,
+                                          string hResult,
                                           string exception)
     {
         fixed (char* pMessage = message)
         fixed (char* pExceptionType = exceptionType)
         fixed (char* pTargetSite = targetSite)
+        fixed (char* pHResult = hResult)
         fixed (char* pException = exception)
         {
             const int eventDataCount = 5;
@@ -187,7 +189,7 @@ internal sealed class BadEchoEventSource : EventSource
             SetEventData(ref eventData[0], ref message, pMessage);
             SetEventData(ref eventData[1], ref exceptionType, pExceptionType);
             SetEventData(ref eventData[2], ref targetSite, pTargetSite);
-            SetEventData(ref eventData[3], ref hResult);
+            SetEventData(ref eventData[3], ref hResult, pHResult);
             SetEventData(ref eventData[4], ref exception, pException);
 
             WriteEventCore(7, eventDataCount, eventData);

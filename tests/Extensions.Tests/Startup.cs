@@ -25,17 +25,17 @@ public class Startup
         const string appSettingsSecondary = "appsettings.secondary.json";
         const string appSettingsNonexistent = "appsettings.nonexistent.json";
 
-        IConfiguration configuration = new ConfigurationBuilder()
-                                       .AddJsonFile("appsettings.json")
-                                       .AddJsonFile(appSettingsPrimary, optional: false, reloadOnChange: true)
-                                       .AddJsonFile(appSettingsSecondary, optional: false, reloadOnChange: true)
-                                       .AddJsonFile(appSettingsNonexistent, optional: true, reloadOnChange: true)
-                                       .Build();
+        var builder = new ConfigurationBuilder();
+        IConfiguration configuration = builder.AddJsonFile("appsettings.json")
+                                              .AddJsonFile(appSettingsPrimary, optional: false, reloadOnChange: true)
+                                              .AddJsonFile(appSettingsSecondary, optional: false, reloadOnChange: true)
+                                              .AddJsonFile(appSettingsNonexistent, optional: true, reloadOnChange: true)
+                                              .Build();
         services.AddLogging(l =>
         {
-            l.AddDebug();
             l.AddConfiguration(configuration.GetSection("Logging"));
             l.AddProvider(new TestLoggerProvider());
+            l.AddFile();
         });
 
         services.AddEventSourceLogForwarder();
@@ -51,5 +51,8 @@ public class Startup
                                            appSettingsPrimary);
         services.Configure<ArrayOptions>(configuration.GetSection(ArrayOptions.SectionName),
                                          appSettingsPrimary);
+
+        File.Delete("test.log");
+        File.Delete("test-NotHosted.log");
     }
 }

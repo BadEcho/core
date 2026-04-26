@@ -3,7 +3,7 @@
 
 The `BadEcho.Extensions` library integrates the Bad Echo core frameworks with the Microsoft.Extensions.* family of libraries and the dependency injection container they use. 
 
-Using this library allows for various services and features registered with an application host to be interoperable with various Bad Echo features. It also provides some enhancements to existing services exposed by the various Microsoft.Extensions.* libraries.
+Using this library allows for various services and features registered with an application host to be interoperable with various Bad Echo features. It also provides some enhancements to existing services exposed by the various Microsoft.Extensions.* libraries, as well as features such as a simple file logger.
 
 This package exists to be used by specific Bad Echo applications, but is licensed under the GNU Affero General Public License so that others may enjoy it as well; see the accompanying [license](https://github.com/BadEcho/core/blob/master/LICENSE.md) for details.
 

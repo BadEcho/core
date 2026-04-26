@@ -14,10 +14,8 @@
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Primitives;
-using BadEcho.Extensions.Properties;
 
 namespace BadEcho.Extensions;
 
@@ -104,7 +102,7 @@ public sealed class WritableOptions<TOptions> : IWritableOptions<TOptions>, IDis
         name ??= string.Empty;
 
         JsonNode updateSection = JsonSerializer.SerializeToNode(Get(name)) ?? new JsonObject();
-        string path = GetOptionsPath(_fileNameMap[name]);
+        string path = _environment.ResolvePath(_fileNameMap[name]);
 
         JsonNode? optionsFileNode = null;
 
@@ -134,29 +132,6 @@ public sealed class WritableOptions<TOptions> : IWritableOptions<TOptions>, IDis
         _registrations.Clear();
 
         _disposed = true;
-    }
-
-    private string GetOptionsPath(string fileName)
-    {
-        IFileInfo info = _environment.ContentRootFileProvider.GetFileInfo(fileName);
-        string? path;
-
-        if (info is NotFoundFileInfo)
-        {
-            string? directoryName = Path.GetDirectoryName(fileName);
-
-            if (!string.IsNullOrEmpty(directoryName) && !Directory.Exists(directoryName))
-                Directory.CreateDirectory(directoryName);
-
-            path = fileName;
-        }
-        else
-            path = info.PhysicalPath;            
-
-        if (string.IsNullOrEmpty(path))
-            throw new InvalidOperationException(Strings.OptionsFileNotAccessible);
-
-        return path;
     }
 
     private void RegisterSource(IOptionsChangeTokenSource<TOptions> source)
