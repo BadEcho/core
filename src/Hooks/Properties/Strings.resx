@@ -124,6 +124,9 @@
 	  <value>Failed to start a message loop for receiving hook events.</value>
   </data>
   <data name="NonKeyboardMessageReceived" xml:space="preserve">
-	  <value>Keyboard input listener was sent an non-input related message.</value>
+	  <value>Keyboard input listener was sent a non-input related message.</value>
   </data>
+	<data name="NonMouseMessageReceived" xml:space="preserve">
+		<value>Mouse input listener was sent a non-input related message.</value>
+	</data>
 </root>

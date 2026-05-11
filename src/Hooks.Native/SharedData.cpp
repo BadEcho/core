@@ -31,6 +31,8 @@ namespace {
         // Input related global hooks are executed in the context of the installing thread.
         case Keyboard:
         case LowLevelKeyboard:
+        case Mouse:
+        case LowLevelMouse:
         default:
             return nullptr;
         }
@@ -85,6 +87,10 @@ namespace {
 	            return &threadData->KeyboardHook;
 	        case LowLevelKeyboard:
 	            return &threadData->LowLevelKeyboardHook;
+            case Mouse:
+                return &threadData->MouseHook;
+            case LowLevelMouse:
+                return &threadData->LowLevelMouseHook;				
         }
 
         return nullptr;

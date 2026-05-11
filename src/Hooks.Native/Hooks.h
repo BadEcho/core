@@ -43,7 +43,15 @@ enum HookType : unsigned char
 	/**
 	 * Monitors \c WH_KEYBOARD_LL low-level keyboard input events.
 	 */
-	LowLevelKeyboard
+	LowLevelKeyboard,
+	/**
+	 * Monitors \c WH_MOUSE mouse messages.
+	 */
+	Mouse,
+	/**
+	 * Monitors \c WH_MOUSE_LL low-level mouse input events.
+	 */
+	LowLevelMouse
 };
 
 #define HOOKS_API extern "C" __declspec(dllexport)
@@ -83,6 +91,8 @@ LRESULT CALLBACK CallWndProcRet(int nCode, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK MouseProc(int nCode, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam);
 
 /**
  * Interprets the data at a specified address (which is typically what is provided by LPARAM in window messages) as a type.

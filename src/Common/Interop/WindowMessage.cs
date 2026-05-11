@@ -111,15 +111,53 @@ public enum WindowMessage
     /// </summary>
     SystemCommand = 0x112,
     /// <summary>
+    /// A window message corresponding to WM_MOUSEMOVE, sent when the mouse cursor moves.
+    /// </summary>
+    MouseMove = 0x200,
+    /// <summary>
+    /// A window message corresponding to WM_LBUTTONDOWN, posted when the user presses the left mouse button while the cursor
+    /// is in the client area of a window.
+    /// </summary>
+    LeftButtonDown = 0x201,
+    /// <summary>
     /// A window message corresponding to WM_LBUTTONUP, posted when the user releases the left mouse button while the cursor
     /// is in the client area of a window.
     /// </summary>
     LeftButtonUp = 0x202,
     /// <summary>
+    /// A window message corresponding to WM_RBUTTONDOWN, posted when the user presses the right mouse button while the cursor
+    /// is in the client area of a window.
+    /// </summary>
+    RightButtonDown = 0x204,
+    /// <summary>
     /// A window message corresponding to WM_RBUTTONUP, posted when the user releases the right mouse button while the cursor
     /// is in the client area of a window.
     /// </summary>
     RightButtonUp = 0x205,
+    /// <summary>
+    /// A window message corresponding to WM_MBUTTONDOWN, posted when the user presses the middle mouse button while the cursor
+    /// is in the client area of a window,
+    /// </summary>
+    MiddleButtonDown = 0x207,
+    /// <summary>
+    /// A window message corresponding to WM_MBUTTONUP, posted when the user releases the middle mouse button while the cursor
+    /// is in the client area of a window,
+    /// </summary>
+    MiddleButtonUp = 0x208,
+    /// <summary>
+    /// A window message corresponding to WM_MOUSEWHEEL, sent when the mouse wheel is rotated.
+    /// </summary>
+    MouseWheel = 0x20A,
+    /// <summary>
+    /// A window message corresponding to WM_XBUTTONDOWN, posted when the user presses an extended mouse button while the cursor
+    /// is in the client area of a window,
+    /// </summary>
+    XButtonDown = 0x20B,
+    /// <summary>
+    /// A window message corresponding to WM_MBUTTONDOWN, posted when the user releases an extended mouse button while the cursor
+    /// is in the client area of a window,
+    /// </summary>
+    XButtonUp = 0x20C,
     /// <summary>
     /// A window message corresponding to WM_EXITSIZEMOVE, sent one time to a window after it has exited the moving or sizing modal
     /// loop.

@@ -52,13 +52,21 @@ struct ThreadData
 	 */
 	HookData GetMessageHook;
 	/**
+	 * The installed \c WH_KEYBOARD hook procedure for the thread, if one exists.
+	 */
+	HookData KeyboardHook;
+	/**
 	 * The installed \c WH_KEYBOARD_LL hook procedure for the thread, if one exists.
 	 */
 	HookData LowLevelKeyboardHook;
 	/**
-	 * The installed \c WH_KEYBOARD hook procedure for the thread, if one exists.
+	 * The installed \c WH_MOUSE hook procedure for the thread, if one exists.
 	 */
-	HookData KeyboardHook;
+	HookData MouseHook;
+	/**
+	 * The installed \c WH_MOUSE_LL hook procedure for the thread, if one exists.
+	 */
+	HookData LowLevelMouseHook;
 };
 
 /**

@@ -87,6 +87,16 @@ bool __cdecl AddHook(HookType hookType, HWND destination, int threadId)
             lpfn = LowLevelKeyboardProc;
             break;
 
+		case Mouse:
+            idHook = WH_MOUSE;
+            lpfn = MouseProc;
+            break;
+
+        case LowLevelMouse:
+            idHook = WH_MOUSE_LL;
+            lpfn = LowLevelMouseProc;
+            break;
+
 		default:
             return false;
     }
@@ -235,6 +245,44 @@ LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
         // our code, we asynchronously post the hook event to our listener.
         if (destination != nullptr)
             PostHookMessage(destination, message, keyboardInput->vkCode, keyboardInput->flags);
+    }
+
+    return CallNextHookEx(nullptr, nCode, wParam, lParam);
+}
+
+LRESULT CALLBACK MouseProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+    int threadId = static_cast<int>(GetCurrentThreadId());
+
+    if (HookData* hookData = GetHookData(Mouse, threadId); nCode == HC_ACTION && hookData != nullptr)
+    {
+        HWND destination = hookData->Destination;
+
+        auto mouseInput = PointTo<MOUSEHOOKSTRUCT>(lParam);
+        auto message = static_cast<unsigned int>(wParam);
+
+        if (destination != nullptr)
+            SendHookMessage(destination, message, mouseInput->pt.x, mouseInput->pt.y);
+    }
+
+    return CallNextHookEx(nullptr, nCode, wParam, lParam);
+}
+
+LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+    int threadId = static_cast<int>(GetCurrentThreadId());
+
+    if (HookData* hookData = GetHookData(LowLevelMouse, threadId); nCode == HC_ACTION && hookData != nullptr)
+    {
+        HWND destination = hookData->Destination;
+
+        auto mouseInput = PointTo<MSLLHOOKSTRUCT>(lParam);
+        auto message = static_cast<unsigned int>(wParam);
+
+        // Low-level keyboard hooks have very stringent execution requirements. To alleviate this burden on
+        // our code, we asynchronously post the hook event to our listener.
+        if (destination != nullptr)
+            PostHookMessage(destination, message, mouseInput->pt.x, mouseInput->pt.y);
     }
 
     return CallNextHookEx(nullptr, nCode, wParam, lParam);

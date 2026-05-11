@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -40,5 +40,13 @@ public enum HookType
     /// <summary>
     /// A hook procedure whose type corresponds to <c>WH_KEYBOARD_LL</c> that monitors low-level keyboard input events.
     /// </summary>
-    LowLevelKeyboard
+    LowLevelKeyboard,
+    /// <summary>
+    /// A hook procedure whose type corresponds to <c>WH_MOUSE</c> that monitors mouse messages.
+    /// </summary>
+    Mouse,
+    /// <summary>
+    /// A hook procedure whose type corresponds to <c>WH_MOUSE_LL</c> that monitors low-level mouse input events.
+    /// </summary>
+    LowLevelMouse
 }

@@ -70,11 +70,20 @@ namespace BadEcho.Hooks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Keyboard input listener was sent an non-input related message..
+        ///   Looks up a localized string similar to Keyboard input listener was sent a non-input related message..
         /// </summary>
         internal static string NonKeyboardMessageReceived {
             get {
                 return ResourceManager.GetString("NonKeyboardMessageReceived", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mouse input listener was sent a non-input related message..
+        /// </summary>
+        internal static string NonMouseMessageReceived {
+            get {
+                return ResourceManager.GetString("NonMouseMessageReceived", resourceCulture);
             }
         }
         
