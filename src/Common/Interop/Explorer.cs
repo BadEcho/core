@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -19,6 +19,7 @@ namespace BadEcho.Interop;
 public static class Explorer
 {
     private const string VERB_EXPLORE = "explore";
+    private const string VERB_OPEN = "open";
 
     /// <summary>
     /// Explores the folder referred to by the specified path.
@@ -28,6 +29,18 @@ public static class Explorer
     public static ShellResult OpenFolder(string path)
     {
         int result = Shell32.ShellExecute(nint.Zero, VERB_EXPLORE, path, null, null, 1);
+
+        return result > 32 ? ShellResult.Success : (ShellResult) result;
+    }
+
+    /// <summary>
+    /// Opens the file or folder referred to by the specified path.
+    /// </summary>
+    /// <param name="path">The full or relative path to the file or folder to open.</param>
+    /// <returns>The result of invoking the Windows Shell.</returns>
+    public static ShellResult Open(string path)
+    {
+        int result = Shell32.ShellExecute(nint.Zero, VERB_OPEN, path, null, null, 1);
 
         return result > 32 ? ShellResult.Success : (ShellResult) result;
     }
