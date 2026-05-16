@@ -159,6 +159,10 @@ public enum WindowMessage
     /// </summary>
     XButtonUp = 0x20C,
     /// <summary>
+    /// A window message corresponding to WM_HMOUSEWHEEL, sent when the horizontal mouse wheel is tilted or rotated.
+    /// </summary>
+    HorizontalMouseWheel = 0x20E,
+    /// <summary>
     /// A window message corresponding to WM_EXITSIZEMOVE, sent one time to a window after it has exited the moving or sizing modal
     /// loop.
     /// </summary>

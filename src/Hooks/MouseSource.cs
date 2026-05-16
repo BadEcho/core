@@ -66,6 +66,7 @@ public sealed class MouseSource : HookSource
             WindowMessage.MiddleButtonUp => MouseEvent.MiddleButtonUp,
             WindowMessage.MouseMove => MouseEvent.Move,
             WindowMessage.MouseWheel => MouseEvent.Wheel,
+            WindowMessage.HorizontalMouseWheel => MouseEvent.HorizontalWheel,
             WindowMessage.XButtonDown => MouseEvent.XButtonDown,
             WindowMessage.XButtonUp => MouseEvent.XButtonUp,
             _ => throw new ArgumentException(Strings.NonMouseMessageReceived)

@@ -43,6 +43,10 @@ public enum MouseEvent
     /// </summary>
     Wheel,
     /// <summary>
+    /// The horizontal scroll wheel has been rotated or tilted.
+    /// </summary>
+    HorizontalWheel,
+    /// <summary>
     /// The middle button has been pressed.
     /// </summary>
     MiddleButtonDown,
