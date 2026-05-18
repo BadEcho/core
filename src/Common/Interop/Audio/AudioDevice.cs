@@ -41,6 +41,10 @@ public sealed class AudioDevice
             void* pEndpointVolume = _device.Activate(ref _AudioEndpointVolumeIID, ClassContext.All, nint.Zero);
 
             _endpointVolume = ComInterfaceMarshaller<IAudioEndpointVolume>.ConvertToManaged(pEndpointVolume)!;
+
+            _endpointVolume.GetVolumeRange(out float minimumValue, out float _, out float _);
+
+            MinimumVolume = minimumValue;
         }
     }
 
@@ -64,4 +68,19 @@ public sealed class AudioDevice
         get => _endpointVolume.GetMute();
         set => _endpointVolume.SetMute(value, ref _Empty);
     }
+
+    /// <summary>
+    /// Gets or sets the volume of the device, in decibels.
+    /// </summary>
+    public float Volume
+    {
+        get => _endpointVolume.GetMasterVolumeLevel();
+        set => _endpointVolume.SetMasterVolumeLevel(value, ref _Empty);
+    }
+
+    /// <summary>
+    /// Gets the minimum volume level of the device, in decibels.
+    /// </summary>
+    public float MinimumVolume
+    { get; }
 }
