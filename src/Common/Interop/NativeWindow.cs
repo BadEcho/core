@@ -28,7 +28,7 @@ public sealed class NativeWindow
 {
     private readonly List<int> _hotKeyIds = [];
 
-    private bool _displayingWithoutFlicker;
+    private bool _titleBarStrippedTemporarily;
     private bool _ignoreSizeChanges;
 
     private WindowStyles _displayStyles;
@@ -126,6 +126,12 @@ public sealed class NativeWindow
     /// Gets a value indicating if techniques intended to eliminate the possibility of a flickering background during the initial
     /// display of the window should be employed.
     /// </summary>
+    /// <remarks>
+    /// Setting this to true will, among a number of other things, prevent the system from erasing the window's background using the
+    /// window class's background brush -- which means that this should only be enabled if the painting logic for the window will take
+    /// care of filling in the invalidated area normally performed by <c>DefWindowProc</c>'s handling of the
+    /// <see cref="WindowMessage.EraseBackground"/> message.
+    /// </remarks>
     public bool DisplayWithoutFlicker
     { get; init; }
 
@@ -301,15 +307,16 @@ public sealed class NativeWindow
                 break;
 
             case WindowMessage.EraseBackground:
-                if (_displayingWithoutFlicker)
-                {
+                if (_titleBarStrippedTemporarily)
+                {   // If the window's title bar has been stripped temporarily due to Anti-Flickering Protective Measures™,
+                    // we'll restore it at this point.
                     Display display = Display.FromWindow(Handle);
                     int displayStyles = unchecked((int) _displayStyles);
 
                     User32.SetWindowLongPtr(Handle, WindowAttribute.Style, displayStyles);
 
                     // Prevent recursive handling of this message.
-                    _displayingWithoutFlicker = false;
+                    _titleBarStrippedTemporarily = false;
 
                     // We account for the invisible borders that exist around most windows for purpose of mouse cursor grabs.
                     // This becomes important if we're dealing with "fullscreen" bordered windows (it'll extend onto other displays
@@ -330,7 +337,13 @@ public sealed class NativeWindow
                                                        uFlags);
                     if (!resized)
                         throw new Win32Exception(Marshal.GetLastWin32Error());
+                }
                     
+                if (DisplayWithoutFlicker)
+                {   // Even if the window doesn't have a title bar, we still need to handle the initial few WM_ERASEBKGND messages
+                    // to prevent a nasty flicker attack from occurring. To reiterate: simply handling this message alone will not
+                    // prevent flickering if the window has a title bar...the other steps taken in the WM_SHOWWINDOW portion of this code
+                    // are required.
                     handled = true;
                     lResult = new IntPtr(1);
                 }
@@ -348,26 +361,33 @@ public sealed class NativeWindow
                     // One can observe this behavior using all sorts of programs, even Chrome will briefly attack our sight with bright
                     // white its window gets painted.
 
-                    // If a window lacks a title bar (i.e., it was created with the WS_POPUP style) then it will not flash. However, if
-                    // a window is set to display upon creation via WS_VISIBLE and was configured to have a title bar, then it is too
+                    // If a window lacks a title bar (i.e., it was created with the WS_POPUP style or lacks WS_CAPTION) then it will not flash.
+                    // However, if a window is set to display upon creation via WS_VISIBLE and was configured to have a title bar, then it is too
                     // late. The only way to shield the abrasive white flicker is to shrink the window size to a pixel in both dimensions
                     // and remove the title bar, causing it to be essentially invisible. After it displays we can resize it, and its appearance
                     // will be much more smooth.
 
-                    // We first back up the initial dimensions of the window. Depending on the API that was used to create the window
+                    // First we check if the window has a title bar...we don't need to do anything here if it does not.
+                    _displayStyles = (WindowStyles)User32.GetWindowLongPtr(Handle, WindowAttribute.Style);
+
+                    // The Overlapped style is the default style for windows (though we're rarely going to see one in the wild), but it has a title bar,
+                    // so we explicitly check for it. The only way a window can have the Overlapped style is if no other styles are applied;
+                    // we can't check if its flag is present like other styles, since it is 0x0. Other than that, we defer to whether or not it has the
+                    // Caption style when determining if it has a title bar.
+                    if (_displayStyles == WindowStyles.Overlapped || _displayStyles.HasFlag(WindowStyles.Caption))
+                    {
+                        // If we have a title bar, then we back up the initial dimensions of the window. Depending on the API that was used to create the window
                     // (i.e., Win32 directory, SDL, etc.), the size characteristics of our window, even at this point in time in which
                     // the window is about to be shown, may not be finalized. To account for this, we monitor for changes in size during
                     // our display operation.
                     Width = rect.Width;
                     Height = rect.Height;
-                    _displayingWithoutFlicker = true;
 
                     // Strip the title bar, shredding all evidence of the protective measure being taken to shield our fragile eyes from
                     // such deviance in window behavior.
                     const int popupStyle = unchecked((int) WindowStyles.Popup);
-
-                    _displayStyles
-                        = (WindowStyles) User32.SetWindowLongPtr(Handle, WindowAttribute.Style, popupStyle);
+                        User32.SetWindowLongPtr(Handle, WindowAttribute.Style, popupStyle);
+                        _titleBarStrippedTemporarily = true;
 
                     // We can't set the width and length to 0...they have to be at least 1. A single pixel window with no title bar is basically
                     // invisible. We temporarily disable the monitoring of size in our callback so that we don't update our size properties with bunk values.
@@ -384,6 +404,7 @@ public sealed class NativeWindow
                         throw new Win32Exception(Marshal.GetLastWin32Error());
 
                     _ignoreSizeChanges = false;
+                }
                 }
 
                 break;
