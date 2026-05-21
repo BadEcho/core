@@ -196,6 +196,49 @@ public sealed class NativeWindow
         => User32.InvalidateRect(Handle, null, true);
 
     /// <summary>
+    /// Brings this window to the foreground, allowing it to receive keyboard input.
+    /// </summary>
+    /// <returns>True if successful; otherwise false.</returns>
+    /// <remarks>
+    /// <para>
+    /// Windows is rather restrictive with which processes are allowed to set the foreground window; this is to prevent
+    /// "focus stealing". Sometimes we need to steal focus for the good of mankind, however, and this function will let you do that.
+    /// </para>
+    /// <para>
+    /// Bringing a window to the foreground will typically fail if the calling process is not already the foreground process.
+    /// One way around this is to attach our window's input queue to that of the thread currently in the foreground.
+    /// This will allow them to share their input states, and will satisfy one of the requirements for bringing our window to the
+    /// foreground.
+    /// </para>
+    /// <para>
+    /// This method will first try to bring the window to the foreground normally; if that fails, then we attach to the foreground
+    /// thread's input queue, try again, and then detach from the thread.
+    /// </para>
+    /// </remarks>
+    public bool SetForegroundWindow()
+    {
+        if (User32.SetForegroundWindow(Handle))
+            return true;
+
+        WindowHandle foregroundHwnd = User32.GetForegroundWindow();
+
+        uint foregroundThreadId = User32.GetWindowThreadProcessId(foregroundHwnd, nint.Zero);
+        uint currentThreadId = Kernel32.GetCurrentThreadId();
+
+        User32.AttachThreadInput(foregroundThreadId, currentThreadId, true);
+        // The proper way to bring ourselves to the foreground is through SetForegroundWindow; however, I have found success with
+        // falling back to the alternative BringWindowToTop if our attempts are still met with failure.
+        bool isForeground = User32.SetForegroundWindow(Handle);
+
+        if (!isForeground)
+            isForeground = User32.BringWindowToTop(Handle);
+
+        User32.AttachThreadInput(foregroundThreadId, currentThreadId, false);
+
+        return isForeground;
+    } 
+
+    /// <summary>
     /// Sets the windows extended style information so that said window acts as transparent overlay which all input passes through.
     /// </summary>
     /// <remarks>
@@ -280,7 +323,7 @@ public sealed class NativeWindow
 
         return windowWrapper.Handle;
     }
-
+    
     private ProcedureResult WindowProcedure(IntPtr hWnd, uint msg, nint wParam, nint lParam)
     {
         var lResult = IntPtr.Zero;
@@ -338,7 +381,7 @@ public sealed class NativeWindow
                     if (!resized)
                         throw new Win32Exception(Marshal.GetLastWin32Error());
                 }
-                    
+
                 if (DisplayWithoutFlicker)
                 {   // Even if the window doesn't have a title bar, we still need to handle the initial few WM_ERASEBKGND messages
                     // to prevent a nasty flicker attack from occurring. To reiterate: simply handling this message alone will not
@@ -377,34 +420,34 @@ public sealed class NativeWindow
                     if (_displayStyles == WindowStyles.Overlapped || _displayStyles.HasFlag(WindowStyles.Caption))
                     {
                         // If we have a title bar, then we back up the initial dimensions of the window. Depending on the API that was used to create the window
-                    // (i.e., Win32 directory, SDL, etc.), the size characteristics of our window, even at this point in time in which
-                    // the window is about to be shown, may not be finalized. To account for this, we monitor for changes in size during
-                    // our display operation.
-                    Width = rect.Width;
-                    Height = rect.Height;
+                        // (i.e., Win32 directory, SDL, etc.), the size characteristics of our window, even at this point in time in which
+                        // the window is about to be shown, may not be finalized. To account for this, we monitor for changes in size during
+                        // our display operation.
+                        Width = rect.Width;
+                        Height = rect.Height;
 
-                    // Strip the title bar, shredding all evidence of the protective measure being taken to shield our fragile eyes from
-                    // such deviance in window behavior.
-                    const int popupStyle = unchecked((int) WindowStyles.Popup);
+                        // Strip the title bar, shredding all evidence of the protective measure being taken to shield our fragile eyes from
+                        // such deviance in window behavior.
+                        const int popupStyle = unchecked((int) WindowStyles.Popup);
                         User32.SetWindowLongPtr(Handle, WindowAttribute.Style, popupStyle);
                         _titleBarStrippedTemporarily = true;
 
-                    // We can't set the width and length to 0...they have to be at least 1. A single pixel window with no title bar is basically
-                    // invisible. We temporarily disable the monitoring of size in our callback so that we don't update our size properties with bunk values.
-                    _ignoreSizeChanges = true;
+                        // We can't set the width and length to 0...they have to be at least 1. A single pixel window with no title bar is basically
+                        // invisible. We temporarily disable the monitoring of size in our callback so that we don't update our size properties with bunk values.
+                        _ignoreSizeChanges = true;
 
-                    bool resized = User32.SetWindowPos(Handle,
-                                                       IntPtr.Zero,
-                                                       0,
-                                                       0,
-                                                       1,
-                                                       1,
-                                                       WindowPositionFlags.NoMove | WindowPositionFlags.NoActivate);
-                    if (!resized)
-                        throw new Win32Exception(Marshal.GetLastWin32Error());
+                        bool resized = User32.SetWindowPos(Handle,
+                                                           IntPtr.Zero,
+                                                           0,
+                                                           0,
+                                                           1,
+                                                           1,
+                                                           WindowPositionFlags.NoMove | WindowPositionFlags.NoActivate);
+                        if (!resized)
+                            throw new Win32Exception(Marshal.GetLastWin32Error());
 
-                    _ignoreSizeChanges = false;
-                }
+                        _ignoreSizeChanges = false;
+                    }
                 }
 
                 break;

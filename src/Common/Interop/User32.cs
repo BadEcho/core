@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -454,6 +454,26 @@ internal static partial class User32
     public static unsafe partial bool InvalidateRect(WindowHandle hWnd, RECT* lpRect, [MarshalAs(UnmanagedType.Bool)] bool bErase);
 
     /// <summary>
+    /// Attaches or detaches the input processing mechanism of one thread to that of another thread.
+    /// </summary>
+    /// <param name="idAttach">The identifier of the thread to be attached to another thread.</param>
+    /// <param name="idAttachTo">The identifier of the thread to which <c>idAttach</c> will be attached.</param>
+    /// <param name="fAttach">If true, the two threads are attached; otherwise, they are detached.</param>
+    /// <returns>True if successful; otherwise, false.</returns>
+    [LibraryImport(LibraryName, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool AttachThreadInput(uint idAttach, uint idAttachTo, [MarshalAs(UnmanagedType.Bool)] bool fAttach);
+
+    /// <summary>
+    /// Retrieves a handle to the foreground window.
+    /// </summary>
+    /// <returns>A handle to the foreground window. This can be null in certain circumstances, such as when a window is losing activation.</returns>
+    [LibraryImport(LibraryName)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial WindowHandle GetForegroundWindow();
+
+    /// <summary>
     /// Brings the thread that created the specified window into the foreground and activates the window.
     /// </summary>
     /// <param name="hWnd">A handle to the window that should be activated and brought to the foreground.</param>
@@ -462,6 +482,16 @@ internal static partial class User32
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool SetForegroundWindow(WindowHandle hWnd);
+
+    /// <summary>
+    /// Brings the specified window to the top of the Z order.
+    /// </summary>
+    /// <param name="hWnd">A handle to the window to bring to the top of the Z order.</param>
+    /// <returns>True if successful; otherwise false.</returns>
+    [LibraryImport(LibraryName, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool BringWindowToTop(WindowHandle hWnd);
 
     /// <summary>
     /// Retrieves the identifier of the thread that created the specified window and, optionally, the identifier of the process

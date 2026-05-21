@@ -97,7 +97,7 @@ internal static partial class Kernel32
     /// <returns>The thread identifier of the calling thread.</returns>
     [LibraryImport(LIBRARY_NAME)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    public static partial int GetCurrentThreadId();
+    public static partial uint GetCurrentThreadId();
 
     /// <summary>
     /// Creates an activation context.
