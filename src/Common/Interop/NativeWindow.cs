@@ -49,7 +49,7 @@ public sealed class NativeWindow
     /// Initializes a new instance of the <see cref="NativeWindow"/> class.
     /// </summary>
     /// <param name="handle">The handle to the window.</param>
-    public NativeWindow(WindowHandle handle)
+    private NativeWindow(WindowHandle handle)
     {
         Handle = handle;
 
