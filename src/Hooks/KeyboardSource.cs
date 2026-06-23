@@ -45,7 +45,7 @@ public sealed class KeyboardSource : HookSource
     public KeyboardSource(KeyboardProcedure callback)
         : base(HookType.LowLevelKeyboard)
     {
-        Require.NotNull(callback//, nameof(callback));
+        Require.NotNull(callback, nameof(callback));
 
         _callback = callback;
     }

@@ -94,8 +94,8 @@ public abstract class FileConfigurationProvider : ConfigurationProvider, IFileCo
         if (_disposed)
             return;
 
-        //if (disposing)
-        //    _watcher.Dispose();
+        if (disposing)
+            _watcher.Dispose();
 
         _disposed = true;
     }
