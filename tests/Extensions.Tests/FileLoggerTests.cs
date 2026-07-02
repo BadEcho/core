@@ -17,8 +17,6 @@ using Microsoft.Extensions.Logging;
 
 namespace BadEcho.Extensions.Tests;
 
-#pragma warning disable CA2254
-
 public class FileLoggerTests
 {
     private readonly ILogger<FileLoggerTests> _logger;
@@ -67,10 +65,7 @@ public class FileLoggerTests
             l.AddDebug();
             l.AddConfiguration(configuration.GetSection("Logging"));
             l.AddProvider(new TestLoggerProvider());
-            l.AddFile(o =>
-            {
-                o.Path = path;
-            });
+            l.AddFile(o => o.Path = path);
         });
 
         var sp = services.BuildServiceProvider();
@@ -111,4 +106,3 @@ public class FileLoggerTests
         return fileContents.Contains(text);
     }
 }
-#pragma warning restore CA2254

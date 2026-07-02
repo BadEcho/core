@@ -170,6 +170,93 @@ public sealed class NativeWindow
     }
 
     /// <summary>
+    /// Sets the windows style information so that said window is stripped of its title bar.
+    /// </summary>
+    /// <param name="handle">A handle to the window.</param>
+    public static void RemoveTitleBar(WindowHandle handle)
+    {
+        var style = (WindowStyles) User32.GetWindowLongPtr(handle, WindowAttribute.Style);
+
+        style &= ~WindowStyles.SystemMenu;
+
+        User32.SetWindowLongPtr(handle,
+                                WindowAttribute.Style,
+                                new IntPtr((int) style));
+    }
+
+    /// <summary>
+    /// Brings this window to the foreground, allowing it to receive keyboard input.
+    /// </summary>
+    /// <returns>True if successful; otherwise false.</returns>
+    /// <remarks>
+    /// <para>
+    /// Windows is rather restrictive with which processes are allowed to set the foreground window; this is to prevent
+    /// "focus stealing". Sometimes we need to steal focus for the good of mankind, however, and this function will let you do that.
+    /// </para>
+    /// <para>
+    /// Bringing a window to the foreground will typically fail if the calling process is not already the foreground process.
+    /// One way around this is to attach our window's input queue to that of the thread currently in the foreground.
+    /// This will allow them to share their input states, and will satisfy one of the requirements for bringing our window to the
+    /// foreground.
+    /// </para>
+    /// <para>
+    /// This method will first try to bring the window to the foreground normally; if that fails, then we attach to the foreground
+    /// thread's input queue, try again, and then detach from the thread.
+    /// </para>
+    /// </remarks>
+    /// <param name="handle">A handle to the window.</param>
+    public static bool SetForegroundWindow(WindowHandle handle)
+    {
+        if (User32.SetForegroundWindow(handle))
+            return true;
+
+        WindowHandle foregroundHwnd = User32.GetForegroundWindow();
+
+        uint foregroundThreadId = User32.GetWindowThreadProcessId(foregroundHwnd, nint.Zero);
+        uint currentThreadId = Kernel32.GetCurrentThreadId();
+
+        User32.AttachThreadInput(foregroundThreadId, currentThreadId, true);
+        // The proper way to bring ourselves to the foreground is through SetForegroundWindow; however, I have found success with
+        // falling back to the alternative BringWindowToTop if our attempts are still met with failure.
+        bool isForeground = User32.SetForegroundWindow(handle);
+
+        if (!isForeground)
+            isForeground = User32.BringWindowToTop(handle);
+
+        User32.AttachThreadInput(foregroundThreadId, currentThreadId, false);
+
+        return isForeground;
+    }
+
+    /// <inheritdoc cref="RemoveTitleBar(WindowHandle)"/>
+    public void RemoveTitleBar()
+        => RemoveTitleBar(Handle);
+
+    /// <inheritdoc cref="SetForegroundWindow(WindowHandle)"/>
+    public bool SetForegroundWindow()
+    {
+        if (User32.SetForegroundWindow(Handle))
+            return true;
+
+        WindowHandle foregroundHwnd = User32.GetForegroundWindow();
+
+        uint foregroundThreadId = User32.GetWindowThreadProcessId(foregroundHwnd, nint.Zero);
+        uint currentThreadId = Kernel32.GetCurrentThreadId();
+
+        User32.AttachThreadInput(foregroundThreadId, currentThreadId, true);
+        // The proper way to bring ourselves to the foreground is through SetForegroundWindow; however, I have found success with
+        // falling back to the alternative BringWindowToTop if our attempts are still met with failure.
+        bool isForeground = User32.SetForegroundWindow(Handle);
+
+        if (!isForeground)
+            isForeground = User32.BringWindowToTop(Handle);
+
+        User32.AttachThreadInput(foregroundThreadId, currentThreadId, false);
+
+        return isForeground;
+    }
+
+    /// <summary>
     /// Applies a brush of the specified color as the background for this window's class.
     /// </summary>
     /// <param name="r">The intensity of the red color.</param>
@@ -194,49 +281,6 @@ public sealed class NativeWindow
     /// </summary>
     public unsafe void Invalidate()
         => User32.InvalidateRect(Handle, null, true);
-
-    /// <summary>
-    /// Brings this window to the foreground, allowing it to receive keyboard input.
-    /// </summary>
-    /// <returns>True if successful; otherwise false.</returns>
-    /// <remarks>
-    /// <para>
-    /// Windows is rather restrictive with which processes are allowed to set the foreground window; this is to prevent
-    /// "focus stealing". Sometimes we need to steal focus for the good of mankind, however, and this function will let you do that.
-    /// </para>
-    /// <para>
-    /// Bringing a window to the foreground will typically fail if the calling process is not already the foreground process.
-    /// One way around this is to attach our window's input queue to that of the thread currently in the foreground.
-    /// This will allow them to share their input states, and will satisfy one of the requirements for bringing our window to the
-    /// foreground.
-    /// </para>
-    /// <para>
-    /// This method will first try to bring the window to the foreground normally; if that fails, then we attach to the foreground
-    /// thread's input queue, try again, and then detach from the thread.
-    /// </para>
-    /// </remarks>
-    public bool SetForegroundWindow()
-    {
-        if (User32.SetForegroundWindow(Handle))
-            return true;
-
-        WindowHandle foregroundHwnd = User32.GetForegroundWindow();
-
-        uint foregroundThreadId = User32.GetWindowThreadProcessId(foregroundHwnd, nint.Zero);
-        uint currentThreadId = Kernel32.GetCurrentThreadId();
-
-        User32.AttachThreadInput(foregroundThreadId, currentThreadId, true);
-        // The proper way to bring ourselves to the foreground is through SetForegroundWindow; however, I have found success with
-        // falling back to the alternative BringWindowToTop if our attempts are still met with failure.
-        bool isForeground = User32.SetForegroundWindow(Handle);
-
-        if (!isForeground)
-            isForeground = User32.BringWindowToTop(Handle);
-
-        User32.AttachThreadInput(foregroundThreadId, currentThreadId, false);
-
-        return isForeground;
-    } 
 
     /// <summary>
     /// Sets the windows extended style information so that said window acts as transparent overlay which all input passes through.
@@ -268,20 +312,6 @@ public sealed class NativeWindow
         User32.SetWindowLongPtr(Handle,
                                 WindowAttribute.ExtendedStyle,
                                 new IntPtr((int) extendedStyle));
-    }
-
-    /// <summary>
-    /// Sets the windows style information so that said window is stripped of its title bar.
-    /// </summary>
-    public void RemoveTitleBar()
-    {
-        var style = (WindowStyles) User32.GetWindowLongPtr(Handle, WindowAttribute.Style);
-
-        style &= ~WindowStyles.SystemMenu;
-
-        User32.SetWindowLongPtr(Handle,
-                                WindowAttribute.Style,
-                                new IntPtr((int) style));
     }
 
     /// <summary>

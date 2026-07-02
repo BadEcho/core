@@ -62,7 +62,8 @@ dotnet_diagnostic.CA1031.severity = warning
 dotnet_diagnostic.CA1033.severity = warning
 
 # CA1034: Nested types should not be visible
-dotnet_diagnostic.CA1034.severity = warning
+# Re-enable when extension block bug is resolved
+dotnet_diagnostic.CA1034.severity = none
 
 # CA1043: Use Integral Or String Argument For Indexers
 dotnet_diagnostic.CA1043.severity = warning

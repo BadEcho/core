@@ -32,7 +32,7 @@ internal static class HostEnvironmentExtensions
         if (!Path.IsPathFullyQualified(path) && environment != null) 
             path = Path.Join(environment.ContentRootPath, path);
 
-        FileInfo info = new FileInfo(path);
+        var info = new FileInfo(path);
 
         info.Directory?.Create();
 
