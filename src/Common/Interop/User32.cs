@@ -505,6 +505,23 @@ internal static partial class User32
     public static partial uint GetWindowThreadProcessId(WindowHandle hWnd, IntPtr lpdwProcessId);
 
     /// <summary>
+    /// Retrieves the name of the class to which the specified window belongs.
+    /// </summary>
+    /// <param name="hWnd">A handle to the window and, indirectly, the class to which the window belongs.</param>
+    /// <param name="lpClassName">A buffer that receives the class name string.</param>
+    /// <param name="nMaxCount">
+    /// The length of the <paramref name="lpClassName"/> buffer, in characters. The buffer must be large enough to include
+    /// the terminating null character; otherwise, the class name string is truncated.
+    /// </param>
+    /// <returns>
+    /// If successful, the number of characters copied to the buffer, not including the terminating null character;
+    /// otherwise, zero.
+    /// </returns>
+    [LibraryImport(LibraryName, EntryPoint = "GetClassNameW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial int GetClassName(WindowHandle hWnd, char[] lpClassName, int nMaxCount);
+
+    /// <summary>
     /// Returns the system DPI.
     /// </summary>
     /// <returns>The system DPI value.</returns>

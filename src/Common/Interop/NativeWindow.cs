@@ -11,6 +11,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System.Buffers;
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -60,6 +61,24 @@ public sealed class NativeWindow
         Top = rect.Top;
         Width = rect.Width;
         Height = rect.Height;
+
+        // We may be filtering by class name in tight loops of window enumerations, so let us avoid unnecessary allocations.
+        // Window class names are limited to 256 (+1 for the null terminator).
+        char[] nameBuffer = ArrayPool<char>.Shared.Rent(257);
+
+        try
+        {
+            int length = User32.GetClassName(Handle, nameBuffer, nameBuffer.Length);
+
+            if (length == 0)
+                throw new Win32Exception(Marshal.GetLastWin32Error());
+
+            ClassName = new string(nameBuffer, 0, length);
+        }
+        finally
+        {
+            ArrayPool<char>.Shared.Return(nameBuffer);
+        }
     }
 
     /// <summary>
@@ -96,6 +115,12 @@ public sealed class NativeWindow
     /// </summary>
     public int Height
     { get; private set; }
+
+    /// <summary>
+    /// Gets the name of this window's class.
+    /// </summary>
+    public string ClassName
+    { get; }
 
     /// <summary>
     /// Gets the bounds of the caption button area for this window.
