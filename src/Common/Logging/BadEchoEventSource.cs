@@ -150,7 +150,9 @@ internal sealed class BadEchoEventSource : EventSource
                                        string targetSite,
                                        string hResult,
                                        string exception)
-    {
+    {   
+        message ??= string.Empty;
+
         fixed (char* pMessage = message)
         fixed (char* pExceptionType = exceptionType)
         fixed (char* pTargetSite = targetSite)
@@ -177,6 +179,8 @@ internal sealed class BadEchoEventSource : EventSource
                                           string hResult,
                                           string exception)
     {
+        message ??= string.Empty;
+
         fixed (char* pMessage = message)
         fixed (char* pExceptionType = exceptionType)
         fixed (char* pTargetSite = targetSite)
