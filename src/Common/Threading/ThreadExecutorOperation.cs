@@ -549,7 +549,7 @@ public class ThreadExecutorOperation
                 if (_isClosed)
                     return;
 
-                _operation.Canceled -= HandleOperationCanceledOrCompleted;
+                _operation.Completed -= HandleOperationCanceledOrCompleted;
                 _operation.Canceled -= HandleOperationCanceledOrCompleted;
 
                 _event.Close();
