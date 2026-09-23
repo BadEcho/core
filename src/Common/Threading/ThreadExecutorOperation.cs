@@ -125,7 +125,7 @@ public class ThreadExecutorOperation
         {
             lock (ExecutorLock)
             {
-                _completed = (EventHandler?) Delegate.Combine(_completed, value);
+                _completed = (EventHandler?) Delegate.Remove(_completed, value);
             }
         }
     }
