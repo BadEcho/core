@@ -42,6 +42,30 @@ public class MessageOnlyExecutorTests
     }
 
     [Fact]
+    public async Task Dispose_WithPendingCrossThreadOperation_CancelsOperation()
+    {
+        var executor = new MessageOnlyExecutor();
+
+        await executor.StartAsync();
+
+        using var mre = new ManualResetEventSlim(false);
+
+        _ = executor.InvokeAsync(() =>
+        {
+            mre.Wait();
+            executor.Dispose();
+        });
+
+        
+        var pending = executor.InvokeAsync(() => 42);
+
+        mre.Set();
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => pending.Task.WaitAsync(TimeSpan.FromSeconds(5)));
+        Assert.Equal(ThreadExecutorOperationStatus.Canceled, pending.Status);
+    }
+
+    [Fact]
     public void InvokeDispose_Running_NoException()
     {
         var executor = CreateExecutor();

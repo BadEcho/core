@@ -309,6 +309,30 @@ public class ThreadExecutorOperation
     }
 
     /// <summary>
+    /// Cancels an operation already removed from the executor's queue.
+    /// </summary>
+    /// <remarks>
+    /// Used when shutting down. <see cref="Cancel"/> only completes the operation if the executor still has it queued, which will no longer
+    /// be the case during the iteration of existing operations (which requires dequeuing them first).
+    /// </remarks>
+    internal void CancelDequeued()
+    {
+        EventHandler? canceled;
+
+        lock (ExecutorLock)
+        {
+            if (Status != ThreadExecutorOperationStatus.Pending)
+                return;
+
+            Status = ThreadExecutorOperationStatus.Canceled;
+            canceled = _canceled;
+        }
+
+        TaskSource.SetCanceled();
+        canceled?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
     /// Invokes the operation's method.
     /// </summary>
     /// <returns>The result of the method's execution.</returns>

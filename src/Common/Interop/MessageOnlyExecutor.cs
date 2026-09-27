@@ -614,7 +614,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
 
             // We must lock when reading from the queue, however we don't want to lock while the operation's cancellation
             // routines run.
-            operation?.Cancel();
+            operation?.CancelDequeued();
 
         } while (operation != null);
     }
