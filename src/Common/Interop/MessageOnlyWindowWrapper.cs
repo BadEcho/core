@@ -201,10 +201,13 @@ public sealed class MessageOnlyWindowWrapper : WindowWrapper, IDisposable
 
         _disposed = true;
 
+        // This gets zeroed out at the end of the method, so we want copy it to a local.
+        ushort classAtom = _classAtom;
+
         // If the window is in the process of being destroyed, we can't call UnregisterClass yet. So, we basically
         // post it to the executor for it to happen later, once the window is closed.
         if (_windowIsBeingDestroyed)
-            _executor.BeginInvoke(() => UnregisterClass(_classAtom), null);
+            _executor.BeginInvoke(() => UnregisterClass(classAtom), null);
 
         // Normally, you should never access reference types when Dispose is called from a finalizer, but the following
         // code will run even during finalization. If we don't do this, the window class will never get unregistered.
@@ -216,9 +219,9 @@ public sealed class MessageOnlyWindowWrapper : WindowWrapper, IDisposable
         {   // Destroying the window needs to be done on the window's on thread. The class registration can be done
             // on any thread, but it's simpler to just do it all in one go.
             if (Environment.CurrentManagedThreadId == _ownerThreadId)
-                DestroyWindow(Handle, _classAtom);
+                DestroyWindow(Handle, classAtom);
             else
-                _executor.BeginInvoke(() => DestroyWindow(Handle, _classAtom), null);
+                _executor.BeginInvoke(() => DestroyWindow(Handle, classAtom), null);
         }
 
         _classAtom = 0;
