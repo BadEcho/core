@@ -75,6 +75,9 @@ namespace {
 
     HookData* GetThreadHookData(HookType hookType, ThreadData* threadData)
     {
+        if (threadData == nullptr)
+            return nullptr;
+
         switch (hookType)
         {
 	        case CallWindowProcedure:
@@ -212,6 +215,9 @@ HookData* GetHookData(HookType hookType, int threadId)
 
     ThreadData* threadData = GetThreadData(hookType, threadId);
 
+    if (threadData == nullptr)
+        return nullptr;
+
     return GetThreadHookData(hookType, threadData);
 }
 
@@ -223,6 +229,9 @@ void RemoveHookData(HookType hookType, int threadId)
         return;
 
     HookData* hookData = GetThreadHookData(hookType, threadData);
+
+    if (hookData == nullptr)
+        return;
 
     if (threadId == 0)
         UpdateGlobalId(hookType, 0);

@@ -144,7 +144,11 @@ public abstract class HookSource : IDisposable, IAsyncDisposable
 
         if (disposing)
         {
-            RemoveHook();
+            // We need to execute in the context of our message pump in case the hook was installed at a global scope
+            // -- if this is so, we need to ensure we're removing the hook on the same thread that installed it.
+            if (_hookExecutor.Window != null) // If the message pump never ran, there never was a hook.
+                _hookExecutor.Invoke(RemoveHook);
+
             _hookExecutor.Dispose();
         }
 
