@@ -204,6 +204,10 @@ HookData* AddHookData(HookType hookType, int threadId)
         SharedData[index].KeyboardHook.Destination = nullptr;
         SharedData[index].LowLevelKeyboardHook.Handle = nullptr;
         SharedData[index].LowLevelKeyboardHook.Destination = nullptr;
+        SharedData[index].MouseHook.Handle = nullptr;
+        SharedData[index].MouseHook.Destination = nullptr;
+        SharedData[index].LowLevelMouseHook.Handle = nullptr;
+        SharedData[index].LowLevelMouseHook.Destination = nullptr;
 
         // Synchronization is required as multiple processes may be attempting to increment the
         // thread count.
@@ -262,6 +266,12 @@ void RemoveHookData(HookType hookType, int threadId)
         return;
 
     if (threadData->LowLevelKeyboardHook.Handle != nullptr)
+        return;
+
+    if (threadData->MouseHook.Handle != nullptr)
+        return;
+
+    if (threadData->LowLevelMouseHook.Handle != nullptr)
         return;
 
     // "Free" the thread, as it no longer has any hooks associated with it.
