@@ -42,6 +42,8 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     private bool _hasStarted;
     private bool _disposeQueued;
 
+    private Exception? _startupException;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="MessageOnlyExecutor"/> class.
     /// </summary>
@@ -353,7 +355,18 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
                 throw new InvalidOperationException(Strings.ExecutorAlreadyRunning);
 
             Thread = Thread.CurrentThread;
-            Window = new MessageOnlyWindowWrapper(this);
+
+            try
+            {
+                Window = new MessageOnlyWindowWrapper(this);
+            }
+            catch (Exception ex)
+            {   // Callers wait for the executor to be running before queueing work, so they must be released even though we failed to start;
+                // they'll receive this exception rather than waiting on an executor that will never run.
+                _startupException = ex;
+                _running.Set();
+                throw;
+            }
 
             Window.AddCallback(WindowProcedure);
 
@@ -393,7 +406,9 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
                              {
                                  // The 'await' keyword normally unwraps the AggregateException and throws the inner exception
                                  // instead. We will do the same here, via the task source.
-                                 if (t.Exception != null)
+                                 // An exception will be set on a completed task only if the executor encountered a startup failure.
+                                 // Calling SetException a second time would cause an exception to throw.
+                                 if (t.Exception != null && !operation.Task.IsCompleted)
                                      operation.TaskSource.SetException(t.Exception.InnerExceptions[0]);
                              },
                              CancellationToken.None,
@@ -513,10 +528,21 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
         }
 
         if (!succeeded)
-        {   // We mark the operation as canceled since we failed to enqueue it -- we just set the appropriate statuses here as opposed
+        {
+            // We mark the operation as canceled since we failed to enqueue it -- we just set the appropriate statuses here as opposed
             // to calling cancel as the operation is already removed from the queue.
-            operation.Status = ThreadExecutorOperationStatus.Canceled;
-            operation.TaskSource.SetCanceled();
+            if (_startupException != null)
+            {
+                // The executor failed to start, that's the ultimate reason for the failure, so it is reported here.
+                operation.Status = ThreadExecutorOperationStatus.Completed;
+                operation.TaskSource.SetException(_startupException);
+
+            }
+            else
+            {
+                operation.Status = ThreadExecutorOperationStatus.Canceled;
+                operation.TaskSource.SetCanceled();
+            }
         }
     }
 

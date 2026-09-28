@@ -378,4 +378,7 @@
   <data name="ExecutorExceptionHandlerFailed" xml:space="preserve">
 		<value>A handler for the executor's UnhandledException event threw an exception.</value>
 	</data>
+	<data name="MessageOnlyWindowClassCleanupFailed" xml:space="preserve">
+		<value>Unable to unregister a message-only window's class after the window failed to be created.</value>
+	</data>
 </root>

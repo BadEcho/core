@@ -493,6 +493,15 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to unregister a message-only window&apos;s class after the window failed to be created..
+        /// </summary>
+        public static string MessageOnlyWindowClassCleanupFailed {
+            get {
+                return ResourceManager.GetString("MessageOnlyWindowClassCleanupFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Native library resolver failed to load library: {0}.
         /// </summary>
         public static string NativeResolvedLoadFailed {

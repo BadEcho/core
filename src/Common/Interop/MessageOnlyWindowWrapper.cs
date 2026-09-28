@@ -13,6 +13,8 @@
 
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using BadEcho.Logging;
+using BadEcho.Properties;
 using BadEcho.Threading;
 
 namespace BadEcho.Interop;
@@ -53,10 +55,10 @@ public sealed class MessageOnlyWindowWrapper : WindowWrapper, IDisposable
         WNDPROC initialCallback = subclass.WndProc;
         string className = CreateClassName();
 
-        _classAtom = RegisterClass(initialCallback, className);
-
         try
         {
+            _classAtom = RegisterClass(initialCallback, className);
+
             unsafe
             {
                 Handle = User32.CreateWindowEx(0,
@@ -72,13 +74,25 @@ public sealed class MessageOnlyWindowWrapper : WindowWrapper, IDisposable
                                                IntPtr.Zero,
                                                null);
             }
-        }
-        finally
-        {
+
             if (Handle.IsInvalid)
-            {   // The subclass pins itself, so if window creation fails, we need to manually release it here and now.
-                subclass.Dispose();
+                throw new Win32Exception(Marshal.GetLastWin32Error());
+        }
+        catch 
+        {
+            subclass.Dispose();
+
+            try
+            {
+                UnregisterClass(_classAtom);
             }
+            catch (Win32Exception unregisterEx)
+            {
+                Logger.Error(Strings.MessageOnlyWindowClassCleanupFailed, unregisterEx);
+            }
+
+            _classAtom = 0;
+            throw;
         }
 
         // This is required to guarantee that the initial WNDPROC delegate callback is kept alive throughout the method.
