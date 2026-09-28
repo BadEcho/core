@@ -138,15 +138,19 @@ internal sealed class WindowSubclass : IDisposable
         if (_disposed)
             return;
 
-        RemoveCallback(false);
+        _disposed = true;
+
+        // If the window was subclassed by something else after we attached, removing ourselves would break their part
+        // of the chain, so we're left in it. The window can still call into us, so we must stay pinned; detachment (and with it, unpinning)
+        // is completed once the window received WM_NCDESTROY.
+        if (!RemoveCallback(false))
+            return;
 
         // If somehow we're still pinned, unpin ourselves so that we can get garbage collected.
         // This should only occur if attachment never occurred due to an error occurring
         // with the creation of the window which we intended to subclass.
         if (_handle.IsAllocated)
             _handle.Free();
-
-        _disposed = true;
     }
 
     /// <summary>
@@ -201,7 +205,7 @@ internal sealed class WindowSubclass : IDisposable
                     handled = !forcibly;
                 }
             }
-            else if (_executor is not { IsShutdownComplete: true })
+            else if (!_disposed && _executor is not { IsShutdownComplete: true })
             {
                 ProcedureResult? result = SendOperation(hWnd, msg, wParam, lParam);
 
