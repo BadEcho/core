@@ -201,17 +201,14 @@ internal sealed class WindowSubclass : IDisposable
                     handled = !forcibly;
                 }
             }
-            else
+            else if (_executor is not { IsShutdownComplete: true })
             {
-                if (_executor is not { IsShutdownComplete: true })
-                {
-                    ProcedureResult? result = SendOperation(hWnd, msg, wParam, lParam);
+                ProcedureResult? result = SendOperation(hWnd, msg, wParam, lParam);
 
-                    if (result != null)
-                    {
-                        lResult = result.LResult;
-                        handled = result.Handled;
-                    }
+                if (result != null)
+                {
+                    lResult = result.LResult;
+                    handled = result.Handled;
                 }
             }
         }
