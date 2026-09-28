@@ -99,7 +99,8 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     { get; private set; }
 
     object? IThreadExecutor.Invoke(Delegate method, object? argument)
-    {
+    {   // Because this method is called while the executor's own window is being created, we need to do a manual check
+        // here as opposed to calling OnExecutorThread(), which will cause a deadlock due to the executor not running yet.
         if (Thread == Thread.CurrentThread) 
         {
             return InvokeContext(ExecuteDelegate);
@@ -129,6 +130,8 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
         }
 
         var operation = new ThreadExecutorOperation(this, method, true, argument);
+
+        InvokeAsync(operation);
         operation.Wait();
 
         // The Wait is released once Completed is raised; however, SetException will not have been called yet.

@@ -317,6 +317,25 @@ public class MessageOnlyExecutorTests
     }
 
     [Fact]
+    public async Task SynchronizationContextSend_FromOtherThread_RunsOnExecutorThread()
+    {
+        using var executor = new MessageOnlyExecutor();
+
+        await executor.StartAsync();
+
+        var context = executor.Invoke(() => SynchronizationContext.Current);
+        Assert.NotNull(context);
+
+        int sendThreadId = 0;
+
+        Task sendTask = Task.Run(() => context.Send(_ => sendThreadId = Environment.CurrentManagedThreadId, null));
+
+        await sendTask.WaitAsync(TimeSpan.FromSeconds(5));
+
+        Assert.Equal(executor.Thread.ManagedThreadId, sendThreadId);
+    }
+
+    [Fact]
     public async Task Post_ThrowingCallback_RaisesUnhandledExceptionAndKeepsRunning()
     {
         using var executor = new MessageOnlyExecutor();
