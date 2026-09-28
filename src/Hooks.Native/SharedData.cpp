@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -17,6 +17,16 @@ namespace {
     ThreadData* SharedData = nullptr;
     LPVOID SharedMemory = nullptr;
     HANDLE FileMapping = nullptr;
+
+    // The data written to the shared memory is laid out differently between 32-bit and 64-bit platforms;
+    // they also have their own .shared segment, so each platform gets its own set of shared objects.
+#ifdef _WIN64
+    constexpr LPCTSTR FileMappingName = TEXT("BadEcho.Hooks.FileMappingObject.x64");
+    constexpr LPCTSTR MutexName = TEXT("BadEcho.Hooks.MutexObject.x64");
+#else
+    constexpr LPCTSTR FileMappingName = TEXT("BadEcho.Hooks.FileMappingObject.x86");
+    constexpr LPCTSTR MutexName = TEXT("BadEcho.Hooks.MutexObject.x86");
+#endif
     
     int* GetGlobalId(HookType hookType)
     {
@@ -125,7 +135,7 @@ bool InitializeSharedData()
         PAGE_READWRITE,
         0,
         SharedMemorySize,
-        TEXT("BadEcho.Hooks.FileMappingObject"));
+        FileMappingName);
 
     if (FileMapping == nullptr)
         return false;
@@ -139,7 +149,7 @@ bool InitializeSharedData()
         return false;
 
     SharedSectionMutex
-        = CreateMutex(nullptr, FALSE, TEXT("BadEcho.Hooks.MutexObject"));
+        = CreateMutex(nullptr, FALSE, MutexName);
 
     if (SharedSectionMutex == nullptr)
         return false;

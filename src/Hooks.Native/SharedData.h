@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -76,7 +76,7 @@ constexpr int MaxThreads = 20;
 /**
  * The size allocated for the shared memory used to store hook data.
  */
-constexpr int SharedMemorySize = 1760;
+constexpr int SharedMemorySize = static_cast<int>(sizeof(ThreadData) * MaxThreads);
 
 /**
  * Initializes various shared memory and synchronization objects used for communication between processes.
