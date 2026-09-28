@@ -58,7 +58,7 @@ namespace {
     {
         int index;
 
-        for (index = 0; index < ThreadCount; index++)
+        for (index = 0; index < MaxThreads; index++)
         {
             if (SharedData[index].ThreadId == threadId)
                 break;
@@ -69,14 +69,14 @@ namespace {
 
     ThreadData* GetThreadData(HookType hookType, int threadId)
     {
-        int index = FindThreadDataIndex(threadId);
+        int index = threadId != 0 ? FindThreadDataIndex(threadId) : MaxThreads;
 
-        if (index == ThreadCount || threadId == 0)
+        if (index == MaxThreads)
         {
-            if (int* globalId = GetGlobalId(hookType); globalId != nullptr)
+            if (int* globalId = GetGlobalId(hookType); globalId != nullptr && *globalId != 0)
                 index = FindThreadDataIndex(*globalId);
 
-            if (index == ThreadCount)
+            if (index == MaxThreads)
                 return nullptr;
         }
 
@@ -119,7 +119,6 @@ bool ChangeMessage = false;
 UINT ChangedMessage = 0;
 WPARAM ChangedWParam = 0;
 LPARAM ChangedLParam = 0;
-int ThreadCount = 0;
 int GlobalCallWndProcId = 0;
 int GlobalCallWndProcRetId = 0;
 int GlobalGetMessageId = 0;
@@ -175,49 +174,31 @@ HookData* AddHookData(HookType hookType, int threadId)
 
     if (isGlobal)
         threadId = static_cast<int>(GetCurrentThreadId());
+    
+	// Synchronization is required as multiple processes may be attempting to claim a free slot.
+    WaitForSingleObject(SharedSectionMutex, INFINITE);
 
     int index = FindThreadDataIndex(threadId);
 
-    if (index == ThreadCount)
-    {   // Thread not registered -- attempt to initialize data.
-        if (ThreadCount == MaxThreads)
-        {   // We're at our storage limit -- check if any threads have been freed.
-            for (index = 0; index < ThreadCount; index++)
-            {
-                if (SharedData[index].ThreadId == 0)
-                    break;
-            }
+    if (index == MaxThreads)
+    {   // Thread not registered -- claim a free slot for it. Threads can be removed in any order, so a free slot
+    	// may be anywhere in the array.
+        index = FindThreadDataIndex(0);
 
-            if (index == MaxThreads)
-                return nullptr;
+        if (index == MaxThreads)
+        {   // We're at our storage limit.            
+            ReleaseMutex(SharedSectionMutex);
+            return nullptr;
         }
 
+        SharedData[index] = ThreadData{ };
         SharedData[index].ThreadId = threadId;
-        
-        SharedData[index].CallWndProcHook.Handle = nullptr;
-        SharedData[index].CallWndProcHook.Destination = nullptr;
-        SharedData[index].CallWndProcRetHook.Handle = nullptr;
-        SharedData[index].CallWndProcRetHook.Destination = nullptr;
-        SharedData[index].GetMessageHook.Handle = nullptr;
-        SharedData[index].GetMessageHook.Destination = nullptr;
-        SharedData[index].KeyboardHook.Handle = nullptr;
-        SharedData[index].KeyboardHook.Destination = nullptr;
-        SharedData[index].LowLevelKeyboardHook.Handle = nullptr;
-        SharedData[index].LowLevelKeyboardHook.Destination = nullptr;
-        SharedData[index].MouseHook.Handle = nullptr;
-        SharedData[index].MouseHook.Destination = nullptr;
-        SharedData[index].LowLevelMouseHook.Handle = nullptr;
-        SharedData[index].LowLevelMouseHook.Destination = nullptr;
-
-        // Synchronization is required as multiple processes may be attempting to increment the
-        // thread count.
-        WaitForSingleObject(SharedSectionMutex, INFINITE);
-        ThreadCount++;
-        ReleaseMutex(SharedSectionMutex);
     }
 
     if (isGlobal)
         UpdateGlobalId(hookType, threadId);
+
+    ReleaseMutex(SharedSectionMutex);
     
     return GetThreadHookData(hookType, &SharedData[index]);
 }
@@ -276,8 +257,4 @@ void RemoveHookData(HookType hookType, int threadId)
 
     // "Free" the thread, as it no longer has any hooks associated with it.
     threadData->ThreadId = 0;
-    
-	WaitForSingleObject(SharedSectionMutex, INFINITE);
-    ThreadCount--;
-    ReleaseMutex(SharedSectionMutex);
 }

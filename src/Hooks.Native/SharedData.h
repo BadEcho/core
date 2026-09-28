@@ -141,10 +141,6 @@ extern WPARAM ChangedWParam;
  */
 extern LPARAM ChangedLParam;
 /**
- * The number of threads that currently have hook data associated with them.
- */
-extern int ThreadCount;
-/**
  * The identifier for the thread that installed a global \c CallWndProc hook procedure.
  */
 extern int GlobalCallWndProcId;
