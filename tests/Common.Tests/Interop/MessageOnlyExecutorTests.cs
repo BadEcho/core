@@ -316,6 +316,34 @@ public class MessageOnlyExecutorTests
         Assert.True(executionResumed);
     }
 
+    [Fact]
+    public async Task Post_ThrowingCallback_RaisesUnhandledExceptionAndKeepsRunning()
+    {
+        using var executor = new MessageOnlyExecutor();
+
+        await executor.StartAsync();
+
+        var reported = new TaskCompletionSource<Exception>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        executor.UnhandledException += (_, e) =>
+        {
+            e.Handled = true;
+            reported.TrySetResult(e.Data);
+        };
+
+        SynchronizationContext? context = executor.Invoke(() => SynchronizationContext.Current);
+
+        Assert.NotNull(context);
+
+        context.Post(_ => throw new InvalidOperationException(), null);
+
+        Exception exception = await reported.Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+        Assert.IsType<InvalidOperationException>(exception);
+
+        Assert.Equal(executor.Thread.ManagedThreadId, executor.Invoke(() => Environment.CurrentManagedThreadId));
+    }
+
     private static MessageOnlyExecutor CreateExecutor()
     {
         var executor = new MessageOnlyExecutor();

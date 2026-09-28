@@ -143,3 +143,21 @@ using BadEcho.Properties;
                            "CA1720",
                            Scope = "member",
                            Target = "~F:BadEcho.Interop.VirtualKey.Decimal")]
+
+[assembly: SuppressMessage("Design",
+                           "CA1031",
+                           Scope = "member",
+                           Target = "~M:BadEcho.Interop.WindowSubclass.WndProc(System.IntPtr,System.UInt32,System.IntPtr,System.IntPtr)",
+                           Justification = "We must catch all exceptions here and not rethrow, as this method is called by native code, and an exception unwinding through DispatchMessage/CallWindowProc results in undefined behavior.")]
+
+[assembly: SuppressMessage("Design",
+                           "CA1031",
+                           Scope = "member",
+                           Target = "~M:BadEcho.Interop.MessageOnlyExecutor.ProcessOperation",
+                           Justification = "We must catch all exceptions here and not rethrow, as this method is called by native code, and an exception unwinding through DispatchMessage/CallWindowProc results in undefined behavior.")]
+
+[assembly: SuppressMessage("Design",
+                           "CA1031",
+                           Scope = "member",
+                           Target = "~M:BadEcho.Interop.WindowWrapper.WindowProcedure(System.IntPtr,System.UInt32,System.IntPtr,System.IntPtr)",
+                           Justification = "We must catch all exceptions here and not rethrow, as this method is called by native code, and an exception unwinding through DispatchMessage/CallWindowProc results in undefined behavior.")]

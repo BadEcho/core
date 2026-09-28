@@ -366,4 +366,16 @@
   <data name="CannotConvertComToManaged" xml:space="preserve">
 	  <value>Unable to convert COM interface pointer to a managed object.</value>
   </data>
+	<data name="SubclassWndProcFailed" xml:space="preserve">
+		<value>A subclassed window failed to process a message; the message was passed down the window procedure chain.</value>
+	</data>
+  <data name="WindowCallbackFailed" xml:space="preserve">
+		<value>A window message callback threw an exception.</value>
+	</data>
+  <data name="ExecutorUnhandledException" xml:space="preserve">
+		<value>An operation posted to the executor threw an exception that was not handled.</value>
+	</data>
+  <data name="ExecutorExceptionHandlerFailed" xml:space="preserve">
+		<value>A handler for the executor's UnhandledException event threw an exception.</value>
+	</data>
 </root>

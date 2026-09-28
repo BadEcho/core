@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -11,8 +11,10 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using BadEcho.Logging;
 using BadEcho.Properties;
 using BadEcho.Threading;
+using ThreadExceptionEventArgs = BadEcho.Threading.ThreadExceptionEventArgs;
 
 namespace BadEcho.Interop;
 
@@ -53,6 +55,22 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
 
         Thread = Thread.CurrentThread;
     }
+
+    /// <summary>
+    /// Occurs when a method posted to the executor with no caller waiting on it throws an exception.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// This will report unhandled exceptions when methods are being queued in a fire-and-forget fashion
+    /// (e.g., via <see cref="SynchronizationContext.Post"/> or <see cref="IThreadExecutor.BeginInvoke"/>).
+    /// </para>
+    /// <para>
+    /// If an exception is not marked as handled by a handler, then it will be logged. It is not allowed to propagate,
+    /// since that would unwind them through the native message loop -- this would result in "undefined behavior", according
+    /// to Microsoft.
+    /// </para>
+    /// </remarks>
+    public event EventHandler<ThreadExceptionEventArgs>? UnhandledException;
 
     /// <inheritdoc/>
     public bool IsShutdownStarted 
@@ -113,13 +131,18 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
         var operation = new ThreadExecutorOperation(this, method, true, argument);
         operation.Wait();
 
+        // The Wait is released once Completed is raised; however, SetException will not have been called yet.
+        // Getting the result off the awaiter will close this gap and rethrow the original exception with its stack trace.
+        if (operation.Status == ThreadExecutorOperationStatus.Completed)
+            operation.Task.GetAwaiter().GetResult();
+
         return operation.Result;
     }
 
     void IThreadExecutor.BeginInvoke(Delegate method, object? argument)
     {
-        var operation 
-            = new ThreadExecutorOperation(this, method, true, argument);
+        var operation
+            = new ThreadExecutorOperation(this, method, true, argument) { RaisesUnhandledException = true };
 
         InvokeAsync(operation);
     }
@@ -521,7 +544,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     {
         ThreadExecutorOperation? operation = null;
 
-        lock (Lock)
+        lock (Lock)  
         {
             if (_operationQueue.Count > 0)
                 operation = Dequeue();
@@ -534,6 +557,24 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
 
         operation.Invoke();
         operation.FinalizeCompletion();
+
+        if (operation is { RaisesUnhandledException: true, Task.Exception: { } ex })
+        {   // Task.Exception is an AggregateException, so we need to unwrap it.
+            Exception innerEx = ex.InnerExceptions[0];
+            var e = new ThreadExceptionEventArgs(innerEx);
+
+            try
+            {   // Handlers run inside the native window procedure, so we need to catch any possible exceptions here as well.
+                UnhandledException?.Invoke(this, e);
+            }
+            catch (Exception handlerEx)
+            {
+                Logger.Error(Strings.ExecutorExceptionHandlerFailed, handlerEx);
+            }
+
+            if (!e.Handled)
+                Logger.Error(Strings.ExecutorUnhandledException, innerEx);
+        }
     }
 
     private bool RequestProcessOperation()

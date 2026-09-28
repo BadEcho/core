@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -187,6 +187,13 @@ public class ThreadExecutorOperation
     /// </summary>
     internal IThreadExecutorOperationTaskSource TaskSource
     { get; }
+
+    /// <summary>
+    /// Gets a value indicating if an exception thrown by the operation should be reported by the executor.
+    /// </summary>
+    /// <remarks>This meant to be used when no caller is waiting to observe exceptions.</remarks>
+    internal bool RaisesUnhandledException
+    { get; init; }
     
     /// <summary>
     /// Gets the executor's synchronization object.
@@ -409,27 +416,30 @@ public class ThreadExecutorOperation
 
     private void Execute()
     {
-        // If we're working with an unknown delegate type, then we'll let the executor's invoke routine handle it.
-        if (_unknownDelegateType)
-        {
-            _result = Executor.Invoke(Method, _argument);
-            return;
-        }
-        
-        SynchronizationContext? oldContext = Executor.SwitchContext();
-
         try
         {
-            _result = InvokeMethod();
+            // If we're working with an unknown delegate type, then we'll let the executor's invoke routine handle it.
+            if (_unknownDelegateType)
+            {
+                _result = Executor.Invoke(Method, _argument);
+                return;
+            }
+
+            SynchronizationContext? oldContext = Executor.SwitchContext();
+
+            try
+            {
+                _result = InvokeMethod();
+            }
+            finally
+            {
+                SynchronizationContext.SetSynchronizationContext(oldContext);
+            }
         }
         catch (Exception ex)
         {
             // This will be reported through the task completion source.
             _exception = ex;
-        }
-        finally
-        {
-            SynchronizationContext.SetSynchronizationContext(oldContext);
         }
     }
 

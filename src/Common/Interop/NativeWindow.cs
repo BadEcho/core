@@ -544,10 +544,11 @@ public sealed class NativeWindow
                                                            1,
                                                            1,
                                                            WindowPositionFlags.NoMove | WindowPositionFlags.NoActivate);
-                        if (!resized)
-                            throw new Win32Exception(Marshal.GetLastWin32Error());
 
                         _ignoreSizeChanges = false;
+
+                        if (!resized)
+                            throw new Win32Exception(Marshal.GetLastWin32Error());
                     }
                 }
 

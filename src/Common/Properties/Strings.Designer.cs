@@ -241,6 +241,15 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A handler for the executor&apos;s UnhandledException event threw an exception..
+        /// </summary>
+        public static string ExecutorExceptionHandlerFailed {
+            get {
+                return ResourceManager.GetString("ExecutorExceptionHandlerFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Executor operation must either be complete or canceled prior to finalizing completion..
         /// </summary>
         public static string ExecutorFinalizedBeforeDone {
@@ -282,6 +291,15 @@ namespace BadEcho.Properties {
         public static string ExecutorShutdown {
             get {
                 return ResourceManager.GetString("ExecutorShutdown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An operation posted to the executor threw an exception that was not handled..
+        /// </summary>
+        public static string ExecutorUnhandledException {
+            get {
+                return ResourceManager.GetString("ExecutorUnhandledException", resourceCulture);
             }
         }
         
@@ -592,6 +610,15 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A subclassed window failed to process a message; the message was passed down the window procedure chain..
+        /// </summary>
+        public static string SubclassWndProcFailed {
+            get {
+                return ResourceManager.GetString("SubclassWndProcFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Handle to task dialog instance wasn&apos;t set as callback data..
         /// </summary>
         public static string TaskDialogCallbackHandleNotSet {
@@ -786,6 +813,15 @@ namespace BadEcho.Properties {
         public static string ThreadExecutorSourceNotInitialized {
             get {
                 return ResourceManager.GetString("ThreadExecutorSourceNotInitialized", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A window message callback threw an exception..
+        /// </summary>
+        public static string WindowCallbackFailed {
+            get {
+                return ResourceManager.GetString("WindowCallbackFailed", resourceCulture);
             }
         }
         

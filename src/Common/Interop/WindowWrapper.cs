@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -12,6 +12,8 @@
 // -----------------------------------------------------------------------
 
 using BadEcho.Collections;
+using BadEcho.Logging;
+using BadEcho.Properties;
 
 namespace BadEcho.Interop;
 
@@ -86,7 +88,16 @@ public abstract class WindowWrapper
 
         foreach (WindowProcedure callback in _callbacks)
         {
-            result = callback(hWnd, msg, wParam, lParam);
+            try
+            {
+                result = callback(hWnd, msg, wParam, lParam);
+            }
+            catch (Exception ex)
+            {   // We don't want an unhandled exception from a callback to prevent window destruction cleanup, which often involves 
+                // the freeing up of unmanaged resources.
+                Logger.Error(Strings.WindowCallbackFailed, ex);
+                continue;
+            }
 
             if (result.Handled)
                 break;

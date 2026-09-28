@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -172,54 +172,80 @@ internal sealed class WindowSubclass : IDisposable
         var lResult = IntPtr.Zero;
         var message = (WindowMessage)msg;
         bool handled = false;
+        IntPtr oldWndProc = IntPtr.Zero;
 
-        switch (_state)
-        {
-            case AttachmentState.Unattached:
-                var window = new WindowHandle(hWnd, false);
-                Attach(window, WndProc, _DefaultWindowProc);
-                break;
-
-            case AttachmentState.Detached:
-                throw new InvalidOperationException(Strings.SubclassDetachedWndProc);
-        }
-
-        IntPtr oldWndProc = _oldWndProc;
-
-        if (_DetachMessage == message)
-        {
-            if (IntPtr.Zero == wParam || wParam == (IntPtr) _handle)
+        // This is being called by native code, and an exception unwinding through DispatchMessage/CallWindowProc results
+        // in undefined behavior according to Microsoft. So, is no bueno.
+        try
+        {   
+            switch (_state)
             {
-                bool forcibly = lParam > 0;
+                case AttachmentState.Unattached:
+                    var window = new WindowHandle(hWnd, false);
+                    Attach(window, WndProc, _DefaultWindowProc);
+                    break;
 
-                lResult = Detach(forcibly) ? new IntPtr(1) : IntPtr.Zero;
-                handled = !forcibly;
+                case AttachmentState.Detached:
+                    throw new InvalidOperationException(Strings.SubclassDetachedWndProc);
             }
-        }
-        else
-        {
-            if (_executor is not { IsShutdownComplete: true })
-            {
-                ProcedureResult? result = SendOperation(hWnd, msg, wParam, lParam);
 
-                if (result != null)
+            oldWndProc = _oldWndProc;
+
+            if (_DetachMessage == message)
+            {
+                if (IntPtr.Zero == wParam || wParam == (IntPtr) _handle)
                 {
-                    lResult = result.LResult;
-                    handled = result.Handled;
+                    bool forcibly = lParam > 0;
+
+                    lResult = Detach(forcibly) ? new IntPtr(1) : IntPtr.Zero;
+                    handled = !forcibly;
                 }
             }
-
-            if (WindowMessage.DestroyNonclientArea == message)
+            else
             {
-                Detach(true);
-                // WM_NCDESTROY should always be passed down the chain.
-                handled = false;
+                if (_executor is not { IsShutdownComplete: true })
+                {
+                    ProcedureResult? result = SendOperation(hWnd, msg, wParam, lParam);
+
+                    if (result != null)
+                    {
+                        lResult = result.LResult;
+                        handled = result.Handled;
+                    }
+                }
             }
         }
+        catch (Exception ex)
+        {
+            Logger.Error(Strings.SubclassWndProcFailed, ex);
+            handled = false;
+        }
+        
+        if (WindowMessage.DestroyNonclientArea == message)
+        {   // This has its own set of exception-handling statements so that a failed callback won't leave us attached to,
+            // and pinned by, a window that no longer exists.
+            try
+            {
+                Detach(true);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(Strings.SubclassWndProcFailed, ex);
+            }
 
-        // If the message wasn't handled, pass it down the WndProc chain.
+            // WM_NCDESTROY should always be passed down the chain.
+            handled = false;
+        }
+
+        // If the message wasn't handled, pass it down the WndProc chain. 
         if (!handled)
+        {
+            // Once detached, we no longer know the previous procedure, so the default one is used instead.
+            if (oldWndProc == IntPtr.Zero)
+                oldWndProc = _DefaultWindowProc;
+
             lResult = User32.CallWindowProc(oldWndProc, hWnd, message, wParam, lParam);
+        }
 
         return lResult;
     }
