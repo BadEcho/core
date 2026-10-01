@@ -17,6 +17,8 @@ namespace {
     ThreadData* SharedData = nullptr;
     LPVOID SharedMemory = nullptr;
     HANDLE FileMapping = nullptr;
+    // Mutex for synchronizing the claiming of thread slots in shared memory.
+    HANDLE SharedSectionMutex = nullptr;
 
     // The data written to the shared memory is laid out differently between 32-bit and 64-bit platforms;
     // they also have their own .shared segment, so each platform gets its own set of shared objects.
@@ -68,7 +70,7 @@ namespace {
     }
 
     ThreadData* GetThreadData(HookType hookType, int threadId)
-    {
+    {   // A thread ID of 0 indicates a global hook. We don't want to ever search for zero here, since free slots will have an identifier of zero.
         int index = threadId != 0 ? FindThreadDataIndex(threadId) : MaxThreads;
 
         if (index == MaxThreads)
@@ -90,16 +92,16 @@ namespace {
 
         switch (hookType)
         {
-	        case CallWindowProcedure:
-	            return &threadData->CallWndProcHook;
-	        case CallWindowProcedureReturn:
-	            return &threadData->CallWndProcRetHook;
-	        case GetMessages:
-	            return &threadData->GetMessageHook;
-	        case Keyboard:
-	            return &threadData->KeyboardHook;
-	        case LowLevelKeyboard:
-	            return &threadData->LowLevelKeyboardHook;
+            case CallWindowProcedure:
+                return &threadData->CallWndProcHook;
+            case CallWindowProcedureReturn:
+                return &threadData->CallWndProcRetHook;
+            case GetMessages:
+                return &threadData->GetMessageHook;
+            case Keyboard:
+                return &threadData->KeyboardHook;
+            case LowLevelKeyboard:
+                return &threadData->LowLevelKeyboardHook;
             case Mouse:
                 return &threadData->MouseHook;
             case LowLevelMouse:
@@ -110,21 +112,13 @@ namespace {
     }
 }
 
-// Mutex for synchronizing writes to shared memory, particularly for message parameter modification by message queue hook procedures.
-HANDLE SharedSectionMutex = nullptr;
-
 // Adds a data section to our binary file for variables we want shared across all processes.
 #pragma data_seg(".shared")
-bool ChangeMessage = false;
-UINT ChangedMessage = 0;
-WPARAM ChangedWParam = 0;
-LPARAM ChangedLParam = 0;
 int GlobalCallWndProcId = 0;
 int GlobalCallWndProcRetId = 0;
 int GlobalGetMessageId = 0;
 #pragma data_seg()
 #pragma comment(linker, "/SECTION:.shared,RWS") 
-
 
 bool InitializeSharedData()
 {
@@ -175,14 +169,14 @@ HookData* AddHookData(HookType hookType, int threadId)
     if (isGlobal)
         threadId = static_cast<int>(GetCurrentThreadId());
     
-	// Synchronization is required as multiple processes may be attempting to claim a free slot.
+    // Synchronization is required as multiple processes may be attempting to claim a free slot.
     WaitForSingleObject(SharedSectionMutex, INFINITE);
 
     int index = FindThreadDataIndex(threadId);
 
     if (index == MaxThreads)
     {   // Thread not registered -- claim a free slot for it. Threads can be removed in any order, so a free slot
-    	// may be anywhere in the array.
+        // may be anywhere in the array.
         index = FindThreadDataIndex(0);
 
         if (index == MaxThreads)
@@ -257,4 +251,14 @@ void RemoveHookData(HookType hookType, int threadId)
 
     // "Free" the thread, as it no longer has any hooks associated with it.
     threadData->ThreadId = 0;
+}
+
+MessageChanges* GetMessageChanges(int threadId)
+{
+    if (threadId == 0)
+        return nullptr;
+
+    int index = FindThreadDataIndex(threadId);
+
+    return index != MaxThreads ? &SharedData[index].MessageChanges : nullptr;
 }

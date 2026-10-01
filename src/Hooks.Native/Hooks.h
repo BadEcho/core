@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -21,37 +21,37 @@
  */
 enum HookType : unsigned char
 {	
-	/**
-	 * Monitors \c WH_CALLWNDPROC messages before the system sends them to the destination window
-	 * procedure.
-	 */
-	CallWindowProcedure,
-	/**
-	 * Monitors \c WH_CALLWNDPROCRET messages after they have been processed by the destination
-	 * window procedure.
-	 */
-	CallWindowProcedureReturn,
-	/**
-	 * Monitors \c WH_GETMESSAGE messages posted to a message queue prior to their retrieval.
-	 * @remarks This is named \c GetMessages to avoid conflicting with the ever-present \c GetMessage Win32 macro.
-	 */
-	GetMessages,
-	/**
-	 * Monitors \c WH_KEYBOARD keystroke messages.
-	 */
-	Keyboard,
-	/**
-	 * Monitors \c WH_KEYBOARD_LL low-level keyboard input events.
-	 */
-	LowLevelKeyboard,
-	/**
-	 * Monitors \c WH_MOUSE mouse messages.
-	 */
-	Mouse,
-	/**
-	 * Monitors \c WH_MOUSE_LL low-level mouse input events.
-	 */
-	LowLevelMouse
+    /**
+     * Monitors \c WH_CALLWNDPROC messages before the system sends them to the destination window
+     * procedure.
+     */
+    CallWindowProcedure,
+    /**
+     * Monitors \c WH_CALLWNDPROCRET messages after they have been processed by the destination
+     * window procedure.
+     */
+    CallWindowProcedureReturn,
+    /**
+     * Monitors \c WH_GETMESSAGE messages posted to a message queue prior to their retrieval.
+     * @remarks This is named \c GetMessages to avoid conflicting with the ever-present \c GetMessage Win32 macro.
+     */
+    GetMessages,
+    /**
+     * Monitors \c WH_KEYBOARD keystroke messages.
+     */
+    Keyboard,
+    /**
+     * Monitors \c WH_KEYBOARD_LL low-level keyboard input events.
+     */
+    LowLevelKeyboard,
+    /**
+     * Monitors \c WH_MOUSE mouse messages.
+     */
+    Mouse,
+    /**
+     * Monitors \c WH_MOUSE_LL low-level mouse input events.
+     */
+    LowLevelMouse
 };
 
 #define HOOKS_API extern "C" __declspec(dllexport)
@@ -74,15 +74,19 @@ HOOKS_API bool __cdecl AddHook(HookType hookType, HWND destination, int threadId
 HOOKS_API bool __cdecl RemoveHook(HookType hookType, int threadId);
 
 /**
- * Changes the details of a hook message currently being intercepted.
+ * Records changes to a message intercepted form a thread's message queue, to be applied before the thread receives it.
+ * @param threadId The identifier of the thread whose message queue the message was intercepted from.
  * @param message The message identifier to use.
  * @param wParam Additional information about the message to use.
  * @param lParam Additional information about the message to use.
+ * @return 
+ * A token identifying the recorded changes, which must then be returned by the hook procedure for the changes to be applied; 
+ * or zero, if changes could not be recorded.
  * @note
- * This function should only be called from window procedures that handle hook types supporting
- * mutable messages.
+ * This function should only be called from listeners that handle hook types supporting
+ * mutable messages. Changes are only supported for thread-specific hooks; global hooks are not supported.
  */
-HOOKS_API void __cdecl ChangeMessageDetails(UINT message, WPARAM wParam, LPARAM lParam);
+HOOKS_API LRESULT __cdecl ChangeMessageDetails(int threadId, UINT message, WPARAM wParam, LPARAM lParam);
 
 // Installable hook procedures.
 
@@ -103,8 +107,8 @@ LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam);
 template<typename T>
 T* PointTo(uintptr_t address)
 {
-	char* p = nullptr;
-	p += address;
+    char* p = nullptr;
+    p += address;
 
-	return reinterpret_cast<T*>(p);
+    return reinterpret_cast<T*>(p);
 }

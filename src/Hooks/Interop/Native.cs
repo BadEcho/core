@@ -52,11 +52,16 @@ internal static partial class Native
     /// <summary>
     /// Changes the details of a hook message currently being intercepted.
     /// </summary>
+    /// <param name="threadId">The identifier of the thread whose message queue the message was intercepted from.</param>
     /// <param name="message">The message identifier to use.</param>
     /// <param name="wParam">Additional information about the message to use.</param>
     /// <param name="lParam">Additional information about the message to use.</param>
+    /// <returns>
+    /// A token identifying the recorded changes, which must then be returned by the hook procedure for the changes to be applied;
+    /// or zero, if changes could not be recorded.
+    /// </returns>
     [LibraryImport(LIBRARY_NAME)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
-    public static partial void ChangeMessageDetails(uint message, IntPtr wParam, IntPtr lParam);
+    public static partial nint ChangeMessageDetails(int threadId, uint message, nint wParam, nint lParam);
 }

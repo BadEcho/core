@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -36,15 +36,18 @@ public sealed class MessageQueueSource : HookSource
     }
 
     /// <inheritdoc/>
-    protected override void OnHookEvent(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+    protected override nint OnHookEvent(nint hWnd, uint msg, nint wParam, nint lParam)
     {
         uint localMsg = msg;
-        IntPtr localWParam = wParam;
-        IntPtr localLParam = lParam;
+        nint localWParam = wParam;
+        nint localLParam = lParam;
 
         _callback(ref localMsg, ref localWParam, ref localLParam);
 
+        // The hook procedure will only apply the changes if we answer with the token identifying them.
         if (localMsg != msg || localWParam != wParam || localLParam != lParam)
-            Native.ChangeMessageDetails(localMsg, localWParam, localLParam);
+            return Native.ChangeMessageDetails(ThreadId, localMsg, localWParam, localLParam);
+
+        return 0;
     }
 }

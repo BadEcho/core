@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -26,7 +26,6 @@ public abstract class HookSource : IDisposable, IAsyncDisposable
 {
     private readonly MessageOnlyExecutor _hookExecutor = new();
     private readonly HookType _hookType;
-    private readonly int _threadId;
 
     private bool _hooked;
     private bool _disposed;
@@ -39,7 +38,7 @@ public abstract class HookSource : IDisposable, IAsyncDisposable
     protected HookSource(HookType hookType, int threadId)
         : this(hookType)
     {
-        _threadId = threadId;
+        ThreadId = threadId;
     }
 
     /// <summary>
@@ -54,6 +53,12 @@ public abstract class HookSource : IDisposable, IAsyncDisposable
     {
         _hookType = hookType;
     }
+
+    /// <summary>
+    /// Gets the identifier of the thread with which the hook procedure is to be associated, or zero if it is a global hook.
+    /// </summary>
+    protected int ThreadId
+    { get; }
 
     /// <summary>
     /// Initializes the message loop that facilitates the receiving of hook messages, and then installs the hook procedure.
@@ -80,8 +85,8 @@ public abstract class HookSource : IDisposable, IAsyncDisposable
         await _hookExecutor.InvokeAsync(() =>
         {
             _hooked = Native.AddHook(_hookType,
-                                     _hookExecutor.Window.Handle, 
-                                     _threadId);
+                                     _hookExecutor.Window.Handle,
+                                     ThreadId);
         });
     }
 
@@ -162,21 +167,22 @@ public abstract class HookSource : IDisposable, IAsyncDisposable
     /// <param name="msg">The message.</param>
     /// <param name="wParam">Additional message-specific information.</param>
     /// <param name="lParam">Additional message-specific information.</param>
-    protected abstract void OnHookEvent(nint hWnd, uint msg, nint wParam, nint lParam);
+    /// <returns>The result to send back to the hook procedure; should be zero, unless the hook type expects a response.</returns>
+    protected abstract nint OnHookEvent(nint hWnd, uint msg, nint wParam, nint lParam);
 
-    private ProcedureResult HandleHookEvent(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+    private ProcedureResult HandleHookEvent(nint hWnd, uint msg, nint wParam, nint lParam)
     {   // Ignore all system messages; we're only interested in messages sent by our hook DLL.
         if (msg < (int) WindowMessage.User)
             return new ProcedureResult(IntPtr.Zero, true);
 
         msg -= (int) WindowMessage.User;
 
-        OnHookEvent(hWnd, msg, wParam, lParam);
+        nint lResult = OnHookEvent(hWnd, msg, wParam, lParam);
 
         // We always mark our hook messages as handled; we don't want further processing by any supporting
         // infrastructure. This has no bearing on whether or not the next hook procedure in the current hook
         // chain is called, which our hook DLL will always do.
-        return new ProcedureResult(IntPtr.Zero, true);
+        return new ProcedureResult(lResult, true);
     }
 
     private void RemoveHook()
@@ -184,9 +190,9 @@ public abstract class HookSource : IDisposable, IAsyncDisposable
         if (!_hooked)
             return;
 
-        _hooked = !Native.RemoveHook(_hookType, _threadId);
+        _hooked = !Native.RemoveHook(_hookType, ThreadId);
 
         if (_hooked)
-            Logger.Warning(Strings.UnhookFailed.InvariantFormat(_threadId));
+            Logger.Warning(Strings.UnhookFailed.InvariantFormat(ThreadId));
     }
 }

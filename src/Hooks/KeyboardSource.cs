@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -51,7 +51,7 @@ public sealed class KeyboardSource : HookSource
     }
 
     /// <inheritdoc/>
-    protected override void OnHookEvent(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+    protected override nint OnHookEvent(nint hWnd, uint msg, nint wParam, nint lParam)
     {
         VirtualKey key = (VirtualKey) wParam;
         KeyState state = (WindowMessage) msg switch
@@ -62,5 +62,7 @@ public sealed class KeyboardSource : HookSource
         };
 
         _callback(state, key);
+
+        return 0;
     }
 }

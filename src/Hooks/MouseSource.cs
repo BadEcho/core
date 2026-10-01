@@ -51,7 +51,7 @@ public sealed class MouseSource : HookSource
     }
 
     /// <inheritdoc/>
-    protected override void OnHookEvent(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+    protected override nint OnHookEvent(nint hWnd, uint msg, nint wParam, nint lParam)
     {
         int x = wParam.ToInt32();
         int y = lParam.ToInt32();
@@ -73,5 +73,7 @@ public sealed class MouseSource : HookSource
         };
 
         _callback(mouseEvent, x, y);
+
+        return 0;
     }
 }
