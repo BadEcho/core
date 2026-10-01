@@ -33,12 +33,13 @@ public class MalleableLazyTests
         bool factoryCalled = false;
 
         var lazy = new MalleableLazy<int>(() =>
-        {
-            factoryCalled = true;
-            return 7;
-        });
-
-        lazy.Value = 3;
+                   {
+                       factoryCalled = true;
+                       return 7;
+                   })
+                   {
+                       Value = 3
+                   };
 
         Assert.True(lazy.IsValueCreated);
         Assert.Equal(3, lazy.Value);
@@ -59,9 +60,10 @@ public class MalleableLazyTests
     [Fact]
     public void Value_ReferenceTypeOverriddenWithNull_ReturnsNull()
     {
-        var lazy = new MalleableLazy<string?>(() => "Lazy");
-
-        lazy.Value = null;
+        var lazy = new MalleableLazy<string?>(() => "Lazy")
+                   {
+                       Value = null
+                   };
 
         Assert.True(lazy.IsValueCreated);
         Assert.Null(lazy.Value);
@@ -82,9 +84,10 @@ public class MalleableLazyTests
     [Fact]
     public void Value_OverriddenBeforeCreation_FactoryNeverRuns()
     {
-        var lazy = new MalleableLazy<string>(() => throw new InvalidOperationException());
-
-        lazy.Value = "Overridden";
+        var lazy = new MalleableLazy<string>(() => throw new InvalidOperationException())
+                   {
+                       Value = "Overridden"
+                   };
 
         Assert.Equal("Overridden", lazy.Value);
         Assert.True(lazy.IsValueCreated);
