@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -97,9 +97,8 @@ public abstract class JsonPolymorphicConverter<TTypeDescriptor,TBase> : JsonConv
             
         writer.WriteNumber(TypePropertyName, typeDescriptor.ToInt32());
 
-        writer.WriteStartObject(DataPropertyName);
+        writer.WritePropertyName(DataPropertyName);
         JsonSerializer.Serialize(writer, value, value.GetType(), options);
-        writer.WriteEndObject();
 
         writer.WriteEndObject();
     }
