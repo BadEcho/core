@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -53,6 +53,15 @@ public sealed class CollectionPropertyChangePublisher<T>
 
     private void HandleCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
+        // Unsubscribe first, as items may be present in both the old and new items collections for some operations (i.e., Move).
+        if (e.OldItems != null)
+        {
+            foreach (INotifyPropertyChanged oldItem in e.OldItems)
+            {
+                oldItem.PropertyChanged -= HandleItemChanged;
+            }
+        }
+
         // NotifyCollectionChangedEventArgs annoyingly does not provide item information via NewItems/OldItems for Reset actions.
         // Treat any items present on the collection after a Reset action as new items.
         IList? newItems = e.NewItems;
@@ -72,14 +81,6 @@ public sealed class CollectionPropertyChangePublisher<T>
             {   // Attempt an unsubscribe first in case this is a Reset and the items were present previously.
                 newItem.PropertyChanged -= HandleItemChanged;
                 newItem.PropertyChanged += HandleItemChanged;
-            }
-        }
-
-        if (e.OldItems != null)
-        {
-            foreach (INotifyPropertyChanged oldItem in e.OldItems)
-            {
-                oldItem.PropertyChanged -= HandleItemChanged;
             }
         }
 
