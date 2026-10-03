@@ -139,20 +139,31 @@ public static class JsonExtensions
 
         for (int i = 0; i < sourceArray.Count; i++)
         {
-            JsonNode? sourceItem = sourceArray[i];
-
-            if (sourceItem == null)
-                sourceArray[i] = sourceItem = new JsonObject();
+            JsonNode? targetItem = i < targetArray.Count ? targetArray[i] : null;
+            JsonNode? mergedItem = MergeArrayItem(targetItem, sourceArray[i]);
 
             if (i == targetArray.Count) 
-                targetArray.Add(new JsonObject());
-            
-            JsonNode? targetItem = targetArray[i];
+                targetArray.Add(mergedItem);
+            else if (!ReferenceEquals(mergedItem, targetItem))
+                targetArray[i] = mergedItem;
+        }
+    }
 
-            if (targetItem == null)
-                targetArray[i] = targetItem = new JsonObject();
+    private static JsonNode? MergeArrayItem(JsonNode? targetItem, JsonNode? sourceItem)
+    {
+        switch (sourceItem)
+        {
+            case JsonObject when targetItem is JsonObject:
+                ReplaceObjectProperties(targetItem, sourceItem);
+                return targetItem;
 
-            ReplaceProperties(targetItem, sourceItem, sourceItem.GetValueKind() == JsonValueKind.Array);
+            case JsonArray when targetItem is JsonArray:
+                ReplaceArrayProperties(targetItem, sourceItem);
+                return targetItem;
+
+            default:
+                // Scalars, nulls, and items of a different kind than the target's replace the target item outright.
+                return sourceItem?.DeepClone();
         }
     }
 
