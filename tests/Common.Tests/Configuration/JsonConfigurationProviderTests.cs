@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //		Created by Matt Weber <matt@badecho.com>
-//		Copyright @ 2024 Bad Echo LLC. All rights reserved.
+//		Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //		Bad Echo Technologies are licensed under the
 //		GNU Affero General Public License v3.0.
@@ -61,6 +61,28 @@ public class JsonConfigurationProviderTests
         Assert.Equal("two", secondGroup.One);
         Assert.Equal("one", secondGroup.Three);
         Assert.Equal("three", secondGroup.Eight);
+    }
+
+    [Fact]
+    public void GetConfiguration_SameTypeSectionThenRoot_DistinctResults()
+    {
+        var configurationProvider = new FakeProvider();
+        var single = configurationProvider.GetConfiguration<FakeExtensionData>("single");
+        var root = configurationProvider.GetConfiguration<FakeExtensionData>();
+
+        Assert.Equal("two", single.One);
+        Assert.Null(root.One);
+    }
+
+    [Fact]
+    public void GetConfiguration_SameTypeRootThenSection_DistinctResults()
+    {
+        var configurationProvider = new FakeProvider();
+        var root = configurationProvider.GetConfiguration<FakeExtensionData>();
+        var single = configurationProvider.GetConfiguration<FakeExtensionData>("single");
+
+        Assert.Null(root.One);
+        Assert.Equal("two", single.One);
     }
 
     private class FakeProvider : JsonConfigurationProvider

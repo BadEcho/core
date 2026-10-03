@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -27,7 +27,7 @@ public abstract class FileConfigurationProvider : ConfigurationProvider, IFileCo
                                                       NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size
                                                   };
 
-    private readonly ConcurrentDictionary<Type, object> _cachedSections = new();
+    private readonly ConcurrentDictionary<(Type SectionType, string? SectionName), object> _cachedSections = new();
     private readonly Lock _isMonitoringLock = new();
 
     private bool _isMonitoring;
@@ -61,7 +61,7 @@ public abstract class FileConfigurationProvider : ConfigurationProvider, IFileCo
             }
         }
 
-        Type sectionType = typeof(T);
+        var sectionKey = (typeof(T), sectionName);
 
         T? section = default;
         var settingsFile = new FileInfo(SettingsFile);
@@ -69,7 +69,7 @@ public abstract class FileConfigurationProvider : ConfigurationProvider, IFileCo
         if (settingsFile is { Exists: true, Length: > 0 })
         {
             section = (T)_cachedSections.GetOrAdd(
-                sectionType,
+                sectionKey,
                 _ => ReadConfiguration<T>(settingsFile.ReadAllText(FileShare.ReadWrite), sectionName));
         }
 
