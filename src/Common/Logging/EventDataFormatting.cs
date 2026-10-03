@@ -26,7 +26,7 @@ public static class EventDataFormatting
 {
     private const int BUILDER_CAPACITY = 512;
 
-    private static StringBuilder? _CachedBuilder;
+    private static volatile StringBuilder? _CachedBuilder;
 
     /// <summary>
     /// Converts the provided event data into a readable string.
@@ -66,16 +66,7 @@ public static class EventDataFormatting
     }
 
     private static StringBuilder RentBuilder()
-    {
-        StringBuilder? builder = _CachedBuilder;
-
-        if (builder == null)
-            return new StringBuilder(BUILDER_CAPACITY);
-
-        _CachedBuilder = null;
-        
-        return builder;
-    }
+        => Interlocked.Exchange(ref _CachedBuilder, null) ?? new StringBuilder(BUILDER_CAPACITY);
 
     private static string FlushBuilder(StringBuilder builder)
     {
