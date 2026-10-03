@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -64,6 +64,17 @@ public abstract class JsonConfigurationProvider<TExtensionData> : JsonConfigurat
 
         /// <inheritdoc/>
         public override void Write(Utf8JsonWriter writer, ExtensionDataStore<TExtensionData> value, JsonSerializerOptions options)
-            => writer.WriteRawValue(value.ConfigurationText);
+        {
+            // Raw values cannot be empty.
+            string configurationText = value.ConfigurationText;
+
+            if (string.IsNullOrEmpty(configurationText))
+            {
+                writer.WriteStartObject();
+                writer.WriteEndObject();
+            }
+            else
+                writer.WriteRawValue(configurationText);
+        }
     }
 }
