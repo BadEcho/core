@@ -85,6 +85,40 @@ public class JsonConfigurationProviderTests
         Assert.Equal("two", single.One);
     }
 
+    [Fact]
+    public async Task ConfigurationChanged_AbsoluteSettingsFile_Raised()
+    {
+        string directory = Directory.CreateTempSubdirectory().FullName;
+        string settingsFile = Path.Combine(directory, TEST_FILE);
+
+        File.WriteAllText(settingsFile, """{ "someData": "before" }""");
+
+        try
+        {
+            using var configurationProvider = new FakeAbsolutePathProvider(settingsFile);
+            var changed = new TaskCompletionSource();
+
+            configurationProvider.ConfigurationChanged += (_, _) => changed.TrySetResult();
+
+            Assert.Equal("before", configurationProvider.GetConfiguration<FakeData>().SomeData);
+
+            File.WriteAllText(settingsFile, """{ "someData": "after" }""");
+            await changed.Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+            Assert.Equal("after", configurationProvider.GetConfiguration<FakeData>().SomeData);
+        }
+        finally
+        {
+            Directory.Delete(directory, true);
+        }
+    }
+
+    private sealed class FakeAbsolutePathProvider(string settingsFile) : JsonConfigurationProvider
+    {
+        protected override string SettingsFile
+            => settingsFile;
+    }
+
     private class FakeProvider : JsonConfigurationProvider
     {
         protected override string SettingsFile

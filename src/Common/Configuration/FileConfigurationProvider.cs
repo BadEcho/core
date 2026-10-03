@@ -22,7 +22,7 @@ namespace BadEcho.Configuration;
 /// </summary>
 public abstract class FileConfigurationProvider : ConfigurationProvider, IFileConfigurationReader, IDisposable
 {
-    private readonly FileSystemWatcher _watcher = new(AppContext.BaseDirectory)
+    private readonly FileSystemWatcher _watcher = new()
                                                   {
                                                       NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size
                                                   };
@@ -49,11 +49,16 @@ public abstract class FileConfigurationProvider : ConfigurationProvider, IFileCo
     /// <inheritdoc/>
     public override T GetConfiguration<T>(string? sectionName)
     {
+        string settingsPath = GetSettingsPath();
+        string? settingsDirectory = Path.GetDirectoryName(settingsPath);
+        
         lock (_isMonitoringLock)
         {
-            if (!_isMonitoring)
+            // If the directory doesn't exist yet, we'll try to start monitoring next time.
+            if (!_isMonitoring && Directory.Exists(settingsDirectory)) 
             {
-                _watcher.Filter = SettingsFile;
+                _watcher.Path = settingsDirectory;
+                _watcher.Filter = Path.GetFileName(settingsPath);
                 _watcher.Changed += HandleWatcherChanged;
                 _watcher.EnableRaisingEvents = true;
 
@@ -64,7 +69,7 @@ public abstract class FileConfigurationProvider : ConfigurationProvider, IFileCo
         var sectionKey = (typeof(T), sectionName);
 
         T? section = default;
-        var settingsFile = new FileInfo(SettingsFile);
+        var settingsFile = new FileInfo(settingsPath);
 
         if (settingsFile is { Exists: true, Length: > 0 })
         {
@@ -120,6 +125,9 @@ public abstract class FileConfigurationProvider : ConfigurationProvider, IFileCo
             ? settingsFile.ReadAllText(FileShare.ReadWrite)
             : string.Empty;
     }
+
+    private string GetSettingsPath()
+        => Path.GetFullPath(SettingsFile, AppContext.BaseDirectory);
 
     private void HandleWatcherChanged(object sender, FileSystemEventArgs e)
     {
