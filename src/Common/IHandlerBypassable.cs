@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -74,11 +74,19 @@ public static class HandlerBypassableExtensions
         Require.NotNull(source, nameof(source));
         Require.NotNull(action, nameof(action));
 
+        // Support nested bypass calls; prevent inner calls from clearing out bypasses.
+        bool wasBypassed = source.HandlersBypassed;
+
         source.HandlersBypassed = true;
 
-        action();
-
-        source.HandlersBypassed = false;
+        try
+        {
+            action();
+        }
+        finally
+        {
+            source.HandlersBypassed = wasBypassed;
+        }
     }
 
     /// <summary>
