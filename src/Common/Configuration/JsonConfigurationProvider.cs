@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -29,10 +29,13 @@ public abstract class JsonConfigurationProvider : FileConfigurationProvider
 
         if (!string.IsNullOrEmpty(sectionName))
         {
-            var document = JsonDocument.Parse(configurationText);
-            var element = document.RootElement.GetProperty(sectionName);
-
-            configurationText = element.GetRawText();
+            using (var document = JsonDocument.Parse(configurationText))
+            {
+                if (!document.RootElement.TryGetProperty(sectionName, out JsonElement element))
+                    return new T();
+                
+                configurationText = element.GetRawText();
+            }
         }
 
         if (!string.IsNullOrEmpty(configurationText))
