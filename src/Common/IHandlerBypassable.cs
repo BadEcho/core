@@ -45,16 +45,7 @@ public interface IHandlerBypassable
     /// </remarks>
     internal bool HandlersBypassed
     {
-        get
-        {    
-            if (!_HandlersBypassedMap.TryGetValue(this, out object? value))
-            {
-                value = false;
-                _HandlersBypassedMap.Add(this, value);
-            }
-
-            return (bool) value;
-        } 
+        get => _HandlersBypassedMap.TryGetValue(this, out object? value) && (bool)value;
         set => _HandlersBypassedMap.AddOrUpdate(this, value);
     }
 }
