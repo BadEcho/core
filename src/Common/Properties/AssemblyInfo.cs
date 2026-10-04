@@ -161,3 +161,9 @@ using BadEcho.Properties;
                            Scope = "member",
                            Target = "~M:BadEcho.Interop.WindowWrapper.WindowProcedure(System.IntPtr,System.UInt32,System.IntPtr,System.IntPtr)",
                            Justification = "We must catch all exceptions here and not rethrow, as this method is called by native code, and an exception unwinding through DispatchMessage/CallWindowProc results in undefined behavior.")]
+
+[assembly: SuppressMessage("Security",
+                           "CA5394:Do not use insecure randomness",
+                           Scope = "type",
+                           Target = "~T:BadEcho.WeightedRandom`1",
+                           Justification = "Weighted selection is not a security-sensitive operation; a non-cryptographic generator is faster and allows callers to supply a seeded instance for reproducible results.")]
