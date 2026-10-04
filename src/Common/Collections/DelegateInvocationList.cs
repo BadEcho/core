@@ -20,6 +20,11 @@ namespace BadEcho.Collections;
 /// Provides a thread-safe manipulable invocation list for a delegate.
 /// </summary>
 /// <typeparam name="T">The type of delegate the invocation list is for.</typeparam>
+/// <remarks>
+/// The invocation list is rebuilt as an immutable snapshot whenever it is modified, so enumeration never locks and is unaffected
+/// by concurrent modification. Each addition or removal is therefore O(n) in the size of the list, which suits lists that are
+/// enumerated far more often than they are modified.
+/// </remarks>
 /// <suppressions>
 /// ReSharper disable ArrangeObjectCreationWhenTypeNotEvident
 /// ReSharper disable PossibleUnintendedReferenceComparison
@@ -39,16 +44,18 @@ public sealed class DelegateInvocationList<T> : IEnumerable<T>
     /// <remarks>This is the same technique used by the C# compiler for code that is subscribing to an event.</remarks>
     public void Add(T @delegate)
     {
+        Require.NotNull(@delegate, nameof(@delegate));
+
         while (true)
         {
             var oldDelegates = _delegates;
 
             T? combinedDelegate =
                 (T?) Delegate.Combine(oldDelegates?.Item1, @delegate);
-            
+
             Tuple<T, Delegate[]>? newDelegates =
                 combinedDelegate != null ? new(combinedDelegate, combinedDelegate.GetInvocationList()) : null;
-            
+
             if (Interlocked.CompareExchange(ref _delegates, newDelegates, oldDelegates) == oldDelegates)
                 break;
         }
@@ -61,13 +68,19 @@ public sealed class DelegateInvocationList<T> : IEnumerable<T>
     /// <remarks>This is the same technique used by the C# compiler for code that is unsubscribing from an event.</remarks>
     public void Remove(T @delegate)
     {
+        Require.NotNull(@delegate, nameof(@delegate));
+
         while (true)
         {
             var oldDelegates = _delegates;
 
             T? delegateWithRemoval =
-                (T?) Delegate.Remove(oldDelegates?.Item1, @delegate);
-            
+                (T?)Delegate.Remove(oldDelegates?.Item1, @delegate);
+
+            // Nothing was removed, so the current snapshot remains valid.
+            if (ReferenceEquals(delegateWithRemoval, oldDelegates?.Item1))
+                return;
+
             Tuple<T, Delegate[]>? newDelegates =
                 delegateWithRemoval != null ? new(delegateWithRemoval, delegateWithRemoval.GetInvocationList()) : null;
 
