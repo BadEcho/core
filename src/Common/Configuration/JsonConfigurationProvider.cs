@@ -21,6 +21,11 @@ namespace BadEcho.Configuration;
 /// </summary>
 public abstract class JsonConfigurationProvider : FileConfigurationProvider
 {
+    private JsonSerializerOptions? _options;
+
+    private JsonSerializerOptions SerializerOptions
+        => LazyInitializer.EnsureInitialized(ref _options, CreateOptions);
+
     /// <inheritdoc/>
     [return: NotNull]
     protected override T ReadConfiguration<T>(string configurationText, string? sectionName = null)
@@ -37,9 +42,9 @@ public abstract class JsonConfigurationProvider : FileConfigurationProvider
                 configurationText = element.GetRawText();
             }
         }
-
+        
         if (!string.IsNullOrEmpty(configurationText))
-            configuration = JsonSerializer.Deserialize<T>(configurationText, CreateOptions());
+            configuration = JsonSerializer.Deserialize<T>(configurationText, SerializerOptions);
 
         return configuration ?? new T();
     }
@@ -48,6 +53,7 @@ public abstract class JsonConfigurationProvider : FileConfigurationProvider
     /// Creates the options used when deserializing JSON configuration data.
     /// </summary>
     /// <returns>The <see cref="JsonSerializerOptions"/> instance to use during deserialization.</returns>
+    /// <remarks>This will be cached after the initial creation.</remarks>
     protected virtual JsonSerializerOptions CreateOptions()
         => new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
