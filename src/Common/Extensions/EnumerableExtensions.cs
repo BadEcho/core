@@ -35,7 +35,7 @@ public static class EnumerableExtensions
         => !source.Any();
 
     /// <summary>
-    /// Checks if the provided sequence is em pty.
+    /// Checks if the provided sequence is empty.
     /// </summary>
     /// <param name="source">The sequence to check for emptiness.</param>
     /// <returns>True if <c>source</c> is empty; otherwise, false.</returns>
