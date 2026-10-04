@@ -34,6 +34,7 @@ public class ThreadExecutorOperation
     private ExecutionContext? _context;
     private Exception? _exception;
     private object? _result;
+    private volatile ThreadExecutorOperationStatus _status;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ThreadExecutorOperation"/> class.
@@ -140,7 +141,10 @@ public class ThreadExecutorOperation
     /// Gets the status of the operation.
     /// </summary>
     public ThreadExecutorOperationStatus Status
-    { get; internal set; }
+    {
+        get => _status;
+        internal set => _status = value;
+    }
 
     /// <summary>
     /// Gets the result of the operation.
@@ -231,9 +235,17 @@ public class ThreadExecutorOperation
         
         if (removed)
         {
+            EventHandler? canceled;
+
+            // Handlers are read under the lock so a subscriber that checked the status before it changed is still notified.
+            lock (ExecutorLock)
+            {
+                canceled = _canceled;
+            }
+
             TaskSource.SetCanceled();
 
-            _canceled?.Invoke(this, EventArgs.Empty);
+            canceled?.Invoke(this, EventArgs.Empty);
         }
 
         return removed;
