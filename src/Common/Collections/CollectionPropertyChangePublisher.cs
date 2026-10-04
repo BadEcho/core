@@ -30,6 +30,9 @@ namespace BadEcho.Collections;
 public sealed class CollectionPropertyChangePublisher<T>
     where T : INotifyPropertyChanged
 {
+    private Dictionary<INotifyPropertyChanged, int> _subscriptionCounts = new(ReferenceEqualityComparer.Instance);
+    private readonly INotifyCollectionChanged _collection;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="CollectionPropertyChangePublisher{T}"/> class.
     /// </summary>
@@ -39,6 +42,10 @@ public sealed class CollectionPropertyChangePublisher<T>
         Require.NotNull(collection, nameof(collection));
 
         collection.CollectionChanged += HandleCollectionChanged;
+
+        _collection = collection;
+
+        Subscribe(_collection as IEnumerable);
     }
 
     /// <summary>
@@ -53,38 +60,72 @@ public sealed class CollectionPropertyChangePublisher<T>
 
     private void HandleCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        // Unsubscribe first, as items may be present in both the old and new items collections for some operations (i.e., Move).
-        if (e.OldItems != null)
-        {
-            foreach (INotifyPropertyChanged oldItem in e.OldItems)
-            {
-                oldItem.PropertyChanged -= HandleItemChanged;
-            }
-        }
-
-        // NotifyCollectionChangedEventArgs annoyingly does not provide item information via NewItems/OldItems for Reset actions.
-        // Treat any items present on the collection after a Reset action as new items.
-        IList? newItems = e.NewItems;
-
         if (e.Action == NotifyCollectionChangedAction.Reset)
-        {
-            var collection = (IEnumerable<T>?) sender;
-
-            if (collection != null)
-                newItems = collection.ToList();
+        {   // NotifyCollectionChangedEventArgs annoyingly does not provide item information via NewItems/OldItems for Reset actions.
+            // Resynchronize with the collection's current contents instead, so that items no longer present are released.
+            UnsubscribeAll();
+            Subscribe(_collection as IEnumerable);
         }
-
-        // These collections are null when they are considered invalid for whatever reason.
-        if (newItems != null)
-        {
-            foreach (INotifyPropertyChanged newItem in newItems)
-            {   // Attempt an unsubscribe first in case this is a Reset and the items were present previously.
-                newItem.PropertyChanged -= HandleItemChanged;
-                newItem.PropertyChanged += HandleItemChanged;
-            }
+        else
+        {   // Unsubscribe old items before subscribing new ones, so that an item present in both lists (e.g., from a Move action) remains subscribed.
+            Unsubscribe(e.OldItems);
+            Subscribe(e.NewItems);
         }
 
         CollectionChanged?.Invoke(sender, e);
+    }
+
+    private void Subscribe(IEnumerable? items)
+    {
+        if (items == null)
+            return;
+
+        foreach (object? item in items)
+        {
+            if (item is not INotifyPropertyChanged notifier)
+                continue;
+
+            if (_subscriptionCounts.TryGetValue(notifier, out int count))
+            {
+                _subscriptionCounts[notifier] = count + 1;
+                continue;
+            }
+
+            _subscriptionCounts.Add(notifier, 1);
+            notifier.PropertyChanged += HandleItemChanged;
+        }
+    }
+
+    private void Unsubscribe(IEnumerable? items)
+    {
+        if (items == null)
+            return;
+
+        foreach (object? item in items)
+        {
+            if (item is not INotifyPropertyChanged notifier || !_subscriptionCounts.TryGetValue(notifier, out int count))
+                continue;
+
+            // An item that still occurs elsewhere in the collection stays subscribed.
+            if (count > 1)
+            {
+                _subscriptionCounts[notifier] = count - 1;
+                continue;
+            }
+
+            _subscriptionCounts.Remove(notifier);
+            notifier.PropertyChanged -= HandleItemChanged;
+        }
+    }
+
+    private void UnsubscribeAll()
+    {
+        foreach (INotifyPropertyChanged notifier in _subscriptionCounts.Keys)
+        {
+            notifier.PropertyChanged -= HandleItemChanged;
+        }
+
+        _subscriptionCounts.Clear();
     }
 
     private void HandleItemChanged(object? sender, PropertyChangedEventArgs e) 
