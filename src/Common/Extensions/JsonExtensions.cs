@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -51,60 +51,42 @@ public static class JsonExtensions
     public static JsonNode MergeNodes(this JsonNode? target, JsonNode source, string sourcePropertyName)
     {
         Require.NotNull(source, nameof(source));
-        
-        bool isArray = source.GetValueKind() == JsonValueKind.Array;
+
+        bool mergeToRoot = string.IsNullOrEmpty(sourcePropertyName);
         
         if (target == null)
         {   // We allow null targets in cases where the node's origin doesn't exist or the node is the result
             // of parsing JSON text that represents a null JSON value.
-            target = new JsonObject();
-
-            if (isArray)
-            {   // Note that JSON configuration providers do not allow arrays as top-level nodes.
-                target = string.IsNullOrEmpty(sourcePropertyName)
-                    ? source
-                    : new JsonObject
-                      {
-                          { sourcePropertyName, source }
-                      };
-            }
-            else
-            {   
-                if (!string.IsNullOrEmpty(sourcePropertyName))
-                    target[sourcePropertyName] = source;
-                else
-                    target = source;
-            }
+            return mergeToRoot
+                ? source.DeepClone()
+                : new JsonObject
+                  {
+                      { sourcePropertyName, source.DeepClone() }
+                  };
         }
-        else
-        {   // We have a JSON target node to merge to. Only nodes belonging to our source node saving will be applied.
-            JsonNode nodeToUpdate = GetJsonNodeToUpdate(target, sourcePropertyName, isArray);
 
-            // This preserves the rest of JSON's structure, allowing us to update JSON containing any number of
-            // different properties safely.
-            ReplaceProperties(nodeToUpdate, source, isArray);
+        JsonNode? nodeToUpdate = mergeToRoot ? target : target[sourcePropertyName];
+        JsonValueKind sourceKind = source.GetValueKind();
+
+        if (nodeToUpdate == null || nodeToUpdate.GetValueKind() != sourceKind || sourceKind is not (JsonValueKind.Object or JsonValueKind.Array))
+        {
+            JsonNode replacement = source.DeepClone();
+
+            if (mergeToRoot)
+                return replacement;
+
+            target[sourcePropertyName] = replacement;
+
+            return target;
         }
-        
+
+        // This preserves the rest of JSON's structure, allowing us to update JSON containing any number of
+        // different properties safely.
+        ReplaceProperties(nodeToUpdate, source, sourceKind == JsonValueKind.Array);
+
         return target;
     }
-
-    private static JsonNode GetJsonNodeToUpdate(JsonNode root, string propertyName, bool isArray)
-    {
-        JsonNode? nodeToUpdate;
-
-        if (string.IsNullOrEmpty(propertyName))
-            nodeToUpdate = root;
-        else
-        {
-            nodeToUpdate = root[propertyName];
-
-            if (nodeToUpdate == null) 
-                root[propertyName] = nodeToUpdate = isArray ? new JsonArray() : new JsonObject();
-        }
-
-        return nodeToUpdate;
-    }
-
+    
     private static void ReplaceProperties(JsonNode target, JsonNode source, bool isArray)
     {
         if (isArray)

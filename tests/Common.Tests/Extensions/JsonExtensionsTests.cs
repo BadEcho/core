@@ -52,4 +52,72 @@ public class JsonExtensionsTests
 
         Assert.Equal("""{"items":[{"a":5,"b":2}]}""", merged.ToJsonString());
     }
+    [Fact]
+    public void MergeNodes_NullTargetSourceWithParent_DoesNotReparentSource()
+    {
+        var sourceRoot = new JsonObject { ["Section"] = new JsonObject { ["Value"] = 1 } };
+        JsonNode source = sourceRoot["Section"]!;
+        JsonNode? target = null;
+
+        JsonNode result = target.MergeNodes(source, "Section");
+
+        Assert.Equal("""{"Section":{"Value":1}}""", result.ToJsonString());
+        Assert.Same(sourceRoot, source.Parent);
+    }
+
+    [Fact]
+    public void MergeNodes_NullTargetToRoot_ReturnsCopy()
+    {
+        JsonNode source = new JsonObject { ["Value"] = 1 };
+        JsonNode? target = null;
+
+        JsonNode result = target.MergeNodes(source);
+
+        Assert.NotSame(source, result);
+        Assert.Equal(source.ToJsonString(), result.ToJsonString());
+    }
+
+    [Fact]
+    public void MergeNodes_SectionOnlyProperties_Preserved()
+    {
+        JsonNode target = JsonNode.Parse("""{"Section":{"A":1,"TargetOnly":2},"Other":true}""")!;
+        JsonNode source = JsonNode.Parse("""{"A":3}""")!;
+
+        JsonNode result = target.MergeNodes(source, "Section");
+
+        Assert.Equal("""{"Section":{"A":3,"TargetOnly":2},"Other":true}""", result.ToJsonString());
+    }
+
+    [Fact]
+    public void MergeNodes_NestedObject_ReplacedWholesale()
+    {
+        JsonNode target = JsonNode.Parse("""{"Section":{"Nested":{"A":1,"B":2}}}""")!;
+        JsonNode source = JsonNode.Parse("""{"Nested":{"A":3}}""")!;
+
+        JsonNode result = target.MergeNodes(source, "Section");
+
+        Assert.Equal("""{"Section":{"Nested":{"A":3}}}""", result.ToJsonString());
+    }
+
+    [Fact]
+    public void MergeNodes_ScalarSource_ReplacesProperty()
+    {
+        JsonNode target = JsonNode.Parse("""{"Section":{"A":1},"Other":true}""")!;
+        JsonNode source = JsonValue.Create(5);
+
+        JsonNode result = target.MergeNodes(source, "Section");
+
+        Assert.Equal("""{"Section":5,"Other":true}""", result.ToJsonString());
+    }
+
+    [Fact]
+    public void MergeNodes_KindMismatch_ReplacesProperty()
+    {
+        JsonNode target = JsonNode.Parse("""{"Section":[1,2],"Other":true}""")!;
+        JsonNode source = JsonNode.Parse("""{"A":1}""")!;
+
+        JsonNode result = target.MergeNodes(source, "Section");
+
+        Assert.Equal("""{"Section":{"A":1},"Other":true}""", result.ToJsonString());
+    }
 }
