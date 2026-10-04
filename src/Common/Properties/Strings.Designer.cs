@@ -97,15 +97,6 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid INotifyPropertyChanged implementation; event data is missing property name information..
-        /// </summary>
-        public static string BadINotifyPropertyChangedImplementation {
-            get {
-                return ResourceManager.GetString("BadINotifyPropertyChangedImplementation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Unable to convert COM interface pointer to a managed object..
         /// </summary>
         public static string CannotConvertComToManaged {
@@ -183,24 +174,6 @@ namespace BadEcho.Properties {
         public static string DisplayGetScaleFactorForMonitorFailed {
             get {
                 return ResourceManager.GetString("DisplayGetScaleFactorForMonitorFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Enumeration has already finished; no more objects exist in the sequence..
-        /// </summary>
-        public static string EnumerationAtEnd {
-            get {
-                return ResourceManager.GetString("EnumerationAtEnd", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Enumeration has not started. A call to MoveNext() must occur at least once prior to reading the Current object..
-        /// </summary>
-        public static string EnumerationNotStarted {
-            get {
-                return ResourceManager.GetString("EnumerationNotStarted", resourceCulture);
             }
         }
         
@@ -412,33 +385,6 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The &apos;{0}&apos; property appears in more than one of the JSON objects being flattened..
-        /// </summary>
-        public static string JsonFlattenedDuplicateProperty {
-            get {
-                return ResourceManager.GetString("JsonFlattenedDuplicateProperty", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The number of JSON objects to flatten must be at least 1..
-        /// </summary>
-        public static string JsonFlattenedElementsToSquashOutOfRange {
-            get {
-                return ResourceManager.GetString("JsonFlattenedElementsToSquashOutOfRange", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Expected {0} consecutive JSON objects to flatten, but only {1} were found..
-        /// </summary>
-        public static string JsonFlattenedObjectsMissing {
-            get {
-                return ResourceManager.GetString("JsonFlattenedObjectsMissing", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The &apos;{0}&apos; property found on the provided JSON object is not the expected type descriptor property &apos;{1}&apos;..
         /// </summary>
         public static string JsonInvalidTypeName {
@@ -507,15 +453,6 @@ namespace BadEcho.Properties {
         public static string JsonTypeValueNotNumber {
             get {
                 return ResourceManager.GetString("JsonTypeValueNotNumber", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Missing exception payload..
-        /// </summary>
-        public static string LoggingMissingException {
-            get {
-                return ResourceManager.GetString("LoggingMissingException", resourceCulture);
             }
         }
         

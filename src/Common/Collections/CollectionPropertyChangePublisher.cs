@@ -30,7 +30,7 @@ namespace BadEcho.Collections;
 public sealed class CollectionPropertyChangePublisher<T>
     where T : INotifyPropertyChanged
 {
-    private Dictionary<INotifyPropertyChanged, int> _subscriptionCounts = new(ReferenceEqualityComparer.Instance);
+    private readonly Dictionary<INotifyPropertyChanged, int> _subscriptionCounts = new(ReferenceEqualityComparer.Instance);
     private readonly INotifyCollectionChanged _collection;
 
     /// <summary>
