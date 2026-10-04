@@ -65,4 +65,55 @@ public class JsonRangeConverterTests
 
         Assert.Equal(JSON_TWO_RANGES.Replace(" ", ""), rangeJson);
     }
+
+    [Fact]
+    public void Write_Duplicates_RoundTrips()
+    {
+        int[] values = [1, 2, 2, 3];
+
+        Assert.Equal(values, RoundTrip(values));
+    }
+
+    [Fact]
+    public void Write_Descending_RoundTrips()
+    {
+        int[] values = [5, 3];
+
+        Assert.Equal(values, RoundTrip(values));
+    }
+
+    [Fact]
+    public void Write_UnorderedRuns_RoundTrips()
+    {
+        int[] values = [80, 81, 82, 5, 6, 7];
+
+        Assert.Equal(values, RoundTrip(values));
+    }
+
+    [Fact]
+    public void Write_Duplicates_SplitsRanges()
+    {
+        var rangeObject = new RangeFakeJsonObject { Ranges = [1, 2, 2, 3] };
+
+        var rangeJson = JsonSerializer.Serialize(rangeObject,
+                                                 new JsonSerializerOptions
+                                                 {
+                                                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                                                 });
+
+        Assert.Equal("""{"ranges":[{"start":1,"end":2},{"start":2,"end":3}]}""", rangeJson);
+    }
+
+    private static IEnumerable<int>? RoundTrip(IEnumerable<int> values)
+    {
+        var options = new JsonSerializerOptions
+                      {
+                          PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                          PropertyNameCaseInsensitive = true
+                      };
+
+        string json = JsonSerializer.Serialize(new RangeFakeJsonObject { Ranges = values }, options);
+
+        return JsonSerializer.Deserialize<RangeFakeJsonObject>(json, options)?.Ranges;
+    }
 }

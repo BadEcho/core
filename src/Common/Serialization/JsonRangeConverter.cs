@@ -78,25 +78,30 @@ public sealed class JsonRangeConverter<T> : JsonConverter<IEnumerable<T>>
         Require.NotNull(value, nameof(value));
         
         writer.WriteStartArray();
-
-        var range = new List<int>();
-
+        bool hasRange = false;
+        int start = 0;
+        int end = 0;
+        
         foreach (T valueInRange in value)
         {
             int numberInRange = valueInRange.ToInt32(CultureInfo.InvariantCulture);
 
             // If this number comes immediately after the previous one, we add it to the current range.
-            if (range.Count == 0 || numberInRange - range[^1] <= 1)
-                range.Add(numberInRange);
-            else
+            if (hasRange && end != int.MaxValue && numberInRange == end + 1)
             {
-                WriteRange(writer, range[0], range[^1]);
-                range = [numberInRange];
+                end = numberInRange;
+                continue;
             }
+
+            if (hasRange)
+                WriteRange(writer, start, end);
+
+            start = end = numberInRange;
+            hasRange = true;
         }
 
-        if (range.Count > 0)
-            WriteRange(writer, range[0], range[^1]);
+        if (hasRange)
+            WriteRange(writer, start, end);
 
         writer.WriteEndArray();
     }
