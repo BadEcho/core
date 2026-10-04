@@ -25,8 +25,13 @@ public sealed class ExtensionDataStore<T>
     /// <summary>
     /// Initializes a new instance of the <see cref="ExtensionDataStore{T}"/> class.
     /// </summary>
+    /// <param name="configurationReader">The <see cref="IFileConfigurationReader"/> instance to read the configuration from.</param>
     public ExtensionDataStore(IFileConfigurationReader configurationReader)
-        => _configurationReader = configurationReader;
+    {
+        Require.NotNull(configurationReader, nameof(configurationReader));
+
+        _configurationReader = configurationReader;
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ExtensionDataStore{T}"/> class.
