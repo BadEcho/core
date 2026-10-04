@@ -24,7 +24,7 @@ public abstract class FileConfigurationProvider : ConfigurationProvider, IFileCo
 {
     private readonly FileSystemWatcher _watcher = new()
                                                   {
-                                                      NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size
+                                                      NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.FileName
                                                   };
 
     private readonly ConcurrentDictionary<(Type SectionType, string? SectionName), object> _cachedSections = new();
@@ -60,6 +60,8 @@ public abstract class FileConfigurationProvider : ConfigurationProvider, IFileCo
                 _watcher.Path = settingsDirectory;
                 _watcher.Filter = Path.GetFileName(settingsPath);
                 _watcher.Changed += HandleWatcherChanged;
+                _watcher.Created += HandleWatcherChanged;
+                _watcher.Renamed += HandleWatcherChanged;
                 _watcher.EnableRaisingEvents = true;
 
                 _isMonitoring = true;
@@ -119,7 +121,7 @@ public abstract class FileConfigurationProvider : ConfigurationProvider, IFileCo
 
     private string ReadConfigurationText()
     {
-        var settingsFile = new FileInfo(SettingsFile);
+        var settingsFile = new FileInfo(GetSettingsPath());
 
         return settingsFile is { Exists: true, Length: > 0 }
             ? settingsFile.ReadAllText(FileShare.ReadWrite)
@@ -131,12 +133,13 @@ public abstract class FileConfigurationProvider : ConfigurationProvider, IFileCo
 
     private void HandleWatcherChanged(object sender, FileSystemEventArgs e)
     {
-        var settingsFile = new FileInfo(SettingsFile);
+        var settingsFile = new FileInfo(GetSettingsPath());
 
         // Some text editors (*cough cough* Notepad++ *cough cough*) clear what's on disk before committing the actual
-        // updated content. Let's ignore these rather superfluous updates. Also, in the event the entire contents of the
-        // file have been deleted, it might be best to ignore this strange occurrence as well.
-        if (settingsFile.Length == 0)
+        // updated content, and some might even replace the file by way of a temporary file, leaving it briefly absent.
+        // Let's ignore these rather superfluous updates as well as all intermediate states. Also, in the event the entire
+        // contents of the file have been deleted, we ignore this strange occurrence as well.
+        if (settingsFile is not { Exists: true, Length: > 0 })
             return;
 
         _cachedSections.Clear();
