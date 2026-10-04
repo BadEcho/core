@@ -11,10 +11,11 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using BadEcho.Properties;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
-using BadEcho.Properties;
 
 namespace BadEcho.Serialization;
 
@@ -24,9 +25,7 @@ namespace BadEcho.Serialization;
 /// <typeparam name="T">The type of object or value handled by the converter.</typeparam>
 public sealed class JsonFlattenedObjectConverter<T> : JsonConverter<T>
 {
-    private static readonly JsonConverter<T> _FallbackConverter =
-        (JsonConverter<T>) JsonSerializerOptions.Default.GetConverter(typeof(T));
-
+    private readonly ConditionalWeakTable<JsonSerializerOptions, JsonSerializerOptions> _passThruOptions = [];
     private readonly int _elementsToSquash;
 
     /// <summary>
@@ -70,5 +69,31 @@ public sealed class JsonFlattenedObjectConverter<T> : JsonConverter<T>
 
     /// <inheritdoc/>
     public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
-        => _FallbackConverter.Write(writer, value, options);
+    {
+        Require.NotNull(writer, nameof(writer));
+
+        JsonSerializer.Serialize(writer, value, GetPassThruOptions(options));
+    }
+
+    /// <summary>
+    /// Gets a copy of the provided options that excludes this converter, allowing <typeparamref name="T"/> to be
+    /// handled by its default conversion without recursing back into this converter.
+    /// </summary>
+    /// <remarks>
+    /// Copies are cached per options instance, as options in use by the serializer are immutable and are
+    /// typically reused across many conversions.
+    /// </remarks>
+    private JsonSerializerOptions GetPassThruOptions(JsonSerializerOptions options)
+    {   // The ConditionalWeakTable holds the options weakly, so short-lived options instances won't be kept alive.
+        return _passThruOptions.GetValue(options, CreatePassThruOptions);
+    }
+
+    private JsonSerializerOptions CreatePassThruOptions(JsonSerializerOptions options)
+    {
+        var passThruOptions = new JsonSerializerOptions(options);
+        // The default converter for type T will most likely be this converter, so we'll want to remove ourselves from the provided options.
+        passThruOptions.Converters.Remove(this);
+
+        return passThruOptions;
+    }
 }

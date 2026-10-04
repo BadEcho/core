@@ -135,6 +135,15 @@
 	<data name="JsonMissingProperty" xml:space="preserve">
 		<value>The provided JSON text is missing the required property: '{0}'.</value>
 	</data>
+  <data name="JsonFlattenedElementsToSquashOutOfRange" xml:space="preserve">
+    <value>The number of JSON objects to flatten must be at least 1.</value>
+  </data>
+  <data name="JsonFlattenedObjectsMissing" xml:space="preserve">
+    <value>Expected {0} consecutive JSON objects to flatten, but only {1} were found.</value>
+  </data>
+  <data name="JsonFlattenedDuplicateProperty" xml:space="preserve">
+    <value>The '{0}' property appears in more than one of the JSON objects being flattened.</value>
+  </data>
   <data name="JsonDataValueNotObject" xml:space="preserve">
     <value>The provided JSON object's data property is not a JSON object.</value>
   </data>

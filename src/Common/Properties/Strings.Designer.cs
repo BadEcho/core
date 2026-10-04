@@ -412,6 +412,33 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The &apos;{0}&apos; property appears in more than one of the JSON objects being flattened..
+        /// </summary>
+        public static string JsonFlattenedDuplicateProperty {
+            get {
+                return ResourceManager.GetString("JsonFlattenedDuplicateProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The number of JSON objects to flatten must be at least 1..
+        /// </summary>
+        public static string JsonFlattenedElementsToSquashOutOfRange {
+            get {
+                return ResourceManager.GetString("JsonFlattenedElementsToSquashOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Expected {0} consecutive JSON objects to flatten, but only {1} were found..
+        /// </summary>
+        public static string JsonFlattenedObjectsMissing {
+            get {
+                return ResourceManager.GetString("JsonFlattenedObjectsMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The &apos;{0}&apos; property found on the provided JSON object is not the expected type descriptor property &apos;{1}&apos;..
         /// </summary>
         public static string JsonInvalidTypeName {

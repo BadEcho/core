@@ -49,6 +49,15 @@ public enum FakeJsonObjectType
     Range
 }
 
+public sealed class FlattenedFakeJsonObject
+{
+    public string? SomeIdentifier
+    { get; set; }
+
+    public string? SomeOtherIdentifier
+    { get; set; }
+}
+
 public sealed class FakeJsonObjectConverter : JsonPolymorphicConverter<FakeJsonObjectType, FakeJsonObject>
 {
     protected override string DataPropertyName
