@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -46,7 +46,8 @@ public sealed class JsonIntFuncConverter<T> : JsonConverter<T>
         if (reader.TokenType != JsonTokenType.Number)
             throw new JsonException(Strings.JsonNotNumber);
 
-        int number = reader.GetInt32();
+        if (!reader.TryGetInt32(out int number))
+            throw new JsonException(Strings.JsonNumberNotInt32);
 
         return _readConvert(number);
     }

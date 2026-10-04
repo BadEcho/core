@@ -168,6 +168,12 @@
   <data name="ThreadExecutorSourceAlreadyInitialized" xml:space="preserve">
     <value>Cannot load an operation into an already initialized ThreadExecutorOperationTaskSource.</value>
   </data>
+  <data name="JsonNumberNotInt32" xml:space="preserve">
+    <value>The provided JSON number cannot be represented as a 32-bit integer.</value>
+  </data>  
+  <data name="JsonRangeValueNotConvertible" xml:space="preserve">
+    <value>The range value '{0}' cannot be converted to type '{1}'.</value>
+  </data>
   <data name="ExecutorWaitOperationSameThread" xml:space="preserve">
     <value>Executor may not wait on an operation executing on the same thread.</value>
   </data>

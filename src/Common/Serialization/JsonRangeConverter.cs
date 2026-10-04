@@ -14,6 +14,7 @@
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using BadEcho.Extensions;
 using BadEcho.Properties;
 
 namespace BadEcho.Serialization;
@@ -120,8 +121,12 @@ public sealed class JsonRangeConverter<T> : JsonConverter<IEnumerable<T>>
 
         for (int i = start; i <= end; i++)
         {   
-            T value = (T) Convert.ChangeType(i, typeof(T), CultureInfo.InvariantCulture);
-            range.Add(value);
+            range.Add(ConvertValue(i));
+
+            // If for some ungodly reason end is set to int.MaxValue, we'll want to break when we get there,
+            // otherwise there will be a wrap-around during the next increment, and loop will never end.
+            if (i == int.MaxValue)
+                break;
         }
 
         return range;
@@ -139,7 +144,10 @@ public sealed class JsonRangeConverter<T> : JsonConverter<IEnumerable<T>>
         if (reader.TokenType != JsonTokenType.Number)
             throw new JsonException(Strings.JsonExtremumValueNotNumber);
 
-        return reader.GetInt32();
+        if (!reader.TryGetInt32(out int extremum))
+            throw new JsonException(Strings.JsonNumberNotInt32);
+
+        return extremum;
     }
 
     private static void WriteRange(Utf8JsonWriter writer, int start, int end)
@@ -150,5 +158,17 @@ public sealed class JsonRangeConverter<T> : JsonConverter<IEnumerable<T>>
         writer.WriteNumber(nameof(end), end);
 
         writer.WriteEndObject();
+    }
+
+    private static T ConvertValue(int value)
+    {
+        try
+        {
+            return (T) Convert.ChangeType(value, typeof(T), CultureInfo.InvariantCulture);
+        }
+        catch (Exception ex) when (ex is OverflowException or InvalidCastException)
+        {   // Only JsonExceptions should be thrown from a converter.
+            throw new JsonException(Strings.JsonRangeValueNotConvertible.InvariantFormat(value, typeof(T)), ex);
+        }
     }
 }

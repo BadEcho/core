@@ -448,6 +448,24 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The provided JSON number cannot be represented as a 32-bit integer..
+        /// </summary>
+        public static string JsonNumberNotInt32 {
+            get {
+                return ResourceManager.GetString("JsonNumberNotInt32", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The range value &apos;{0}&apos; cannot be converted to type &apos;{1}&apos;..
+        /// </summary>
+        public static string JsonRangeValueNotConvertible {
+            get {
+                return ResourceManager.GetString("JsonRangeValueNotConvertible", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The provided JSON object&apos;s type descriptor property is not a number..
         /// </summary>
         public static string JsonTypeValueNotNumber {
