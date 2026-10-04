@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //		Created by Matt Weber <matt@badecho.com>
-//		Copyright @ 2024 Bad Echo LLC. All rights reserved.
+//		Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //		Bad Echo Technologies are licensed under the
 //		GNU Affero General Public License v3.0.
@@ -177,5 +177,46 @@ public class LazyConcurrentDictionaryTests
     {
         Assert.False(_lazyDictionary.TryGetValue(2, out string? noValue));
         Assert.Null(noValue);
+    }
+    [Fact]
+    public void TryGetValue_OutVar_ReturnsValue()
+    {
+        Assert.True(_lazyDictionary.TryGetValue(0, out var value));
+
+        Assert.Equal("First", value);
+    }
+
+
+    [Fact]
+    public void TryGetLazy_New_NoFactoryUntilAccess()
+    {
+        bool factoryRan = false;
+
+        _lazyDictionary.GetOrAdd(2,
+                                 () =>
+                                 {
+                                     factoryRan = true;
+                                     return "Third";
+                                 });
+
+        Assert.True(_lazyDictionary.TryGetLazy(2, out Lazy<string>? lazyValue));
+        Assert.False(factoryRan);
+        Assert.Equal("Third", lazyValue.Value);
+        Assert.True(factoryRan);
+    }
+
+    [Fact]
+    public void TryGetLazy_NonExisting_ReturnsNull()
+    {
+        Assert.False(_lazyDictionary.TryGetLazy(2, out Lazy<string>? lazyValue));
+        Assert.Null(lazyValue);
+    }
+
+    [Fact]
+    public void Indexer_Existing_ReturnsValue()
+    {
+        string value = _lazyDictionary[0];
+
+        Assert.Equal("First", value);
     }
 }
