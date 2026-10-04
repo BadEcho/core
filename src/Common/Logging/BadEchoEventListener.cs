@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -26,6 +26,11 @@ public sealed class BadEchoEventListener : EventListener
     /// <summary>
     /// Initializes a new instance of the <see cref="BadEchoEventListener"/> class.
     /// </summary>
+    /// <remarks>
+    /// Listeners created with this constructor write formatted events to an attached debugger only;
+    /// nothing is output when no debugger is attached. To route events elsewhere, provide a logging action through
+    /// <see cref="BadEchoEventListener(Action{EventWrittenEventArgs})"/>.
+    /// </remarks>
     public BadEchoEventListener()
         : this(LogEvent)
     { }
@@ -84,6 +89,9 @@ public sealed class BadEchoEventListener : EventListener
 
     private static void LogEvent(EventWrittenEventArgs eventData)
     {
+        if (!Debugger.IsLogging())
+            return;
+
         var outputMessage = EventDataFormatting.Format(eventData, true);
 
         Debugger.Log(0, null, $"{outputMessage}{Environment.NewLine}");
