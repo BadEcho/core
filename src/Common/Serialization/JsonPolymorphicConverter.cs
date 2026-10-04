@@ -46,43 +46,46 @@ public abstract class JsonPolymorphicConverter<TTypeDescriptor,TBase> : JsonConv
     /// <inheritdoc/>
     public override TBase? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        Utf8JsonReader dataPropertyReader = default;
-
         if (reader.TokenType != JsonTokenType.StartObject)
             throw new JsonException(Strings.JsonNotStartObject);
-            
-        string typePropertyName = ReadPropertyName(ref reader);
 
-        if (typePropertyName == DataPropertyName)
-        {   // Store for later and skip to the next property.
-            dataPropertyReader = reader;
+        Utf8JsonReader dataPropertyReader = default;
+        int? typeValue = null;
 
-            SkipToNextElement(ref reader);
-            typePropertyName = ReadPropertyName(ref reader);
-        }
-
-        if (typePropertyName != TypePropertyName)
-            throw new JsonException(Strings.JsonInvalidTypeName.CulturedFormat(typePropertyName, TypePropertyName));
-
-        reader.Read();
-
-        if (reader.TokenType != JsonTokenType.Number)
-            throw new JsonException(Strings.JsonTypeValueNotNumber);
-
-        var typeDescriptor = reader.GetInt32().ToEnum<TTypeDescriptor>();
-
-        if (dataPropertyReader.TokenType != JsonTokenType.None)
+        while (reader.Read() && reader.TokenType != JsonTokenType.EndObject)
         {
-            reader.Read();
-            return ReadDataProperty(ref dataPropertyReader, typeDescriptor);
+            if (reader.TokenType != JsonTokenType.PropertyName)
+                throw new JsonException(Strings.JsonMalformedText);
+
+            string propertyName = reader.GetString() ?? string.Empty;
+
+            if (propertyName == TypePropertyName)
+            {
+                reader.Read();
+
+                if (reader.TokenType != JsonTokenType.Number)
+                    throw new JsonException(Strings.JsonTypeValueNotNumber);
+
+                typeValue = reader.GetInt32();
+            }
+            else
+            {   // The payload is read from a stored copy once the type is known.
+                if (propertyName == DataPropertyName)
+                    dataPropertyReader = reader;
+
+                // Moves past the property's value, whatever its kind or nesting.
+                if (!reader.TrySkip())
+                    throw new JsonException(Strings.JsonMalformedText);
+            }
         }
 
-        string dataPropertyName = ReadPropertyName(ref reader);
+        if (typeValue == null)
+            throw new JsonException(Strings.JsonMissingProperty.InvariantFormat(TypePropertyName));
 
-        if (dataPropertyName != DataPropertyName)
-            throw new JsonException(Strings.JsonInvalidTypeName.CulturedFormat(dataPropertyName, DataPropertyName));
+        if (dataPropertyReader.TokenType == JsonTokenType.None)
+            throw new JsonException(Strings.JsonMissingProperty.InvariantFormat(DataPropertyName));
 
-        return ReadDataProperty(ref reader, typeDescriptor);
+        return ReadDataProperty(ref dataPropertyReader, typeValue.Value.ToEnum<TTypeDescriptor>());
     }
 
     /// <inheritdoc/>
@@ -123,33 +126,6 @@ public abstract class JsonPolymorphicConverter<TTypeDescriptor,TBase> : JsonConv
     /// </returns>
     protected abstract TTypeDescriptor DescriptorFromValue(TBase value);
 
-    private static void SkipToNextElement(ref Utf8JsonReader reader)
-    {
-        int levelsDeep = 1;
-
-        reader.Read();
-
-        while (levelsDeep != 0)
-        {
-            reader.Read();
-
-            if (reader.TokenType == JsonTokenType.StartObject)
-                levelsDeep++;
-            else if (reader.TokenType == JsonTokenType.EndObject)
-                levelsDeep--;
-        }
-    }
-        
-    private static string ReadPropertyName(ref Utf8JsonReader reader)
-    {
-        reader.Read();
-
-        if (reader.TokenType != JsonTokenType.PropertyName)
-            throw new JsonException(Strings.JsonMalformedText);
-
-        return reader.GetString() ?? string.Empty;
-    }
-
     private TBase? ReadDataProperty(ref Utf8JsonReader reader, TTypeDescriptor typeDescriptor)
     {
         reader.Read();
@@ -157,10 +133,6 @@ public abstract class JsonPolymorphicConverter<TTypeDescriptor,TBase> : JsonConv
         if (reader.TokenType != JsonTokenType.StartObject)
             throw new JsonException(Strings.JsonDataValueNotObject);
 
-        TBase? readValue = ReadFromDescriptor(ref reader, typeDescriptor);
-
-        reader.Read();
-
-        return readValue;
+        return ReadFromDescriptor(ref reader, typeDescriptor);
     }
 }

@@ -12,6 +12,8 @@
 // -----------------------------------------------------------------------
 
 using System.Text.Json;
+using BadEcho.Extensions;
+using BadEcho.Properties;
 using Xunit;
 
 namespace BadEcho.Tests.Serialization;
@@ -26,6 +28,50 @@ public class JsonPolymorphicConverterTests
 
     private const string JSON_FAKE_OBJECT_COMPACT =
         """[{"Type":0,"Object":{"SomeIdentifier":"hello there"}}]""";
+
+    private const string JSON_EXTRA_LEADING_PROPERTY =
+        """[ { "Type": 0, "Version": 2, "Object": { "SomeIdentifier": "hello there" } } ]""";
+
+    private const string JSON_EXTRA_TRAILING_PROPERTY =
+        """[ { "Type": 0, "Object": { "SomeIdentifier": "hello there" }, "Meta": { "Tags": [ 1, { "A": null } ] } } ]""";
+
+    private const string JSON_OUT_OF_ORDER_ARRAY_DATA =
+        """[ { "Object": [ { } ], "Type": 0 } ]""";
+
+    private const string JSON_MISSING_TYPE =
+        """[ { "Object": { "SomeIdentifier": "hello there" } } ]""";
+
+    [Fact]
+    public void Read_ExtraLeadingProperty_ValidConversion()
+    {
+        var fakeObject = Assert.IsType<FirstFakeJsonObject>(Assert.Single(Deserialize(JSON_EXTRA_LEADING_PROPERTY)));
+
+        Assert.Equal("hello there", fakeObject.SomeIdentifier);
+    }
+
+    [Fact]
+    public void Read_ExtraTrailingProperty_ValidConversion()
+    {
+        var fakeObject = Assert.IsType<FirstFakeJsonObject>(Assert.Single(Deserialize(JSON_EXTRA_TRAILING_PROPERTY)));
+
+        Assert.Equal("hello there", fakeObject.SomeIdentifier);
+    }
+
+    [Fact]
+    public void Read_OutOfOrderArrayData_ThrowsDataNotObject()
+    {
+        var exception = Assert.Throws<JsonException>(() => Deserialize(JSON_OUT_OF_ORDER_ARRAY_DATA).ToList());
+
+        Assert.Equal(Strings.JsonDataValueNotObject, exception.Message);
+    }
+
+    [Fact]
+    public void Read_MissingType_ThrowsMissingProperty()
+    {
+        var exception = Assert.Throws<JsonException>(() => Deserialize(JSON_MISSING_TYPE).ToList());
+
+        Assert.Equal(Strings.JsonMissingProperty.InvariantFormat("Type"), exception.Message);
+    }
 
     [Fact]
     public void Read_First_ValidConversion()

@@ -430,6 +430,15 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The provided JSON text is missing the required property: &apos;{0}&apos;..
+        /// </summary>
+        public static string JsonMissingProperty {
+            get {
+                return ResourceManager.GetString("JsonMissingProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unexpected &apos;null&apos; literal token encountered in JSON when an object was expected..
         /// </summary>
         public static string JsonNodeIsNull {
