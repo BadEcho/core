@@ -12,6 +12,7 @@
 // -----------------------------------------------------------------------
 
 using BadEcho.Configuration;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Xunit;
 
@@ -77,6 +78,33 @@ public class FileConfigurationProviderTests : IDisposable
         Assert.Equal("after", provider.GetConfiguration<FakeData>().SomeData);
     }
 
+    [SkipOnGitHubFact]
+    public async Task GetConfiguration_ChangedDuringRead_DoesNotCacheStaleSection()
+    {
+        WriteSettings("before");
+
+        using var provider = new BlockingProvider(_settingsPath);
+
+        Task<FakeData> reader = Task.Run(() => provider.GetConfiguration<FakeData>());
+
+        try
+        {
+            Assert.True(provider.ReadStarted.Wait(_Timeout));
+
+            // The blocked read already holds the old text; the change is fully processed before it is allowed to finish.
+            bool changed = WaitForChange(provider, () => WriteSettings("after"));
+
+            Assert.True(changed);
+        }
+        finally
+        {
+            provider.ProceedWithRead.Set();
+        }
+
+        Assert.Equal("before", (await reader).SomeData);
+        Assert.Equal("after", provider.GetConfiguration<FakeData>().SomeData);
+    }
+
     private void WriteSettings(string value, string? path = null)
         => File.WriteAllText(path ?? _settingsPath, $$"""{ "someData": "{{value}}" }""");
 
@@ -113,6 +141,31 @@ public class FileConfigurationProviderTests : IDisposable
 
         protected override string SettingsFile
             => _settingsFile;
+    }
+
+    private sealed class BlockingProvider : TempFileProvider
+    {
+        private int _reads;
+
+        public BlockingProvider(string settingsFile)
+            : base(settingsFile)
+        { }
+
+        public ManualResetEventSlim ReadStarted { get; } = new();
+
+        public ManualResetEventSlim ProceedWithRead { get; } = new();
+
+        [return: NotNull]
+        protected override T ReadConfiguration<T>(string configurationText, string? sectionName = null)
+        {
+            if (Interlocked.Increment(ref _reads) == 1)
+            {
+                ReadStarted.Set();
+                ProceedWithRead.Wait(_Timeout);
+            }
+
+            return base.ReadConfiguration<T>(configurationText, sectionName);
+        }
     }
 
     private class FakeData

@@ -23,13 +23,15 @@ namespace BadEcho.Configuration;
 public abstract class FileConfigurationProvider : ConfigurationProvider, IFileConfigurationReader, IDisposable
 {
     private readonly FileSystemWatcher _watcher = new()
-                                                  {
-                                                      NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.FileName
-                                                  };
+    {
+        NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.FileName
+    };
 
     private readonly ConcurrentDictionary<(Type SectionType, string? SectionName), object> _cachedSections = new();
     private readonly Lock _isMonitoringLock = new();
+    private readonly Lock _cacheLock = new();
 
+    private int _cacheGeneration;
     private bool _isMonitoring;
     private bool _disposed;
 
@@ -51,11 +53,11 @@ public abstract class FileConfigurationProvider : ConfigurationProvider, IFileCo
     {
         string settingsPath = GetSettingsPath();
         string? settingsDirectory = Path.GetDirectoryName(settingsPath);
-        
+
         lock (_isMonitoringLock)
         {
             // If the directory doesn't exist yet, we'll try to start monitoring next time.
-            if (!_isMonitoring && Directory.Exists(settingsDirectory)) 
+            if (!_isMonitoring && Directory.Exists(settingsDirectory))
             {
                 _watcher.Path = settingsDirectory;
                 _watcher.Filter = Path.GetFileName(settingsPath);
@@ -68,19 +70,27 @@ public abstract class FileConfigurationProvider : ConfigurationProvider, IFileCo
             }
         }
 
-        var sectionKey = (typeof(T), sectionName);
+        var cacheKey = (typeof(T), sectionName);
 
-        T? section = default;
+        if (_cachedSections.TryGetValue(cacheKey, out object? cachedSection))
+            return (T)cachedSection;
+        
+        // The generation is captured before reading so that content read prior to an invalidation is never cached.
+        int generation = _cacheGeneration;
         var settingsFile = new FileInfo(settingsPath);
 
-        if (settingsFile is { Exists: true, Length: > 0 })
+        if (settingsFile is not { Exists: true, Length: > 0 })
+            return new T();
+
+        T section = ReadConfiguration<T>(settingsFile.ReadAllText(FileShare.ReadWrite), sectionName);
+
+        lock (_cacheLock)
         {
-            section = (T)_cachedSections.GetOrAdd(
-                sectionKey,
-                _ => ReadConfiguration<T>(settingsFile.ReadAllText(FileShare.ReadWrite), sectionName));
+            if (generation == _cacheGeneration)
+                section = (T)_cachedSections.GetOrAdd(cacheKey, section);
         }
 
-        return section ?? new T();
+        return section;
     }
 
     /// <inheritdoc/>
@@ -128,6 +138,15 @@ public abstract class FileConfigurationProvider : ConfigurationProvider, IFileCo
             : string.Empty;
     }
 
+    private void InvalidateCachedSections()
+    {
+        lock (_cacheLock)
+        {
+            _cacheGeneration++;
+            _cachedSections.Clear();
+        }
+    }
+
     private string GetSettingsPath()
         => Path.GetFullPath(SettingsFile, AppContext.BaseDirectory);
 
@@ -142,7 +161,7 @@ public abstract class FileConfigurationProvider : ConfigurationProvider, IFileCo
         if (settingsFile is not { Exists: true, Length: > 0 })
             return;
 
-        _cachedSections.Clear();
+        InvalidateCachedSections();
 
         OnConfigurationChanged();
     }
