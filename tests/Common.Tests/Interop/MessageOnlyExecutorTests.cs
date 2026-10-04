@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //		Created by Matt Weber <matt@badecho.com>
-//		Copyright @ 2024 Bad Echo LLC. All rights reserved.
+//		Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //		Bad Echo Technologies are licensed under a
 //		GNU Affero General Public License v3.0.
@@ -189,6 +189,75 @@ public class MessageOnlyExecutorTests
         var localThreadId = executor.Invoke(() => Environment.CurrentManagedThreadId);
 
         Assert.Equal(executor.Thread.ManagedThreadId, localThreadId);
+    }
+    [Fact]
+    public async Task Cancel_WhileOtherThreadWaits_ReleasesWaiter()
+    {
+        using var executor = new MessageOnlyExecutor();
+
+        await executor.StartAsync();
+
+        for (int i = 0; i < 100; i++)
+        {
+            using var blocker = new ManualResetEventSlim(false);
+            // Occupies the executor so the next operation stays queued.
+            ThreadExecutorOperation blocking = executor.InvokeAsync(() => blocker.Wait());
+            ThreadExecutorOperation pending = executor.InvokeAsync(() => { });
+
+            Task<ThreadExecutorOperationStatus> waiter = Task.Run(() =>
+            {
+                try
+                {
+                    pending.Wait();
+                }
+                catch (OperationCanceledException)
+                {   // Wait surfaces cancellation of known delegate types through the operation's task.
+                }
+
+                return pending.Status;
+            });
+
+            try
+            {
+                Assert.True(pending.Cancel());
+
+                ThreadExecutorOperationStatus status = await waiter.WaitAsync(TimeSpan.FromSeconds(5));
+
+                Assert.Equal(ThreadExecutorOperationStatus.Canceled, status);
+            }
+            finally
+            {
+                blocker.Set();
+                blocking.Wait();
+            }
+        }
+    }
+
+    [Fact]
+    public async Task Cancel_PendingOperation_RaisesCanceledOnce()
+    {
+        using var executor = new MessageOnlyExecutor();
+
+        await executor.StartAsync();
+
+        using var blocker = new ManualResetEventSlim(false);
+        ThreadExecutorOperation blocking = executor.InvokeAsync(() => blocker.Wait());
+        ThreadExecutorOperation pending = executor.InvokeAsync(() => { });
+        int raised = 0;
+
+        pending.Canceled += (_, _) => Interlocked.Increment(ref raised);
+
+        try
+        {
+            Assert.True(pending.Cancel());
+            Assert.Equal(ThreadExecutorOperationStatus.Canceled, pending.Status);
+            Assert.Equal(1, raised);
+        }
+        finally
+        {
+            blocker.Set();
+            blocking.Wait();
+        }
     }
 
     [Fact]

@@ -1,7 +1,7 @@
 # Bad Echo Core Frameworks
 [![Discord](https://img.shields.io/discord/348353194801364992?style=flat-square&label=Discord&logo=discord&logoColor=white&color=7289DA)](https://discord.gg/omni) 
 
-The `BadEcho.Common` library contains code for core frameworks used by [Bad Echo](https://badecho.com) applications. It consists of technologies ranging from Bad Echo's plugin extensibility framework to very general-purpose extension methods that enhance the quality of life for the developer. 
+The `BadEcho.Common` library contains code for core frameworks used by [Bad Echo](https://badecho.com) applications. It consists of technologies ranging from configuration, logging, serialization, threading, and Win32 interop frameworks to very general-purpose extension methods that enhance the quality of life for the developer. 
 
 It's the ever-growing result of much time spent into researching best practices in regards to .NET development across a wide variety of domains.
 
