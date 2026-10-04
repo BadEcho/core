@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -14,15 +14,15 @@
 namespace BadEcho.Threading;
 
 /// <summary>
-/// Provides data for thread exception events, allowing the handler to mark the exception as being handled.
+/// Provides data for executor exception events, allowing the handler to mark the exception as being handled.
 /// </summary>
-public sealed class ThreadExceptionEventArgs : EventArgs<Exception>
+public sealed class ExecutorExceptionEventArgs : EventArgs<Exception>
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="ThreadExceptionEventArgs"/> class.
+    /// Initializes a new instance of the <see cref="ExecutorExceptionEventArgs"/> class.
     /// </summary>
     /// <param name="exception">The exception that occurred on another thread.</param>
-    public ThreadExceptionEventArgs(Exception exception)
+    public ExecutorExceptionEventArgs(Exception exception)
         : base(exception)
     { }
 

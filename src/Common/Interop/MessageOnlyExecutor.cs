@@ -14,7 +14,6 @@
 using BadEcho.Logging;
 using BadEcho.Properties;
 using BadEcho.Threading;
-using ThreadExceptionEventArgs = BadEcho.Threading.ThreadExceptionEventArgs;
 
 namespace BadEcho.Interop;
 
@@ -72,7 +71,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     /// to Microsoft.
     /// </para>
     /// </remarks>
-    public event EventHandler<ThreadExceptionEventArgs>? UnhandledException;
+    public event EventHandler<ExecutorExceptionEventArgs>? UnhandledException;
 
     /// <inheritdoc/>
     public bool IsShutdownStarted 
@@ -590,7 +589,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
         if (operation is { RaisesUnhandledException: true, Task.Exception: { } ex })
         {   // Task.Exception is an AggregateException, so we need to unwrap it.
             Exception innerEx = ex.InnerExceptions[0];
-            var e = new ThreadExceptionEventArgs(innerEx);
+            var e = new ExecutorExceptionEventArgs(innerEx);
 
             try
             {   // Handlers run inside the native window procedure, so we need to catch any possible exceptions here as well.
