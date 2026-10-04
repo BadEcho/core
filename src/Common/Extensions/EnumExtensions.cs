@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -28,7 +28,7 @@ public static class EnumExtensions
     /// <param name="value">The integer value to convert.</param>
     /// <returns>A <typeparamref name="TEnum"/> representation of <c>value</c>.</returns>
     public static TEnum ToEnum<TEnum>(this int value) 
-        where TEnum : Enum
+        where TEnum : struct, Enum
     {
         EnsureIsInteger<TEnum>();
 
@@ -42,7 +42,7 @@ public static class EnumExtensions
     /// <param name="member">The enumeration member to convert.</param>
     /// <returns>The <see cref="int"/> value of <c>member</c>.</returns>
     public static int ToInt32<TEnum>(this TEnum member)
-        where TEnum : Enum
+        where TEnum : struct, Enum
     {
         EnsureIsInteger<TEnum>();
 
@@ -50,7 +50,7 @@ public static class EnumExtensions
     }
 
     private static void EnsureIsInteger<TEnum>()
-        where TEnum : Enum
+        where TEnum : struct, Enum
     {
         if (Unsafe.SizeOf<TEnum>() != Unsafe.SizeOf<int>())
             throw new InvalidOperationException(Strings.EnumIntegralTypeNotInteger);

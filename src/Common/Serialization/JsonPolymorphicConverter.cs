@@ -26,7 +26,7 @@ namespace BadEcho.Serialization;
 /// </typeparam>
 /// <typeparam name="TBase">The base type of object handled by the converter.</typeparam>
 public abstract class JsonPolymorphicConverter<TTypeDescriptor,TBase> : JsonConverter<TBase>
-    where TTypeDescriptor : Enum
+    where TTypeDescriptor : struct, Enum
     where TBase : class
 {
     private const string DEFAULT_TYPE_PROPERTY_NAME = "Type";
