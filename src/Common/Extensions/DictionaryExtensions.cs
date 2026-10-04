@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -27,13 +27,14 @@ public static class DictionaryExtensions
     /// <param name="key">The key whose value to get.</param>
     /// <param name="valueProvider">The value provider function, used if no value is associated with the key.</param>
     /// <returns>
-    /// The value associated with the specified key, if the key is found; otherwise, it retrieves the value from the value \
+    /// The value associated with the specified key, if the key is found; otherwise, it retrieves the value from the value
     /// provider function, adds it to the dictionary and then returns it.
     /// </returns>
     public static TValue GetValueOrAdd<TKey, TValue>(
         this IDictionary<TKey, TValue> dictionary, TKey key, Func<TKey, TValue> valueProvider)
     {
         Require.NotNull(dictionary, nameof(dictionary));
+        Require.NotNull(valueProvider, nameof(valueProvider));
 
         if (!dictionary.TryGetValue(key, out TValue? value))
         {
