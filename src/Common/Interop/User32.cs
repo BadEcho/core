@@ -905,7 +905,7 @@ internal static partial class User32
     /// <param name="nIndex">The zero-based offset to the value to be retrieved.</param>
     /// <returns>The requested value if successful; otherwise, zero.</returns>
     /// <remarks>This should only ever be called from a 32-bit process.</remarks>
-    [LibraryImport(LibraryName, EntryPoint = "GetWindowLongW")]
+    [LibraryImport(LibraryName, EntryPoint = "GetWindowLongW", SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static partial IntPtr GetWindowLongPtr32(WindowHandle hWnd, int nIndex);
 
@@ -916,7 +916,7 @@ internal static partial class User32
     /// <param name="nIndex">The zero-based offset to the value to be retrieved.</param>
     /// <returns>The requested value if successful; otherwise, zero.</returns>
     /// <remarks>This should only ever be called from a 64-bit process.</remarks>
-    [LibraryImport(LibraryName, EntryPoint = "GetWindowLongPtrW")]
+    [LibraryImport(LibraryName, EntryPoint = "GetWindowLongPtrW", SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static partial IntPtr GetWindowLongPtr64(WindowHandle hWnd, int nIndex);
 
@@ -928,7 +928,7 @@ internal static partial class User32
     /// <param name="dwNewLong">The replacement value.</param>
     /// <returns>The previous value of the specified offset if successful; otherwise, zero.</returns>
     /// <remarks>This should only ever be called from a 32-bit process.</remarks>
-    [LibraryImport(LibraryName, EntryPoint = "SetWindowLongW")]
+    [LibraryImport(LibraryName, EntryPoint = "SetWindowLongW", SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static partial IntPtr SetWindowLongPtr32(WindowHandle hWnd, int nIndex, IntPtr dwNewLong);
 
@@ -940,7 +940,7 @@ internal static partial class User32
     /// <param name="dwNewLong">The replacement value.</param>
     /// <returns>The previous value of the specified offset if successful; otherwise, zero.</returns>
     /// <remarks>This should only ever be called from a 64-bit process.</remarks>
-    [LibraryImport(LibraryName, EntryPoint = "SetWindowLongPtrW")]
+    [LibraryImport(LibraryName, EntryPoint = "SetWindowLongPtrW", SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static partial IntPtr SetWindowLongPtr64(WindowHandle hWnd, int nIndex, IntPtr dwNewLong);
 
@@ -951,7 +951,7 @@ internal static partial class User32
     /// <param name="nIndex">The zero-based offset to the value to be retrieved.</param>
     /// <returns>The requested value if successful; otherwise, zero.</returns>
     /// <remarks>This should only ever be called from a 32-bit process.</remarks>
-    [LibraryImport(LibraryName, EntryPoint = "GetClassLongW")]
+    [LibraryImport(LibraryName, EntryPoint = "GetClassLongW", SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static partial IntPtr GetClassLongPtr32(WindowHandle hWnd, int nIndex);
 
@@ -962,7 +962,7 @@ internal static partial class User32
     /// <param name="nIndex">The zero-based offset to the value to be retrieved.</param>
     /// <returns>The requested value if successful; otherwise, zero.</returns>
     /// <remarks>This should only ever be called from a 64-bit process.</remarks>
-    [LibraryImport(LibraryName, EntryPoint = "GetClassLongPtrW")]
+    [LibraryImport(LibraryName, EntryPoint = "GetClassLongPtrW", SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static partial IntPtr GetClassLongPtr64(WindowHandle hWnd, int nIndex);
     
@@ -974,7 +974,7 @@ internal static partial class User32
     /// <param name="dwNewLong">The replacement value.</param>
     /// <returns>The previous value of the specified offset if successful; otherwise, zero.</returns>
     /// <remarks>This should only ever be called from a 32-bit process.</remarks>
-    [LibraryImport(LibraryName, EntryPoint = "SetClassLongW")]
+    [LibraryImport(LibraryName, EntryPoint = "SetClassLongW", SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static partial IntPtr SetClassLongPtr32(WindowHandle hWnd, int nIndex, IntPtr dwNewLong);
 
@@ -986,7 +986,7 @@ internal static partial class User32
     /// <param name="dwNewLong">The replacement value.</param>
     /// <returns>The previous value of the specified offset if successful; otherwise, zero.</returns>
     /// <remarks>This should only ever be called from a 64-bit process.</remarks>
-    [LibraryImport(LibraryName, EntryPoint = "SetClassLongPtrW")]
+    [LibraryImport(LibraryName, EntryPoint = "SetClassLongPtrW", SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static partial IntPtr SetClassLongPtr64(WindowHandle hWnd, int nIndex, IntPtr dwNewLong);
 }
