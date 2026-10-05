@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -77,5 +77,18 @@ public sealed class WindowHandle : SafeHandle
     
     /// <inheritdoc/>
     protected override bool ReleaseHandle()
-        => User32.DestroyWindow(handle);
+    {   // We need to use the raw handle at this point, in case we're being called by the finalizer.
+        uint ownerThreadId = User32.GetWindowThreadProcessId(handle, out uint ownerProcessId);
+
+        if (ownerThreadId == 0) // The window no longer exists.
+            return true;
+
+        if (ownerProcessId != (uint) Environment.ProcessId)
+            return false;
+
+        if (ownerThreadId == Kernel32.GetCurrentThreadId())
+            return User32.DestroyWindow(handle);
+
+        return User32.PostMessage(handle, WindowMessage.Close, nint.Zero, nint.Zero);
+    }
 }

@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -18,6 +18,9 @@ namespace BadEcho.Tests.Interop;
 internal static class TestWindow
 {
     public static WindowHandle Create(string className)
+        => Create(className, WndProc);
+
+    public static WindowHandle Create(string className, WNDPROC wndProc)
     {
         RegisterClass(className);
         IntPtr hInstance = Kernel32.GetModuleHandle(null);
@@ -38,8 +41,11 @@ internal static class TestWindow
                                          null);
         }
     }
-    
+
     internal static ushort RegisterClass(string className)
+        => RegisterClass(className, WndProc);
+
+    internal static ushort RegisterClass(string className, WNDPROC wndProc)
     {
         var windowClass = new WindowClass(WndProc);
 
