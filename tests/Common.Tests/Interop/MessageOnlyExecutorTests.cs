@@ -146,6 +146,26 @@ public class MessageOnlyExecutorTests
     }
 
     [Fact]
+    public async Task Dispose_RacingStartup_ShutsDown()
+    {
+        for (int i = 0; i < 100; i++)
+        {
+            var executor = new MessageOnlyExecutor();
+            Task run = Task.Run(executor.Run);
+
+            // The window is assigned while Run() holds the executor's lock, just before it releases it to push its frame.
+            Assert.True(SpinWait.SpinUntil(() => executor.Window != null || run.IsCompleted, TimeSpan.FromSeconds(5)));
+
+            executor.Dispose();
+
+            // Run() only returns once the outermost frame has exited and shutdown has completed.
+            await run.WaitAsync(TimeSpan.FromSeconds(5));
+
+            Assert.True(executor.IsShutdownComplete);
+        }
+    }
+
+    [Fact]
     public async Task Run_RunningThenDisposed_ThrowsException()
     {
         var executor = new MessageOnlyExecutor();

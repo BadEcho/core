@@ -319,7 +319,6 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
             throw new InvalidOperationException(Strings.ExecutorFramesRequireRun);
 
         _framesRunning++;
-        _hasStarted = true;
 
         try
         {
@@ -369,6 +368,8 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
             }
 
             Window.AddCallback(WindowProcedure);
+
+            _hasStarted = true;
 
             _running.Set();
             // A call to Dispose() may have been made (either deliberately or due to a using statement/declaration) before
@@ -445,6 +446,8 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     {
         if (IsShutdownComplete)
             return;
+
+        bool onExecutorThread;
         
         lock (Lock)
         {
@@ -454,12 +457,24 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
                 _disposeQueued = true;
                 return;
             }
+
+            onExecutorThread = Thread == Thread.CurrentThread;
         }
 
-        if (_framesRunning == 0)
+        // Only the executor's thread can destroy its window, so shutdown is always started there. If that thread hasn't
+        // pushed its first frame yet, the request is processed as soon as it begins pumping.
+        if (onExecutorThread)
             StartShutdown();
         else
-            Invoke(StartShutdown);
+        {
+            try
+            {
+                Invoke(StartShutdown);
+            }
+            catch (OperationCanceledException)
+            {   // The executor completed its shutdown before the request could be processed.
+            }
+        }
 
         _shutdownContext?.Dispose();
         _running.Dispose();
