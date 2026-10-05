@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -38,10 +38,15 @@ internal static unsafe partial class Ole32
         if (result.Failed())
             throw result.GetException();
 
-        T instance = ComInterfaceMarshaller<T>.ConvertToManaged(pInstance)
-            ?? throw new InvalidOperationException(Strings.CannotConvertComToManaged);
-
-        return instance;
+        try
+        {
+            return ComInterfaceMarshaller<T>.ConvertToManaged(pInstance)
+                   ?? throw new InvalidOperationException(Strings.CannotConvertComToManaged);
+        }
+        finally
+        {   // The marshaller creates its own reference, so it's safe to release the one we created (creates a leak otherwise).
+            ComInterfaceMarshaller<T>.Free(pInstance);
+        }
     }
 
     /// <summary>
