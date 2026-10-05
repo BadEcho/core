@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -53,7 +53,7 @@ public enum WindowMessage
     /// <summary>
     /// A window message corresponding to WM_SYSCOLORCHANGE, sent when a change is made to a system color setting.
     /// </summary>
-    SystemColorChange = 0x21,
+    SystemColorChange = 0x15,
     /// <summary>
     /// A window message corresponding to WM_DRAWITEM, posted when a visual aspect of an owner-drawn button, combo box, list box,
     /// or menu has changed.
