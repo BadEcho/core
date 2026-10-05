@@ -357,6 +357,9 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
 
             try
             {
+                if (DisableRequests > 0)
+                    throw new InvalidOperationException(Strings.ExecutorProcessingDisabled);
+
                 Window = new MessageOnlyWindowWrapper(this);
             }
             catch (Exception ex)
@@ -379,7 +382,21 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
                 InvokeAsync(Dispose);
         }
 
-        PushFrame(CreateFrame(true));
+        try
+        {
+            PushFrame(CreateFrame(true));
+        }
+        finally
+        {   // Once we exit the outermost frame, the message pump is no longer running. If shutdown didn't complete for some reason
+            // (either due to an error or some intentional sabotaging via a WM_QUIT from another thread), we'll make sure it completes here.
+            if (!IsShutdownComplete)
+            {   // This covers cases where the shutdown was never started...
+                StartShutdown();
+                // ...and this will cover cases where shutdown was started but never finished.
+                Shutdown();
+            }
+        }
+
     }
 
     /// <inheritdoc/>

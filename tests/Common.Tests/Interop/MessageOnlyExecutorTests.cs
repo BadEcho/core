@@ -452,6 +452,41 @@ public class MessageOnlyExecutorTests
         Assert.Equal(executor.Thread.ManagedThreadId, executor.Invoke(() => Environment.CurrentManagedThreadId));
     }
 
+    [Fact]
+    public async Task Run_QuitMessageEndsLoop_ShutsDownAndDestroysWindow()
+    {
+        using var executor = new MessageOnlyExecutor();
+        Task run = Task.Run(executor.Run);
+
+        // Completes once the executor is running.
+        await executor.InvokeAsync(() => { }).Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+        MessageOnlyWindowWrapper? window = executor.Window;
+
+        Assert.NotNull(window);
+
+        IntPtr hWnd = window.Handle.DangerousGetHandle();
+        const WindowMessage quit = (WindowMessage)0x12; // WM_QUIT
+
+        Assert.True(User32.PostMessage(window.Handle, quit, IntPtr.Zero, IntPtr.Zero));
+
+        await run.WaitAsync(TimeSpan.FromSeconds(5));
+
+        Assert.True(executor.IsShutdownComplete);
+        Assert.Equal(0u, User32.GetWindowThreadProcessId(hWnd, out _));
+    }
+
+    [Fact]
+    public async Task StartAsync_WithRequestsDisabled_CreatesNoWindow()
+    {
+        using var executor = new MessageOnlyExecutor();
+
+        executor.Disable();
+
+        await Assert.ThrowsAsync<InvalidOperationException>(async () => await executor.StartAsync());
+
+        Assert.Null(executor.Window);
+    }
     private static MessageOnlyExecutor CreateExecutor()
     {
         var executor = new MessageOnlyExecutor();
