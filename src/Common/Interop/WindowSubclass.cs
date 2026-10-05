@@ -394,7 +394,7 @@ internal sealed class WindowSubclass : IDisposable
 
         _state = AttachmentState.Detaching;
             
-        lock (_Subclasses)
+        lock (_SubclassesLock)
         {
             _Subclasses.Remove(this);
         }
