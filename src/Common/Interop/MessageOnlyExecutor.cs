@@ -169,14 +169,15 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
 
                 for (int i = 0; i < _Executors.Count; i++)
                 {
-                    if (_Executors[i].TryGetTarget(out IThreadExecutor? executor) && executor.Thread == thread)
-                    {
-                        target = executor;
-                    }
-                    else
+                    if (!_Executors[i].TryGetTarget(out IThreadExecutor? executor))
                     {
                         _Executors.RemoveAt(i);
                         i--;
+                    }
+                    else if(executor.Thread == thread)
+                    {
+                        target = executor;
+                        break;
                     }
                 }
             }
