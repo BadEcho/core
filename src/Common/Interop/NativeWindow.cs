@@ -396,10 +396,10 @@ public sealed class NativeWindow
         if (_hotKeyIds.Contains(id))
             throw new ArgumentException(Strings.WindowHotKeyDuplicateId.InvariantFormat(id), nameof(id));
 
-        _hotKeyIds.Add(id);
-
         if (!User32.RegisterHotKey(Handle, id, modifiers, key))
             throw ((ResultHandle) Marshal.GetHRForLastWin32Error()).GetException();
+
+        _hotKeyIds.Add(id);
     }
 
     /// <summary>
@@ -410,6 +410,8 @@ public sealed class NativeWindow
     {
         if (!User32.UnregisterHotKey(Handle, id))
             throw ((ResultHandle) Marshal.GetHRForLastWin32Error()).GetException();
+
+        _hotKeyIds.Remove(id);
     }
 
     /// <summary>
