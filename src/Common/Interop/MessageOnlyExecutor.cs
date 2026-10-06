@@ -298,6 +298,15 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
             throw new InvalidOperationException(Strings.ExecutorCannotEnableOnOtherThread);
 
         DisableRequests--;
+
+        if (DisableRequests > 0)
+            return;
+
+        // Process operations that arrived while we were disabled.
+        lock (Lock)
+        {
+            RequestProcessOperation();
+        }
     }
 
     /// <inheritdoc/>

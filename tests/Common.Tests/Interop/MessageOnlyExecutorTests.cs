@@ -126,6 +126,34 @@ public class MessageOnlyExecutorTests
     }
 
     [Fact]
+    public async Task Enable_OperationRequestedWhileDisabled_ProcessesOperation()
+    {
+        using var executor = new MessageOnlyExecutor();
+
+        await executor.StartAsync();
+
+        ThreadExecutorOperation<int>? pending = null;
+
+        executor.Invoke(() =>
+        {
+            executor.Disable();
+
+            pending = executor.InvokeAsync(() => 42);
+
+            // Pumps the processing request for the queued operation while processing is disabled, as a modal loop would.
+            var msg = new MSG();
+
+            User32.GetMessage(ref msg, IntPtr.Zero, 0, 0);
+            User32.DispatchMessage(ref msg);
+
+            executor.Enable();
+        });
+
+        Assert.NotNull(pending);
+        Assert.Equal(42, await pending.Task.WaitAsync(TimeSpan.FromSeconds(5)));
+    }
+
+    [Fact]
     public async Task StartAsync_WithRequestsDisabled_ThrowsCatchableExecutorException()
     {
         using var executor = new MessageOnlyExecutor();
