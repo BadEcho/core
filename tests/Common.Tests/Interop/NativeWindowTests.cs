@@ -49,4 +49,18 @@ public class NativeWindowTests
         window.RegisterHotKey(2, HOT_KEY_MODIFIERS, VirtualKey.F23);
         window.UnregisterHotKey(2);
     }
+
+    [Fact]
+    public void FromProcessId_CurrentProcess_IncludesCreatedWindow()
+    {
+        const string className = "NativeWindowTests.FromProcessId_CurrentProcess";
+        using WindowHandle handle = TestWindow.Create(className);
+
+        IEnumerable<NativeWindow> windows = NativeWindow.FromProcessId(Environment.ProcessId);
+
+        NativeWindow window
+            = Assert.Single(windows, w => w.Handle.DangerousGetHandle() == handle.DangerousGetHandle());
+
+        Assert.Equal(className, window.ClassName);
+    }
 }

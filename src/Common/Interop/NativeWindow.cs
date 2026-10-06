@@ -199,19 +199,20 @@ public sealed class NativeWindow
     /// </returns>
     public static IEnumerable<NativeWindow> FromProcessId(int processId)
     {
-        List<NativeWindow> windows = [];
-
+        List<nint> handles = [];
+        
         if (!User32.EnumWindows(Callback, processId))
             throw new Win32Exception(Marshal.GetLastWin32Error());
 
-        return windows;
+        return handles.Select(handle => new NativeWindow(new WindowHandle(handle, false)))
+                      .ToList();
 
         bool Callback(nint hWnd, nint _)
         {
             User32.GetWindowThreadProcessId(hWnd, out uint windowProcessId);
 
-            if (windowProcessId == processId) 
-                windows.Add(new NativeWindow(new WindowHandle(hWnd, false)));
+            if (windowProcessId == processId)
+                handles.Add(hWnd);
 
             return true;
         }
