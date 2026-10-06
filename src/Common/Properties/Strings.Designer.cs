@@ -583,6 +583,15 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The subclass has already been attached to a window..
+        /// </summary>
+        public static string SubclassAlreadyAttached {
+            get {
+                return ResourceManager.GetString("SubclassAlreadyAttached", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Subclass message processing procedure invoked while in a detached state..
         /// </summary>
         public static string SubclassDetachedWndProc {

@@ -126,6 +126,9 @@ internal sealed class WindowSubclass : IDisposable
     public void Attach(WindowHandle window)
     {
         Require.NotNull(window, nameof(window));
+
+        if (_state != AttachmentState.Unattached)
+            throw new InvalidOperationException(Strings.SubclassAlreadyAttached);
         
         IntPtr oldWndProc = User32.GetWindowLongPtr(window, WindowAttribute.WindowProcedure);
 
@@ -310,16 +313,32 @@ internal sealed class WindowSubclass : IDisposable
         }
     }
 
-    private void Attach(WindowHandle window, WNDPROC newWndProcCallback, IntPtr oldWndProc)
+    private void Attach(WindowHandle window, WNDPROC newWndProcCallback, nint oldWndProc)
     {
+        // All this fields need to be set pre-swap, as WndProc might execute immediately following the swap.
         _window = window;
-        _state = AttachmentState.Attached;
-
         _wndProcCallback = newWndProcCallback;
         _wndProc = Marshal.GetFunctionPointerForDelegate(_wndProcCallback);
         _oldWndProc = oldWndProc;
+        _state = AttachmentState.Attached;
 
-        User32.SetWindowLongPtr(_window, WindowAttribute.WindowProcedure, _wndProc);
+        nint previousWndProc = User32.SetWindowLongPtr(_window, WindowAttribute.WindowProcedure, _wndProc);
+        
+        if (previousWndProc == nint.Zero)
+        {   // A zero doesn't necessarily mean there was a failure w/ SetLastWindowLongPtr. GetLastError needs to be checked too.
+            int error = Marshal.GetLastWin32Error();
+
+            if (error != 0)
+            {   // If we don't reset these fields, Dispose will fail to clean us up, and we'll become an immortal zombie.
+                _state = AttachmentState.Unattached;
+                _window = null;
+                _wndProcCallback = null;
+                _wndProc = nint.Zero;
+                _oldWndProc = nint.Zero;
+
+                throw new Win32Exception(error);
+            }
+        }
         
         lock (_SubclassesLock)
         {
