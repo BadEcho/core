@@ -408,8 +408,12 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
         }
 
         // Run() blocks the calling thread until the executor is shut down, so we must offload to another thread in order
-        // for this to return.
-        var runTask = Task.Run(Run);
+        // for this to return. A dedicated background thread is used as opposed to one from the thread pool (which is what
+        // Task.Run would result in us using). Thread pool threads are a limited resource and are meant for short work items.
+        var runTask = Task.Factory.StartNew(Run,
+                                            CancellationToken.None,
+                                            TaskCreationOptions.LongRunning | TaskCreationOptions.DenyChildAttach,
+                                            TaskScheduler.Default);
 
         // A no-op InvokeAsync will return an operation that will complete whenever the executor begins running and
         // processes the request.
