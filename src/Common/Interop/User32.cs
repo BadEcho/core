@@ -126,6 +126,26 @@ internal static partial class User32
     public static partial bool IsWindowVisible(WindowHandle hWnd);
 
     /// <summary>
+    /// Determines whether the specified window handle identifies an existing window.
+    /// </summary>
+    /// <param name="hWnd">A handle to the window to be tested.</param>
+    /// <returns>True if <c>hWnd</c> identifies an existing window; otherwise, false.</returns>
+    [LibraryImport(LibraryName)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool IsWindow(WindowHandle hWnd);
+
+    /// <summary>
+    /// Determines whether the specified window handle identifies an existing window.
+    /// </summary>
+    /// <param name="hWnd">A handle to the window to be tested.</param>
+    /// <returns>True if <c>hWnd</c> identifies an existing window; otherwise, false.</returns>
+    [LibraryImport(LibraryName)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool IsWindow(nint hWnd);
+
+    /// <summary>
     /// Retrieves the identifier of the thread that created the specified window and, optionally, the identifier
     /// of the process that created the window.
     /// </summary>

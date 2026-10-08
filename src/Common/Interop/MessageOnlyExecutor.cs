@@ -596,19 +596,19 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
         var message = (WindowMessage) msg;
         bool handled = false;
 
-        if (DisableRequests <= 0)
+        if (WindowMessage.Destroy == message)
+        {   // The executor will normally not be running at the point in time when its window is being destroyed,
+            // meaning we're here because something other than the executor is trying to destroy the window.
+            if (!IsShutdownStarted && !IsShutdownComplete)
+            {
+                IsShutdownStarted = true;
+                Shutdown();
+            }
+        }
+        else if (DisableRequests <= 0 && _ProcessOperation == message)
         {
-            if (WindowMessage.Destroy == message)
-            {
-                if (!IsShutdownStarted && !IsShutdownComplete)
-                    Shutdown();
-            }
-
-            else if (_ProcessOperation == message)
-            {
-                ProcessOperation();
-                handled = true;
-            }
+            ProcessOperation();
+            handled = true;
         }
 
         return new ProcedureResult(IntPtr.Zero, handled);

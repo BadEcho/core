@@ -96,6 +96,26 @@ public class MessageOnlyExecutorTests
     }
 
     [Fact]
+    public async Task Run_WindowDestroyedExternally_ShutsDown()
+    {
+        using var executor = new MessageOnlyExecutor();
+
+        Task run = Task.Factory.StartNew(executor.Run,
+                                         CancellationToken.None,
+                                         TaskCreationOptions.LongRunning,
+                                         TaskScheduler.Default);
+        // Completes once the executor is running.
+        await executor.InvokeAsync(() => { });
+        // Destroy the window in an unorthodox manner.
+        executor.Invoke(() => executor.Window!.Handle.Dispose());
+
+        await run.WaitAsync(TimeSpan.FromSeconds(5));
+
+        Assert.True(executor.IsShutdownComplete);
+        Assert.Null(executor.Window);
+    }
+
+    [Fact]
     public void Run_AlreadyRunning_ThrowsException()
     {
         using var executor = CreateExecutor();

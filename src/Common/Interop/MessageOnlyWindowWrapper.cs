@@ -48,6 +48,7 @@ public sealed class MessageOnlyWindowWrapper : WindowWrapper, IDisposable
         _executor = executor;
         // We need to store a reference to this since WindowSubclass stores it as a weak reference.
         _callback = WindowProcedure;
+        AddCallback(TrackDestruction);
 
         var subclass = new WindowSubclass(_callback, executor);
 
@@ -128,14 +129,15 @@ public sealed class MessageOnlyWindowWrapper : WindowWrapper, IDisposable
     /// </remarks>
     ~MessageOnlyWindowWrapper()
     {
-        DisposeCore();
+        _ = DisposeCore();
     }
 
     /// <inheritdoc/>
     public void Dispose()
-    {
-        DisposeCore();
-        GC.SuppressFinalize(this);
+    {   // This returns false if the window is still being destroyed. In that case, releasing is deferred until later,
+        // or until finalization, once the window is gone.
+        if (DisposeCore())
+            GC.SuppressFinalize(this);
     }
 
     /// <inheritdoc/>
@@ -207,21 +209,40 @@ public sealed class MessageOnlyWindowWrapper : WindowWrapper, IDisposable
             throw new Win32Exception(Marshal.GetLastWin32Error());
     }
 
-    private void DisposeCore()
+    private bool DisposeCore()
     {   // Reentrancy is prevented here. If this method invokes DestroyWindow, a WM_NCDESTROY message will be sent which
         // may result in this method being called again before the original invocation is done executing. 
         if (_disposed)
-            return;
+            return true;
+        
+        // The wrapper takes care of cleaning up its own resources; however, if a WM_DESTROY message has been posted to our
+        // window outside the normal process, the window may not be gone yet, prompting us to wait. In this situation, the
+        // safe handle may have already been disposed (potentially making it the cause of the situation just described), so
+        // we'll want to check for the window's existence using the raw handle pointer.
+        if (_windowIsBeingDestroyed && User32.IsWindow(Handle.DangerousGetHandle()))
+            return false;
 
         _disposed = true;
-
-        // This gets zeroed out at the end of the method, so we want copy it to a local.
+        
         ushort classAtom = _classAtom;
+        _classAtom = 0;
 
-        // If the window is in the process of being destroyed, we can't call UnregisterClass yet. So, we basically
-        // post it to the executor for it to happen later, once the window is closed.
+        // If we made it here, the window has been destroyed. Time to nuke its class. We don't to throw any exceptions here,
+        // as we may be running from the finalizer.
         if (_windowIsBeingDestroyed)
-            _executor.BeginInvoke(() => UnregisterClass(classAtom), null);
+        {
+            // This prevents the handle from calling DestroyWindow again on a window that's already gone. 
+            Handle.SetHandleAsInvalid();
+
+            try
+            {
+                UnregisterClass(classAtom);
+            }
+            catch (Win32Exception ex)
+            {
+                Logger.Error(Strings.MessageOnlyWindowClassCleanupFailed, ex);
+            }
+        }
 
         // Normally, you should never access reference types when Dispose is called from a finalizer, but the following
         // code will run even during finalization. If we don't do this, the window class will never get unregistered.
@@ -230,7 +251,7 @@ public sealed class MessageOnlyWindowWrapper : WindowWrapper, IDisposable
         // that could lead to a leak, causing an oversaturation of dead window classes in the User Atom Table, which
         // would be cleaned up automatically once the process ends.
         else if (!Handle.IsInvalid)
-        {   // Destroying the window needs to be done on the window's on thread. The class registration can be done
+        {   // Destroying the window needs to be done on the window's own thread. The class registration can be done
             // on any thread, but it's simpler to just do it all in one go.
             if (Environment.CurrentManagedThreadId == _ownerThreadId)
                 DestroyWindow(Handle, classAtom);
@@ -238,6 +259,14 @@ public sealed class MessageOnlyWindowWrapper : WindowWrapper, IDisposable
                 _executor.BeginInvoke(() => DestroyWindow(Handle, classAtom), null);
         }
 
-        _classAtom = 0;
+        return true;
+    }
+    
+    private ProcedureResult TrackDestruction(nint hWnd, uint msg, nint wParam, nint lParam)
+    {
+        if (WindowMessage.Destroy == (WindowMessage) msg)
+            _windowIsBeingDestroyed = true;
+
+        return new ProcedureResult(nint.Zero, false);
     }
 }
