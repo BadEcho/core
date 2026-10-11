@@ -115,6 +115,15 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to remove the clipboard listener from the window..
+        /// </summary>
+        public static string ClipboardListenerRemovalFailed {
+            get {
+                return ResourceManager.GetString("ClipboardListenerRemovalFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to cloak or uncloak the window..
         /// </summary>
         public static string CloakChangeFailure {

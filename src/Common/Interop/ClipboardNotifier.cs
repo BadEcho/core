@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -13,15 +13,19 @@
 
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using BadEcho.Logging;
+using BadEcho.Properties;
 
 namespace BadEcho.Interop;
 
 /// <summary>
 /// Provides a notifier of global clipboard content changes.
 /// </summary>
-public sealed class ClipboardNotifier
+public sealed class ClipboardNotifier : IDisposable
 {
     private readonly WindowWrapper _windowWrapper;
+
+    private bool _disposed;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ClipboardNotifier"/> class.
@@ -42,7 +46,21 @@ public sealed class ClipboardNotifier
     /// <summary>
     /// Occurs when the contents of the clipboard have changed.
     /// </summary>
-    public event EventHandler? ClipboardChanged; 
+    public event EventHandler? ClipboardChanged;
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        if (_disposed)
+            return;
+
+        _windowWrapper.RemoveCallback(WindowProcedure);
+
+        if (!User32.RemoveClipboardFormatListener(_windowWrapper.Handle)) 
+            Logger.Error(Strings.ClipboardListenerRemovalFailed, new Win32Exception(Marshal.GetLastWin32Error()));
+
+        _disposed = true;
+    }
 
     private ProcedureResult WindowProcedure(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam)
     {
@@ -55,9 +73,7 @@ public sealed class ClipboardNotifier
                 return new ProcedureResult(IntPtr.Zero, true);
 
             case WindowMessage.Destroy:
-                if (!User32.RemoveClipboardFormatListener(_windowWrapper.Handle))
-                    throw new Win32Exception(Marshal.GetLastWin32Error());
-
+                Dispose();
                 break;
         }
 

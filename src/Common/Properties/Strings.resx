@@ -207,6 +207,9 @@
   <data name="StockObjectUnavailable" xml:space="preserve">
 		<value>Unable to retrieve a stock graphics object from the system.</value>
 	</data>
+	<data name="ClipboardListenerRemovalFailed" xml:space="preserve">
+		<value>Failed to remove the clipboard listener from the window.</value>
+	</data>
 	<data name="ClassBackgroundChangeFailure" xml:space="preserve">
 		<value>Failed to change the window class's background brush.</value>
 	</data>
