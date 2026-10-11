@@ -221,7 +221,8 @@ public sealed class NativeWindow
     /// <summary>
     /// Sets the windows style information so that said window is stripped of its title bar.
     /// </summary>
-    public void RemoveTitleBar()
+    /// <param name="recalculateFrame">Value indicating if the change needs to be applied to the window's frame as well.</param>
+    public void RemoveSystemMenu(bool recalculateFrame)
     {
         var styles = (WindowStyles)User32.GetWindowLongPtr(Handle, WindowAttribute.Style);
 
@@ -230,6 +231,11 @@ public sealed class NativeWindow
         User32.SetWindowLongPtr(Handle,
                                 WindowAttribute.Style,
                                 new IntPtr((int) styles));
+
+        if (!recalculateFrame)
+            return;
+
+        RecalculateFrame();
     }
 
     /// <summary>
@@ -261,19 +267,9 @@ public sealed class NativeWindow
             return;
 
         // If a style changes the window's frame, it does not take effect until the window is told to recalculate it.
-        User32.SetWindowPos(Handle,
-                            IntPtr.Zero,
-                            0,
-                            0,
-                            0,
-                            0,
-                            WindowPositionFlags.FrameChanged
-                            | WindowPositionFlags.NoMove
-                            | WindowPositionFlags.NoSize
-                            | WindowPositionFlags.NoZOrder
-                            | WindowPositionFlags.NoActivate);
+        RecalculateFrame();
     }
-    
+
     /// <summary>
     /// Adds or removes the specified extended window style to or from the window's extended style information.
     /// </summary>
@@ -427,7 +423,7 @@ public sealed class NativeWindow
 
         return windowWrapper.Handle;
     }
-    
+
     private ProcedureResult WindowProcedure(IntPtr hWnd, uint msg, nint wParam, nint lParam)
     {
         var lResult = IntPtr.Zero;
@@ -571,4 +567,17 @@ public sealed class NativeWindow
 
         return new ProcedureResult(lResult, handled);
     }
+
+    private void RecalculateFrame()
+        => User32.SetWindowPos(Handle,
+                               IntPtr.Zero,
+                               0,
+                               0,
+                               0,
+                               0,
+                               WindowPositionFlags.FrameChanged
+                               | WindowPositionFlags.NoMove
+                               | WindowPositionFlags.NoSize
+                               | WindowPositionFlags.NoZOrder
+                               | WindowPositionFlags.NoActivate);
 }
