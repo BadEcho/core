@@ -601,6 +601,15 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to retrieve a stock graphics object from the system..
+        /// </summary>
+        public static string StockObjectUnavailable {
+            get {
+                return ResourceManager.GetString("StockObjectUnavailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The subclass has already been attached to a window..
         /// </summary>
         public static string SubclassAlreadyAttached {

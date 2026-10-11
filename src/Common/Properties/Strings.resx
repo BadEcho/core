@@ -204,6 +204,9 @@
   <data name="ExecutorProcessingDisabled" xml:space="preserve">
     <value>The executor's ability to process operations is currently disabled.</value>
   </data>
+  <data name="StockObjectUnavailable" xml:space="preserve">
+		<value>Unable to retrieve a stock graphics object from the system.</value>
+	</data>
 	<data name="ClassBackgroundChangeFailure" xml:space="preserve">
 		<value>Failed to change the window class's background brush.</value>
 	</data>

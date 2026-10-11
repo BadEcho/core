@@ -170,7 +170,7 @@ public sealed class MessageOnlyWindowWrapper : WindowWrapper, IDisposable
         IntPtr hNullBrush = Gdi32.GetStockObject(Gdi32.StockObjectBrushNull);
 
         if (hNullBrush == IntPtr.Zero)
-            throw new Win32Exception(Marshal.GetLastWin32Error());
+            throw new InvalidOperationException(Strings.StockObjectUnavailable);
 
         IntPtr hInstance = Kernel32.GetModuleHandle(null);
 

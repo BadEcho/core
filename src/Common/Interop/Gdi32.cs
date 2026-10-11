@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -51,7 +51,7 @@ internal static partial class Gdi32
     /// </summary>
     /// <param name="stockObject">The type of stock object.</param>
     /// <returns>A handle to the requested logical object if successful; otherwise, null.</returns>
-    [LibraryImport(LIBRARY_NAME, SetLastError = true)]
+    [LibraryImport(LIBRARY_NAME)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial IntPtr GetStockObject(int stockObject);
 
