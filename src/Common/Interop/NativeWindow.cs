@@ -133,8 +133,11 @@ public sealed class NativeWindow
                                                                               DwmWindowAttribute.CaptionButtonBounds,
                                                                               out RECT bounds,
                                                                               sizeof(RECT));
-            if (hResult == ResultHandle.Failure) 
+            if (hResult.Failed())
+            {
                 Logger.Error(Strings.WindowCaptionBoundsFailure, hResult.GetException());
+                return Rectangle.Empty;
+            }
 
             return Rectangle.FromLTRB(bounds.Left, bounds.Top, bounds.Right, bounds.Bottom);
         }
