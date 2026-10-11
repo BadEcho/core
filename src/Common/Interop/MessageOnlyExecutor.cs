@@ -33,7 +33,7 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
 
     private static WeakReference<IThreadExecutor>? _LastExecutor;
 
-    private readonly List<ThreadExecutorOperation> _operationQueue = [];
+    private readonly LinkedList<ThreadExecutorOperation> _operationQueue = [];
     private readonly ManualResetEventSlim _running = new();
     
     private readonly WeakReference<IThreadExecutor> _thisExecutor;
@@ -270,10 +270,8 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
 
         lock (Lock)
         {
-            if (!_operationQueue.Contains(operation))
+            if (!_operationQueue.Remove(operation))
                 return false;
-
-            _operationQueue.Remove(operation);
         }
 
         operation.Status = ThreadExecutorOperationStatus.Canceled;
@@ -576,12 +574,12 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
         {
             if (!Environment.HasShutdownStarted && !IsShutdownComplete)
             {
-                _operationQueue.Insert(0, operation);
+                LinkedListNode<ThreadExecutorOperation> node = _operationQueue.AddLast(operation);
 
                 succeeded = RequestProcessOperation();
 
                 if (!succeeded)
-                    _operationQueue.Remove(operation);
+                    _operationQueue.Remove(node);
             }
         }
 
@@ -677,14 +675,14 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
     /// </remarks>
     private ThreadExecutorOperation? Dequeue()
     {
-        if (_operationQueue.Count == 0)
+        LinkedListNode<ThreadExecutorOperation>? first = _operationQueue.First;
+
+        if (first == null)
             return null;
 
-        ThreadExecutorOperation operation = _operationQueue[^1];
+        _operationQueue.RemoveFirst();
 
-        _operationQueue.Remove(operation);
-
-        return operation;
+        return first.Value;
     }
 
     private void StartShutdown()

@@ -548,6 +548,37 @@ public class MessageOnlyExecutorTests
     }
 
     [Fact]
+    public async Task InvokeAsync_QueuedOperations_RunInOrderAndSkipCanceled()
+    {
+        using var executor = new MessageOnlyExecutor();
+
+        await executor.StartAsync();
+
+        using var gate = new ManualResetEventSlim(false);
+        var order = new List<int>();
+        var operations = new List<ThreadExecutorOperation>();
+
+        // Holds the executor thread so that everything below stays queued.
+        _ = executor.InvokeAsync(() => gate.Wait());
+
+        for (int i = 0; i < 100; i++)
+        {
+            int value = i;
+            operations.Add(executor.InvokeAsync(() => order.Add(value)));
+        }
+
+        Assert.True(executor.Cancel(operations[50]));
+        Assert.False(executor.Cancel(operations[50]));
+
+        gate.Set();
+
+        await operations[^1].Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+        Assert.Equal(Enumerable.Range(0, 100).Where(i => i != 50), order);
+        Assert.Equal(ThreadExecutorOperationStatus.Canceled, operations[50].Status);
+    }
+
+    [Fact]
     public async Task Run_QuitPostedInMainFrame_ShutsDown()
     {
         using var executor = new MessageOnlyExecutor();
