@@ -188,7 +188,7 @@ public sealed class MessageOnlyWindowWrapper : WindowWrapper, IDisposable
                               WindowExtraBytes = 0
                           };
         
-        return User32.RegisterClassEx(ref windowClass);
+        return User32.RegisterClassEx(in windowClass);
     }
 
     private static void DestroyWindow(WindowHandle handle, ushort classAtom)

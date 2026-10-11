@@ -22,7 +22,7 @@ internal static class TestWindow
 
     public static WindowHandle Create(string className, WNDPROC wndProc)
     {
-        RegisterClass(className);
+        RegisterClass(className, wndProc);
         IntPtr hInstance = Kernel32.GetModuleHandle(null);
 
         unsafe
@@ -47,7 +47,7 @@ internal static class TestWindow
 
     internal static ushort RegisterClass(string className, WNDPROC wndProc)
     {
-        var windowClass = new WindowClass(WndProc);
+        var windowClass = new WindowClass(wndProc);
 
         IntPtr hInstance = Kernel32.GetModuleHandle(null);
         
@@ -62,7 +62,7 @@ internal static class TestWindow
         windowClass.Name = className;
         windowClass.SmallIcon = IntPtr.Zero;
 
-        return User32.RegisterClassEx(ref windowClass);
+        return User32.RegisterClassEx(in windowClass);
     }
 
     internal static IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam) 

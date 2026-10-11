@@ -166,7 +166,7 @@ internal static partial class User32
     /// </suppressions>
     [LibraryImport(LibraryName, EntryPoint = "RegisterClassExW", SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    public static partial ushort RegisterClassEx([MarshalUsing(typeof(WindowClassMarshaller))] ref WindowClass wc_d);
+    public static partial ushort RegisterClassEx([MarshalUsing(typeof(WindowClassMarshaller))] in WindowClass wc_d);
 
     /// <summary>
     /// Unregisters a window class, freeing the memory required for the class.

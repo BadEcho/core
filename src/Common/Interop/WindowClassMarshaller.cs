@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -19,7 +19,7 @@ namespace BadEcho.Interop;
 /// <summary>
 /// Provides a custom marshaller for window class information.
 /// </summary>
-[CustomMarshaller(typeof(WindowClass), MarshalMode.ManagedToUnmanagedRef, typeof(WindowClassMarshaller))]
+[CustomMarshaller(typeof(WindowClass), MarshalMode.ManagedToUnmanagedIn, typeof(WindowClassMarshaller))]
 internal static unsafe class WindowClassMarshaller
 {
     /// <summary>
@@ -45,30 +45,6 @@ internal static unsafe class WindowClassMarshaller
                    lpszMenuName = Utf16StringMarshaller.ConvertToUnmanaged(managed.MenuName),
                    lpszClassName = Utf16StringMarshaller.ConvertToUnmanaged(managed.Name),
                    hIconSm = managed.SmallIcon
-               };
-    }
-
-    /// <summary>
-    /// Converts an unmanaged <see cref="WNDCLASSEX"/> instance to its managed counterpart.
-    /// </summary>
-    /// <param name="unmanaged">An unmanaged instance of window class information.</param>
-    /// <returns>A <see cref="WindowClass"/> equivalent of <c>unmanaged</c>.</returns>
-    public static WindowClass ConvertToManaged(WNDCLASSEX unmanaged)
-    {
-        var wndProc = Marshal.GetDelegateForFunctionPointer<WNDPROC>(unmanaged.lpfnWndProc);
-        
-        return new WindowClass(wndProc)
-               {
-                   Style = (int) unmanaged.style,
-                   ClassExtraBytes = unmanaged.cbClsExtra,
-                   WindowExtraBytes = unmanaged.cbWndExtra,
-                   Instance = unmanaged.hInstance,
-                   Icon = unmanaged.hIcon,
-                   Cursor = unmanaged.hCursor,
-                   BackgroundBrush = unmanaged.hbrBackground,
-                   MenuName = Utf16StringMarshaller.ConvertToManaged(unmanaged.lpszMenuName),
-                   Name = Utf16StringMarshaller.ConvertToManaged(unmanaged.lpszClassName),
-                   SmallIcon = unmanaged.hIconSm
                };
     }
 

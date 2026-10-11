@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //		Created by Matt Weber <matt@badecho.com>
-//		Copyright @ 2024 Bad Echo LLC. All rights reserved.
+//		Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //		Bad Echo Technologies are licensed under the
 //		GNU Affero General Public License v3.0.
@@ -172,5 +172,19 @@ public class User32Tests
     {
         var context = User32.GetThreadDpiAwarenessContext();
         Assert.Equal(DpiAwareness.Unaware, User32.GetAwarenessFromDpiAwarenessContext(context));
+    }
+
+    [Fact]
+    public void RegisterClassEx_WindowClass_LeavesInstanceUnchanged()
+    {
+        var windowClass = new WindowClass(TestWindow.WndProc)
+                          {
+                              Instance = Kernel32.GetModuleHandle(null),
+                              Name = "RegisterClassEx_LeavesInstanceUnchanged"
+                          };
+        WindowClass original = windowClass;
+
+        Assert.NotEqual(0, User32.RegisterClassEx(in windowClass));
+        Assert.Same(original, windowClass);
     }
 }
