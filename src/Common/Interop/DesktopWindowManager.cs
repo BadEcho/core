@@ -38,6 +38,21 @@ internal static partial class DesktopWindowManager
         WindowHandle hWnd, DwmWindowAttribute dwAttribute, out RECT pvAttribute, int cbAttribute);
 
     /// <summary>
+    /// Retrieves the current value of a specified Desktop Window Manager attribute applied to a window.
+    /// </summary>
+    /// <param name="hWnd">THe handle to the window form which the attribute value is to be retrieved.</param>
+    /// <param name="dwAttribute">A flag describing which value to retrieve.</param>
+    /// <param name="pvAttribute">
+    /// A pointer to a value which, when this function returns successfully, receives the current value of the attribute.
+    /// </param>
+    /// <param name="cbAttribute">The size, in bytes, of the attribute value being received.</param>
+    /// <returns>The result of the operation.</returns>
+    [LibraryImport(LIBRARY_NAME)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial ResultHandle DwmGetWindowAttribute(
+        WindowHandle hWnd, DwmWindowAttribute dwAttribute, out int pvAttribute, int cbAttribute);
+
+    /// <summary>
     /// Sets the value of a specified Desktop Window Manager attribute applied to a window.
     /// </summary>
     /// <param name="hWnd">The handle to the window for which the attribute value is to be set.</param>

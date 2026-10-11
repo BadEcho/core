@@ -145,7 +145,21 @@ public sealed class NativeWindow
     /// </summary>
     public bool IsCloaked
     {
-        get;
+        get
+        {
+            ResultHandle hResult = DesktopWindowManager.DwmGetWindowAttribute(Handle,
+                                                                              DwmWindowAttribute.Cloaked,
+                                                                              out int cloakedReasons,
+                                                                              sizeof(int));
+            if (hResult.Failed())
+            {
+                Logger.Error(Strings.CloakQueryFailure, hResult.GetException());
+                return false;
+            }
+
+            // Anything other than zero is a reason why the window is cloaked.
+            return cloakedReasons != 0;
+        }
         set
         {
             int cloakValue = value ? 1 : 0;
@@ -153,13 +167,8 @@ public sealed class NativeWindow
             ResultHandle hResult =
                 DesktopWindowManager.DwmSetWindowAttribute(Handle, DwmWindowAttribute.Cloak, cloakValue, sizeof(int));
 
-            if (hResult != ResultHandle.Success)
-            {
+            if (hResult.Failed())
                 Logger.Error(Strings.CloakChangeFailure, hResult.GetException());
-                return;
-            }
-
-            field = value;
         }
     }
 

@@ -104,6 +104,45 @@ public class NativeWindowTests
         }
     }
 
+    [Fact]
+    public void IsCloaked_CloakedOutsideProperty_ReturnsTrue()
+    {
+        (WindowHandle handle, LocalWindowWrapper wrapper, NativeWindow window) = CreateWindow(nameof(IsCloaked_CloakedOutsideProperty_ReturnsTrue));
+
+        try
+        {
+            Assert.False(window.IsCloaked);
+
+            ResultHandle hResult = DesktopWindowManager.DwmSetWindowAttribute(handle, DwmWindowAttribute.Cloak, 1, sizeof(int));
+
+            Assert.False(hResult.Failed());
+            Assert.True(window.IsCloaked);
+        }
+        finally
+        {
+            DestroyWindow(handle, wrapper);
+        }
+    }
+
+    [Fact]
+    public void IsCloaked_SetThenCleared_ReflectsState()
+    {
+        (WindowHandle handle, LocalWindowWrapper wrapper, NativeWindow window) = CreateWindow(nameof(IsCloaked_SetThenCleared_ReflectsState));
+
+        try
+        {
+            window.IsCloaked = true;
+            Assert.True(window.IsCloaked);
+
+            window.IsCloaked = false;
+            Assert.False(window.IsCloaked);
+        }
+        finally
+        {
+            DestroyWindow(handle, wrapper);
+        }
+    }
+
     private static (WindowHandle Handle, LocalWindowWrapper Wrapper, NativeWindow Window) CreateWindow(string className)
     {
         WindowHandle handle = TestWindow.Create(className);

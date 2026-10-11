@@ -115,6 +115,15 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to determine whether the window was cloaked..
+        /// </summary>
+        public static string CloakQueryFailure {
+            get {
+                return ResourceManager.GetString("CloakQueryFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} returned when attempting to apply staged display settings..
         /// </summary>
         public static string DisplayApplyDisplaySettingsFailed {
