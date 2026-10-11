@@ -54,6 +54,9 @@ public class WindowSubclassTests
         Assert.Throws<ObjectDisposedException>(() => subclass.Attach(handle));
     }
 
+    /// <suppressions>
+    /// ReSharper disable AccessToModifiedClosure
+    /// </suppressions>
     [Fact]
     public async Task Dispose_FromOtherThread_RestoresWindowProcedure()
     {
@@ -86,8 +89,7 @@ public class WindowSubclassTests
 
         Assert.Equal(countAfterDispose, Volatile.Read(ref callbackCount));
     }
-
-
+    
     private static ProcedureResult PassThrough(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
         => new(IntPtr.Zero, false);
 }

@@ -183,9 +183,6 @@
 	<data name="SubclassAlreadyAttached" xml:space="preserve">
 		<value>The subclass has already been attached to a window.</value>
 	</data>
-  <data name="SubclassDetachedWndProc" xml:space="preserve">
-    <value>Subclass message processing procedure invoked while in a detached state.</value>
-  </data>
   <data name="SubclassForcibleDetachmentFailed" xml:space="preserve">
     <value>Unable to forcibly detach a subclassed window's WndProc from the window's message chain.</value>
   </data>

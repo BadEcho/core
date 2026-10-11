@@ -628,15 +628,6 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Subclass message processing procedure invoked while in a detached state..
-        /// </summary>
-        public static string SubclassDetachedWndProc {
-            get {
-                return ResourceManager.GetString("SubclassDetachedWndProc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Unable to detach a subclassed window&apos;s WndProc from the window&apos;s message chain..
         /// </summary>
         public static string SubclassDetachmentFailed {

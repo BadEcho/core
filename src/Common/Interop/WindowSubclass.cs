@@ -178,24 +178,25 @@ internal sealed class WindowSubclass : IDisposable
     /// </remarks>
     internal IntPtr WndProc(IntPtr hWnd, uint msg, nint wParam, nint lParam)
     {
-        var lResult = IntPtr.Zero;
         var message = (WindowMessage)msg;
+
+        // We really shouldn't be getting called if we're already detached -- however we don't want to throw an exception that will be unwound through native code,
+        // so really, the best we can do is just pass the message on to the default window procedure.
+        if (_state == AttachmentState.Detached)
+            return User32.CallWindowProc(_DefaultWindowProc, hWnd, message, wParam, lParam);
+
+        var lResult = IntPtr.Zero;
         bool handled = false;
         IntPtr oldWndProc = IntPtr.Zero;
 
         // This is being called by native code, and an exception unwinding through DispatchMessage/CallWindowProc results
         // in undefined behavior according to Microsoft. So, is no bueno.
         try
-        {   
-            switch (_state)
+        {
+            if (_state == AttachmentState.Unattached)
             {
-                case AttachmentState.Unattached:
-                    var window = new WindowHandle(hWnd, false);
-                    Attach(window, WndProc, _DefaultWindowProc);
-                    break;
-
-                case AttachmentState.Detached:
-                    throw new InvalidOperationException(Strings.SubclassDetachedWndProc);
+                var window = new WindowHandle(hWnd, false);
+                Attach(window, WndProc, _DefaultWindowProc);
             }
 
             oldWndProc = _oldWndProc;
@@ -260,7 +261,14 @@ internal sealed class WindowSubclass : IDisposable
     {
         IntPtr hModule = User32.GetModuleHandle();
 
-        return Kernel32.GetProcAddress(hModule, User32.ExportDefWindowProcW);
+        if (hModule == nint.Zero)
+            throw new Win32Exception(Marshal.GetLastWin32Error());
+
+        nint defaultWindowProc = Kernel32.GetProcAddress(hModule, User32.ExportDefWindowProcW);
+
+        return defaultWindowProc != nint.Zero
+            ? defaultWindowProc
+            : throw new Win32Exception(Marshal.GetLastWin32Error());
     }
 
     private static void RestoreWindowProc(WindowHandle window, IntPtr procToRestore, bool forceClose)
