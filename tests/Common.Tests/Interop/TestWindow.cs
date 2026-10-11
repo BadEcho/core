@@ -58,7 +58,7 @@ internal static class TestWindow
         windowClass.Icon = IntPtr.Zero;
         windowClass.Cursor = IntPtr.Zero;
         windowClass.BackgroundBrush = IntPtr.Zero;
-        windowClass.MenuName = string.Empty;
+        windowClass.MenuName = null;
         windowClass.Name = className;
         windowClass.SmallIcon = IntPtr.Zero;
 

@@ -182,7 +182,6 @@ public sealed class MessageOnlyWindowWrapper : WindowWrapper, IDisposable
                               Cursor = IntPtr.Zero,
                               Icon = IntPtr.Zero,
                               Instance = hInstance,
-                              MenuName = string.Empty,
                               SmallIcon = IntPtr.Zero,
                               Style = 0,
                               WindowExtraBytes = 0
