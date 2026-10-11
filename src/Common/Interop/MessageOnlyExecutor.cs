@@ -517,16 +517,22 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
         }
     }
 
-    private static void LoopMessages(IThreadExecutorFrame frame)
+    private void LoopMessages(IThreadExecutorFrame frame)
     {
         var msg = new MSG();
 
         while (frame.ShouldContinue)
         {   // This is very much the style of the traditional Win32 message queue loop. Get, Translate, and then Dispatch the message.
             int result = User32.GetMessage(ref msg, nint.Zero, 0, 0);
-            
+
             if (result == 0) // WM_QUIT was received.
+            {   // Post it again so outer frames receive the quit as well.
+                if (_framesRunning > 1)
+                    User32.PostQuitMessage((int) msg.wParam.ToInt64());
+
+                StartShutdown();
                 break;
+            }
 
             if (result == -1) // Retrieval itself failed; retrying again would most likely just fail again.
                 throw new Win32Exception(Marshal.GetLastWin32Error());

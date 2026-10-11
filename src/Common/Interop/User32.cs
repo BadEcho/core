@@ -821,6 +821,14 @@ internal static partial class User32
     public static partial bool PostMessage(WindowHandle hWnd, WindowMessage msg, IntPtr wParam, IntPtr lParam);
 
     /// <summary>
+    /// Indicates to the system that a thread has made a request to terminate (quit).
+    /// </summary>
+    /// <param name="nExitCode">The application exit code, used as the <c>wParam</c> of the <c>WM_QUIT</c> message.</param>
+    [LibraryImport(LibraryName)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial void PostQuitMessage(int nExitCode);
+    
+    /// <summary>
     /// Passes message information to the specified window procedure.
     /// </summary>
     /// <param name="wndProc">The previous window procedure.</param>

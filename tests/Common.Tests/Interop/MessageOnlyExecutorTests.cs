@@ -525,6 +525,48 @@ public class MessageOnlyExecutorTests
     }
 
     [Fact]
+    public async Task Run_QuitPostedInNestedFrame_ShutsDown()
+    {
+        using var executor = new MessageOnlyExecutor();
+
+        Task run = Task.Factory.StartNew(executor.Run,
+                                         CancellationToken.None,
+                                         TaskCreationOptions.LongRunning,
+                                         TaskScheduler.Default);
+        // Completes once the executor is running.
+        await executor.InvokeAsync(() => { });
+
+        executor.Invoke(() =>
+        {
+            User32.PostQuitMessage(0);
+            executor.PushFrame(executor.CreateFrame());
+        });
+
+        await run.WaitAsync(TimeSpan.FromSeconds(5));
+
+        Assert.True(executor.IsShutdownComplete);
+    }
+
+    [Fact]
+    public async Task Run_QuitPostedInMainFrame_ShutsDown()
+    {
+        using var executor = new MessageOnlyExecutor();
+
+        Task run = Task.Factory.StartNew(executor.Run,
+                                         CancellationToken.None,
+                                         TaskCreationOptions.LongRunning,
+                                         TaskScheduler.Default);
+        await executor.InvokeAsync(() => { });
+
+        executor.Invoke(() => User32.PostQuitMessage(0));
+
+        await run.WaitAsync(TimeSpan.FromSeconds(5));
+
+        Assert.True(executor.IsShutdownComplete);
+    }
+
+
+    [Fact]
     public async Task StartAsync_WithRequestsDisabled_CreatesNoWindow()
     {
         using var executor = new MessageOnlyExecutor();
