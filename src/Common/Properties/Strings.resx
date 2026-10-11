@@ -204,6 +204,9 @@
   <data name="ExecutorProcessingDisabled" xml:space="preserve">
     <value>The executor's ability to process operations is currently disabled.</value>
   </data>
+	<data name="ClassBackgroundChangeFailure" xml:space="preserve">
+		<value>Failed to change the window class's background brush.</value>
+	</data>
   <data name="ExecutorAlreadyRunning" xml:space="preserve">
     <value>The executor is already running on a thread.</value>
   </data>

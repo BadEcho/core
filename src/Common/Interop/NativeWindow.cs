@@ -307,10 +307,24 @@ public sealed class NativeWindow
         // Win32 COLORREF values use the BGR format.
         int newBrushColor = (b << 16) | (g << 8) | r;
 
-        IntPtr newBrush = Gdi32.CreateSolidBrush(newBrushColor);
-        IntPtr oldBrush = User32.SetClassLongPtr(Handle, WindowClassAttribute.Background, newBrush);
+        nint newBrush = Gdi32.CreateSolidBrush(newBrushColor);
 
-        Gdi32.DeleteObject(oldBrush);
+        if (newBrush == nint.Zero)
+            throw new InvalidOperationException(Strings.ClassBackgroundChangeFailure);
+        
+        nint oldBrush = User32.SetClassLongPtr(Handle, WindowClassAttribute.Background, newBrush);
+
+        // We can't determine if there was a failure just from checking the return value,
+        // as the class may have previously had a NULL brush set (causing zero to be returned), so we just query the class directly.
+        if (User32.GetClassLongPtr(Handle, WindowClassAttribute.Background) != newBrush)
+        {
+            Gdi32.DeleteObject(newBrush);
+            throw new InvalidOperationException(Strings.ClassBackgroundChangeFailure);
+        }
+        
+        // If a non-GDI or a stock object was returned, passing these to DeleteObject is harmless; no pointing attempting to delete a zero-value, however.
+        if (oldBrush != nint.Zero) 
+            Gdi32.DeleteObject(oldBrush);
     }
 
     /// <summary>

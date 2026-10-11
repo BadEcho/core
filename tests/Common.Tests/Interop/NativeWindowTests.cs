@@ -84,6 +84,32 @@ public class NativeWindowTests
     }
 
     [Fact]
+    public void ChangeClassBackground_CalledTwice_ClassUsesLatestBrush()
+    {
+        (WindowHandle handle, LocalWindowWrapper wrapper, NativeWindow window) = CreateWindow(nameof(ChangeClassBackground_CalledTwice_ClassUsesLatestBrush));
+
+        try
+        {
+            window.ChangeClassBackground(255, 0, 0);
+
+            IntPtr firstBrush = User32.GetClassLongPtr(handle, WindowClassAttribute.Background);
+
+            Assert.NotEqual(IntPtr.Zero, firstBrush);
+
+            window.ChangeClassBackground(0, 0, 255);
+
+            IntPtr secondBrush = User32.GetClassLongPtr(handle, WindowClassAttribute.Background);
+
+            Assert.NotEqual(IntPtr.Zero, secondBrush);
+            Assert.NotEqual(firstBrush, secondBrush);
+        }
+        finally
+        {
+            DestroyWindow(handle, wrapper);
+        }
+    }
+
+    [Fact]
     public void MakeOverlay_AlreadyTransparent_AddsLayered()
     {
         (WindowHandle handle, LocalWindowWrapper wrapper, NativeWindow window) = CreateWindow(nameof(MakeOverlay_AlreadyTransparent_AddsLayered));

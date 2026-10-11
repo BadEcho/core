@@ -106,6 +106,15 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to change the window class&apos;s background brush..
+        /// </summary>
+        public static string ClassBackgroundChangeFailure {
+            get {
+                return ResourceManager.GetString("ClassBackgroundChangeFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to cloak or uncloak the window..
         /// </summary>
         public static string CloakChangeFailure {
