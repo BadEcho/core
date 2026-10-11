@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -50,8 +50,13 @@ public sealed class NativeLibraryTransposer
     /// A <see cref="NativeLibraryTransposer"/> instance which may be discarded, as the runtime itself will maintain
     /// a strong reference to it for the lifetime of <c>assembly</c>.
     /// </returns>
+    /// <remarks>
+    /// The runtime only allows one resolver per assembly; calling this multiple times for the same assembly will result
+    /// in an exception.
+    /// </remarks>
     public static NativeLibraryTransposer Create(Assembly assembly, string baseDirectory)
     {
+        Require.NotNull(assembly, nameof(assembly));
         Require.NotNull(baseDirectory, nameof(baseDirectory));
 
         return new NativeLibraryTransposer(assembly, baseDirectory);
