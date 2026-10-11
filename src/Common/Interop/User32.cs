@@ -583,11 +583,13 @@ internal static partial class User32
     /// </param>
     /// <param name="uMsgFilterMin">The integer value of the lowest message value to be retrieved.</param>
     /// <param name="uMsgFilterMax">The integer value of the highest message value to be retrieved.</param>
-    /// <returns>If successful, true; otherwise, false.</returns>
-    [LibraryImport(LibraryName, EntryPoint = "GetMessageW")]
-    [return: MarshalAs(UnmanagedType.Bool)]
+    /// <returns>
+    /// A nonzero value if a message other than <c>WM_QUIT</c> was retrieved; otherwise, zero if <c>WM_QUIT</c> was retrieved
+    /// or -1 if an error occurred.
+    /// </returns>
+    [LibraryImport(LibraryName, EntryPoint = "GetMessageW", SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    public static partial bool GetMessage(ref MSG lpMsg, IntPtr hWnd, uint uMsgFilterMin, uint uMsgFilterMax);
+    public static partial int GetMessage(ref MSG lpMsg, IntPtr hWnd, uint uMsgFilterMin, uint uMsgFilterMax);
 
     /// <summary>
     /// Sends the specified message to one or more window.

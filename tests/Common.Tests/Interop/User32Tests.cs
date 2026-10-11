@@ -105,13 +105,31 @@ public class User32Tests
                                   {
                                       WindowHandle handle = TestWindow.Create("GetMessage_ReturnsTrue");
 
-                                      Assert.True(User32.GetMessage(ref msg, handle.DangerousGetHandle(), 0, 0));
+                                      Assert.True(User32.GetMessage(ref msg, handle.DangerousGetHandle(), 0, 0) > 0);
                                   });
 
         User32.SendMessage(WindowHandle.InvalidHandle, (WindowMessage) 1, IntPtr.Zero, IntPtr.Zero);
 
         await getMessage.WaitAsync(TimeSpan.FromMinutes(1.0));
     }
+
+    [Fact]
+    public async Task GetMessage_DestroyedWindow_ReturnsError()
+    {
+        int result = await Task.Run(() =>
+        {
+            var msg = new MSG();
+            WindowHandle handle = TestWindow.Create("GetMessage_DestroyedWindow_ReturnsError");
+            IntPtr hWnd = handle.DangerousGetHandle();
+
+            handle.Dispose();
+
+            return User32.GetMessage(ref msg, hWnd, 0, 0);
+        }).WaitAsync(TimeSpan.FromSeconds(10));
+
+        Assert.Equal(-1, result);
+    }
+
 
     [Fact]
     public void TranslateMessage_NoMessage_ReturnsFalse()

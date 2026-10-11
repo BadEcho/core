@@ -11,6 +11,8 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System.ComponentModel;
+using System.Runtime.InteropServices;
 using BadEcho.Logging;
 using BadEcho.Properties;
 using BadEcho.Threading;
@@ -521,9 +523,14 @@ public sealed class MessageOnlyExecutor : IThreadExecutor, IDisposable
 
         while (frame.ShouldContinue)
         {   // This is very much the style of the traditional Win32 message queue loop. Get, Translate, and then Dispatch the message.
-            if (!User32.GetMessage(ref msg, IntPtr.Zero, 0, 0))
-                break;
+            int result = User32.GetMessage(ref msg, nint.Zero, 0, 0);
             
+            if (result == 0) // WM_QUIT was received.
+                break;
+
+            if (result == -1) // Retrieval itself failed; retrying again would most likely just fail again.
+                throw new Win32Exception(Marshal.GetLastWin32Error());
+
             User32.TranslateMessage(ref msg);
             User32.DispatchMessage(ref msg);
         }
