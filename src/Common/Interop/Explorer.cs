@@ -30,9 +30,9 @@ public static class Explorer
     /// <returns>The result of invoking the Windows Shell.</returns>
     public static ShellResult OpenFolder(string path)
     {
-        int result = Shell32.ShellExecute(nint.Zero, VERB_EXPLORE, path, null, null, 1);
+        nint result = Shell32.ShellExecute(nint.Zero, VERB_EXPLORE, path, null, null, 1);
 
-        return result > 32 ? ShellResult.Success : (ShellResult) result;
+        return ToShellResult(result);
     }
 
     /// <summary>
@@ -51,9 +51,9 @@ public static class Explorer
     /// <returns>The result of invoking the Windows Shell.</returns>
     public static ShellResult Open(string path, string? parameters)
     {
-        int result = Shell32.ShellExecute(nint.Zero, VERB_OPEN, path, parameters, null, 1);
+        nint result = Shell32.ShellExecute(nint.Zero, VERB_OPEN, path, parameters, null, 1);
 
-        return result > 32 ? ShellResult.Success : (ShellResult) result;
+        return ToShellResult(result);
     }
 
     /// <summary>
@@ -85,4 +85,11 @@ public static class Explorer
 
         return path;
     }
+
+    private static ShellResult ToShellResult(nint result)
+        => result switch
+        {
+            > 32 => ShellResult.Success,
+            _ => (ShellResult) (int) result
+        };
 }

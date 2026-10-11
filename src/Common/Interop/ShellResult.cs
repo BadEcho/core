@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -19,9 +19,9 @@ namespace BadEcho.Interop;
 public enum ShellResult
 {
     /// <summary>
-    /// The operation was successful.
+    /// The operating system is out of memory or resources.
     /// </summary>
-    Success = 0,
+    SystemOutOfMemory = 0,
     /// <summary>
     /// The specified file was not found.
     /// </summary>
@@ -69,5 +69,9 @@ public enum ShellResult
     /// <summary>
     /// The specified DLL was not found.
     /// </summary>
-    DllNotFound
+    DllNotFound,
+    /// <summary>
+    /// The operation was successful.
+    /// </summary>
+    Success
 }

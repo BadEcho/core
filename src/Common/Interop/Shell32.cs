@@ -59,10 +59,10 @@ internal static partial class Shell32
     /// </returns>
     [LibraryImport(LIBRARY_NAME, EntryPoint = "ShellExecuteW", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    public static partial int ShellExecute(nint hWnd,
-                                           string lpOperation,
-                                           string? lpFile,
-                                           string? lpParameters,
-                                           string? lpDirectory,
-                                           int nShowCmd);
+    public static partial nint ShellExecute(nint hWnd,
+                                            string lpOperation,
+                                            string? lpFile,
+                                            string? lpParameters,
+                                            string? lpDirectory,
+                                            int nShowCmd);
 }
