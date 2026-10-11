@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -49,9 +49,9 @@ public enum ResultHandle
     /// </summary>
     TypeElementNotFound = unchecked((int)0x8002802B),
     /// <summary>
-    /// Indicates that a requested resource is read-only. Corresponds to STG_E_ACCESSDENIED.
+    /// Indicates that a requested storage resource is read-only. Corresponds to STG_E_ACCESSDENIED.
     /// </summary>
-    AccessDenied = unchecked((int)0x80030005),
+    StorageAccessDenied = unchecked((int)0x80030005),
     /// <summary>
     /// Indicates that the class is not registered in the registry. Corresponds to REGDB_E_CLASSNOTREG.
     /// </summary>
@@ -64,6 +64,10 @@ public enum ResultHandle
     /// Indicates that a specified object could not be found. Corresponds to NO_OBJECT
     /// </summary>
     NoObject = unchecked((int)0x800401E5),
+    /// <summary>
+    /// Indicates that access was denied. Corresponds to E_ACCESSDENIED.
+    /// </summary>
+    AccessDenied = unchecked((int)0x80070005),
     /// <summary>
     /// Indicates that invalid arguments were provided. Corresponds to E_INVALIDARG.
     /// </summary>
