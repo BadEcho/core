@@ -63,4 +63,61 @@ public class NativeWindowTests
 
         Assert.Equal(className, window.ClassName);
     }
+    [Fact]
+    public void MakeOverlay_NotLayered_AppliesTransparentAndLayered()
+    {
+        (WindowHandle handle, LocalWindowWrapper wrapper, NativeWindow window) = CreateWindow(nameof(MakeOverlay_NotLayered_AppliesTransparentAndLayered));
+
+        try
+        {
+            window.MakeOverlay();
+
+            var extendedStyle = (ExtendedWindowStyles)User32.GetWindowLongPtr(handle, WindowAttribute.ExtendedStyle);
+
+            Assert.True(extendedStyle.HasFlag(ExtendedWindowStyles.Transparent));
+            Assert.True(extendedStyle.HasFlag(ExtendedWindowStyles.Layered));
+        }
+        finally
+        {
+            DestroyWindow(handle, wrapper);
+        }
+    }
+
+    [Fact]
+    public void MakeOverlay_AlreadyTransparent_AddsLayered()
+    {
+        (WindowHandle handle, LocalWindowWrapper wrapper, NativeWindow window) = CreateWindow(nameof(MakeOverlay_AlreadyTransparent_AddsLayered));
+
+        try
+        {
+            window.ChangeExtendedStyles(ExtendedWindowStyles.Transparent, true);
+
+            window.MakeOverlay();
+
+            var extendedStyle = (ExtendedWindowStyles)User32.GetWindowLongPtr(handle, WindowAttribute.ExtendedStyle);
+
+            Assert.True(extendedStyle.HasFlag(ExtendedWindowStyles.Layered));
+        }
+        finally
+        {
+            DestroyWindow(handle, wrapper);
+        }
+    }
+
+    private static (WindowHandle Handle, LocalWindowWrapper Wrapper, NativeWindow Window) CreateWindow(string className)
+    {
+        WindowHandle handle = TestWindow.Create(className);
+
+        Assert.False(handle.IsInvalid);
+
+        var wrapper = new LocalWindowWrapper(handle);
+
+        return (handle, wrapper, new NativeWindow(wrapper));
+    }
+
+    private static void DestroyWindow(WindowHandle handle, LocalWindowWrapper wrapper)
+    {
+        wrapper.Dispose();
+        User32.DestroyWindow(handle.DangerousGetHandle());
+    }
 }

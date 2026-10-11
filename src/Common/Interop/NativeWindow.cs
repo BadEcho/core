@@ -354,32 +354,34 @@ public sealed class NativeWindow
     /// Sets the windows extended style information so that said window acts as transparent overlay which all input passes through.
     /// </summary>
     /// <remarks>
-    /// <para>
-    /// Some user interface frameworks, such as WPF, allow for the developer to set a window to transparent, which is something
-    /// we may wish to do if we are interested in constructing a transparent overlay showing information. Simply setting a window
-    /// as transparent (at least in the case of WPF), is not sufficient to create a true overlay, as the window can still grab focus,
-    /// preventing a total click-through experience, especially if there are any controls on the window (which there is a pretty
-    /// good chance of).
-    /// </para>
-    /// <para>
     /// This method can be used to make any window a completely transparent overlay for which all input events will simply pass through
     /// to the window beneath it. Note that this method will only make it transparent in terms of its behavior; additional means are
     /// required in order to make the window visually transparent.
-    /// </para>
     /// </remarks>
     public void MakeOverlay()
     {
-        var extendedStyle = (ExtendedWindowStyles) User32.GetWindowLongPtr(Handle, WindowAttribute.ExtendedStyle);
+        const ExtendedWindowStyles overlayStyles = ExtendedWindowStyles.Layered | ExtendedWindowStyles.Transparent;
 
-        // Check if the transparency style is already applied.
-        if (extendedStyle.HasFlag(ExtendedWindowStyles.Transparent))
+        var extendedStyles = (ExtendedWindowStyles) User32.GetWindowLongPtr(Handle, WindowAttribute.ExtendedStyle);
+
+        // Check if the overlay styles are already applied.
+        if ((extendedStyles & overlayStyles) == overlayStyles)
             return;
 
-        extendedStyle |= ExtendedWindowStyles.Transparent;
-        
+        // Some UI frameworks will create their windows as layered when marked as transparent; normal windows will not have this
+        // set by default.
+        bool wasLayered = extendedStyles.HasFlag(ExtendedWindowStyles.Layered);
+
+        extendedStyles |= overlayStyles;
+
         User32.SetWindowLongPtr(Handle,
                                 WindowAttribute.ExtendedStyle,
-                                new IntPtr((int) extendedStyle));
+                                new IntPtr((int) extendedStyles));
+
+        // If a window has just been made layered, we need to set its layering attributes, otherwise it won't get drawn.
+        // If it was already layered prior to this call, we don't want to touch this.
+        if (!wasLayered && !User32.SetLayeredWindowAttributes(Handle, 0, byte.MaxValue, LayeredWindowAttributeFlags.Alpha))
+            throw new Win32Exception(Marshal.GetLastWin32Error());
     }
 
     /// <summary>

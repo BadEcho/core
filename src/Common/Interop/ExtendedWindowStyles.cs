@@ -37,5 +37,9 @@ public enum ExtendedWindowStyles
     /// <summary>
     /// The window itself contains child windows that should take part in dialog box navigation.
     /// </summary>
-    ControlParent = 0x00010000
+    ControlParent = 0x00010000,
+    /// <summary>
+    /// The window is a layered window, which allows it to be composited with per-window opacity or a transparency color key.
+    /// </summary>
+    Layered = 0x00080000
 }

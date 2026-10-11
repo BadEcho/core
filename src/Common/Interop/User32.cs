@@ -709,6 +709,19 @@ internal static partial class User32
                                             int cy,
                                             WindowPositionFlags uFlags);
     /// <summary>
+    /// Sets the opacity and transparency color key of a layered window.
+    /// </summary>
+    /// <param name="hWnd">A handle to the layered window.</param>
+    /// <param name="crKey">The transparency color key to be used when composing the layered window.</param>
+    /// <param name="bAlpha">The alpha value used to describe the opacity of the layered window.</param>
+    /// <param name="dwFlags">An action to be taken.</param>
+    /// <returns>True if successful; otherwise, false.</returns>
+    [LibraryImport(LibraryName, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool SetLayeredWindowAttributes(WindowHandle hWnd, int crKey, byte bAlpha, LayeredWindowAttributeFlags dwFlags);
+
+    /// <summary>
     /// Changes the text of the specified window's title bar. If the specified window is a control, then the text of the control
     /// is changed.
     /// </summary>
