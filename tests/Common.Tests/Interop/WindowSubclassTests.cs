@@ -54,6 +54,40 @@ public class WindowSubclassTests
         Assert.Throws<ObjectDisposedException>(() => subclass.Attach(handle));
     }
 
+    [Fact]
+    public async Task Dispose_FromOtherThread_RestoresWindowProcedure()
+    {
+        using var executor = new MessageOnlyExecutor();
+
+        await executor.StartAsync();
+
+        WindowHandle handle = executor.Window!.Handle;
+        int callbackCount = 0;
+
+        IntPtr original = executor.Invoke(() => User32.GetWindowLongPtr(handle, WindowAttribute.WindowProcedure));
+        LocalWindowWrapper wrapper = executor.Invoke(() => new LocalWindowWrapper(handle))!;
+
+        wrapper.AddCallback((_, _, _, _) =>
+        {
+            Interlocked.Increment(ref callbackCount);
+            return new ProcedureResult(IntPtr.Zero, false);
+        });
+
+        // Disposed from the test thread while the executor's thread pumps the window's messages.
+        wrapper.Dispose();
+
+        IntPtr restored = executor.Invoke(() => User32.GetWindowLongPtr(handle, WindowAttribute.WindowProcedure));
+
+        Assert.Equal(original, restored);
+
+        int countAfterDispose = Volatile.Read(ref callbackCount);
+
+        User32.SendMessage(handle, WindowMessage.Null, IntPtr.Zero, IntPtr.Zero);
+
+        Assert.Equal(countAfterDispose, Volatile.Read(ref callbackCount));
+    }
+
+
     private static ProcedureResult PassThrough(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
         => new(IntPtr.Zero, false);
 }

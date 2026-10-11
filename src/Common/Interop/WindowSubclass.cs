@@ -127,6 +127,8 @@ internal sealed class WindowSubclass : IDisposable
     {
         Require.NotNull(window, nameof(window));
 
+        ObjectDisposedException.ThrowIf(_disposed, GetType());
+
         if (_state != AttachmentState.Unattached)
             throw new InvalidOperationException(Strings.SubclassAlreadyAttached);
         
@@ -142,11 +144,11 @@ internal sealed class WindowSubclass : IDisposable
             return;
 
         _disposed = true;
-
+        
         // If the window was subclassed by something else after we attached, removing ourselves would break their part
         // of the chain, so we're left in it. The window can still call into us, so we must stay pinned; detachment (and with it, unpinning)
-        // is completed once the window received WM_NCDESTROY.
-        if (!RemoveCallback(false))
+        // is completed once the window receives WM_NCDESTROY.
+        if (!RemoveCallbackLocally())
             return;
 
         // If somehow we're still pinned, unpin ourselves so that we can get garbage collected.
@@ -376,6 +378,25 @@ internal sealed class WindowSubclass : IDisposable
             Logger.Warning(forcibly ? Strings.SubclassForcibleDetachmentFailed : Strings.SubclassDetachmentFailed);
 
         return detached;
+    }
+
+    private bool RemoveCallbackLocally()
+    {   // Removing the callback changes the installed window procedure as well as fields that our window procedure relies on.
+        // So, we want to make sure that any change to the callback is done on the window's own thread so removal isn't concurrent
+        // with an executing window procedure.
+        if (_state is AttachmentState.Unattached or AttachmentState.Detached || _window == null)
+            return true;
+
+        uint windowThreadId = User32.GetWindowThreadProcessId(_window, nint.Zero);
+
+        // If the window no longer exists, we don't need to worry about anything calling into us during removal.
+        if (windowThreadId == 0)
+            return RemoveCallback(true);
+
+        if (windowThreadId == Kernel32.GetCurrentThreadId())
+            return RemoveCallback(false);
+        
+        return User32.SendMessage(_window, _DetachMessage, (nint)_handle, nint.Zero) != nint.Zero;
     }
 
     /// <remarks>
