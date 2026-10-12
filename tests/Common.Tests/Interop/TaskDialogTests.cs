@@ -11,6 +11,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System.Reflection;
 using BadEcho.Interop;
 using BadEcho.Interop.Dialogs;
 using Xunit;
@@ -426,6 +427,59 @@ public class TaskDialogTests
 
         Assert.True(_okButton.IsElevated);
     }
+
+    [Fact]
+    public void Click_UserClicksAfterGarbageCollection_ClicksNotIgnored()
+    {
+        int okClicks = 0;
+        int ticks = 0;
+
+        _okButton.ClosesDialog = false;
+        _okButton.Clicked += (_, _) => okClicks++;
+        _configuration.Ticked += SimulateUserClicks;
+
+        TaskDialog.Show(_configuration);
+
+        Assert.Equal(2, okClicks);
+
+        void SimulateUserClicks(object? sender, EventArgs<int> e)
+        {
+            ticks++;
+
+            switch (ticks)
+            {
+                case 1:
+                    // Anything only weakly referenced by the dialog's subclass is reclaimed here.
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                    GC.Collect();
+
+                    SendUserClick(_configuration, TaskDialogResult.OK);
+                    break;
+
+                case 3:
+                    SendUserClick(_configuration, TaskDialogResult.OK);
+                    break;
+
+                case 4:
+                    _cancelButton.Click();
+                    break;
+            }
+        }
+    }
+
+    private static IntPtr GetDialogWindow(TaskDialogConfiguration configuration)
+    {
+        FieldInfo windowField
+            = typeof(TaskDialog).GetField("_window", BindingFlags.NonPublic | BindingFlags.Instance)
+              ?? throw new MissingFieldException(nameof(TaskDialog), "_window");
+
+        return (IntPtr)windowField.GetValue(configuration.Host)!;
+    }
+
+    private static void SendUserClick(TaskDialogConfiguration configuration, TaskDialogResult result)
+        // Bypasses TaskDialogButton.Click so that the dialog processes the click as if it came from the user.
+        => ComCtl32.SendTaskDialogMessage(GetDialogWindow(configuration), TaskDialogMessage.ClickButton, (int)result, 0);
 
     private void ClickOKButton(object? sender, EventArgs e)
     {

@@ -27,6 +27,7 @@ public sealed class TaskDialog : IDisposable
         = User32.RegisterWindowMessage("TaskDialog.ButtonClickContinuationEvent");
     
     private readonly Queue<TaskDialogConfiguration> _pendingNavigations = new();
+    private readonly WindowProcedure _windowProcedure;
     private readonly WindowSubclass _subclass;
 
     private TaskDialogButton? _selectedButton;
@@ -42,8 +43,9 @@ public sealed class TaskDialog : IDisposable
     /// Initializes a new instance of the <see cref="TaskDialog"/> class.
     /// </summary>
     private TaskDialog()
-    {
-        _subclass = new WindowSubclass(WindowProcedure);
+    {   // We need to pin this delegate, since the subclass only weakly references it.
+        _windowProcedure = WindowProcedure;
+        _subclass = new WindowSubclass(_windowProcedure);
     }
 
     /// <summary>

@@ -23,6 +23,7 @@ namespace BadEcho.Interop;
 /// </remarks>
 public sealed class LocalWindowWrapper : WindowWrapper, IDisposable
 {
+    private readonly WindowProcedure _windowProcedure;
     private readonly WindowSubclass _subclass;
     private bool _disposed;
 
@@ -32,8 +33,9 @@ public sealed class LocalWindowWrapper : WindowWrapper, IDisposable
     /// <param name="handle">A handle to the window being wrapped.</param>
     public LocalWindowWrapper(WindowHandle handle) 
         : base(handle)
-    {
-        _subclass = new WindowSubclass(WindowProcedure);
+    {   // We need to pin this delegate, since the subclass only weakly references it.
+        _windowProcedure = WindowProcedure;
+        _subclass = new WindowSubclass(_windowProcedure);
 
         _subclass.Attach(handle);
     }
