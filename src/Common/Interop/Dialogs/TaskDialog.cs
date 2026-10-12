@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -21,13 +21,16 @@ namespace BadEcho.Interop.Dialogs;
 /// Provides a task dialog, which is a dialog box fancier than your run-of-the-mill message box used to display information
 /// and receive simple input from the user.
 /// </summary>
+/// <suppressions>
+/// ReSharper disable PrivateFieldCanBeConvertedToLocalVariable
+/// </suppressions>
 public sealed class TaskDialog : IDisposable
 {
     private static readonly WindowMessage _ButtonClickContinuationEvent
         = User32.RegisterWindowMessage("TaskDialog.ButtonClickContinuationEvent");
     
     private readonly Queue<TaskDialogConfiguration> _pendingNavigations = new();
-    private readonly WindowProcedure _windowProcedure;
+    private readonly WindowProcedure _callback;
     private readonly WindowSubclass _subclass;
 
     private TaskDialogButton? _selectedButton;
@@ -44,8 +47,8 @@ public sealed class TaskDialog : IDisposable
     /// </summary>
     private TaskDialog()
     {   // We need to pin this delegate, since the subclass only weakly references it.
-        _windowProcedure = WindowProcedure;
-        _subclass = new WindowSubclass(_windowProcedure);
+        _callback = WindowProcedure;
+        _subclass = new WindowSubclass(_callback);
     }
 
     /// <summary>
