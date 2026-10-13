@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -28,6 +28,7 @@ public sealed class PopupMenu : IDisposable
     private readonly WindowWrapper _windowWrapper;
     private readonly MenuHandle _menu;
 
+    private int _nextId = 1;
     private bool _disposed;
 
     /// <summary>
@@ -79,11 +80,12 @@ public sealed class PopupMenu : IDisposable
     {
         // The menu item identifier must at least be 1, as a value of 0 is returned in the event nothing is clicked on
         // the menu (or if an error occurs).
-        var newItem = new MenuItem(_items.Count + 1, label);
+        var newItem = new MenuItem(_nextId, label);
 
         if (!User32.AppendMenu(_menu, flags, (uint)newItem.Id, newItem.Label))
             throw new Win32Exception(Marshal.GetLastWin32Error());
 
+        _nextId++;
         _items.Add(newItem);
 
         return newItem;
@@ -176,7 +178,7 @@ public sealed class PopupMenu : IDisposable
         // Since we're using TrackMenuFlags.ReturnCommand, the return value will be zero if either nothing
         // was clicked or an error occurred. Unfortunately, if zero is returned, there is no way to discern
         // between the two. So, we just always assume the user made no selection.
-        return result != 0 ? _items[result - 1] : null;
+        return result != 0 ? _items.Find(i => i.Id == result) : null;
     }
 
     /// <inheritdoc />
