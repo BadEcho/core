@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -29,7 +29,15 @@ namespace BadEcho.Interop;
 public sealed class NotifyIcon : IDisposable
 {
     private static readonly WindowMessage _TrayEvent
-        = User32.RegisterWindowMessage("NotificationAreaIcon.TrayEvent");
+        = User32.RegisterWindowMessage("NotifyIcon.TrayEvent");
+
+    /// <summary>
+    /// The WM_TASKBARCREATED message is dynamically registered by explorer at system startup.
+    /// Somewhat of a less-than-obvious feature; we register the message here so we can be notified
+    /// when a new taskbar is being created (due to explorer crashing, etc.)
+    /// </summary>
+    private static readonly WindowMessage _TaskbarCreated
+        = User32.RegisterWindowMessage("TaskbarCreated");
 
     private static readonly int _BitDepth
         = LoadBitDepth();
@@ -395,17 +403,20 @@ public sealed class NotifyIcon : IDisposable
             
         if (_isVisible)
         {
-            var message = _isAdded ? NotifyIconMessage.Modify : NotifyIconMessage.Add;
+            if (_isAdded && Shell32.Shell_NotifyIcon(NotifyIconMessage.Modify, ref iconData))
+                return;
 
-            if (!Shell32.Shell_NotifyIcon(message, ref iconData))
+            // Either the icon hasn't been added yet, or the shell no longer knows of the icon due to the notification
+            // area being recreated.
+            if (!Shell32.Shell_NotifyIcon(NotifyIconMessage.Add, ref iconData))
                 throw new Win32Exception(Strings.NotifyIconAddModifyFailed);
-            
+
             _isAdded = true;
         }
-        else
+        else if (_isAdded)
         {
             if (!Shell32.Shell_NotifyIcon(NotifyIconMessage.Delete, ref iconData))
-                throw new Win32Exception(Strings.NotifyIconDeleteFailed);
+                Logger.Warning(Strings.NotifyIconDeleteFailed);
 
             _isAdded = false;
         } 
@@ -430,6 +441,22 @@ public sealed class NotifyIcon : IDisposable
                 case WindowMessage.RightButtonUp:
                     RightClicked?.Invoke(this, EventArgs.Empty);
                     break;
+            }
+        }
+        else if (_TaskbarCreated == message)
+        {
+            _isAdded = false;
+
+            if (_isVisible)
+            {
+                try
+                {
+                    Update();
+                }
+                catch (Win32Exception ex)
+                {
+                    Logger.Error(Strings.NotifyIconRestoreFailed, ex);
+                }
             }
         }
         else if (WindowMessage.Destroy == message) 

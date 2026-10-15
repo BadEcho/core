@@ -601,6 +601,15 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to restore the icon to the taskbar&apos;s notification area after the taskbar was recreated..
+        /// </summary>
+        public static string NotifyIconRestoreFailed {
+            get {
+                return ResourceManager.GetString("NotifyIconRestoreFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to set popup as the foreground window. The menu will not disappear if the user clicks outside of it..
         /// </summary>
         public static string PopupNotInForeground {
