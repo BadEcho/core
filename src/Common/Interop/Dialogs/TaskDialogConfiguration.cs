@@ -441,6 +441,15 @@ public sealed class TaskDialogConfiguration
     }
 
     /// <summary>
+    /// Gets or sets a value indicating whether hyperlink processing for the content, expanded information, and footer is enabled.
+    /// </summary>
+    public bool EnableHyperlinks
+    {
+        get => _flags.HasFlag(TaskDialogFlags.EnableHyperlinks);
+        set => SetFlag(TaskDialogFlags.EnableHyperlinks, value);
+    }
+
+    /// <summary>
     /// Gets or sets the width of the dialog in dialog units. Leave this unset for the ideal width to be automatically calculated.
     /// </summary>
     /// <remarks>This cannot be changed while the dialog is showing.</remarks>
