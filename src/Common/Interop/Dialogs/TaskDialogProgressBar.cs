@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -20,7 +20,7 @@ namespace BadEcho.Interop.Dialogs;
 /// </summary>
 public sealed class TaskDialogProgressBar : TaskDialogControl
 {
-    private TaskDialogProgressBarState _state;
+    private TaskDialogProgressBarState _state = TaskDialogProgressBarState.Normal;
     private TaskDialogProgressBarState _initialState;
     private int _animationSpeed;
     private int _maximum = 100;

@@ -835,6 +835,15 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A task dialog progress bar must be given a state other than None before the dialog is shown..
+        /// </summary>
+        public static string TaskDialogProgressBarStateNotSet {
+            get {
+                return ResourceManager.GetString("TaskDialogProgressBarStateNotSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An unknown task dialog radio button was clicked on. This is very strange, my friend..
         /// </summary>
         public static string TaskDialogUnknownRadioButtonClicked {

@@ -288,6 +288,9 @@
   <data name="NoTaskDialogWindowListening" xml:space="preserve">
 	  <value>Can't send messages to a task dialog window...without a window. The dialog must be shown before its state can be updated.</value>
   </data>
+  <data name="TaskDialogProgressBarStateNotSet" xml:space="preserve">
+    <value>A task dialog progress bar must be given a state other than None before the dialog is shown.</value>
+  </data>
   <data name="TaskDialogChangeRequiresDetachment" xml:space="preserve">
 	  <value>Property cannot be changed while the task dialog is shown.</value>
   </data>

@@ -530,6 +530,9 @@ public sealed class TaskDialogConfiguration
 
         if (!foundDefaultButton)
             throw new InvalidOperationException(Strings.TaskDialogDefaultButtonNotInCollection);
+
+        if (ProgressBar is { State: TaskDialogProgressBarState.None })
+            throw new InvalidOperationException(Strings.TaskDialogProgressBarStateNotSet);
     }
 
     /// <summary>
