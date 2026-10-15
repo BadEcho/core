@@ -106,6 +106,7 @@ public sealed class TaskDialog : IDisposable
         try
         {
             int selectedButtonId;
+            bool verificationChecked;
             ResultHandle hResult;
 
             // Normally, any program wishing to use the Task Dialog API needs to enable Common Controls v6 via an
@@ -116,11 +117,13 @@ public sealed class TaskDialog : IDisposable
                 hResult = ComCtl32.TaskDialogIndirect(ref configuration,
                                                       out selectedButtonId,
                                                       out _,
-                                                      out _);
+                                                      out verificationChecked);
             }
 
             if (hResult.Failed())
                 throw hResult.GetException();
+
+            AttachedConfiguration.UpdateVerificationChecked(verificationChecked);
 
             if (_callbackException != null)
                 ExceptionDispatchInfo.Throw(_callbackException);
@@ -432,7 +435,10 @@ public sealed class TaskDialog : IDisposable
                     break;
 
                 case TaskDialogNotification.VerificationClicked:
-                    AttachedConfiguration.OnVerificationCheckedChange(new EventArgs<bool>(wParam != IntPtr.Zero));
+                    bool isChecked = wParam != IntPtr.Zero;
+
+                    AttachedConfiguration.UpdateVerificationChecked(isChecked);
+                    AttachedConfiguration.OnVerificationCheckedChange(new EventArgs<bool>(isChecked));
                     
                     break;
             }

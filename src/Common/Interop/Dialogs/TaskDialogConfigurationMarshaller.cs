@@ -130,7 +130,8 @@ internal static unsafe class TaskDialogConfigurationMarshaller
                                 nDefaultButton = managed.DefaultButton?.Id ?? 0,
                                 nDefaultRadioButton = managed.DefaultRadioButton?.Id ?? 0,
                                 pfCallback = &NativeCallbackProc,
-                                lpCallbackData = host.Handle
+                                lpCallbackData = host.Handle,
+                                cxWidth = (uint) managed.Width
                             };
 
                 if (managed.Owner != null)

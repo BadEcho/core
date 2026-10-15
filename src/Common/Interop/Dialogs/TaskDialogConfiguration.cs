@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -375,7 +375,7 @@ public sealed class TaskDialogConfiguration
         get => _verificationChecked;
         set
         {
-            if (Attached)
+            if (Attached && value != _verificationChecked)
             {
                 Host.UpdateCheckBox(value);
             }
@@ -441,7 +441,7 @@ public sealed class TaskDialogConfiguration
     }
 
     /// <summary>
-    /// Gets or sets the width of the dialog. Leave this unset for the ideal width to be automatically calculated.
+    /// Gets or sets the width of the dialog in dialog units. Leave this unset for the ideal width to be automatically calculated.
     /// </summary>
     /// <remarks>This cannot be changed while the dialog is showing.</remarks>
     public int Width
@@ -558,6 +558,9 @@ public sealed class TaskDialogConfiguration
         if (DefaultRadioButton == null)
             _controlFlags |= TaskDialogFlags.NoDefaultRadioButton;
 
+        if (_verificationChecked)
+            _controlFlags |= TaskDialogFlags.CheckVerificationFlag;
+
         if (ProgressBar != null)
             _controlFlags |= ProgressBar.Attach(host);
     }
@@ -672,6 +675,13 @@ public sealed class TaskDialogConfiguration
     /// <param name="e">An <see cref="EventArgs{T}"/> instance containing checked state.</param>
     internal void OnVerificationCheckedChange(EventArgs<bool> e)
         => VerificationCheckedChanged?.Invoke(this, e);
+
+    /// <summary>
+    /// Records the checked state of the verification check box without triggering any events.
+    /// </summary>
+    /// <param name="isChecked">Value indicating the checked state.</param>
+    internal void UpdateVerificationChecked(bool isChecked)
+        => _verificationChecked = isChecked;
 
     private void SetFlag(TaskDialogFlags flag, bool value)
     {

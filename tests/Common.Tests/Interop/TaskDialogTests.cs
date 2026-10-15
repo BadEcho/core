@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -466,6 +466,40 @@ public class TaskDialogTests
                     break;
             }
         }
+    }
+
+    [Fact]
+    public void VerificationChecked_ToggledInDialog_StateTracked()
+    {
+        bool? reportedState = null;
+
+        _configuration.VerificationText = "Don't ask me again";
+        _configuration.VerificationCheckedChanged += (_, e) => reportedState = e.Data;
+        _configuration.Created += CheckVerification;
+
+        TaskDialog.Show(_configuration);
+
+        Assert.True(reportedState);
+        Assert.True(_configuration.VerificationChecked);
+
+        void CheckVerification(object? sender, EventArgs e)
+        {
+            ComCtl32.SendTaskDialogMessage(GetDialogWindow(_configuration), TaskDialogMessage.ClickVerification, 1, 0);
+
+            _okButton.Click();
+        }
+    }
+
+    [Fact]
+    public void VerificationChecked_CheckedBeforeShown_StaysChecked()
+    {
+        _configuration.VerificationText = "Don't ask me again";
+        _configuration.VerificationChecked = true;
+        _configuration.Created += ClickOKButton;
+
+        TaskDialog.Show(_configuration);
+
+        Assert.True(_configuration.VerificationChecked);
     }
 
     private static IntPtr GetDialogWindow(TaskDialogConfiguration configuration)
