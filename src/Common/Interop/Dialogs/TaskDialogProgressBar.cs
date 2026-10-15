@@ -48,7 +48,15 @@ public sealed class TaskDialogProgressBar : TaskDialogControl
     /// <summary>
     /// Gets or sets the maximum value of this progress bar.
     /// </summary>
-    /// <remarks>This can be changed while the dialog is showing.</remarks>
+    /// <remarks>
+    /// <para>
+    /// The native progress bar stores its range as 16-bit values, so setting this to a value higher than
+    /// <see cref="ushort.MaxValue"/> will cause an exception.
+    /// </para>
+    /// <para>
+    /// This can be changed while the dialog is showing.
+    /// </para>
+    /// </remarks>
     public int Maximum
     {
         get => _maximum;
@@ -56,7 +64,7 @@ public sealed class TaskDialogProgressBar : TaskDialogControl
         {
             EnsureValidState();
 
-            if (value < 0 || value <= Minimum)
+            if (value < 0 || value > ushort.MaxValue || value <= Minimum)
                 throw new ArgumentOutOfRangeException(nameof(value), Strings.TaskDialogProgressBarMaximumOutOfRange);
 
             if (Attached && IsInitialized && !IsMarquee(State))

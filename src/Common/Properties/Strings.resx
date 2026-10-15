@@ -337,7 +337,7 @@
 	  <value>Cannot change a task dialog progress bar's properties when it has an uninitialized state.</value>
   </data>
   <data name="TaskDialogProgressBarMaximumOutOfRange" xml:space="preserve">
-	  <value>Task dialog progress bar maximum value cannot be negative and must be greater than the minimum value.</value>
+	  <value>Task dialog progress bar maximum value cannot be negative, cannot exceed 65535, and must be greater than the minimum value.</value>
   </data>
   <data name="TaskDialogProgressBarMinimumOutOfRange" xml:space="preserve">
 	  <value>Task dialog progress bar minimum value cannot be negative and must be less than the maximum value.</value>

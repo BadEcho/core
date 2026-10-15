@@ -817,7 +817,7 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Task dialog progress bar maximum value cannot be negative and must be greater than the minimum value..
+        ///   Looks up a localized string similar to Task dialog progress bar maximum value cannot be negative, cannot exceed 65535, and must be greater than the minimum value..
         /// </summary>
         public static string TaskDialogProgressBarMaximumOutOfRange {
             get {

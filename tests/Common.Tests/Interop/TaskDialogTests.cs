@@ -502,6 +502,50 @@ public class TaskDialogTests
         Assert.True(_configuration.VerificationChecked);
     }
 
+    [Fact]
+    public void Maximum_AboveWordRange_ThrowsException()
+    {
+        var progressBar = new TaskDialogProgressBar();
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => progressBar.Maximum = ushort.MaxValue + 1);
+    }
+
+    [Fact]
+    public void Maximum_WordRangeUpperBound_IsValid()
+    {
+        var progressBar = new TaskDialogProgressBar
+                          {
+                              Maximum = ushort.MaxValue
+                          };
+
+        Assert.Equal(ushort.MaxValue, progressBar.Maximum);
+    }
+
+    [Fact]
+    public void ProgressBar_FullWordRangeWhileShowing_IsValid()
+    {
+        var progressBar = new TaskDialogProgressBar
+                          {
+                              State = TaskDialogProgressBarState.Normal
+                          };
+
+        _configuration.ProgressBar = progressBar;
+        _configuration.Created += UpdateRangeAndClose;
+
+        TaskDialog.Show(_configuration);
+
+        Assert.Equal(ushort.MaxValue, progressBar.Maximum);
+
+        void UpdateRangeAndClose(object? sender, EventArgs e)
+        {
+            progressBar.Maximum = ushort.MaxValue;
+            progressBar.Minimum = 40000;
+            progressBar.Value = 50000;
+
+            _okButton.Click();
+        }
+    }
+
     private static IntPtr GetDialogWindow(TaskDialogConfiguration configuration)
     {
         FieldInfo windowField

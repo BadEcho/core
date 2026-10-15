@@ -254,7 +254,8 @@ public sealed class TaskDialog : IDisposable
     /// <param name="minimum">The minimum value.</param>
     /// <param name="maximum">The maximum value.</param>
     internal void SetProgressBarRange(int minimum, int maximum)
-        => SendTaskDialogMessage(TaskDialogMessage.SetProgressBarRange, 0, (maximum << 16) + minimum);
+        // HIWORD/LOWORD
+        => SendTaskDialogMessage(TaskDialogMessage.SetProgressBarRange, 0, (maximum & 0xFFFF) << 16 | (minimum & 0xFFFF));
 
     /// <summary>
     /// Sets the position, or value, of the progress bar in the dialog.
