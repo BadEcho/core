@@ -319,6 +319,10 @@ public sealed class TaskDialog : IDisposable
                                                  IntPtr wParam,
                                                  IntPtr lParam)
     {
+        // If a callback exception has been set, then we're on our way out, and should ignore subsequent calls not having to do with tearing down.
+        if (_callbackException != null && notification != TaskDialogNotification.Destroyed)
+            return ResultHandle.Success;
+
         try
         {
             // We go ahead and subclass the window as early as possible, which will be following the first notification received.
@@ -408,12 +412,18 @@ public sealed class TaskDialog : IDisposable
 
                 case TaskDialogNotification.Destroyed:
                     _isBeingDestroyed = true;
-                    AttachedConfiguration.OnClosed(EventArgs.Empty);
 
-                    _subclass.Dispose();
+                    try
+                    {
+                        AttachedConfiguration.OnClosed(EventArgs.Empty);
+                    }
+                    finally
+                    {
+                        _subclass.Dispose();
 
-                    // Prevent the sending of any more messages to the dialog after receiving the Destroyed notification.
-                    _window = IntPtr.Zero;
+                        // Prevent the sending of any more messages to the dialog after receiving the Destroyed notification.
+                        _window = IntPtr.Zero;
+                    }
 
                     break;
 
@@ -445,15 +455,17 @@ public sealed class TaskDialog : IDisposable
             }
         }
         catch (Exception ex)
-        {   // This callback is indirectly called from native code; we don't want exceptions to bubble back up to the native
-            // code, otherwise we'll get an SEHException due to being inside an activation context. This obfuscates the error and can
-            // lead to other issues. So, we capture the exception's state, store the exception, close the dialog, and then throw it
-            // after release the activation context.
-            ExceptionDispatchInfo.Capture(ex);
+        {   // This callback is called from native code; we don't want exceptions to bubble back up to the native
+            // code, otherwise we'll get an SEHException due to being inside an activation context
+            // (although this depends on the runtime: if we're Native AOT, the process will just terminate).
+            // This obfuscates the error and can  lead to other issues. So, the exception is stored to be rethrown once the
+            // dialog closes, which we preempt through the clicking of the cancel button.
             
-            _callbackException = ex;
+            _callbackException ??= ex;
 
-            ClickButton(TaskDialogButton.Cancel);
+            // We send a direct message in case there was an issue with subclassing, which ClickButton() depends on.
+            if (!_isBeingDestroyed)
+                ComCtl32.SendTaskDialogMessage(hWnd, TaskDialogMessage.ClickButton, (int) TaskDialogResult.Cancel, 0);
         }
 
         return ResultHandle.Success;

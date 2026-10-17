@@ -546,6 +546,34 @@ public class TaskDialogTests
         }
     }
 
+    [Fact]
+    public void Show_CancelHandlerAlwaysThrows_ThrowsFirstException()
+    {
+        _okButton.Clicked += (_, _) => throw new ArgumentException("OK failed.");
+        _cancelButton.Clicked += (_, _) => throw new InvalidOperationException("Cancel failed.");
+        _configuration.Created += ClickOKButton;
+
+        Assert.Throws<ArgumentException>(() => TaskDialog.Show(_configuration));
+    }
+
+    [Fact]
+    public void Show_HandlerThrowsWithNonClosingCancel_DialogCloses()
+    {
+        _cancelButton.ClosesDialog = false;
+        _configuration.Created += (_, _) => throw new ArgumentException("Created failed.");
+
+        Assert.Throws<ArgumentException>(() => TaskDialog.Show(_configuration));
+    }
+
+    [Fact]
+    public void Show_ClosedHandlerThrows_ThrowsHandlerException()
+    {
+        _configuration.Created += ClickOKButton;
+        _configuration.Closed += (_, _) => throw new ArgumentException("Closed failed.");
+
+        Assert.Throws<ArgumentException>(() => TaskDialog.Show(_configuration));
+    }
+    
     private static IntPtr GetDialogWindow(TaskDialogConfiguration configuration)
     {
         FieldInfo windowField
