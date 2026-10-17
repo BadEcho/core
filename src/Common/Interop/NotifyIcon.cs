@@ -195,9 +195,9 @@ public sealed class NotifyIcon : IDisposable
         Require.NotNull(data, nameof(data));
 
         _balloonIconHandle?.Dispose();
-
+        
         Display primaryDisplay = Display.Primary;
-        int iconSize = (int) primaryDisplay.ScaleFactor * 48;
+        int iconSize = (int) Math.Round(primaryDisplay.ScaleFactor * 48);
 
         _balloonIconHandle = LoadIconHandle(data, iconSize, iconSize);
     }
