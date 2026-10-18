@@ -164,7 +164,7 @@ public sealed class PopupMenu : IDisposable
             ? TrackMenuFlags.LeftAlign
             : TrackMenuFlags.RightAlign;
 
-        flags |= TrackMenuFlags.ReturnCommand;
+        flags |= TrackMenuFlags.ReturnCommand | TrackMenuFlags.RightButton;
 
         var prcRect = new RECT();
         int result = User32.TrackPopupMenu(_menu,
@@ -174,6 +174,10 @@ public sealed class PopupMenu : IDisposable
                                            0,
                                            _windowWrapper.Handle,
                                            ref prcRect);
+
+        // An old workaround suggested by Microsoft for a bug that probably doesn't affect modern Windows versions.
+        // This forces a task switch to prevent the menu from persisting after opening a second time.
+        User32.PostMessage(_windowWrapper.Handle, WindowMessage.Null, nint.Zero, nint.Zero);
 
         // Since we're using TrackMenuFlags.ReturnCommand, the return value will be zero if either nothing
         // was clicked or an error occurred. Unfortunately, if zero is returned, there is no way to discern
