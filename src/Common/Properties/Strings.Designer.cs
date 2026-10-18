@@ -592,7 +592,7 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to send a message deleting an icon from the taskbar&apos;s notification area..
+        ///   Looks up a localized string similar to Failed to send a message deleting an icon from the taskbar&apos;s notification area. The error code was: {0}..
         /// </summary>
         public static string NotifyIconDeleteFailed {
             get {

@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -30,7 +30,7 @@ internal static partial class Shell32
     /// A <see cref="NotifyIconData"/> instance containing notification area information.
     /// </param>
     /// <returns>True if successful; otherwise, false.</returns>
-    [LibraryImport(LIBRARY_NAME, EntryPoint = "Shell_NotifyIconW")]
+    [LibraryImport(LIBRARY_NAME, EntryPoint = "Shell_NotifyIconW", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     public static partial bool Shell_NotifyIcon(NotifyIconMessage dwMessage, ref NotifyIconData lpData);

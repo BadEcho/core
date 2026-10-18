@@ -14,6 +14,7 @@
 using System.Buffers;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using BadEcho.Extensions;
 using BadEcho.Logging;
 using BadEcho.Properties;
 
@@ -243,7 +244,7 @@ public sealed class NotifyIcon : IDisposable
                        };
 
         if (!Shell32.Shell_NotifyIcon(NotifyIconMessage.Modify, ref iconData))
-            throw new Win32Exception(Strings.NotifyIconBalloonFailed);
+            throw new Win32Exception(Marshal.GetLastWin32Error(), Strings.NotifyIconBalloonFailed);
     }
 
     /// <inheritdoc/>
@@ -252,7 +253,15 @@ public sealed class NotifyIcon : IDisposable
         if (_disposed)
             return;
 
-        Hide();
+        try
+        {
+            Hide();
+        }
+        catch (Win32Exception ex)
+        {   // Errors are caught here due to the possibility that Hide will fail if the shell has already removed the icon.
+            // Even if this happens, we want to release our handles and remove the callback from the window wrapper.
+            Logger.Error(Strings.NotifyIconDeleteFailed.InvariantFormat(ex.ErrorCode), ex);
+        }
 
         _windowWrapper.RemoveCallback(WindowProcedure);
         _iconHandle.Dispose();
@@ -409,14 +418,14 @@ public sealed class NotifyIcon : IDisposable
             // Either the icon hasn't been added yet, or the shell no longer knows of the icon due to the notification
             // area being recreated.
             if (!Shell32.Shell_NotifyIcon(NotifyIconMessage.Add, ref iconData))
-                throw new Win32Exception(Strings.NotifyIconAddModifyFailed);
+                throw new Win32Exception(Marshal.GetLastWin32Error(), Strings.NotifyIconAddModifyFailed);
 
             _isAdded = true;
         }
         else if (_isAdded)
-        {
+        {   // We don't throw here because a failed call most likely means the shell no longer has the icon, which was the goal anyway.
             if (!Shell32.Shell_NotifyIcon(NotifyIconMessage.Delete, ref iconData))
-                Logger.Warning(Strings.NotifyIconDeleteFailed);
+                Logger.Warning(Strings.NotifyIconDeleteFailed.InvariantFormat(Marshal.GetLastWin32Error()));
 
             _isAdded = false;
         } 
