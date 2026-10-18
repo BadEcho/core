@@ -167,3 +167,9 @@ using BadEcho.Properties;
                            Scope = "type",
                            Target = "~T:BadEcho.WeightedRandom`1",
                            Justification = "Weighted selection is not a security-sensitive operation; a non-cryptographic generator is faster and allows callers to supply a seeded instance for reproducible results.")]
+
+[assembly: SuppressMessage("Design",
+                           "CA1065:Do not raise exceptions in unexpected locations",
+                           Scope = "member",
+                           Target = "~M:BadEcho.Interop.ActivationScope.Dispose",
+                           Justification = "The activation context cannot be deactivated from another thread, so an error is thrown here. ActivationScope has no custom finalizer, so this will only run and throw when code calls it, and not on the finalizer thread.")]

@@ -159,7 +159,10 @@
   <data name="DisplayEnumDisplayMonitorsFailed" xml:space="preserve">
     <value>EnumDisplayMonitors failed unexpectedly.</value>
   </data>
-  <data name="WindowHotKeyDuplicateId" xml:space="preserve">
+  <data name="ActivationScopeDisposedOnForeignThread" xml:space="preserve">
+    <value>An activation scope must be disposed on the same thread that created it.</value>
+  </data>
+	<data name="WindowHotKeyDuplicateId" xml:space="preserve">
     <value>A hot key has already been registered with the identifier '{0}'.</value>
   </data>
   <data name="ThreadExecutorSourceNotInitialized" xml:space="preserve">

@@ -79,6 +79,15 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An activation scope must be disposed on the same thread that created it..
+        /// </summary>
+        public static string ActivationScopeDisposedOnForeignThread {
+            get {
+                return ResourceManager.GetString("ActivationScopeDisposedOnForeignThread", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot retrieve a value from an export that isn&apos;t representing an object..
         /// </summary>
         public static string ArgumentExportValueNoObject {

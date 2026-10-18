@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -21,6 +21,8 @@ namespace BadEcho.Interop;
 /// </summary>
 internal sealed class ActivationContextCookieHandle : SafeHandleZeroOrMinusOneIsInvalid
 {
+    private readonly int _owningThreadId = Environment.CurrentManagedThreadId;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ActivationContextCookieHandle"/> class.
     /// </summary>
@@ -28,7 +30,14 @@ internal sealed class ActivationContextCookieHandle : SafeHandleZeroOrMinusOneIs
         : base(true) 
     { }
 
+    /// <summary>
+    /// Gets a value indicating if this handle was created on the current thread.
+    /// </summary>
+    public bool IsOwnedByCurrentThread
+        => Environment.CurrentManagedThreadId == _owningThreadId;
+
     /// <inheritdoc/>
+    /// <remarks>Context deactivation has to occur on the same thread that activated it.</remarks>
     protected override bool ReleaseHandle()
-        => Kernel32.DeactivateActCtx(0, handle);
+        => IsOwnedByCurrentThread && Kernel32.DeactivateActCtx(0, handle);
 }

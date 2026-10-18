@@ -71,4 +71,55 @@ public class ActivationContextTests
             }
         }
     }
+
+    [Fact]
+    public void Dispose_FromOtherThread_ThrowsInvalidOperationException()
+    {
+        ActivationScope? scope = null;
+        Exception? activationException = null;
+
+        var activatingThread = new Thread(() =>
+        {
+            try
+            {
+                scope = ActivationScope.Create();
+            }
+            catch (Exception ex)
+            {
+                activationException = ex;
+            }
+        });
+        activatingThread.Start();
+        activatingThread.Join();
+
+        Assert.Null(activationException);
+        Assert.NotNull(scope);
+
+        Assert.Throws<InvalidOperationException>(scope.Dispose);
+    }
+
+    [Fact]
+    public void Finalize_Undisposed_DoesNotDeactivate()
+    {
+        Exception? activationException = null;
+
+        var activatingThread = new Thread(() =>
+        {
+            try
+            {
+                ActivationScope.Create();
+            }
+            catch (Exception ex)
+            {
+                activationException = ex;
+            }
+        });
+        activatingThread.Start();
+        activatingThread.Join();
+
+        Assert.Null(activationException);
+
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+    }
 }

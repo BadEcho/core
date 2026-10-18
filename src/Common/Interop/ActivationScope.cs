@@ -128,20 +128,16 @@ public sealed class ActivationScope : IDisposable
         return Create(contextHandle);
     }
 
-    /// <summary>
-    /// Activates the activation context created within this scope.
-    /// </summary>
-    public void Activate()
-    {
-        if (!Kernel32.ActivateActCtx(_contextHandle, out _cookieHandle))
-            throw new Win32Exception(Marshal.GetLastWin32Error());
-    }
-
     /// <inheritdoc/>
     public void Dispose()
     {
         if (_disposed)
             return;
+
+        // An activation context must be disposed on the thread that created it.
+        // If this is being called from another thread...then oops.
+        if (_cookieHandle is { IsInvalid: false, IsOwnedByCurrentThread: false })
+            throw new InvalidOperationException(Strings.ActivationScopeDisposedOnForeignThread);
 
         _cookieHandle?.Dispose();
         _contextHandle.Dispose();
@@ -172,5 +168,11 @@ public sealed class ActivationScope : IDisposable
         scope.Activate();
 
         return scope;
+    }
+
+    private void Activate()
+    {
+        if (!Kernel32.ActivateActCtx(_contextHandle, out _cookieHandle))
+            throw new Win32Exception(Marshal.GetLastWin32Error());
     }
 }
