@@ -862,6 +862,15 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Dark mode context menus are not supported by this version of Windows; menus will use the default theme..
+        /// </summary>
+        public static string ThemingDarkMenusUnsupported {
+            get {
+                return ResourceManager.GetString("ThemingDarkMenusUnsupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot load an operation into an already initialized ThreadExecutorOperationTaskSource..
         /// </summary>
         public static string ThreadExecutorSourceAlreadyInitialized {

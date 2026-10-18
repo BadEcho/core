@@ -399,4 +399,7 @@
 	<data name="MessageOnlyWindowClassCleanupFailed" xml:space="preserve">
 		<value>Unable to unregister a message-only window's class after the window failed to be created.</value>
 	</data>
+  <data name="ThemingDarkMenusUnsupported" xml:space="preserve">
+	  <value>Dark mode context menus are not supported by this version of Windows; menus will use the default theme.</value>
+  </data>
 </root>
