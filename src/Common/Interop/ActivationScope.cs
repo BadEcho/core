@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -114,8 +114,17 @@ public sealed class ActivationScope : IDisposable
                           Source = tempManifestPath
                       };
 
-        ActivationContextHandle contextHandle = Kernel32.CreateActCtx(ref context);
+        ActivationContextHandle contextHandle;
 
+        try
+        {
+            contextHandle = Kernel32.CreateActCtx(ref context);
+        }
+        finally
+        {   // The temporary manifest file will have already been parsed at this point in time.
+            File.Delete(tempManifestPath);
+        }
+        
         return Create(contextHandle);
     }
 
