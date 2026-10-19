@@ -130,9 +130,8 @@ bool __cdecl RemoveHook(HookType hookType, int threadId)
         return false;
 
     bool result = UnhookWindowsHookEx(hookData->Handle);
-
-    if (result)
-        RemoveHookData(hookType, threadId);
+    
+    RemoveHookData(hookType, threadId);
 
     return result;
 }
