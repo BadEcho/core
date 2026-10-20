@@ -12,6 +12,8 @@
 // -----------------------------------------------------------------------
 
 #include "SharedData.h"
+#include <sddl.h>
+#include <strsafe.h>
 
 namespace {
     ThreadData* SharedData = nullptr;
@@ -110,6 +112,60 @@ namespace {
 
         return nullptr;
     }
+
+    /**
+     * Creates the security descriptor applied to the shared objects used by this library.
+     * @return The security descriptor, or \c nullptr if one could not be created.
+     * @remarks
+     * This grants full access to SYSTEM and the current user, with objects labeled at medium integrity.
+     * This means any process running as the same user at medium integrity or higher can access these objects.
+     * A custom security descriptor is used to prevent the scenario where a hook, initially installed by an elevated
+     * process, will result in shared objects that cannot be accessed by normal, medium integrity processes created 
+     * by the same user.
+     */
+    PSECURITY_DESCRIPTOR CreateSharedSecurityDescriptor()
+    {
+        HANDLE token;
+
+        if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &token))
+            return nullptr;
+
+        // This is typed as a BYTE array, however we need to it to start at a memory address suitable for a TOKEN_USER.
+        // Two things get written into this buffer: the fixed-sized TOKEN_USER struct, followed by the user's SID, so we size for both.
+        alignas(TOKEN_USER) BYTE tokenUser[sizeof(TOKEN_USER) + SECURITY_MAX_SID_SIZE] {};
+        DWORD returnLength;
+
+        BOOL hasUser = GetTokenInformation(token, TokenUser, tokenUser, sizeof(tokenUser), &returnLength);
+
+        CloseHandle(token);
+
+        if (!hasUser)
+            return nullptr;
+
+        LPTSTR userSid;
+
+        // We'll be building a SDDL string, the most compact way to define a security descriptor, so we prep the SID for insertion.
+        if (!ConvertSidToStringSid(reinterpret_cast<TOKEN_USER*>(tokenUser)->User.Sid, &userSid))
+            return nullptr;
+
+        TCHAR sddl[256];
+
+        // This SDDL essentially disables inheritance, grants all access to SYSTEM and the local user, prevents lower integrity
+        // processes from accessing it, and allows medium or higher.
+        HRESULT formatResult = StringCchPrintf(sddl, ARRAYSIZE(sddl), TEXT("D:P(A;;GA;;;SY)(A;;GA;;;%s)S:(ML;;NWNR;;;ME)"), userSid);
+
+        LocalFree(userSid);
+
+        if (FAILED(formatResult))
+            return nullptr;
+
+        PSECURITY_DESCRIPTOR descriptor;
+
+        if (!ConvertStringSecurityDescriptorToSecurityDescriptor(sddl, SDDL_REVISION_1, &descriptor, nullptr))
+            return nullptr;
+
+        return descriptor;
+    }
 }
 
 // Adds a data section to our binary file for variables we want shared across all processes.
@@ -122,29 +178,38 @@ int GlobalGetMessageId = 0;
 
 bool InitializeSharedData()
 {
+    PSECURITY_DESCRIPTOR descriptor = CreateSharedSecurityDescriptor();
+    SECURITY_ATTRIBUTES attributes{ sizeof(SECURITY_ATTRIBUTES), descriptor, false };
+    LPSECURITY_ATTRIBUTES securityAttributes = descriptor != nullptr ? &attributes : nullptr;
+
     FileMapping = CreateFileMapping(
         INVALID_HANDLE_VALUE,
-        nullptr,
+        securityAttributes,
         PAGE_READWRITE,
         0,
         SharedMemorySize,
         FileMappingName);
+    
+    bool init = false;
 
-    if (FileMapping == nullptr)
+    if (FileMapping != nullptr)
+    {
+        init = GetLastError() != ERROR_ALREADY_EXISTS;
+
+        SharedSectionMutex
+            = CreateMutex(securityAttributes, FALSE, MutexName);
+    }
+
+    if (descriptor != nullptr)
+        LocalFree(descriptor);
+
+    if (FileMapping == nullptr || SharedSectionMutex == nullptr)
         return false;
-
-    bool init = GetLastError() != ERROR_ALREADY_EXISTS;
 
     SharedMemory
         = MapViewOfFile(FileMapping, FILE_MAP_WRITE, 0, 0, 0);
 
     if (SharedMemory == nullptr)
-        return false;
-
-    SharedSectionMutex
-        = CreateMutex(nullptr, FALSE, MutexName);
-
-    if (SharedSectionMutex == nullptr)
         return false;
 
     if (init)
