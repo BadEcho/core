@@ -19,7 +19,7 @@
 /**
  * Specifies a type of hook procedure.
  */
-enum HookType : unsigned char
+enum HookType : int // Keeps exported functions' ABI consistent with P/Invoke callers.
 {	
     /**
      * Monitors \c WH_CALLWNDPROC messages before the system sends them to the destination window

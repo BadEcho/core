@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -116,6 +116,69 @@ public class HookTests
 
             foreach (var process in processes)
             {
+                process.Kill();
+            }
+        }
+    }
+
+    [Fact]
+    public async Task AddHook_InstallFailures_ReleaseSlots()
+    {
+        using var pump = new MessageOnlyExecutor();
+
+        await pump.StartAsync();
+        Assert.NotNull(pump.Window);
+
+        // Thread identifiers are multiples of four, so odd values never identify a thread and installation always fails.
+        for (int i = 0; i < MAX_THREADS; i++)
+        {
+            Assert.False(Native.AddHook(HOOK_TYPE, pump.Window.Handle, i * 2 + 1));
+        }
+
+        AssertAllSlotsAvailable(pump.Window.Handle);
+    }
+
+    [Fact]
+    public async Task RemoveHook_GlobalLowLevelHooks_ReleaseSlots()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            using var pump = new MessageOnlyExecutor();
+
+            await pump.StartAsync();
+            Assert.NotNull(pump.Window);
+
+            WindowHandle window = pump.Window.Handle;
+
+            // Global hook data is registered to the installing thread, so both calls must run on the pump's thread.
+            Assert.True(pump.Invoke(() => Native.AddHook(HookType.LowLevelKeyboard, window, 0)));
+            Assert.True(pump.Invoke(() => Native.RemoveHook(HookType.LowLevelKeyboard, 0)));
+        }
+
+        using var checkPump = new MessageOnlyExecutor();
+
+        await checkPump.StartAsync();
+        Assert.NotNull(checkPump.Window);
+
+        AssertAllSlotsAvailable(checkPump.Window.Handle);
+    }
+
+    private static void AssertAllSlotsAvailable(WindowHandle destination)
+    {
+        var processes = NativeProcesses.Create(MAX_THREADS);
+
+        try
+        {
+            foreach (var process in processes)
+            {
+                Assert.True(Native.AddHook(HOOK_TYPE, destination, process.Threads[0].Id));
+            }
+        }
+        finally
+        {
+            foreach (var process in processes)
+            {
+                Native.RemoveHook(HOOK_TYPE, process.Threads[0].Id);
                 process.Kill();
             }
         }

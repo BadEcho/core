@@ -60,11 +60,6 @@ BOOL APIENTRY DllMain(HINSTANCE instance, DWORD reason, LPVOID)  // NOLINT(misc-
 
 bool __cdecl AddHook(HookType hookType, HWND destination, int threadId)
 {
-    HookData* hookData = AddHookData(hookType, threadId);
-
-    if (hookData == nullptr)
-        return false;
-
     int idHook;
     HOOKPROC lpfn;
 
@@ -106,31 +101,59 @@ bool __cdecl AddHook(HookType hookType, HWND destination, int threadId)
             break;
 
         default:
+            SetLastError(ERROR_INVALID_HOOK_FILTER);
             return false;
+    }
+    
+    // We hold the lock until the hook's details are recorded, so its registration can't be freed or reused in the meantime.
+    SharedDataLock lock;
+
+    if (!lock.IsAcquired())
+        return false;
+
+    HookData* hookData = AddHookData(hookType, threadId);
+
+    if (hookData == nullptr)
+    {   // Out of shared storage for another hook.
+        SetLastError(ERROR_OUT_OF_STRUCTURES);
+        return false;
     }
 
     HHOOK hook = SetWindowsHookEx(idHook, lpfn, Instance, threadId);
 
     if (hook == nullptr)
-    {        
+    {   // AddHookData already added registration data, which we'll release now if it was made solely for this hook.
+        if (hookData->Handle == nullptr)
+            RemoveHookData(hookType, threadId);
+
         return false;
     }
 
-    hookData->Handle = hook;
     hookData->Destination = destination;
+    hookData->Handle = hook;
 
     return true;
 }
 
 bool __cdecl RemoveHook(HookType hookType, int threadId)
-{    
-    HookData* hookData = GetHookData(hookType, threadId);
+{   
+    SharedDataLock lock;
+
+    if (!lock.IsAcquired())
+        return false;
+
+    // Only the caller's own registration is considered.
+    HookData* hookData = GetHookData(hookType, threadId, HookDataScope::Registered);
 
     if (hookData == nullptr || hookData->Handle == nullptr)
+    {
+        SetLastError(ERROR_HOOK_NOT_INSTALLED);
         return false;
+    }
 
     bool result = UnhookWindowsHookEx(hookData->Handle);
     
+    // We clean up registration data even if UnhookWindowHookEx failed to take care of situations such as the target process already having been shut down, etc.
     RemoveHookData(hookType, threadId);
 
     return result;
@@ -162,7 +185,7 @@ LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
     int threadId = static_cast<int>(GetCurrentThreadId());
 
-    if (HookData* hookData = GetHookData(CallWindowProcedure, threadId); nCode == HC_ACTION && hookData != nullptr)
+    if (HookData* hookData = GetHookData(CallWindowProcedure, threadId, HookDataScope::Effective); nCode == HC_ACTION && hookData != nullptr)
     {   
         HWND destination = hookData->Destination;
 
@@ -179,7 +202,7 @@ LRESULT CALLBACK CallWndProcRet(int nCode, WPARAM wParam, LPARAM lParam)
 {
     int threadId = static_cast<int>(GetCurrentThreadId());    
 
-    if (HookData* hookData = GetHookData(CallWindowProcedureReturn, threadId); nCode == HC_ACTION && hookData != nullptr)
+    if (HookData* hookData = GetHookData(CallWindowProcedureReturn, threadId, HookDataScope::Effective); nCode == HC_ACTION && hookData != nullptr)
     {
         HWND destination = hookData->Destination;
         
@@ -196,7 +219,7 @@ LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
     int threadId = static_cast<int>(GetCurrentThreadId());    
 
-    if (HookData* hookData = GetHookData(GetMessages, threadId); nCode == HC_ACTION && hookData != nullptr)
+    if (HookData* hookData = GetHookData(GetMessages, threadId, HookDataScope::Effective); nCode == HC_ACTION && hookData != nullptr)
     {   
         if (HWND destination = hookData->Destination; destination != nullptr)
         {
@@ -233,7 +256,7 @@ LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
     int threadId = static_cast<int>(GetCurrentThreadId());
 
-    if (HookData* hookData = GetHookData(Keyboard, threadId); nCode == HC_ACTION && hookData != nullptr)
+    if (HookData* hookData = GetHookData(Keyboard, threadId, HookDataScope::Effective); nCode == HC_ACTION && hookData != nullptr)
     {
         HWND destination = hookData->Destination;
 
@@ -251,7 +274,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
     int threadId = static_cast<int>(GetCurrentThreadId());
 
-    if (HookData* hookData = GetHookData(LowLevelKeyboard, threadId); nCode == HC_ACTION && hookData != nullptr)
+    if (HookData* hookData = GetHookData(LowLevelKeyboard, threadId, HookDataScope::Effective); nCode == HC_ACTION && hookData != nullptr)
     {
         HWND destination = hookData->Destination;
 
@@ -269,7 +292,7 @@ LRESULT CALLBACK MouseProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
     int threadId = static_cast<int>(GetCurrentThreadId());
 
-    if (HookData* hookData = GetHookData(Mouse, threadId); nCode == HC_ACTION && hookData != nullptr)
+    if (HookData* hookData = GetHookData(Mouse, threadId, HookDataScope::Effective); nCode == HC_ACTION && hookData != nullptr)
     {
         HWND destination = hookData->Destination;
 
@@ -287,7 +310,7 @@ LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
     int threadId = static_cast<int>(GetCurrentThreadId());
 
-    if (HookData* hookData = GetHookData(LowLevelMouse, threadId); nCode == HC_ACTION && hookData != nullptr)
+    if (HookData* hookData = GetHookData(LowLevelMouse, threadId, HookDataScope::Effective); nCode == HC_ACTION && hookData != nullptr)
     {
         HWND destination = hookData->Destination;
 

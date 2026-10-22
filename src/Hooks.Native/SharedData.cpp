@@ -71,22 +71,6 @@ namespace {
         return index;
     }
 
-    ThreadData* GetThreadData(HookType hookType, int threadId)
-    {   // A thread ID of 0 indicates a global hook. We don't want to ever search for zero here, since free slots will have an identifier of zero.
-        int index = threadId != 0 ? FindThreadDataIndex(threadId) : MaxThreads;
-
-        if (index == MaxThreads)
-        {
-            if (int* globalId = GetGlobalId(hookType); globalId != nullptr && *globalId != 0)
-                index = FindThreadDataIndex(*globalId);
-
-            if (index == MaxThreads)
-                return nullptr;
-        }
-
-        return &SharedData[index];
-    }
-
     HookData* GetThreadHookData(HookType hookType, ThreadData* threadData)
     {
         if (threadData == nullptr)
@@ -166,6 +150,46 @@ namespace {
 
         return descriptor;
     }
+
+    int ResolveThreadId(int threadId)
+    {   // Global hook data is registered to the thread that installed the hook. 
+        // Fallback to the current thread if a thread ID of 0 (i.e., global) is specified.
+        return threadId != 0 ? threadId : static_cast<int>(GetCurrentThreadId());
+    }
+
+    bool HasHooks(const ThreadData& threadData)
+    {
+        return threadData.CallWndProcHook.Handle != nullptr
+            || threadData.CallWndProcRetHook.Handle != nullptr
+            || threadData.GetMessageHook.Handle != nullptr
+            || threadData.KeyboardHook.Handle != nullptr
+            || threadData.LowLevelKeyboardHook.Handle != nullptr
+            || threadData.MouseHook.Handle != nullptr
+            || threadData.LowLevelMouseHook.Handle != nullptr;
+    }
+}
+
+SharedDataLock::SharedDataLock()
+    : _acquired(false)
+{
+    if (SharedSectionMutex == nullptr)
+        return;
+
+    DWORD waitResult = WaitForSingleObject(SharedSectionMutex, INFINITE);
+
+    // An abandoned mutex is still one that has been acquired; it's previous owned exited without releasing it.
+    _acquired = waitResult == WAIT_OBJECT_0 || waitResult == WAIT_ABANDONED;
+}
+
+SharedDataLock::~SharedDataLock()
+{
+    if (_acquired)
+        ReleaseMutex(SharedSectionMutex);
+}
+
+bool SharedDataLock::IsAcquired() const
+{
+    return _acquired;
 }
 
 // Adds a data section to our binary file for variables we want shared across all processes.
@@ -231,11 +255,7 @@ HookData* AddHookData(HookType hookType, int threadId)
 {
     bool isGlobal = threadId == 0;
 
-    if (isGlobal)
-        threadId = static_cast<int>(GetCurrentThreadId());
-    
-    // Synchronization is required as multiple processes may be attempting to claim a free slot.
-    WaitForSingleObject(SharedSectionMutex, INFINITE);
+    threadId = ResolveThreadId(threadId);
 
     int index = FindThreadDataIndex(threadId);
 
@@ -244,74 +264,73 @@ HookData* AddHookData(HookType hookType, int threadId)
         // may be anywhere in the array.
         index = FindThreadDataIndex(0);
 
-        if (index == MaxThreads)
-        {   // We're at our storage limit.            
-            ReleaseMutex(SharedSectionMutex);
-            return nullptr;
-        }
+        if (index == MaxThreads)    // We're at our storage limit.
+            return nullptr;        
 
         SharedData[index] = ThreadData{ };
+        // Read-only operations won't be locking, so we need to guarantee these writes are in order.
+        MemoryBarrier();
         SharedData[index].ThreadId = threadId;
     }
 
     if (isGlobal)
         UpdateGlobalId(hookType, threadId);
 
-    ReleaseMutex(SharedSectionMutex);
-    
     return GetThreadHookData(hookType, &SharedData[index]);
 }
 
-HookData* GetHookData(HookType hookType, int threadId)
-{    
-    if (threadId == 0)
-        threadId = static_cast<int>(GetCurrentThreadId());
+HookData* GetHookData(HookType hookType, int threadId, HookDataScope scope)
+{   
+    HookData* hookData = nullptr;
 
-    ThreadData* threadData = GetThreadData(hookType, threadId);
+    if (int index = FindThreadDataIndex(ResolveThreadId(threadId)); index != MaxThreads)
+        hookData = GetThreadHookData(hookType, &SharedData[index]);
 
-    if (threadData == nullptr)
+    // Return the thread's own entry if the caller only wants the thread's registration...
+    if (scope == HookDataScope::Registered)
+        return hookData;
+
+    // ...or if that entry does have a hook installed, which takes precedence over a global one of the same type.
+    if (hookData != nullptr && hookData->Handle != nullptr)
+        return hookData;
+
+    int* globalId = GetGlobalId(hookType);
+
+    if (globalId == nullptr || *globalId == 0)
         return nullptr;
 
-    return GetThreadHookData(hookType, threadData);
+    int globalIndex = FindThreadDataIndex(*globalId);
+
+    return globalIndex != MaxThreads ? GetThreadHookData(hookType, &SharedData[globalIndex]) : nullptr;
 }
 
 void RemoveHookData(HookType hookType, int threadId)
 {
-    ThreadData* threadData = GetThreadData(hookType, threadId);
+    bool isGlobal = threadId == 0;
 
-    if (threadData == nullptr)
+    threadId = ResolveThreadId(threadId);
+
+    int index = FindThreadDataIndex(threadId);
+
+    if (index == MaxThreads)
         return;
 
+    ThreadData* threadData = &SharedData[index];
     HookData* hookData = GetThreadHookData(hookType, threadData);
 
     if (hookData == nullptr)
         return;
 
-    if (threadId == 0)
-        UpdateGlobalId(hookType, 0);
+    if (isGlobal)
+    {   // Global registrations are only cleared if its being done from the thread that installed it.
+        if (int* globalId = GetGlobalId(hookType); globalId != nullptr && *globalId == threadId)
+            *globalId = 0;
+    }
 
-    hookData->Handle = nullptr;
     hookData->Destination = nullptr;
+    hookData->Handle = nullptr;
 
-    if (threadData->CallWndProcHook.Handle != nullptr)
-        return;
-
-    if (threadData->CallWndProcRetHook.Handle != nullptr)
-        return;
-
-    if (threadData->GetMessageHook.Handle != nullptr)
-        return;
-
-    if (threadData->KeyboardHook.Handle != nullptr)
-        return;
-
-    if (threadData->LowLevelKeyboardHook.Handle != nullptr)
-        return;
-
-    if (threadData->MouseHook.Handle != nullptr)
-        return;
-
-    if (threadData->LowLevelMouseHook.Handle != nullptr)
+    if (HasHooks(*threadData))
         return;
 
     // "Free" the thread, as it no longer has any hooks associated with it.

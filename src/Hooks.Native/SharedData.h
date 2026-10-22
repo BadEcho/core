@@ -122,6 +122,47 @@ constexpr int MaxThreads = 20;
  */
 constexpr int SharedMemorySize = sizeof(ThreadData) * MaxThreads;
 
+/*
+ * Provides exclusive access to shared hook data for the lifetime of the instance.
+ */
+class SharedDataLock
+{
+public:
+    SharedDataLock();
+    ~SharedDataLock();
+
+    // No copying!
+    SharedDataLock(const SharedDataLock&) = delete;
+    SharedDataLock& operator=(const SharedDataLock&) = delete;
+    SharedDataLock(SharedDataLock&&) = delete;
+    SharedDataLock& operator=(SharedDataLock&&) = delete;
+
+    /**
+     * Gets a value indicating if exclusive access to shared hook data was obtained.
+     * @return True if a lock is held; otherwise, false.
+     */
+    [[nodiscard]] bool IsAcquired() const;
+
+private:
+    bool _acquired;
+};
+
+/**
+ * Specifies the type of hook data a lookup considers.
+ */
+enum class HookDataScope : unsigned char
+{
+    /**
+     * Lookup only hook data registered to the specified thread. Used when acting on a caller's own registration.
+     */
+    Registered,
+    /**
+     * Lookup hook data registered to the specified thread, or, if there is none of the requested type, the global hook data of that
+     * hook type. Used by hook procedures to find where to forward messages.
+     */
+    Effective
+};
+
 /**
  * Initializes various shared memory and synchronization objects used for communication between processes.
  * @return True if the shared data was successfully initialized; otherwise, false.
@@ -138,26 +179,28 @@ void CloseSharedData();
  * @param hookType The type of hook data to add.
  * @param threadId The identifier of the thread to associate the hook data with.
  * @return A pointer to the hook data if successful; otherwise a \c nullptr if the limits on shared data storage have been exceeded.
+ * @remarks This should only be called while holding a \c SharedDataLock.
  */
 HookData* AddHookData(HookType hookType, int threadId);
 
 /**
  * Retrieves hook data associated with a thread for a particular type of hook.
  * @param hookType The type of hook data to retrieve.
- * @param threadId The identifier of the thread associated with the hook data.
+ * @param threadId The identifier of the thread associated with the hook data, or zero for the calling thread.
+ * @param scope Which hook data is considered; see \c HookDataScope.
  * @return A pointer to the requested type of hook data, if one exists; otherwise, a \c nullptr.
- * @remarks If a global hook of the requested type has been installed, then that will be returned instead if no other hook data has been
- *			associated with the specified thread. This is done because most types of global hook procedures are called in the process
- *			context of every application on the desktop, so we will have no record of the threads executing them.
+ * @remarks
+ * Hook procedures call this without a lock, as they only read the data returned. Callers that act on the data returned by
+ * installing, uninstalling, or modifying the hook it describes, must hold a \c SharedDataLock.
  */
-HookData* GetHookData(HookType hookType, int threadId);
+HookData* GetHookData(HookType hookType, int threadId, HookDataScope scope);
 
 /**
  * Disassociates a type of hook data from a thread.
  * @param hookType The type of hook data to disassociate from the thread.
  * @param threadId The identifier of the thread to disassociate the hook data from.
  * @remarks A thread can have multiple types of hook data associated with it. Only when all hook types have been disassociated from a thread
- *			will the block of shared memory set aside for it be freed.
+ *			will the block of shared memory set aside for it be freed. This should only be called while holding a \c SharedDataLock.
  */
 void RemoveHookData(HookType hookType, int threadId);
 
