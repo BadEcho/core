@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -249,19 +249,19 @@ public sealed class Display
 
     private static List<Display> LoadDisplays()
     {
-        var displays = new List<Display>();
+        var monitors = new List<nint>();
 
         // EnumDisplayMonitors doesn't support GetLastError, so there is unfortunately no way to get more information if this fails.
         if (!User32.EnumDisplayMonitors(DeviceContextHandle.InvalidHandle, IntPtr.Zero, Callback, IntPtr.Zero))
             throw new Win32Exception(Strings.DisplayEnumDisplayMonitorsFailed);
 
-        return displays.OrderBy(d => d.WorkingArea.Left).ToList();
+        return monitors.Select(m => new Display(m))
+                       .OrderBy(d => d.WorkingArea.Left)
+                       .ToList();
 
-        bool Callback(IntPtr hMonitor, IntPtr hdcMonitor, IntPtr lprcMonitor, IntPtr lParam)
+        bool Callback(nint hMonitor, nint hdcMonitor, nint lprcMonitor, nint lParam)
         {
-            var display = new Display(hMonitor);
-
-            displays.Add(display);
+            monitors.Add(hMonitor);
 
             return true;
         }
