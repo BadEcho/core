@@ -216,7 +216,7 @@ public sealed class Display
     /// steps fail.
     /// </para>
     /// </remarks>
-    public unsafe void MakePrimary()
+    public void MakePrimary()
     {
         if (_isPrimary)
             return;
@@ -226,25 +226,14 @@ public sealed class Display
         int xOffset = 0 - _currentMode.PositionX;
         int yOffset = 0 - _currentMode.PositionY;
 
-        Move(xOffset, yOffset, false);
+        Move(xOffset, yOffset, ChangeDisplaySettingsFlags.SetPrimary);
 
-        var result = User32.ChangeDisplaySettingsEx(Name,
-                                                    ref _currentMode,
-                                                    IntPtr.Zero,
-                                                    ChangeDisplaySettingsFlags.SetPrimary |
-                                                    ChangeDisplaySettingsFlags.UpdateRegistry |
-                                                    ChangeDisplaySettingsFlags.NoReset,
-                                                    null);
-
-        if (result != ChangeDisplaySettingsResult.Successful)
-            throw new Win32Exception(Strings.DisplayChangePrimaryFailed.InvariantFormat(result));
-        
         foreach (var otherDisplay in otherDisplays)
         {
-            otherDisplay.Move(xOffset, yOffset, true);
+            otherDisplay.Move(xOffset, yOffset);
         }
 
-        ApplyChanges(true);
+        ApplyChanges();
     }
 
     private static List<Display> LoadDisplays()
@@ -284,6 +273,23 @@ public sealed class Display
         return User32.GetAwarenessFromDpiAwarenessContext(awarenessContext);
     }
 
+    private static unsafe void ApplyChanges()
+    {
+        var result = User32.ChangeDisplaySettingsEx(null,
+                                                    IntPtr.Zero,
+                                                    IntPtr.Zero,
+                                                    ChangeDisplaySettingsFlags.ApplyChanges,
+                                                    null);
+
+        if (result != ChangeDisplaySettingsResult.Successful)
+            throw new Win32Exception(Strings.DisplayApplyDisplaySettingsFailed.InvariantFormat(result));
+
+        foreach (var display in Devices)
+        {
+            display.LoadInfo();
+        }
+    }
+
     private void LoadInfo()
     {
         var info = MONITORINFOEX.CreateWritable();
@@ -299,38 +305,29 @@ public sealed class Display
             = Rectangle.FromLTRB(info.rcWork.Left, info.rcWork.Top, info.rcWork.Right, info.rcWork.Bottom);
     }
 
-    private unsafe void ApplyChanges(bool allDisplays)
+    private unsafe void Move(int xOffset, int yOffset, ChangeDisplaySettingsFlags additionalFlags = default)
     {
-        var result = allDisplays
-            ? User32.ChangeDisplaySettingsEx(null, IntPtr.Zero, IntPtr.Zero, ChangeDisplaySettingsFlags.ApplyChanges, null)
-            : User32.ChangeDisplaySettingsEx(Name, ref _currentMode, IntPtr.Zero, ChangeDisplaySettingsFlags.ApplyChanges, null);
+        int positionX = _currentMode.PositionX + xOffset;
+        int positionY = _currentMode.PositionY + yOffset;
 
-        if (result != ChangeDisplaySettingsResult.Successful)
-            throw new Win32Exception(Strings.DisplayApplyDisplaySettingsFailed.InvariantFormat(result));
-
-        foreach (var display in Devices)
+        var positionMode = new DeviceMode
         {
-            display.LoadInfo();
-        }
-    }
+                               DeviceName = _currentMode.DeviceName,
+                               SpecificationVersion = _currentMode.SpecificationVersion,
+                               DriverVersion = _currentMode.DriverVersion,
+                               Fields = DeviceModeFields.Position,
+                               PositionX = positionX,
+                               PositionY = positionY
+                           };
 
-    private unsafe void Move(int xOffset, int yOffset, bool stage)
-    {
-        _currentMode.PositionX += xOffset;
-        _currentMode.PositionY += yOffset;
-        _currentMode.Fields = DeviceModeFields.Position;
+        var flags = ChangeDisplaySettingsFlags.UpdateRegistry | ChangeDisplaySettingsFlags.NoReset | additionalFlags;
 
-        if (!stage)
-            return;
-        
-        var result = User32.ChangeDisplaySettingsEx(Name,
-                                                    ref _currentMode,
-                                                    IntPtr.Zero,
-                                                    ChangeDisplaySettingsFlags.NoReset |
-                                                    ChangeDisplaySettingsFlags.UpdateRegistry,
-                                                    null);
+        var result = User32.ChangeDisplaySettingsEx(Name, ref positionMode, IntPtr.Zero, flags, null);
 
         if (result != ChangeDisplaySettingsResult.Successful)
             throw new Win32Exception(Strings.DisplayChangePositionFailed.InvariantFormat(result));
+
+        _currentMode.PositionX = positionX;
+        _currentMode.PositionY = positionY;
     }
 }
