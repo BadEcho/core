@@ -167,6 +167,23 @@ namespace {
             || threadData.MouseHook.Handle != nullptr
             || threadData.LowLevelMouseHook.Handle != nullptr;
     }
+
+    bool IsLive(const HookData* hookData)
+    {
+        return hookData != nullptr && hookData->Handle != nullptr && IsWindow(hookData->Destination);
+    }
+
+    bool IsGlobalHookTaken(HookType hookType, int threadId)
+    {
+        int* globalId = GetGlobalId(hookType);
+
+        if (globalId == nullptr || *globalId == 0 || *globalId == threadId)
+            return false;
+
+        int ownerIndex = FindThreadDataIndex(*globalId);
+
+        return ownerIndex != MaxThreads && IsLive(GetThreadHookData(hookType, &SharedData[ownerIndex]));
+    }
 }
 
 SharedDataLock::SharedDataLock()
@@ -257,6 +274,12 @@ HookData* AddHookData(HookType hookType, int threadId)
 
     threadId = ResolveThreadId(threadId);
 
+    if (isGlobal && IsGlobalHookTaken(hookType, threadId))
+    {
+        SetLastError(ERROR_ALREADY_REGISTERED);
+        return nullptr;
+    }
+
     int index = FindThreadDataIndex(threadId);
 
     if (index == MaxThreads)
@@ -264,13 +287,21 @@ HookData* AddHookData(HookType hookType, int threadId)
         // may be anywhere in the array.
         index = FindThreadDataIndex(0);
 
-        if (index == MaxThreads)    // We're at our storage limit.
-            return nullptr;        
+        if (index == MaxThreads)
+        {   // We're at our storage limit.
+            SetLastError(ERROR_OUT_OF_STRUCTURES);
+            return nullptr;
+        }
 
         SharedData[index] = ThreadData{ };
         // Read-only operations won't be locking, so we need to guarantee these writes are in order.
         MemoryBarrier();
         SharedData[index].ThreadId = threadId;
+    }
+    else if (IsLive(GetThreadHookData(hookType, &SharedData[index])))
+    {   // Only one hook procedure of each type can be registered to a thread.
+        SetLastError(ERROR_ALREADY_REGISTERED);
+        return nullptr;
     }
 
     if (isGlobal)

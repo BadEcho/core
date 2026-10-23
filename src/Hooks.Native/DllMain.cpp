@@ -113,11 +113,8 @@ bool __cdecl AddHook(HookType hookType, HWND destination, int threadId)
 
     HookData* hookData = AddHookData(hookType, threadId);
 
-    if (hookData == nullptr)
-    {   // Out of shared storage for another hook.
-        SetLastError(ERROR_OUT_OF_STRUCTURES);
+    if (hookData == nullptr) // Out of shared storage for another hook.
         return false;
-    }
 
     HHOOK hook = SetWindowsHookEx(idHook, lpfn, Instance, threadId);
 

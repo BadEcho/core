@@ -178,7 +178,9 @@ void CloseSharedData();
  * Associates a type of hook data with a thread.
  * @param hookType The type of hook data to add.
  * @param threadId The identifier of the thread to associate the hook data with.
- * @return A pointer to the hook data if successful; otherwise a \c nullptr if the limits on shared data storage have been exceeded.
+ * @return 
+ * A pointer to the hook data if successful; otherwise a \c nullptr if the limits on shared data storage have been exceeded, 
+ * if a hook of the same type has already been registered to the thread, or if a global hook of the same type has already been registered globally.
  * @remarks This should only be called while holding a \c SharedDataLock.
  */
 HookData* AddHookData(HookType hookType, int threadId);

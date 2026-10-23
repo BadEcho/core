@@ -163,6 +163,70 @@ public class HookTests
         AssertAllSlotsAvailable(checkPump.Window.Handle);
     }
 
+    [Fact]
+    public async Task AddHook_SameThreadAndTypeTwice_SecondReturnsFalse()
+    {
+        using var firstPump = new MessageOnlyExecutor();
+        using var secondPump = new MessageOnlyExecutor();
+
+        await firstPump.StartAsync();
+        await secondPump.StartAsync();
+        Assert.NotNull(firstPump.Window);
+        Assert.NotNull(secondPump.Window);
+
+        var process = NativeProcesses.Create(1)[0];
+
+        try
+        {
+            int threadId = process.Threads[0].Id;
+
+            Assert.True(Native.AddHook(HOOK_TYPE, firstPump.Window.Handle, threadId));
+            Assert.False(Native.AddHook(HOOK_TYPE, secondPump.Window.Handle, threadId));
+            Assert.True(Native.RemoveHook(HOOK_TYPE, threadId));
+        }
+        finally
+        {
+            process.Kill();
+        }
+    }
+
+    [Fact]
+    public async Task AddHook_PreviousOwnerWindowDestroyed_ReturnsTrue()
+    {
+        nint staleWindow;
+
+        var process = NativeProcesses.Create(1)[0];
+        int threadId = process.Threads[0].Id;
+
+        try
+        {
+            using (var stalePump = new MessageOnlyExecutor())
+            {
+                await stalePump.StartAsync();
+                Assert.NotNull(stalePump.Window);
+
+                staleWindow = stalePump.Window.Handle.DangerousGetHandle();
+
+                // Never removed, so the registration outlives the window it forwards to.
+                Assert.True(Native.AddHook(HOOK_TYPE, stalePump.Window.Handle, threadId));
+            }
+
+            Assert.True(SpinWait.SpinUntil(() => !User32.IsWindow(staleWindow), TimeSpan.FromSeconds(5)));
+
+            using var pump = new MessageOnlyExecutor();
+
+            await pump.StartAsync();
+            Assert.NotNull(pump.Window);
+
+            Assert.True(Native.AddHook(HOOK_TYPE, pump.Window.Handle, threadId));
+        }
+        finally
+        {
+            Native.RemoveHook(HOOK_TYPE, threadId);
+            process.Kill();
+        }
+    }
+
     private static void AssertAllSlotsAvailable(WindowHandle destination)
     {
         var processes = NativeProcesses.Create(MAX_THREADS);

@@ -62,6 +62,9 @@ enum HookType : int // Keeps exported functions' ABI consistent with P/Invoke ca
  * @param destination A handle to the window that will receive messages sent to the hook procedure.
  * @param threadId The identifier of the thread with which the hook procedure is to be associated.
  * @return True if successful; otherwise, false.
+ * @remarks
+ * Only one hook procedure of each type can be installed for a thread, and only one global hook procedure of a type can be 
+ * installed at a time across all processes using this library.
  */
 HOOKS_API bool __cdecl AddHook(HookType hookType, HWND destination, int threadId);
 
