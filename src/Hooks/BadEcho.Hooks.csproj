@@ -34,4 +34,17 @@
 		</EmbeddedResource>
 	</ItemGroup>
 
+	<PropertyGroup>
+		<GenerateNuspecDependsOn>
+			EnsureNativeHooksBuilt;$(GenerateNuspecDependsOn)
+		</GenerateNuspecDependsOn>
+	</PropertyGroup>
+
+	<Target Name="EnsureNativeHooksBuilt">
+		<Error Condition="!Exists('$(OutputPath)\BadEcho.Hooks.Native.dll')"
+		       Text="The x64 BadEcho.Hooks.Native.dll was not found in '$(OutputPath)'." />
+		<Error Condition="!Exists('$(OutputPath)\x86\BadEcho.Hooks.Native.dll')"
+		       Text="The x86 BadEcho.Hooks.Native.dll was not found in '$(OutputPath)\x86'." />
+	</Target>
+
 </Project>
