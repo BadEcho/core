@@ -40,7 +40,7 @@ public sealed class TaskDialog : IDisposable
     private IntPtr _window;
     private GCHandle _handle;
 
-    private Exception? _callbackException;
+    private ExceptionDispatchInfo? _callbackException;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TaskDialog"/> class.
@@ -125,8 +125,7 @@ public sealed class TaskDialog : IDisposable
 
             AttachedConfiguration.UpdateVerificationChecked(verificationChecked);
 
-            if (_callbackException != null)
-                ExceptionDispatchInfo.Throw(_callbackException);
+            _callbackException?.Throw();
 
             if (selectedButtonId == _selectedButton?.Id)
                 return _selectedButton;
@@ -458,10 +457,10 @@ public sealed class TaskDialog : IDisposable
         {   // This callback is called from native code; we don't want exceptions to bubble back up to the native
             // code, otherwise we'll get an SEHException due to being inside an activation context
             // (although this depends on the runtime: if we're Native AOT, the process will just terminate).
-            // This obfuscates the error and can  lead to other issues. So, the exception is stored to be rethrown once the
+            // This obfuscates the error and can lead to other issues. So, the exception is stored to be rethrown once the
             // dialog closes, which we preempt through the clicking of the cancel button.
             
-            _callbackException ??= ex;
+            _callbackException ??= ExceptionDispatchInfo.Capture(ex); // We only keep the first exception; any raised while closing the dialog are noise.
 
             // We send a direct message in case there was an issue with subclassing, which ClickButton() depends on.
             if (!_isBeingDestroyed)

@@ -220,6 +220,29 @@ public class TaskDialogTests
     }
 
     [Fact]
+    public void Show_HandlerThrowsThenCancelHandlerThrows_ThrowsFirstException()
+    {
+        bool cancelThrew = false;
+
+        _configuration.Created += ThrowRootCause;
+        _cancelButton.Clicked += ThrowOnceFromCancel;
+
+        Assert.Throws<NotSupportedException>(() => TaskDialog.Show(_configuration));
+
+        static void ThrowRootCause(object? sender, EventArgs e)
+            => throw new NotSupportedException();
+
+        void ThrowOnceFromCancel(object? sender, EventArgs e)
+        {
+            if (cancelThrew)
+                return;
+
+            cancelThrew = true;
+            throw new InvalidOperationException();
+        }
+    }
+
+    [Fact]
     public void Text_ChangeCustomBeforeShown_IsValid()
     {
         var custom = new TaskDialogButton("Hello")
