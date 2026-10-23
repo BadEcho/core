@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -54,8 +54,18 @@ public sealed class ExternalWindowWrapper : WindowWrapper, IDisposable
     public static async Task<ExternalWindowWrapper> CreateAsync(WindowHandle handle)
     {
         var wrapper = new ExternalWindowWrapper(handle);
+
+        try
+        {   // If we throw here...and there are quite a few exceptions that can happen here...we'll lose the wrapper, and its underlying pump
+            // will never get disposed.
+            await wrapper._source.StartAsync().ConfigureAwait(false);
+        }
+        catch
+        {
+            wrapper.Dispose();
+            throw;
+        }
         
-        await wrapper._source.StartAsync().ConfigureAwait(false);
 
         return wrapper;
     }
