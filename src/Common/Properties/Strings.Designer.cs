@@ -169,15 +169,6 @@ namespace BadEcho.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} returned when attempting to set the monitor as the primary display device..
-        /// </summary>
-        public static string DisplayChangePrimaryFailed {
-            get {
-                return ResourceManager.GetString("DisplayChangePrimaryFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to EnumDisplayMonitors failed unexpectedly..
         /// </summary>
         public static string DisplayEnumDisplayMonitorsFailed {
@@ -210,6 +201,15 @@ namespace BadEcho.Properties {
         public static string DisplayGetScaleFactorForMonitorFailed {
             get {
                 return ResourceManager.GetString("DisplayGetScaleFactorForMonitorFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to restore the original position of {0} after a display rearrangement could not be completed. The display arrangement stored in the registry may not match the one currently in effect..
+        /// </summary>
+        public static string DisplayRestoreArrangementFailed {
+            get {
+                return ResourceManager.GetString("DisplayRestoreArrangementFailed", resourceCulture);
             }
         }
         

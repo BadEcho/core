@@ -23,7 +23,7 @@ namespace BadEcho.Interop;
 /// <summary>
 /// Provides a representation of a display monitor connected to the computer.
 /// </summary>
-public sealed class Display
+public sealed class Display : IEquatable<Display>
 {
     /// <summary>
     /// Apparently the only defined flag that can be set in a <see cref="MONITORINFOEX"/> structure, which indicates that
@@ -35,9 +35,6 @@ public sealed class Display
     /// The assumed screen DPI for displays that have a scale factor of 100 percent (WinUser.h).
     /// </summary>
     private const double USER_DEFAULT_SCREEN_DPI = 96.0;
-
-    private static readonly Lazy<IEnumerable<Display>> _Displays
-        = new(LoadDisplays, LazyThreadSafetyMode.ExecutionAndPublication);
     
     private readonly IntPtr _monitor;
 
@@ -53,11 +50,6 @@ public sealed class Display
         _monitor = monitor;
 
         LoadInfo();
-
-        // EnumDisplaySettings doesn't support GetLastError, so we can't get any meaningful error data.
-        // Regardless, we want to fail since we may introduce problems trying to commit an uninitialized DEVMODE when changing settings.
-        if (!User32.EnumDisplaySettings(Name, User32.EnumCurrentSettings, ref _currentMode))
-            throw new Win32Exception(Strings.DisplayEnumDisplaySettingsFailed.InvariantFormat(Name));
     }
 
     /// <summary>
@@ -75,7 +67,7 @@ public sealed class Display
     /// the first item being the leftmost monitor, and the last item being the right most monitor.
     /// </remarks>
     public static IEnumerable<Display> Devices
-        => _Displays.Value;
+        => LoadDisplays();
 
     /// <summary>
     /// Gets the monitor designated as the primary display device.
@@ -197,6 +189,18 @@ public sealed class Display
         return new Display(User32.MonitorFromWindow(window, 0x2));
     }
 
+    /// <inheritdoc/>
+    public override bool Equals(object? obj)
+        => Equals(obj as Display);
+
+    /// <inheritdoc/>
+    public override int GetHashCode()
+        => _monitor.GetHashCode();
+
+    /// <inheritdoc/>
+    public bool Equals(Display? other)
+        => other is not null && _monitor == other._monitor;
+
     /// <summary>
     /// Makes this monitor the primary display device.
     /// </summary>
@@ -211,9 +215,12 @@ public sealed class Display
     /// </para>
     /// <para>
     /// Since this requires updating the graphics modes of multiple devices, we stage the individual positional changes and then bring
-    /// them all into effect at once by calling <c>ChangeDisplaySettingsEx</c> with a null device. None of the changes get committed
-    /// to the registry until this final call, so there is no need to worry about an inconsistent registry state should any of these
-    /// steps fail.
+    /// them all into effect at once by calling <c>ChangeDisplaySettingsEx</c> with a null device. Each staged change is written to the
+    /// registry as soon as it is made, but none of them take effect until this final call. If any step fails, the original position
+    /// and primary designation of every display is staged again, so that the registry describes the arrangement currently in effect.
+    /// </para>
+    /// <para>
+    /// Once the changes are in effect, this instance and the other repositioned displays are refreshed.
     /// </para>
     /// </remarks>
     public void MakePrimary()
@@ -221,19 +228,29 @@ public sealed class Display
         if (_isPrimary)
             return;
 
-        IEnumerable<Display> otherDisplays = Devices.Where(d => d != this);
+        List<Display> otherDisplays = Devices.Where(d => !d.Equals(this)).ToList();
 
         int xOffset = 0 - _currentMode.PositionX;
         int yOffset = 0 - _currentMode.PositionY;
 
-        Move(xOffset, yOffset, ChangeDisplaySettingsFlags.SetPrimary);
-
-        foreach (var otherDisplay in otherDisplays)
+        try
         {
-            otherDisplay.Move(xOffset, yOffset);
+            Move(xOffset, yOffset, ChangeDisplaySettingsFlags.SetPrimary);
+
+            foreach (var otherDisplay in otherDisplays)
+            {
+                otherDisplay.Move(xOffset, yOffset);
+            }
+
+            ApplyChanges();
+        }
+        catch
+        {
+            RestoreArrangement(otherDisplays);
+            throw;
         }
 
-        ApplyChanges();
+        LoadInfo();
     }
 
     private static List<Display> LoadDisplays()
@@ -283,11 +300,6 @@ public sealed class Display
 
         if (result != ChangeDisplaySettingsResult.Successful)
             throw new Win32Exception(Strings.DisplayApplyDisplaySettingsFailed.InvariantFormat(result));
-
-        foreach (var display in Devices)
-        {
-            display.LoadInfo();
-        }
     }
 
     private void LoadInfo()
@@ -303,22 +315,24 @@ public sealed class Display
 
         WorkingArea
             = Rectangle.FromLTRB(info.rcWork.Left, info.rcWork.Top, info.rcWork.Right, info.rcWork.Bottom);
+
+        // EnumDisplaySettings doesn't support GetLastError, so we can't get any meaningful error data.
+        // Regardless, we want to fail since we may introduce problems trying to commit an uninitialized DEVMODE when changing settings.
+        if (!User32.EnumDisplaySettings(Name, User32.EnumCurrentSettings, ref _currentMode))
+            throw new Win32Exception(Strings.DisplayEnumDisplaySettingsFailed.InvariantFormat(Name));
     }
 
     private unsafe void Move(int xOffset, int yOffset, ChangeDisplaySettingsFlags additionalFlags = default)
     {
-        int positionX = _currentMode.PositionX + xOffset;
-        int positionY = _currentMode.PositionY + yOffset;
-
         var positionMode = new DeviceMode
-        {
+                           {
                                DeviceName = _currentMode.DeviceName,
                                SpecificationVersion = _currentMode.SpecificationVersion,
                                DriverVersion = _currentMode.DriverVersion,
                                Fields = DeviceModeFields.Position,
-                               PositionX = positionX,
-                               PositionY = positionY
-                           };
+                               PositionX = _currentMode.PositionX + xOffset,
+                               PositionY = _currentMode.PositionY + yOffset
+        };
 
         var flags = ChangeDisplaySettingsFlags.UpdateRegistry | ChangeDisplaySettingsFlags.NoReset | additionalFlags;
 
@@ -326,8 +340,21 @@ public sealed class Display
 
         if (result != ChangeDisplaySettingsResult.Successful)
             throw new Win32Exception(Strings.DisplayChangePositionFailed.InvariantFormat(result));
+    }
 
-        _currentMode.PositionX = positionX;
-        _currentMode.PositionY = positionY;
+    private void RestoreArrangement(IEnumerable<Display> otherDisplays)
+    {
+        foreach (var display in otherDisplays.Prepend(this))
+        {
+            try
+            {
+                // This will stage each display's original position.
+                display.Move(0, 0, display._isPrimary ? ChangeDisplaySettingsFlags.SetPrimary : default);
+            }
+            catch (Win32Exception ex)
+            {
+                Logger.Error(Strings.DisplayRestoreArrangementFailed.InvariantFormat(display.Name), ex);
+            }
+        }
     }
 }

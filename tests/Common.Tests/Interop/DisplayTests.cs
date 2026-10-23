@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //		Created by Matt Weber <matt@badecho.com>
-//		Copyright @ 2024 Bad Echo LLC. All rights reserved.
+//		Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //		Bad Echo Technologies are licensed under the
 //		GNU Affero General Public License v3.0.
@@ -52,6 +52,16 @@ public class DisplayTests
         bool success = User32.EnumDisplayDevices(null, 0, ref device, 0);
         
         Assert.True(success);
+    }
+
+    [Fact]
+    public void Devices_CalledTwice_ReturnsFreshEqualInstances()
+    {
+        List<Display> first = Display.Devices.ToList();
+        List<Display> second = Display.Devices.ToList();
+
+        Assert.NotSame(first[0], second[0]);
+        Assert.Equal(first, second);
     }
 
     [Fact]
