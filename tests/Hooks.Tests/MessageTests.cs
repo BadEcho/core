@@ -12,6 +12,7 @@
 // -----------------------------------------------------------------------
 
 using BadEcho.Interop;
+using System.Reflection;
 
 namespace BadEcho.Hooks.Tests;
 
@@ -175,6 +176,71 @@ public class MessageTests : IDisposable
                 process.Kill();
         }
     }
+
+    [Fact]
+    public async Task MouseSource_WheelHookMessage_DataAndCoordinatesReceived()
+    {
+        var process = NativeProcesses.Create(1)[0];
+
+        try
+        {
+            (nint _, int threadId) = NativeProcesses.GetWindowInformation(process);
+            bool receivedWheel = false;
+            int receivedX = 0, receivedY = 0, receivedData = 0;
+
+            await using (var source = new MouseSource(MouseProcedure, threadId))
+            {
+                await source.StartAsync();
+
+                MessageOnlyWindowWrapper window = GetHookWindow(source);
+
+                // Stands in for the native hook procedure: mouse data in the WPARAM and packed coordinates in the LPARAM.
+                User32.SendMessage(window.Handle,
+                                   (WindowMessage)((uint)WindowMessage.User + (uint)WindowMessage.MouseWheel),
+                                   MakeParam(0, -240),
+                                   MakeParam(-5, 300));
+            }
+
+            Assert.True(receivedWheel);
+            Assert.Equal(-5, receivedX);
+            Assert.Equal(300, receivedY);
+            Assert.Equal(-240, receivedData);
+
+            ProcedureResult MouseProcedure(MouseEvent mouseEvent, int x, int y, int data)
+            {
+                if (mouseEvent == MouseEvent.Wheel)
+                {
+                    receivedWheel = true;
+                    receivedX = x;
+                    receivedY = y;
+                    receivedData = data;
+                }
+
+                return new ProcedureResult(nint.Zero, true);
+            }
+        }
+        finally
+        {
+            process.Kill();
+        }
+    }
+
+    private static MessageOnlyWindowWrapper GetHookWindow(HookSource source)
+    {   // The window receiving hook messages isn't exposed, so it's read from the source's private executor.
+        FieldInfo? executorField
+            = typeof(HookSource).GetField("_hookExecutor", BindingFlags.Instance | BindingFlags.NonPublic);
+
+        var executor = (MessageOnlyExecutor?)executorField?.GetValue(source);
+
+        Assert.NotNull(executor);
+        Assert.NotNull(executor.Window);
+
+        return executor.Window;
+    }
+
+    private static nint MakeParam(int low, int high)
+        => unchecked((nint)(uint)((ushort)low | ((ushort)high << 16)));
+
     public void Dispose()
     {
         _mre.Dispose();

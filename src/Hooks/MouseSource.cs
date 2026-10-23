@@ -52,9 +52,11 @@ public sealed class MouseSource : HookSource
 
     /// <inheritdoc/>
     protected override nint OnHookEvent(nint hWnd, uint msg, nint wParam, nint lParam)
-    {
-        int x = wParam.ToInt32();
-        int y = lParam.ToInt32();
+    {   // Windows only defines the high 16 bits of the mouseData structure that's forwarded to here.
+        int data = unchecked((short) (wParam >> 16));
+        // X- and y-coordinates are packed into the low and high words of the LPARAM.
+        int x = unchecked((short) lParam);
+        int y = unchecked((short) (lParam >> 16));
 
         MouseEvent mouseEvent = (WindowMessage) msg switch
         {
@@ -72,7 +74,7 @@ public sealed class MouseSource : HookSource
             _ => throw new ArgumentException(Strings.NonMouseMessageReceived)
         };
 
-        _callback(mouseEvent, x, y);
+        _callback(mouseEvent, x, y, data);
 
         return 0;
     }

@@ -288,16 +288,16 @@ LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
 LRESULT CALLBACK MouseProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
     int threadId = static_cast<int>(GetCurrentThreadId());
-
+        
     if (HookData* hookData = GetHookData(Mouse, threadId, HookDataScope::Effective); nCode == HC_ACTION && hookData != nullptr)
     {
         HWND destination = hookData->Destination;
 
-        auto mouseInput = PointTo<MOUSEHOOKSTRUCT>(lParam);
+        auto mouseInput = PointTo<MOUSEHOOKSTRUCTEX>(lParam);
         auto message = static_cast<unsigned int>(wParam);
 
         if (destination != nullptr)
-            PostHookMessage(destination, message, mouseInput->pt.x, mouseInput->pt.y);
+            PostHookMessage(destination, message, mouseInput->mouseData, MAKELPARAM(mouseInput->pt.x, mouseInput->pt.y));
     }
 
     return CallNextHookEx(nullptr, nCode, wParam, lParam);
@@ -315,7 +315,7 @@ LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam)
         auto message = static_cast<unsigned int>(wParam);
 
         if (destination != nullptr)
-            PostHookMessage(destination, message, mouseInput->pt.x, mouseInput->pt.y);
+            PostHookMessage(destination, message, mouseInput->mouseData, MAKELPARAM(mouseInput->pt.x, mouseInput->pt.y));
     }
 
     return CallNextHookEx(nullptr, nCode, wParam, lParam);
