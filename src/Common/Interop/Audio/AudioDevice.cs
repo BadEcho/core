@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -40,7 +40,14 @@ public sealed class AudioDevice
         {
             void* pEndpointVolume = _device.Activate(ref _AudioEndpointVolumeIID, ClassContext.All, nint.Zero);
 
-            _endpointVolume = ComInterfaceMarshaller<IAudioEndpointVolume>.ConvertToManaged(pEndpointVolume)!;
+            try
+            {
+                _endpointVolume = ComInterfaceMarshaller<IAudioEndpointVolume>.ConvertToManaged(pEndpointVolume)!;
+            }
+            finally
+            {   // The managed wrapper will hold its own reference, we can release the one from Activate at this point.
+                ComInterfaceMarshaller<IAudioEndpointVolume>.Free(pEndpointVolume);
+            }
 
             _endpointVolume.GetVolumeRange(out float minimumValue, out float _, out float _);
 
