@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -24,6 +24,9 @@ namespace BadEcho.Drawing;
 /// </remarks>
 public sealed class RectanglePacker
 {
+    private static readonly IComparer<Point> _AnchorRankComparer
+        = Comparison.Using<Point>((l, r) => (l.X + l.Y).CompareTo(r.X + r.Y));
+
     private readonly List<Point> _anchors = [Point.Empty];
     private readonly List<Rectangle> _packedRectangles = [];
     private readonly Size _maximumPackingSize;
@@ -165,7 +168,7 @@ public sealed class RectanglePacker
     private void InsertAnchor(Point anchor)
     {
         int insertIndex
-            = _anchors.BinarySearch(anchor, Comparison.Using<Point>((l, r) => l.X + l.Y - r.X + r.Y));
+            = _anchors.BinarySearch(anchor, _AnchorRankComparer);
         
         if (insertIndex < 0)
             insertIndex = ~insertIndex;
