@@ -37,6 +37,10 @@
       <BuildType Solution="Package|*" Project="Release" />
       <Build Solution="Package|*" Project="false" />
     </Project>
+    <Project Path="tests/Drawing.Tests/BadEcho.Drawing.Tests.csproj" Id="e40d923b-d76d-473c-83b4-6a092c9152ed">
+      <BuildType Solution="Package|*" Project="Debug" />
+      <Build Solution="Package|*" Project="false" />
+    </Project>
     <Project Path="tests/Extensions.Tests/BadEcho.Extensions.Tests.csproj">
       <BuildType Solution="Package|*" Project="Release" />
       <Build Solution="Package|*" Project="false" />

@@ -29,6 +29,7 @@ public sealed class ImagePacker
     private List<string> _imagePaths = [];
     
     private SKBitmap? _outputImage;
+    private Size _maximumSize;
     
     /// <summary>
     /// Gets a mapping between individual image file names and the region of the generated image they've
@@ -64,8 +65,8 @@ public sealed class ImagePacker
         _imageSizes.Clear();
         _packedAreas.Clear();
         
-        var maximumSize = new Size(maximumWidth, maximumHeight);
-        OutputSize = maximumSize;
+        _maximumSize = new Size(maximumWidth, maximumHeight);
+        OutputSize = _maximumSize;
         _imagePaths = imagePaths.ToList();
 
         foreach (string image in _imagePaths)
@@ -228,9 +229,7 @@ public sealed class ImagePacker
 
         int maxDimension = Math.Max(sizeToAttempt.Width, sizeToAttempt.Height);
 
-        sizeToAttempt = new Size(maxDimension, maxDimension);
-
-        return sizeToAttempt;
+        return new Size(Math.Min(maxDimension, _maximumSize.Width), Math.Min(maxDimension, _maximumSize.Height));
     }
 
     private SKBitmap CreateOutputImage()
