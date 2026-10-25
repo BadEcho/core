@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -20,7 +20,7 @@ namespace BadEcho.Drawing;
 /// <summary>
 /// Generates an image comprising multiple other images, packed together as tightly as practicable.
 /// </summary>
-public sealed class ImagePacker
+public sealed class ImagePacker : IDisposable
 {
     private readonly Dictionary<string, SKBitmap> _images = [];
     private readonly Dictionary<string, Size> _imageSizes = [];
@@ -30,6 +30,7 @@ public sealed class ImagePacker
     
     private SKBitmap? _outputImage;
     private Size _maximumSize;
+    private bool _disposed;
     
     /// <summary>
     /// Gets a mapping between individual image file names and the region of the generated image they've
@@ -61,56 +62,61 @@ public sealed class ImagePacker
     {
         Require.NotNull(imagePaths, nameof(imagePaths));
         
-        _images.Clear();
-        _imageSizes.Clear();
         _packedAreas.Clear();
         
         _maximumSize = new Size(maximumWidth, maximumHeight);
         OutputSize = _maximumSize;
         _imagePaths = imagePaths.ToList();
 
-        foreach (string image in _imagePaths)
+        try
         {
-            using (var fileStream = new SKFileStream(image))
+            foreach (string image in _imagePaths)
             {
-                var bitmap = SKBitmap.Decode(fileStream);
+                using (var fileStream = new SKFileStream(image))
+                {
+                    var bitmap = SKBitmap.Decode(fileStream);
 
-                _images.Add(image, bitmap);
-                _imageSizes.Add(image, new Size(bitmap.Width, bitmap.Height));
+                    _images.Add(image, bitmap);
+                    _imageSizes.Add(image, new Size(bitmap.Width, bitmap.Height));
+                }
+            }
+
+            _imagePaths.Sort((firstImage, secondImage) =>
+            {
+                Size firstSize = _imageSizes[firstImage];
+                Size secondSize = _imageSizes[secondImage];
+
+                int comparison = secondSize.Width.CompareTo(firstSize.Width);
+
+                return comparison != 0 ? comparison : secondSize.Height.CompareTo(firstSize.Height);
+            });
+
+            PackRectangles();
+
+            SKBitmap outputImage = CreateOutputImage();
+
+            _outputImage?.Dispose();
+            _outputImage = outputImage;
+
+            var keys = new string[_packedAreas.Keys.Count];
+
+            _packedAreas.Keys.CopyTo(keys, 0);
+
+            foreach (string key in keys)
+            {
+                Size size = _imageSizes[key];
+                Rectangle packedArea = _packedAreas[key];
+
+                packedArea.Width = size.Width;
+                packedArea.Height = size.Height;
+
+                _packedAreas[key] = packedArea;
             }
         }
-
-        _imagePaths.Sort((firstImage, secondImage) =>
+        finally
         {
-            Size firstSize = _imageSizes[firstImage];
-            Size secondSize = _imageSizes[secondImage];
-
-            int comparison = secondSize.Width.CompareTo(firstSize.Width);
-
-            return comparison != 0 ? comparison : secondSize.Height.CompareTo(firstSize.Height);
-        });
-
-        PackRectangles();
-
-        _outputImage = CreateOutputImage();
-
-        var keys = new string[_packedAreas.Keys.Count];
-
-        _packedAreas.Keys.CopyTo(keys, 0);
-
-        foreach (string key in keys)
-        {
-            Size size = _imageSizes[key];
-            Rectangle packedArea = _packedAreas[key];
-
-            packedArea.Width = size.Width;
-            packedArea.Height = size.Height;
-
-            _packedAreas[key] = packedArea;
+            ReleaseImages();
         }
-        
-        _images.Clear();
-        _imageSizes.Clear();
     }
 
     /// <summary>
@@ -129,6 +135,18 @@ public sealed class ImagePacker
                 imageStream.SaveTo(fileStream);
             }
         }
+    }
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        if (_disposed)
+            return;
+
+        _outputImage?.Dispose();
+        _outputImage = null;
+
+        _disposed = true;
     }
 
     private static int FindNextPowerOfTwo(int k)
@@ -252,5 +270,16 @@ public sealed class ImagePacker
         }
 
         return outputImage;
+    }
+
+    private void ReleaseImages()
+    {
+        foreach (SKBitmap image in _images.Values)
+        {
+            image.Dispose();
+        }
+
+        _images.Clear();
+        _imageSizes.Clear();
     }
 }

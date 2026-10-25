@@ -51,6 +51,20 @@ public class ImagePackerTests : IDisposable
         AssertSavedSize(packer, packer.OutputSize);
     }
 
+    [Fact]
+    public void Pack_Twice_SavesLatestImage()
+    {
+        string first = CreateImage("first.png", 8, 8, SKColors.Red);
+        string second = CreateImage("second.png", 30, 30, SKColors.Blue);
+        using var packer = new ImagePacker();
+
+        packer.Pack([first], 64, 64);
+        packer.Pack([second], 64, 64);
+
+        Assert.Equal(new Size(32, 32), packer.OutputSize);
+        AssertSavedSize(packer, packer.OutputSize);
+    }
+
     public void Dispose()
     {
         Directory.Delete(_directory, true);
