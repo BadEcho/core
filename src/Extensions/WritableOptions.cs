@@ -11,11 +11,13 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Primitives;
+using BadEcho.Properties;
 
 namespace BadEcho.Extensions;
 
@@ -31,7 +33,7 @@ public sealed class WritableOptions<TOptions> : IWritableOptions<TOptions>, IDis
     private readonly List<IDisposable> _registrations = [];
     private readonly IHostEnvironment _environment;
     private readonly Dictionary<string, string> _fileNameMap = [];
-    private readonly Dictionary<string, string> _sectionNameMap = [];
+    private readonly Dictionary<string, string> _sectionPathMap = [];
     
     private bool _disposed;
 
@@ -51,7 +53,7 @@ public sealed class WritableOptions<TOptions> : IWritableOptions<TOptions>, IDis
         foreach (var configureOptions in configureOptionsSet)
         {
             _fileNameMap[configureOptions.Name ?? string.Empty] = configureOptions.FileName;
-            _sectionNameMap[configureOptions.Name ?? string.Empty] = configureOptions.SectionName;
+            _sectionPathMap[configureOptions.Name ?? string.Empty] = configureOptions.SectionPath;
         }
 
         // Avoids any unnecessary enumerator allocations, since the DI container typically uses arrays.
@@ -109,7 +111,7 @@ public sealed class WritableOptions<TOptions> : IWritableOptions<TOptions>, IDis
         if (File.Exists(path))
             optionsFileNode = JsonNode.Parse(File.ReadAllText(path));
 
-        optionsFileNode = optionsFileNode.MergeNodes(updateSection, _sectionNameMap[name]);
+        optionsFileNode = MergeSection(optionsFileNode, updateSection, _sectionPathMap[name], path);
       
         File.WriteAllText(path,
                           optionsFileNode.ToJsonString(new JsonSerializerOptions
@@ -132,6 +134,57 @@ public sealed class WritableOptions<TOptions> : IWritableOptions<TOptions>, IDis
         _registrations.Clear();
 
         _disposed = true;
+    }
+
+    private static JsonNode MergeSection(JsonNode? root, JsonNode section, string sectionPath, string filePath)
+    {
+        if (string.IsNullOrEmpty(sectionPath))
+            return root.MergeNodes(section);
+
+        root ??= new JsonObject();
+
+        string[] keys = sectionPath.Split(ConfigurationPath.KeyDelimiter);
+        JsonObject parent = root.AsObject();
+
+        for (int i = 0; i < keys.Length - 1; i++)
+        {
+            string key = FindPropertyName(parent, keys[i]);
+
+            switch (parent[key])
+            {
+                case JsonObject child:
+                    parent = child;
+                    break;
+
+                case JsonArray:
+                    throw new InvalidOperationException(Strings.WritableOptionsSectionWithinArray.InvariantFormat(sectionPath, filePath));
+
+                default:
+                    // Missing, null, and scalar nodes can't contain the section, so an object takes their place.
+                    var replacement = new JsonObject();
+                    parent[key] = replacement;
+                    parent = replacement;
+                    break;
+            }
+        }
+
+        parent.MergeNodes(section, FindPropertyName(parent, keys[^1]));
+
+        return root;
+    }
+
+    private static string FindPropertyName(JsonObject node, string key)
+    {
+        if (node.ContainsKey(key))
+            return key;
+
+        foreach (KeyValuePair<string, JsonNode?> property in node)
+        {
+            if (string.Equals(property.Key, key, StringComparison.OrdinalIgnoreCase))
+                return property.Key;
+        }
+
+        return key;
     }
 
     private void RegisterSource(IOptionsChangeTokenSource<TOptions> source)

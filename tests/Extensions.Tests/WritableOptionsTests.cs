@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -11,6 +11,9 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
@@ -244,6 +247,115 @@ public class WritableOptionsTests : IDisposable
                                      changedPropertySelector: o => o[0].OptionA);
     }
 
+    [Fact]
+    public void Save_NestedSection_UpdatesNestedSection()
+    {
+        string filePath = CreateSettingsFile("""
+            {
+              "Outer": {
+                "Inner": { "OptionA": "First nested one", "OptionB": "Second nested one" },
+                "Sibling": true
+              }
+            }
+            """);
+        try
+        {
+            using ServiceProvider provider
+                = BuildProvider(filePath, (s, c) => s.Configure<TestOptions>(c.GetSection("Outer:Inner"), filePath));
+            var options = provider.GetRequiredService<IWritableOptions<TestOptions>>();
+
+            TestOptions value = options.Get(null);
+            Assert.Equal("First nested one", value.OptionA);
+
+            value.OptionA = "Changed";
+            options.Save(null);
+
+            JsonNode root = JsonNode.Parse(File.ReadAllText(filePath))!;
+
+            Assert.Equal("Changed", (string?)root["Outer"]?["Inner"]?["OptionA"]);
+            Assert.Equal("Second nested one", (string?)root["Outer"]?["Inner"]?["OptionB"]);
+            Assert.True((bool?)root["Outer"]?["Sibling"]);
+            Assert.Null(root["Inner"]);
+        }
+        finally
+        {
+            DeleteSettingsFile(filePath);
+        }
+    }
+
+    [Fact]
+    public void Save_NestedSectionDifferentCase_UpdatesExistingSection()
+    {
+        string filePath = CreateSettingsFile("""
+            { "Outer": { "Inner": { "OptionA": "First nested one", "OptionB": "Second nested one" } } }
+            """);
+        try
+        {
+            using ServiceProvider provider
+                = BuildProvider(filePath, (s, c) => s.Configure<TestOptions>(c.GetSection("outer:inner"), filePath));
+            var options = provider.GetRequiredService<IWritableOptions<TestOptions>>();
+
+            options.Get(null).OptionA = "Changed";
+            options.Save(null);
+
+            JsonObject root = JsonNode.Parse(File.ReadAllText(filePath))!.AsObject();
+
+            Assert.Equal("Changed", (string?)root["Outer"]?["Inner"]?["OptionA"]);
+            Assert.Single(root);
+            Assert.Single(root["Outer"]!.AsObject());
+        }
+        finally
+        {
+            DeleteSettingsFile(filePath);
+        }
+    }
+
+    [Fact]
+    public void Save_NestedSectionMissing_CreatesNestedSection()
+    {
+        string filePath = CreateSettingsFile("{}");
+        try
+        {
+            using ServiceProvider provider
+                = BuildProvider(filePath, (s, c) => s.Configure<TestOptions>(c.GetSection("Outer:Inner"), filePath));
+            var options = provider.GetRequiredService<IWritableOptions<TestOptions>>();
+
+            options.Get(null).OptionA = "Changed";
+            options.Save(null);
+
+            JsonNode root = JsonNode.Parse(File.ReadAllText(filePath))!;
+
+            Assert.Equal("Changed", (string?)root["Outer"]?["Inner"]?["OptionA"]);
+            Assert.Null(root["Inner"]);
+        }
+        finally
+        {
+            DeleteSettingsFile(filePath);
+        }
+    }
+
+    [Fact]
+    public void Save_SectionWithinArray_ThrowsInvalidOperationException()
+    {
+        string filePath = CreateSettingsFile("""
+            { "Items": [ { "OptionA": "First item", "OptionB": "Second item" } ] }
+            """);
+        try
+        {
+            using ServiceProvider provider
+                = BuildProvider(filePath, (s, c) => s.Configure<TestOptions>(c.GetSection("Items:0"), filePath));
+            var options = provider.GetRequiredService<IWritableOptions<TestOptions>>();
+
+            options.Get(null).OptionA = "Changed";
+
+            Assert.Throws<InvalidOperationException>(() => options.Save(null));
+        }
+        finally
+        {
+            DeleteSettingsFile(filePath);
+        }
+    }
+
     public void Dispose()
     {
         _primaryFirstChange?.Dispose();
@@ -270,6 +382,35 @@ public class WritableOptionsTests : IDisposable
         {
             Assert.Equal(expected[i], actual[i]);
         }
+    }
+
+    private static string CreateSettingsFile(string contents)
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "BadEcho.Extensions.Tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+
+        string filePath = Path.Combine(directory, "appsettings.json");
+        File.WriteAllText(filePath, contents);
+
+        return filePath;
+    }
+
+    private static void DeleteSettingsFile(string filePath)
+        => Directory.Delete(Path.GetDirectoryName(filePath)!, true);
+
+    private static ServiceProvider BuildProvider(string filePath, Action<IServiceCollection, IConfiguration> configure)
+    {
+        IConfiguration configuration = new ConfigurationBuilder()
+                                       .AddJsonFile(filePath, optional: true, reloadOnChange: false)
+                                       .Build();
+        var services = new ServiceCollection();
+
+        services.AddOptions();
+        services.AddSingleton<IHostEnvironment>(new TestHostEnvironment(Path.GetDirectoryName(filePath)!));
+
+        configure(services, configuration);
+
+        return services.BuildServiceProvider();
     }
 
     /// <suppression>

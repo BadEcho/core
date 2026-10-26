@@ -402,4 +402,7 @@
   <data name="DisplayRestoreArrangementFailed" xml:space="preserve">
 	  <value>Failed to restore the original position of {0} after a display rearrangement could not be completed. The display arrangement stored in the registry may not match the one currently in effect.</value>
   </data>
+  <data name="WritableOptionsSectionWithinArray" xml:space="preserve">
+	  <value>Options sourced from the configuration section '{0}' cannot be saved to '{1}', as the section is nested within a JSON array.</value>
+  </data>
 </root>

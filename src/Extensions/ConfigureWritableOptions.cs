@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -43,7 +43,7 @@ public sealed class ConfigureWritableOptions<TOptions> : ConfigureNamedOptions<T
     {
         Require.NotNull(configuration, nameof(configuration));
 
-        SectionName = configuration.Key;
+        SectionPath = configuration.Path;
     }
 
     /// <summary>
@@ -74,8 +74,8 @@ public sealed class ConfigureWritableOptions<TOptions> : ConfigureNamedOptions<T
     { get; }
 
     /// <summary>
-    /// Gets the name of the configuration section the options are sourced from.
+    /// Gets the path of the configuration section the options are sourced from.
     /// </summary>
-    public string SectionName
+    public string SectionPath
     { get; } = string.Empty;
 }

@@ -914,5 +914,14 @@ namespace BadEcho.Properties {
                 return ResourceManager.GetString("WindowHotKeyDuplicateId", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Options sourced from the configuration section &apos;{0}&apos; cannot be saved to &apos;{1}&apos;, as the section is nested within a JSON array..
+        /// </summary>
+        public static string WritableOptionsSectionWithinArray {
+            get {
+                return ResourceManager.GetString("WritableOptionsSectionWithinArray", resourceCulture);
+            }
+        }
     }
 }
