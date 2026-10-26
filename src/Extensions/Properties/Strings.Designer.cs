@@ -68,5 +68,14 @@ namespace BadEcho.Extensions.Properties {
                 return ResourceManager.GetString("LogFilePathNotSpecified", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to write to the log file &apos;{0}&apos;: {1}.
+        /// </summary>
+        internal static string LogFileWriteFailed {
+            get {
+                return ResourceManager.GetString("LogFileWriteFailed", resourceCulture);
+            }
+        }
     }
 }

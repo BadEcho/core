@@ -101,4 +101,7 @@
 	<data name="LogFilePathNotSpecified" xml:space="preserve">
 		<value>A valid path to a log file must be specified.</value>
 	</data>
+	<data name="LogFileWriteFailed" xml:space="preserve">
+		<value>Unable to write to the log file '{0}': {1}</value>
+	</data>
 </root>

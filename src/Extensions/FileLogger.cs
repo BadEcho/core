@@ -12,6 +12,9 @@
 // -----------------------------------------------------------------------
 
 using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.Security;
+using BadEcho.Extensions.Properties;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -83,17 +86,33 @@ internal sealed class FileLogger : ILogger
         if (string.IsNullOrEmpty(message) && exception == null)
             return;
 
-        string path = _environment.ResolvePath(Environment.ExpandEnvironmentVariables(Options.Path));
-
-        lock (_NamedLocks.GetOrAdd(path, _ => new Lock()))
+        try
         {
-            using var logFile = new FileStream(path, FileMode.Append, FileAccess.Write, FileShare.Read);
-            using (var logWriter = new StreamWriter(logFile))
-            {
-                logWriter.WriteLine($"{DateTime.Now:s} - {logLevel , -11} - {IndentNewLines(message)}");
+            string path = _environment.ResolvePath(Environment.ExpandEnvironmentVariables(Options.Path));
 
-                if (exception != null)
-                    logWriter.WriteLine($"\t{IndentNewLines(exception.ToString())}");
+            lock (_NamedLocks.GetOrAdd(path, _ => new Lock()))
+            {
+                using var logFile = new FileStream(path, FileMode.Append, FileAccess.Write, FileShare.Read);
+                using (var logWriter = new StreamWriter(logFile))
+                {
+                    logWriter.WriteLine($"{DateTime.Now:s} - {logLevel,-11} - {IndentNewLines(message)}");
+
+                    if (exception != null)
+                        logWriter.WriteLine($"\t{IndentNewLines(exception.ToString())}");
+                }
+            }
+        }
+        catch (Exception ex) when (ex  is IOException
+                                       or UnauthorizedAccessException 
+                                       or ArgumentException 
+                                       or NotSupportedException
+                                       or SecurityException)
+        {   
+            if (Debugger.IsLogging())
+            {   // We avoid using our own logger if there's some bad I/O business going on, as it'll get forwarded back to here.
+                Debugger.Log(0,
+                             null,
+                             $"{Strings.LogFileWriteFailed.InvariantFormat(Options.Path, ex.Message)}{Environment.NewLine}");
             }
         }
 
