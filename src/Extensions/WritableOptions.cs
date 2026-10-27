@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -28,6 +28,13 @@ namespace BadEcho.Extensions;
 public sealed class WritableOptions<TOptions> : IWritableOptions<TOptions>, IDisposable
     where TOptions : class
 {
+    private readonly JsonDocumentOptions _jsonOptions
+        = new()
+          {
+              CommentHandling = JsonCommentHandling.Skip,
+              AllowTrailingCommas = true
+          };
+
     private readonly IOptionsFactory<TOptions> _factory;
     private readonly IOptionsMonitorCache<TOptions> _cache;
     private readonly List<IDisposable> _registrations = [];
@@ -109,7 +116,7 @@ public sealed class WritableOptions<TOptions> : IWritableOptions<TOptions>, IDis
         JsonNode? optionsFileNode = null;
 
         if (File.Exists(path))
-            optionsFileNode = JsonNode.Parse(File.ReadAllText(path));
+            optionsFileNode = JsonNode.Parse(File.ReadAllText(path), documentOptions: _jsonOptions);
 
         optionsFileNode = MergeSection(optionsFileNode, updateSection, _sectionPathMap[name], path);
       
