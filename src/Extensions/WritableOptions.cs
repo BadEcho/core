@@ -113,18 +113,21 @@ public sealed class WritableOptions<TOptions> : IWritableOptions<TOptions>, IDis
         JsonNode updateSection = JsonSerializer.SerializeToNode(Get(name)) ?? new JsonObject();
         string path = _environment.ResolvePath(_fileNameMap[name]);
 
-        JsonNode? optionsFileNode = null;
+        lock (FileLocks.Get(path))
+        {
+            JsonNode? optionsFileNode = null;
 
-        if (File.Exists(path))
-            optionsFileNode = JsonNode.Parse(File.ReadAllText(path), documentOptions: _jsonOptions);
+            if (File.Exists(path))
+                optionsFileNode = JsonNode.Parse(File.ReadAllText(path), documentOptions: _jsonOptions);
 
-        optionsFileNode = MergeSection(optionsFileNode, updateSection, _sectionPathMap[name], path);
-      
-        File.WriteAllText(path,
-                          optionsFileNode.ToJsonString(new JsonSerializerOptions
-                                                       {
-                                                           WriteIndented = true
-                                                       }));
+            optionsFileNode = MergeSection(optionsFileNode, updateSection, _sectionPathMap[name], path);
+
+            File.WriteAllText(path,
+                              optionsFileNode.ToJsonString(new JsonSerializerOptions
+                                                           {
+                                                               WriteIndented = true
+                                                           }));
+        }
     }
 
     /// <inheritdoc/>

@@ -19,7 +19,6 @@ using System.Text.Json.Nodes;
 
 namespace BadEcho.Extensions.Tests;
 
-[Collection("WritableTests")]
 public class WritableOptionsTests : IDisposable
 {
     private static readonly PrimaryFirstOptions _ExpectedPrimaryFirst
