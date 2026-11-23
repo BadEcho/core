@@ -230,7 +230,9 @@ public class TaskDialogTests
         Assert.Throws<NotSupportedException>(() => TaskDialog.Show(_configuration));
 
         static void ThrowRootCause(object? sender, EventArgs e)
-            => throw new NotSupportedException();
+        {
+            throw new NotSupportedException();
+        }
 
         void ThrowOnceFromCancel(object? sender, EventArgs e)
         {
