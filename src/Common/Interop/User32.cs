@@ -126,6 +126,16 @@ internal static partial class User32
     public static partial bool IsWindowVisible(WindowHandle hWnd);
 
     /// <summary>
+    /// Determines whether the specified window is minimized (iconic).
+    /// </summary>
+    /// <param name="hWnd">A handle to the window to be tested.</param>
+    /// <returns>True if the window is minimized; otherwise, false.</returns>
+    [LibraryImport(LibraryName)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static partial bool IsIconic(WindowHandle hWnd);
+
+    /// <summary>
     /// Determines whether the specified window handle identifies an existing window.
     /// </summary>
     /// <param name="hWnd">A handle to the window to be tested.</param>

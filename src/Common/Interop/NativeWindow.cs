@@ -25,7 +25,7 @@ namespace BadEcho.Interop;
 /// Provides an encapsulation of a Win32 window, providing information of interest as well as offering ways to manipulate
 /// said window.
 /// </summary>
-public sealed class NativeWindow
+public sealed class NativeWindow : IEquatable<NativeWindow>
 {
     private readonly List<int> _hotKeyIds = [];
 
@@ -183,6 +183,12 @@ public sealed class NativeWindow
         => User32.IsWindowVisible(Handle);
 
     /// <summary>
+    /// Gets a value indicating if this window is currently minimized.
+    /// </summary>
+    public bool IsMinimized
+        => User32.IsIconic(Handle);
+
+    /// <summary>
     /// Gets a value indicating if techniques intended to eliminate the possibility of a flickering background during the initial
     /// display of the window should be employed.
     /// </summary>
@@ -229,6 +235,21 @@ public sealed class NativeWindow
             return true;
         }
     }
+
+    /// <inheritdoc/>
+    public override bool Equals(object? obj)
+        => Equals(obj as NativeWindow);
+
+    /// <inheritdoc/>
+    public override int GetHashCode()
+        => Handle.DangerousGetHandle().GetHashCode();
+
+    /// <inheritdoc/>
+    /// <remarks>
+    /// The real risk with DangerousGetHandle is when we're passing the raw value to native code, which isn't happening here.
+    /// </remarks>
+    public bool Equals(NativeWindow? other)
+        => other is not null && Handle.DangerousGetHandle() == other.Handle.DangerousGetHandle();
 
     /// <summary>
     /// Sets the windows style information so that said window is stripped of its title bar.
@@ -444,6 +465,12 @@ public sealed class NativeWindow
     /// </summary>
     public void Minimize() 
         => User32.ShowWindow(Handle, ShowWindowCommand.Minimize);
+
+    /// <summary>
+    /// Activates and displays the window in its original size and position.
+    /// </summary>
+    public void Restore()
+        => User32.ShowWindow(Handle, ShowWindowCommand.Restore);
 
     private static WindowHandle ValidateWrapper(WindowWrapper windowWrapper)
     {
